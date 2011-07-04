@@ -130,8 +130,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNSwitch                switchPreferencesEnableVNC;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
     @outlet TNUIKitScrollView       scrollViewContentView;
-    @outlet TNUIKitScrollView       scrollViewForDrives;
-    @outlet TNUIKitScrollView       scrollViewForNics;
     @outlet TNSwipeView             swipeViewParameters;
     @outlet CPView                  viewParametersStandard;
     @outlet CPView                  viewParametersAdvanced;
@@ -150,16 +148,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPButton                        _minusButtonNics;
     CPButton                        _plusButtonDrives;
     CPButton                        _plusButtonNics;
-    CPColor                         _bezelColor;
-    CPColor                         _buttonBezelHighlighted;
-    CPColor                         _buttonBezelSelected;
     CPImage                         _imageDefining;
     CPImage                         _imageEdited;
     CPString                        _stringXMLDesc;
 
+    TNLibvirtDomain                 _libvirtDomain;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
-    TNLibvirtDomain                 _libvirtDomain;
+    TNXMLNode                       _libvirtCapabilities;
 }
 
 
@@ -249,17 +245,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
 
     _stringXMLDesc = @"";
-
-    var mainBundle              = [CPBundle mainBundle],
-        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
-        buttonBezel             = [CPColor colorWithPatternImage:centerBezel],
-        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
-        centerBezelSelected     = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarCenterBezelSelected.png"] size:CGSizeMake(1, 26)];
-
-    _bezelColor                 = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
-    _buttonBezelHighlighted     = [CPColor colorWithPatternImage:centerBezelHighlighted];
-    _buttonBezelSelected        = [CPColor colorWithPatternImage:centerBezelSelected];
-
 
     // DRIVES
     _drivesDatasource = [[TNTableViewDataSource alloc] init];
@@ -936,6 +921,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)selectGuestWithType:(CPString)aType architecture:(CPString)anArch
 {
+    if ([_libvirtDomain type] == TNLibvirtDomainTypeXen && (aType == "linux"))
+        aType = "xen";
+
     var guests = [buttonGuests itemArray];
 
     for (var i = 0; i < [guests count]; i++)
@@ -1258,6 +1246,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[[_libvirtDomain OS] type] setArchitecture:arch];
     [[[_libvirtDomain OS] type] setType:osType];
 
+    if ([guest firstChildWithName:@"loader"])
+        [[_libvirtDomain OS] setLoader:[[guest firstChildWithName:@"loader"] text]];
+
     [self buildGUIAccordingToCurrentGuest];
 
     [self didChangeDomainType:buttonDomainType];
@@ -1488,7 +1479,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([[[_libvirtDomain devices] inputs] count] == 0)
         [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
 
-    [[[[_libvirtDomain devices] inputs] firstObject] setType:[aSender title]];
+    [[[[_libvirtDomain devices] inputs] lastObject] setType:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1503,7 +1494,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([[[_libvirtDomain devices] inputs] count] == 0)
         [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
 
-    [[[[_libvirtDomain devices] inputs] firstObject] setBus:[aSender title]];
+    [[[[_libvirtDomain devices] inputs] lastObject] setBus:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1654,7 +1645,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
         var host = [aStanza firstChildWithName:@"host"],
             guests = [aStanza childrenWithName:@"guest"],
-            supportedCapabilities = [CPDictionary dictionary];
+            _libvirtCapabilities = [CPDictionary dictionary];
 
         if ([guests count] == 0)
         {
@@ -1664,8 +1655,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [self showMaskView:YES];
         }
 
-        [supportedCapabilities setObject:host forKey:@"host"];
-        [supportedCapabilities setObject:[CPArray array] forKey:@"guests"];
+        [_libvirtCapabilities setObject:host forKey:@"host"];
+        [_libvirtCapabilities setObject:[CPArray array] forKey:@"guests"];
 
         for (var i = 0; i < [guests count]; i++)
         {
@@ -1678,14 +1669,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [guestItem setTitle:osType + @" (" + arch + @")"];
             [buttonGuests addItem:guestItem];
 
-            [[supportedCapabilities objectForKey:@"guests"] addObject:guest];
+            [[_libvirtCapabilities objectForKey:@"guests"] addObject:guest];
         }
 
         var defaultGuest = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultGuest"];
         if (defaultGuest)
             [buttonGuests selectItemWithTitle:defaultGuest];
 
-        CPLog.trace(supportedCapabilities);
+        CPLog.trace(_libvirtCapabilities);
         [self getXMLDesc];
     }
     else

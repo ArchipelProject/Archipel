@@ -102,9 +102,9 @@ CPApplicationMain = function(args, namedArgs)
     if (bundleLocale)
     {
         var request = [CPURLRequest requestWithURL:@"Resources/" + bundleLocale + ".lproj/Localizable.xstrings"],
-            response = [CPURLConnection sendSynchronousRequest:request returningResponse:response error:nil];
+            response = [CPURLConnection sendSynchronousRequest:request returningResponse:response];
 
-        var plist = [CPPropertyListSerialization propertyListFromData:response format:nil errorDescription:nil];
+        var plist = [CPPropertyListSerialization propertyListFromData:response format:nil];
         [mainBundle setDictionary:plist forTable:@"Localizable"];
     }
 
