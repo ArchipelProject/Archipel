@@ -89,7 +89,7 @@
 /* Class = "NSTextFieldCell"; title = "Network usage"; ObjectID = "92"; */
 "92.title" = "Utilisation réseau";
 
-/* Class = "NSTextFieldCell"; title = "Memory History"; ObjectID = "104"; */
+/* Class = "NSTextFieldCell"; title = "Disks usage"; ObjectID = "104"; */
 "104.title" = "Historique mémoire";
 
 /* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "126"; */
