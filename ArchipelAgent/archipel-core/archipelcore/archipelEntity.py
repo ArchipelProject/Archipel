@@ -312,7 +312,7 @@ class TNArchipelEntity (object):
             else:
                 sys.exit(-1)
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
-        self.log.info("Sucessfully connected to XMPP with JID %s" % str(self.jid))
+        self.log.info("Successfully connected to XMPP with JID %s" % str(self.jid))
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
         return True
 
@@ -329,7 +329,7 @@ class TNArchipelEntity (object):
                 return
             self.log.error("Bad authentication. Exiting.")
             sys.exit(0)
-        self.log.info("Sucessfully authenticated.")
+        self.log.info("Successfully authenticated.")
         self.isAuth = True
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.register_handlers()
@@ -490,7 +490,7 @@ class TNArchipelEntity (object):
             - add
             - remove
         @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
+        @param conn: the instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
@@ -879,7 +879,7 @@ class TNArchipelEntity (object):
         @type item: dictionnary
         @param item: the dictionnary describing the registrar item
         """
-        self.log.debug("Plugin have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
+        self.log.debug("Plugin have registered a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
         self.messages_registrar.append(item)
 
     def add_message_registrar_items(self, items):
@@ -1002,7 +1002,7 @@ class TNArchipelEntity (object):
 
     def iq_set_permission(self, iq, onlyown):
         """
-        Set a list of permission.
+        Set a list of permissions.
         @type iq: xmpp.Node
         @param iq: the original request IQ
         @type onlyown: Boolean
@@ -1123,7 +1123,7 @@ class TNArchipelEntity (object):
                     self.log.info("LOOP EXCEPTION: Account has been removed from server.")
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 elif self.auto_reconnect:
-                    self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 five seconds.")
+                    self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 (five) seconds.")
                     t, v, tr = sys.exc_info()
                     self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
