@@ -105,10 +105,10 @@ class ColorFormatter (logging.Formatter):
 
 def init_conf(path):
     """
-    This method intialize the configuration object (that will be passed to all
+    This method initialize the configuration object (that will be passed to all
     entities) from a given path.
     @type path: string
-    @param path: teh path of the config file to read
+    @param path: the path of the config file to read
     @return : the ConfigParser object containing the configuration
     """
     conf = ConfigParser.ConfigParser()
