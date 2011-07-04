@@ -98,7 +98,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     id                              _entity                         @accessors(property=entity);
     int                             _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
     int                             _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
-    TNiTunesTabView                 _mainTabView                    @accessors(property=mainTabView);
+    TNTabView                       _mainTabView                    @accessors(property=mainTabView);
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
     CPArray                         _bundles;
@@ -315,7 +315,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     _numberOfActiveModules = 0;
 
-    // we know disable the storage remembering during the tab item populating
+    // we now disable the storage remembering during the tab item populating
     _deactivateModuleTabItemPositionStorage = YES;
 
     for (var i = 0; i < [sortedValue count]; i++)
@@ -684,12 +684,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 - (void)tabView:(TNiTunesTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
 {
     if ([aTabView numberOfTabViewItems] <= 0)
-        return
+        return;
 
     var currentTabItem = [aTabView selectedTabViewItem];
-
-    if (currentTabItem == anItem)
-        return;
 
     if (currentTabItem)
     {
@@ -802,9 +799,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         [[module view] setFrame:bounds];
         [module willShow];
-
-        if (![[module view] backgroundColor])
-            [[module view] setBackgroundColor:[_mainModuleView backgroundColor]];
 
         [_mainModuleView addSubview:[module view]];
 
