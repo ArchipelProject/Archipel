@@ -243,7 +243,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
             stats = self.collector.get_collected_stats(limit)
             return str(stats)
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_get_logs(self, iq):
         """
@@ -287,4 +287,4 @@ class TNHypervisorHealth (TNArchipelPlugin):
             output = commands.getoutput("tail -n %d %s" % (limit, self.logfile))
             return output
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)

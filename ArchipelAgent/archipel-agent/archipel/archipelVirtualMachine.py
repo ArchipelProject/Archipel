@@ -990,7 +990,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.create()
             return "I'm starting."
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_shutdown(self, iq):
         """
@@ -1026,7 +1026,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.shutdown()
             return "I'm shutdowning."
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_destroy(self, iq):
         """
@@ -1062,7 +1062,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.destroy()
             return "I've destroyed myself."
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_reboot(self, iq):
         """
@@ -1098,7 +1098,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.reboot()
             return "I try to reboot."
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_suspend(self, iq):
         """
@@ -1134,7 +1134,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.suspend()
             return "I'm suspended."
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_resume(self, iq):
         """
@@ -1170,7 +1170,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.resume()
             return "I'm resumed."
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_info(self, iq):
         """
@@ -1217,7 +1217,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 cpuorth = "CPUs"
             return "I'm in state %s, I use %d MB of memory. I've got %d %s and I've consumed %d second(s) of my hypervisor (%s)." % (state, mem, i["nrVirtCpu"], cpuorth, time, i["hypervisor"])
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_xmldesc(self, iq):
         """
@@ -1396,7 +1396,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 resp = resp + "%s : rx_bytes:%s rx_packets:%s rx_errs:%d rx_drop:%s / tx_bytes:%s tx_packets:%s tx_errs:%d tx_drop:%s" % (i["name"], i["rx_bytes"], i["rx_packets"], i["rx_errs"], i["rx_drop"], i["tx_bytes"], i["tx_packets"], i["tx_errs"], i["tx_drop"])
             return resp
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_capabilities(self, iq):
         """

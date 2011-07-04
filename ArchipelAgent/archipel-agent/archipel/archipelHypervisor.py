@@ -658,7 +658,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vm = self.alloc(msg.getFrom(), name)
             return "Archipel VM with name %s has been allocated using JID %s" % (vm.name, vm.jid)
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_alloc_for_migration(self, iq):
         """
@@ -721,7 +721,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.free(vm.jid)
             return "Archipel VM with JID %s has been freed." % (vm.jid)
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_free_for_migration(self, iq):
         """
@@ -773,7 +773,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.clone(vm.uuid, msg.getFrom())
             return "Cloning of virtual machine %s has started." % (vm.jid)
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_roster(self, iq):
         """
@@ -809,7 +809,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 ret += " - %s (%s)\n" % (vm.name, vm.jid)
             return ret
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_ip(self, iq):
         """
@@ -837,7 +837,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         try:
             return "Sure, my IP is %s" % self.ipaddr
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_libvirt_uri(self, iq):
         """
@@ -866,7 +866,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         try:
             return "Sure, my libvirt URI is %s" % self.migration_libvirt_uri()
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_capabilities(self, iq):
         """
@@ -894,4 +894,4 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         try:
             return str(self.capabilities)
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)

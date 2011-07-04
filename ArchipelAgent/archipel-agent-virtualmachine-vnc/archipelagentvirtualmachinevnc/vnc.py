@@ -251,4 +251,4 @@ class TNArchipelVNC (TNArchipelPlugin):
             ports = self.display()
             return "You can connect to my screen at %s:%s" % (self.entity.ipaddr, ports["direct"])
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)

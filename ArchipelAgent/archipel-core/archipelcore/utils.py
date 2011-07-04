@@ -140,7 +140,7 @@ def init_conf(path):
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     #traceback.print_exc(file=sys.stdout, limit=20)
     caller = inspect.stack()[1][3]
-    log.error("%s.%s: exception raised is: %s" % (originclass, caller, ex))
+    log.error("%s.%s: exception raised is: '%s' triggered by stanza :\n%s" % (originclass, caller, ex, str(iq)))
     reply = iq.buildReply('error')
     reply.setQueryPayload(iq.getQueryPayload())
     error = xmpp.Node("error", attrs={"code": code, "type": "cancel"})
@@ -149,7 +149,7 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     reply.addChild(node=error)
     return reply
 
-def build_error_message(originclass, ex):
+def build_error_message(originclass, ex, msg):
     caller = inspect.stack()[3][3]
-    log.error("%s: exception raised is: %s" % (caller, str(ex)))
+    log.error("%s: exception raised is: '%s' triggered by message:\n %s" % (caller, str(ex), str(msg)))
     return str(ex)

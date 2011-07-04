@@ -369,7 +369,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             self.create(identifier)
             return "Starting network %s" % identifier
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_destroy(self, iq):
         """
@@ -406,7 +406,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             self.destroy(identifier)
             return "Destroying network %s" % identifier
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_get(self, iq):
         """
@@ -458,7 +458,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
                 ret += "    - %s\n" % net
             return ret
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_get_names(self, iq):
         """
@@ -537,7 +537,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
                 ret += "    - %s\n" % n
             return ret
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_get_nwfilters(self, iq):
         """

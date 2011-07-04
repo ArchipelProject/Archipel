@@ -319,7 +319,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
                 ret += "    - %s (%s)\n" % (app["name"], app["uuid"])
             return ret
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
     def iq_attach(self, iq):
         """
@@ -355,7 +355,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             self.attach(uuid, requester)
             return "Appliance installation as started"
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
 
     def iq_detach(self, iq):
@@ -384,7 +384,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             self.detach()
             return "Appliance is now detached"
         except Exception as ex:
-            return build_error_message(self, ex)
+            return build_error_message(self, ex, msg)
 
 
     def iq_package(self, iq):
