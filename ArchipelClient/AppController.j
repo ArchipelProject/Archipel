@@ -37,12 +37,12 @@
 @import <AppKit/CPWebView.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
-@import <iTunesTabView/iTunesTabView.j>
 @import <LPKit/LPMultiLineTextField.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNUIKitScrollView.j>
 @import <TNKit/TNFlipView.j>
+@import <TNKit/TNTabView.j>
 @import <VNCCappuccino/VNCCappuccino.j>
 
 @import "Categories/TNCategories.j"
@@ -195,7 +195,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPTimer                                     _moduleLoadingDelay;
     CPWindow                                    _helpWindow;
     int                                         _tempNumberOfReadyModules;
-    TNiTunesTabView                             _moduleTabView;
+    TNTabView                                   _moduleTabView;
     TNOutlineViewRoster                         _rosterOutlineView;
     TNPubSubController                          _pubSubController;
     TNRosterDataViewContact                     _rosterDataViewForContacts;
@@ -332,9 +332,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
-    _moduleTabView = [[TNiTunesTabView alloc] initWithFrame:[rightView bounds]];
+    _moduleTabView = [[TNTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_moduleTabView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
+    [_moduleTabView setContentBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
+    [_moduleTabView setTabViewBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/swipedTabView-bg.png"]]]];
     [rightView setBackView:_moduleTabView];
 
     /* loading view */
