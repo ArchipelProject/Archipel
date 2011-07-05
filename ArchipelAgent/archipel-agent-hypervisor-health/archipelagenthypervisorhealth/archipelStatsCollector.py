@@ -64,8 +64,10 @@ class TNThreadedHealthCollector (Thread):
         self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
         self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
         self.cursor.execute("create table if not exists network (collection_date date, records text)")
+        self.database_query_connection.commit()
         log.info("Database ready.")
         self.recover_stored_stats()
+        self.cursor.close()
         Thread.__init__(self)
 
     def recover_stored_stats(self):
@@ -76,19 +78,23 @@ class TNThreadedHealthCollector (Thread):
         self.cursor.execute("select * from cpu order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, idle = values
-            self.stats_CPU.insert(0, {"date": date, "id": idle})
+            self.stats_CPU.append({"date": date, "id": idle})
+        self.stats_CPU.reverse()   
         self.cursor.execute("select * from memory order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, free, used, total, swapped = values
-            self.stats_memory.insert(0, {"date": date, "free": free, "used": used, "total": total, "swapped": swapped})
+            self.stats_memory.append({"date": date, "free": free, "used": used, "total": total, "swapped": swapped})
+        self.stats_memory.reverse()     
         self.cursor.execute("select * from load order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, one, five, fifteen = values
-            self.stats_load.insert(0, {"date": date, "one": one, "five": five, "fifteen": fifteen})
+            self.stats_load.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
+        self.stats_load.reverse()     
         self.cursor.execute("select * from network order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, records = values
-            self.stats_network.insert(0, {"date": date, "records": records})
+            self.stats_network.append({"date": date, "records": records})
+        self.stats_network.reverse()
         log.info("Statistics recovered.")
 
     def get_collected_stats(self, limit=1):
@@ -275,9 +281,10 @@ class TNThreadedHealthCollector (Thread):
 
     def run(self):
         """
-        Overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop.
+        Overrides super class method. do the L{TNArchipelVirtualMachine} main loop.
         """
         self.database_thread_connection = sqlite3.connect(self.database_file)
+        self.database_thread_cursor = self.database_thread_connection.cursor()
         while(1):
             try:
                 self.stats_CPU.append(self.get_cpu_stats())
@@ -288,18 +295,18 @@ class TNThreadedHealthCollector (Thread):
                 if len(self.stats_CPU) >= self.max_cached_rows:
                     middle = (self.max_cached_rows - 1) / 2
 
-                    self.database_thread_connection.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
-                    self.database_thread_connection.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
-                    self.database_thread_connection.executemany("insert into load values(:date, :one , :five, :fifteen)", self.stats_load[0:middle])
-                    self.database_thread_connection.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])
+                    self.database_thread_cursor.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
+                    self.database_thread_cursor.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
+                    self.database_thread_cursor.executemany("insert into load values(:date, :one , :five, :fifteen)", self.stats_load[0:middle])
+                    self.database_thread_cursor.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])
 
                     log.info("Stats saved in database file.")
 
-                    if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
-                        self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_connection.execute("delete from network where collection_date=(select collection_date from network order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                    if int(self.database_thread_cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
+                        self.database_thread_cursor.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                        self.database_thread_cursor.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                        self.database_thread_cursor.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                        self.database_thread_cursor.execute("delete from network where collection_date=(select collection_date from network order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         log.debug("Old stored stats have been purged from memory.")
 
                     del self.stats_CPU[0:middle]
