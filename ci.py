@@ -26,7 +26,6 @@ BUILD_TNKIT=True
 BUILD_VNCCAPPUCCINO=True
 BUILD_STROPHECAPPUCCINO=True
 BUILD_GROWLCAPPUCCINO=True
-BUILD_MESSAGEBOARD=True
 BUILD_ARCHIPELCLIENT=True
 DEPLOY_PATH="/var/www/archipelproject.org/app/"
 EXPORT_PATH="/var/www/archipelproject.org/nightlies/old/"
@@ -55,13 +54,6 @@ def buildLPKit():
     if os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build  && export CONFIGURATION=Debug && jake -f myJakeFile build"):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
-
-
-def buildMessageBoard():
-    os.system("echo \* Starting to build MessageBoard")
-    if os.system("cd ./ArchipelClient/Libraries/MessageBoard && jake release && jake debug"):
-        os.system("echo \* unable to build MessageBoard")
-        sys.exit(-5)
 
 
 def buildStropheCappuccino():
@@ -145,12 +137,6 @@ def generateAPI(api_dir):
     os.system("cp -a ./ArchipelClient/Libraries/GrowlCappuccino/Build/Documentation/html/* %s/growlcappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/growlcappuccino/" % api_dir)
 
-    os.system("echo \* Generating doc for MessageBoard")
-    os.system("mkdir -p %s/messageboard" % api_dir)
-    os.system("cd ./ArchipelClient/Libraries/MessageBoard; jake docs")
-    os.system("cp -a ./ArchipelClient/Libraries/MessageBoard/Build/Documentation/html/* %s/messageboard/" % api_dir)
-    os.system("chown -R cruise:www-data %s/messageboard/" % api_dir)
-
     os.system("echo \* Generating doc for TNKit")
     os.system("mkdir -p %s/tnkit" % api_dir)
     os.system("cd ./ArchipelClient/Libraries/TNKit; jake docs")
@@ -182,7 +168,6 @@ if __name__ == "__main__":
     if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
     if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
     if BUILD_LPKIT or FORCE:             buildLPKit()
-    if BUILD_MESSAGEBOARD or FORCE:      buildMessageBoard()
     if BUILD_STROPHECAPPUCCINO or FORCE: buildStropheCappuccino()
     if BUILD_TNKIT or FORCE:             buildTNKit()
     if BUILD_VNCCAPPUCCINO or FORCE:     buildVNCCappuccino()

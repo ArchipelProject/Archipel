@@ -22,9 +22,9 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 
-@import <MessageBoard/TNMessageBoard.j>
 @import <StropheCappuccino/MUC/TNStropheMUCRoom.j>
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNMessageBoard.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 

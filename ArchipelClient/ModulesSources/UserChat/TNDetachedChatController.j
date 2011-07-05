@@ -25,7 +25,7 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
 
-@import <MessageBoard/TNMessageBoard.j>
+@import <TNKit/TNMessageBoard.j>
 @import <TNKit/TNUIKitScrollView.j>
 
 

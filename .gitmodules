@@ -16,6 +16,3 @@
 [submodule "ArchipelClient/Libraries/TNKit"]
 	path = ArchipelClient/Libraries/TNKit
 	url = git://github.com/primalmotion/TNKit.git
-[submodule "ArchipelClient/Libraries/MessageBoard"]
-	path = ArchipelClient/Libraries/MessageBoard
-	url = git://github.com/primalmotion/MessageBoard.git
