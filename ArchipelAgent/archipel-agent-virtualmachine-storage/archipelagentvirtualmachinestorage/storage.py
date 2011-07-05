@@ -36,6 +36,7 @@ ARCHIPEL_ERROR_CODE_DRIVES_GET          = -3003
 ARCHIPEL_ERROR_CODE_DRIVES_GETISO       = -3004
 ARCHIPEL_ERROR_CODE_DRIVES_CONVERT      = -3005
 ARCHIPEL_ERROR_CODE_DRIVES_RENAME       = -3006
+ARCHIPEL_ERROR_CODE_DRIVES_GETGOLDEN    = -3007
 
 
 class TNStorageManagement (TNArchipelPlugin):
@@ -59,6 +60,9 @@ class TNStorageManagement (TNArchipelPlugin):
             self.qemu_img_bin = self.configuration.get("STORAGE", "qemu_img_bin_path")
         else:
             self.qemu_img_bin = "qemu-img"
+
+        self.golden_drives_dir = self.configuration.get("STORAGE", "golden_drives_dir")
+
         if not os.path.exists(self.qemu_img_bin):
             raise Exception("qemu-img is not found at path %s. You may need to install it" % self.qemu_img_bin)
         if not os.path.exists(self.shared_isos_folder):
@@ -97,7 +101,7 @@ class TNStorageManagement (TNArchipelPlugin):
         plugin_friendly_name           = "Virtual Machine Storage"
         plugin_identifier              = "storage"
         plugin_configuration_section   = "STORAGE"
-        plugin_configuration_tokens    = ["iso_base_path", "use_metadata_preallocation"]
+        plugin_configuration_tokens    = ["iso_base_path", "use_metadata_preallocation", "golden_drives_dir"]
 
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
@@ -117,6 +121,7 @@ class TNStorageManagement (TNArchipelPlugin):
             - getiso
             - convert
             - rename
+            - getgolden
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
@@ -139,6 +144,9 @@ class TNStorageManagement (TNArchipelPlugin):
             reply = self.iq_convert(iq)
         elif action == "rename":
             reply = self.iq_rename(iq)
+        elif action == "getgolden":
+            reply = self.iq_getgolden(iq)
+
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -158,6 +166,7 @@ class TNStorageManagement (TNArchipelPlugin):
             disk_unit   = query_node.getTag("archipel").getAttr("unit")
             format      = query_node.getTag("archipel").getAttr("format")
             prealloc    = query_node.getTag("archipel").getAttr("preallocation")
+            golden      = query_node.getTag("archipel").getAttr("golden")
             disk_path   = self.entity.folder + "/" + disk_name + "." + format
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big", "You may be able to do it manually, but I won't try.")
@@ -169,6 +178,12 @@ class TNStorageManagement (TNArchipelPlugin):
             if prealloc and prealloc == "metadata" and format == "qcow2" and self.entity.configuration.getboolean("STORAGE", "use_metadata_preallocation"):
                 self.entity.log.info("Creating a QCOW2 file with preallocated metadata.")
                 ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, "-o", "preallocation=metadata", disk_path, "%s%s" % (disk_size, disk_unit)])
+            elif golden and format == "qcow2":
+                self.entity.log.info("Creating a differencing QCOW2 file with backing file.")
+                if not os.path.exists("%s/%s" % (self.golden_drives_dir, golden)):
+                    raise Exception("The requested golden image %s has not been found in the golden folder. Cannot create drive")
+                else:
+                    ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, "-b", "%s/%s" % (self.golden_drives_dir, golden), disk_path, "%s%s" % (disk_size, disk_unit)])
             else:
                 ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
             if not ret == 0:
@@ -311,12 +326,16 @@ class TNStorageManagement (TNArchipelPlugin):
                     diskPath = "%s/%s" % (self.entity.folder, disk)
                     diskSize = os.path.getsize(diskPath)
                     diskInfo = subprocess.Popen([self.qemu_img_bin, "info", diskPath], stdout=subprocess.PIPE).communicate()[0].split("\n")
-                    node = xmpp.Node(tag="disk", attrs={"name": disk.split('.')[0],
+                    currentAttributes = {
+                        "name": disk.split('.')[0],
                         "path": diskPath,
                         "format": diskInfo[1].split(": ")[1],
                         "virtualSize": diskInfo[2].split(": ")[1],
-                        "diskSize": diskSize,
-                    })
+                        "diskSize": diskSize
+                    }
+                    if len(diskInfo) == 7:
+                        currentAttributes["backingFile"] = os.path.basename(diskInfo[5].split()[2])
+                    node = xmpp.Node(tag="disk", attrs=currentAttributes)
                     nodes.append(node)
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
@@ -350,4 +369,26 @@ class TNStorageManagement (TNArchipelPlugin):
             self.entity.log.info("Info about iso sent.")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETISO)
+        return reply
+
+    def iq_getgolden(self, iq):
+        """
+        Get the list of golden qcow2 images
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            nodes = []
+            goldens = subprocess.Popen(["ls", self.golden_drives_dir], stdout=subprocess.PIPE).communicate()[0].split()
+            for golden in goldens:
+                if subprocess.Popen(["file", "%s/%s" % (self.golden_drives_dir, golden)], stdout=subprocess.PIPE).communicate()[0].lower().find("format: qcow") > -1:
+                    node = xmpp.Node(tag="golden", attrs={"name": golden, "path": "%s/%s" % (self.golden_drives_dir, golden)})
+                    nodes.append(node)
+            reply = iq.buildReply("result")
+            reply.setQueryPayload(nodes)
+            self.entity.log.info("Info about golden sent.")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETGOLDEN)
         return reply
