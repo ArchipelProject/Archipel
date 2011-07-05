@@ -53,17 +53,16 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     @outlet CPButton                    buttonCreate;
     @outlet CPButtonBar                 buttonBarControl;
-    @outlet CPSearchField               fieldFilterAppliance;
-    @outlet CPTextField                 fieldNewApplianceName;
     @outlet CPCheckBox                  checkBoxShouldGZIP;
+    @outlet CPSearchField               fieldFilterAppliance;
+    @outlet CPTableView                 tableAppliances;
+    @outlet CPTextField                 fieldNewApplianceName;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewAppliance;
-    @outlet TNUIKitScrollView           mainScrollView;
 
     CPButton                            _detachButton;
     CPButton                            _attachButton;
     CPButton                            _packageButton;
-    CPTableView                         _tableAppliances;
     TNTableViewDataSource               _appliancesDatasource;
 }
 
@@ -76,62 +75,22 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (void)awakeFromCib
 {
     [windowNewAppliance setDefaultButton:buttonCreate];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    // Media table view
+    // table appliances
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
-    _tableAppliances         = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
-
-    var bundle = [CPBundle bundleForClass:[self class]];
-
-    [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [mainScrollView setAutohidesScrollers:YES];
-    [mainScrollView setDocumentView:_tableAppliances];
-
-    [_tableAppliances setUsesAlternatingRowBackgroundColors:YES];
-    [_tableAppliances setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableAppliances setAllowsColumnReordering:YES];
-    [_tableAppliances setAllowsColumnResizing:YES];
-    [_tableAppliances setTarget:self];
-    [_tableAppliances setDoubleAction:@selector(tableDoubleClicked:)];
-    [_tableAppliances setAllowsEmptySelection:YES];
-    [_tableAppliances setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var columnName      = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        columnComment   = [[CPTableColumn alloc] initWithIdentifier:@"comment"],
-        columnStatus    = [[CPTableColumn alloc] initWithIdentifier:@"status"],
-        imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [columnName setWidth:200]
-    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-
-    [columnComment setWidth:250];
-    [[columnComment headerView] setStringValue:CPBundleLocalizedString(@"Comment", @"Comment")];
-    [columnComment setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
-
-    [imgView setImageScaling:CPScaleNone];
-    [columnStatus setDataView:imgView];
-    [columnStatus setWidth:16];
-    [[columnStatus headerView] setStringValue:@" "];
-
-    [_tableAppliances addTableColumn:columnStatus];
-    [_tableAppliances addTableColumn:columnName];
-    [_tableAppliances addTableColumn:columnComment];
-
-    [_appliancesDatasource setTable:_tableAppliances];
+    [tableAppliances setTarget:self];
+    [tableAppliances setDoubleAction:@selector(tableDoubleClicked:)];
+    [_appliancesDatasource setTable:tableAppliances];
     [_appliancesDatasource setSearchableKeyPaths:[@"name", @"path", @"comment"]]
-
-    [_tableAppliances setDataSource:_appliancesDatasource];
-
+    [tableAppliances setDataSource:_appliancesDatasource];
     [fieldFilterAppliance setTarget:_appliancesDatasource];
     [fieldFilterAppliance setAction:@selector(filterObjects:)];
 
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Install" action:@selector(attach:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Detach" action:@selector(detach:) keyEquivalent:@""];
-    [_tableAppliances setMenu:menu];
+    [tableAppliances setMenu:menu];
 
     _packageButton  = [CPButtonBar plusButton];
     [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/package.png"] size:CPSizeMake(16, 16)]];
@@ -172,8 +131,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 
-    [_tableAppliances setDelegate:nil];
-    [_tableAppliances setDelegate:self]; // hum....
+    [tableAppliances setDelegate:nil];
+    [tableAppliances setDelegate:self]; // hum....
 
     [self getInstalledAppliances];
 }
@@ -183,7 +142,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (void)willUnload
 {
     [_appliancesDatasource removeAllObjects];
-    [_tableAppliances reloadData];
+    [tableAppliances reloadData];
 
     [super willUnload];
 }
@@ -323,10 +282,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (IBAction)tableDoubleClicked:(id)aSender
 {
-    if ([_tableAppliances numberOfSelectedRows] <= 0)
+    if ([tableAppliances numberOfSelectedRows] <= 0)
         return;
 
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
 
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
@@ -401,7 +360,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
             [_appliancesDatasource addObject:newAppliance];
         }
-        [_tableAppliances reloadData];
+        [tableAppliances reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
@@ -417,7 +376,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)attach
 {
-    if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
+    if (([tableAppliances numberOfRows]) && ([tableAppliances numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
                          message:CPBundleLocalizedString(@"You must select an appliance", @"You must select an appliance")];
@@ -437,7 +396,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)performAttach:(id)someUserInfo
 {
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex],
         stanza          = [TNStropheStanza iqWithType:@"set"];
 
@@ -474,7 +433,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)detach
 {
-    if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
+    if (([tableAppliances numberOfRows]) && ([tableAppliances numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
                          message:CPBundleLocalizedString(@"You must select an appliance", @"You must select an appliance")];
@@ -492,7 +451,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)performDetach:(id)someUserInfo
 {
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex],
         stanza          = [TNStropheStanza iqWithType:@"set"];
 
@@ -576,10 +535,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [_attachButton setEnabled:NO];
     [_detachButton setEnabled:NO];
 
-    if ([_tableAppliances numberOfSelectedRows] <= 0)
+    if ([tableAppliances numberOfSelectedRows] <= 0)
         return;
 
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
 
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)

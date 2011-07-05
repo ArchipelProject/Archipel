@@ -92,3 +92,21 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "202"; */
 "202.title" = "Item 3";
 
+/* Class = "NSTableColumn"; headerCell.title = "Action"; ObjectID = "212"; */
+"212.headerCell.title" = "Action";
+
+/* Class = "NSTableColumn"; headerCell.title = "Date"; ObjectID = "213"; */
+"213.headerCell.title" = "Date";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "214"; */
+"214.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "215"; */
+"215.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Comment"; ObjectID = "216"; */
+"216.headerCell.title" = "Comment";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "217"; */
+"217.title" = "Text Cell";
+

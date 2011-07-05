@@ -23,3 +23,27 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "32"; */
 "32.title" = "Boite";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "50"; */
+"50.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "51"; */
+"51.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Jabber ID"; ObjectID = "53"; */
+"53.headerCell.title" = "Jabber ID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "54"; */
+"54.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "62"; */
+"62.headerCell.title" = "Name";
+
+/* Class = "NSTableColumn"; headerCell.title = "Jabber ID"; ObjectID = "63"; */
+"63.headerCell.title" = "Jabber ID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "64"; */
+"64.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "65"; */
+"65.title" = "Text Cell";
+

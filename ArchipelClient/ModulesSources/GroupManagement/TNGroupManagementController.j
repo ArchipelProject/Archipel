@@ -57,12 +57,11 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 @implementation TNGroupManagementController : TNModule
 {
     @outlet CPButtonBar                     buttonBarControl;
-    @outlet TNUIKitScrollView               VMScrollView;
     @outlet CPSearchField                   filterField;
+    @outlet CPTableView                     tableVirtualMachines;
     @outlet CPView                          viewTableContainer;
     @outlet TNGroupedMigrationController    groupedMigrationController;
 
-    CPTableView                             _tableVirtualMachines;
     TNTableViewDataSource                   _datasourceGroupVM;
 }
 
@@ -77,47 +76,12 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
-    _tableVirtualMachines   = [[CPTableView alloc] initWithFrame:[VMScrollView bounds]];
 
-    [VMScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [VMScrollView setAutohidesScrollers:YES];
-    [VMScrollView setDocumentView:_tableVirtualMachines];
-
-    [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
-    [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableVirtualMachines setAllowsColumnReordering:YES];
-    [_tableVirtualMachines setAllowsColumnResizing:YES];
-    [_tableVirtualMachines setAllowsEmptySelection:YES];
-    [_tableVirtualMachines setAllowsMultipleSelection:YES];
-    [_tableVirtualMachines setTarget:self];
-    [_tableVirtualMachines setDoubleAction:@selector(virtualMachineDoubleClick:)];
-
-
-    var vmColumNickname     = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        vmColumJID          = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
-        vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [vmColumNickname setWidth:250];
-    [[vmColumNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-
-    [vmColumJID setWidth:450];
-    [[vmColumJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
-
-    [imgView setImageScaling:CPScaleNone];
-    [vmColumStatusIcon setDataView:imgView];
-    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
-    [vmColumStatusIcon setWidth:16];
-    [[vmColumStatusIcon headerView] setStringValue:@""];
-
-    [_tableVirtualMachines addTableColumn:vmColumStatusIcon];
-    [_tableVirtualMachines addTableColumn:vmColumNickname];
-    [_tableVirtualMachines addTableColumn:vmColumJID];
-
-    [_datasourceGroupVM setTable:_tableVirtualMachines];
+    [tableVirtualMachines setTarget:self];
+    [tableVirtualMachines setDoubleAction:@selector(virtualMachineDoubleClick:)];
+    [_datasourceGroupVM setTable:tableVirtualMachines];
     [_datasourceGroupVM setSearchableKeyPaths:[@"nickname", @"JID"]];
-    [_tableVirtualMachines setDataSource:_datasourceGroupVM];
+    [tableVirtualMachines setDataSource:_datasourceGroupVM];
 
     var createButton    = [CPButtonBar plusButton],
         shutdownButton  = [CPButtonBar plusButton],
@@ -244,7 +208,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
             [_datasourceGroupVM addObject:contact];
     }
 
-    [_tableVirtualMachines reloadData];
+    [tableVirtualMachines reloadData];
 }
 
 
@@ -257,7 +221,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (IBAction)virtualMachineDoubleClick:(id)aSender
 {
-    var selectedIndexes = [_tableVirtualMachines selectedRowIndexes],
+    var selectedIndexes = [tableVirtualMachines selectedRowIndexes],
         contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]],
         row             = [[[[TNStropheIMClient defaultClient] roster] mainOutlineView] rowForItem:contact],
         indexes         = [CPIndexSet indexSetWithIndex:row];
@@ -365,7 +329,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
             break;
     }
 
-    var indexes = [_tableVirtualMachines selectedRowIndexes],
+    var indexes = [tableVirtualMachines selectedRowIndexes],
         objects = [_datasourceGroupVM objectsAtIndexes:indexes];
 
     for (var i = 0; i < [objects count]; i++)
@@ -395,7 +359,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + sender + CPBundleLocalizedString(" state modified", " state modified")];
 
-        [_tableVirtualMachines reloadData];
+        [tableVirtualMachines reloadData];
     }
 
     return NO;
@@ -406,7 +370,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (void)performGroupedMigration:(TNStropheContact)aDestination
 {
-    var indexes = [_tableVirtualMachines selectedRowIndexes],
+    var indexes = [tableVirtualMachines selectedRowIndexes],
         objects = [_datasourceGroupVM objectsAtIndexes:indexes];
 
     for (var i = 0; i < [objects count]; i++)
@@ -437,7 +401,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
          [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
                                                           message:CPBundleLocalizedString(@"Cannot migrate virtual machine ", @"Cannot migrate virtual machine ") + sender + CPBundleLocalizedString(" to the selected hypervisor", " to the selected hypervisor")];
 
-    [_tableVirtualMachines reloadData];
+    [tableVirtualMachines reloadData];
     return NO;
 }
 

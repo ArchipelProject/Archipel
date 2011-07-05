@@ -6,7 +6,5 @@
 	<string>Migration</string>
 	<key>Migration has started. It can take a while</key>
 	<string>Migration has started. It can take a while</string>
-	<key>Name</key>
-	<string>Name</string>
 </dict>
 </plist>

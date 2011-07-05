@@ -11,3 +11,27 @@
 /* Class = "NSTextFieldCell"; title = "Select a pin to set destination"; ObjectID = "23"; */
 "23.title" = "Select a pin to set destination";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "44"; */
+"44.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "45"; */
+"45.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "47"; */
+"47.headerCell.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "48"; */
+"48.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "55"; */
+"55.headerCell.title" = "JID";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "56"; */
+"56.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "59"; */
+"59.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "60"; */
+"60.title" = "Text Cell";
+

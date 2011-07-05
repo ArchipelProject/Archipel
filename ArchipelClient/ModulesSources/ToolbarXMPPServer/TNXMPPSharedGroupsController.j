@@ -50,13 +50,13 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarGroups;
     @outlet CPButtonBar         buttonBarUsersInGroups;
-    @outlet TNUIKitScrollView   scrollViewGroups;
-    @outlet TNUIKitScrollView   scrollViewUsers;
-    @outlet TNUIKitScrollView   scrollViewUsersInGroup;
     @outlet CPSearchField       filterFieldGroups;
     @outlet CPSearchField       filterFieldUsers;
     @outlet CPSearchField       filterFieldUsersInGroup;
     @outlet CPSplitView         splitViewVertical;
+    @outlet CPTableView         tableGroups;
+    @outlet CPTableView         tableUsers;
+    @outlet CPTableView         tableUsersInGroup;
     @outlet CPTextField         fieldNewGroupDescription;
     @outlet CPTextField         fieldNewGroupName;
     @outlet CPView              mainView                    @accessors(getter=mainView);
@@ -73,9 +73,6 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     CPButton                    _addUserInGroupButton;
     CPButton                    _deleteGroupButton;
     CPButton                    _deleteUserFromGroupButton;
-    CPTableView                 _tableGroups;
-    CPTableView                 _tableUsers;
-    CPTableView                 _tableUsersInGroup;
     id                          _currentSelectedGroup;
     int                         _oldSelectedIndexesForGroupTable;
     TNTableViewDataSource       _datasourceGroups;
@@ -92,94 +89,27 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     [windowNewGroup setDefaultButton:buttonCreate];
 
-    /* table Users */
+    [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setIsPaneSplitter:YES];
 
-    [scrollViewUsers setBorderedWithHexColor:@"#C0C7D2"];
-
+    /* table Users */
     _datasourceUsers  = [[TNTableViewDataSource alloc] init];
-    _tableUsers       = [[CPTableView alloc] initWithFrame:[scrollViewUsers bounds]];
-
-    [scrollViewUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewUsers setAutohidesScrollers:YES];
-    [scrollViewUsers setDocumentView:_tableUsers];
-
-    [_tableUsers setUsesAlternatingRowBackgroundColors:YES];
-    [_tableUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableUsers setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableUsers setAllowsColumnReordering:YES];
-    [_tableUsers setAllowsColumnResizing:YES];
-    [_tableUsers setAllowsEmptySelection:YES];
-    [_tableUsers setAllowsMultipleSelection:YES];
-
-    var colName     = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        colJID      = [[CPTableColumn alloc] initWithIdentifier:@"jid"],
-        colIcon     = [[CPTableColumn alloc] initWithIdentifier:@"icon"],
-        iconView    = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [colName setWidth:275];
-    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-
-    [colJID setWidth:200];
-    [[colJID headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
-    [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
-
-    [iconView setImageScaling:CPScaleNone];
-    [colIcon setWidth:16];
-    [colIcon setDataView:iconView];
-    [[colIcon headerView] setStringValue:@""];
-
-    [_tableUsers addTableColumn:colIcon];
-    [_tableUsers addTableColumn:colName];
-    [_tableUsers addTableColumn:colJID];
-
-    [_datasourceUsers setTable:_tableUsers];
+    [_datasourceUsers setTable:tableUsers];
     [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
-    [_tableUsers setDataSource:_datasourceUsers];
-
+    [tableUsers setDataSource:_datasourceUsers];
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
 
-
     /* table Groups */
-
-    [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
-
     _datasourceGroups   = [[TNTableViewDataSource alloc] init];
-    _tableGroups        = [[CPTableView alloc] initWithFrame:[scrollViewGroups bounds]];
-
-    [scrollViewGroups setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewGroups setAutohidesScrollers:YES];
-    [scrollViewGroups setDocumentView:_tableGroups];
-
-    [_tableGroups setUsesAlternatingRowBackgroundColors:YES];
-    [_tableGroups setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableGroups setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableGroups setAllowsColumnReordering:YES];
-    [_tableGroups setAllowsColumnResizing:YES];
-    [_tableGroups setAllowsEmptySelection:YES];
-    [_tableGroups setAllowsMultipleSelection:NO];
-
-    var colName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        colDescription  = [[CPTableColumn alloc] initWithIdentifier:@"description"];
-
-    [colName setWidth:175];
-    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-
-    [colDescription setWidth:450];
-    [[colDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
-    [colDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"description" ascending:YES]];
-
-    [_tableGroups addTableColumn:colName];
-    [_tableGroups addTableColumn:colDescription];
-
-    [_datasourceGroups setTable:_tableGroups];
+    [_datasourceGroups setTable:tableGroups];
     [_datasourceGroups setSearchableKeyPaths:[@"name", @"description"]];
-    [_tableGroups setDataSource:_datasourceGroups];
-    [_tableGroups setDelegate:self];
+    [tableGroups setDataSource:_datasourceGroups];
+    [tableGroups setDelegate:self];
+    [filterFieldGroups setTarget:_datasourceGroups];
+    [filterFieldGroups setAction:@selector(filterObjects:)];
 
     _addGroupButton = [CPButtonBar plusButton];
     [_addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-add.png"] size:CPSizeMake(16, 16)]];
@@ -192,43 +122,15 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_deleteGroupButton setTarget:self];
     [_deleteGroupButton setAction:@selector(deleteGroup:)];
     [_deleteGroupButton setToolTip:CPBundleLocalizedString(@"Delete selected shared group", @"Delete selected shared group")];
-
     [buttonBarGroups setButtons:[_addGroupButton, _deleteGroupButton]];
 
-    [filterFieldGroups setTarget:_datasourceGroups];
-    [filterFieldGroups setAction:@selector(filterObjects:)];
-
-
     /* table users in group */
-
-    [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
-
     _datasourceUsersInGroup  = [[TNTableViewDataSource alloc] init];
-    _tableUsersInGroup       = [[CPTableView alloc] initWithFrame:[scrollViewUsersInGroup bounds]];
-
-    [scrollViewUsersInGroup setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewUsersInGroup setAutohidesScrollers:YES];
-    [scrollViewUsersInGroup setDocumentView:_tableUsersInGroup];
-
-    [_tableUsersInGroup setUsesAlternatingRowBackgroundColors:YES];
-    [_tableUsersInGroup setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableUsersInGroup setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableUsersInGroup setAllowsColumnReordering:YES];
-    [_tableUsersInGroup setAllowsColumnResizing:YES];
-    [_tableUsersInGroup setAllowsEmptySelection:YES];
-    [_tableUsersInGroup setAllowsMultipleSelection:YES];
-
-    var colUserName = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
-
-    [colUserName setWidth:175];
-    [[colUserName headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
-    [colUserName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
-
-    [_tableUsersInGroup addTableColumn:colUserName];
-
-    [_datasourceUsersInGroup setTable:_tableUsersInGroup];
+    [_datasourceUsersInGroup setTable:tableUsersInGroup];
     [_datasourceUsersInGroup setSearchableKeyPaths:[@"jid"]];
-    [_tableUsersInGroup setDataSource:_datasourceUsersInGroup];
+    [tableUsersInGroup setDataSource:_datasourceUsersInGroup];
+    [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
+    [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
 
     _addUserInGroupButton = [CPButtonBar plusButton];
     [_addUserInGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
@@ -241,11 +143,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_deleteUserFromGroupButton setTarget:self];
     [_deleteUserFromGroupButton setAction:@selector(removeUsersFromGroup:)];
     [_deleteUserFromGroupButton setToolTip:CPBundleLocalizedString(@"Remove users from selected shared group", @"Remove users from selected shared group")];
-
     [buttonBarUsersInGroups setButtons:[_addUserInGroupButton, _deleteUserFromGroupButton]];
-
-    [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
-    [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
 }
 
 
@@ -304,8 +202,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [windowAddUserInGroup center];
     [windowAddUserInGroup makeKeyAndOrderFront:aSender];
 
-    [_tableUsers reloadData];
-    [_tableUsers deselectAll];
+    [tableUsers reloadData];
+    [tableUsers deselectAll];
 
     // fuck yea.
     var frame = [windowAddUserInGroup frame];
@@ -351,7 +249,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (IBAction)addUsersInGroup:(id)aSender
 {
-    var indexes = [_tableUsers selectedRowIndexes],
+    var indexes = [tableUsers selectedRowIndexes],
         rows    = [_datasourceUsers objectsAtIndexes:indexes];
 
     [self addUsers:rows inGroup:[_currentSelectedGroup objectForKey:@"id"]];
@@ -364,14 +262,14 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (IBAction)removeUsersFromGroup:(id)aSender
 {
-    if ([_tableUsersInGroup numberOfSelectedRows] < 1)
+    if ([tableUsersInGroup numberOfSelectedRows] < 1)
     {
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong users", @"Wrong users")
                           informative:CPBundleLocalizedString(@"You must select at least one user", @"You must select at least one user")];
         return;
     }
 
-    var indexes = [_tableUsersInGroup selectedRowIndexes],
+    var indexes = [tableUsersInGroup selectedRowIndexes],
         rows    = [_datasourceUsersInGroup objectsAtIndexes:indexes];
 
     [self removeUsers:rows fromGroup:[_currentSelectedGroup objectForKey:@"id"]];
@@ -389,8 +287,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     {
         [_datasourceGroups removeAllObjects];
         [_datasourceUsersInGroup removeAllObjects];
-        [_tableGroups reloadData];
-        [_tableUsersInGroup reloadData];
+        [tableGroups reloadData];
+        [tableUsersInGroup reloadData];
         return;
     }
 
@@ -411,7 +309,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     {
         var groups = [aStanza childrenWithName:@"group"];
 
-        _oldSelectedIndexesForGroupTable = [_tableGroups selectedRowIndexes];
+        _oldSelectedIndexesForGroupTable = [tableGroups selectedRowIndexes];
 
         [_datasourceGroups removeAllObjects];
         [_datasourceUsersInGroup removeAllObjects];
@@ -427,11 +325,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
             [_datasourceGroups addObject:newItem];
         }
 
-        [_tableGroups reloadData];
-        [_tableUsersInGroup reloadData];
+        [tableGroups reloadData];
+        [tableUsersInGroup reloadData];
 
-        [_tableGroups selectRowIndexes:_oldSelectedIndexesForGroupTable byExtendingSelection:NO];
-        [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:_tableGroups]];
+        [tableGroups selectRowIndexes:_oldSelectedIndexesForGroupTable byExtendingSelection:NO];
+        [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableGroups]];
     }
     else
         [_delegate handleIqErrorFromStanza:aStanza];
@@ -570,18 +468,18 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     var table = [aNotification object];
 
-    if (table === _tableGroups)
+    if (table === tableGroups)
     {
-        if ([_tableGroups numberOfSelectedRows] != 1)
+        if ([tableGroups numberOfSelectedRows] != 1)
         {
             _currentSelectedGroup = nil;
             [_datasourceUsersInGroup removeAllObjects];
-            [_tableUsersInGroup reloadData];
+            [tableUsersInGroup reloadData];
 
             return;
         }
 
-        var index   = [[_tableGroups selectedRowIndexes] firstIndex],
+        var index   = [[tableGroups selectedRowIndexes] firstIndex],
             group   = [_datasourceGroups objectAtIndex:index],
             users   = [group objectForKey:@"users"];
 
@@ -594,7 +492,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
                 newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"jid"]];
             [_datasourceUsersInGroup addObject:newItem];
         }
-        [_tableUsersInGroup reloadData];
+        [tableUsersInGroup reloadData];
     }
 }
 

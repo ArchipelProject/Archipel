@@ -56,6 +56,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPPopUpButton       popupDeleteMachine;
     @outlet CPSearchField       fieldFilterVM;
+    @outlet CPTableView         tableVirtualMachines;
     @outlet CPTextField         fieldCloneVirtualMachineName;
     @outlet CPTextField         fieldNewSubscriptionTarget;
     @outlet CPTextField         fieldNewVMRequestedName;
@@ -65,14 +66,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPWindow            windowNewSubscription;
     @outlet CPWindow            windowNewVirtualMachine;
     @outlet CPWindow            windowRemoveSubscription;
-    @outlet TNUIKitScrollView   scrollViewListVM;
 
     CPButton                    _cloneButton;
     CPButton                    _minusButton;
     CPButton                    _plusButton;
     CPButton                    _addSubscriptionButton;
     CPButton                    _removeSubscriptionButton;
-    CPTableView                 _tableVirtualMachines;
+
     TNTableViewDataSource       _virtualMachinesDatasource;
 }
 
@@ -93,57 +93,21 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
-    _tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[scrollViewListVM bounds]];
-
-    [scrollViewListVM setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewListVM setAutohidesScrollers:YES];
-    [scrollViewListVM setDocumentView:_tableVirtualMachines];
-
-    [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
-    [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableVirtualMachines setAllowsColumnResizing:YES];
-    [_tableVirtualMachines setAllowsEmptySelection:YES];
-    [_tableVirtualMachines setAllowsMultipleSelection:YES];
-    [_tableVirtualMachines setDelegate:self];
-    [_tableVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableVirtualMachines setTarget:self];
-    [_tableVirtualMachines setDoubleAction:@selector(didDoubleClick:)]
-
-    var vmColumNickname     = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        vmColumJID          = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
-        vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [vmColumNickname setWidth:250];
-    [[vmColumNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [vmColumNickname setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
-
-    [vmColumJID setWidth:320];
-    [[vmColumJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
-    [vmColumJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"JID" ascending:YES]];
-
-    [imgView setImageScaling:CPScaleNone];
-    [vmColumStatusIcon setDataView:imgView];
-    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
-    [vmColumStatusIcon setWidth:16];
-    [[vmColumStatusIcon headerView] setStringValue:@""];
-
-    [_tableVirtualMachines addTableColumn:vmColumStatusIcon];
-    [_tableVirtualMachines addTableColumn:vmColumNickname];
-    [_tableVirtualMachines addTableColumn:vmColumJID];
-
-    [_virtualMachinesDatasource setTable:_tableVirtualMachines];
+    [tableVirtualMachines setDelegate:self];
+    [tableVirtualMachines setTarget:self];
+    [tableVirtualMachines setDoubleAction:@selector(didDoubleClick:)]
+    [_virtualMachinesDatasource setTable:tableVirtualMachines];
     [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID"]];
 
     [fieldFilterVM setTarget:_virtualMachinesDatasource];
     [fieldFilterVM setAction:@selector(filterObjects:)];
 
-    [_tableVirtualMachines setDataSource:_virtualMachinesDatasource];
+    [tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(addVirtualMachine:) keyEquivalent:@""];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteVirtualMachine:) keyEquivalent:@""];
-    [_tableVirtualMachines setMenu:menu];
+    [tableVirtualMachines setMenu:menu];
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
@@ -198,8 +162,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [_tableVirtualMachines setDelegate:nil];
-    [_tableVirtualMachines setDelegate:self]; // hum....
+    [tableVirtualMachines setDelegate:nil];
+    [tableVirtualMachines setDelegate:self]; // hum....
 
     [self populateVirtualMachinesTable];
 }
@@ -209,7 +173,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)willUnload
 {
     [_virtualMachinesDatasource removeAllObjects];
-    [_tableVirtualMachines reloadData];
+    [tableVirtualMachines reloadData];
 
     [super willUnload];
 }
@@ -282,7 +246,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)_didChangeVMStatus:(CPNotification)aNotif
 {
-    [_tableVirtualMachines reloadData];
+    [tableVirtualMachines reloadData];
 }
 
 /*! update the GUI according to the selected entity in table
@@ -295,7 +259,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_addSubscriptionButton setEnabled:NO];
     [_removeSubscriptionButton setEnabled:NO];
 
-    var condition = ([_tableVirtualMachines numberOfSelectedRows] > 0);
+    var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
 
     [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:condition];
     [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:condition];
@@ -330,7 +294,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                 [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:contact];
             }
         }
-        [_tableVirtualMachines reloadData];
+        [tableVirtualMachines reloadData];
     }
 }
 
@@ -343,7 +307,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)didDoubleClick:(id)aSender
 {
-    var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
+    var index   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
         vm      = [_virtualMachinesDatasource objectAtIndex:index];
 
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
@@ -388,9 +352,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openCloneVirtualMachineWindow:(id)aSender
 {
-    if (([_tableVirtualMachines numberOfRows] == 0)
-        || ([_tableVirtualMachines numberOfSelectedRows] <= 0)
-        || ([_tableVirtualMachines numberOfSelectedRows] > 1))
+    if (([tableVirtualMachines numberOfRows] == 0)
+        || ([tableVirtualMachines numberOfSelectedRows] <= 0)
+        || ([tableVirtualMachines numberOfSelectedRows] > 1))
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select one (and only one) virtual machine", @"You must select one (and only one) virtual machine")];
@@ -509,7 +473,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             }
         }
 
-        [_tableVirtualMachines reloadData];
+        [tableVirtualMachines reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
@@ -563,7 +527,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)deleteVirtualMachine
 {
-    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
+    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] <= 0))
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
@@ -573,7 +537,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     var msg     = CPBundleLocalizedString(@"Destroying some Virtual Machines", @"Destroying some Virtual Machines"),
         title   = CPBundleLocalizedString(@"Are you sure you want to completely remove theses virtual machines ?", @"Are you sure you want to completely remove theses virtual machines ?");
 
-    if ([[_tableVirtualMachines selectedRowIndexes] count] < 2)
+    if ([[tableVirtualMachines selectedRowIndexes] count] < 2)
     {
         msg     = CPBundleLocalizedString(@"Are you sure you want to completely remove this virtual machine ?", @"Are you sure you want to completely remove this virtual machine ?");
         title   = CPBundleLocalizedString(@"Destroying a Virtual Machine", @"Destroying a Virtual Machine");
@@ -584,7 +548,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                                  target:self
                                  actions:[[CPBundleLocalizedString(@"Delete", @"Delete"), @selector(performDeleteVirtualMachine:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
-    [alert setUserInfo:[_tableVirtualMachines selectedRowIndexes]];
+    [alert setUserInfo:[tableVirtualMachines selectedRowIndexes]];
 
     [alert runModal];
 }
@@ -596,7 +560,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     var indexes = someUserInfo,
         objects = [_virtualMachinesDatasource objectsAtIndexes:indexes];
 
-    [_tableVirtualMachines deselectAll];
+    [tableVirtualMachines deselectAll];
 
     for (var i = 0; i < [objects count]; i++)
     {
@@ -647,11 +611,11 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)cloneVirtualMachine
 {
-    var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
+    var index   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
         vm      = [_virtualMachinesDatasource objectAtIndex:index],
         stanza  = [TNStropheStanza iqWithType:@"set"];
 
-    [_tableVirtualMachines deselectAll];
+    [tableVirtualMachines deselectAll];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
 
@@ -696,14 +660,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)addSubscription
 {
-    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
+    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] <= 0))
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
          return;
     }
 
-    var selectedIndex   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
         vm              = [_virtualMachinesDatasource objectAtIndex:selectedIndex],
         stanza          = [TNStropheStanza iqWithType:@"set"];
 
@@ -741,14 +705,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)removeSubscription
 {
-    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] != 1))
+    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] != 1))
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
          return;
     }
 
-    var selectedIndex   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
         vm              = [_virtualMachinesDatasource objectAtIndex:selectedIndex];
 
     var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Removing subscription", @"Removing subscription")
@@ -765,7 +729,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)performRemoveSubscription:(TNStropheContact)aVirtualMachine
 {
-    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
+    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] <= 0))
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];

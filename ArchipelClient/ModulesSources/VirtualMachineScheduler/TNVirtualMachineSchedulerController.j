@@ -59,6 +59,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     @outlet CPCheckBox              checkBoxEveryYear;
     @outlet CPPopUpButton           buttonNewJobAction;
     @outlet CPSearchField           filterFieldJobs;
+    @outlet CPTableView             tableJobs;
     @outlet CPTabView               tabViewJobSchedule;
     @outlet CPTextField             fieldNewJobComment;
     @outlet CPView                  viewNewJobOneShot;
@@ -75,12 +76,11 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
     @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
     @outlet TNTextFieldStepper      stepperSecond;
-    @outlet TNUIKitScrollView       scrollViewTableJobs;
 
     CPButton                        _buttonSchedule;
     CPButton                        _buttonUnschedule;
     CPDate                          _scheduledDate;
-    CPTableView                     _tableJobs;
+
     TNTableViewDataSource           _datasourceJobs;
 }
 
@@ -95,39 +95,9 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];
-    _tableJobs          = [[CPTableView alloc] initWithFrame:[scrollViewTableJobs bounds]];
-
-    [scrollViewTableJobs setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewTableJobs setAutohidesScrollers:YES];
-    [scrollViewTableJobs setDocumentView:_tableJobs];
-
-    [_tableJobs setUsesAlternatingRowBackgroundColors:YES];
-    [_tableJobs setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableJobs setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableJobs setAllowsColumnReordering:YES];
-    [_tableJobs setAllowsColumnResizing:YES];
-    [_tableJobs setAllowsEmptySelection:YES];
-    [_tableJobs setAllowsMultipleSelection:YES];
-
-    var columnAction    = [[CPTableColumn alloc] initWithIdentifier:@"action"],
-        columnDate      = [[CPTableColumn alloc] initWithIdentifier:@"date"],
-        columnComment   = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
-
-    [columnAction setWidth:120];
-    [[columnAction headerView] setStringValue:CPBundleLocalizedString(@"Action", @"Action")];
-
-    [columnDate setWidth:150];
-    [[columnDate headerView] setStringValue:CPBundleLocalizedString(@"Date", @"Date")];
-
-    [[columnComment headerView] setStringValue:CPBundleLocalizedString(@"Comment", @"Comment")];
-
-    [_tableJobs addTableColumn:columnAction];
-    [_tableJobs addTableColumn:columnDate];
-    [_tableJobs addTableColumn:columnComment];
-
-    [_datasourceJobs setTable:_tableJobs];
+    [_datasourceJobs setTable:tableJobs];
     [_datasourceJobs setSearchableKeyPaths:[@"comment", @"action", @"date"]];
-    [_tableJobs setDataSource:_datasourceJobs];
+    [tableJobs setDataSource:_datasourceJobs];
 
     _buttonSchedule    = [CPButtonBar plusButton];
     _buttonUnschedule  = [CPButtonBar plusButton];
@@ -172,8 +142,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [stepperNewRecurrentJobDay setMinValue:1];
     [stepperNewRecurrentJobHour setMaxValue:23];
     [stepperNewRecurrentJobHour setMinValue:0];
-
-
 }
 
 
@@ -391,7 +359,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
             [_datasourceJobs addObject:newJob];
         }
-        [_tableJobs reloadData];
+        [tableJobs reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
@@ -482,7 +450,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 - (void)unschedule
 {
-    if (([_tableJobs numberOfRows] == 0) || ([_tableJobs numberOfSelectedRows] <= 0))
+    if (([tableJobs numberOfRows] == 0) || ([tableJobs numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
                          message:CPBundleLocalizedString(@"You must select a job", @"You must select a job")];
@@ -492,7 +460,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     var title = CPBundleLocalizedString(@"Unschedule Jobs", @"Unschedule Jobs"),
         msg   = CPBundleLocalizedString(@"Are you sure you want to unschedule these jobs ?", @"Are you sure you want to unschedule these jobs ?");
 
-    if ([[_tableJobs selectedRowIndexes] count] < 2)
+    if ([[tableJobs selectedRowIndexes] count] < 2)
     {
         title = CPBundleLocalizedString(@"Unschedule job", @"Unschedule job");
         msg   = CPBundleLocalizedString(@"Are you sure you want to unschedule this job ?", @"Are you sure you want to unschedule this job ?");
@@ -503,7 +471,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
                                  target:self
                                  actions:[[CPBundleLocalizedString(@"Unschedule", @"Unschedule"), @selector(performUnschedule:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
-    [alert setUserInfo:[_tableJobs selectedRowIndexes]];
+    [alert setUserInfo:[tableJobs selectedRowIndexes]];
 
     [alert runModal];
 }
@@ -515,7 +483,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     var indexes = userInfo,
         objects = [_datasourceJobs objectsAtIndexes:indexes];
 
-    [_tableJobs deselectAll];
+    [tableJobs deselectAll];
 
     for (var i = 0; i < [objects count]; i++)
     {

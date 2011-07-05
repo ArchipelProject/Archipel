@@ -26,8 +26,8 @@
 {
     @outlet CPButton                buttonSave;
     @outlet CPButtonBar             buttonBar;
-    @outlet TNUIKitScrollView       scrollViewTableRoles;
     @outlet CPSearchField           filterField;
+    @outlet CPTableView             tableRoles;
     @outlet CPTextField             fieldNewTemplateDescription;
     @outlet CPTextField             fieldNewTemplateName;
     @outlet CPView                  viewTableContainer;
@@ -36,7 +36,6 @@
 
     id                              _delegate           @accessors(property=delegate);
 
-    CPTableView                     _tableRoles;
     TNPubSubNode                    _nodeRolesTemplates;
     TNTableViewDataSource           _datasourceRoles;
 }
@@ -54,45 +53,9 @@
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceRoles    = [[TNTableViewDataSource alloc] init];
-    _tableRoles         = [[CPTableView alloc] initWithFrame:[scrollViewTableRoles bounds]];
-
-    [scrollViewTableRoles setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewTableRoles setAutohidesScrollers:YES];
-    [scrollViewTableRoles setDocumentView:_tableRoles];
-
-    [_tableRoles setUsesAlternatingRowBackgroundColors:YES];
-    [_tableRoles setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableRoles setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableRoles setAllowsColumnReordering:YES];
-    [_tableRoles setAllowsColumnResizing:YES];
-    [_tableRoles setAllowsEmptySelection:YES];
-
-    var colName         = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        colDescription  = [[CPTableColumn alloc] initWithIdentifier:@"description"],
-        colValue        = [[CPTableColumn alloc] initWithIdentifier:@"state"],
-        checkBoxView    = [CPCheckBox checkBoxWithTitle:@""];
-
-    [colName setWidth:125];
-    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-
-    [colDescription setWidth:125];
-    [[colDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
-
-    [colValue setWidth:30];
-    [[colValue headerView] setStringValue:@""];
-    [checkBoxView setAlignment:CPCenterTextAlignment];
-    [checkBoxView setFrameOrigin:CPPointMake(10.0, 0.0)];
-    [checkBoxView setTarget:self];
-    [checkBoxView setAction:@selector(changePermissionsState:)];
-    [colValue setDataView:checkBoxView];
-
-    [_tableRoles addTableColumn:colValue];
-    [_tableRoles addTableColumn:colName];
-    [_tableRoles addTableColumn:colDescription];
-
-    [_datasourceRoles setTable:_tableRoles];
+    [_datasourceRoles setTable:tableRoles];
     [_datasourceRoles setSearchableKeyPaths:[@"name", @"description"]];
-    [_tableRoles setDataSource:_datasourceRoles];
+    [tableRoles setDataSource:_datasourceRoles];
 
     buttonDelete = [CPButtonBar plusButton];
     [buttonDelete setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
@@ -255,7 +218,7 @@
 */
 - (IBAction)deleteSelectedRole:(id)aSender
 {
-    var index = [[_tableRoles selectedRowIndexes] firstIndex],
+    var index = [[tableRoles selectedRowIndexes] firstIndex],
         role = [[_datasourceRoles objectAtIndex:index] valueForKey:@"role"];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didRectractRole:) name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
@@ -304,7 +267,7 @@
         [_datasourceRoles addObject:newRole];
     }
 
-    [_tableRoles reloadData];
+    [tableRoles reloadData];
 }
 
 /*! fetch the role node if needed

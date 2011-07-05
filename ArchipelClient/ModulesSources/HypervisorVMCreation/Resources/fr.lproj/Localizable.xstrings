@@ -44,10 +44,6 @@
 	<string>Destroying some Virtual Machines</string>
 	<key>Error</key>
 	<string>Error</string>
-	<key>Jabber ID</key>
-	<string>Jabber ID</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>Remove</key>
 	<string>Remove</string>
 	<key>Removing subscription</key>

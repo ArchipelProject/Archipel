@@ -101,3 +101,15 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "108"; */
 "108.title" = "Cancel";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "131"; */
+"131.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "132"; */
+"132.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "134"; */
+"134.headerCell.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "135"; */
+"135.title" = "Text Cell";
+

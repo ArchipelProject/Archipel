@@ -96,6 +96,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
     @outlet CPSlider                sliderMemory;
+    @outlet CPTableView             tableHypervisors;
     @outlet CPTextField             fieldInfoConsumedCPU;
     @outlet CPTextField             fieldInfoMem;
     @outlet CPTextField             fieldInfoState;
@@ -107,7 +108,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet TNSwitch                switchAutoStart;
     @outlet TNSwitch                switchPreventOOMKiller;
     @outlet TNTextFieldStepper      stepperCPU;
-    @outlet TNUIKitScrollView       scrollViewTableHypervisors;
 
     CPButton                        _migrateButton;
     CPImage                         _imageDestroy;
@@ -127,7 +127,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     CPImageView                     _imageViewFullScreenshot;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
-    CPTableView                     _tableHypervisors;
     CPTimer                         _screenshotTimer;
     TNAttachedWindow                _attachedWindowScreenshot;
     TNStropheContact                _virtualMachineToFree;
@@ -202,51 +201,15 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setTarget:self];
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
 
-
     // table migration
     [viewTableHypervisorsContainer setBorderedWithHexColor:@"#C0C7D2"];
-
     _datasourceHypervisors   = [[TNTableViewDataSource alloc] init];
-    _tableHypervisors        = [[CPTableView alloc] initWithFrame:[scrollViewTableHypervisors bounds]];
-
-    [scrollViewTableHypervisors setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewTableHypervisors setAutohidesScrollers:YES];
-    [scrollViewTableHypervisors setDocumentView:_tableHypervisors];
-
-    [_tableHypervisors setUsesAlternatingRowBackgroundColors:YES];
-    [_tableHypervisors setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableHypervisors setAllowsColumnReordering:YES];
-    [_tableHypervisors setAllowsColumnResizing:YES];
-    [_tableHypervisors setTarget:self];
-    [_tableHypervisors setDoubleAction:@selector(migrate:)];
-    [_tableHypervisors setAllowsEmptySelection:YES];
-    [_tableHypervisors setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var columnName      = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        columnStatus    = [[CPTableColumn alloc] initWithIdentifier:@"isSelected"],
-        imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [columnName setWidth:200]
-    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
-
-    [imgView setImageScaling:CPScaleNone];
-    [columnStatus setDataView:imgView];
-    [columnStatus setResizingMask:CPTableColumnAutoresizingMask ];
-    [columnStatus setWidth:16];
-    [[columnStatus headerView] setStringValue:@""];
-
-    [filterHypervisors setTarget:_datasourceHypervisors];
-    [filterHypervisors setAction:@selector(filterObjects:)];
-    [_datasourceHypervisors setSearchableKeyPaths:[@"nickname"]];
-
-    [_tableHypervisors addTableColumn:columnStatus];
-    [_tableHypervisors addTableColumn:columnName];
-    [_datasourceHypervisors setTable:_tableHypervisors];
-    [_tableHypervisors setDataSource:_datasourceHypervisors];
+    [tableHypervisors setTarget:self];
+    [tableHypervisors setDoubleAction:@selector(migrate:)];
+    [_datasourceHypervisors setTable:tableHypervisors];
+    [tableHypervisors setDataSource:_datasourceHypervisors];
 
     // button bar migration
-
     _migrateButton  = [CPButtonBar plusButton];
     [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
     [_migrateButton setTarget:self];
@@ -336,8 +299,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self checkIfRunning];
 
     [buttonScreenshot setImage:_imageScreenShutdowned];
-    [_tableHypervisors setDelegate:nil];
-    [_tableHypervisors setDelegate:self];
+    [tableHypervisors setDelegate:nil];
+    [tableHypervisors setDelegate:self];
 
     [viewTableHypervisorsContainer setHidden:YES];
     [filterHypervisors setHidden:YES];
@@ -346,7 +309,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [sliderMemory setEnabled:NO];
     [stepperCPU setEnabled:NO];
 
-    [_tableHypervisors deselectAll];
+    [tableHypervisors deselectAll];
     [self populateHypervisorsTable];
 
     return YES;
@@ -522,7 +485,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             [_datasourceHypervisors addObject:o];
         }
     }
-    [_tableHypervisors reloadData];
+    [tableHypervisors reloadData];
 
 }
 
@@ -897,9 +860,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         else
             [item setSelected:NO];
     }
-    [_tableHypervisors reloadData];
+    [tableHypervisors reloadData];
 
-    var index = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    var index = [[tableHypervisors selectedRowIndexes] firstIndex];
     if (index != -1)
     {
         var selectedHypervisor = [_datasourceHypervisors objectAtIndex:index];
@@ -1395,7 +1358,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)migrate
 {
-    var index                   = [[_tableHypervisors selectedRowIndexes] firstIndex],
+    var index                   = [[tableHypervisors selectedRowIndexes] firstIndex],
         destinationHypervisor   = [_datasourceHypervisors objectAtIndex:index];
 
     if ([destinationHypervisor fullJID] == _currentHypervisorJID)
@@ -1501,7 +1464,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
-    var selectedRow = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    var selectedRow = [[tableHypervisors selectedRowIndexes] firstIndex];
 
     if (selectedRow == -1)
     {

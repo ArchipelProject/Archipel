@@ -48,8 +48,6 @@
 	<string>Migration</string>
 	<key>Migration has started.</key>
 	<string>Migration has started.</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>No status</key>
 	<string>No status</string>
 	<key>OOM</key>

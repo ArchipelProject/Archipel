@@ -17,3 +17,21 @@
 /* Class = "NSButtonCell"; title = "Migrate"; ObjectID = "33"; */
 "33.title" = "Migrate";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "53"; */
+"53.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "54"; */
+"54.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "62"; */
+"62.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "65"; */
+"65.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "72"; */
+"72.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "73"; */
+"73.title" = "Text Cell";
+

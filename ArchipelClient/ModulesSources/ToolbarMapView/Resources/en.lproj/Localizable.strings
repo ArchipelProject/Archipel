@@ -10,20 +10,11 @@
 /* Destination */
 "Destination" = "Destination";
 
-/* Jabber ID */
-"Jabber ID" = "Jabber ID";
-
-/* JID */
-"JID" = "JID";
-
 /* Migration */
 "Migration" = "Migration";
 
 /* Migration has started. It can take a while */
 "Migration has started. It can take a while" = "Migration has started. It can take a while";
-
-/* Name */
-"Name" = "Name";
 
 /* Origin */
 "Origin" = "Origin";

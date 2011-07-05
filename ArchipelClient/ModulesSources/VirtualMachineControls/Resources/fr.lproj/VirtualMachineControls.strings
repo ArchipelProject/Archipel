@@ -92,3 +92,9 @@
 /* Class = "NSTextFieldCell"; title = "Screenshot refresh time:"; ObjectID = "158"; */
 "158.title" = "Screenshot refresh time:";
 
+/* Class = "NSTableColumn"; headerCell.title = "Hypervisor"; ObjectID = "172"; */
+"172.headerCell.title" = "Hypervisor";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "173"; */
+"173.title" = "Text Cell";
+

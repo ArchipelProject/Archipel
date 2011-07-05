@@ -4,10 +4,6 @@
 <dict>
 	<key>Delete the selected role</key>
 	<string>Delete the selected role</string>
-	<key>Description</key>
-	<string>Description</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>Permission for selected user has been saved.</key>
 	<string>Permission for selected user has been saved.</string>
 	<key>Permissions saved</key>

@@ -14,12 +14,8 @@
 	<string>Destroy all selected virtual machines</string>
 	<key>Destroy selected virtual machines</key>
 	<string>Destroy selected virtual machines</string>
-	<key>Jabber ID</key>
-	<string>Jabber ID</string>
 	<key>Migrate all selected virtual machines</key>
 	<string>Migrate all selected virtual machines</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>Pause all selected virtual machines</key>
 	<string>Pause all selected virtual machines</string>
 	<key>Pause selected virtual machines</key>

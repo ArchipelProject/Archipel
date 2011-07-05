@@ -63,11 +63,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPView                  mapViewContainer;
     @outlet CPView                  viewDestination;
     @outlet CPView                  viewOrigin;
-    @outlet TNUIKitScrollView       scrollViewDestination;
-    @outlet TNUIKitScrollView       scrollViewOrigin;
+    @outlet CPTableView             tableVMDestination;
+    @outlet CPTableView             tableVMOrigin;
 
-    CPTableView                     _tableVMDestination;
-    CPTableView                     _tableVMOrigin;
+
     MKMapView                       _mainMapView;
     TNDragDropTableViewDataSource   _dataSourceVMDestination;
     TNDragDropTableViewDataSource   _dataSourceVMOrigin;
@@ -112,92 +111,24 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [splitViewVertical setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
     // VM origin table view
-    _dataSourceVMOrigin     = [[TNDragDropTableViewDataSource alloc] init];
-    _tableVMOrigin          = [[CPTableView alloc] initWithFrame:[scrollViewOrigin bounds]];
-
-    [scrollViewOrigin setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewOrigin setAutohidesScrollers:YES];
-    [scrollViewOrigin setDocumentView:_tableVMOrigin];
-
-    [_tableVMOrigin setUsesAlternatingRowBackgroundColors:YES];
-    [_tableVMOrigin setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableVMOrigin setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableVMOrigin setAllowsColumnResizing:YES];
-    [_tableVMOrigin setAllowsEmptySelection:YES];
-
-    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        vmColumJID = [[CPTableColumn alloc] initWithIdentifier:CPBundleLocalizedString(@"JID", @"JID")],
-        vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [vmColumNickname setWidth:150];
-    [[vmColumNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-
-    [[vmColumJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
-
-    [imgView setImageScaling:CPScaleNone];
-    [vmColumStatusIcon setDataView:imgView];
-    [vmColumStatusIcon setWidth:16];
-    [[vmColumStatusIcon headerView] setStringValue:@""];
-
+    _dataSourceVMOrigin = [[TNDragDropTableViewDataSource alloc] init];
+    [_dataSourceVMOrigin setTable:tableVMOrigin];
+    [_dataSourceVMOrigin setSearchableKeyPaths:[@"nickname", @"JID"]];
     [filterFieldOrigin setTarget:_dataSourceVMOrigin];
     [filterFieldOrigin setAction:@selector(filterObjects:)];
 
-    [_dataSourceVMOrigin setTable:_tableVMOrigin];
-    [_dataSourceVMOrigin setSearchableKeyPaths:[@"nickname", @"JID"]];
-    [_tableVMOrigin addTableColumn:vmColumStatusIcon];
-    [_tableVMOrigin addTableColumn:vmColumNickname];
-    [_tableVMOrigin addTableColumn:vmColumJID];
-    [_tableVMOrigin setDataSource:_dataSourceVMOrigin];
-    // [_tableVMOrigin registerForDraggedTypes:[CPArray arrayWithObjects:CPGeneralPboardType, nil]];
-
-
     // VM Destination table view
-    _dataSourceVMDestination     = [[TNDragDropTableViewDataSource alloc] init];
-    _tableVMDestination         = [[CPTableView alloc] initWithFrame:[scrollViewDestination bounds]];
-
-    [scrollViewDestination setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewDestination setAutohidesScrollers:YES];
-    [scrollViewDestination setDocumentView:_tableVMDestination];
-
-    [_tableVMDestination setUsesAlternatingRowBackgroundColors:YES];
-    [_tableVMDestination setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableVMDestination setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableVMDestination setAllowsColumnReordering:YES];
-    [_tableVMDestination setAllowsColumnResizing:YES];
-    [_tableVMDestination setAllowsEmptySelection:YES];
-
-    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
-        vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [vmColumNickname setWidth:150];
-    [[vmColumNickname headerView] setStringValue:@"Name"];
-
-    [[vmColumJID headerView] setStringValue:@"Jabber ID"];
-
-    [imgView setImageScaling:CPScaleNone];
-    [vmColumStatusIcon setDataView:imgView];
-    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
-    [vmColumStatusIcon setWidth:16];
-    [[vmColumStatusIcon headerView] setStringValue:@""];
-
+    _dataSourceVMDestination = [[TNDragDropTableViewDataSource alloc] init];
+    [_dataSourceVMDestination setTable:tableVMDestination];
+    [_dataSourceVMDestination setSearchableKeyPaths:[@"nickname", @"JID"]];
     [filterFieldDestination setTarget:_dataSourceVMDestination];
     [filterFieldDestination setAction:@selector(filterObjects:)];
 
-    [_dataSourceVMDestination setTable:_tableVMDestination];
-    [_dataSourceVMDestination setSearchableKeyPaths:[@"nickname", @"JID"]];
-    [_tableVMDestination addTableColumn:vmColumStatusIcon];
-    [_tableVMDestination addTableColumn:vmColumNickname];
-    [_tableVMDestination addTableColumn:vmColumJID];
-    [_tableVMDestination setDataSource:_dataSourceVMDestination];
-
-
-    [_tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
-    [_tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
-    [_tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
-    [_tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
+    // [tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
+    // [tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
+    // [tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
+    // [tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
+    // [tableVMOrigin registerForDraggedTypes:[CPArray arrayWithObjects:CPGeneralPboardType, nil]];
 }
 
 
@@ -216,10 +147,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_mainMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainMapView setDelegate:self];
 
-    [_tableVMOrigin setDelegate:nil];
-    [_tableVMOrigin setDelegate:self];
-    [_tableVMDestination setDelegate:nil];
-    [_tableVMDestination setDelegate:self];
+    [tableVMOrigin setDelegate:nil];
+    [tableVMOrigin setDelegate:self];
+    [tableVMDestination setDelegate:nil];
+    [tableVMDestination setDelegate:self];
 
     [mapViewContainer addSubview:_mainMapView];
 
@@ -350,7 +281,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             if (entry && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine))
                 [_dataSourceVMOrigin addObject:entry];
         }
-        [_tableVMOrigin reloadData];
+        [tableVMOrigin reloadData];
     }
     else
     {
@@ -379,7 +310,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             if (entry && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine))
                 [_dataSourceVMDestination addObject:entry];
         }
-        [_tableVMDestination reloadData];
+        [tableVMDestination reloadData];
     }
     else
     {

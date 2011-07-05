@@ -58,11 +58,11 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     @outlet CPButtonBar             buttonBarControl;
     @outlet CPSearchField           filterField;
     @outlet CPSplitView             splitView;
+    @outlet CPTableView             tablePermissions;
     @outlet CPTextField             labelNoUserSelected;
     @outlet CPView                  viewTableContainer;
     @outlet CPView                  viewUsersLeft;
     @outlet TNRolesController       rolesController;
-    @outlet TNUIKitScrollView       scrollViewPermissions;
     @outlet TNUIKitScrollView       scrollViewUsers;
 
     TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
@@ -73,7 +73,6 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     CPButton                        _saveButton;
     CPImage                         _defaultAvatar;
     CPOutlineView                   _outlineViewUsers;
-    CPTableView                     _tablePermissions;
     TNXMPPUserDatasource            _datasourceUsers;
 }
 
@@ -94,46 +93,9 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 
     // table users
     _datasourcePermissions  = [[TNTableViewDataSource alloc] init];
-    _tablePermissions       = [[CPTableView alloc] initWithFrame:[scrollViewPermissions bounds]];
-
-    [scrollViewPermissions setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewPermissions setAutohidesScrollers:YES];
-    [scrollViewPermissions setDocumentView:_tablePermissions];
-
-    [_tablePermissions setUsesAlternatingRowBackgroundColors:YES];
-    [_tablePermissions setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tablePermissions setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tablePermissions setAllowsColumnReordering:YES];
-    [_tablePermissions setAllowsColumnResizing:YES];
-    [_tablePermissions setAllowsEmptySelection:YES];
-
-    var colName         = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        colDescription  = [[CPTableColumn alloc] initWithIdentifier:@"description"],
-        colValue        = [[CPTableColumn alloc] initWithIdentifier:@"state"],
-        checkBoxView    = [CPCheckBox checkBoxWithTitle:@""];
-
-    [colName setWidth:125];
-    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-
-    [colDescription setWidth:450];
-    [[colDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
-
-    [colValue setWidth:30];
-    [[colValue headerView] setStringValue:@""];
-
-    [checkBoxView setAlignment:CPCenterTextAlignment];
-    [checkBoxView setFrameOrigin:CPPointMake(10.0, 0.0)];
-    [checkBoxView setTarget:self];
-    [checkBoxView setAction:@selector(changePermissionsState:)];
-    [colValue setDataView:checkBoxView];
-
-    [_tablePermissions addTableColumn:colValue];
-    [_tablePermissions addTableColumn:colName];
-    [_tablePermissions addTableColumn:colDescription];
-
-    [_datasourcePermissions setTable:_tablePermissions];
+    [_datasourcePermissions setTable:tablePermissions];
     [_datasourcePermissions setSearchableKeyPaths:[@"name", @"description"]];
-    [_tablePermissions setDataSource:_datasourcePermissions];
+    [tablePermissions setDataSource:_datasourcePermissions];
 
     _saveButton = [CPButtonBar plusButton];
     [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
@@ -199,8 +161,8 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     [_datasourceUsers removeAllObjects];
     [_outlineViewUsers setDelegate:nil];
     [_outlineViewUsers setDelegate:self];
-    [_tablePermissions setDelegate:nil];
-    [_tablePermissions setDelegate:self];
+    [tablePermissions setDelegate:nil];
+    [tablePermissions setDelegate:self];
 
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -223,7 +185,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 - (void)willUnload
 {
     [_datasourcePermissions removeAllObjects];
-    [_tablePermissions reloadData];
+    [tablePermissions reloadData];
     [_datasourceUsers removeAllObjects];
     [_outlineViewUsers reloadData];
     [viewTableContainer setHidden:YES];
@@ -312,7 +274,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
         }
     }
 
-    [_tablePermissions reloadData];
+    [tablePermissions reloadData];
 }
 
 /*! will remove all permissions given
@@ -334,7 +296,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
             }
         }
     }
-    [_tablePermissions reloadData];
+    [tablePermissions reloadData];
 }
 
 
@@ -374,7 +336,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
         else
         {
             [_datasourcePermissions removeAllObjects];
-            [_tablePermissions reloadData];
+            [tablePermissions reloadData];
             [viewTableContainer setHidden:YES];
             [labelNoUserSelected setHidden:NO];
         }
@@ -382,7 +344,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     else
     {
         [_datasourcePermissions removeAllObjects];
-        [_tablePermissions reloadData];
+        [tablePermissions reloadData];
         [viewTableContainer setHidden:YES];
         [labelNoUserSelected setHidden:NO];
     }
@@ -439,7 +401,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
             [_datasourcePermissions addObject:newPermission];
         }
 
-        [_tablePermissions reloadData];
+        [tablePermissions reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else

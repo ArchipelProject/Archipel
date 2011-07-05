@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Action</key>
-	<string>Action</string>
 	<key>Action has been scheduled</key>
 	<string>Action has been scheduled</string>
 	<key>Add a new scheduled action</key>
@@ -14,10 +12,6 @@
 	<string>Are you sure you want to unschedule this job ?</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Comment</key>
-	<string>Comment</string>
-	<key>Date</key>
-	<string>Date</string>
 	<key>Error</key>
 	<string>Error</string>
 	<key>Recurent</key>

@@ -47,3 +47,15 @@
 /* Class = "NSTextFieldCell"; title = "This parameter can eventually be ignored according to the agent configuration."; ObjectID = "72"; */
 "72.title" = "This parameter can eventually be ignored according to the agent configuration.";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "80"; */
+"80.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "81"; */
+"81.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Comment"; ObjectID = "83"; */
+"83.headerCell.title" = "Comment";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "84"; */
+"84.title" = "Text Cell";
+

@@ -16,14 +16,8 @@
 /* Destroy selected virtual machines */
 "Destroy selected virtual machines" = "Destroy selected virtual machines";
 
-/* Jabber ID */
-"Jabber ID" = "Jabber ID";
-
 /* Migrate all selected virtual machines */
 "Migrate all selected virtual machines" = "Migrate all selected virtual machines";
-
-/* Name */
-"Name" = "Name";
 
 /* Pause all selected virtual machines */
 "Pause all selected virtual machines" = "Pause all selected virtual machines";

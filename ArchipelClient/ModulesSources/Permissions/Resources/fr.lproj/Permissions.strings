@@ -59,3 +59,27 @@
 /* Class = "NSTextFieldCell"; placeholderString = "A great role for great guys"; ObjectID = "82"; */
 "82.placeholderString" = "A great role for great guys";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "123"; */
+"123.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "124"; */
+"124.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Description"; ObjectID = "126"; */
+"126.headerCell.title" = "Description";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "127"; */
+"127.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Description"; ObjectID = "135"; */
+"135.headerCell.title" = "Description";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "136"; */
+"136.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "139"; */
+"139.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "140"; */
+"140.title" = "Text Cell";
+

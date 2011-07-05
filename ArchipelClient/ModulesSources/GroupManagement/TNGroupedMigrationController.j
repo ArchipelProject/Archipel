@@ -28,13 +28,12 @@
 
 @implementation TNGroupedMigrationController : CPObject
 {
-    @outlet TNUIKitScrollView   scrollViewTableHypervisors;
     @outlet CPSearchField       searchFieldHypervisors;
+    @outlet CPTableView         tableHypervisors;
     @outlet CPWindow            mainWindow;
 
     id                          _delegate @accessors(property=delegate);
 
-    CPTableView                 _tableHypervisors;
     TNTableViewDataSource       _datasourceHypervisors;
 }
 
@@ -47,33 +46,9 @@
 - (void)awakeFromCib
 {
     _datasourceHypervisors  = [[TNTableViewDataSource alloc] init];
-    _tableHypervisors       = [[CPTableView alloc] initWithFrame:[scrollViewTableHypervisors bounds]];
-
-    [scrollViewTableHypervisors setBorderedWithHexColor:@"#C0C7D2"];
-    [scrollViewTableHypervisors setAutohidesScrollers:YES];
-    [scrollViewTableHypervisors setDocumentView:_tableHypervisors];
-
-    [_tableHypervisors setUsesAlternatingRowBackgroundColors:YES];
-    [_tableHypervisors setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableHypervisors setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableHypervisors setAllowsEmptySelection:YES];
-    [_tableHypervisors setAllowsMultipleSelection:NO];
-
-    var columnNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        columnJID      = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
-
-    [columnNickname setWidth:150];
-    [[columnNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-
-    [columnJID setWidth:450];
-    [[columnJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
-
-    [_tableHypervisors addTableColumn:columnNickname];
-    [_tableHypervisors addTableColumn:columnJID];
-
-    [_datasourceHypervisors setTable:_tableHypervisors];
+    [_datasourceHypervisors setTable:tableHypervisors];
     [_datasourceHypervisors setSearchableKeyPaths:[@"nickname", @"JID"]];
-    [_tableHypervisors setDataSource:_datasourceHypervisors];
+    [tableHypervisors setDataSource:_datasourceHypervisors];
 
     [searchFieldHypervisors setTarget:_datasourceHypervisors];
     [searchFieldHypervisors setAction:@selector(filterObjects:)];
@@ -97,7 +72,7 @@
         if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[item vCard]] == TNArchipelEntityTypeHypervisor)
             [_datasourceHypervisors addObject:item];
     }
-    [_tableHypervisors reloadData];
+    [tableHypervisors reloadData];
 }
 
 
@@ -127,7 +102,7 @@
 */
 - (IBAction)sendMigration:(id)aSender
 {
-    var index = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    var index = [[tableHypervisors selectedRowIndexes] firstIndex];
 
     [_delegate performGroupedMigration:[_datasourceHypervisors objectAtIndex:index]];
     [mainWindow close];

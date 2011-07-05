@@ -10,16 +10,10 @@
 	<string>Define path</string>
 	<key>Destination</key>
 	<string>Destination</string>
-	<key>JID</key>
-	<string>JID</string>
-	<key>Jabber ID</key>
-	<string>Jabber ID</string>
 	<key>Migration</key>
 	<string>Migration</string>
 	<key>Migration has started. It can take a while</key>
 	<string>Migration has started. It can take a while</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>Origin</key>
 	<string>Origin</string>
 	<key>Please choose if this </key>

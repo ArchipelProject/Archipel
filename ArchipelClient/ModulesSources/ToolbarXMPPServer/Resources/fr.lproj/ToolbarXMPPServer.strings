@@ -122,3 +122,45 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "153"; */
 "153.title" = "Cancel";
 
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "205"; */
+"205.headerCell.title" = "Name";
+
+/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "206"; */
+"206.headerCell.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "207"; */
+"207.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "208"; */
+"208.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Description"; ObjectID = "215"; */
+"215.headerCell.title" = "Description";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "216"; */
+"216.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "217"; */
+"217.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "218"; */
+"218.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "226"; */
+"226.headerCell.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "227"; */
+"227.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "236"; */
+"236.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "237"; */
+"237.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "239"; */
+"239.headerCell.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "240"; */
+"240.title" = "Text Cell";
+

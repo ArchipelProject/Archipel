@@ -44,20 +44,17 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 @implementation TNToolbarMigrationController : TNModule
 {
-    @outlet     CPButton            buttonMigrate;
-    @outlet     CPSearchField       searchHypervisorDestination;
-    @outlet     CPSearchField       searchHypervisorOrigin;
-    @outlet     CPSearchField       searchVirtualMachine;
-    @outlet     TNUIKitScrollView   scrollViewTableHypervisorDestination;
-    @outlet     TNUIKitScrollView   scrollViewTableHypervisorOrigin;
-    @outlet     TNUIKitScrollView   scrollViewTableVirtualMachines;
+    @outlet CPButton            buttonMigrate;
+    @outlet CPSearchField       searchHypervisorDestination;
+    @outlet CPSearchField       searchHypervisorOrigin;
+    @outlet CPSearchField       searchVirtualMachine;
+    @outlet CPTableView         tableHypervisorDestination;
+    @outlet CPTableView         tableHypervisorOrigin;
+    @outlet CPTableView         tableHypervisorVirtualMachines;
 
-    CPTableView                     _tableHypervisorDestination;
-    CPTableView                     _tableHypervisorOrigin;
-    CPTableView                     _tableHypervisorVirtualMachines;
-    TNTableViewDataSource           _hypervisorDestinationDatasource;
-    TNTableViewDataSource           _hypervisorOriginDatasource;
-    TNTableViewDataSource           _virtualMachinesDatasource;
+    TNTableViewDataSource       _hypervisorDestinationDatasource;
+    TNTableViewDataSource       _hypervisorOriginDatasource;
+    TNTableViewDataSource       _virtualMachinesDatasource;
 }
 
 
@@ -68,125 +65,32 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)awakeFromCib
 {
-    [scrollViewTableHypervisorOrigin setBorderedWithHexColor:@"#C0C7D2"];
-    [scrollViewTableHypervisorDestination setBorderedWithHexColor:@"#C0C7D2"];
-    [scrollViewTableVirtualMachines setBorderedWithHexColor:@"#C0C7D2"];
-
     // table hypervisor origin
     _hypervisorOriginDatasource  = [[TNTableViewDataSource alloc] init];
-    _tableHypervisorOrigin       = [[CPTableView alloc] initWithFrame:[scrollViewTableHypervisorOrigin bounds]];
-
-    [scrollViewTableHypervisorOrigin setAutohidesScrollers:YES];
-    [scrollViewTableHypervisorOrigin setDocumentView:_tableHypervisorOrigin];
-
-    [_tableHypervisorOrigin setUsesAlternatingRowBackgroundColors:YES];
-    [_tableHypervisorOrigin setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableHypervisorOrigin setAllowsColumnResizing:YES];
-    [_tableHypervisorOrigin setAllowsEmptySelection:YES];
-    [_tableHypervisorOrigin setAllowsMultipleSelection:NO];
-    [_tableHypervisorOrigin setDelegate:self];
-    [_tableHypervisorOrigin setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var columnHypervisorName = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        columnHypervisorStatus  = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView1                 = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [columnHypervisorName setWidth:250];
-    [[columnHypervisorName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columnHypervisorName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
-
-    [imgView1 setImageScaling:CPScaleNone];
-    [columnHypervisorStatus setDataView:imgView1];
-    [columnHypervisorStatus setResizingMask:CPTableColumnAutoresizingMask ];
-    [columnHypervisorStatus setWidth:16];
-    [[columnHypervisorStatus headerView] setStringValue:@""];
-
+    [tableHypervisorOrigin setDelegate:self];
     [searchHypervisorOrigin setTarget:_hypervisorOriginDatasource];
     [searchHypervisorOrigin setAction:@selector(filterObjects:)];
     [_hypervisorOriginDatasource setSearchableKeyPaths:[@"nickname"]];
-
-    [_tableHypervisorOrigin addTableColumn:columnHypervisorStatus];
-    [_tableHypervisorOrigin addTableColumn:columnHypervisorName];
-    [_hypervisorOriginDatasource setTable:_tableHypervisorOrigin];
-    [_tableHypervisorOrigin setDataSource:_hypervisorOriginDatasource];
-
+    [_hypervisorOriginDatasource setTable:tableHypervisorOrigin];
+    [tableHypervisorOrigin setDataSource:_hypervisorOriginDatasource];
 
     // table virtual machines
-    _virtualMachinesDatasource      = [[TNTableViewDataSource alloc] init];
-    _tableHypervisorVirtualMachines = [[CPTableView alloc] initWithFrame:[scrollViewTableVirtualMachines bounds]];
-
-    [scrollViewTableVirtualMachines setAutohidesScrollers:YES];
-    [scrollViewTableVirtualMachines setDocumentView:_tableHypervisorVirtualMachines];
-
-    [_tableHypervisorVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
-    [_tableHypervisorVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableHypervisorVirtualMachines setAllowsColumnResizing:YES];
-    [_tableHypervisorVirtualMachines setAllowsEmptySelection:YES];
-    [_tableHypervisorVirtualMachines setAllowsMultipleSelection:NO];
-    [_tableHypervisorVirtualMachines setDelegate:self];
-    [_tableHypervisorVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var columnVMName    = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        columnVMStatus  = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView2        = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [columnVMName setWidth:250];
-    [[columnVMName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columnVMName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
-
-    [imgView2 setImageScaling:CPScaleNone];
-    [columnVMStatus setDataView:imgView2];
-    [columnVMStatus setResizingMask:CPTableColumnAutoresizingMask ];
-    [columnVMStatus setWidth:16];
-    [[columnVMStatus headerView] setStringValue:@""];
-
+    _virtualMachinesDatasource = [[TNTableViewDataSource alloc] init];
+    [tableHypervisorVirtualMachines setDelegate:self];
     [searchVirtualMachine setTarget:_virtualMachinesDatasource];
     [searchVirtualMachine setAction:@selector(filterObjects:)];
     [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname"]];
-
-    [_tableHypervisorVirtualMachines addTableColumn:columnVMStatus];
-    [_tableHypervisorVirtualMachines addTableColumn:columnVMName];
-    [_virtualMachinesDatasource setTable:_tableHypervisorVirtualMachines];
-    [_tableHypervisorVirtualMachines setDataSource:_virtualMachinesDatasource];
-
+    [_virtualMachinesDatasource setTable:tableHypervisorVirtualMachines];
+    [tableHypervisorVirtualMachines setDataSource:_virtualMachinesDatasource];
 
     // table hypervisor destination
-    _hypervisorDestinationDatasource    = [[TNTableViewDataSource alloc] init];
-    _tableHypervisorDestination         = [[CPTableView alloc] initWithFrame:[scrollViewTableHypervisorDestination bounds]];
-
-    [scrollViewTableHypervisorDestination setAutohidesScrollers:YES];
-    [scrollViewTableHypervisorDestination setDocumentView:_tableHypervisorDestination];
-
-    [_tableHypervisorDestination setUsesAlternatingRowBackgroundColors:YES];
-    [_tableHypervisorDestination setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableHypervisorDestination setAllowsColumnResizing:YES];
-    [_tableHypervisorDestination setAllowsEmptySelection:YES];
-    [_tableHypervisorDestination setAllowsMultipleSelection:NO];
-    [_tableHypervisorDestination setDelegate:self];
-    [_tableHypervisorDestination setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var columnHypervisorDestName    = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        columnHypervisorDestStatus  = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
-        imgView3                    = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-
-    [columnHypervisorDestName setWidth:250];
-    [[columnHypervisorDestName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columnHypervisorDestName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
-
-    [imgView3 setImageScaling:CPScaleNone];
-    [columnHypervisorDestStatus setDataView:imgView3];
-    [columnHypervisorDestStatus setResizingMask:CPTableColumnAutoresizingMask ];
-    [columnHypervisorDestStatus setWidth:16];
-    [[columnHypervisorDestStatus headerView] setStringValue:@""];
-
+    _hypervisorDestinationDatasource = [[TNTableViewDataSource alloc] init];
+    [tableHypervisorDestination setDelegate:self];
     [searchHypervisorDestination setTarget:_hypervisorDestinationDatasource];
     [searchHypervisorDestination setAction:@selector(filterObjects:)];
     [_hypervisorDestinationDatasource setSearchableKeyPaths:[@"nickname"]];
-
-    [_tableHypervisorDestination addTableColumn:columnHypervisorDestStatus];
-    [_tableHypervisorDestination addTableColumn:columnHypervisorDestName];
-    [_hypervisorDestinationDatasource setTable:_tableHypervisorDestination];
-    [_tableHypervisorDestination setDataSource:_hypervisorDestinationDatasource];
+    [_hypervisorDestinationDatasource setTable:tableHypervisorDestination];
+    [tableHypervisorDestination setDataSource:_hypervisorDestinationDatasource];
 }
 
 
@@ -222,13 +126,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     [buttonMigrate setEnabled:NO];
 
-    [_tableHypervisorOrigin setDelegate:nil];
-    [_tableHypervisorDestination setDelegate:nil];
-    [_tableHypervisorVirtualMachines setDelegate:nil];
+    [tableHypervisorOrigin setDelegate:nil];
+    [tableHypervisorDestination setDelegate:nil];
+    [tableHypervisorVirtualMachines setDelegate:nil];
 
-    [_tableHypervisorOrigin setDelegate:self];
-    [_tableHypervisorDestination setDelegate:self];
-    [_tableHypervisorVirtualMachines setDelegate:self];
+    [tableHypervisorOrigin setDelegate:self];
+    [tableHypervisorDestination setDelegate:self];
+    [tableHypervisorVirtualMachines setDelegate:self];
 
     [self populateHypervisorOriginTable];
 
@@ -247,9 +151,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_hypervisorDestinationDatasource removeAllObjects];
     [_virtualMachinesDatasource removeAllObjects];
 
-    [_tableHypervisorOrigin deselectAll];
-    [_tableHypervisorVirtualMachines deselectAll];
-    [_tableHypervisorDestination deselectAll];
+    [tableHypervisorOrigin deselectAll];
+    [tableHypervisorVirtualMachines deselectAll];
+    [tableHypervisorDestination deselectAll];
 
     [self refresh:nil];
 }
@@ -262,9 +166,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)refresh:(CPNotification)aNotification
 {
-    [_tableHypervisorOrigin reloadData];
-    [_tableHypervisorDestination reloadData];
-    [_tableHypervisorVirtualMachines reloadData];
+    [tableHypervisorOrigin reloadData];
+    [tableHypervisorDestination reloadData];
+    [tableHypervisorVirtualMachines reloadData];
 }
 
 
@@ -286,7 +190,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[item vCard]] == TNArchipelEntityTypeHypervisor)
             [_hypervisorOriginDatasource addObject:item]
     }
-    [_tableHypervisorOrigin reloadData];
+    [tableHypervisorOrigin reloadData];
 
 }
 
@@ -301,7 +205,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     for (var i = 0; i < [rosterItems count]; i++)
     {
         var item                = [rosterItems objectAtIndex:i],
-            index               = [[_tableHypervisorOrigin selectedRowIndexes] firstIndex],
+            index               = [[tableHypervisorOrigin selectedRowIndexes] firstIndex],
             currentHypervisor   = [_hypervisorOriginDatasource objectAtIndex:index];
 
         if (currentHypervisor != item)
@@ -310,7 +214,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                 [_hypervisorDestinationDatasource addObject:item]
         }
     }
-    [_tableHypervisorDestination reloadData];
+    [tableHypervisorDestination reloadData];
 }
 
 
@@ -333,8 +237,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)migrate
 {
-    var virtualMachine          = [_virtualMachinesDatasource objectAtIndex:[[_tableHypervisorVirtualMachines selectedRowIndexes] firstIndex]],
-        destinationHypervisor   = [_hypervisorDestinationDatasource objectAtIndex:[[_tableHypervisorDestination selectedRowIndexes] firstIndex]],
+    var virtualMachine          = [_virtualMachinesDatasource objectAtIndex:[[tableHypervisorVirtualMachines selectedRowIndexes] firstIndex]],
+        destinationHypervisor   = [_hypervisorDestinationDatasource objectAtIndex:[[tableHypervisorDestination selectedRowIndexes] firstIndex]],
         stanza                  = [TNStropheStanza iqWithType:@"set"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
@@ -352,9 +256,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if ([aStanza type] == @"result")
     {
-        [_tableHypervisorDestination deselectAll];
-        [_tableHypervisorVirtualMachines deselectAll];
-        [_tableHypervisorOrigin deselectAll];
+        [tableHypervisorDestination deselectAll];
+        [tableHypervisorVirtualMachines deselectAll];
+        [tableHypervisorOrigin deselectAll];
 
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
                                                          message:CPBundleLocalizedString(@"Migration has started. It can take a while", @"Migration has started. It can take a while")];
@@ -402,7 +306,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             if (entry && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine))
                 [_virtualMachinesDatasource addObject:entry];
         }
-        [_tableHypervisorVirtualMachines reloadData];
+        [tableHypervisorVirtualMachines reloadData];
     }
     else
     {
@@ -418,38 +322,38 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
-    if ([aNotification object] == _tableHypervisorOrigin)
+    if ([aNotification object] == tableHypervisorOrigin)
     {
         [buttonMigrate setEnabled:NO];
         [_hypervisorDestinationDatasource removeAllObjects];
-        [_tableHypervisorDestination reloadData];
-        if ([_tableHypervisorOrigin numberOfSelectedRows] == 0)
+        [tableHypervisorDestination reloadData];
+        if ([tableHypervisorOrigin numberOfSelectedRows] == 0)
         {
             [_virtualMachinesDatasource removeAllObjects];
-            [_tableHypervisorVirtualMachines reloadData];
-            [_tableHypervisorVirtualMachines deselectAll];
+            [tableHypervisorVirtualMachines reloadData];
+            [tableHypervisorVirtualMachines deselectAll];
             return;
         }
-        var index               = [[_tableHypervisorOrigin selectedRowIndexes] firstIndex],
+        var index               = [[tableHypervisorOrigin selectedRowIndexes] firstIndex],
             currentHypervisor   = [_hypervisorOriginDatasource objectAtIndex:index];
 
         [self rosterOfHypervisor:currentHypervisor];
     }
-    else if ([aNotification object] == _tableHypervisorVirtualMachines)
+    else if ([aNotification object] == tableHypervisorVirtualMachines)
     {
         [buttonMigrate setEnabled:NO];
-        if ([_tableHypervisorVirtualMachines numberOfSelectedRows] == 0)
+        if ([tableHypervisorVirtualMachines numberOfSelectedRows] == 0)
         {
             [_hypervisorDestinationDatasource removeAllObjects];
-            [_tableHypervisorDestination reloadData];
-            [_tableHypervisorDestination deselectAll];
+            [tableHypervisorDestination reloadData];
+            [tableHypervisorDestination deselectAll];
             return;
         }
         [self populateHypervisorDestinationTable];
     }
-    else if ([aNotification object] == _tableHypervisorDestination)
+    else if ([aNotification object] == tableHypervisorDestination)
     {
-        if ([_tableHypervisorDestination numberOfSelectedRows] == 0)
+        if ([tableHypervisorDestination numberOfSelectedRows] == 0)
             [buttonMigrate setEnabled:NO];
         else
             [buttonMigrate setEnabled:YES];

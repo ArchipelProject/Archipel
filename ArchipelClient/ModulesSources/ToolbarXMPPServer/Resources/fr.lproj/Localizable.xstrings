@@ -20,8 +20,6 @@
 	<string>Delete selected shared group</string>
 	<key>Delete selected user accounts</key>
 	<string>Delete selected user accounts</string>
-	<key>Description</key>
-	<string>Description</string>
 	<key>JID</key>
 	<string>JID</string>
 	<key>Name</key>

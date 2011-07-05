@@ -53,6 +53,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
     @outlet CPWindow            windowNewUser;
+    @outlet CPTableView         tableUsers;
 
     CPArray                     _users                          @accessors(getter=users);
     id                          _delegate                       @accessors(property=delegate);
@@ -64,7 +65,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     CPImage                     _iconEntityTypeHuman;
     CPImage                     _iconEntityTypeHypervisor;
     CPImage                     _iconEntityTypeVM;
-    CPTableView                 _tableUsers;
 }
 
 #pragma mark -
@@ -73,47 +73,44 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)awakeFromCib
 {
     [windowNewUser setDefaultButton:buttonCreate];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    var bundle                  = [CPBundle bundleForClass:[self class]];
+    var bundle = [CPBundle bundleForClass:[self class]];
 
-    _datasourceUsers            = [[TNTableViewDataSource alloc] init];
-    _tableUsers                 = [[CPTableView alloc] initWithFrame:[scrollViewUsers bounds]];
     _users                      = [CPArray array];
     _iconEntityTypeHuman        = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CPSizeMake(16, 16)];
     _iconEntityTypeVM           = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CPSizeMake(16, 16)];
     _iconEntityTypeHypervisor   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CPSizeMake(16, 16)];
 
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [scrollViewUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewUsers setAutohidesScrollers:YES];
-    [scrollViewUsers setDocumentView:_tableUsers];
+    // table users
+    _datasourceUsers = [[TNTableViewDataSource alloc] init];
 
-    [_tableUsers setUsesAlternatingRowBackgroundColors:YES];
-    [_tableUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableUsers setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableUsers setAllowsColumnReordering:YES];
-    [_tableUsers setAllowsColumnResizing:YES];
-    [_tableUsers setAllowsEmptySelection:YES];
-    [_tableUsers setAllowsMultipleSelection:YES];
+    // [tableUsers setUsesAlternatingRowBackgroundColors:YES];
+    // [tableUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    // [tableUsers setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    // [tableUsers setAllowsColumnReordering:YES];
+    // [tableUsers setAllowsColumnResizing:YES];
+    // [tableUsers setAllowsEmptySelection:YES];
+    // [tableUsers setAllowsMultipleSelection:YES];
 
 
-    var colName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        colJID  = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    // var colName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
+    //     colJID  = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    //
+    // [colName setWidth:325];
+    // [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
+    // [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
+    //
+    // [colJID setWidth:450];
+    // [[colJID headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
+    // [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
+    //
+    // [tableUsers addTableColumn:colName];
+    // [tableUsers addTableColumn:colJID];
 
-    [colName setWidth:325];
-    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-
-    [colJID setWidth:450];
-    [[colJID headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
-    [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
-
-    [_tableUsers addTableColumn:colName];
-    [_tableUsers addTableColumn:colJID];
-
-    [_datasourceUsers setTable:_tableUsers];
+    [_datasourceUsers setTable:tableUsers];
     [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
-    [_tableUsers setDataSource:_datasourceUsers];
+    [tableUsers setDataSource:_datasourceUsers];
 
     _addButton = [CPButtonBar plusButton];
     [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
@@ -205,14 +202,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (IBAction)unregisterUser:(id)aSender
 {
-    if ([_tableUsers numberOfSelectedRows] < 1)
+    if ([tableUsers numberOfSelectedRows] < 1)
     {
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"You must select one user", @"You must select one user")
                           informative:@""];
         return;
     }
 
-    var indexes     = [_tableUsers selectedRowIndexes],
+    var indexes     = [tableUsers selectedRowIndexes],
         users       = [_datasourceUsers objectsAtIndexes:indexes],
         usernames   = [CPArray array];
 
@@ -242,7 +239,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:_entity])
     {
         [_datasourceUsers removeAllObjects];
-        [_tableUsers reloadData];
+        [tableUsers reloadData];
         return;
     }
 
@@ -300,7 +297,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
                 [_datasourceUsers addObject:newItem];
         }
 
-        [_tableUsers reloadData];
+        [tableUsers reloadData];
     }
     else
     {
