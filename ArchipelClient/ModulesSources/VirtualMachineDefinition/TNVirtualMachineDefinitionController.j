@@ -97,7 +97,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPPopUpButton           buttonVNCKeymap;
     @outlet CPSearchField           fieldFilterDrives;
     @outlet CPSearchField           fieldFilterNics;
-    @outlet CPTabView               tabViewDevices;
     @outlet CPTextField             fieldMemory;
     @outlet CPTextField             fieldPreferencesDomainType;
     @outlet CPTextField             fieldPreferencesGuest;
@@ -130,13 +129,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNSwitch                switchPreferencesEnableVNC;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
     @outlet TNUIKitScrollView       scrollViewContentView;
-    @outlet TNSwipeView             swipeViewParameters;
+    @outlet TNTabView               tabViewParameters;
     @outlet CPView                  viewParametersStandard;
     @outlet CPView                  viewParametersAdvanced;
     @outlet CPView                  viewParametersEffectTop;
     @outlet CPView                  viewParametersEffectBottom;
-    @outlet CPButton                buttonSwipeNext;
-    @outlet CPButton                buttonSwipePrevious;
     @outlet CPTableView             tableDrives;
     @outlet CPTableView             tableInterfaces;
 
@@ -175,10 +172,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [scrollViewContentView setDocumentView:viewMainContent];
     [scrollViewContentView setAutohidesScrollers:YES];
     var frameSize = [scrollViewContentView contentSize];
-    frameSize.height = [viewMainContent frameSize].height;
     [viewMainContent setFrameOrigin:CPPointMake(0.0, 0.0)];
     [viewMainContent setFrameSize:frameSize];
-    [viewMainContent setAutoresizingMask:CPViewWidthSizable];
+    [viewMainContent setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [viewBottomControl setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 
      var inset = CGInsetMake(2, 2, 2, 5);
@@ -187,34 +183,30 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
-    // swipeView
+    // paramaters tabView
     var mainBundle = [CPBundle mainBundle],
-        imageButtonNext = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-right.png"] size:CPSizeMake(14.0, 14.0)],
-        imageButtonNextPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-right.png"] size:CPSizeMake(14.0, 14.0)],
-        imageButtonPrevious = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-left.png"] size:CPSizeMake(14.0, 14.0)],
-        imageButtonPreviousPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-left.png"] size:CPSizeMake(14.0, 14.0)],
         imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
-        imageSwipeDarkBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/dark-bg.png"]];
+        tabViewItemStandard = [[CPTabViewItem alloc] initWithIdentifier:@"standard"],
+        tabViewItemAdvanced = [[CPTabViewItem alloc] initWithIdentifier:@"advanced"],
+        tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
+        tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"];
 
-    [viewParametersStandard setBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
-    [viewParametersAdvanced setBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
-    [swipeViewParameters setBackgroundColor:[CPColor colorWithPatternImage:imageSwipeDarkBG]];
-    [swipeViewParameters setViews:[viewParametersStandard, viewParametersAdvanced]];
-    [swipeViewParameters setMinimalRatio:0.1];
+    [tabViewParameters setContentBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
 
-    [buttonSwipeNext setBordered:NO];
-    [buttonSwipeNext setTarget:swipeViewParameters];
-    [buttonSwipeNext setAction:@selector(nextView:)];
-    [buttonSwipeNext setImage:imageButtonNext]; // this avoid the blinking..
-    [buttonSwipeNext setValue:imageButtonNext forThemeAttribute:@"image"];
-    [buttonSwipeNext setValue:imageButtonNextPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+    [tabViewItemStandard setLabel:CPLocalizedString(@"Basics", @"Basics")];
+    [tabViewItemStandard setView:viewParametersStandard];
+    [tabViewItemAdvanced setLabel:CPLocalizedString(@"Advanced", @"Advanced")];
+    [tabViewItemAdvanced setView:viewParametersAdvanced];
+    [tabViewItemDrives setLabel:CPBundleLocalizedString(@"Virtual Medias", @"Virtual Medias")];
+    [tabViewItemDrives setView:viewDeviceVirtualDrives];
+    [tabViewItemNics setLabel:CPBundleLocalizedString(@"Virtual Nics", @"Virtual Nics")];
+    [tabViewItemNics setView:viewDeviceVirtualNics];
 
-    [buttonSwipePrevious setBordered:NO];
-    [buttonSwipePrevious setTarget:swipeViewParameters];
-    [buttonSwipePrevious setAction:@selector(nextView:)];
-    [buttonSwipePrevious setImage:imageButtonPrevious]; // this avoid the blinking..
-    [buttonSwipePrevious setValue:imageButtonPrevious forThemeAttribute:@"image"];
-    [buttonSwipePrevious setValue:imageButtonPreviousPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+    [tabViewParameters addTabViewItem:tabViewItemStandard];
+    [tabViewParameters addTabViewItem:tabViewItemAdvanced];
+    [tabViewParameters addTabViewItem:tabViewItemDrives];
+    [tabViewParameters addTabViewItem:tabViewItemNics];
+
 
     var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CPSizeMake(1.0, 10.0)],
         shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CPSizeMake(1.0, 10.0)];
@@ -316,19 +308,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected virtual network card", @"Edit selected virtual network card")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
-
-    // device tabView
-    [tabViewDevices setAutoresizingMask:CPViewWidthSizable];
-    var tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
-        tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"];
-
-    [tabViewItemDrives setLabel:CPBundleLocalizedString(@"Virtual Medias", @"Virtual Medias")];
-    [tabViewItemDrives setView:viewDeviceVirtualDrives];
-    [tabViewDevices addTabViewItem:tabViewItemDrives];
-
-    [tabViewItemNics setLabel:CPBundleLocalizedString(@"Virtual Nics", @"Virtual Nics")];
-    [tabViewItemNics setView:viewDeviceVirtualNics];
-    [tabViewDevices addTabViewItem:tabViewItemNics];
 
     // others..
     [buttonBoot removeAllItems];
@@ -714,7 +693,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _definitionEdited = NO;
     [self getXMLDesc];
 
-    if ([object isKindOfClass:TNiTunesTabView])
+    if ([object isKindOfClass:TNTabView])
         [object selectTabViewItem:item];
     else
     {
@@ -734,7 +713,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _definitionEdited = NO;
     [self defineXML];
 
-    if ([object isKindOfClass:TNiTunesTabView])
+    if ([object isKindOfClass:TNTabView])
         [object selectTabViewItem:item];
     else
     {

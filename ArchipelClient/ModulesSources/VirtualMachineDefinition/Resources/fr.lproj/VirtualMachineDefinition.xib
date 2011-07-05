@@ -59,47 +59,39 @@
 			</object>
 			<object class="NSCustomView" id="1005">
 				<nil key="NSNextResponder"/>
-				<int key="NSvFlags">268</int>
+				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSCustomView" id="862158691">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{0, 300}, {870, 340}}</string>
+						<int key="NSvFlags">274</int>
+						<string key="NSFrame">{{0, 23}, {870, 535}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="867357855"/>
 						<string key="NSReuseIdentifierKey">_NS:499</string>
-						<string key="NSClassName">TNSwipeView</string>
+						<string key="NSClassName">TNTabView</string>
 					</object>
 					<object class="NSCustomView" id="867357855">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{0, 298}, {869, 10}}</string>
+						<int key="NSvFlags">290</int>
+						<string key="NSFrame">{{0, 20}, {869, 10}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="126110591"/>
 						<string key="NSReuseIdentifierKey">_NS:499</string>
 						<string key="NSClassName">NSView</string>
 					</object>
 					<object class="NSCustomView" id="2937892">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{0, 632}, {869, 10}}</string>
+						<string key="NSFrame">{{0, 550}, {869, 10}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="862158691"/>
 						<string key="NSReuseIdentifierKey">_NS:499</string>
 						<string key="NSClassName">NSView</string>
 					</object>
-					<object class="NSCustomView" id="126110591">
-						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{-2, 0}, {875, 288}}</string>
-						<reference key="NSSuperview" ref="1005"/>
-						<string key="NSClassName">NSTabView</string>
-					</object>
 					<object class="NSPopUpButton" id="320757079">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{337, 653}, {195, 26}}</string>
+						<string key="NSFrame">{{337, 571}, {195, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="303200756"/>
 						<bool key="NSEnabled">YES</bool>
@@ -176,7 +168,7 @@
 					<object class="NSBox" id="303200756">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">11</int>
-						<string key="NSFrame">{{546, 665}, {323, 5}}</string>
+						<string key="NSFrame">{{546, 583}, {323, 5}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="2937892"/>
 						<string key="NSOffsets">{0, 0}</string>
@@ -207,7 +199,7 @@
 					<object class="NSBox" id="970672378">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">14</int>
-						<string key="NSFrame">{{0, 665}, {323, 5}}</string>
+						<string key="NSFrame">{{0, 583}, {323, 5}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="320757079"/>
 						<string key="NSOffsets">{0, 0}</string>
@@ -234,7 +226,7 @@
 					<object class="NSTextField" id="924747925">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 695}, {252, 26}}</string>
+						<string key="NSFrame">{{17, 613}, {252, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="970672378"/>
 						<bool key="NSEnabled">YES</bool>
@@ -264,7 +256,7 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{870, 741}</string>
+				<string key="NSFrameSize">{870, 659}</string>
 				<reference key="NSNextKeyView" ref="924747925"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -985,7 +977,7 @@
 					<string key="NSFrameSize">{494, 390}</string>
 					<reference key="NSNextKeyView" ref="752064820"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1680, 1050}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -1784,7 +1776,7 @@
 					<string key="NSFrameSize">{506, 546}</string>
 					<reference key="NSNextKeyView" ref="337946197"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1680, 1050}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -1995,7 +1987,7 @@
 					<string key="NSFrameSize">{588, 529}</string>
 					<reference key="NSNextKeyView" ref="500338457"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1680, 1050}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -4018,28 +4010,6 @@
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSButton" id="431265555">
-						<reference key="NSNextResponder" ref="248807684"/>
-						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{816, 19}, {14, 14}}</string>
-						<reference key="NSSuperview" ref="248807684"/>
-						<string key="NSReuseIdentifierKey">_NS:1566</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="872901627">
-							<int key="NSCellFlags">-2080244224</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSCellIdentifier">_NS:1566</string>
-							<reference key="NSControlView" ref="431265555"/>
-							<int key="NSButtonFlags">-2033434369</int>
-							<int key="NSButtonFlags2">162</int>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">400</int>
-							<int key="NSPeriodicInterval">75</int>
-						</object>
-					</object>
 					<object class="NSPopUpButton" id="1071896499">
 						<reference key="NSNextResponder" ref="248807684"/>
 						<int key="NSvFlags">269</int>
@@ -5080,7 +5050,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{230, 34}, {37, 22}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="431265555"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="788109449">
 							<int key="NSCellFlags">-1804468671</int>
@@ -5685,28 +5654,6 @@
 							</object>
 						</object>
 					</object>
-					<object class="NSButton" id="204575141">
-						<reference key="NSNextResponder" ref="927575755"/>
-						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{814, 19}, {14, 14}}</string>
-						<reference key="NSSuperview" ref="927575755"/>
-						<string key="NSReuseIdentifierKey">_NS:1566</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="435131407">
-							<int key="NSCellFlags">-2080244224</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSCellIdentifier">_NS:1566</string>
-							<reference key="NSControlView" ref="204575141"/>
-							<int key="NSButtonFlags">-2033434369</int>
-							<int key="NSButtonFlags2">162</int>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">400</int>
-							<int key="NSPeriodicInterval">75</int>
-						</object>
-					</object>
 					<object class="NSTextField" id="604173520">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
@@ -5729,7 +5676,6 @@
 						<int key="NSvFlags">301</int>
 						<string key="NSFrame">{{243, 112}, {371, 23}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
-						<reference key="NSNextKeyView" ref="204575141"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="252934314">
@@ -5975,14 +5921,6 @@
 						<reference key="destination" ref="638948793"/>
 					</object>
 					<int key="connectionID">434</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tabViewDevices</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="126110591"/>
-					</object>
-					<int key="connectionID">435</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -6874,19 +6812,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonSwipeNext</string>
+						<string key="label">tabViewParameters</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="431265555"/>
+						<reference key="destination" ref="862158691"/>
 					</object>
-					<int key="connectionID">935</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonSwipePrevious</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="204575141"/>
-					</object>
-					<int key="connectionID">936</int>
+					<int key="connectionID">937</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -6924,7 +6854,6 @@
 							<reference ref="970672378"/>
 							<reference ref="320757079"/>
 							<reference ref="303200756"/>
-							<reference ref="126110591"/>
 							<reference ref="924747925"/>
 							<reference ref="862158691"/>
 							<reference ref="2937892"/>
@@ -6999,11 +6928,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">11</int>
 						<reference key="object" ref="303200756"/>
-						<reference key="parent" ref="1005"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">116</int>
-						<reference key="object" ref="126110591"/>
 						<reference key="parent" ref="1005"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -9411,7 +9335,6 @@
 							<reference ref="606919072"/>
 							<reference ref="743370686"/>
 							<reference ref="1071896499"/>
-							<reference ref="431265555"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">View param standart</string>
@@ -10367,7 +10290,6 @@
 						<reference key="object" ref="927575755"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="204575141"/>
 							<reference ref="259322499"/>
 							<reference ref="1012711643"/>
 							<reference ref="719860476"/>
@@ -10404,34 +10326,6 @@
 						<int key="objectID">844</int>
 						<reference key="object" ref="252934314"/>
 						<reference key="parent" ref="754237806"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">847</int>
-						<reference key="object" ref="204575141"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="435131407"/>
-						</object>
-						<reference key="parent" ref="927575755"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">848</int>
-						<reference key="object" ref="435131407"/>
-						<reference key="parent" ref="204575141"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">849</int>
-						<reference key="object" ref="431265555"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="872901627"/>
-						</object>
-						<reference key="parent" ref="248807684"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">850</int>
-						<reference key="object" ref="872901627"/>
-						<reference key="parent" ref="431265555"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">851</int>
@@ -10723,7 +10617,6 @@
 					<string>113.IBPluginDependency</string>
 					<string>114.IBPluginDependency</string>
 					<string>115.IBPluginDependency</string>
-					<string>116.IBPluginDependency</string>
 					<string>117.IBNSWindowAutoPositionCentersHorizontal</string>
 					<string>117.IBNSWindowAutoPositionCentersVertical</string>
 					<string>117.IBPluginDependency</string>
@@ -11178,11 +11071,7 @@
 					<string>842.IBPluginDependency</string>
 					<string>843.IBPluginDependency</string>
 					<string>844.IBPluginDependency</string>
-					<string>847.IBPluginDependency</string>
-					<string>848.IBPluginDependency</string>
-					<string>849.IBPluginDependency</string>
 					<string>85.IBPluginDependency</string>
-					<string>850.IBPluginDependency</string>
 					<string>851.IBPluginDependency</string>
 					<string>857.IBPluginDependency</string>
 					<string>859.IBPluginDependency</string>
@@ -11231,7 +11120,6 @@
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -11746,10 +11634,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference key="dict.sortedKeys" ref="0"/>
@@ -11775,7 +11659,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">936</int>
+			<int key="maxID">937</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -12158,51 +12042,30 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TNSwipeView</string>
-					<string key="superclassName">NSControl</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>nextView:</string>
-							<string>previousView:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>nextView:</string>
-							<string>previousView:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">nextView:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">previousView:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNSwipeView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNSwitch</string>
 					<string key="superclassName">LPSwitch</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNSwitch.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNTabView</string>
+					<string key="superclassName">NSControl</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">_tabItemCliked:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">_tabItemCliked:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">_tabItemCliked:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNTabView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -12532,8 +12395,6 @@
 							<string>buttonPreferencesOnPowerOff</string>
 							<string>buttonPreferencesOnReboot</string>
 							<string>buttonPreferencesVNCKeyMap</string>
-							<string>buttonSwipeNext</string>
-							<string>buttonSwipePrevious</string>
 							<string>buttonUndefine</string>
 							<string>buttonVNCKeymap</string>
 							<string>buttonXMLEditor</string>
@@ -12561,7 +12422,6 @@
 							<string>scrollViewForDrives</string>
 							<string>scrollViewForNics</string>
 							<string>stepperNumberCPUs</string>
-							<string>swipeViewParameters</string>
 							<string>switchACPI</string>
 							<string>switchAPIC</string>
 							<string>switchEnableVNC</string>
@@ -12570,6 +12430,7 @@
 							<string>switchPreferencesEnableVNC</string>
 							<string>switchPreferencesHugePages</string>
 							<string>tabViewDevices</string>
+							<string>tabViewParameters</string>
 							<string>tableDrives</string>
 							<string>tableInterfaces</string>
 							<string>viewBottomControl</string>
@@ -12613,8 +12474,6 @@
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -12641,7 +12500,6 @@
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNTextFieldStepper</string>
-							<string>TNSwipeView</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
@@ -12650,6 +12508,7 @@
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>NSTabView</string>
+							<string>TNTabView</string>
 							<string>NSTableView</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
@@ -12695,8 +12554,6 @@
 							<string>buttonPreferencesOnPowerOff</string>
 							<string>buttonPreferencesOnReboot</string>
 							<string>buttonPreferencesVNCKeyMap</string>
-							<string>buttonSwipeNext</string>
-							<string>buttonSwipePrevious</string>
 							<string>buttonUndefine</string>
 							<string>buttonVNCKeymap</string>
 							<string>buttonXMLEditor</string>
@@ -12724,7 +12581,6 @@
 							<string>scrollViewForDrives</string>
 							<string>scrollViewForNics</string>
 							<string>stepperNumberCPUs</string>
-							<string>swipeViewParameters</string>
 							<string>switchACPI</string>
 							<string>switchAPIC</string>
 							<string>switchEnableVNC</string>
@@ -12733,6 +12589,7 @@
 							<string>switchPreferencesEnableVNC</string>
 							<string>switchPreferencesHugePages</string>
 							<string>tabViewDevices</string>
+							<string>tabViewParameters</string>
 							<string>tableDrives</string>
 							<string>tableInterfaces</string>
 							<string>viewBottomControl</string>
@@ -12848,14 +12705,6 @@
 								<string key="candidateClassName">NSPopUpButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">buttonSwipeNext</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonSwipePrevious</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">buttonUndefine</string>
 								<string key="candidateClassName">NSButton</string>
 							</object>
@@ -12964,10 +12813,6 @@
 								<string key="candidateClassName">TNTextFieldStepper</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">swipeViewParameters</string>
-								<string key="candidateClassName">TNSwipeView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">switchACPI</string>
 								<string key="candidateClassName">TNSwitch</string>
 							</object>
@@ -12998,6 +12843,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">tabViewDevices</string>
 								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabViewParameters</string>
+								<string key="candidateClassName">TNTabView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableDrives</string>
