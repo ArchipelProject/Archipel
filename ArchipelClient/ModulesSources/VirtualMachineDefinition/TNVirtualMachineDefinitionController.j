@@ -1868,7 +1868,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
 
-    console.warn([[_libvirtDomain XMLNode] tree]);
+    CPLog.info("XML Definition is : " + [[_libvirtDomain XMLNode] stringValue]);
     [stanza addNode:[_libvirtDomain XMLNode]];
     [buttonDefine setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
