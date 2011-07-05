@@ -84,7 +84,7 @@ TNLibvirtDeviceDiskDriverCaches                     = [ TNLibvirtDeviceDiskDrive
         [node setValue:_IO forAttribute:@"io"];
     if (_name)
         [node setValue:_name forAttribute:@"name"];
-    if (_IO)
+    if (_type)
         [node setValue:_type forAttribute:@"type"];
 
     return node;

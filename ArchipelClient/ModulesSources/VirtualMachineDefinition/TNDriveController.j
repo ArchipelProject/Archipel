@@ -136,12 +136,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     }
 
     [[_drive driver] setCache:[buttonDriverCache title]];
-
-    // [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
-
+    [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
     [[_drive target] setBus:[buttonTargetBus title]];
     [[_drive target] setDevice:[buttonTargetDevice title]];
-
 
     [_table reloadData];
 
@@ -252,7 +249,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
                 format  = [disk valueForAttribute:@"format"],
                 label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk valueForAttribute:@"diskSize"] + ")",
                 item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
-
             [item setStringValue:[disk valueForAttribute:@"path"]];
             [item setObjectValue:format];
             [buttonSourcePath addItem:item];
