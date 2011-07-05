@@ -1,4 +1,5 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
 #
 # runarchipel
 #
@@ -65,7 +66,7 @@ def versions(option, opt, value, parser):
     sys.exit(ARCHIPEL_INIT_SUCCESS)
 
 def test_libvirt():
-    """test if all needed libvirt's function are present"""
+    """test if all needed libvirt's functions are present"""
     try:
         import libvirt
     except:
@@ -84,7 +85,7 @@ def main():
     """
     if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
 
-    # starting thre libvirt event loop
+    # starting the libvirt event loop
     virEventLoopPureStart()
 
     # initializing the hypervisor XMPP entity
@@ -102,7 +103,7 @@ def main():
     try:
         hyp.loop()
     except Exception as ex:
-        print "\033[31mRUNARCHIPEL: Exception has stoped the hypervisor main loop: %s\033[0m" % str(ex)
+        print "\033[31mRUNARCHIPEL: Exception has stopped the hypervisor main loop: %s\033[0m" % str(ex)
         sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
 
 
@@ -116,11 +117,6 @@ if __name__ == "__main__":
                         help="the config file to use",
                         metavar="CONFIG",
                         default="/etc/archipel/archipel.conf")
-    parser.add_option("-n", "--nofork",
-                        dest="fork",
-                        help="run archipel in the current process. Do not fork. This is for testing",
-                        metavar="FORK",
-                        default=True)
     parser.add_option("-v", "--version",
                         action="callback",
                         help="display the version of all components",
@@ -133,16 +129,9 @@ if __name__ == "__main__":
         print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % options.config
         sys.exit(ARCHIPEL_INIT_ERROR_NO_CONFIG)
 
-    if options.fork:
-        try:
-            pid = os.fork()
-            if pid == 0: main()
-            else: sys.exit(ARCHIPEL_INIT_SUCCESS)
-        except OSError as e:
-            sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
-    else:
-        try:
-            main()
-        except KeyboardInterrupt:
-            sys.exit(ARCHIPEL_INIT_SUCCESS)
-
+    try:
+        pid = os.fork()
+        if pid == 0: main()
+        else: sys.exit(ARCHIPEL_INIT_SUCCESS)
+    except OSError as e:
+        sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
