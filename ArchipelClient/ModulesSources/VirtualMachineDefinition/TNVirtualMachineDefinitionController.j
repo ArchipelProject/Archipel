@@ -251,6 +251,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_drivesDatasource setTable:tableDrives];
     [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.sourceObject", @"target.bus", @"driver.cache"]];
     [tableDrives setDataSource:_drivesDatasource];
+    [tableDrives setTarget:self];
+    [tableDrives setDoubleAction:@selector(editDrive:)];
 
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -285,6 +287,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_nicsDatasource setTable:tableInterfaces];
     [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"MAC", @"source.bridge"]];
     [tableInterfaces setDataSource:_nicsDatasource];
+    [tableInterfaces setTarget:self];
+    [tableInterfaces setDoubleAction:@selector(editInterface:)];
 
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
