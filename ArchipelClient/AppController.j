@@ -332,10 +332,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
-    _moduleTabView = [[TNTabView alloc] initWithFrame:[rightView bounds]];
+    _moduleTabView = [[TNTabView alloc] initWithFrame:CPRectMakeZero()];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setContentBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
-    [_moduleTabView setTabViewBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/swipedTabView-bg.png"]]]];
     [rightView setBackView:_moduleTabView];
 
     /* loading view */
@@ -362,6 +361,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rightViewTextField setAlignment:CPCenterTextAlignment]
     [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:26]];
     [_rightViewTextField setTextColor:[CPColor grayColor]];
+    [_rightViewTextField setHidden:YES];
     [_moduleTabView addSubview:_rightViewTextField];
 
     /* filter view. */

@@ -168,6 +168,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [self _removeAllTabsFromModulesTabView];
     [_infoTextField setStringValue:@""];
+    [_infoTextField setHidden:YES];
 
     _numberOfActiveModules  = 0;
     _numberOfReadyModules   = 0;
@@ -194,15 +195,18 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
             if (_previousXMPPShow == TNStropheContactStatusOffline)
             {
                 [_infoTextField setStringValue:@"Entity is offline"];
+                [_infoTextField setHidden:NO];
             }
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
                 [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
                 [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
+                [_infoTextField setHidden:NO];
             }
             else
             {
                 [_infoTextField setStringValue:@""];
+                [_infoTextField setHidden:YES];
             }
             [center postNotificationName:TNArchipelModulesReadyNotification object:self];
         }
@@ -598,6 +602,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [self _removeAllTabsFromModulesTabView];
         _previousXMPPShow = TNStropheContactStatusOffline;
         [_infoTextField setStringValue:@"Entity is offline"];
+        [_infoTextField setHidden:NO];
     }
     else if ([[aNotification object] XMPPShow] == TNStropheContactStatusDND)
     {
@@ -607,6 +612,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [self _removeAllTabsFromModulesTabView];
         _previousXMPPShow = TNStropheContactStatusDND;
         [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
+        [_infoTextField setHidden:NO];
     }
     else if ((_previousXMPPShow == TNStropheContactStatusOffline) || (_previousXMPPShow == TNStropheContactStatusDND))
     {
@@ -615,6 +621,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _allModulesReady            = NO;
 
         [_infoTextField setStringValue:@""];
+        [_infoTextField setHidden:YES];
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
