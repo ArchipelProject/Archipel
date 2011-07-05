@@ -1,9 +1,6 @@
 /* Are you sure you want to destroy this drive ? this is not reversible. */
 "Are you sure you want to destroy this drive ? this is not reversible." = "Are you sure you want to destroy this drive ? this is not reversible.";
 
-/* B */
-"B" = "B";
-
 /* Cancel */
 "Cancel" = "Cancel";
 
@@ -52,29 +49,14 @@
 /* Error */
 "Error" = "Error";
 
-/* Format */
-"Format" = "Format";
-
 /* GB */
 "GB" = "GB";
 
 /* If checked, the drive will not be in sparse mode */
 "If checked, the drive will not be in sparse mode" = "If checked, the drive will not be in sparse mode";
 
-/* KB */
-"KB" = "KB";
-
 /* MB */
 "MB" = "MB";
-
-/* Name */
-"Name" = "Name";
-
-/* Path */
-"Path" = "Path";
-
-/* Real size */
-"Real size" = "Real size";
 
 /* Rename */
 "Rename" = "Rename";
@@ -93,9 +75,6 @@
 
 /* Set the unit of size for the new virtual drive */
 "Set the unit of size for the new virtual drive" = "Set the unit of size for the new virtual drive";
-
-/* Virtual size */
-"Virtual size" = "Virtual size";
 
 /* You can't edit disks of a running virtual machine */
 "You can't edit disks of a running virtual machine" = "You can't edit disks of a running virtual machine";

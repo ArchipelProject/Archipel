@@ -25,7 +25,6 @@
 
 @import <TNKit/TNAlert.j>
 
-@import "TNMediaObject.j"
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskConvert = @"convert",
@@ -41,7 +40,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     @outlet CPWindow                mainWindow;
 
     id                              _delegate           @accessors(property=delegate);
-    TNMedia                         _currentEditedDisk  @accessors(property=currentEditedDisk);
+    CPDictionary                    _currentEditedDisk  @accessors(property=currentEditedDisk);
 }
 
 
@@ -75,8 +74,20 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         return;
     }
 
-    [buttonEditDiskFormat selectItemWithTitle:[_currentEditedDisk format]];
-    [fieldEditDiskName setStringValue:[_currentEditedDisk name]];
+    var backingFile = [_currentEditedDisk objectForKey:@"backingFile"];
+    if (backingFile && backingFile != @"")
+    {
+        [buttonEditDiskFormat setEnabled:NO];
+        [buttonConvert setEnabled:NO];
+    }
+    else
+    {
+        [buttonEditDiskFormat setEnabled:YES];
+        [buttonConvert setEnabled:YES];
+    }
+
+    [buttonEditDiskFormat selectItemWithTitle:[_currentEditedDisk objectForKey:@"format"]];
+    [fieldEditDiskName setStringValue:[_currentEditedDisk objectForKey:@"name"]];
 
     [mainWindow makeFirstResponder:fieldEditDiskName];
     [mainWindow center];
@@ -88,7 +99,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (void)closeMainWindow
 {
     [mainWindow close];
-    _currentEditedDisk = nil;
 }
 
 
@@ -120,7 +130,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)convert
 {
-    if (_currentEditedDisk && [_currentEditedDisk format] == [buttonEditDiskFormat title])
+    if (_currentEditedDisk && [_currentEditedDisk objectForKey:@"format"] == [buttonEditDiskFormat title])
     {
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                           informative:CPBundleLocalizedString(@"You must choose a different format", @"You must choose a different format")];
@@ -132,7 +142,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDiskConvert,
-        "path": [_currentEditedDisk path],
+        "path": [_currentEditedDisk objectForKey:@"path"],
         "format": [buttonEditDiskFormat title]}];
 
     [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didConvertDisk:) ofObject:self];
@@ -158,16 +168,16 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)rename
 {
-    if ([_delegate isActive])
+    if ([_delegate isEntityOnline])
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
                                                          message:CPBundleLocalizedString(@"You can't edit disks of a running virtual machine", @"You can't edit disks of a running virtual machine") icon:TNGrowlIconError];
         return;
     }
 
-    if ([fieldEditDiskName stringValue] != [_currentEditedDisk name])
+    if ([fieldEditDiskName stringValue] != [_currentEditedDisk objectForKey:@"name"])
     {
-        [_currentEditedDisk setName:[fieldEditDiskName stringValue]];
+        [_currentEditedDisk setObject:[fieldEditDiskName stringValue] forKey:@"name"];
 
         var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -175,12 +185,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [stanza addChildWithName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeVirtualMachineDisk,
             "action": TNArchipelTypeVirtualMachineDiskRename,
-            "path": [_currentEditedDisk path],
-            "newname": [_currentEditedDisk name]}];
+            "path": [_currentEditedDisk objectForKey:@"path"],
+            "newname": [_currentEditedDisk objectForKey:@"name"]}];
 
         [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didRename:) ofObject:self];
-
-        _currentEditedDisk = nil;
     }
 
    [self closeMainWindow];

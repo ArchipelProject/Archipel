@@ -113,3 +113,54 @@
 /* Class = "NSTextFieldCell"; title = "Virtual machine is running"; ObjectID = "108"; */
 "108.title" = "Virtual machine is running";
 
+/* Class = "NSButtonCell"; title = "Use master drive:"; ObjectID = "123"; */
+"123.title" = "Use master drive:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "126"; */
+"126.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "127"; */
+"127.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "128"; */
+"128.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "129"; */
+"129.title" = "Item 1";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "140"; */
+"140.headerCell.title" = "Name";
+
+/* Class = "NSTableColumn"; headerCell.title = "Format"; ObjectID = "141"; */
+"141.headerCell.title" = "Format";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "142"; */
+"142.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "143"; */
+"143.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Virtual size"; ObjectID = "145"; */
+"145.headerCell.title" = "Virtual size";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "146"; */
+"146.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Real size"; ObjectID = "147"; */
+"147.headerCell.title" = "Real size";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "148"; */
+"148.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Golden drive"; ObjectID = "149"; */
+"149.headerCell.title" = "Golden drive";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "150"; */
+"150.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "151"; */
+"151.headerCell.title" = "Path";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "152"; */
+"152.title" = "Text Cell";
+

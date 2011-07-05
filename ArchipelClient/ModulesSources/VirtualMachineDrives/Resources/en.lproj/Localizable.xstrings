@@ -4,8 +4,6 @@
 <dict>
 	<key>Are you sure you want to destroy this drive ? this is not reversible.</key>
 	<string>Are you sure you want to destroy this drive ? this is not reversible.</string>
-	<key>B</key>
-	<string>B</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Choose the format of the virtual drive</key>
@@ -38,22 +36,12 @@
 	<string>Edit selected virtual drive</string>
 	<key>Error</key>
 	<string>Error</string>
-	<key>Format</key>
-	<string>Format</string>
 	<key>GB</key>
 	<string>GB</string>
 	<key>If checked, the drive will not be in sparse mode</key>
 	<string>If checked, the drive will not be in sparse mode</string>
-	<key>KB</key>
-	<string>KB</string>
 	<key>MB</key>
 	<string>MB</string>
-	<key>Name</key>
-	<string>Name</string>
-	<key>Path</key>
-	<string>Path</string>
-	<key>Real size</key>
-	<string>Real size</string>
 	<key>Rename</key>
 	<string>Rename</string>
 	<key>Set the format of the new virtual drive</key>
@@ -66,8 +54,6 @@
 	<string>Set the size of the new virtual drive</string>
 	<key>Set the unit of size for the new virtual drive</key>
 	<string>Set the unit of size for the new virtual drive</string>
-	<key>Virtual size</key>
-	<string>Virtual size</string>
 	<key>You can't edit disks of a running virtual machine</key>
 	<string>You can't edit disks of a running virtual machine</string>
 	<key>You can't edit multiple disk</key>

@@ -25,14 +25,17 @@
 
 @import <TNKit/TNAlert.j>
 
-var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
-    TNArchipelTypeVirtualMachineDiskCreate  = @"create";
+var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
+    TNArchipelTypeVirtualMachineDiskCreate      = @"create",
+    TNArchipelTypeVirtualMachineDiskGoldenList  = @"getgolden";
 
 
 @implementation TNNewDriveController : CPObject
 {
     @outlet CPButton        buttonOK;
     @outlet CPCheckBox      checkBoxUseQCOW2Preallocation;
+    @outlet CPCheckBox      checkBoxUseMasterDrive;
+    @outlet CPPopUpButton   buttonGoldenDrive;
     @outlet CPPopUpButton   buttonNewDiskFormat;
     @outlet CPPopUpButton   buttonNewDiskSizeUnit;
     @outlet CPTextField     fieldNewDiskName;
@@ -58,6 +61,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonNewDiskSizeUnit removeAllItems];
     [buttonNewDiskSizeUnit addItemsWithTitles:[CPBundleLocalizedString(@"GB", @"GB"), CPBundleLocalizedString(@"MB", @"MB")]];
 
+    [buttonGoldenDrive removeAllItems];
+
     [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     [fieldNewDiskSize setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
 
@@ -66,6 +71,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonNewDiskFormat setToolTip:CPBundleLocalizedString(@"Set the format of the new virtual drive", @"Set the format of the new virtual drive")];
     [buttonNewDiskSizeUnit setToolTip:CPBundleLocalizedString(@"Set the unit of size for the new virtual drive", @"Set the unit of size for the new virtual drive")];
     [checkBoxUseQCOW2Preallocation setToolTip:CPBundleLocalizedString(@"If checked, the drive will not be in sparse mode", @"If checked, the drive will not be in sparse mode")];
+    [checkBoxUseMasterDrive setToolTip:CPLocalizedString(@"Use a golden QCOW2 file for this drive", @"Use a golden QCOW2 file for this drive")];
+    [buttonGoldenDrive setToolTip:CPLocalizedString(@"Select the golden drive you want to use", @"Select the golden drive you want to use")];
 }
 
 
@@ -76,10 +83,17 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)openMainWindow
 {
+    [self getGoldenList];
     [fieldNewDiskName setStringValue:@""];
     [fieldNewDiskSize setStringValue:@""];
     [buttonNewDiskFormat selectItemWithTitle:@"qcow2"];
     [self diskCreationFormatChanged:nil];
+
+    [buttonGoldenDrive setEnabled:NO];
+    [checkBoxUseMasterDrive setEnabled:YES];
+    [checkBoxUseQCOW2Preallocation setEnabled:YES];
+    [checkBoxUseMasterDrive setState:CPOffState];
+    [checkBoxUseQCOW2Preallocation setState:CPOffState];
 
     [mainWindow makeFirstResponder:fieldNewDiskName];
     [mainWindow center];
@@ -102,10 +116,50 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (IBAction)diskCreationFormatChanged:(id)aSender
 {
     if ([buttonNewDiskFormat title] == @"qcow2")
+    {
         [checkBoxUseQCOW2Preallocation setHidden:NO];
+        [checkBoxUseMasterDrive setHidden:NO];
+        [buttonGoldenDrive setHidden:NO];
+    }
     else
+    {
         [checkBoxUseQCOW2Preallocation setHidden:YES];
+        [checkBoxUseMasterDrive setHidden:YES];
+        [buttonGoldenDrive setHidden:YES];
+    }
 }
+
+/*! handle mutual exclusion of the checkboxes
+*/
+- (IBAction)didCheckBoxesChange:(id)aSender
+{
+    if ([checkBoxUseQCOW2Preallocation state] == CPOnState)
+    {
+        [checkBoxUseMasterDrive setState:CPOffState];
+        [checkBoxUseMasterDrive setEnabled:NO];
+        [buttonGoldenDrive setEnabled:NO];
+        return;
+    }
+    else
+    {
+        [checkBoxUseMasterDrive setEnabled:YES];
+        [buttonGoldenDrive setEnabled:NO];
+    }
+
+    if ([checkBoxUseMasterDrive state] == CPOnState)
+    {
+        [checkBoxUseQCOW2Preallocation setState:CPOffState];
+        [checkBoxUseQCOW2Preallocation setEnabled:NO];
+        [buttonGoldenDrive setEnabled:YES];
+        return;
+    }
+    else
+    {
+        [checkBoxUseQCOW2Preallocation setEnabled:YES];
+        [buttonGoldenDrive setEnabled:NO];
+    }
+}
+
 
 /*! creates a disk
     @param aSender the sender of the action
@@ -121,13 +175,48 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
 /*! asks virtual machine to create a new disk
 */
+- (void)getGoldenList
+{
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineDisk,
+        "action": TNArchipelTypeVirtualMachineDiskGoldenList}];
+
+    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didGetGoldenList:) ofObject:self];
+}
+
+- (BOOL)_didGetGoldenList:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+        return NO;
+    }
+
+    console.warn([aStanza tree]);
+    var goldens = [aStanza childrenWithName:@"golden"];
+
+    [buttonGoldenDrive removeAllItems];
+    for (var i = 0; i < [goldens count]; i++)
+        [buttonGoldenDrive addItemWithTitle:[[goldens objectAtIndex:i] valueForAttribute:@"name"]];
+
+    [buttonGoldenDrive selectItemAtIndex:0];
+    return NO;
+}
+
+
+/*! asks virtual machine to create a new disk
+*/
 - (void)createDisk
 {
     var dUnit,
         dName       = [fieldNewDiskName stringValue],
         dSize       = [fieldNewDiskSize stringValue],
         format      = [buttonNewDiskFormat title],
-        prealloc    = ((format == @"qcow2") && ([checkBoxUseQCOW2Preallocation state] == CPOnState));
+        prealloc    = ((format == @"qcow2") && ([checkBoxUseQCOW2Preallocation state] == CPOnState)),
+        golden      = ((format == @"qcow2") && ([checkBoxUseMasterDrive state] == CPOnState));
 
     if (dSize == @"" || isNaN(dSize))
     {
@@ -161,6 +250,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     if (prealloc)
         params.preallocation = "metadata";
+
+    if (golden)
+        params.golden = [buttonGoldenDrive title];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildWithName:@"archipel" andAttributes:params];

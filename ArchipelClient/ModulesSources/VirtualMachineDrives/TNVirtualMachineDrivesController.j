@@ -28,7 +28,6 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
-@import "TNMediaObject.j"
 @import "TNNewDriveController.j"
 @import "TNEditDriveController.j"
 
@@ -41,6 +40,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelPushNotificationAppliance     = @"archipel:push:vmcasting",
     TNArchipelPushNotificationDiskCreated   = @"created";
 
+TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
 /*! @defgroup  virtualmachinedrives Module VirtualMachine Drives
     @desc Allows to create and manage virtual drives
@@ -56,14 +56,13 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     @outlet CPView                  viewTableContainer;
     @outlet TNEditDriveController   editDriveController;
     @outlet TNNewDriveController    newDriveController;
-    @outlet TNUIKitScrollView       scrollViewDisks;
-
-    BOOL                            _isActive               @accessors(getters=isActive);
+    @outlet CPTableView             tableMedias;
+    BOOL                            _isEntityOnline               @accessors(getter=isEntityOnline);
 
     CPButton                        _editButton;
     CPButton                        _minusButton;
     CPButton                        _plusButton;
-    CPTableView                     _tableMedias;
+
     id                              _registredDiskListeningId;
     TNTableViewDataSource           _mediasDatasource;
 }
@@ -82,60 +81,14 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     // Media table view
     _mediasDatasource    = [[TNTableViewDataSource alloc] init];
-    _tableMedias         = [[CPTableView alloc] initWithFrame:[scrollViewDisks bounds]];
+    [tableMedias setTarget:self];
+    [tableMedias setDoubleAction:@selector(openEditWindow:)];
+    [tableMedias setDelegate:self];
 
-    [scrollViewDisks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewDisks setAutohidesScrollers:YES];
-    [scrollViewDisks setDocumentView:_tableMedias];
+    [_mediasDatasource setTable:tableMedias];
+    [_mediasDatasource setSearchableKeyPaths:[@"name", @"format", @"virtualSize", @"diskSize", @"path", @"backingFile"]];
 
-    [_tableMedias setUsesAlternatingRowBackgroundColors:YES];
-    [_tableMedias setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableMedias setAllowsColumnReordering:YES];
-    [_tableMedias setAllowsColumnResizing:YES];
-    [_tableMedias setAllowsEmptySelection:YES];
-    [_tableMedias setAllowsMultipleSelection:YES];
-    [_tableMedias setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var mediaColumName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        mediaColumFormat = [[CPTableColumn alloc] initWithIdentifier:@"format"],
-        mediaColumVirtualSize = [[CPTableColumn alloc] initWithIdentifier:@"virtualSize"],
-        mediaColumDiskSize = [[CPTableColumn alloc] initWithIdentifier:@"diskSize"],
-        mediaColumPath = [[CPTableColumn alloc] initWithIdentifier:@"path"];
-
-    [mediaColumName setWidth:150];
-    [[mediaColumName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [mediaColumName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-
-    [mediaColumFormat setWidth:80];
-    [[mediaColumFormat headerView] setStringValue:CPBundleLocalizedString(@"Format", @"Format")];
-    [mediaColumFormat setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"format" ascending:YES]];
-
-    [mediaColumVirtualSize setWidth:80];
-    [[mediaColumVirtualSize headerView] setStringValue:CPBundleLocalizedString(@"Virtual size", @"Virtual size")];
-    [mediaColumVirtualSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"virtualSize" ascending:YES]];
-
-    [mediaColumDiskSize setWidth:80];
-    [[mediaColumDiskSize headerView] setStringValue:CPBundleLocalizedString(@"Real size", @"Real size")];
-    [mediaColumDiskSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"diskSize" ascending:YES]];
-
-    [mediaColumPath setWidth:300];
-    [[mediaColumPath headerView] setStringValue:CPBundleLocalizedString(@"Path", @"Path")];
-    [mediaColumPath setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"path" ascending:YES]];
-
-    [_tableMedias addTableColumn:mediaColumName];
-    [_tableMedias addTableColumn:mediaColumFormat];
-    [_tableMedias addTableColumn:mediaColumVirtualSize];
-    [_tableMedias addTableColumn:mediaColumDiskSize];
-    [_tableMedias addTableColumn:mediaColumPath];
-
-    [_tableMedias setTarget:self];
-    [_tableMedias setDoubleAction:@selector(openEditWindow:)];
-    [_tableMedias setDelegate:self];
-
-    [_mediasDatasource setTable:_tableMedias];
-    [_mediasDatasource setSearchableKeyPaths:[@"name", @"format", @"virtualSize", @"diskSize", @"path"]];
-
-    [_tableMedias setDataSource:_mediasDatasource];
+    [tableMedias setDataSource:_mediasDatasource];
 
     [fieldFilter setTarget:_mediasDatasource];
     [fieldFilter setAction:@selector(filterObjects:)];
@@ -143,7 +96,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Rename", @"Rename") action:@selector(openEditWindow:) keyEquivalent:@""];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(removeDisk:) keyEquivalent:@""];
-    [_tableMedias setMenu:menu];
+    [tableMedias setMenu:menu];
 
     _plusButton  = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
@@ -190,8 +143,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [_tableMedias setDelegate:nil];
-    [_tableMedias setDelegate:self];
+    [tableMedias setDelegate:nil];
+    [tableMedias setDelegate:self];
 
     [self getDisksInfo];
 }
@@ -284,7 +237,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     var XMPPShow = [_entity XMPPShow];
 
-    _isActive = ((XMPPShow == TNStropheContactStatusOnline) || (XMPPShow == TNStropheContactStatusAway));
+    _isEntityOnline = ((XMPPShow == TNStropheContactStatusOnline) || (XMPPShow == TNStropheContactStatusAway));
 
     if (XMPPShow == TNStropheContactStatusBusy)
         [self showMaskView:NO];
@@ -312,16 +265,18 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
         return;
 
-    if (_isActive)
+    if (_isEntityOnline)
+    {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
                                                          message:CPBundleLocalizedString(@"You can't edit disks of a running virtual machine", @"You can't edit disks of a running virtual machine")
                                                             icon:TNGrowlIconError];
+    }
     else
     {
-        if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+        if (([tableMedias numberOfRows]) && ([tableMedias numberOfSelectedRows] <= 0))
              return;
 
-        if ([_tableMedias numberOfSelectedRows] > 1)
+        if ([tableMedias numberOfSelectedRows] > 1)
         {
             [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
                                                              message:CPBundleLocalizedString(@"You can't edit multiple disk", @"You can't edit multiple disk")
@@ -329,7 +284,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             return;
         }
 
-        var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
+        var selectedIndex   = [[tableMedias selectedRowIndexes] firstIndex],
             diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
 
         [editDriveController setCurrentEditedDisk:diskObject];
@@ -371,22 +326,26 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if ([aStanza type] == @"result")
     {
         [_mediasDatasource removeAllObjects];
-
         var disks = [aStanza childrenWithName:@"disk"];
 
         for (var i = 0; i < [disks count]; i++)
         {
-            var disk    = [disks objectAtIndex:i],
-                vSize   = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
-                dSize   = [[[disk valueForAttribute:@"diskSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
-                path    = [disk valueForAttribute:@"path"],
-                name    = [disk valueForAttribute:@"name"],
-                format  = [disk valueForAttribute:@"format"],
-                newMedia = [TNMedia mediaWithPath:path name:name format:format virtualSize:vSize diskSize:dSize];
+            var disk        = [disks objectAtIndex:i],
+                vSize       = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
+                dSize       = [[[disk valueForAttribute:@"diskSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
+                path        = [disk valueForAttribute:@"path"],
+                name        = [disk valueForAttribute:@"name"],
+                format      = [disk valueForAttribute:@"format"],
+                backingFile = [disk valueForAttribute:@"backingFile"];
 
-            [_mediasDatasource addObject:newMedia];
+            [_mediasDatasource addObject:[CPDictionary dictionaryWithObjectsAndKeys:path, @"path",
+                                                                                    name, @"name",
+                                                                                    format, @"format",
+                                                                                    vSize, @"virtualSize",
+                                                                                    dSize, @"diskSize",
+                                                                                    backingFile, @"backingFile"]];
         }
-        [_tableMedias reloadData];
+        [tableMedias reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
@@ -402,7 +361,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)removeDisk
 {
-    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+    if (([tableMedias numberOfRows]) && ([tableMedias numberOfSelectedRows] <= 0))
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select a media", @"You must select a media")];
@@ -420,7 +379,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)performRemoveDisk:(id)someUserInfo
 {
-    var selectedIndexes = [_tableMedias selectedRowIndexes],
+    var selectedIndexes = [tableMedias selectedRowIndexes],
         objects         = [_mediasDatasource objectsAtIndexes:selectedIndexes];
 
     for (var i = 0; i < [objects count]; i++)
@@ -432,7 +391,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [stanza addChildWithName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeVirtualMachineDisk,
             "action": TNArchipelTypeVirtualMachineDiskDelete,
-            "name": [dName path],
+            "name": [dName objectForKey:@"path"],
             "undefine": "yes"}];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(_didRemoveDisk:) ofObject:self];
@@ -459,8 +418,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
     [self setControl:_plusButton enabledAccordingToPermission:@"drives_create"];
-    [self setControl:_minusButton enabledAccordingToPermission:@"drives_delete" specialCondition:([_tableMedias numberOfSelectedRows] > 0)];
-    [self setControl:_editButton enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([_tableMedias numberOfSelectedRows] <= 0)];
+    [self setControl:_minusButton enabledAccordingToPermission:@"drives_delete" specialCondition:([tableMedias numberOfSelectedRows] > 0)];
+    [self setControl:_editButton enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([tableMedias numberOfSelectedRows] <= 0)];
 }
 
 
