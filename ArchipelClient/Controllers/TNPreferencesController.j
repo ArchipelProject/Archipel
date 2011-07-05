@@ -239,6 +239,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
             [module loadPreferences];
     }
 
+    _oldLocale = [defaults objectForKey:@"CPBundleLocale"];
     [CPApp beginSheet:_mainWindow modalForWindow:[CPApp mainWindow] modalDelegate:self didEndSelector:@selector(mainViewModalTerminated:) contextInfo:nil];
 }
 
@@ -259,8 +260,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [self hideWindow:nil];
 
     var defaults = [CPUserDefaults standardUserDefaults];
-
-    _oldLocale = [defaults objectForKey:@"CPBundleLocale"];
 
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
