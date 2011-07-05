@@ -74,7 +74,7 @@
     mainWebView._DOMElement.style.WebkitTransition = "opacity 0.3s";
 
     [mainWebView setFrameLoadDelegate:self];
-    [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
+    [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"] + "?lang=" + [defaults objectForKey:@"CPBundleLocale"]];
 
     return YES;
 }
@@ -87,7 +87,7 @@
 
     [defaults setObject:[fieldPreferencesWelcomePageUrl stringValue] forKey:@"TNArchipelHelpWindowURL"];
 
-    [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
+    [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"] + "?lang=" + [defaults objectForKey:@"CPBundleLocale"]];
 }
 
 /*! called when user gets preferences
