@@ -25,9 +25,6 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Comment */
-"Comment" = "Comment";
-
 /* Create a package from the virtual machine and publish it into the hypervisor's VMCast feed */
 "Create a package from the virtual machine and publish it into the hypervisor's VMCast feed" = "Create a package from the virtual machine and publish it into the hypervisor's VMCast feed";
 
@@ -48,9 +45,6 @@
 
 /* Instanciation has started */
 "Instanciation has started" = "Instanciation has started";
-
-/* Name */
-"Name" = "Name";
 
 /* Packaging started. */
 "Packaging started." = "Packaging started.";

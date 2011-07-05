@@ -20,8 +20,6 @@
 	<string>Attach selected appliance</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Comment</key>
-	<string>Comment</string>
 	<key>Create a package from the virtual machine and publish it into the hypervisor's VMCast feed</key>
 	<string>Create a package from the virtual machine and publish it into the hypervisor's VMCast feed</string>
 	<key>Create appliance from this virtual machine</key>
@@ -36,8 +34,6 @@
 	<string>Error</string>
 	<key>Instanciation has started</key>
 	<string>Instanciation has started</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>Packaging started.</key>
 	<string>Packaging started.</string>
 	<key>Packaging successful.</key>

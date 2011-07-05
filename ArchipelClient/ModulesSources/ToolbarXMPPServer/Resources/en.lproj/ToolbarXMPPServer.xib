@@ -457,7 +457,7 @@
 												<int key="NSColumnAutoresizingStyle">4</int>
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
-												<bool key="NSAllowsTypeSelect">YES</bool>
+												<bool key="NSAllowsTypeSelect">NO</bool>
 												<int key="NSTableViewDraggingDestinationStyle">0</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
@@ -1030,7 +1030,7 @@
 																<reference key="NSBackgroundColor" ref="891946857"/>
 																<reference key="NSGridColor" ref="677648985"/>
 																<double key="NSRowHeight">17</double>
-																<int key="NSTvFlags">-692060160</int>
+																<int key="NSTvFlags">-759169024</int>
 																<reference key="NSDelegate"/>
 																<reference key="NSDataSource"/>
 																<int key="NSColumnAutoresizingStyle">4</int>
@@ -1284,7 +1284,7 @@
 																<reference key="NSBackgroundColor" ref="891946857"/>
 																<reference key="NSGridColor" ref="677648985"/>
 																<double key="NSRowHeight">17</double>
-																<int key="NSTvFlags">-557842432</int>
+																<int key="NSTvFlags">-624951296</int>
 																<reference key="NSDelegate"/>
 																<reference key="NSDataSource"/>
 																<int key="NSColumnAutoresizingStyle">4</int>
@@ -1945,7 +1945,7 @@
 											<reference key="NSBackgroundColor" ref="891946857"/>
 											<reference key="NSGridColor" ref="677648985"/>
 											<double key="NSRowHeight">17</double>
-											<int key="NSTvFlags">-559939584</int>
+											<int key="NSTvFlags">-627048448</int>
 											<reference key="NSDelegate"/>
 											<reference key="NSDataSource"/>
 											<int key="NSColumnAutoresizingStyle">4</int>

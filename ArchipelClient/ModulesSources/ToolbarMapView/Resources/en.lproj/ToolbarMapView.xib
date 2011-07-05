@@ -254,7 +254,7 @@
 																			</object>
 																		</object>
 																		<double key="NSRowHeight">17</double>
-																		<int key="NSTvFlags">-692060160</int>
+																		<int key="NSTvFlags">-759169024</int>
 																		<reference key="NSDelegate"/>
 																		<reference key="NSDataSource"/>
 																		<int key="NSColumnAutoresizingStyle">4</int>
@@ -582,7 +582,7 @@
 																		<reference key="NSBackgroundColor" ref="736322173"/>
 																		<reference key="NSGridColor" ref="588809609"/>
 																		<double key="NSRowHeight">17</double>
-																		<int key="NSTvFlags">-692060160</int>
+																		<int key="NSTvFlags">-759169024</int>
 																		<reference key="NSDelegate"/>
 																		<reference key="NSDataSource"/>
 																		<int key="NSColumnAutoresizingStyle">4</int>
