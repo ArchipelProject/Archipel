@@ -246,6 +246,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
 
+    var commonImageModuleBackground = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]],
+        commonImageDarkBackground = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
+
     /* register defaults defaults */
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersionHuman"], @"TNArchipelVersionHuman",
@@ -321,12 +324,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* left view */
     [leftView setFrontView:_outlineScrollView];
-    [leftView setBackgroundColor:[CPColor colorWithPatternImage:leftViewBg]];
+    [leftView setBackgroundColor:[CPColor colorWithPatternImage:commonImageDarkBackground]];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [rightView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
+    [rightView setBackgroundColor:commonImageModuleBackground];
     [rightView setAnimationDuration:1.0];
     [rightView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
@@ -334,17 +337,15 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[TNTabView alloc] initWithFrame:CPRectMakeZero()];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_moduleTabView setContentBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
+    [_moduleTabView setContentBackgroundColor:commonImageModuleBackground];
     [rightView setBackView:_moduleTabView];
 
     /* loading view */
-    var leftViewBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]],
-        maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]],
-        archipelBundleIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pluginIconArchipel.png"]];
+    var archipelBundleIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pluginIconArchipel.png"]];
 
     [imageViewBundleLoading setImage:archipelBundleIcon];
     [viewLoading setFrame:[rightView bounds]];
-    [viewLoading setBackgroundColor:[CPColor colorWithPatternImage:maskBackgroundImage]];
+    [viewLoading setBackgroundColor:[CPColor colorWithPatternImage:commonImageDarkBackground]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setFrontView:viewLoading];
     [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
@@ -404,6 +405,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
     [moduleController setModulesMenu:_modulesMenu];
+    [moduleController setToolbarModuleBackgroundColor:commonImageModuleBackground];
     [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 

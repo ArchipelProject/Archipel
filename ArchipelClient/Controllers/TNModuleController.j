@@ -88,6 +88,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     BOOL                            _allModulesReady                @accessors(getter=isAllModulesReady);
     BOOL                            _moduleLoadingStarted           @accessors(getter=isModuleLoadingStarted);
     CPArray                         _loadedTabModules               @accessors(getter=loadedTabModules);
+    CPColor                         _toolbarModuleBackgroundColor   @accessors(property=toolbarModuleBackgroundColor);
     CPDictionary                    _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
     CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
     CPString                        _modulesPath                    @accessors(property=modulesPath);
@@ -542,7 +543,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         [currentModuleController setToolbarItemOnly:NO];
         [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-
+        [[currentModuleController view] setBackgroundColor:_toolbarModuleBackgroundColor];
         [moduleToolbarItem setTarget:self];
         [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
     }
