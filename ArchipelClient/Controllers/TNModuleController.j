@@ -23,8 +23,8 @@
 @import <AppKit/CPToolbarItem.j>
 @import <AppKit/CPView.j>
 
-@import <iTunesTabView/TNiTunesTabView.j>
 @import <StropheCappuccino/StropheCappuccino.j>
+@import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNUIKitScrollView.j>
 
@@ -62,9 +62,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 /*! @ingroup archipelcore
 
-    simple TNiTunesTabViewItem subclass to add the TNModule Object inside
+    simple TNTabViewItem subclass to add the TNModule Object inside
 */
-@implementation TNModuleTabViewItem : TNiTunesTabViewItem
+@implementation TNModuleTabViewItem : CPTabViewItem
 {
     TNModule _module @accessors(property=module);
 }
@@ -230,7 +230,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 #pragma mark Storage
 
 /*! set wich item tab to remember
-    @param anItem: the TNiTunesTabView item to remember
+    @param anItem: the TNTabView item to remember
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
@@ -657,11 +657,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 #pragma mark -
 #pragma mark Delegates
 
-/*! TNiTunesTabView delegate. Wil check if current tab item is OK to be hidden
-    @param aTabView the TNiTunesTabView that sent the message (_mainTabView)
+/*! TNTabView delegate. Wil check if current tab item is OK to be hidden
+    @param aTabView the TNTabView that sent the message (_mainTabView)
     @param anItem the item that should be selected
 */
-- (BOOL)tabView:(TNiTunesTabView)aTabView shouldSelectTabViewItem:(TNModuleTabViewItem)anItem
+- (BOOL)tabView:(TNTabView)aTabView shouldSelectTabViewItem:(TNModuleTabViewItem)anItem
 {
     if ([aTabView numberOfTabViewItems] <= 0)
         return YES;
@@ -677,11 +677,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 }
 
 
-/*! TNiTunesTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
-    @param aTabView the TNiTunesTabView that sent the message (_mainTabView)
+/*! TNTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
+    @param aTabView the TNTabView that sent the message (_mainTabView)
     @param anItem the new selected item
 */
-- (void)tabView:(TNiTunesTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
+- (void)tabView:(TNTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
 {
     if ([aTabView numberOfTabViewItems] <= 0)
         return;

@@ -195,7 +195,6 @@ def install_archipelclient(interactive=True, properties=None):
         inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
         inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
         inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
-        inst_itunestabview  = ask_bool("Would you like to build iTunesTabView ?")
         inst_messageboard   = ask_bool("Would you like to build MessageBoard ?")
         inst_tnkit          = ask_bool("Would you like to build TNKit ?")
         inst_lpkit          = ask_bool("Would you like to build LPKit ?")
@@ -208,7 +207,6 @@ def install_archipelclient(interactive=True, properties=None):
         inst_growl          = properties["inst_growl"]
         inst_vnc            = properties["inst_vnc"]
         inst_strophe        = properties["inst_strophe"]
-        inst_itunestabview  = properties["inst_itunestabview"]
         inst_messageboard   = properties["inst_messageboard"]
         inst_tnkit          = properties["inst_tnkit"]
         inst_lpkit          = properties["inst_lpkit"]
@@ -225,7 +223,6 @@ def install_archipelclient(interactive=True, properties=None):
     print "   - build GrowlCappuccino       : %s" % str(inst_growl)
     print "   - build VNCCappuccino         : %s" % str(inst_vnc)
     print "   - build StropheCappuccino     : %s" % str(inst_strophe)
-    print "   - build iTunesTabView         : %s" % str(inst_itunestabview)
     print "   - build MessageBoard          : %s" % str(inst_messageboard)
     print "   - build TNKit                 : %s" % str(inst_tnkit)
     print "   - build LPKit                 : %s" % str(inst_lpkit)
@@ -249,7 +246,6 @@ def install_archipelclient(interactive=True, properties=None):
     if inst_growl:          client_build_growlcappuccino()
     if inst_vnc:            client_build_vnccappuccino()
     if inst_strophe:        client_build_strophecappuccino()
-    if inst_itunestabview:  client_build_itunestabview()
     if inst_messageboard:   client_build_messageboard()
     if inst_tnkit:          client_build_tnkit()
     if inst_lpkit:          client_build_lpkit()
@@ -325,17 +321,6 @@ def client_build_vnccappuccino():
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
     print "\033[32m * VNCCappuccino build\033[0m"
-
-
-def client_build_itunestabview():
-    print " * Building iTunesTabView";
-    s = Spinner();
-    ret = os.system("cd ./Libraries/iTunesTabView && jake debug %s && jake release %s" % (REDIRECT, REDIRECT))
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build iTunesTabView\033[0m"
-        sys.exit(1)
-    print "\033[32m * iTunesTabView build\033[0m"
 
 
 def client_build_messageboard():
@@ -436,7 +421,6 @@ if __name__ == "__main__":
                                                         "growlcappuccino", 
                                                         "vnccappuccino",
                                                         "strophecappuccino",
-                                                        "itunestabview",
                                                         "messageboard", 
                                                         "lpkit",
                                                         "tnkit",
@@ -454,7 +438,6 @@ if __name__ == "__main__":
     properties["inst_growl"]            = False
     properties["inst_vnc"]              = False
     properties["inst_strophe"]          = False
-    properties["inst_itunestabview"]    = False
     properties["inst_messageboard"]     = False
     properties["inst_lpkit"]            = False
     properties["inst_tnkit"]            = False
@@ -470,7 +453,6 @@ if __name__ == "__main__":
         if not interactive and o in ("--growlcappuccino"):      properties["inst_growl"]            = True
         if not interactive and o in ("--vnccappuccino"):        properties["inst_vnc"]              = True
         if not interactive and o in ("--strophecappuccino"):    properties["inst_strophe"]          = True
-        if not interactive and o in ("--itunestabview"):        properties["inst_itunestabview"]    = True
         if not interactive and o in ("--messageboard"):         properties["inst_messageboard"]     = True
         if not interactive and o in ("--lpkit"):                properties["inst_lpkit"]            = True
         if not interactive and o in ("--tnkit"):                properties["inst_tnkit"]            = True

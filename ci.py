@@ -1,18 +1,18 @@
 #!/usr/bin/python
-# 
+#
 # ci.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -26,7 +26,6 @@ BUILD_TNKIT=True
 BUILD_VNCCAPPUCCINO=True
 BUILD_STROPHECAPPUCCINO=True
 BUILD_GROWLCAPPUCCINO=True
-BUILD_ITUNESTABVIEW=True
 BUILD_MESSAGEBOARD=True
 BUILD_ARCHIPELCLIENT=True
 DEPLOY_PATH="/var/www/archipelproject.org/app/"
@@ -50,14 +49,6 @@ def buildGrowlCappuccino():
     if os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake release && jake debug"):
         os.system("echo \* unable to build GrowlCappuccino")
         sys.exit(-2)
-
-
-def buildiTunesTabView():
-    os.system("echo \* Starting to build iTunesTabView")
-    if os.system("cd ./ArchipelClient/Libraries/iTunesTabView && jake release && jake debug"):
-        os.system("echo \* unable to build iTunesTabView")
-        sys.exit(-3)
-
 
 def buildLPKit():
     os.system("echo \* Starting to build LPKit")
@@ -129,56 +120,50 @@ def deployArchipel(deploy_dir):
 def generateAPI(api_dir):
     os.system("echo \* Starting to generate documentation")
     os.system("rm -rf %s/*" % api_dir)
-    
+
     os.system("echo \* Generating doc for ArchipelClient")
     os.system("mkdir -p %s/archipel-client" % api_dir)
     os.system("cd ArchipelClient; jake docs")
     os.system("cp -a ArchipelClient/Build/Documentation/html/* %s/archipel-client/" % api_dir)
     os.system("chown -R cruise:www-data %s/archipel-client/" % api_dir)
-    
+
     os.system("echo \* Generating doc for StropheCappuccino")
     os.system("mkdir -p %s/strophecappuccino" % api_dir)
     os.system("cd ./ArchipelClient/Libraries/StropheCappuccino; jake docs")
     os.system("cp -a ./ArchipelClient/Libraries/StropheCappuccino/Build/Documentation/html/* %s/strophecappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/strophecappuccino/" % api_dir)
-    
+
     os.system("echo \* Generating doc for VNCCappuccino")
     os.system("mkdir -p %s/vnccappuccino" % api_dir)
     os.system("cd ./ArchipelClient/Libraries/VNCCappuccino; jake docs")
     os.system("cp -a ./ArchipelClient/Libraries/VNCCappuccino/Build/Documentation/html/* %s/vnccappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/vnccappuccino/" % api_dir)
-    
+
     os.system("echo \* Generating doc for GrowlCappuccino")
     os.system("mkdir -p %s/growlcappuccino" % api_dir)
     os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino; jake docs")
     os.system("cp -a ./ArchipelClient/Libraries/GrowlCappuccino/Build/Documentation/html/* %s/growlcappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/growlcappuccino/" % api_dir)
-    
-    os.system("echo \* Generating doc for iTunesTabView")
-    os.system("mkdir -p %s/itunestabview" % api_dir)
-    os.system("cd ./ArchipelClient/Libraries/iTunesTabView; jake docs")
-    os.system("cp -a ./ArchipelClient/Libraries/iTunesTabView/Build/Documentation/html/* %s/itunestabview/" % api_dir)
-    os.system("chown -R cruise:www-data %s/itunestabview/" % api_dir)
-    
+
     os.system("echo \* Generating doc for MessageBoard")
     os.system("mkdir -p %s/messageboard" % api_dir)
     os.system("cd ./ArchipelClient/Libraries/MessageBoard; jake docs")
     os.system("cp -a ./ArchipelClient/Libraries/MessageBoard/Build/Documentation/html/* %s/messageboard/" % api_dir)
     os.system("chown -R cruise:www-data %s/messageboard/" % api_dir)
-    
+
     os.system("echo \* Generating doc for TNKit")
     os.system("mkdir -p %s/tnkit" % api_dir)
     os.system("cd ./ArchipelClient/Libraries/TNKit; jake docs")
     os.system("cp -a ./ArchipelClient/Libraries/TNKit/Build/Documentation/html/* %s/tnkit/" % api_dir)
     os.system("chown -R cruise:www-data %s/tnkit/" % api_dir)
-    
+
     os.system("echo \* Generating doc for ArchipelAgent")
     os.system("mkdir -p %s/archipel-agent" % api_dir)
     os.system("cd ArchipelAgent; epydoc --config=epydoc.conf")
     os.system("cp -a ArchipelAgent/html/* %s/archipel-agent/" % api_dir)
     os.system("chown -R cruise:www-data %s/archipel-agent/" % api_dir)
-    
-    
+
+
     os.system("echo \* Documentation generation complete")
 
 
@@ -187,7 +172,7 @@ if __name__ == "__main__":
     """
     Simple script that can be run using CruiseControl.rb to make continuous integration
     """
-    
+
     ret, out = commands.getstatusoutput("git log -n1")
     if "#nobuild" in out:
         os.system("echo \* Build skipped according to last commit message (contains #nobuild)")
@@ -196,16 +181,15 @@ if __name__ == "__main__":
     updateSubmodules()
     if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
     if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
-    if BUILD_ITUNESTABVIEW or FORCE:     buildiTunesTabView()
     if BUILD_LPKIT or FORCE:             buildLPKit()
     if BUILD_MESSAGEBOARD or FORCE:      buildMessageBoard()
     if BUILD_STROPHECAPPUCCINO or FORCE: buildStropheCappuccino()
     if BUILD_TNKIT or FORCE:             buildTNKit()
     if BUILD_VNCCAPPUCCINO or FORCE:     buildVNCCappuccino()
-    
+
     buildArchipel(EXPORT_PATH, BUILD_ARCHIPELCLIENT)
     deployArchipel(DEPLOY_PATH)
     generateAPI(API_PATH)
-    
+
     os.system("echo \* BUILD SUCESSFULL.")
     sys.exit(0)

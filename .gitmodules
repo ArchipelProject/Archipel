@@ -7,9 +7,6 @@
 [submodule "ArchipelClient/Libraries/StropheCappuccino"]
 	path = ArchipelClient/Libraries/StropheCappuccino
 	url = git://github.com/primalmotion/StropheCappuccino.git
-[submodule "ArchipelClient/Libraries/iTunesTabView"]
-	path = ArchipelClient/Libraries/iTunesTabView
-	url = git://github.com/primalmotion/iTunesTabView.git
 [submodule "ArchipelClient/Libraries/VNCCappuccino"]
 	path = ArchipelClient/Libraries/VNCCappuccino
 	url = git://github.com/primalmotion/VNCCappuccino.git
