@@ -211,6 +211,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     for (var i = 0; i < [sortedItems count]; i++)
         [buttonHypervisors addItem:[sortedItems objectAtIndex:i]];
 
+    [buttonHypervisors selectItemAtIndex:0];
     _entity = [[buttonHypervisors selectedItem] objectValue];
     [self permissionsChanged];
 }
