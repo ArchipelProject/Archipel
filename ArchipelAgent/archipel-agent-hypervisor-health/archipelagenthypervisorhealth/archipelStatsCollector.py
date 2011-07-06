@@ -211,7 +211,7 @@ class TNThreadedHealthCollector (Thread):
         out     = output.split("\n")[1:-1]
         for l in out:
             cell = l.split()
-            ret.append({"partition": cell[0], "blocks": cell[1], "used": cell[2], "available": cell[3], "capacity": cell[4], "mount": cell[5]})
+            ret.append({"partition": cell[0], "blocks": cell[1], "used": int(cell[2]) * 1024, "available": int(cell[3]) * 1024, "capacity": cell[4], "mount": cell[5]})
         return ret
 
     def get_network_stats(self):
