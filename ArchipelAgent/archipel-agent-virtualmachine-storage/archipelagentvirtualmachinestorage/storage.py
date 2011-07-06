@@ -168,9 +168,9 @@ class TNStorageManagement (TNArchipelPlugin):
             prealloc    = query_node.getTag("archipel").getAttr("preallocation")
             golden      = query_node.getTag("archipel").getAttr("golden")
             disk_path   = self.entity.folder + "/" + disk_name + "." + format
-            if disk_unit == "M" and (int(disk_size) >= 1000000000):
+            if disk_unit == "M" and (float(disk_size) >= 1000000000):
                 raise Exception("too big", "You may be able to do it manually, but I won't try.")
-            elif disk_unit == "G" and (int(disk_size) >= 10000):
+            elif disk_unit == "G" and (float(disk_size) >= 10000):
                 raise Exception("too big", "You may be able to do it manually, but I won't try.")
             if os.path.exists(disk_path):
                 raise Exception("The disk with name %s already exists." % disk_name)
@@ -327,10 +327,10 @@ class TNStorageManagement (TNArchipelPlugin):
                     diskSize = os.path.getsize(diskPath)
                     diskInfo = subprocess.Popen([self.qemu_img_bin, "info", diskPath], stdout=subprocess.PIPE).communicate()[0].split("\n")
                     currentAttributes = {
-                        "name": disk.split('.')[0],
+                        "name": os.path.basename(os.path.splitext(disk)[0]),
                         "path": diskPath,
                         "format": diskInfo[1].split(": ")[1],
-                        "virtualSize": diskInfo[2].split(": ")[1],
+                        "virtualSize": diskInfo[2].split(" ")[3].replace("(", ""),
                         "diskSize": diskSize
                     }
                     if len(diskInfo) == 7:
