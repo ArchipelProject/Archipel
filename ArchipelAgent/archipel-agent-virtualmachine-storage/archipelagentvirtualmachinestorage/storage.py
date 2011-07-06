@@ -56,17 +56,18 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.shared_isos_folder = self.configuration.get("STORAGE", "iso_base_path") + "/"
+        self.golden_drives_dir = self.configuration.get("STORAGE", "golden_drives_dir")
         if self.configuration.has_option("STORAGE", "qemu_img_bin_path"):
             self.qemu_img_bin = self.configuration.get("STORAGE", "qemu_img_bin_path")
         else:
             self.qemu_img_bin = "qemu-img"
-
-        self.golden_drives_dir = self.configuration.get("STORAGE", "golden_drives_dir")
-
         if not os.path.exists(self.qemu_img_bin):
             raise Exception("qemu-img is not found at path %s. You may need to install it" % self.qemu_img_bin)
         if not os.path.exists(self.shared_isos_folder):
             os.makedirs(self.shared_isos_folder)
+        if not os.path.exists(self.golden_drives_dir):
+            os.makedirs(self.golden_drives_dir)
+
         # permissions
         self.entity.permission_center.create_permission("drives_create", "Authorizes user to get create a drive", False)
         self.entity.permission_center.create_permission("drives_delete", "Authorizes user to delete a drive", False)
