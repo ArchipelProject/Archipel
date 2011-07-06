@@ -1,0 +1,317 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+#
+# archipel-testxmppserver
+#
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import os
+import sys
+from optparse import OptionParser
+import xmpp
+import archipelcore.pubsub
+
+## Constants
+
+LABEL_WELCOME ="""\
+*******************************************************************************
+*                        Archipel XMPP Server Test                            *
+*                                                                             *
+* Archipel needs some specific parameters to be set. This tool will perform   *
+* some tests in order to ensure that your ejabberd server is properly         *
+* configured.                                                                 *
+* If you encounter some errors during test, there are great chance that       *
+* Archipel won't work correctly. If so, please read carrefully :              *
+*                                                                             *
+* - https://github.com/primalmotion/Archipel/wiki/Preparing-Ejabberd          *
+*                                                                             *
+* Copyright 2011 Antoine Mercadal                                             *
+*******************************************************************************
+"""
+LABEL_TITLE                             = "\033[35m"
+LABEL_SUCCESS                           = "\033[32m[SUCCESS] : "
+LABEL_ERROR                             = "\033[31m[ ERROR ] : "
+LABEL_WARNING                           = "\033[33m[WARNING] : "
+LABEL_RESET                             = "\033[0m"
+
+
+## Error codes
+
+TEST_SUCCESS                            = 0
+TEST_ERROR_CONNECTION_CANNOT_CONNECT    = 1000000000
+TEST_ERROR_CONNECTION_CANNOT_AUTH       = 1100000000
+TEST_ERROR_INBAND_CANNOT_REGISTER       = 1110000000
+TEST_ERROR_INBAND_CANNOT_UNREGISTER     = 1111000000
+TEST_ERROR_PUBSUB_CANNOT_CREATE         = 1111100000
+TEST_ERROR_PUBSUB_CANNOT_FIND           = 1111110000
+TEST_ERROR_PUBSUB_CANNOT_CONFIGURE      = 1111111000
+TEST_ERROR_PUBSUB_CANNOT_DELETE         = 1111111100
+TEST_ERROR_XMLRPC_CANNOT_CONNECT        = 1111111110
+TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA  = 1111111111
+
+
+## Utilities
+
+def print_title(msg):
+    print "\n%s# %s%s" % (LABEL_TITLE, msg, LABEL_RESET)
+
+def print_info(msg):
+    print " * %s" % msg
+
+def print_error(msg):
+    print "   %s%s%s" % (LABEL_ERROR, LABEL_RESET, msg)
+
+def print_success(msg):
+    print "   %s%s%s" % (LABEL_SUCCESS, LABEL_RESET, msg)
+
+def print_warning(msg):
+    print "   %s%s%s" % (LABEL_WARNING, LABEL_RESET, msg)
+
+def xmpp_connect(jid, password, auth=True):
+    """
+    create a new XMPP connection
+    """
+    xmppclient = xmpp.Client(jid.getDomain(), debug=[])
+    if not xmppclient.connect():
+        print_error("Cannot connect to the XMPP server")
+        return TEST_ERROR_CONNECTION_CANNOT_CONNECT
+    if auth:
+        if xmppclient.auth(jid.getNode(), password, "configurator") == None:
+            print_error("Bad authentication")
+            return TEST_ERROR_CONNECTION_CANNOT_AUTH
+    return xmppclient
+
+
+
+## Tests
+
+def test_connection(jid, password):
+    """
+    test the connection to the XMPP server
+    """
+    print_info("Trying to connect to the XMPP Server using %s" % str(jid))
+    xmpp_client = xmpp_connect(jid, password)
+    if xmpp_client == TEST_ERROR_CONNECTION_CANNOT_CONNECT:
+        print_error("Cannot connect to the XMPP server")
+        return TEST_ERROR_CONNECTION_CANNOT_CONNECT
+    if xmpp_client == TEST_ERROR_CONNECTION_CANNOT_AUTH:
+        print_error("Bad authentication")
+        return TEST_ERROR_CONNECTION_CANNOT_AUTH
+    print_success("Sucessfully connected")
+    return TEST_SUCCESS
+
+def test_account_register(jid, password):
+    """
+    try to register a new account
+    """
+    print_info("Trying to register a new dummy XMPP account using in-band registration")
+    dummy = xmpp.JID(node="dummy", domain=jid.getDomain())
+    xmpp_client = xmpp_connect(dummy, password, auth=False)
+    iq = (xmpp.Iq(typ='set', to=dummy.getDomain()))
+    payload_username = xmpp.Node(tag="username")
+    payload_username.addData(dummy.getNode())
+    payload_password = xmpp.Node(tag="password")
+    payload_password.addData("dummy")
+    iq.setQueryNS("jabber:iq:register")
+    iq.setQueryPayload([payload_username, payload_password])
+    print_info("Registration information sent. Wait for response...")
+    resp_iq = xmpp_client.SendAndWaitForResponse(iq)
+    if resp_iq.getType() == "error":
+        print_error("Unable to register. Be sure '{access, register, [{allow, all}]}.' and '{registration_timeout, infinity}.' are present in ejabberd.cfg")
+        return TEST_ERROR_INBAND_CANNOT_REGISTER
+    else:
+        print_success("Registration complete.")
+        return TEST_SUCCESS
+
+def test_account_unregister(jid, password):
+    """
+    try to remove the account
+    """
+    print_info("Trying to unregister the dummy XMPP account using in-band unregistration")
+    dummy = xmpp.JID(node="dummy", domain=jid.getDomain())
+    xmpp_client = xmpp_connect(dummy, "dummy")
+    iq = (xmpp.Iq(typ='set', to=dummy.getDomain()))
+    iq.setQueryNS("jabber:iq:register")
+    remove_node = xmpp.Node(tag="remove")
+    iq.setQueryPayload([remove_node])
+    print_info("Unregistration information sent. Waiting for response...")
+    try:
+        resp_iq = xmpp_client.SendAndWaitForResponse(iq)
+        if resp_iq.getType() == "error":
+            print_error("Unable to unregister: %s" % str(resp_iq))
+            return TEST_ERROR_INBAND_CANNOT_UNREGISTER
+        else:
+            print_success("Unregistration complete.")
+            return TEST_SUCCESS
+    except Exception as ex:
+        if str(ex).find("User removed") > -1:
+            print_success("Unregistration complete.")
+            return TEST_SUCCESS
+
+def test_pubsub_creation(jid, password):
+    """
+    try to create a new pubsub with the dummy account
+    """
+    print_info("Trying to create a pubsub node with the dummy account")
+    dummy = xmpp.JID(node="dummy", domain=jid.getDomain())
+    xmpp_client = xmpp_connect(dummy, "dummy")
+    dummyPubsub = archipelcore.pubsub.TNPubSubNode(xmpp_client, "pubsub.%s" % dummy.getDomain(), "/test/dummy")
+    ret = False
+    if not dummyPubsub.recover(wait=True):
+        ret = dummyPubsub.create(wait=True)
+    else:
+        print_warning("Dummy pubsub already exists.")
+    if ret:
+        print_success("Dummy pubsub created.")
+        return TEST_SUCCESS
+    else:
+        print_error("Unable to create the pubsub. Be sure you have '{access, pubsub_createnode, [{allow, all}]}.' in ejabberd.cfg")
+        return TEST_ERROR_PUBSUB_CANNOT_CREATE
+
+def test_pubsub_configuration(jid, password):
+    """
+    Try to configure the pubsub with needed value of Archipel
+    """
+    print_info("Trying to configure the pubsub with required info for Archipel...")
+    dummy = xmpp.JID(node="dummy", domain=jid.getDomain())
+    xmpp_client = xmpp_connect(dummy, "dummy")
+    dummyPubsub = archipelcore.pubsub.TNPubSubNode(xmpp_client, "pubsub.%s" % dummy.getDomain(), "/test/dummy")
+    if not dummyPubsub.recover(wait=True):
+        print_error("Unable to find the dummy pubsub")
+        return TEST_ERROR_PUBSUB_CANNOT_FIND
+    ret = dummyPubsub.configure({
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1000,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
+    }, wait=True)
+    if ret:
+        print_success("Pubsub sucessfully configured with correct value")
+        return TEST_SUCCESS
+    else:
+        print_error("Unable to configure the pubsub. Be sure you have '{max_items_node, 1000}' in mod_pubsub configuration in ejabberd.cfg")
+        return TEST_ERROR_PUBSUB_CANNOT_CONFIGURE
+
+def test_pubsub_deletion(jid, password):
+    """
+    Try to delete the pubsub account
+    """
+    print_info("Trying to remove dummy pubsub...")
+    dummy = xmpp.JID(node="dummy", domain=jid.getDomain())
+    xmpp_client = xmpp_connect(dummy, "dummy")
+    dummyPubsub = archipelcore.pubsub.TNPubSubNode(xmpp_client, "pubsub.%s" % dummy.getDomain(), "/test/dummy")
+    if not dummyPubsub.recover(wait=True):
+        print_error("Unable to find the dummy pubsub")
+        return TEST_ERROR_PUBSUB_CANNOT_FIND
+    ret = dummyPubsub.delete(wait=True)
+    if ret:
+        print_success("Sucessfully deleted the pubsub.")
+        return TEST_SUCCESS
+    else:
+        print_error("Unable to delete the pubsub. This is weird.")
+        return TEST_ERROR_PUBSUB_CANNOT_DELETE
+
+def test_xmlrpc_connection(jid, password):
+    import xmlrpclib
+    print_info("Trying to connect the ejabberd_xmlrpc module...")
+    xmlrpc_host         = jid.getDomain()
+    xmlrpc_port         = "4560"
+    xmlrpc_user         = jid.getNode()
+    xmlrpc_password     = password
+    xmlrpc_call         = "http://%s:%s@%s:%s/" % (xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
+    xmlrpc_server       = xmlrpclib.ServerProxy(xmlrpc_call)
+    try:
+        answer = xmlrpc_server.registered_users({"host": xmlrpc_host})
+        print_success("Successfully contacted ejabberd_xmlrpc module")
+        return TEST_SUCCESS
+    except Exception as ex:
+        print_error("Unable to contact the ejabberd_xmlrpc module: %s" % str(ex))
+        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
+
+def test_xmlrpc_modadminextra(jid, password):
+    import xmlrpclib
+    print_info("Checking is mod_admin_extra is available...")
+    xmlrpc_host         = jid.getDomain()
+    xmlrpc_port         = "4560"
+    xmlrpc_user         = jid.getNode()
+    xmlrpc_password     = password
+    xmlrpc_call         = "http://%s:%s@%s:%s/" % (xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
+    xmlrpc_server       = xmlrpclib.ServerProxy(xmlrpc_call)
+    try:
+        answer = xmlrpc_server.srg_list({"host": xmlrpc_host})
+        print_success("mod_admin_extra is present.")
+        return TEST_SUCCESS
+    except Exception as ex:
+        print_error("Unable to access mod_admin_extra features: %s" % str(ex))
+        return TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA
+
+
+
+## Main
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-j", "--jid",
+                        dest="jid",
+                        help="set the JID to use",
+                        metavar="JID")
+    parser.add_option("-p", "--password",
+                        dest="password",
+                        help="set the password associated to the JID",
+                        metavar="PASSWORD")
+    parser.add_option("-P", "--pubsubserver",
+                        dest="pubsubserver",
+                        help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
+                        metavar="PUBSUBSERVER",
+                        default=None)
+    options, args = parser.parse_args()
+
+    if not options.jid or not options.password:
+        parser.error("you must enter a JID and a PASSWORD. see --help for help")
+
+    os.system("clear")
+    final_ret = 0
+    print LABEL_WELCOME
+    raw_input("Type enter key to continue...")
+
+    print_title("TEST 1 : XMPP CONNECTION")
+    final_ret = final_ret + test_connection(xmpp.JID(options.jid), options.password)
+    print_title("TEST 2 : INBAND REGISTRATION")
+    final_ret = final_ret + test_account_register(xmpp.JID(options.jid), options.password)
+    print_title("TEST 3 : PUBSUB CREATION")
+    final_ret = final_ret + test_pubsub_creation(xmpp.JID(options.jid), options.password)
+    print_title("TEST 4 : PUBSUB CONFIGURATION")
+    final_ret = final_ret + test_pubsub_configuration(xmpp.JID(options.jid), options.password)
+    print_title("TEST 5 : PUBSUB DELETION")
+    final_ret = final_ret + test_pubsub_deletion(xmpp.JID(options.jid), options.password)
+    print_title("TEST 6 : INBAND UNREGISTRATION")
+    final_ret = final_ret + test_account_unregister(xmpp.JID(options.jid), options.password)
+    print_title("TEST 7 : QUICK REGISTRATION/UNREGISTRATION")
+    final_ret = final_ret + test_account_register(xmpp.JID(options.jid), options.password)
+    final_ret = final_ret + test_account_unregister(xmpp.JID(options.jid), options.password)
+    print_title("TEST 8 : EJABBERD_XMLRPC BASIC OPERATION")
+    final_ret = final_ret + test_xmlrpc_connection(xmpp.JID(options.jid), options.password)
+    print_title("TEST 9 : CHECKING FOR MOD_ADMIN_EXTRA")
+    final_ret = final_ret + test_xmlrpc_modadminextra(xmpp.JID(options.jid), options.password)
+
+    if final_ret == 0:
+        print "\n\033[32myour XMPP server should be ready!%s\n" %  LABEL_RESET
+    else:
+        print "\n\033[31mOne or more has not been passed (error code is %s)%s\n" % (LABEL_RESET, final_ret)
+    sys.exit(final_ret)

@@ -90,6 +90,7 @@ setup(name='archipel-agent',
         'install/bin/archipel-tagnode',
         'install/bin/archipel-updatedomain',
         'install/bin/archipel-initinstall',
+        'install/bin/archipel-testxmppserver',
         'install/bin/runarchipel'
         ],
       data_files=[
