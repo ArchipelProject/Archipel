@@ -58,16 +58,15 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPView                      viewTableContainer;
-    @outlet TNUIKitScrollView           scrollViewNetworks;
     @outlet TNNetworkDataView           networkDataViewPrototype;
     @outlet TNWindowNetworkController   networkController;
+    @outlet CPTableView                 tableViewNetworks;
 
     CPButton                            _activateButton;
     CPButton                            _deactivateButton;
     CPButton                            _editButton;
     CPButton                            _minusButton;
     CPButton                            _plusButton;
-    CPTableView                         _tableViewNetworks;
     TNHypervisorNetwork                 _networkHolder;
     TNTableViewDataSource               _datasourceNetworks;
 
@@ -84,41 +83,13 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     /* VM table view */
     _datasourceNetworks     = [[TNTableViewDataSource alloc] init];
-    _tableViewNetworks      = [[CPTableView alloc] initWithFrame:[scrollViewNetworks bounds]];
-
-    [scrollViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewNetworks setAutohidesScrollers:YES];
-    [scrollViewNetworks setDocumentView:_tableViewNetworks];
-
-    [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
-    [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableViewNetworks setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
-    [_tableViewNetworks setAllowsColumnResizing:YES];
-    [_tableViewNetworks setAllowsEmptySelection:YES];
-    [_tableViewNetworks setAllowsMultipleSelection:YES];
-    [_tableViewNetworks setRowHeight:146.0];
-    [_tableViewNetworks setHeaderView:nil];
-    [_tableViewNetworks setTarget:self];
-    [_tableViewNetworks setDelegate:self];
-    [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
-
-    var prototype = [CPKeyedArchiver archivedDataWithRootObject:networkDataViewPrototype],
-        columnNetwork = [[CPTableColumn alloc] initWithIdentifier:@"self"];
-
-    // I don't know why I need to copy it. But without this, it fails
-    [columnNetwork setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
-    [columnNetwork setWidth:[_tableViewNetworks bounds].size.width];
-
-    [_tableViewNetworks addTableColumn:columnNetwork];
-
-    [_datasourceNetworks setTable:_tableViewNetworks];
-    // [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"bridgeName", @"bridgeForwardMode", @"bridgeForwardDevice", @"bridgeIP", @"bridgeNetmask"]];
-
-    // [fieldFilterNetworks setTarget:_datasourceNetworks];
-    // [fieldFilterNetworks setAction:@selector(filterObjects:)];
-
-    [_tableViewNetworks setDataSource:_datasourceNetworks];
-    [_tableViewNetworks setDelegate:self];
+    var prototype = [CPKeyedArchiver archivedDataWithRootObject:networkDataViewPrototype];
+    [[tableViewNetworks tableColumnWithIdentifier:@"self"] setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
+    [tableViewNetworks setTarget:self];
+    [tableViewNetworks setDoubleAction:@selector(editNetwork:)];
+    [_datasourceNetworks setTable:tableViewNetworks];
+    [tableViewNetworks setDataSource:_datasourceNetworks];
+    [tableViewNetworks setDelegate:self];
 
     [networkController setDelegate:self];
 
@@ -130,7 +101,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [menu addItemWithTitle:CPBundleLocalizedString(@"Deactivate", @"Deactivate") action:@selector(deactivateNetwork:) keyEquivalent:@""];
     [menu addItem:[CPMenuItem separatorItem]];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(delNetwork:) keyEquivalent:@""];
-    [_tableViewNetworks setMenu:menu];
+    [tableViewNetworks setMenu:menu];
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
@@ -180,11 +151,11 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(_didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
+    [center addObserver:self selector:@selector(_didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:tableViewNetworks];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [_tableViewNetworks setDelegate:nil];
-    [_tableViewNetworks setDelegate:self]; // hum....
+    [tableViewNetworks setDelegate:nil];
+    [tableViewNetworks setDelegate:self]; // hum....
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];
@@ -240,14 +211,14 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)_didTableSelectionChange:(CPNotification)aNotification
 {
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    var selectedIndex   = [[tableViewNetworks selectedRowIndexes] firstIndex];
 
     [_minusButton setEnabled:NO];
     [_editButton setEnabled:NO];
     [_activateButton setEnabled:NO];
     [_deactivateButton setEnabled:NO];
 
-    if ([_tableViewNetworks numberOfSelectedRows] == 0)
+    if ([tableViewNetworks numberOfSelectedRows] == 0)
         return;
 
     var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
@@ -385,7 +356,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)delNetwork:(id)aSender
 {
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+    var selectedIndexes = [tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes],
         alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete Network", @"Delete Network")
                               informative:CPBundleLocalizedString(@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.", @"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.")
@@ -410,7 +381,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     if (![self currentEntityHasPermission:@"network_define"])
         return;
 
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    var selectedIndex   = [[tableViewNetworks selectedRowIndexes] firstIndex];
 
     if (selectedIndex != -1)
     {
@@ -432,7 +403,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)defineNetworkXML:(id)aSender
 {
-    var selectedIndex = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    var selectedIndex = [[tableViewNetworks selectedRowIndexes] firstIndex];
 
     if (selectedIndex == -1)
         return
@@ -447,7 +418,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)activateNetwork:(id)aSender
 {
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+    var selectedIndexes = [tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
 
     [self activateNetworks:networks];
@@ -458,7 +429,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)deactivateNetwork:(id)aSender
 {
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+    var selectedIndexes = [tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes],
         alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Deactivate Network", @"Deactivate Network")
                               informative:CPBundleLocalizedString(@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.", @"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.")
@@ -569,7 +540,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
             [_datasourceNetworks addObject:newNetwork];
         }
 
-        [_tableViewNetworks reloadData];
+        [tableViewNetworks reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
@@ -693,7 +664,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
                 "uuid": [networkObject UUID]}];
 
             [self sendStanza:stanza andRegisterSelector:@selector(_didNetworkStatusChange:)];
-            [_tableViewNetworks deselectAll];
+            [tableViewNetworks deselectAll];
         }
     }
 }
@@ -717,7 +688,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
                 "uuid" : [networkObject UUID]}];
 
             [self sendStanza:stanza andRegisterSelector:@selector(_didNetworkStatusChange:)];
-            [_tableViewNetworks deselectAll];
+            [tableViewNetworks deselectAll];
         }
     }
 }

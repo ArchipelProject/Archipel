@@ -58,8 +58,8 @@
     @outlet CPView              viewTableHostsContainer;
     @outlet CPView              viewTableRangesContainer;
     @outlet CPWindow            mainWindow;
-    @outlet TNUIKitScrollView   scrollViewDHCPHosts;
-    @outlet TNUIKitScrollView   scrollViewDHCPRanges;
+    @outlet CPTableView         tableViewHosts;
+    @outlet CPTableView         tableViewRanges;
 
     CPArray                     _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
     id                          _delegate                   @accessors(property=delegate);
@@ -69,8 +69,6 @@
     CPButton                    _minusButtonDHCPRanges;
     CPButton                    _plusButtonDHCPHosts;
     CPButton                    _plusButtonDHCPRanges;
-    CPTableView                 _tableViewHosts;
-    CPTableView                 _tableViewRanges;
     TNTableViewDataSource       _datasourceDHCPHosts;
     TNTableViewDataSource       _datasourceDHCPRanges;
 }
@@ -120,88 +118,27 @@
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
-    _tableViewRanges        = [[CPTableView alloc] initWithFrame:[scrollViewDHCPRanges bounds]];
-
-    [scrollViewDHCPRanges setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewDHCPRanges setAutohidesScrollers:YES];
-    [scrollViewDHCPRanges setDocumentView:_tableViewRanges];
-
-    [_tableViewRanges setUsesAlternatingRowBackgroundColors:YES];
-    [_tableViewRanges setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableViewRanges setAllowsColumnResizing:YES];
-    [_tableViewRanges setAllowsEmptySelection:YES];
-
-    var columRangeStart = [[CPTableColumn alloc] initWithIdentifier:@"start"],
-        columRangeEnd = [[CPTableColumn alloc] initWithIdentifier:@"end"];
-
-    [[columRangeStart headerView] setStringValue:CPBundleLocalizedString(@"Start", @"Start")];
-    [columRangeStart setWidth:250];
-    [columRangeStart setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"start" ascending:YES]];
-    [columRangeStart setEditable:YES];
-
-    [[columRangeEnd headerView] setStringValue:CPBundleLocalizedString(@"End", @"End")];
-    [columRangeEnd setWidth:250];
-    [columRangeEnd setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"end" ascending:YES]];
-    [columRangeEnd setEditable:YES];
-
-    [_tableViewRanges addTableColumn:columRangeStart];
-    [_tableViewRanges addTableColumn:columRangeEnd];
+    [tableViewRanges setDelegate:self];
+    [tableViewRanges setDataSource:_datasourceDHCPRanges];
+    [_datasourceDHCPRanges setTable:tableViewRanges];
 
     // TABLE FOR HOSTS
-    _datasourceDHCPHosts     = [[TNTableViewDataSource alloc] init];
-    _tableViewHosts          = [[CPTableView alloc] initWithFrame:[scrollViewDHCPHosts bounds]];
+    _datasourceDHCPHosts = [[TNTableViewDataSource alloc] init];
+    [tableViewHosts setDelegate:self];
+    [tableViewHosts setDataSource:_datasourceDHCPHosts];
+    [_datasourceDHCPHosts setTable:tableViewHosts];
 
-    [scrollViewDHCPHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewDHCPHosts setAutohidesScrollers:YES];
-    [scrollViewDHCPHosts setDocumentView:_tableViewHosts];
-
-    [_tableViewHosts setUsesAlternatingRowBackgroundColors:YES];
-    [_tableViewHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableViewHosts setAllowsColumnResizing:YES];
-    [_tableViewHosts setAllowsEmptySelection:YES];
-
-
-    var columHostMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"],
-        columHostName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        columHostIP = [[CPTableColumn alloc] initWithIdentifier:@"IP"];
-
-    [[columHostMac headerView] setStringValue:CPBundleLocalizedString(@"MAC Address", @"MAC Address")];
-    [columHostMac setWidth:150];
-    [columHostMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
-    [columHostMac setEditable:YES];
-
-    [[columHostName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columHostName setWidth:150];
-    [columHostName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-    [columHostName setEditable:YES];
-
-    [[columHostIP headerView] setStringValue:CPBundleLocalizedString(@"IP", @"IP")];
-    [columHostIP setWidth:150];
-    [columHostIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"IP" ascending:YES]];
-    [columHostIP setEditable:YES];
-
-    [_tableViewHosts addTableColumn:columHostMac];
-    [_tableViewHosts addTableColumn:columHostName];
-    [_tableViewHosts addTableColumn:columHostIP];
-
-    //setting datasources
-    [_tableViewRanges setDataSource:_datasourceDHCPRanges];
-    [_tableViewHosts setDataSource:_datasourceDHCPHosts];
-
-    // setting delegate
-    [_tableViewHosts setDelegate:self];
-    [_tableViewRanges setDelegate:self];
 
     var menuRange = [[CPMenu alloc] init],
         menuHost = [[CPMenu alloc] init];
 
     [menuRange addItemWithTitle:CPBundleLocalizedString(@"Add new range", @"Add new range") action:@selector(addDHCPRange:) keyEquivalent:@""];
     [menuRange addItemWithTitle:CPBundleLocalizedString(@"Remove", @"Remove") action:@selector(removeDHCPRange:) keyEquivalent:@""];
-    [_tableViewRanges setMenu:menuRange];
+    [tableViewRanges setMenu:menuRange];
 
     [menuHost addItemWithTitle:CPBundleLocalizedString(@"Add new host reservation", @"Add new host reservation") action:@selector(addDHCPHost:) keyEquivalent:@""];
     [menuHost addItemWithTitle:CPBundleLocalizedString(@"Remove", @"Remove") action:@selector(removeDHCPHost:) keyEquivalent:@""];
-    [_tableViewHosts setMenu:menuHost];
+    [tableViewHosts setMenu:menuHost];
 
     var tabViewDHCPRangesItem = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
         tabViewDHCPHostsItem = [[CPTabViewItem alloc] initWithIdentifier:@"id2"];
@@ -254,8 +191,8 @@
     [_datasourceDHCPRanges setContent:[_network DHCPEntriesRanges]];
     [_datasourceDHCPHosts setContent:[_network DHCPEntriesHosts]];
 
-    [_tableViewRanges reloadData];
-    [_tableViewHosts reloadData];
+    [tableViewRanges reloadData];
+    [tableViewHosts reloadData];
 }
 
 
@@ -301,7 +238,7 @@
 
     [checkBoxDHCPEnabled setState:CPOnState];
     [_datasourceDHCPRanges addObject:newRange];
-    [_tableViewRanges reloadData];
+    [tableViewRanges reloadData];
 }
 
 /*! remove a DHCP range
@@ -309,12 +246,12 @@
 */
 - (IBAction)removeDHCPRange:(id)sender
 {
-    var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableViewRanges selectedRowIndexes] firstIndex],
         rangeObject     = [_datasourceDHCPRanges removeObjectAtIndex:selectedIndex];
 
-    [_tableViewRanges reloadData];
+    [tableViewRanges reloadData];
 
-    if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
+    if (([tableViewRanges numberOfRows] == 0) && ([tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
 
 }
@@ -328,7 +265,7 @@
 
     [checkBoxDHCPEnabled setState:CPOnState];
     [_datasourceDHCPHosts addObject:newHost];
-    [_tableViewHosts reloadData];
+    [tableViewHosts reloadData];
 }
 
 /*! remove a DHCP host
@@ -336,12 +273,12 @@
 */
 - (IBAction)removeDHCPHost:(id)sender
 {
-    var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableViewHosts selectedRowIndexes] firstIndex],
         hostsObject     = [_datasourceDHCPHosts removeObjectAtIndex:selectedIndex];
 
-    [_tableViewHosts reloadData];
+    [tableViewHosts reloadData];
 
-    if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
+    if (([tableViewRanges numberOfRows] == 0) && ([tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
 }
 
