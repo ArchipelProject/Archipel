@@ -27,6 +27,7 @@
 @import "CPPlatformWindow+Title.j"
 @import "CPSearchField+CancelButton.j"
 @import "CPSegmentedControl+SegmentView.j"
+@import "CPString+FormatByteSize.j"
 @import "CPString+UUIDRFC4122.j"
 @import "CPTabView+Border.j"
 @import "CPView+Border.j"
