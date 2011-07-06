@@ -331,8 +331,8 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
         for (var i = 0; i < [disks count]; i++)
         {
             var disk        = [disks objectAtIndex:i],
-                vSize       = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
-                dSize       = [[[disk valueForAttribute:@"diskSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
+                vSize       = [CPString formatByteSize:[disk valueForAttribute:@"virtualSize"]],
+                dSize       = [CPString formatByteSize:[disk valueForAttribute:@"diskSize"]],
                 path        = [disk valueForAttribute:@"path"],
                 name        = [disk valueForAttribute:@"name"],
                 format      = [disk valueForAttribute:@"format"],
