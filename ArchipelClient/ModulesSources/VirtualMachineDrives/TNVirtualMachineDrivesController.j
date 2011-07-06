@@ -30,6 +30,8 @@
 
 @import "TNNewDriveController.j"
 @import "TNEditDriveController.j"
+@import "TNDriveDataView.j"
+@import "TNDriveObject.j"
 
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
@@ -56,6 +58,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     @outlet CPView                  viewTableContainer;
     @outlet TNEditDriveController   editDriveController;
     @outlet TNNewDriveController    newDriveController;
+    @outlet TNDriveDataView         dataViewDrivePrototype;
     @outlet CPTableView             tableMedias;
     BOOL                            _isEntityOnline               @accessors(getter=isEntityOnline);
 
@@ -85,9 +88,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [tableMedias setDoubleAction:@selector(openEditWindow:)];
     [tableMedias setDelegate:self];
 
-    [_mediasDatasource setTable:tableMedias];
-    [_mediasDatasource setSearchableKeyPaths:[@"name", @"format", @"virtualSize", @"diskSize", @"path", @"backingFile"]];
+    var prototype = [CPKeyedArchiver archivedDataWithRootObject:dataViewDrivePrototype];
+    [[tableMedias tableColumnWithIdentifier:@"self"] setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
 
+    [_mediasDatasource setTable:tableMedias];
     [tableMedias setDataSource:_mediasDatasource];
 
     [fieldFilter setTarget:_mediasDatasource];
@@ -336,14 +340,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
                 path        = [disk valueForAttribute:@"path"],
                 name        = [disk valueForAttribute:@"name"],
                 format      = [disk valueForAttribute:@"format"],
-                backingFile = [disk valueForAttribute:@"backingFile"];
+                backingFile = [disk valueForAttribute:@"backingFile"],
+                drive       = [TNDrive mediaWithPath:path name:name format:format virtualSize:vSize diskSize:dSize backingFile:backingFile];
 
-            [_mediasDatasource addObject:[CPDictionary dictionaryWithObjectsAndKeys:path, @"path",
-                                                                                    name, @"name",
-                                                                                    format, @"format",
-                                                                                    vSize, @"virtualSize",
-                                                                                    dSize, @"diskSize",
-                                                                                    backingFile, @"backingFile"]];
+            [_mediasDatasource addObject:drive];
         }
         [tableMedias reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
@@ -391,7 +391,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
         [stanza addChildWithName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeVirtualMachineDisk,
             "action": TNArchipelTypeVirtualMachineDiskDelete,
-            "name": [dName objectForKey:@"path"],
+            "name": [dName path],
             "undefine": "yes"}];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(_didRemoveDisk:) ofObject:self];

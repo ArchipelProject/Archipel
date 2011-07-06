@@ -25,6 +25,8 @@
 
 @import <TNKit/TNAlert.j>
 
+@import "TNDriveObject.j"
+
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskConvert = @"convert",
@@ -74,7 +76,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         return;
     }
 
-    var backingFile = [_currentEditedDisk objectForKey:@"backingFile"];
+    var backingFile = [_currentEditedDisk backingFile];
     if (backingFile && backingFile != @"")
     {
         [buttonEditDiskFormat setEnabled:NO];
@@ -86,8 +88,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [buttonConvert setEnabled:YES];
     }
 
-    [buttonEditDiskFormat selectItemWithTitle:[_currentEditedDisk objectForKey:@"format"]];
-    [fieldEditDiskName setStringValue:[_currentEditedDisk objectForKey:@"name"]];
+    [buttonEditDiskFormat selectItemWithTitle:[_currentEditedDisk format]];
+    [fieldEditDiskName setStringValue:[_currentEditedDisk name]];
 
     [mainWindow makeFirstResponder:fieldEditDiskName];
     [mainWindow center];
@@ -130,7 +132,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)convert
 {
-    if (_currentEditedDisk && [_currentEditedDisk objectForKey:@"format"] == [buttonEditDiskFormat title])
+    if (_currentEditedDisk && [_currentEditedDisk format] == [buttonEditDiskFormat title])
     {
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                           informative:CPBundleLocalizedString(@"You must choose a different format", @"You must choose a different format")];
@@ -142,7 +144,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDiskConvert,
-        "path": [_currentEditedDisk objectForKey:@"path"],
+        "path": [_currentEditedDisk path],
         "format": [buttonEditDiskFormat title]}];
 
     [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didConvertDisk:) ofObject:self];
@@ -175,9 +177,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         return;
     }
 
-    if ([fieldEditDiskName stringValue] != [_currentEditedDisk objectForKey:@"name"])
+    if ([fieldEditDiskName stringValue] != [_currentEditedDisk name])
     {
-        [_currentEditedDisk setObject:[fieldEditDiskName stringValue] forKey:@"name"];
+        [_currentEditedDisk setName:[fieldEditDiskName stringValue]];
 
         var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -185,8 +187,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [stanza addChildWithName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeVirtualMachineDisk,
             "action": TNArchipelTypeVirtualMachineDiskRename,
-            "path": [_currentEditedDisk objectForKey:@"path"],
-            "newname": [_currentEditedDisk objectForKey:@"name"]}];
+            "path": [_currentEditedDisk path],
+            "newname": [_currentEditedDisk name]}];
 
         [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didRename:) ofObject:self];
     }

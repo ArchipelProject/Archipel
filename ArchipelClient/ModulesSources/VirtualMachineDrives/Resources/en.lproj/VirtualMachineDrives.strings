@@ -131,36 +131,30 @@
 /* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "140"; */
 "140.headerCell.title" = "Name";
 
-/* Class = "NSTableColumn"; headerCell.title = "Format"; ObjectID = "141"; */
-"141.headerCell.title" = "Format";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "142"; */
-"142.title" = "Text Cell";
-
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "143"; */
 "143.title" = "Text Cell";
 
-/* Class = "NSTableColumn"; headerCell.title = "Virtual size"; ObjectID = "145"; */
-"145.headerCell.title" = "Virtual size";
+/* Class = "NSTextFieldCell"; title = "Drive name"; ObjectID = "250"; */
+"250.title" = "Drive name";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "146"; */
-"146.title" = "Text Cell";
+/* Class = "NSTextFieldCell"; title = "VirtualSize"; ObjectID = "254"; */
+"254.title" = "VirtualSize";
 
-/* Class = "NSTableColumn"; headerCell.title = "Real size"; ObjectID = "147"; */
-"147.headerCell.title" = "Real size";
+/* Class = "NSTextFieldCell"; title = "Real size"; ObjectID = "256"; */
+"256.title" = "Real size";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "148"; */
-"148.title" = "Text Cell";
+/* Class = "NSTextFieldCell"; title = "path"; ObjectID = "258"; */
+"258.title" = "path";
 
-/* Class = "NSTableColumn"; headerCell.title = "Golden drive"; ObjectID = "149"; */
-"149.headerCell.title" = "Golden drive";
+/* Class = "NSTextFieldCell"; title = "Golden Drive"; ObjectID = "260"; */
+"260.title" = "Golden Drive";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "150"; */
-"150.title" = "Text Cell";
+/* Class = "NSTextFieldCell"; title = "Real size:"; ObjectID = "267"; */
+"267.title" = "Real size:";
 
-/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "151"; */
-"151.headerCell.title" = "Path";
+/* Class = "NSTextFieldCell"; title = "Virtual size:"; ObjectID = "269"; */
+"269.title" = "Virtual size:";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "152"; */
-"152.title" = "Text Cell";
+/* Class = "NSTextFieldCell"; title = "Golden drive:"; ObjectID = "271"; */
+"271.title" = "Golden drive:";
 
