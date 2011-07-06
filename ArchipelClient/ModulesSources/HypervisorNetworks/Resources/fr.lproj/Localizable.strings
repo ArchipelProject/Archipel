@@ -82,9 +82,6 @@
 /* Enable DHCP for this virtual network */
 "Enable DHCP for this virtual network" = "Enable DHCP for this virtual network";
 
-/* End */
-"End" = "End";
-
 /* Enter the name of the bridge to create when this network is activated */
 "Enter the name of the bridge to create when this network is activated" = "Enter the name of the bridge to create when this network is activated";
 
@@ -96,15 +93,6 @@
 
 /* Error */
 "Error" = "Error";
-
-/* IP */
-"IP" = "IP";
-
-/* MAC Address */
-"MAC Address" = "MAC Address";
-
-/* Name */
-"Name" = "Name";
 
 /* Network */
 "Network" = "Network";
@@ -132,9 +120,6 @@
 
 /* Select the hypervisor network card you want to use for this virtual network */
 "Select the hypervisor network card you want to use for this virtual network" = "Select the hypervisor network card you want to use for this virtual network";
-
-/* Start */
-"Start" = "Start";
 
 /* The IP address to assign to the bridge */
 "The IP address to assign to the bridge" = "The IP address to assign to the bridge";

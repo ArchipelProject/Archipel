@@ -56,8 +56,6 @@
 	<string>Edit selected network</string>
 	<key>Enable DHCP for this virtual network</key>
 	<string>Enable DHCP for this virtual network</string>
-	<key>End</key>
-	<string>End</string>
 	<key>Enter the name of the bridge to create when this network is activated</key>
 	<string>Enter the name of the bridge to create when this network is activated</string>
 	<key>Enter the name of the virtual network</key>
@@ -66,12 +64,6 @@
 	<string>Enter the value of delay for the bridge</string>
 	<key>Error</key>
 	<string>Error</string>
-	<key>IP</key>
-	<string>IP</string>
-	<key>MAC Address</key>
-	<string>MAC Address</string>
-	<key>Name</key>
-	<string>Name</string>
 	<key>Network</key>
 	<string>Network</string>
 	<key>Network has been defined</key>
@@ -90,8 +82,6 @@
 	<string>Remove selected DHCP reservation</string>
 	<key>Select the hypervisor network card you want to use for this virtual network</key>
 	<string>Select the hypervisor network card you want to use for this virtual network</string>
-	<key>Start</key>
-	<string>Start</string>
 	<key>The IP address to assign to the bridge</key>
 	<string>The IP address to assign to the bridge</string>
 	<key>The netmask to use for the bridge</key>

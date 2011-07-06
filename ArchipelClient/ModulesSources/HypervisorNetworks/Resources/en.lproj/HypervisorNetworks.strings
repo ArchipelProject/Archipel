@@ -176,3 +176,36 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "277"; */
 "277.title" = "Text Cell";
 
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "317"; */
+"317.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Start"; ObjectID = "336"; */
+"336.headerCell.title" = "Start";
+
+/* Class = "NSTableColumn"; headerCell.title = "End"; ObjectID = "337"; */
+"337.headerCell.title" = "End";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "338"; */
+"338.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "339"; */
+"339.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "346"; */
+"346.headerCell.title" = "Name";
+
+/* Class = "NSTableColumn"; headerCell.title = "MAC Address"; ObjectID = "347"; */
+"347.headerCell.title" = "MAC Address";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "348"; */
+"348.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "349"; */
+"349.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "IP"; ObjectID = "350"; */
+"350.headerCell.title" = "IP";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "351"; */
+"351.title" = "Text Cell";
+
