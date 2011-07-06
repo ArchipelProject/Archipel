@@ -45,20 +45,22 @@
 
         _nameLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Partition name", @"Partition name")];
         [_nameLabel setFont:[CPFont boldSystemFontOfSize:12.0]];
-        [_nameLabel sizeToFit];
-        [_nameLabel setFrameOrigin:CPPointMake(3.0, 3.0)]
+        [_nameLabel setFrame:CPRectMake(3.0, 3.0, 210.0, 18.0)]
+        [_nameLabel setLineBreakMode:CPLineBreakByTruncatingTail];
 
         _usedLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Used: ", @"Used: ")];
         [_usedLabel setFont:[CPFont systemFontOfSize:10.0]];
-        [_usedLabel setFrameOrigin:CPPointMake(260.0, 3.0)];
+        [_usedLabel setFrame:CPRectMake(210.0, 3.0, 95.0, 18.0)];
         [_usedLabel setAutoresizingMask:CPViewMinXMargin];
         [_usedLabel setAlignment:CPRightTextAlignment];
+        [_usedLabel setLineBreakMode:CPLineBreakByTruncatingTail];
 
         _availableLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Available: ", @"Available: ")];
         [_availableLabel setFont:[CPFont systemFontOfSize:10.0]];
-        [_availableLabel setFrameOrigin:CPPointMake(330.0, 3.0)];
+        [_availableLabel setFrame:CPRectMake(310.0, 3.0, 108.0, 18.0)];
         [_availableLabel setAutoresizingMask:CPViewMinXMargin];
         [_availableLabel setAlignment:CPRightTextAlignment];
+        [_availableLabel setLineBreakMode:CPLineBreakByTruncatingTail];
 
         _levelIndicator = [[CPLevelIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, aFrame.size.width - 6, 18.0)];
         [_levelIndicator setEditable:NO];
@@ -78,33 +80,6 @@
     return self;
 }
 
-#pragma mark -
-#pragma mark Utilities
-
-/*! format a size string from a given integer size in Kb
-    @param  aSize integer containing the size in Kb.
-    @return CPString containing "XX Unit" where Unit can be Kb, Mb or Gb
-*/
-- (CPString)formatSize:(int)aSize
-{
-    var usedKind = CPBundleLocalizedString(@"GB", @"GB");
-
-    if (Math.round(aSize / 1024 / 1024) == 0)
-    {
-        aSize = Math.round(aSize / 1024);
-        usedKind = CPBundleLocalizedString(@"MB", @"MB");
-        if (aSize == 0)
-        {
-            aSize = Math.round(aSize / 1024);
-            usedKind = CPBundleLocalizedString(@"KB", @"KB");
-        }
-    }
-    else
-        aSize = Math.round(aSize / 1024 / 1024);
-
-    return @"" + aSize + usedKind + @"";
-}
-
 
 #pragma mark -
 #pragma mark CPColumn view protocol
@@ -118,13 +93,8 @@
     [_levelIndicator setDoubleValue:50 - capacity / 2];
 
     [_nameLabel setStringValue:[aContent objectForKey:@"mount"]];
-    [_nameLabel sizeToFit];
-
-    [_usedLabel setStringValue:CPBundleLocalizedString(@"Used: ", @"Used: ") + [self formatSize:[[aContent objectForKey:@"used"] intValue]]];
-    [_usedLabel sizeToFit];
-
-    [_availableLabel setStringValue:CPBundleLocalizedString(@"Available: ", @"Available: ") + [self formatSize:[[aContent objectForKey:@"available"] intValue]]];
-    [_availableLabel sizeToFit];
+    [_usedLabel setStringValue:CPBundleLocalizedString(@"Used: ", @"Used: ") + [CPString formatByteSize:[[aContent objectForKey:@"used"] intValue]]];
+    [_availableLabel setStringValue:CPBundleLocalizedString(@"Available: ", @"Available: ") + [CPString formatByteSize:[[aContent objectForKey:@"available"] intValue]]];
 }
 
 
