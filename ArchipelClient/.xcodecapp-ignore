@@ -1,6 +1,7 @@
 *Build*
 *Libraries/Cappuccino*
 *Libraries/StropheCappuccino*
+*Libraries/*/Build/*
 *Categories*
 *.xCodeSupport*
 *Modules/*
