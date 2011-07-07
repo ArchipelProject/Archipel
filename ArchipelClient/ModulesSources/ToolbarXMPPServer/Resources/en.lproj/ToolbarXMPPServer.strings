@@ -26,9 +26,6 @@
 /* Class = "NSTextFieldCell"; title = "You can manage XMPP users of the selected server."; ObjectID = "24"; */
 "24.title" = "You can manage XMPP users of the selected server.";
 
-/* Class = "NSWindow"; title = "New user"; ObjectID = "31"; */
-"31.title" = "New user";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "39"; */
 "39.title" = "Box";
 
@@ -74,9 +71,6 @@
 /* Class = "NSTextFieldCell"; title = "Users"; ObjectID = "89"; */
 "89.title" = "Users";
 
-/* Class = "NSWindow"; title = "New shared group"; ObjectID = "111"; */
-"111.title" = "New shared group";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "117"; */
 "117.title" = "Box";
 
@@ -103,9 +97,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Description:"; ObjectID = "131"; */
 "131.title" = "Description:";
-
-/* Class = "NSWindow"; title = "Add users in group"; ObjectID = "136"; */
-"136.title" = "Add users in group";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "144"; */
 "144.title" = "Box";

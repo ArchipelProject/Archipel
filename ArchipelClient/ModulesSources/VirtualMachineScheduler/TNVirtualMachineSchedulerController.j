@@ -29,9 +29,9 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNTextFieldStepper.j>
 @import <TNKit/TNUIKitScrollView.j>
 
+@import "TNSchedulerController.j";
 
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
     @desc Scheduler control for virtual machines
@@ -39,48 +39,22 @@
 
 var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
-    TNArchipelTypeEntityScheduleSchedule    = @"schedule",
-    TNArchipelTypeEntityScheduleUnschedule  = @"unschedule",
-    TNArchipelTypeEntityScheduleJobs        = @"jobs",
-    TNArchipelTypeEntityScheduleActions     = @"actions";
+    TNArchipelTypeEntityScheduleJobs        = @"jobs";
 
 /*! @ingroup virtualmachinescheduler
     Main controller of the module
 */
 @implementation TNVirtualMachineScheduler : TNModule
 {
-    @outlet CPButton                buttonNewJobOK;
     @outlet CPButtonBar             buttonBarJobs;
-    @outlet CPCheckBox              checkBoxEveryDay;
-    @outlet CPCheckBox              checkBoxEveryHour;
-    @outlet CPCheckBox              checkBoxEveryMinute;
-    @outlet CPCheckBox              checkBoxEveryMonth;
-    @outlet CPCheckBox              checkBoxEverySecond;
-    @outlet CPCheckBox              checkBoxEveryYear;
-    @outlet CPPopUpButton           buttonNewJobAction;
     @outlet CPSearchField           filterFieldJobs;
-    @outlet CPTableView             tableJobs;
-    @outlet CPTabView               tabViewJobSchedule;
-    @outlet CPTextField             fieldNewJobComment;
-    @outlet CPView                  viewNewJobOneShot;
-    @outlet CPView                  viewNewJobRecurent;
+    @outlet CPTableView             tableJobs           @accessors(readonly);
     @outlet CPView                  viewTableContainer;
-    @outlet CPWindow                windowNewJob;
-    @outlet TNCalendarView          calendarViewNewJob;
-    @outlet TNTextFieldStepper      stepperHour;
-    @outlet TNTextFieldStepper      stepperMinute;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobDay;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobHour;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobMinute;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobMonth;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
-    @outlet TNTextFieldStepper      stepperSecond;
+    @outlet TNSchedulerController   schedulerController;
 
     CPButton                        _buttonSchedule;
     CPButton                        _buttonUnschedule;
     CPDate                          _scheduledDate;
-
     TNTableViewDataSource           _datasourceJobs;
 }
 
@@ -90,8 +64,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
 - (void)awakeFromCib
 {
-    [windowNewJob setDefaultButton:buttonNewJobOK];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];
@@ -100,15 +72,14 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [tableJobs setDataSource:_datasourceJobs];
 
     _buttonSchedule    = [CPButtonBar plusButton];
-    _buttonUnschedule  = [CPButtonBar plusButton];
-
     [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CPSizeMake(16, 16)]];
     [_buttonSchedule setTarget:self];
     [_buttonSchedule setAction:@selector(openNewJobWindow:)];
     [_buttonSchedule setToolTip:CPBundleLocalizedString(@"Add a new scheduled action", @"Add a new scheduled action")];
 
+    _buttonUnschedule  = [CPButtonBar plusButton];
     [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
-    [_buttonUnschedule setTarget:self];
+    [_buttonUnschedule setTarget:schedulerController];
     [_buttonUnschedule setAction:@selector(unschedule:)];
     [_buttonUnschedule setToolTip:CPBundleLocalizedString(@"Remove selected scheduled action", @"Remove selected scheduled action")];
 
@@ -117,31 +88,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [filterFieldJobs setTarget:_datasourceJobs];
     [filterFieldJobs setAction:@selector(filterObjects:)];
 
-    [stepperHour setMaxValue:23];
-
-    [calendarViewNewJob setBorderedWithHexColor:@"#C0C7D2"];
-    [calendarViewNewJob setDelegate:self];
-
-    //tabview
-    var itemOneShot = [[CPTabViewItem alloc] initWithIdentifier:@"itemOneShot"];
-    [itemOneShot setLabel:CPBundleLocalizedString(@"Unique", @"Unique")];
-    [itemOneShot setView:viewNewJobOneShot];
-    [tabViewJobSchedule addTabViewItem:itemOneShot];
-
-    var itemRecurrent = [[CPTabViewItem alloc] initWithIdentifier:@"itemRecurrent"];
-    [itemRecurrent setLabel:CPBundleLocalizedString(@"Recurent", @"Recurent")];
-    [itemRecurrent setView:viewNewJobRecurent];
-    [tabViewJobSchedule addTabViewItem:itemRecurrent];
-
-    var date = [CPDate date];
-    [stepperNewRecurrentJobYear setMaxValue:[[date format:@"Y"] intValue] + 100];
-    [stepperNewRecurrentJobYear setMinValue:[date format:@"Y"]];
-    [stepperNewRecurrentJobMonth setMaxValue:12];
-    [stepperNewRecurrentJobMonth setMinValue:1];
-    [stepperNewRecurrentJobDay setMaxValue:31];
-    [stepperNewRecurrentJobDay setMinValue:1];
-    [stepperNewRecurrentJobHour setMaxValue:23];
-    [stepperNewRecurrentJobHour setMinValue:0];
+    [schedulerController setDelegate:self];
 }
 
 
@@ -160,15 +107,16 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationScheduler];
 
     [self getJobs];
-    [self getActions];
+    [schedulerController getActions];
 }
 
 /*! called when module becomes unvisible
 */
 - (void)willHide
 {
+    [schedulerController closeWindow:nil];
+
     [super willHide];
-    [windowNewJob close];
 }
 
 
@@ -176,8 +124,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Schedule new action", @"Schedule new action") action:@selector(openNewJobWindowq:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unschedule selected action", @"Unschedule selected action") action:@selector(unschedule:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Schedule new action", @"Schedule new action") action:@selector(openNewJobWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unschedule selected action", @"Unschedule selected action") action:@selector(unschedule:) keyEquivalent:@""] setTarget:schedulerController];
 }
 
 /*! called when permissions changes
@@ -188,7 +136,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [self setControl:_buttonUnschedule enabledAccordingToPermission:@"scheduler_unschedule"];
 
     if (![self currentEntityHasPermission:@"scheduler_schedule"])
-        [windowNewJob close];
+        [schedulerController closeWindow:nil];
 }
 
 
@@ -208,7 +156,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
     [self getJobs];
-
     return YES;
 }
 
@@ -221,106 +168,12 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 - (IBAction)openNewJobWindow:(id)aSender
 {
-    var date = [CPDate date];
-
-    [fieldNewJobComment setStringValue:@""];
-    [stepperHour setDoubleValue:[date format:@"H"]]
-    [stepperMinute setDoubleValue:[date format:@"i"]]
-    [stepperSecond setDoubleValue:0.0];
-    [calendarViewNewJob makeSelectionWithDate:date end:date];
-
-    [stepperNewRecurrentJobYear setDoubleValue:[date format:@"Y"]];
-    [stepperNewRecurrentJobMonth setDoubleValue:[date format:@"m"]];
-    [stepperNewRecurrentJobDay setDoubleValue:[date format:@"d"]];
-    [stepperNewRecurrentJobHour setDoubleValue:[date format:@"H"]];
-    [stepperNewRecurrentJobMinute setDoubleValue:[date format:@"i"]];
-    [stepperNewRecurrentJobSecond setDoubleValue:0.0];
-
-    [windowNewJob center];
-    [windowNewJob makeKeyAndOrderFront:nil];
-
-    [buttonNewJobAction selectItemAtIndex:0];
+    [schedulerController openWindow:aSender];
 }
 
-/*! schedule a new job
-*/
-- (IBAction)schedule:(id)sender
-{
-    [windowNewJob close];
-    [self schedule];
-}
-
-/*! unschedule the selected jobs
-*/
-- (IBAction)unschedule:(id)sender
-{
-    [self unschedule];
-}
-
-/*! handle every checkbox event
-*/
-- (IBAction)checkboxClicked:(id)aSender
-{
-    switch ([aSender tag])
-    {
-        case "1":
-            [stepperNewRecurrentJobYear setEnabled:![aSender state]];
-            break;
-        case "2":
-            [stepperNewRecurrentJobMonth setEnabled:![aSender state]];
-            break;
-        case "3":
-            [stepperNewRecurrentJobDay setEnabled:![aSender state]];
-            break;
-        case "4":
-            [stepperNewRecurrentJobHour setEnabled:![aSender state]];
-            break;
-        case "5":
-            [stepperNewRecurrentJobMinute setEnabled:![aSender state]];
-            break;
-        case "6":
-            [stepperNewRecurrentJobSecond setEnabled:![aSender state]];
-            break;
-    }
-}
 
 #pragma mark -
 #pragma mark XMPP Controls
-
-/*! ask for supported actions
-*/
-- (void)getActions
-{
-    var stanza = [TNStropheStanza iqWithType:@"get"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeEntityScheduleActions}];
-
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveActions:) ofObject:self];
-}
-
-/*! compute the answer containing the actions
-    @param aStanza TNStropheStanza containing the answer
-*/
-- (BOOL)_didReceiveActions:(TNStropheStanza)aStanza
-{
-    [buttonNewJobAction removeAllItems];
-
-    if ([aStanza type] == @"result")
-    {
-        var actions = [aStanza childrenWithName:@"action"];
-
-        for (var i = 0; i < [actions count]; i++)
-            [buttonNewJobAction addItemWithTitle:[[actions objectAtIndex:i] text]];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
 
 /*! ask for existing jobs
 */
@@ -369,154 +222,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     }
 
     return NO;
-}
-
-
-/*! schedule a new job
-*/
-- (void)schedule
-{
-    if (!_scheduledDate)
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Scheduler", @"Scheduler")
-                                                         message:CPBundleLocalizedString(@"You must select a date", @"You must select a date")
-                                                            icon:TNGrowlIconError];
-        return;
-    }
-
-    var stanza = [TNStropheStanza iqWithType:@"get"];
-
-    var year,
-        month,
-        day,
-        hour,
-        minute,
-        second;
-
-    if ([[tabViewJobSchedule selectedTabViewItem] identifier] == @"itemOneShot")
-    {
-        year    = [_scheduledDate format:@"Y"];
-        month   = [_scheduledDate format:@"m"];
-        day     = [_scheduledDate format:@"d"];
-        hour    = [stepperHour doubleValue];
-        minute  = [stepperMinute doubleValue];
-        second  = [stepperSecond doubleValue];
-    }
-    else if ([[tabViewJobSchedule selectedTabViewItem] identifier] == @"itemRecurrent")
-    {
-        year    = (![checkBoxEveryYear state]) ? [stepperNewRecurrentJobYear doubleValue] : "*";
-        month   = (![checkBoxEveryMonth state]) ? [stepperNewRecurrentJobMonth doubleValue] : "*";
-        day     = (![checkBoxEveryDay state]) ? [stepperNewRecurrentJobDay doubleValue] : "*";
-        hour    = (![checkBoxEveryHour state]) ? [stepperNewRecurrentJobHour doubleValue] : "*";
-        minute  = (![checkBoxEveryMinute state]) ? [stepperNewRecurrentJobMinute doubleValue] : "*";
-        second  = (![checkBoxEverySecond state]) ? [stepperNewRecurrentJobSecond doubleValue] : "*";
-    }
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeEntityScheduleSchedule,
-        "comment": [fieldNewJobComment stringValue],
-        "job": [buttonNewJobAction title],
-        "year": year,
-        "month": month,
-        "day": day,
-        "hour": hour,
-        "minute": minute,
-        "second": second}];
-
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didScheduleJob:) ofObject:self];
-}
-
-/*! compute the scheduling results
-    @param aStanza TNStropheStanza containing the answer
-*/
-- (BOOL)_didScheduleJob:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Scheduler", @"Scheduler")
-                                                         message:CPBundleLocalizedString(@"Action has been scheduled", @"Action has been scheduled")];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
-
-/*! schedule a new job, but before ask user confirmation
-*/
-- (void)unschedule
-{
-    if (([tableJobs numberOfRows] == 0) || ([tableJobs numberOfSelectedRows] <= 0))
-    {
-         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
-                         message:CPBundleLocalizedString(@"You must select a job", @"You must select a job")];
-         return;
-    }
-
-    var title = CPBundleLocalizedString(@"Unschedule Jobs", @"Unschedule Jobs"),
-        msg   = CPBundleLocalizedString(@"Are you sure you want to unschedule these jobs ?", @"Are you sure you want to unschedule these jobs ?");
-
-    if ([[tableJobs selectedRowIndexes] count] < 2)
-    {
-        title = CPBundleLocalizedString(@"Unschedule job", @"Unschedule job");
-        msg   = CPBundleLocalizedString(@"Are you sure you want to unschedule this job ?", @"Are you sure you want to unschedule this job ?");
-    }
-
-    var alert = [TNAlert alertWithMessage:title
-                                informative:msg
-                                 target:self
-                                 actions:[[CPBundleLocalizedString(@"Unschedule", @"Unschedule"), @selector(performUnschedule:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
-
-    [alert setUserInfo:[tableJobs selectedRowIndexes]];
-
-    [alert runModal];
-}
-
-/*! schedule a new job
-*/
-- (void)performUnschedule:(id)userInfo
-{
-    var indexes = userInfo,
-        objects = [_datasourceJobs objectsAtIndexes:indexes];
-
-    [tableJobs deselectAll];
-
-    for (var i = 0; i < [objects count]; i++)
-    {
-        var job             = [objects objectAtIndex:i],
-            stanza          = [TNStropheStanza iqWithType:@"set"];
-
-        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
-        [stanza addChildWithName:@"archipel" andAttributes:{
-            "action": TNArchipelTypeEntityScheduleUnschedule,
-            "uid": [job objectForKey:@"uid"]}];
-
-        [_entity sendStanza:stanza andRegisterSelector:@selector(_didUnscheduleJobs:) ofObject:self];
-    }
-}
-
-/*! compute the scheduling results
-    @param aStanza TNStropheStanza containing the answer
-*/
-- (BOOL)_didUnscheduleJobs:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] != @"result")
-        [self handleIqErrorFromStanza:aStanza];
-
-    return NO;
-}
-
-
-#pragma mark -
-#pragma mark Delegates
-
-- (void)calendarView:(LPCalendarView)aCalendarView didMakeSelection:(CPDate)aStartDate end:(CPDate)anEndDate
-{
-    _scheduledDate = aStartDate;
 }
 
 

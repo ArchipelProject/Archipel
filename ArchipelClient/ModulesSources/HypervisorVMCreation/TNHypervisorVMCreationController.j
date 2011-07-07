@@ -30,14 +30,13 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNUIKitScrollView.j>
 
+@import "TNVirtualMachineAllocationController.j";
+@import "TNVirtualMachineCloneController.j";
+@import "TNVirtualMachineSubscriptionController.j";
+
+
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
-    TNArchipelTypeHypervisorControlAlloc        = @"alloc",
-    TNArchipelTypeHypervisorControlFree         = @"free",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
-    TNArchipelTypeHypervisorControlClone        = @"clone",
-    TNArchipelTypeSubscription                  = @"archipel:subscription",
-    TNArchipelTypeSubscriptionAdd               = @"add",
-    TNArchipelTypeSubscriptionRemove            = @"remove",
     TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 /*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
@@ -49,31 +48,21 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 @implementation TNHypervisorVMCreationController : TNModule
 {
-    @outlet CPButton            buttonAddSubscription;
-    @outlet CPButton            buttonAlloc;
-    @outlet CPButton            buttonClone;
-    @outlet CPButton            buttonRemoveSubscription;
-    @outlet CPButtonBar         buttonBarControl;
-    @outlet CPPopUpButton       popupDeleteMachine;
-    @outlet CPSearchField       fieldFilterVM;
-    @outlet CPTableView         tableVirtualMachines;
-    @outlet CPTextField         fieldCloneVirtualMachineName;
-    @outlet CPTextField         fieldNewSubscriptionTarget;
-    @outlet CPTextField         fieldNewVMRequestedName;
-    @outlet CPTextField         fieldRemoveSubscriptionTarget;
-    @outlet CPView              viewTableContainer;
-    @outlet CPWindow            windowCloneVirtualMachine;
-    @outlet CPWindow            windowNewSubscription;
-    @outlet CPWindow            windowNewVirtualMachine;
-    @outlet CPWindow            windowRemoveSubscription;
+    @outlet CPButtonBar                             buttonBarControl;
+    @outlet CPPopUpButton                           popupDeleteMachine;
+    @outlet CPSearchField                           fieldFilterVM;
+    @outlet CPTableView                             tableVirtualMachines            @accessors(readonly);
+    @outlet CPView                                  viewTableContainer;
+    @outlet TNVirtualMachineAllocationController    VMAllocationController;
+    @outlet TNVirtualMachineCloneController         VMCloneController;
+    @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
 
-    CPButton                    _cloneButton;
-    CPButton                    _minusButton;
-    CPButton                    _plusButton;
-    CPButton                    _addSubscriptionButton;
-    CPButton                    _removeSubscriptionButton;
-
-    TNTableViewDataSource       _virtualMachinesDatasource;
+    CPButton                                        _cloneButton;
+    CPButton                                        _minusButton;
+    CPButton                                        _plusButton;
+    CPButton                                        _addSubscriptionButton;
+    CPButton                                        _removeSubscriptionButton;
+    TNTableViewDataSource                           _virtualMachinesDatasource;
 }
 
 
@@ -84,11 +73,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)awakeFromCib
 {
-    [windowNewVirtualMachine setDefaultButton:buttonAlloc];
-    [windowCloneVirtualMachine setDefaultButton:buttonClone];
-    [windowNewSubscription setDefaultButton:buttonAddSubscription];
-    [windowRemoveSubscription setDefaultButton:buttonRemoveSubscription];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // VM table view
@@ -105,13 +89,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 
     var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(addVirtualMachine:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(openNewVirtualMachineWindow:) keyEquivalent:@""];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteVirtualMachine:) keyEquivalent:@""];
     [tableVirtualMachines setMenu:menu];
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
-    [_plusButton setAction:@selector(addVirtualMachine:)];
+    [_plusButton setAction:@selector(openNewVirtualMachineWindow:)];
     [_plusButton setToolTip:CPBundleLocalizedString(@"Ask hypervisor to create a new virtual machine", @"Ask hypervisor to create a new virtual machine")];
 
     _minusButton = [CPButtonBar minusButton];
@@ -143,6 +127,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton]];
 
+    [VMAllocationController setDelegate:self];
+    [VMSubscriptionController setDelegate:self];
+    [VMCloneController setDelegate:self];
 }
 
 
@@ -168,6 +155,17 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self populateVirtualMachinesTable];
 }
 
+/*! called when the module hides
+*/
+- (void)willHide
+{
+    [VMCloneController closeWindow:nil];
+    [VMSubscriptionController closeWindow:nil];
+    [VMAllocationController closeWindow:nil];
+
+    [super willHide];
+}
+
 /*! called when module is unloaded
 */
 - (void)willUnload
@@ -182,10 +180,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(addVirtualMachine:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(openNewVirtualMachineWindow:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete virtual machine", @"Delete virtual machine") action:@selector(deleteVirtualMachine:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clone this virtual machine", @"Clone this virtual machine") action:@selector(cloneVirtualMachine:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clone this virtual machine", @"Clone this virtual machine") action:@selector(openCloneVirtualMachineWindow:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -199,13 +197,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove"];
 
     if (![self currentEntityHasPermission:@"alloc"])
-        [windowNewVirtualMachine close];
+        [VMAllocationController closeWindow:nil];
 
     if (![self currentEntityHasPermission:@"subscription_add"])
-        [windowNewSubscription close];
+        [VMSubscriptionController closeAddSubscriptionWindow:nil];
 
     if (![self currentEntityHasPermission:@"subscription_remove"])
-        [windowRemoveSubscription close];
+        [VMSubscriptionController closeRemoveSubscriptionWindow:nil];
 
     [self tableViewSelectionDidChange:nil];
 
@@ -321,30 +319,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     }
 }
 
-/*! open the new virtual machine window
-    @param sender the sender of the action
-*/
-- (IBAction)addVirtualMachine:(id)aSender
-{
-    [fieldNewVMRequestedName setStringValue:@""];
-    [windowNewVirtualMachine center];
-    [windowNewVirtualMachine makeKeyAndOrderFront:nil];
-}
-
-/*! alloc a new virtual machine
-    @param sender the sender of the action
-*/
-- (IBAction)alloc:(id)aSender
-{
-    [self alloc];
-}
-
 /*! delete selected virtual machines
     @param sender the sender of the action
 */
 - (IBAction)deleteVirtualMachine:(id)aSender
 {
-    [self deleteVirtualMachine];
+    [VMAllocationController deleteVirtualMachine];
 }
 
 /*! Opens the clone virtual machine window
@@ -361,18 +341,15 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
          return;
     }
 
-    [fieldCloneVirtualMachineName setStringValue:@""];
-    [windowCloneVirtualMachine center];
-    [windowCloneVirtualMachine makeKeyAndOrderFront:aSender];
+    [VMCloneController openWindow:aSender];
 }
 
-/*! clone a virtual machine
+/*! open the add subscription window
     @param sender the sender of the action
 */
-- (IBAction)cloneVirtualMachine:(id)aSender
+- (IBAction)openNewVirtualMachineWindow:(id)aSender
 {
-    [windowCloneVirtualMachine close];
-    [self cloneVirtualMachine];
+    [VMAllocationController openWindow:aSender];
 }
 
 /*! open the add subscription window
@@ -380,17 +357,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openAddSubscriptionWindow:(id)aSender
 {
-    [fieldNewSubscriptionTarget setStringValue:@""];
-    [windowNewSubscription center];
-    [windowNewSubscription makeKeyAndOrderFront:aSender];
-}
-
-/*! add subscription to selected virtual machine
-    @param sender the sender of the action
-*/
-- (IBAction)addSubscription:(id)aSender
-{
-    [self addSubscription];
+    [VMSubscriptionController openAddSubsctiptionWindow:aSender];
 }
 
 /*! open the add subscription window
@@ -398,18 +365,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openRemoveSubscriptionWindow:(id)aSender
 {
-    [fieldRemoveSubscriptionTarget setStringValue:@""];
-    [windowRemoveSubscription center];
-    [windowRemoveSubscription makeKeyAndOrderFront:aSender];
+    [VMSubscriptionController openRemoveSubscriptionWindow:aSender];
 }
 
-/*! remove subscription from selected virtual machine
-    @param sender the sender of the action
-*/
-- (IBAction)removeSubscription:(id)aSender
-{
-    [self removeSubscription];
-}
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -485,286 +443,11 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     return NO;
 }
 
-/*! alloc a new virtual machine
-*/
-- (void)alloc
-{
-    var stanza  = [TNStropheStanza iqWithType:@"set"];
-
-    [windowNewVirtualMachine orderOut:nil];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorControlAlloc,
-        "name": [fieldNewVMRequestedName stringValue]}];
-
-    [self sendStanza:stanza andRegisterSelector:@selector(_didAllocVirtualMachine:)];
-
-}
-
-/*! compute the answer of the hypervisor about its allocing a VM
-    @param aStanza TNStropheStanza containing hypervisor answer
-*/
-- (BOOL)_didAllocVirtualMachine:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
-        CPLog.info(@"sucessfully create a virtual machine");
-
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
-                                                         message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + vmJID + CPBundleLocalizedString(@" has been created", @" has been created")];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
-/*! delete a virtual machine. but ask user if he is sure before
-*/
-- (void)deleteVirtualMachine
-{
-    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] <= 0))
-    {
-         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
-                           informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
-         return;
-    }
-
-    var msg     = CPBundleLocalizedString(@"Destroying some Virtual Machines", @"Destroying some Virtual Machines"),
-        title   = CPBundleLocalizedString(@"Are you sure you want to completely remove theses virtual machines ?", @"Are you sure you want to completely remove theses virtual machines ?");
-
-    if ([[tableVirtualMachines selectedRowIndexes] count] < 2)
-    {
-        msg     = CPBundleLocalizedString(@"Are you sure you want to completely remove this virtual machine ?", @"Are you sure you want to completely remove this virtual machine ?");
-        title   = CPBundleLocalizedString(@"Destroying a Virtual Machine", @"Destroying a Virtual Machine");
-    }
-
-    var alert = [TNAlert alertWithMessage:title
-                                informative:msg
-                                 target:self
-                                 actions:[[CPBundleLocalizedString(@"Delete", @"Delete"), @selector(performDeleteVirtualMachine:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
-
-    [alert setUserInfo:[tableVirtualMachines selectedRowIndexes]];
-
-    [alert runModal];
-}
-
-/*! delete a virtual machine
-*/
-- (void)performDeleteVirtualMachine:(id)someUserInfo
-{
-    var indexes = someUserInfo,
-        objects = [_virtualMachinesDatasource objectsAtIndexes:indexes];
-
-    [tableVirtualMachines deselectAll];
-
-    for (var i = 0; i < [objects count]; i++)
-    {
-        var vm              = [objects objectAtIndex:i],
-            stanza          = [TNStropheStanza iqWithType:@"set"];
-
-        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-        [stanza addChildWithName:@"archipel" andAttributes:{
-            "xmlns": TNArchipelTypeHypervisorControl,
-            "action": TNArchipelTypeHypervisorControlFree,
-            "jid": [vm JID]}];
-
-        if ([[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
-            [[[TNStropheIMClient defaultClient] roster] removeContact:vm];
-
-        [_entity sendStanza:stanza andRegisterSelector:@selector(_didDeleteVirtualMachine:) ofObject:self];
-    }
-}
-
-/*! compute the answer of the hypervisor about its deleting a VM
-    @param aStanza TNStropheStanza containing hypervisor answer
-*/
-- (BOOL)_didDeleteVirtualMachine:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info(@"sucessfully deallocating a virtual machine");
-
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
-                                                         message:CPBundleLocalizedString(@"Virtual machine has been removed", @"Virtual machine has been removed")];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
 /*! remove a virtual machine from the roster
 */
 - (void)performRemoveFromRoster:(id)someUserInfo
 {
     [[[TNStropheIMClient defaultClient] roster] removeContact:someUserInfo];
-}
-
-/*! clone a virtual machine.
-*/
-- (void)cloneVirtualMachine
-{
-    var index   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
-        vm      = [_virtualMachinesDatasource objectAtIndex:index],
-        stanza  = [TNStropheStanza iqWithType:@"set"];
-
-    [tableVirtualMachines deselectAll];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-
-    if ([fieldCloneVirtualMachineName stringValue] && [fieldCloneVirtualMachineName stringValue] != @"")
-    {
-        [stanza addChildWithName:@"archipel" andAttributes:{
-            "action": TNArchipelTypeHypervisorControlClone,
-            "jid": [[vm JID] bare],
-            "name": [fieldCloneVirtualMachineName stringValue]}];
-    }
-    else
-    {
-        [stanza addChildWithName:@"archipel" andAttributes:{
-            "action": TNArchipelTypeHypervisorControlClone,
-            "jid": [[vm JID] bare]}];
-    }
-
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didCloneVirtualMachine:) ofObject:self];
-}
-
-/*! compute the answer of the hypervisor about its cloning a VM
-    @param aStanza TNStropheStanza containing hypervisor answer
-*/
-- (BOOL)_didCloneVirtualMachine:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info(@"sucessfully cloning a virtual machine");
-
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
-                                                         message:CPBundleLocalizedString(@"Virtual machine has been cloned", @"Virtual machine has been cloned")];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
-/*! add a new subscription to selected virtual machine
-*/
-- (void)addSubscription
-{
-    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] <= 0))
-    {
-         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
-                           informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
-         return;
-    }
-
-    var selectedIndex   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
-        vm              = [_virtualMachinesDatasource objectAtIndex:selectedIndex],
-        stanza          = [TNStropheStanza iqWithType:@"set"];
-
-    [windowNewSubscription close];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeSubscription}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeSubscriptionAdd,
-        "jid": [fieldNewSubscriptionTarget stringValue]}];
-
-    [vm sendStanza:stanza andRegisterSelector:@selector(_didAddSubscription:) ofObject:self];
-
-}
-
-/*! compute the answer of the hypervisor about adding subscription
-    @param aStanza TNStropheStanza containing hypervisor answer
-*/
-- (BOOL)_didAddSubscription:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Subscription request", @"Subscription request")
-                                                         message:CPBundleLocalizedString(@"Added new subscription to virtual machine", @"Added new subscription to virtual machine")];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
-
-/*! ask vm to remove a subscription. but ask user if he is sure before
-*/
-- (void)removeSubscription
-{
-    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] != 1))
-    {
-         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
-                           informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
-         return;
-    }
-
-    var selectedIndex   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
-        vm              = [_virtualMachinesDatasource objectAtIndex:selectedIndex];
-
-    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Removing subscription", @"Removing subscription")
-                              informative:CPBundleLocalizedString(@"Are you sure you want to remove the subscription for this user ?", @"Are you sure you want to remove the subscription for this user ?")
-                                   target:self
-                                  actions:[[CPBundleLocalizedString(@"Remove", @"Remove"), @selector(performRemoveSubscription:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
-
-    [alert setUserInfo:vm];
-
-    [alert runModal];
-}
-
-/*! ask vm to remove a subscription
-*/
-- (void)performRemoveSubscription:(TNStropheContact)aVirtualMachine
-{
-    if (([tableVirtualMachines numberOfRows] == 0) || ([tableVirtualMachines numberOfSelectedRows] <= 0))
-    {
-         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
-                           informative:CPBundleLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
-         return;
-    }
-
-    var stanza = [TNStropheStanza iqWithType:@"set"];
-
-    [windowRemoveSubscription close];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeSubscription}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeSubscriptionRemove,
-        "jid": [fieldRemoveSubscriptionTarget stringValue]}];
-
-    [aVirtualMachine sendStanza:stanza andRegisterSelector:@selector(_didRemoveSubscription:) ofObject:self];
-
-}
-
-/*! compute the answer of the hypervisor about removing subscription
-    @param aStanza TNStropheStanza containing hypervisor answer
-*/
-- (BOOL)_didRemoveSubscription:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Subscription request", @"Subscription request")
-                                                         message:CPBundleLocalizedString(@"Subscription have been removed", @"Subscription have been removed")];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
 }
 
 @end

@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "Connected as ..."; ObjectID = "840"; */
 "840.title" = "Verbunden als ...";
 
-/* Class = "NSWindow"; title = "New group"; ObjectID = "856"; */
-"856.title" = "Neue Gruppe";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "862"; */
 "862.title" = "Box";
 
@@ -25,9 +22,6 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "My Group"; ObjectID = "874"; */
 "874.placeholderString" = "Meine Gruppe";
-
-/* Class = "NSWindow"; title = "Add contact"; ObjectID = "880"; */
-"880.title" = "Kontakt hinzufügen";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "888"; */
 "888.title" = "Box";
@@ -61,9 +55,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Archipel Client"; ObjectID = "911"; */
 "911.title" = "Archipel Client";
-
-/* Class = "NSWindow"; title = "Avatar chooser"; ObjectID = "919"; */
-"919.title" = "Avatar wähler";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "927"; */
 "927.title" = "Box";

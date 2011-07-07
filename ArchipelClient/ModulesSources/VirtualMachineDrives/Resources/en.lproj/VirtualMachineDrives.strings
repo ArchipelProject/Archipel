@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "You can create a new virtual hard drive or edit, delete, convert any existing one."; ObjectID = "5"; */
 "5.title" = "You can create a new virtual hard drive or edit, delete, convert any existing one.";
 
-/* Class = "NSWindow"; title = "Disk properties"; ObjectID = "11"; */
-"11.title" = "Disk properties";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "18"; */
 "18.title" = "Box";
 
@@ -46,9 +43,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Format:"; ObjectID = "38"; */
 "38.title" = "Format:";
-
-/* Class = "NSWindow"; title = "Create a new disk"; ObjectID = "39"; */
-"39.title" = "Create a new disk";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "46"; */
 "46.title" = "Box";

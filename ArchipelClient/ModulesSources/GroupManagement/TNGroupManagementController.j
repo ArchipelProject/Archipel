@@ -173,6 +173,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (void)willHide
 {
+    [groupedMigrationController closeWindow:nil];
     [super willHide];
 }
 
@@ -288,7 +289,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (IBAction)migrate:(id)aSender
 {
-    [groupedMigrationController showMainWindow:aSender];
+    [groupedMigrationController openWindow:aSender];
 }
 
 

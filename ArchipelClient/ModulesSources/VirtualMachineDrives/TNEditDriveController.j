@@ -39,7 +39,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     @outlet CPButton                buttonOK;
     @outlet CPPopUpButton           buttonEditDiskFormat;
     @outlet CPTextField             fieldEditDiskName;
-    @outlet CPWindow                mainWindow;
+    @outlet CPView                  mainContentView;
 
     id                              _delegate           @accessors(property=delegate);
     CPDictionary                    _currentEditedDisk  @accessors(property=currentEditedDisk);
@@ -53,13 +53,15 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
-    [mainWindow setDefaultButton:buttonOK];
-
     [buttonEditDiskFormat removeAllItems];
     [buttonEditDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
 
     [fieldEditDiskName setToolTip:CPBundleLocalizedString(@"Set the name of the virtual drive", @"Set the name of the virtual drive")];
     [buttonEditDiskFormat setToolTip:CPBundleLocalizedString(@"Choose the format of the virtual drive", @"Choose the format of the virtual drive")];
+
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_mainWindow setContentView:mainContentView];
+    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -68,7 +70,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
 /*! open the controller window
 */
-- (void)openMainWindow
+- (IBAction)openMainWindow:(id)aSender
 {
     if (!_currentEditedDisk)
     {
@@ -91,16 +93,25 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonEditDiskFormat selectItemWithTitle:[_currentEditedDisk format]];
     [fieldEditDiskName setStringValue:[_currentEditedDisk name]];
 
-    [mainWindow makeFirstResponder:fieldEditDiskName];
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:nil];
+    [_mainWindow makeFirstResponder:fieldEditDiskName];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height
+        rect.origin.x += rect.size.width / 2;
+        var point = [[aSender superview] convertPoint:rect.origin toView:nil];
+        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+    }
+    else
+        [_mainWindow positionRelativeToView:aSender];
 }
 
 /*! close the controller window
 */
-- (void)closeMainWindow
+- (IBAction)closeMainWindow:(id)aSender
 {
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 

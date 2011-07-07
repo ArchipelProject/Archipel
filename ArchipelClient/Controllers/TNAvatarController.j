@@ -24,7 +24,8 @@
 @import <AppKit/CPCollectionView.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPView.j>
-@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAttachedWindow.j>
 
 @import "../Views/TNAvatarImage.j"
 @import "../Views/TNAvatarView.j"
@@ -46,12 +47,12 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     @outlet CPButton            buttonChange;
     @outlet CPCollectionView    collectionViewAvatars;
     @outlet CPImageView         imageSpinner;
-    @outlet CPWindow            mainWindow              @accessors(readonly);
+    @outlet CPView              mainContentView;
 
     TNStropheContact            _entity                 @accessors(property=entity);
 
     BOOL                        isReady;
-
+    TNAttachedWindow            _mainWindow;
 }
 
 
@@ -79,7 +80,9 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 
-    [mainWindow setDefaultButton:buttonChange];
+    [_mainWindow setDefaultButton:buttonChange];
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_mainWindow setContentView:mainContentView];
 }
 
 
@@ -162,7 +165,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     if ([aStanza type] == @"result")
     {
         CPLog.info("Avatar changed for entity " + [_entity JID]);
-        [mainWindow close];
+        [_mainWindow close];
     }
 }
 
@@ -180,9 +183,15 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     if ([[TNPermissionsCenter defaultCenter] hasPermission:@"getavatars" forEntity:_entity])
     {
         [self getAvailableAvatars];
-        [mainWindow center];
-        [mainWindow makeKeyAndOrderFront:aSender];
+        [_mainWindow positionRelativeToView:aSender];
     }
+}
+
+/*! Close the window
+*/
+- (IBAction)closeWindow:(id)aSender
+{
+    [_mainWindow close];
 }
 
 

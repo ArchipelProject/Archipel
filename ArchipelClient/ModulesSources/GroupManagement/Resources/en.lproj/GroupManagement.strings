@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "You can send grouped commands to the followed virtual machines in the group."; ObjectID = "6"; */
 "6.title" = "You can send grouped commands to the followed virtual machines in the group.";
 
-/* Class = "NSWindow"; title = "Choose an hypervisor"; ObjectID = "18"; */
-"18.title" = "Choose an hypervisor";
-
 /* Class = "NSTextFieldCell"; title = "Grouped migration"; ObjectID = "21"; */
 "21.title" = "Grouped migration";
 

@@ -61,6 +61,9 @@
 /* Away */
 "Away" = "Parti(e)";
 
+/* B */
+"B" = "B";
+
 /* Busy */
 "Busy" = "Occupé";
 
@@ -170,6 +173,9 @@
 /* Filter contacts by name or tags */
 "Filter contacts by name or tags" = "Filtrer par nom ou par étiquette";
 
+/* GB */
+"GB" = "GB";
+
 /* Go to website */
 "Go to website" = "Visiter le site web";
 
@@ -203,6 +209,9 @@
 /* JID is not valid */
 "JID is not valid" = "le JID n'est pas valide";
 
+/* KB */
+"KB" = "KB";
+
 /* Loaded  */
 "Loaded " = "Chargé ";
 
@@ -217,6 +226,9 @@
 
 /* Make a donation */
 "Make a donation" = "Faire un don";
+
+/* MB */
+"MB" = "MB";
 
 /* Modules */
 "Modules" = "Modules";

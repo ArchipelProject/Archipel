@@ -29,6 +29,7 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 
@@ -52,7 +53,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @outlet CPTextField         fieldNewUserUsername;
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
-    @outlet CPWindow            windowNewUser;
+    @outlet CPView              viewNewUser;
     @outlet CPTableView         tableUsers;
 
     CPArray                     _users                          @accessors(getter=users);
@@ -65,6 +66,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     CPImage                     _iconEntityTypeHuman;
     CPImage                     _iconEntityTypeHypervisor;
     CPImage                     _iconEntityTypeVM;
+    TNAttachedWindow            _windowNewUser;
 }
 
 #pragma mark -
@@ -72,7 +74,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 - (void)awakeFromCib
 {
-    [windowNewUser setDefaultButton:buttonCreate];
+    _windowNewUser = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewUser frameSize].width, [viewNewUser frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_windowNewUser setContentView:viewNewUser];
+    [_windowNewUser setDefaultButton:buttonCreate];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     var bundle = [CPBundle bundleForClass:[self class]];
@@ -84,30 +89,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     // table users
     _datasourceUsers = [[TNTableViewDataSource alloc] init];
-
-    // [tableUsers setUsesAlternatingRowBackgroundColors:YES];
-    // [tableUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    // [tableUsers setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    // [tableUsers setAllowsColumnReordering:YES];
-    // [tableUsers setAllowsColumnResizing:YES];
-    // [tableUsers setAllowsEmptySelection:YES];
-    // [tableUsers setAllowsMultipleSelection:YES];
-
-
-    // var colName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-    //     colJID  = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
-    //
-    // [colName setWidth:325];
-    // [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    // [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-    //
-    // [colJID setWidth:450];
-    // [[colJID headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
-    // [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
-    //
-    // [tableUsers addTableColumn:colName];
-    // [tableUsers addTableColumn:colJID];
-
     [_datasourceUsers setTable:tableUsers];
     [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
     [tableUsers setDataSource:_datasourceUsers];
@@ -145,7 +126,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
-        [windowNewUser close];
+        [_windowNewUser close];
 
     [self reload];
 }
@@ -170,8 +151,15 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [fieldNewUserPassword setStringValue:@""];
     [fieldNewUserPasswordConfirm setStringValue:@""];
 
-    [windowNewUser center];
-    [windowNewUser makeKeyAndOrderFront:aSender];
+    [_windowNewUser positionRelativeToView:aSender];
+}
+
+/*! close the new user window
+    @param aSender the sender of the action
+*/
+- (IBAction)closeRegisterUserWindow:(id)aSender
+{
+    [_windowNewUser close];
 }
 
 /*! create a new user
@@ -193,7 +181,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         return;
     }
 
-    [windowNewUser close];
+    [_windowNewUser close];
     [self registerUserWithName:[fieldNewUserUsername stringValue] password:[fieldNewUserPassword stringValue]];
 }
 

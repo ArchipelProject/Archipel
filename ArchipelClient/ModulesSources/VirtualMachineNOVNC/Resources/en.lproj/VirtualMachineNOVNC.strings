@@ -32,9 +32,6 @@
 /* Class = "NSButtonCell"; title = "Remember"; ObjectID = "51"; */
 "51.title" = "Remember";
 
-/* Class = "NSWindow"; title = "Pasteboard"; ObjectID = "52"; */
-"52.title" = "Pasteboard";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "56"; */
 "56.title" = "Box";
 
@@ -76,4 +73,7 @@
 
 /* Class = "NSTextFieldCell"; title = "The virtual machine has to be started to be able to access its screen."; ObjectID = "125"; */
 "125.title" = "The virtual machine has to be started to be able to access its screen.";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "149"; */
+"149.title" = "Cancel";
 

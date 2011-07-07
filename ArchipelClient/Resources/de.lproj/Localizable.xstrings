@@ -40,6 +40,8 @@
 	<string>Verfügbar</string>
 	<key>Away</key>
 	<string>Abwesend</string>
+	<key>B</key>
+	<string>B</string>
 	<key>Busy</key>
 	<string>Beschäftigt</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
@@ -98,6 +100,8 @@
 	<string>Gruppe ausklappen</string>
 	<key>Filter contacts by name or tags</key>
 	<string>Kontakte über Name oder Tags filtern</string>
+	<key>GB</key>
+	<string>GB</string>
 	<key>Go to website</key>
 	<string>Zur Webseite gehen</string>
 	<key>Group</key>
@@ -118,6 +122,8 @@
 	<string>Hypervisor</string>
 	<key>JID is not valid</key>
 	<string>JID ist nicht gültig</string>
+	<key>KB</key>
+	<string>KB</string>
 	<key>Loaded </key>
 	<string>Geladen </string>
 	<key>Locale change</key>
@@ -126,6 +132,8 @@
 	<string>Abmelden</string>
 	<key>Logon</key>
 	<string>Login</string>
+	<key>MB</key>
+	<string>MB</string>
 	<key>Make a donation</key>
 	<string>Spenden</string>
 	<key>Modules</key>

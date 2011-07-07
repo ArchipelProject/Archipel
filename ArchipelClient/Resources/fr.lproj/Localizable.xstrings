@@ -40,6 +40,8 @@
 	<string>Disponible</string>
 	<key>Away</key>
 	<string>Parti(e)</string>
+	<key>B</key>
+	<string>B</string>
 	<key>Busy</key>
 	<string>Occupé</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
@@ -98,6 +100,8 @@
 	<string>Etendre le groupe</string>
 	<key>Filter contacts by name or tags</key>
 	<string>Filtrer par nom ou par étiquette</string>
+	<key>GB</key>
+	<string>GB</string>
 	<key>Go to website</key>
 	<string>Visiter le site web</string>
 	<key>Group</key>
@@ -118,6 +122,8 @@
 	<string>Hyperviseur</string>
 	<key>JID is not valid</key>
 	<string>le JID n'est pas valide</string>
+	<key>KB</key>
+	<string>KB</string>
 	<key>Loaded </key>
 	<string>Chargé </string>
 	<key>Locale change</key>
@@ -126,6 +132,8 @@
 	<string>Déconnexion</string>
 	<key>Logon</key>
 	<string>Connexion</string>
+	<key>MB</key>
+	<string>MB</string>
 	<key>Make a donation</key>
 	<string>Faire un don</string>
 	<key>Modules</key>

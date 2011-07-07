@@ -28,11 +28,11 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNUIKitScrollView.j>
 
 @import "TNInstalledAppliancesObject.j";
-
 
 
 var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:vmcasting",
@@ -57,13 +57,14 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPTableView                 tableAppliances;
     @outlet CPTextField                 fieldNewApplianceName;
+    @outlet CPView                      viewNewAppliance;
     @outlet CPView                      viewTableContainer;
-    @outlet CPWindow                    windowNewAppliance;
 
     CPButton                            _detachButton;
     CPButton                            _attachButton;
     CPButton                            _packageButton;
     TNTableViewDataSource               _appliancesDatasource;
+    TNAttachedWindow                    _windowNewAppliance;
 }
 
 
@@ -74,7 +75,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)awakeFromCib
 {
-    [windowNewAppliance setDefaultButton:buttonCreate];
+    _windowNewAppliance = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewAppliance frameSize].width, [viewNewAppliance frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_windowNewAppliance setContentView:viewNewAppliance];
+    [_windowNewAppliance setDefaultButton:buttonCreate];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // table appliances
@@ -163,6 +167,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)willHide
 {
+    [_windowNewAppliance close];
     [super willHide];
 }
 
@@ -185,7 +190,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [self setControl:_detachButton enabledAccordingToPermission:@"appliance_detach"];
 
     if ([self currentEntityHasPermission:@"appliance_package"])
-        [windowNewAppliance close];
+        [_windowNewAppliance close];
 
     [self tableViewSelectionDidChange:nil];
 }
@@ -271,9 +276,16 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     [fieldNewApplianceName setStringValue:[CPString UUID]];
     [checkBoxShouldGZIP setState:CPOnState];
-    [windowNewAppliance center];
-    [windowNewAppliance makeFirstResponder:fieldNewApplianceName];
-    [windowNewAppliance makeKeyAndOrderFront:nil];
+    [_windowNewAppliance makeFirstResponder:fieldNewApplianceName];
+    [_windowNewAppliance positionRelativeToView:aSender];
+}
+
+/*! close the new appliance window
+    @param sender the sender of the action
+*/
+- (IBAction)closeNewApplianceWindow:(id)aSender
+{
+    [_windowNewAppliance close];
 }
 
 /*! performed when we double click on package from table view.
@@ -512,7 +524,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didPackageAppliance:) ofObject:self];
 
-    [windowNewAppliance close];
+    [_windowNewAppliance close];
 }
 
 /*! compute the packaging results

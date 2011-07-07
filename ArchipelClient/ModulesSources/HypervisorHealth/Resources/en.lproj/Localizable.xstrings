@@ -18,14 +18,10 @@
 	<string>Display the method column in the log table</string>
 	<key>GB</key>
 	<string>GB</string>
-	<key>KB</key>
-	<string>KB</string>
 	<key>Level</key>
 	<string>Level</string>
 	<key>Logs</key>
 	<string>Logs</string>
-	<key>MB</key>
-	<string>MB</string>
 	<key>Partition name</key>
 	<string>Partition name</string>
 	<key>Set the delay between asking hypervisor statistics</key>

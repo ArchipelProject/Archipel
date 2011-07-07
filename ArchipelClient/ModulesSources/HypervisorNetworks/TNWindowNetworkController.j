@@ -57,7 +57,7 @@
     @outlet CPView              viewRangesConf;
     @outlet CPView              viewTableHostsContainer;
     @outlet CPView              viewTableRangesContainer;
-    @outlet CPWindow            mainWindow;
+    @outlet CPView              mainContentView;
     @outlet CPTableView         tableViewHosts;
     @outlet CPTableView         tableViewRanges;
 
@@ -69,6 +69,7 @@
     CPButton                    _minusButtonDHCPRanges;
     CPButton                    _plusButtonDHCPHosts;
     CPButton                    _plusButtonDHCPRanges;
+    TNAttachedWindow            _mainWindow;
     TNTableViewDataSource       _datasourceDHCPHosts;
     TNTableViewDataSource       _datasourceDHCPRanges;
 }
@@ -78,7 +79,9 @@
 
 - (void)awakeFromCib
 {
-    [mainWindow setDefaultButton:buttonOK];
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_mainWindow setContentView:mainContentView];
+    [_mainWindow setDefaultButton:buttonOK];
 
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
@@ -226,7 +229,7 @@
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
     [_delegate defineNetwork:_network];
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 /*! add a new DCHP range
@@ -285,19 +288,29 @@
 /*! show the main window
     @param aSender the sender of the action
 */
-- (IBAction)showWindow:(id)aSender
+- (IBAction)openWindow:(id)aSender
 {
     [self update];
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:aSender];
+    [_mainWindow makeFirstResponder:fieldNetworkName];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height
+        rect.origin.x += rect.size.width / 2;
+        var point = [[aSender superview] convertPoint:rect.origin toView:nil];
+        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+    }
+    else
+        [_mainWindow positionRelativeToView:aSender];
 }
 
 /*! hide the main window
     @param aSender the sender of the action
 */
-- (IBAction)hideWindow:(id)sender
+- (IBAction)closeWindow:(id)sender
 {
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 /*! called when changing the forward mode

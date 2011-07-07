@@ -26,6 +26,7 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNUIKitScrollView.j>
+@import <TNKit/TNAttachedWindow.j>
 @import <VNCCappuccino/TNVNCView.j>
 
 @import "TNExternalVNCWindow.j";
@@ -63,7 +64,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
     @outlet CPView                  viewControls;
     @outlet CPWindow                windowPassword;
-    @outlet CPWindow                windowPasteBoard;
+    @outlet CPView                  viewPasteBoard;
     @outlet LPMultiLineTextField    fieldPasteBoard;
     @outlet TNSwitch                switchPreferencesPreferSSL;
     @outlet TNUIKitScrollView       mainScrollView;
@@ -75,6 +76,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     CPString                        _VMHost;
     CPString                        _vncDirectPort;
     CPString                        _vncProxyPort;
+    TNAttachedWindow                _windowPasteBoard;
     TNVNCView                       _vncView;
 }
 
@@ -87,7 +89,10 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (void)awakeFromCib
 {
     [windowPassword setDefaultButton:buttonPasswordSend];
-    [windowPasteBoard setDefaultButton:buttonPasteBoardSend];
+
+    _windowPasteBoard = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewPasteBoard frameSize].width, [viewPasteBoard frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_windowPasteBoard setContentView:viewPasteBoard];
+    [_windowPasteBoard setDefaultButton:buttonPasteBoardSend];
 
     [imageViewSecureConnection setHidden:YES];
 
@@ -464,12 +469,28 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 #pragma mark -
 #pragma mark Actions
 
-/*! Open the direct VNC URI using vnc://
+/*! Open the the external VNC window
     @param sender the sender of the action
 */
 - (IBAction)openExternalWindow:(id)aSender
 {
     [self openVNCInNewWindow];
+}
+
+/*! Open the pasteboard window
+    @param sender the sender of the action
+*/
+- (IBAction)openPasteBoardWindow:(id)aSender
+{
+    [_windowPasteBoard positionRelativeToView:aSender];
+}
+
+/*! close the pasteboard window
+    @param sender the sender of the action
+*/
+- (IBAction)closePasteBoardWindow:(id)aSender
+{
+    [_windowPasteBoard close];
 }
 
 /*! set the zoom factor
@@ -534,7 +555,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [fieldPasteBoard setStringValue:@""];
 
-    [windowPasteBoard close];
+    [_windowPasteBoard close];
 }
 
 /*! remeber the password

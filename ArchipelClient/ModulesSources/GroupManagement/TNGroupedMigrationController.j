@@ -18,22 +18,29 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPButton.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPWindow.j>
 @import <AppKit/CPTableView.j>
 
+@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNUIKitScrollView.j>
 
 
+/*! @ingroup groupmanagement
+    Allow to migrate several virtual machines
+*/
 @implementation TNGroupedMigrationController : CPObject
 {
+    @outlet CPButton            buttonMigrate;
     @outlet CPSearchField       searchFieldHypervisors;
     @outlet CPTableView         tableHypervisors;
-    @outlet CPWindow            mainWindow;
+    @outlet CPView              mainContentView;
 
     id                          _delegate @accessors(property=delegate);
 
+    TNAttachedWindow            _mainWindow;
     TNTableViewDataSource       _datasourceHypervisors;
 }
 
@@ -52,6 +59,10 @@
 
     [searchFieldHypervisors setTarget:_datasourceHypervisors];
     [searchFieldHypervisors setAction:@selector(filterObjects:)];
+
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_mainWindow setContentView:mainContentView];
+    [_mainWindow setDefaultButton:buttonMigrate];
 }
 
 
@@ -82,19 +93,18 @@
 /*! show the main window
     @param aSender the sender of the action
 */
-- (IBAction)showMainWindow:(id)aSender
+- (IBAction)openWindow:(id)aSender
 {
     [self populateHypervisors];
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:aSender];
+    [_mainWindow positionRelativeToView:aSender];
 }
 
 /*! hide the main window
     @param aSender the sender of the action
 */
-- (IBAction)closeMainWindow:(id)aSender
+- (IBAction)closeWindow:(id)aSender
 {
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 /*! send migration info to the delegate
@@ -105,7 +115,7 @@
     var index = [[tableHypervisors selectedRowIndexes] firstIndex];
 
     [_delegate performGroupedMigration:[_datasourceHypervisors objectAtIndex:index]];
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 @end

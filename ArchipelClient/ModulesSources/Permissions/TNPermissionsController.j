@@ -180,6 +180,14 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     [self getXMPPUsers];
 }
 
+/*! called when module is hidden
+*/
+- (void)willHide
+{
+    [rolesController closeWindow:nil];
+    [rolesController closeNewTemplateWindow:nil];
+}
+
 /*! called when module is unloaded
 */
 - (void)willUnload
@@ -355,7 +363,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 */
 - (IBAction)openRolesWindow:(id)aSender
 {
-    [rolesController showWindow:aSender];
+    [rolesController openWindow:aSender];
 }
 
 

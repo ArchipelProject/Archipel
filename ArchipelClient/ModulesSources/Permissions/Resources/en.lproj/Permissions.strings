@@ -8,9 +8,6 @@
 /* Class = "NSTextFieldCell"; title = "Select a user from the list"; ObjectID = "22"; */
 "22.title" = "Select a user from the list";
 
-/* Class = "NSWindow"; title = "Permissions templates"; ObjectID = "26"; */
-"26.title" = "Permissions templates";
-
 /* Class = "NSTextFieldCell"; title = "Choose templates you want to apply or retract."; ObjectID = "49"; */
 "49.title" = "Choose templates you want to apply or retract.";
 
@@ -28,9 +25,6 @@
 
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "62"; */
 "62.title" = "Add";
-
-/* Class = "NSWindow"; title = "New template"; ObjectID = "63"; */
-"63.title" = "New template";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "66"; */
 "66.title" = "Box";
@@ -82,4 +76,7 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "140"; */
 "140.title" = "Text Cell";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "203"; */
+"203.title" = "Close";
 

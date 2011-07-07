@@ -16,6 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+@import <AppKit/CPButton.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAttachedWindow.j>
 
 var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
     TNArchipelTypeHypervisorNetworkGetNames     = @"getnames",
@@ -36,7 +43,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     @outlet CPTableView     tableViewNetworkFilterParameters;
     @outlet CPTextField     fieldMac;
     @outlet CPView          viewNWFilterParametersContainer;
-    @outlet CPWindow        mainWindow;
+    @outlet CPView          mainContentView;
 
     id                      _delegate   @accessors(property=delegate);
     CPTableView             _table      @accessors(property=table);
@@ -44,6 +51,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     TNStropheContact        _entity     @accessors(property=entity);
 
     TNTableViewDataSource   _datasourceNWFilterParameters;
+    TNAttachedWindow        _mainWindow;
 }
 
 #pragma mark -
@@ -54,8 +62,6 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 - (void)awakeFromCib
 {
     [viewNWFilterParametersContainer setBorderedWithHexColor:@"#C0C7D2"];
-
-    [mainWindow setDefaultButton:buttonOK];
 
     [buttonType removeAllItems];
     [buttonModel removeAllItems];
@@ -78,6 +84,10 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     [removeButton setAction:@selector(removeNWFilterParameter:)];
 
     [buttonBarNetworkParameters setButtons:[addButton, removeButton]];
+
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_mainWindow setContentView:mainContentView];
+    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -192,7 +202,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     [_delegate handleDefinitionEdition:YES];
     [_table reloadData];
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 /*! change the type of the network
@@ -238,20 +248,28 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 /*! show the main window
     @param aSender the sender of the action
 */
-- (IBAction)showWindow:(id)aSender
+- (IBAction)openWindow:(id)aSender
 {
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:aSender];
-
     [self update];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height
+        rect.origin.x += rect.size.width / 2;
+        var point = [[aSender superview] convertPoint:rect.origin toView:nil];
+        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+    }
+    else
+        [_mainWindow positionRelativeToView:aSender];
 }
 
 /*! hide the main window
     @param aSender the sender of the action
 */
-- (IBAction)hideWindow:(id)aSender
+- (IBAction)closeWindow:(id)aSender
 {
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 

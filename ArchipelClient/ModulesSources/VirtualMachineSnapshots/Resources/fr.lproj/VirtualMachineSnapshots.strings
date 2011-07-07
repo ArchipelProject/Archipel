@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "Snapshots"; ObjectID = "11"; */
 "11.title" = "Snapshots";
 
-/* Class = "NSWindow"; title = "New snapshot"; ObjectID = "14"; */
-"14.title" = "New snapshot";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "20"; */
 "20.title" = "Box";
 

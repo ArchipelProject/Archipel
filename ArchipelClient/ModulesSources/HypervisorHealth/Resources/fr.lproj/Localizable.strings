@@ -25,17 +25,11 @@
 /* GB */
 "GB" = "Go";
 
-/* KB */
-"KB" = "Ko";
-
 /* Level */
 "Level" = "Niveau";
 
 /* Logs */
 "Logs" = "Logs";
-
-/* MB */
-"MB" = "Mo";
 
 /* message */
 "message" = "message";

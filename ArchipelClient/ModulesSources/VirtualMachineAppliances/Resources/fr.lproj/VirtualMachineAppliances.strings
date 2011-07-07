@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "Select the installed appliance into hypervisor you want to use for this virtual machine."; ObjectID = "8"; */
 "8.title" = "Select the installed appliance into hypervisor you want to use for this virtual machine.";
 
-/* Class = "NSWindow"; title = "Create a new appliance"; ObjectID = "12"; */
-"12.title" = "Create a new appliance";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "18"; */
 "18.title" = "Box";
 

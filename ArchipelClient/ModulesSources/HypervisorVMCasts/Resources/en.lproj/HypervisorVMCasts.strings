@@ -8,9 +8,6 @@
 /* Class = "NSButtonCell"; title = "Display only installed"; ObjectID = "14"; */
 "14.title" = "Display only installed";
 
-/* Class = "NSWindow"; title = "New VMCast"; ObjectID = "21"; */
-"21.title" = "New VMCast";
-
 /* Class = "TNWindowDownloadQueue"; title = "Download queue"; ObjectID = "23"; */
 "23.title" = "Download queue";
 

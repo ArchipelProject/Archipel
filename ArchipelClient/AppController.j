@@ -179,6 +179,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     BOOL                                        _tagsVisible;
     CPButton                                    _hideButton;
+    CPButton                                    _plusButton;
     CPButton                                    _userAvatarButton;
     CPImage                                     _hideButtonImageDisable;
     CPImage                                     _hideButtonImageEnable;
@@ -666,7 +667,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CPSizeMake(1, 26)],
         rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CPSizeMake(1, 26)],
         buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
-        plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
@@ -678,12 +678,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
-    [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
+    _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
+    [_plusButton setTarget:self];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@""];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@""];
-    [plusButton setMenu:plusMenu];
-    [plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
+    [_plusButton setMenu:plusMenu];
+    [_plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
 
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
@@ -699,7 +700,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     if ([bundle objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
-        [buttons addObject:plusButton]
+        [buttons addObject:_plusButton]
         [buttons addObject:minusButton]
     }
 
@@ -958,7 +959,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)addContact:(id)sender
 {
-    [contactsController showWindow:sender];
+    [contactsController showWindow:_plusButton];
 }
 
 /*! will ask for deleting the selected contact
@@ -977,7 +978,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)addGroup:(id)sender
 {
-    [groupsController showWindow:sender];
+    [groupsController showWindow:_plusButton];
 }
 
 /*! will ask for deleting the selected group

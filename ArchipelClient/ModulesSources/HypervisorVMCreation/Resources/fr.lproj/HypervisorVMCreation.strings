@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container."; ObjectID = "5"; */
 "5.title" = "You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container.";
 
-/* Class = "NSWindow"; title = "Add subscription"; ObjectID = "13"; */
-"13.title" = "Add subscription";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "17"; */
 "17.title" = "Box";
 
@@ -26,9 +23,6 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "25"; */
 "25.title" = "Cancel";
 
-/* Class = "NSWindow"; title = "Remove subscription"; ObjectID = "27"; */
-"27.title" = "Remove subscription";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "34"; */
 "34.title" = "Box";
 
@@ -46,9 +40,6 @@
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
 "39.title" = "Cancel";
-
-/* Class = "NSWindow"; title = "New virtual machine"; ObjectID = "41"; */
-"41.title" = "New virtual machine";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "43"; */
 "43.title" = "Box";
@@ -76,9 +67,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "60"; */
 "60.title" = "Name:";
-
-/* Class = "NSWindow"; title = "Clone virtual machine"; ObjectID = "94"; */
-"94.title" = "Clone virtual machine";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "102"; */
 "102.title" = "Box";

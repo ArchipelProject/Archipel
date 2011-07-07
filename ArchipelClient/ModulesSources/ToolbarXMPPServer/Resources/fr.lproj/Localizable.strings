@@ -25,12 +25,6 @@
 /* Delete selected user accounts */
 "Delete selected user accounts" = "Delete selected user accounts";
 
-/* JID */
-"JID" = "JID";
-
-/* Name */
-"Name" = "Name";
-
 /* Password doesn't match */
 "Password doesn't match" = "Password doesn't match";
 

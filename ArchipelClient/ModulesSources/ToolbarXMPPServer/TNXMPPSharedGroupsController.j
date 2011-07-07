@@ -30,6 +30,7 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 
@@ -47,6 +48,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 @implementation TNXMPPSharedGroupsController : CPObject
 {
+    @outlet CPButton            buttonAdd;
     @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarGroups;
     @outlet CPButtonBar         buttonBarUsersInGroups;
@@ -60,10 +62,10 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     @outlet CPTextField         fieldNewGroupDescription;
     @outlet CPTextField         fieldNewGroupName;
     @outlet CPView              mainView                    @accessors(getter=mainView);
+    @outlet CPView              viewAddUserInGroup;
+    @outlet CPView              viewNewGroup;
     @outlet CPView              viewTableGroupsContainer;
     @outlet CPView              viewTableUsersInGroupContainer;
-    @outlet CPWindow            windowAddUserInGroup;
-    @outlet CPWindow            windowNewGroup;
 
     id                          _delegate           @accessors(property=delegate);
     TNStropheContact            _entity             @accessors(setter=setEntity:);
@@ -78,6 +80,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     TNTableViewDataSource       _datasourceGroups;
     TNTableViewDataSource       _datasourceUsers;
     TNTableViewDataSource       _datasourceUsersInGroup;
+    TNAttachedWindow            _windowAddUserInGroup;
+    TNAttachedWindow            _windowNewGroup;
 }
 
 #pragma mark -
@@ -87,7 +91,14 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)awakeFromCib
 {
-    [windowNewGroup setDefaultButton:buttonCreate];
+    _windowNewGroup = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewGroup frameSize].width, [viewNewGroup frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_windowNewGroup setContentView:viewNewGroup];
+    [_windowNewGroup setDefaultButton:buttonCreate];
+
+    _windowAddUserInGroup = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewAddUserInGroup frameSize].width, [viewAddUserInGroup frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_windowAddUserInGroup setContentView:viewAddUserInGroup];
+    [_windowAddUserInGroup setDefaultButton:buttonAdd];
+
 
     [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
     [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -160,10 +171,10 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_delegate setControl:_deleteUserFromGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"]];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]])
-        [windowAddUserInGroup close];
+        [_windowAddUserInGroup close];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]])
-        [windowNewGroup close];
+        [_windowNewGroup close];
 
     [self reload];
 }
@@ -188,8 +199,15 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [fieldNewGroupName setStringValue:@""];
     [fieldNewGroupDescription setStringValue:@""];
 
-    [windowNewGroup center];
-    [windowNewGroup makeKeyAndOrderFront:aSender];
+    [_windowNewGroup positionRelativeToView:aSender];
+}
+
+/*! close the new group window
+    @param aSender the sender of the action
+*/
+- (IBAction)closeNewGroupWindow:(id)aSender
+{
+    [_windowNewGroup close];
 }
 
 /*! open the add user in group window
@@ -199,18 +217,25 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     [_datasourceUsers setContent:[[_usersController users] copy]];
 
-    [windowAddUserInGroup center];
-    [windowAddUserInGroup makeKeyAndOrderFront:aSender];
+    [_windowAddUserInGroup positionRelativeToView:aSender];
 
     [tableUsers reloadData];
     [tableUsers deselectAll];
 
-    // fuck yea.
-    var frame = [windowAddUserInGroup frame];
-    frame.size.height++;
-    [windowAddUserInGroup setFrame:frame];
-    frame.size.height--;
-    [windowAddUserInGroup setFrame:frame];
+    // // fuck yea.
+    // var frame = [windowAddUserInGroup frame];
+    // frame.size.height++;
+    // [windowAddUserInGroup setFrame:frame];
+    // frame.size.height--;
+    // [windowAddUserInGroup setFrame:frame];
+}
+
+/*! close the add user in group window
+    @param aSender the sender of the action
+*/
+- (IBAction)closeAddUserInGroupWindow:(id)aSender
+{
+    [_windowAddUserInGroup close];
 }
 
 /*! create a new group
@@ -225,7 +250,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
         return;
     }
 
-    [windowNewGroup close];
+    [_windowNewGroup close];
     [self createGroup:[fieldNewGroupName stringValue] description:[fieldNewGroupDescription stringValue]];
 }
 
@@ -254,7 +279,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     [self addUsers:rows inGroup:[_currentSelectedGroup objectForKey:@"id"]];
 
-    [windowAddUserInGroup close];
+    [_windowAddUserInGroup close];
 }
 
 /*! remove selected users from selected group

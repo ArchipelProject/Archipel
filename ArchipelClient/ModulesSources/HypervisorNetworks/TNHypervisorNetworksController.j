@@ -162,6 +162,15 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [self getHypervisorNICS];
 }
 
+/*! called when the module hides
+*/
+- (void)willHide
+{
+    [networkController closeWindow:nil];
+
+    [super willHide];
+}
+
 /*! called when MainMenu is ready
 */
 - (void)menuReady
@@ -348,7 +357,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
                                          DHCPEnabled:YES];
 
     [networkController setNetwork:newNetwork];
-    [networkController showWindow:aSender];
+    [networkController openWindow:aSender];
 }
 
 /*! delete a network
@@ -394,7 +403,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         }
 
         [networkController setNetwork:networkObject];
-        [networkController showWindow:aSender];
+        [networkController openWindow:aSender];
     }
 }
 

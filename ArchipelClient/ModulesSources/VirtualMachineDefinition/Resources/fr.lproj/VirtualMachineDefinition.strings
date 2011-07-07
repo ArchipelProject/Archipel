@@ -107,9 +107,6 @@
 /* Class = "NSTextFieldCell"; title = "Clock:"; ObjectID = "113"; */
 "113.title" = "Clock:";
 
-/* Class = "NSWindow"; title = "Drives"; ObjectID = "117"; */
-"117.title" = "Drives";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "128"; */
 "128.title" = "Box";
 
@@ -152,9 +149,6 @@
 /* Class = "NSTextFieldCell"; title = "Target:"; ObjectID = "172"; */
 "172.title" = "Target:";
 
-/* Class = "NSWindow"; title = "Network"; ObjectID = "175"; */
-"175.title" = "Network";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "183"; */
 "183.title" = "Box";
 
@@ -187,9 +181,6 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "00:00:DE:AD:BE:EF"; ObjectID = "215"; */
 "215.placeholderString" = "00:00:DE:AD:BE:EF";
-
-/* Class = "NSWindow"; title = "XML Editor"; ObjectID = "217"; */
-"217.title" = "XML Editor";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "223"; */
 "223.title" = "Box";

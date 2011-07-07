@@ -18,6 +18,15 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAttachedWindow.j>
+
+
 
 /*! @ingroup permissionsmodule
     roles controller representation
@@ -31,13 +40,15 @@
     @outlet CPTextField             fieldNewTemplateDescription;
     @outlet CPTextField             fieldNewTemplateName;
     @outlet CPView                  viewTableContainer;
-    @outlet CPWindow                mainWindow;
-    @outlet CPWindow                windowNewTemplate;
+    @outlet CPView                  mainContentView;
+    @outlet CPView                  viewNewTemplate;
 
     id                              _delegate           @accessors(property=delegate);
 
     TNPubSubNode                    _nodeRolesTemplates;
     TNTableViewDataSource           _datasourceRoles;
+    TNAttachedWindow                _mainWindow;
+    TNAttachedWindow                _windowNewTemplate;
 }
 
 
@@ -48,8 +59,6 @@
 */
 - (void)awakeFromCib
 {
-    [windowNewTemplate setDefaultButton:buttonSave];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceRoles    = [[TNTableViewDataSource alloc] init];
@@ -67,6 +76,13 @@
 
     [filterField setTarget:_datasourceRoles];
     [filterField setAction:@selector(filterObjects:)];
+
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_mainWindow setContentView:mainContentView];
+    [_mainWindow setDefaultButton:buttonSave];
+
+    _windowNewTemplate = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewTemplate frameSize].width, [viewNewTemplate frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_windowNewTemplate setContentView:viewNewTemplate];
 }
 
 
@@ -126,25 +142,37 @@
 /*! show the controller's main window
     @param aSender the sender of the action
 */
-- (IBAction)showWindow:(id)aSender
+- (IBAction)openWindow:(id)aSender
 {
     [self reload];
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:aSender];
-
-    var frame = [mainWindow frame];
-    frame.size.height++;
-    [mainWindow setFrame:frame];
-    frame.size.height--;
-    [mainWindow setFrame:frame];
+    [_mainWindow positionRelativeToView:aSender];
 }
 
 /*! will close the controller's main window
     @param aSender the sender of the action
 */
-- (IBAction)hideWindow:(id)aSender
+- (IBAction)closeWindow:(id)aSender
 {
-    [mainWindow close];
+    [_mainWindow close];
+}
+
+/*! will open the new template window
+    @param aSender the sender of the action
+*/
+- (IBAction)openNewTemplateWindow:(id)aSender
+{
+    [fieldNewTemplateName setStringValue:@""];
+    [fieldNewTemplateDescription setStringValue:@""];
+    [_windowNewTemplate makeFirstResponder:fieldNewTemplateDescription];
+    [_windowNewTemplate positionRelativeToView:aSender];
+}
+
+/*! close the new template window
+    @param aSender the sender of the action
+*/
+- (IBAction)closeNewTemplateWindow:(id)aSender
+{
+    [_windowNewTemplate close];
 }
 
 /*! apply selected roles to delegate's role datasource
@@ -169,17 +197,6 @@
 - (IBAction)retractRoles:(id)aSender
 {
     [_delegate retractPermissions:[self buildPermissionsArray]];
-}
-
-/*! will open the new template window
-    @param aSender the sender of the action
-*/
-- (IBAction)openNewTemplateWindow:(id)aSender
-{
-    [fieldNewTemplateName setStringValue:@""];
-    [fieldNewTemplateDescription setStringValue:@""];
-    [windowNewTemplate center];
-    [windowNewTemplate makeKeyAndOrderFront:aSender];
 }
 
 /*! save the current set of permission as a role template
@@ -210,7 +227,7 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRole:) name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRoleFail:) name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
     [_nodeRolesTemplates publishItem:template];
-    [windowNewTemplate close];
+    [_windowNewTemplate close];
 }
 
 /*! delete the current selected role

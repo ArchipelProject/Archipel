@@ -27,6 +27,7 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNUIKitScrollView.j>
 
 @import "TNSnapshot.j";
@@ -57,8 +58,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     @outlet CPSearchField               fieldFilter;
     @outlet CPTextField                 fieldInfo;
     @outlet CPTextField                 fieldNewSnapshotName;
+    @outlet CPView                      viewNewSnapshot;
     @outlet CPView                      viewTableContainer;
-    @outlet CPWindow                    windowNewSnapshot;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
     @outlet TNUIKitScrollView           scrollViewSnapshots;
 
@@ -68,6 +69,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     CPOutlineView                       _outlineViewSnapshots;
     TNSnapshot                          _currentSnapshot;
     TNSnapshotsDatasource               _datasourceSnapshots;
+    TNAttachedWindow                    _windowNewSnapshot;
 }
 
 #pragma mark -
@@ -77,7 +79,9 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)awakeFromCib
 {
-    [windowNewSnapshot setDefaultButton:buttonSnapshotTake];
+    _windowNewSnapshot = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewSnapshot frameSize].width, [viewNewSnapshot frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
+    [_windowNewSnapshot setContentView:viewNewSnapshot];
+    [_windowNewSnapshot setDefaultButton:buttonSnapshotTake];
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -221,6 +225,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)willHide
 {
+    [_windowNewSnapshot close];
     [super willHide];
 }
 
@@ -277,11 +282,20 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     [fieldNewSnapshotName setStringValue:@""];
     [fieldNewSnapshotDescription setStringValue:@""];
-    [windowNewSnapshot center];
-    [windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
-    [windowNewSnapshot makeKeyAndOrderFront:aSender];
+
+    [_windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
+    [_windowNewSnapshot positionRelativeToView:aSender];
 }
+
+/*! close the new snapshot window
+    @param aSender the sender of the action
+*/
+- (IBAction)closeWindowNewSnapshot:(id)aSender
+{
+    [_windowNewSnapshot close];
+}
+
 
 /*! take a snaphot
     @param aSender the sender of the action
@@ -443,7 +457,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didTakeSnapshot:)];
 
-    [windowNewSnapshot orderOut:nil];
+    [_windowNewSnapshot close];
     [fieldNewSnapshotName setStringValue:nil];
     [fieldNewSnapshotDescription setStringValue:nil];
 }

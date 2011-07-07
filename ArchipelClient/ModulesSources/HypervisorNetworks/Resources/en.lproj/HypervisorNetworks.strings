@@ -5,9 +5,6 @@
 /* Class = "NSTextFieldCell"; title = "Manage hypervisor networks"; ObjectID = "10"; */
 "10.title" = "Manage hypervisor networks";
 
-/* Class = "NSWindow"; title = "Network properties"; ObjectID = "16"; */
-"16.title" = "Network properties";
-
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
 "19.title" = "Name:";
 

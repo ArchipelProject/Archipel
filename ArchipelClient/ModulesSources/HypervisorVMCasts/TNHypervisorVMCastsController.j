@@ -34,14 +34,12 @@
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
 @import "TNVMCastDatasource.j";
-
+@import "TNVMCastRegistrationController.j"
 
 
 var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_",
     TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
     TNArchipelTypeHypervisorVMCastingGet                = @"get",
-    TNArchipelTypeHypervisorVMCastingRegister           = @"register",
-    TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister",
     TNArchipelTypeHypervisorVMCastingDownload           = @"downloadappliance",
     TNArchipelTypeHypervisorVMCastingDeleteAppliance    = @"deleteappliance",
     TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting";
@@ -57,22 +55,21 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 @implementation TNHypervisorVMCastsController : TNModule
 {
-    @outlet CPButton            buttonNewVMCast;
-    @outlet CPButtonBar         buttonBarControl;
-    @outlet CPCheckBox          checkBoxOnlyInstalled;
-    @outlet TNUIKitScrollView   mainScrollView;
-    @outlet CPSearchField       fieldFilter;
-    @outlet CPTextField         fieldNewURL;
-    @outlet CPView              viewTableContainer;
-    @outlet CPWindow            windowDownloadQueue;
-    @outlet CPWindow            windowNewCastURL;
+    @outlet CPButtonBar                     buttonBarControl;
+    @outlet CPCheckBox                      checkBoxOnlyInstalled;
+    @outlet TNUIKitScrollView               mainScrollView;
+    @outlet CPSearchField                   fieldFilter;
+    @outlet CPView                          viewTableContainer;
+    @outlet CPWindow                        windowDownloadQueue;
+    @outlet TNVMCastRegistrationController  VMCastRegistrationController;
 
-    CPButton                    _downloadButton;
-    CPButton                    _downloadQueueButton;
-    CPButton                    _minusButton;
-    CPButton                    _plusButton;
-    CPOutlineView               _mainOutlineView;
-    TNVMCastDatasource          _castsDatasource;
+    CPOutlineView                           _mainOutlineView        @accessors(getter=mainOutlineView);
+
+    CPButton                                _downloadButton;
+    CPButton                                _downloadQueueButton;
+    CPButton                                _minusButton;
+    CPButton                                _plusButton;
+    TNVMCastDatasource                      _castsDatasource;
 }
 
 #pragma mark -
@@ -82,11 +79,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)awakeFromCib
 {
-    [windowNewCastURL setDefaultButton:buttonNewVMCast];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    [fieldNewURL setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     _castsDatasource = [[TNVMCastDatasource alloc] init];
 
     _mainOutlineView = [[CPOutlineView alloc] initWithFrame:[mainScrollView bounds]];
@@ -174,6 +168,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
 
     [checkBoxOnlyInstalled setToolTip:CPBundleLocalizedString(@"If checked, it will only displayed installed appliances", @"If checked, it will only displayed installed appliances")];
+
+    [VMCastRegistrationController setDelegate:self];
 }
 
 #pragma mark -
@@ -202,7 +198,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (void)willUnload
 {
     [windowDownloadQueue orderOut:nil];
-    [windowNewCastURL orderOut:nil];
+    [VMCastRegistrationController closeWindow:nil];
 
     [_mainOutlineView deselectAll];
 
@@ -216,8 +212,9 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)willHide
 {
+    [VMCastRegistrationController closeWindow:nil];
+
     [super willHide];
-    // message sent when the tab is changed
 }
 
 /*! called when MainMenu is ready
@@ -244,7 +241,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
         [windowDownloadQueue close];
 
     if (![self currentEntityHasPermission:@"vmcasting_register"])
-        [windowNewCastURL close];
+        [VMCastRegistrationController closeWindow:nil];
 
     var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex],
         currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
@@ -303,8 +300,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)openNewVMCastURLWindow:(id)aSender
 {
-    [fieldNewURL setStringValue:@""];
-    [windowNewCastURL makeKeyAndOrderFront:nil];
+    [VMCastRegistrationController openWindow:aSender]
 }
 
 /*! called when filter checkbox change
@@ -319,15 +315,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     [_mainOutlineView reloadData];
     [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
-}
-
-/*! add new VMCast
-    @param sender the sender of the action
-*/
-- (IBAction)addNewVMCast:(id)aSender
-{
-    [windowNewCastURL close];
-    [self addNewVMCast];
 }
 
 /*! remove a thing (VMCast or Appliance)
@@ -351,7 +338,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)removeVMCast:(id)someUserInfo
 {
-    [self removeVMCast];
+    [VMCastRegistrationController removeVMCast];
 }
 
 /*! starts a download
@@ -461,38 +448,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     return NO;
 }
 
-/*! ask hypervisor to add VMCasts
-*/
-- (void)addNewVMCast
-{
-    [windowNewCastURL orderOut:nil];
-
-    var stanza      = [TNStropheStanza iqWithType:@"set"],
-        url         = [fieldNewURL stringValue];
-
-    [fieldNewURL setStringValue:@""];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorVMCastingRegister,
-        "url": url}];
-
-    [self sendStanza:stanza andRegisterSelector:@selector(_didAddNewVMCast:)];
-}
-
-/*! compute the hypervisor answer about adding a VMCast
-    @param aStanza TNStropheStanza that contains the hypervisor answer
-*/
-- (BOOL)_didAddNewVMCast:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") message:CPBundleLocalizedString(@"VMcast has been registred", @"VMcast has been registred")];
-    else
-        [self handleIqErrorFromStanza:aStanza];
-
-    return NO;
-}
-
 /*! ask hypervisor to add remove a VMCast or an Appliance
 */
 - (void)remove
@@ -510,7 +465,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     if ([currentVMCast isKindOfClass:TNVMCast])
         [self removeAppliance];
     else if ([currentVMCast isKindOfClass:TNVMCastSource])
-        [self removeVMCast];
+        [VMCastRegistrationController removeVMCast];
 
 }
 
@@ -550,51 +505,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 {
     if ([aStanza type] == @"result")
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Appliance has been uninstalled", @"Appliance has been uninstalled")];
-    else
-        [self handleIqErrorFromStanza:aStanza];
-
-    return NO;
-}
-
-
-/*! ask hypervisor to add remove an VMCast. but before ask user if he is sure.
-*/
-- (void)removeVMCast
-{
-    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete VMCast", @"Delete VMCast")
-                                informative:CPBundleLocalizedString(@"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.", @"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.")
-                                 target:self
-                                 actions:[[CPBundleLocalizedString(@"Unregister", @"Unregister"), @selector(performRemoveVMCast:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
-
-    [alert runModal];
-}
-
-/*! ask hypervisor to add remove an VMCast
-*/
-- (void)performRemoveVMCast:(id)someUserInfo
-{
-    var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex],
-        currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex],
-        uuid            = [currentVMCast UUID],
-        stanza          = [TNStropheStanza iqWithType:@"set"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorVMCastingUnregister,
-        "uuid": uuid}];
-
-
-    [self sendStanza:stanza andRegisterSelector:@selector(_didRemoveVMCast:)]
-}
-
-/*! compute the hypervisor answer about removing an vmcast
-    @param aStanza TNStropheStanza that contains the hypervisor answer
-*/
-- (BOOL)_didRemoveVMCast:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast")
-                                                         message:CPBundleLocalizedString(@"VMcast has been unregistred", @"VMcast has been unregistred")];
     else
         [self handleIqErrorFromStanza:aStanza];
 

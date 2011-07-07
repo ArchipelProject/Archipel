@@ -18,14 +18,10 @@
 	<string>Affiche la colonne Method dans le tableau de log</string>
 	<key>GB</key>
 	<string>Go</string>
-	<key>KB</key>
-	<string>Ko</string>
 	<key>Level</key>
 	<string>Niveau</string>
 	<key>Logs</key>
 	<string>Logs</string>
-	<key>MB</key>
-	<string>Mo</string>
 	<key>Partition name</key>
 	<string>Partition</string>
 	<key>Set the delay between asking hypervisor statistics</key>

@@ -97,26 +97,32 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPPopUpButton           buttonVNCKeymap;
     @outlet CPSearchField           fieldFilterDrives;
     @outlet CPSearchField           fieldFilterNics;
+    @outlet CPTableView             tableDrives;
+    @outlet CPTableView             tableInterfaces;
+    @outlet CPTextField             fieldBlockIOTuningWeight;
     @outlet CPTextField             fieldMemory;
+    @outlet CPTextField             fieldMemoryTuneGuarantee;
+    @outlet CPTextField             fieldMemoryTuneHardLimit;
+    @outlet CPTextField             fieldMemoryTuneSoftLimit;
+    @outlet CPTextField             fieldMemoryTuneSwapHardLimit;
     @outlet CPTextField             fieldPreferencesDomainType;
     @outlet CPTextField             fieldPreferencesGuest;
     @outlet CPTextField             fieldPreferencesMachine;
     @outlet CPTextField             fieldPreferencesMemory;
     @outlet CPTextField             fieldVNCListen;
-    @outlet CPTextField             fieldVNCPort;
-    @outlet CPTextField             fieldMemoryTuneSoftLimit;
-    @outlet CPTextField             fieldMemoryTuneHardLimit;
-    @outlet CPTextField             fieldMemoryTuneGuarantee;
-    @outlet CPTextField             fieldMemoryTuneSwapHardLimit;
     @outlet CPTextField             fieldVNCPassword;
-    @outlet CPTextField             fieldBlockIOTuningWeight;
+    @outlet CPTextField             fieldVNCPort;
     @outlet CPView                  viewBottomControl;
     @outlet CPView                  viewDeviceVirtualDrives;
     @outlet CPView                  viewDeviceVirtualNics;
     @outlet CPView                  viewDrivesContainer;
     @outlet CPView                  viewMainContent;
     @outlet CPView                  viewNicsContainer;
-    @outlet CPWindow                windowXMLEditor;
+    @outlet CPView                  viewParametersAdvanced;
+    @outlet CPView                  viewParametersEffectBottom;
+    @outlet CPView                  viewParametersEffectTop;
+    @outlet CPView                  viewParametersStandard;
+    @outlet CPView                  viewXMLEditor;
     @outlet LPMultiLineTextField    fieldStringXMLDesc;
     @outlet TNDriveController       driveController;
     @outlet TNNetworkController     networkController;
@@ -125,17 +131,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNSwitch                switchEnableVNC;
     @outlet TNSwitch                switchHugePages;
     @outlet TNSwitch                switchPAE;
-    @outlet TNSwitch                switchPreferencesHugePages;
     @outlet TNSwitch                switchPreferencesEnableVNC;
+    @outlet TNSwitch                switchPreferencesHugePages;
+    @outlet TNTabView               tabViewParameters;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
     @outlet TNUIKitScrollView       scrollViewContentView;
-    @outlet TNTabView               tabViewParameters;
-    @outlet CPView                  viewParametersStandard;
-    @outlet CPView                  viewParametersAdvanced;
-    @outlet CPView                  viewParametersEffectTop;
-    @outlet CPView                  viewParametersEffectBottom;
-    @outlet CPTableView             tableDrives;
-    @outlet CPTableView             tableInterfaces;
+
 
     BOOL                            _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                            _definitionRecovered;
@@ -148,11 +149,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPImage                         _imageDefining;
     CPImage                         _imageEdited;
     CPString                        _stringXMLDesc;
-
+    TNAttachedWindow                _windowXMLEditor;
     TNLibvirtDomain                 _libvirtDomain;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
     TNXMLNode                       _libvirtCapabilities;
+
 }
 
 
@@ -163,7 +165,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)awakeFromCib
 {
-    [windowXMLEditor setDefaultButton:buttonXMLEditorDefine];
+    _windowXMLEditor = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewXMLEditor frameSize].width, [viewXMLEditor frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_windowXMLEditor setContentView:viewXMLEditor];
+    [_windowXMLEditor setDefaultButton:buttonXMLEditorDefine];
 
     var bundle      = [CPBundle bundleForClass:[self class]],
         defaults    = [CPUserDefaults standardUserDefaults],
@@ -507,6 +511,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     return YES;
 }
 
+/*! called when module is hidden
+*/
+- (void)willHide
+{
+    [networkController closeWindow:nil];
+    [driveController closeWindow:nil];
+    [_windowXMLEditor close];
+
+    [super willHide];
+}
+
 /*! return YES if module can be hidden
 */
 - (BOOL)shouldHideAndSelectItem:(anItem)nextItem ofObject:(id)anObject
@@ -633,8 +648,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if (![self currentEntityHasPermission:@"define"])
     {
-        [networkController hideWindow:nil];
-        [driveController hideWindow:nil];
+        [networkController closeWindow:nil];
+        [driveController closeWindow:nil];
     }
 
     [networkController updateAfterPermissionChanged];
@@ -1038,8 +1053,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
-    [windowXMLEditor center];
-    [windowXMLEditor makeKeyAndOrderFront:aSender];
+    [_windowXMLEditor positionRelativeToView:aSender];
+}
+
+/*! close the manual XML editor
+    @param sender the sender of the action
+*/
+- (IBAction)closeXMLEditor:(id)aSender
+{
+    [_windowXMLEditor close];
 }
 
 /*! make the definition set as edited
@@ -1090,7 +1112,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_nicsDatasource addObject:newNic];
     [tableInterfaces reloadData];
     [networkController setNic:newNic];
-    [networkController showWindow:aSender];
+    [networkController openWindow:aSender];
     [self makeDefinitionEdited:YES];
 }
 
@@ -1111,7 +1133,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var nicObject = [_nicsDatasource objectAtIndex:[tableInterfaces selectedRow]];
 
     [networkController setNic:nicObject];
-    [networkController showWindow:aSender];
+    [networkController openWindow:aSender];
 }
 
 /*! delete a network card
@@ -1169,7 +1191,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives reloadData];
     [driveController setDrive:newDrive];
 
-    [driveController showWindow:aSender];
+    [driveController openWindow:aSender];
     [self makeDefinitionEdited:YES];
 }
 
@@ -1190,7 +1212,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var driveObject = [_drivesDatasource objectAtIndex:[tableDrives selectedRow]];
 
     [driveController setDrive:driveObject];
-    [driveController showWindow:aSender];
+    [driveController openWindow:aSender];
 }
 
 /*! delete a drive
@@ -1871,7 +1893,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonDefine setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
-    [windowXMLEditor close];
+    [_windowXMLEditor close];
 }
 
 /*! compute hypervisor answer about the definition

@@ -16,6 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+@import <AppKit/CPButton.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAttachedWindow.j>
+
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskGet     = @"get",
     TNArchipelTypeVirtualMachineISOGet      = @"getiso";
@@ -33,12 +41,14 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     @outlet CPPopUpButton   buttonTargetDevice;
     @outlet CPPopUpButton   buttonType;
     @outlet CPTextField     fieldDevicePath;
-    @outlet CPWindow        mainWindow;
+    @outlet CPView          mainContentView;
 
     id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
     TNLibvirtDeviceDisk     _drive          @accessors(property=drive);
     TNStropheContact        _entity         @accessors(property=entity);
+
+    TNAttachedWindow        _mainWindow;
 }
 
 
@@ -49,8 +59,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
-    [mainWindow setDefaultButton:buttonOK];
-
     [buttonDevice removeAllItems];
     [buttonType removeAllItems];
     [buttonTargetDevice removeAllItems];
@@ -68,6 +76,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonSourcePath setToolTip:CPBundleLocalizedString(@"Set the source to use for the drive", @"Set the source to use for the drive")];
     [buttonTargetDevice setToolTip:CPBundleLocalizedString(@"Set the target to use for the drive", @"Set the target to use for the drive")];
     [buttonDriverCache setToolTip:CPBundleLocalizedString(@"Set the cache mode the drive", @"Set the cache mode the drive")];
+
+    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
+    [_mainWindow setContentView:mainContentView];
+    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -143,7 +155,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [_table reloadData];
 
     [_delegate handleDefinitionEdition:YES];
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 /*! change the type of the drive
@@ -199,20 +211,28 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 /*! show the main window
     @param aSender the sender of the action
 */
-- (IBAction)showWindow:(id)aSender
+- (IBAction)openWindow:(id)aSender
 {
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:aSender];
-
     [self update];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height
+        rect.origin.x += rect.size.width / 2;
+        var point = [[aSender superview] convertPoint:rect.origin toView:nil];
+        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+    }
+    else
+        [_mainWindow positionRelativeToView:aSender];
 }
 
 /*! hide the main window
     @param aSender the sender of the action
 */
-- (IBAction)hideWindow:(id)aSender
+- (IBAction)closeWindow:(id)aSender
 {
-    [mainWindow close];
+    [_mainWindow close];
 }
 
 
