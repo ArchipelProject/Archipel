@@ -166,6 +166,16 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     return YES;
 }
 
+/*! called when module is hidden
+*/
+- (void)willHide
+{
+    [editDriveController closeWindow:nil];
+    [newDriveController closeWindow:nil];
+
+    [super willHide];
+}
+
 /*! called when MainMenu is ready
 */
 - (void)menuReady
@@ -181,10 +191,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 - (void)permissionsChanged
 {
     if (![self currentEntityHasPermission:@"drives_create"])
-        [newDriveController closeMainWindow:nil];
+        [newDriveController closeWindow:nil];
 
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
-        [editDriveController closeMainWindow:nil];
+        [editDriveController closeWindow:nil];
 
     [self tableViewSelectionDidChange:nil];
 }
@@ -258,7 +268,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 */
 - (IBAction)openNewDiskWindow:(id)aSender
 {
-    [newDriveController openMainWindow:aSender];
+    [newDriveController openWindow:aSender];
 }
 
 /*! opens the rename window
@@ -292,7 +302,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
             diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
 
         [editDriveController setCurrentEditedDisk:diskObject];
-        [editDriveController openMainWindow:aSender];
+        [editDriveController openWindow:aSender];
     }
 }
 

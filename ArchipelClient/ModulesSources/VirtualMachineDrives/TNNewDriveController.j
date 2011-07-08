@@ -84,7 +84,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 
 /*! open the controller window
 */
-- (IBAction)openMainWindow:(id)aSender
+- (IBAction)openWindow:(id)aSender
 {
     [self getGoldenList];
     [fieldNewDiskName setStringValue:@""];
@@ -104,7 +104,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 
 /*! close the controller window
 */
-- (IBAction)closeMainWindow:(id)aSender
+- (IBAction)closeWindow:(id)aSender
 {
     [_mainWindow close];
 }
