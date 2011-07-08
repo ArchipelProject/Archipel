@@ -248,7 +248,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [self setControl:_revertButton enabledAccordingToPermission:@"snapshot_revert" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
 
     if (![self currentEntityHasPermission:@"snapshot_take"])
-        [windowNewSnapshot close];
+        [_windowNewSnapshot close];
 }
 
 #pragma mark -
