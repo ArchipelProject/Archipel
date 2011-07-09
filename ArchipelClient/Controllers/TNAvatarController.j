@@ -170,7 +170,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 /*! Open the main window
     @param sender the sender of the action
 */
-- (IBAction)showPopover:(id)aSender
+- (IBAction)showWindow:(id)aSender
 {
     [[TNPermissionsCenter defaultCenter] setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatars"] forEntity:_entity specialCondition:YES];
 
@@ -184,7 +184,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
 /*! Close the window
 */
-- (IBAction)closePopover:(id)aSender
+- (IBAction)closeWindow:(id)aSender
 {
     [mainPopover close];
 }
