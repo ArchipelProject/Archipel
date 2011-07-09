@@ -155,7 +155,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [tableViewNetworks setDelegate:nil];
-    [tableViewNetworks setDelegate:self]; // hum....
+    [tableViewNetworks setDelegate:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];

@@ -224,7 +224,7 @@
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
     [_delegate defineNetwork:_network];
-    [_mainPopover close];
+    [mainPopover close];
 }
 
 /*! add a new DCHP range

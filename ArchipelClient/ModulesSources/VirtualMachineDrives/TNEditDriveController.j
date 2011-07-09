@@ -157,7 +157,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didConvertDisk:) ofObject:self];
 
-    [self closeMainWindow];
+    [mainPopover close];
 }
 
 /*! compute virtual machine disk conversion results
@@ -201,7 +201,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didRename:) ofObject:self];
     }
 
-   [self closeMainWindow];
+   [mainPopover close];
 }
 
 /*! compute virtual machine disk renaming results
