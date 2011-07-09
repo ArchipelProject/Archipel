@@ -12,6 +12,7 @@
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>NSPopover</string>
 			<string>NSScroller</string>
 			<string>NSTableHeaderView</string>
 			<string>NSButton</string>
@@ -29,6 +30,7 @@
 			<string>NSTableColumn</string>
 			<string>NSView</string>
 			<string>NSTextField</string>
+			<string>NSViewController</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -525,6 +527,16 @@
 				<reference key="NSNextKeyView" ref="756676543"/>
 				<string key="NSClassName">NSView</string>
 			</object>
+			<object class="NSViewController" id="672599261"/>
+			<object class="NSPopover" id="771525680">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="672599261"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
 			<object class="NSView" id="829011973">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">256</int>
@@ -767,6 +779,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{511, 259}</string>
+				<reference key="NSNextKeyView" ref="860671332"/>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -885,20 +898,36 @@
 					<int key="connectionID">87</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewNewAppliance</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="829011973"/>
-					</object>
-					<int key="connectionID">115</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeNewApplianceWindow:</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="324651244"/>
 					</object>
 					<int key="connectionID">116</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="771525680"/>
+						<reference key="destination" ref="672599261"/>
+					</object>
+					<int key="connectionID">119</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverNewAppliances</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="771525680"/>
+					</object>
+					<int key="connectionID">120</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="672599261"/>
+						<reference key="destination" ref="829011973"/>
+					</object>
+					<int key="connectionID">121</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1149,6 +1178,7 @@
 							<reference ref="130582028"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">New Appliance</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">21</int>
@@ -1295,6 +1325,17 @@
 						<reference key="object" ref="82864875"/>
 						<reference key="parent" ref="860671332"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">117</int>
+						<reference key="object" ref="672599261"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">118</int>
+						<reference key="object" ref="771525680"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1305,6 +1346,8 @@
 					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
 					<string>11.IBPluginDependency</string>
+					<string>117.IBPluginDependency</string>
+					<string>118.IBPluginDependency</string>
 					<string>16.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
@@ -1390,6 +1433,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>CPCheckBox</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1424,7 +1469,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">116</int>
+			<int key="maxID">121</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1560,8 +1605,8 @@
 							<string>fieldFilterAppliance</string>
 							<string>fieldNewApplianceName</string>
 							<string>mainScrollView</string>
+							<string>popoverNewAppliances</string>
 							<string>tableAppliances</string>
-							<string>viewNewAppliance</string>
 							<string>viewTableContainer</string>
 							<string>windowNewAppliance</string>
 						</object>
@@ -1573,8 +1618,8 @@
 							<string>NSSearchField</string>
 							<string>NSTextField</string>
 							<string>TNUIKitScrollView</string>
+							<string>NSPopover</string>
 							<string>NSTableView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 						</object>
@@ -1589,8 +1634,8 @@
 							<string>fieldFilterAppliance</string>
 							<string>fieldNewApplianceName</string>
 							<string>mainScrollView</string>
+							<string>popoverNewAppliances</string>
 							<string>tableAppliances</string>
-							<string>viewNewAppliance</string>
 							<string>viewTableContainer</string>
 							<string>windowNewAppliance</string>
 						</object>
@@ -1621,12 +1666,12 @@
 								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">tableAppliances</string>
-								<string key="candidateClassName">NSTableView</string>
+								<string key="name">popoverNewAppliances</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewAppliance</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">tableAppliances</string>
+								<string key="candidateClassName">NSTableView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

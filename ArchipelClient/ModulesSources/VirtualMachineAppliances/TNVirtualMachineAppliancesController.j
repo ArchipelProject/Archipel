@@ -54,17 +54,16 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     @outlet CPButton                    buttonCreate;
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPCheckBox                  checkBoxShouldGZIP;
+    @outlet CPPopover                   popoverNewAppliances;
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPTableView                 tableAppliances;
     @outlet CPTextField                 fieldNewApplianceName;
-    @outlet CPView                      viewNewAppliance;
     @outlet CPView                      viewTableContainer;
 
     CPButton                            _detachButton;
     CPButton                            _attachButton;
     CPButton                            _packageButton;
     TNTableViewDataSource               _appliancesDatasource;
-    TNAttachedWindow                    _windowNewAppliance;
 }
 
 
@@ -75,10 +74,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)awakeFromCib
 {
-    _windowNewAppliance = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewAppliance frameSize].width, [viewNewAppliance frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_windowNewAppliance setContentView:viewNewAppliance];
-    [_windowNewAppliance setDefaultButton:buttonCreate];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // table appliances
@@ -167,7 +162,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)willHide
 {
-    [_windowNewAppliance close];
+    [popoverNewAppliances close];
     [super willHide];
 }
 
@@ -190,7 +185,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [self setControl:_detachButton enabledAccordingToPermission:@"appliance_detach"];
 
     if ([self currentEntityHasPermission:@"appliance_package"])
-        [_windowNewAppliance close];
+        [popoverNewAppliances close];
 
     [self tableViewSelectionDidChange:nil];
 }
@@ -276,8 +271,11 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     [fieldNewApplianceName setStringValue:[CPString UUID]];
     [checkBoxShouldGZIP setState:CPOnState];
-    [_windowNewAppliance makeFirstResponder:fieldNewApplianceName];
-    [_windowNewAppliance positionRelativeToView:aSender];
+
+    [popoverNewAppliances showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverNewAppliances makeFirstResponder:fieldNewApplianceName];
+    [popoverNewAppliances setDefaultButton:buttonCreate];
+
 }
 
 /*! close the new appliance window
@@ -285,7 +283,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (IBAction)closeNewApplianceWindow:(id)aSender
 {
-    [_windowNewAppliance close];
+    [popoverNewAppliances close];
 }
 
 /*! performed when we double click on package from table view.
@@ -524,7 +522,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didPackageAppliance:) ofObject:self];
 
-    [_windowNewAppliance close];
+    [popoverNewAppliances close];
 }
 
 /*! compute the packaging results

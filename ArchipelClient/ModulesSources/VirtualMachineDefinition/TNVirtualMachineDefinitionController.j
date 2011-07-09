@@ -80,6 +80,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPButton                buttonXMLEditorDefine;
     @outlet CPButtonBar             buttonBarControlDrives;
     @outlet CPButtonBar             buttonBarControlNics;
+    @outlet CPPopover               popoverXMLEditor;
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonGuests;
     @outlet CPPopUpButton           buttonInputBus;
@@ -122,7 +123,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                  viewParametersEffectBottom;
     @outlet CPView                  viewParametersEffectTop;
     @outlet CPView                  viewParametersStandard;
-    @outlet CPView                  viewXMLEditor;
     @outlet LPMultiLineTextField    fieldStringXMLDesc;
     @outlet TNDriveController       driveController;
     @outlet TNNetworkController     networkController;
@@ -137,7 +137,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNTextFieldStepper      stepperNumberCPUs;
     @outlet TNUIKitScrollView       scrollViewContentView;
 
-
     BOOL                            _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                            _definitionRecovered;
     CPButton                        _editButtonDrives;
@@ -149,7 +148,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPImage                         _imageDefining;
     CPImage                         _imageEdited;
     CPString                        _stringXMLDesc;
-    TNAttachedWindow                _windowXMLEditor;
     TNLibvirtDomain                 _libvirtDomain;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
@@ -165,10 +163,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)awakeFromCib
 {
-    _windowXMLEditor = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewXMLEditor frameSize].width, [viewXMLEditor frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_windowXMLEditor setContentView:viewXMLEditor];
-    [_windowXMLEditor setDefaultButton:buttonXMLEditorDefine];
-
     var bundle      = [CPBundle bundleForClass:[self class]],
         defaults    = [CPUserDefaults standardUserDefaults],
         imageBg     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];
@@ -517,7 +511,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     [networkController closeWindow:nil];
     [driveController closeWindow:nil];
-    [_windowXMLEditor close];
+    [popoverXMLEditor close];
 
     [super willHide];
 }
@@ -534,6 +528,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                                      actions:[[CPBundleLocalizedString(@"Validate", @"Validate"), @selector(saveChanges:)], [CPBundleLocalizedString(@"Discard", @"Discard"), @selector(discardChanges:)]]];
 
         [alert setUserInfo:[CPArray arrayWithObjects:nextItem, anObject]];
+
+        [networkController closeWindow:nil];
+        [driveController closeWindow:nil];
+        [popoverXMLEditor close];
+
         [alert runModal];
         return NO;
     }
@@ -1053,7 +1052,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
-    [_windowXMLEditor positionRelativeToView:aSender];
+    [popoverXMLEditor showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
 }
 
 /*! close the manual XML editor
@@ -1061,7 +1061,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)closeXMLEditor:(id)aSender
 {
-    [_windowXMLEditor close];
+    [popoverXMLEditor close];
 }
 
 /*! make the definition set as edited
@@ -1893,7 +1893,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonDefine setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
-    [_windowXMLEditor close];
+    [popoverXMLEditor close];
 }
 
 /*! compute hypervisor answer about the definition

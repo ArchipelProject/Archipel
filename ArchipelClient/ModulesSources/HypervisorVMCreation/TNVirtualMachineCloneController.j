@@ -21,7 +21,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
-@import <TNKit/TNAttachedWindow.j>
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlClone        = @"clone";
@@ -33,23 +32,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 @implementation TNVirtualMachineCloneController : CPObject
 {
     @outlet CPButton        buttonClone;
+    @outlet CPPopover       mainPopover;
     @outlet CPTextField     fieldCloneVirtualMachineName;
-    @outlet CPView          mainContentView;
 
     id                      _delegate   @accessors(property=delegate);
-
-    TNAttachedWindow        _mainWindow;
-}
-
-
-#pragma mark -
-#pragma mark Initialization
-
-- (void)awakeFromCib
-{
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonClone];
 }
 
 
@@ -62,8 +48,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (IBAction)openWindow:(id)aSender
 {
     [fieldCloneVirtualMachineName setStringValue:@""];
-    [_mainWindow makeFirstResponder:fieldCloneVirtualMachineName];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover makeFirstResponder:fieldCloneVirtualMachineName];
+    [mainPopover setDefaultButton:buttonClone];
 }
 
 /*! close the window
@@ -71,7 +58,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! clone a virtual machine
@@ -79,7 +66,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)cloneVirtualMachine:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
     [self cloneVirtualMachine];
 }
 

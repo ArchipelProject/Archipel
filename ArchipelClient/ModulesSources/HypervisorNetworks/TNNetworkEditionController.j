@@ -1,5 +1,5 @@
 /*
- * TNWindowNetworkProperties.j
+ * TNNetworkEditionController.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -38,15 +38,18 @@
 /*! @ingroup hypervisornetworks
     The newtork window edition
 */
-@implementation TNWindowNetworkController : CPObject
+@implementation TNNetworkEditionController : CPObject
 {
     @outlet CPButton            buttonOK;
     @outlet CPButtonBar         buttonBarControlDHCPHosts;
     @outlet CPButtonBar         buttonBarControlDHCPRanges;
     @outlet CPCheckBox          checkBoxDHCPEnabled;
     @outlet CPCheckBox          checkBoxSTPEnabled;
+    @outlet CPPopover           mainPopover;
     @outlet CPPopUpButton       buttonForwardDevice;
     @outlet CPPopUpButton       buttonForwardMode;
+    @outlet CPTableView         tableViewHosts;
+    @outlet CPTableView         tableViewRanges;
     @outlet CPTabView           tabViewDHCP;
     @outlet CPTextField         fieldBridgeDelay;
     @outlet CPTextField         fieldBridgeIP;
@@ -57,9 +60,6 @@
     @outlet CPView              viewRangesConf;
     @outlet CPView              viewTableHostsContainer;
     @outlet CPView              viewTableRangesContainer;
-    @outlet CPView              mainContentView;
-    @outlet CPTableView         tableViewHosts;
-    @outlet CPTableView         tableViewRanges;
 
     CPArray                     _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
     id                          _delegate                   @accessors(property=delegate);
@@ -69,7 +69,6 @@
     CPButton                    _minusButtonDHCPRanges;
     CPButton                    _plusButtonDHCPHosts;
     CPButton                    _plusButtonDHCPRanges;
-    TNAttachedWindow            _mainWindow;
     TNTableViewDataSource       _datasourceDHCPHosts;
     TNTableViewDataSource       _datasourceDHCPRanges;
 }
@@ -79,10 +78,6 @@
 
 - (void)awakeFromCib
 {
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonOK];
-
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
@@ -229,7 +224,7 @@
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
     [_delegate defineNetwork:_network];
-    [_mainWindow close];
+    [_mainPopover close];
 }
 
 /*! add a new DCHP range
@@ -291,7 +286,6 @@
 - (IBAction)openWindow:(id)aSender
 {
     [self update];
-    [_mainWindow makeFirstResponder:fieldNetworkName];
 
     if ([aSender isKindOfClass:CPTableView])
     {
@@ -299,10 +293,13 @@
         rect.origin.y += rect.size.height
         rect.origin.x += rect.size.width / 2;
         var point = [[aSender superview] convertPoint:rect.origin toView:nil];
-        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+        [mainPopover showRelativeToRect:CPRectMake(point.x, point.y, 10, 10) ofView:nil preferredEdge:nil];
     }
     else
-        [_mainWindow positionRelativeToView:aSender];
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil]
+
+    [mainPopover makeFirstResponder:fieldNetworkName];
+    [mainPopover setDefaultButton:buttonOK];
 }
 
 /*! hide the main window
@@ -310,7 +307,7 @@
 */
 - (IBAction)closeWindow:(id)sender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! called when changing the forward mode

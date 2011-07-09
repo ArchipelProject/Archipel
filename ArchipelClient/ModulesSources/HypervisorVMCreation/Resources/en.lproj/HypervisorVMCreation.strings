@@ -83,7 +83,7 @@
 /* Class = "NSTextFieldCell"; title = "Clone virtual machine"; ObjectID = "106"; */
 "106.title" = "Clone virtual machine";
 
-/* Class = "NSButtonCell"; title = "Clone"; ObjectID = "107"; */
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "107"; */
 "107.title" = "Create";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "108"; */

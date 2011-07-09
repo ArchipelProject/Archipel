@@ -27,7 +27,6 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNUIKitScrollView.j>
 
 @import "TNSnapshot.j";
@@ -58,7 +57,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     @outlet CPSearchField               fieldFilter;
     @outlet CPTextField                 fieldInfo;
     @outlet CPTextField                 fieldNewSnapshotName;
-    @outlet CPView                      viewNewSnapshot;
+    @outlet CPPopover                   popoverNewSnapshot;
     @outlet CPView                      viewTableContainer;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
     @outlet TNUIKitScrollView           scrollViewSnapshots;
@@ -69,7 +68,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     CPOutlineView                       _outlineViewSnapshots;
     TNSnapshot                          _currentSnapshot;
     TNSnapshotsDatasource               _datasourceSnapshots;
-    TNAttachedWindow                    _windowNewSnapshot;
 }
 
 #pragma mark -
@@ -79,10 +77,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)awakeFromCib
 {
-    _windowNewSnapshot = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewSnapshot frameSize].width, [viewNewSnapshot frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_windowNewSnapshot setContentView:viewNewSnapshot];
-    [_windowNewSnapshot setDefaultButton:buttonSnapshotTake];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
@@ -225,7 +219,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)willHide
 {
-    [_windowNewSnapshot close];
+    [popoverNewSnapshot close];
     [super willHide];
 }
 
@@ -248,7 +242,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [self setControl:_revertButton enabledAccordingToPermission:@"snapshot_revert" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
 
     if (![self currentEntityHasPermission:@"snapshot_take"])
-        [_windowNewSnapshot close];
+        [popoverNewSnapshot close];
 }
 
 #pragma mark -
@@ -284,8 +278,9 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [fieldNewSnapshotDescription setStringValue:@""];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
 
-    [_windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
-    [_windowNewSnapshot positionRelativeToView:aSender];
+    [popoverNewSnapshot showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
+    [popoverNewSnapshot setDefaultButton:buttonSnapshotTake];
 }
 
 /*! close the new snapshot window
@@ -293,7 +288,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (IBAction)closeWindowNewSnapshot:(id)aSender
 {
-    [_windowNewSnapshot close];
+    [popoverNewSnapshot close];
 }
 
 
@@ -457,7 +452,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didTakeSnapshot:)];
 
-    [_windowNewSnapshot close];
+    [popoverNewSnapshot close];
     [fieldNewSnapshotName setStringValue:nil];
     [fieldNewSnapshotDescription setStringValue:nil];
 }

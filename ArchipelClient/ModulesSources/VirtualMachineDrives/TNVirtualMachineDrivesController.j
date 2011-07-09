@@ -429,7 +429,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 {
     [self setControl:_plusButton enabledAccordingToPermission:@"drives_create"];
     [self setControl:_minusButton enabledAccordingToPermission:@"drives_delete" specialCondition:([tableMedias numberOfSelectedRows] > 0)];
-    [self setControl:_editButton enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([tableMedias numberOfSelectedRows] <= 0)];
+    [self setControl:_editButton enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([tableMedias numberOfSelectedRows] >= 0)];
 }
 
 

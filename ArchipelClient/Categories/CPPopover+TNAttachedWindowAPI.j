@@ -1,5 +1,5 @@
 /*
- * TNCategories.j
+ * CPPopover+TNAttachedWindowAPI.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,21 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <AppKit/CPPopover.j>
 
-/*! @defgroup categories Archipel Utilities
-    @desc Simples categories made to live ina better world
-*/
+@implementation CPPopover (TNAttachedWindowAPI)
 
+- (void)setDefaultButton:(CPButton)aButton
+{
+    [_attachedWindow setDefaultButton:aButton];
+}
 
-@import "CPDate+Format.j"
-@import "CPOutlineView+Extend.j"
-@import "CPPlatformWindow+Title.j"
-@import "CPPopover+TNAttachedWindowAPI.j"
-@import "CPSearchField+CancelButton.j"
-@import "CPSegmentedControl+SegmentView.j"
-@import "CPString+FormatByteSize.j"
-@import "CPString+UUIDRFC4122.j"
-@import "CPTabView+Border.j"
-@import "CPView+Border.j"
-@import "TNStropheClient+Singleton.j"
-@import "TNStropheGroup+Capitalized.j"
+- (CPButton)defaultButton
+{
+    return [_attachedWindow defaultButton];
+}
+
+- (void)makeFirstResponder:(id)aResponder
+{
+    [_attachedWindow makeFirstResponder:aResponder];
+}
+
+@end

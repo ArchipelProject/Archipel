@@ -23,7 +23,9 @@
 			<string>NSCustomObject</string>
 			<string>NSCustomView</string>
 			<string>NSView</string>
+			<string>NSViewController</string>
 			<string>NSTextField</string>
+			<string>NSPopover</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -261,6 +263,16 @@
 				<string key="NSFrameSize">{725, 522}</string>
 				<reference key="NSNextKeyView" ref="70210539"/>
 				<string key="NSClassName">NSView</string>
+			</object>
+			<object class="NSViewController" id="572641755"/>
+			<object class="NSPopover" id="88654969">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="572641755"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="958189303">
 				<nil key="NSNextResponder"/>
@@ -532,20 +544,36 @@
 					<int key="connectionID">57</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewNewSnapshot</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="958189303"/>
-					</object>
-					<int key="connectionID">76</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeWindowNewSnapshot:</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="23679038"/>
 					</object>
 					<int key="connectionID">77</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="88654969"/>
+						<reference key="destination" ref="572641755"/>
+					</object>
+					<int key="connectionID">80</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverNewSnapshot</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="88654969"/>
+					</object>
+					<int key="connectionID">81</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="572641755"/>
+						<reference key="destination" ref="958189303"/>
+					</object>
+					<int key="connectionID">82</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -802,6 +830,17 @@
 						<reference key="object" ref="518214625"/>
 						<reference key="parent" ref="532529537"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">78</int>
+						<reference key="object" ref="572641755"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">79</int>
+						<reference key="object" ref="88654969"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -840,6 +879,8 @@
 					<string>58.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 					<string>7.IBPluginDependency</string>
+					<string>78.IBPluginDependency</string>
+					<string>79.IBPluginDependency</string>
 					<string>8.IBPluginDependency</string>
 					<string>9.IBPluginDependency</string>
 				</object>
@@ -879,6 +920,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -893,7 +936,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">77</int>
+			<int key="maxID">82</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1030,8 +1073,8 @@
 							<string>fieldInfo</string>
 							<string>fieldNewSnapshotDescription</string>
 							<string>fieldNewSnapshotName</string>
+							<string>popoverNewSnapshot</string>
 							<string>scrollViewSnapshots</string>
-							<string>viewNewSnapshot</string>
 							<string>viewTableContainer</string>
 							<string>windowNewSnapshot</string>
 						</object>
@@ -1043,8 +1086,8 @@
 							<string>NSTextField</string>
 							<string>LPMultiLineTextField</string>
 							<string>NSTextField</string>
+							<string>NSPopover</string>
 							<string>TNUIKitScrollView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 						</object>
@@ -1059,8 +1102,8 @@
 							<string>fieldInfo</string>
 							<string>fieldNewSnapshotDescription</string>
 							<string>fieldNewSnapshotName</string>
+							<string>popoverNewSnapshot</string>
 							<string>scrollViewSnapshots</string>
-							<string>viewNewSnapshot</string>
 							<string>viewTableContainer</string>
 							<string>windowNewSnapshot</string>
 						</object>
@@ -1091,12 +1134,12 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewSnapshots</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
+								<string key="name">popoverNewSnapshot</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewSnapshot</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">scrollViewSnapshots</string>
+								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

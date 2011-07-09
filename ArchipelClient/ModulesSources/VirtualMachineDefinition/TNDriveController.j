@@ -22,7 +22,6 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 
-@import <TNKit/TNAttachedWindow.j>
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskGet     = @"get",
@@ -34,6 +33,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 @implementation TNDriveController : CPObject
 {
     @outlet CPButton        buttonOK;
+    @outlet CPPopover       mainPopover;
     @outlet CPPopUpButton   buttonDevice;
     @outlet CPPopUpButton   buttonDriverCache;
     @outlet CPPopUpButton   buttonSourcePath;
@@ -41,14 +41,11 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     @outlet CPPopUpButton   buttonTargetDevice;
     @outlet CPPopUpButton   buttonType;
     @outlet CPTextField     fieldDevicePath;
-    @outlet CPView          mainContentView;
 
     id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
     TNLibvirtDeviceDisk     _drive          @accessors(property=drive);
     TNStropheContact        _entity         @accessors(property=entity);
-
-    TNAttachedWindow        _mainWindow;
 }
 
 
@@ -76,10 +73,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonSourcePath setToolTip:CPBundleLocalizedString(@"Set the source to use for the drive", @"Set the source to use for the drive")];
     [buttonTargetDevice setToolTip:CPBundleLocalizedString(@"Set the target to use for the drive", @"Set the target to use for the drive")];
     [buttonDriverCache setToolTip:CPBundleLocalizedString(@"Set the cache mode the drive", @"Set the cache mode the drive")];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -155,7 +148,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [_table reloadData];
 
     [_delegate handleDefinitionEdition:YES];
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! change the type of the drive
@@ -218,13 +211,15 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if ([aSender isKindOfClass:CPTableView])
     {
         var rect = [aSender rectOfRow:[aSender selectedRow]];
-        rect.origin.y += rect.size.height
+        rect.origin.y += rect.size.height;
         rect.origin.x += rect.size.width / 2;
         var point = [[aSender superview] convertPoint:rect.origin toView:nil];
-        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+        [mainPopover showRelativeToRect:CPRectMake(point.x, point.y, 10, 10) ofView:nil preferredEdge:CPMaxYEdge];
     }
     else
-        [_mainWindow positionRelativeToView:aSender];
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    [mainPopover setDefaultButton:buttonOK];
 }
 
 /*! hide the main window
@@ -232,7 +227,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 

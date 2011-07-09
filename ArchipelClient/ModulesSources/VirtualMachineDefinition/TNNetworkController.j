@@ -36,6 +36,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 {
     @outlet CPButton        buttonOK;
     @outlet CPButtonBar     buttonBarNetworkParameters;
+    @outlet CPPopover       mainPopover;
     @outlet CPPopUpButton   buttonModel;
     @outlet CPPopUpButton   buttonNetworkFilter;
     @outlet CPPopUpButton   buttonSource;
@@ -43,7 +44,6 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     @outlet CPTableView     tableViewNetworkFilterParameters;
     @outlet CPTextField     fieldMac;
     @outlet CPView          viewNWFilterParametersContainer;
-    @outlet CPView          mainContentView;
 
     id                      _delegate   @accessors(property=delegate);
     CPTableView             _table      @accessors(property=table);
@@ -51,7 +51,6 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     TNStropheContact        _entity     @accessors(property=entity);
 
     TNTableViewDataSource   _datasourceNWFilterParameters;
-    TNAttachedWindow        _mainWindow;
 }
 
 #pragma mark -
@@ -84,10 +83,6 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     [removeButton setAction:@selector(removeNWFilterParameter:)];
 
     [buttonBarNetworkParameters setButtons:[addButton, removeButton]];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -202,7 +197,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     [_delegate handleDefinitionEdition:YES];
     [_table reloadData];
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! change the type of the network
@@ -255,13 +250,15 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     if ([aSender isKindOfClass:CPTableView])
     {
         var rect = [aSender rectOfRow:[aSender selectedRow]];
-        rect.origin.y += rect.size.height
+        rect.origin.y += rect.size.height;
         rect.origin.x += rect.size.width / 2;
         var point = [[aSender superview] convertPoint:rect.origin toView:nil];
-        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+        [mainPopover showRelativeToRect:CPRectMake(point.x, point.y, 10, 10) ofView:nil preferredEdge:CPMaxYEdge];
     }
     else
-        [_mainWindow positionRelativeToView:aSender];
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    [mainPopover setDefaultButton:buttonOK];
 }
 
 /*! hide the main window
@@ -269,7 +266,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 

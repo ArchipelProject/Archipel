@@ -34,13 +34,12 @@
 @implementation TNGroupedMigrationController : CPObject
 {
     @outlet CPButton            buttonMigrate;
+    @outlet CPPopover           mainPopover;
     @outlet CPSearchField       searchFieldHypervisors;
     @outlet CPTableView         tableHypervisors;
-    @outlet CPView              mainContentView;
 
     id                          _delegate @accessors(property=delegate);
 
-    TNAttachedWindow            _mainWindow;
     TNTableViewDataSource       _datasourceHypervisors;
 }
 
@@ -59,10 +58,6 @@
 
     [searchFieldHypervisors setTarget:_datasourceHypervisors];
     [searchFieldHypervisors setAction:@selector(filterObjects:)];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonMigrate];
 }
 
 
@@ -96,7 +91,8 @@
 - (IBAction)openWindow:(id)aSender
 {
     [self populateHypervisors];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover setDefaultButton:buttonMigrate];
 }
 
 /*! hide the main window
@@ -104,7 +100,7 @@
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! send migration info to the delegate
@@ -115,7 +111,7 @@
     var index = [[tableHypervisors selectedRowIndexes] firstIndex];
 
     [_delegate performGroupedMigration:[_datasourceHypervisors objectAtIndex:index]];
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 @end

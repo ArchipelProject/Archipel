@@ -12,6 +12,7 @@
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>NSPopover</string>
 			<string>NSButton</string>
 			<string>NSButtonCell</string>
 			<string>NSTextFieldCell</string>
@@ -25,6 +26,7 @@
 			<string>NSWindowTemplate</string>
 			<string>NSView</string>
 			<string>NSTextField</string>
+			<string>NSViewController</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -572,6 +574,16 @@
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
+			</object>
+			<object class="NSViewController" id="347206673"/>
+			<object class="NSPopover" id="381698769">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="347206673"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="670153015">
 				<nil key="NSNextResponder"/>
@@ -1164,11 +1176,27 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewPasteBoard</string>
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="381698769"/>
+						<reference key="destination" ref="347206673"/>
+					</object>
+					<int key="connectionID">157</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverPasteBoard</string>
 						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="381698769"/>
+					</object>
+					<int key="connectionID">158</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="347206673"/>
 						<reference key="destination" ref="670153015"/>
 					</object>
-					<int key="connectionID">154</int>
+					<int key="connectionID">159</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1765,6 +1793,17 @@
 						<reference key="object" ref="486659397"/>
 						<reference key="parent" ref="745808752"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">155</int>
+						<reference key="object" ref="347206673"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">156</int>
+						<reference key="object" ref="381698769"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1790,6 +1829,8 @@
 					<string>148.IBPluginDependency</string>
 					<string>149.IBPluginDependency</string>
 					<string>15.IBPluginDependency</string>
+					<string>155.IBPluginDependency</string>
+					<string>156.IBPluginDependency</string>
 					<string>16.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
@@ -1889,6 +1930,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1954,7 +1997,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">154</int>
+			<int key="maxID">159</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2151,10 +2194,10 @@
 							<string>fieldPreferencesFBURefreshRate</string>
 							<string>imageViewSecureConnection</string>
 							<string>mainScrollView</string>
+							<string>popoverPasteBoard</string>
 							<string>sliderScaling</string>
 							<string>switchPreferencesPreferSSL</string>
 							<string>viewControls</string>
-							<string>viewPasteBoard</string>
 							<string>windowPassword</string>
 							<string>windowPasteBoard</string>
 						</object>
@@ -2175,9 +2218,9 @@
 							<string>NSTextField</string>
 							<string>NSImageView</string>
 							<string>TNUIKitScrollView</string>
+							<string>NSPopover</string>
 							<string>NSSlider</string>
 							<string>TNSwitch</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 							<string>NSWindow</string>
@@ -2202,10 +2245,10 @@
 							<string>fieldPreferencesFBURefreshRate</string>
 							<string>imageViewSecureConnection</string>
 							<string>mainScrollView</string>
+							<string>popoverPasteBoard</string>
 							<string>sliderScaling</string>
 							<string>switchPreferencesPreferSSL</string>
 							<string>viewControls</string>
-							<string>viewPasteBoard</string>
 							<string>windowPassword</string>
 							<string>windowPasteBoard</string>
 						</object>
@@ -2272,6 +2315,10 @@
 								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">popoverPasteBoard</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">sliderScaling</string>
 								<string key="candidateClassName">NSSlider</string>
 							</object>
@@ -2281,10 +2328,6 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewControls</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewPasteBoard</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">

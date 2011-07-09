@@ -29,7 +29,6 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 
@@ -46,15 +45,15 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarControl;
-    @outlet TNUIKitScrollView   scrollViewUsers;
+    @outlet CPPopover           popoverNewUser;
     @outlet CPSearchField       filterField;
+    @outlet CPTableView         tableUsers;
     @outlet CPTextField         fieldNewUserPassword;
     @outlet CPTextField         fieldNewUserPasswordConfirm;
     @outlet CPTextField         fieldNewUserUsername;
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
-    @outlet CPView              viewNewUser;
-    @outlet CPTableView         tableUsers;
+    @outlet TNUIKitScrollView   scrollViewUsers;
 
     CPArray                     _users                          @accessors(getter=users);
     id                          _delegate                       @accessors(property=delegate);
@@ -66,7 +65,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     CPImage                     _iconEntityTypeHuman;
     CPImage                     _iconEntityTypeHypervisor;
     CPImage                     _iconEntityTypeVM;
-    TNAttachedWindow            _windowNewUser;
 }
 
 #pragma mark -
@@ -74,10 +72,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 - (void)awakeFromCib
 {
-    _windowNewUser = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewUser frameSize].width, [viewNewUser frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_windowNewUser setContentView:viewNewUser];
-    [_windowNewUser setDefaultButton:buttonCreate];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     var bundle = [CPBundle bundleForClass:[self class]];
@@ -126,7 +120,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
-        [_windowNewUser close];
+        [popoverNewUser close];
 
     [self reload];
 }
@@ -151,7 +145,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [fieldNewUserPassword setStringValue:@""];
     [fieldNewUserPasswordConfirm setStringValue:@""];
 
-    [_windowNewUser positionRelativeToView:aSender];
+    [popoverNewUser showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverNewUser setDefaultButton:buttonCreate];
+    [popoverNewUser makeFirstResponder:fieldNewUserUsername];
 }
 
 /*! close the new user window
@@ -159,7 +155,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (IBAction)closeRegisterUserWindow:(id)aSender
 {
-    [_windowNewUser close];
+    [popoverNewUser close];
 }
 
 /*! create a new user
@@ -181,7 +177,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         return;
     }
 
-    [_windowNewUser close];
+    [popoverNewUser close];
     [self registerUserWithName:[fieldNewUserUsername stringValue] password:[fieldNewUserPassword stringValue]];
 }
 

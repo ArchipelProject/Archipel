@@ -12,6 +12,7 @@
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>NSPopover</string>
 			<string>NSScroller</string>
 			<string>NSTableHeaderView</string>
 			<string>NSButton</string>
@@ -28,6 +29,7 @@
 			<string>NSTableColumn</string>
 			<string>NSView</string>
 			<string>NSTextField</string>
+			<string>NSViewController</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -448,6 +450,16 @@
 			</object>
 			<object class="NSCustomObject" id="397467511">
 				<string key="NSClassName">TNGroupedMigrationController</string>
+			</object>
+			<object class="NSViewController" id="840498722"/>
+			<object class="NSPopover" id="411474620">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="840498722"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="1055382019">
 				<nil key="NSNextResponder"/>
@@ -905,14 +917,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="397467511"/>
-						<reference key="destination" ref="1055382019"/>
-					</object>
-					<int key="connectionID">93</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">buttonMigrate</string>
 						<reference key="source" ref="397467511"/>
 						<reference key="destination" ref="697876774"/>
@@ -926,6 +930,30 @@
 						<reference key="destination" ref="273089990"/>
 					</object>
 					<int key="connectionID">96</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="411474620"/>
+						<reference key="destination" ref="840498722"/>
+					</object>
+					<int key="connectionID">99</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="397467511"/>
+						<reference key="destination" ref="411474620"/>
+					</object>
+					<int key="connectionID">100</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="840498722"/>
+						<reference key="destination" ref="1055382019"/>
+					</object>
+					<int key="connectionID">101</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1023,6 +1051,7 @@
 						<int key="objectID">33</int>
 						<reference key="object" ref="397467511"/>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Grouped Migration Controller</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">14</int>
@@ -1265,6 +1294,17 @@
 						<reference key="object" ref="606588087"/>
 						<reference key="parent" ref="588319175"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">97</int>
+						<reference key="object" ref="840498722"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">98</int>
+						<reference key="object" ref="411474620"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1316,9 +1356,13 @@
 					<string>67.IBPluginDependency</string>
 					<string>7.IBPluginDependency</string>
 					<string>8.IBPluginDependency</string>
+					<string>97.IBPluginDependency</string>
+					<string>98.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1378,7 +1422,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">96</int>
+			<int key="maxID">101</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1586,7 +1630,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonMigrate</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 							<string>scrollViewTableHypervisors</string>
 							<string>searchFieldHypervisors</string>
@@ -1595,7 +1639,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
 							<string>TNUIKitScrollView</string>
 							<string>NSSearchField</string>
@@ -1607,7 +1651,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonMigrate</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 							<string>scrollViewTableHypervisors</string>
 							<string>searchFieldHypervisors</string>
@@ -1620,8 +1664,8 @@
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>

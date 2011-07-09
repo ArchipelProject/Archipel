@@ -24,8 +24,6 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPView.j>
 
-@import <TNKit/TNAttachedWindow.j>
-
 
 
 /*! @ingroup permissionsmodule
@@ -35,20 +33,18 @@
 {
     @outlet CPButton                buttonSave;
     @outlet CPButtonBar             buttonBar;
+    @outlet CPPopover               mainPopover;
+    @outlet CPPopover               popoverNewTemplate;
     @outlet CPSearchField           filterField;
     @outlet CPTableView             tableRoles;
     @outlet CPTextField             fieldNewTemplateDescription;
     @outlet CPTextField             fieldNewTemplateName;
     @outlet CPView                  viewTableContainer;
-    @outlet CPView                  mainContentView;
-    @outlet CPView                  viewNewTemplate;
 
     id                              _delegate           @accessors(property=delegate);
 
     TNPubSubNode                    _nodeRolesTemplates;
     TNTableViewDataSource           _datasourceRoles;
-    TNAttachedWindow                _mainWindow;
-    TNAttachedWindow                _windowNewTemplate;
 }
 
 
@@ -76,13 +72,6 @@
 
     [filterField setTarget:_datasourceRoles];
     [filterField setAction:@selector(filterObjects:)];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonSave];
-
-    _windowNewTemplate = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewNewTemplate frameSize].width, [viewNewTemplate frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_windowNewTemplate setContentView:viewNewTemplate];
 }
 
 
@@ -145,7 +134,7 @@
 - (IBAction)openWindow:(id)aSender
 {
     [self reload];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
 }
 
 /*! will close the controller's main window
@@ -153,7 +142,7 @@
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! will open the new template window
@@ -163,8 +152,10 @@
 {
     [fieldNewTemplateName setStringValue:@""];
     [fieldNewTemplateDescription setStringValue:@""];
-    [_windowNewTemplate makeFirstResponder:fieldNewTemplateDescription];
-    [_windowNewTemplate positionRelativeToView:aSender];
+
+    [popoverNewTemplate showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverNewTemplate makeFirstResponder:fieldNewTemplateName];
+    [popoverNewTemplate setDefaultButton:buttonSave];
 }
 
 /*! close the new template window
@@ -172,7 +163,7 @@
 */
 - (IBAction)closeNewTemplateWindow:(id)aSender
 {
-    [_windowNewTemplate close];
+    [popoverNewTemplate close];
 }
 
 /*! apply selected roles to delegate's role datasource
@@ -227,7 +218,7 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRole:) name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRoleFail:) name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
     [_nodeRolesTemplates publishItem:template];
-    [_windowNewTemplate close];
+    [popoverNewTemplate close];
 }
 
 /*! delete the current selected role

@@ -35,10 +35,8 @@
 {
     @outlet CPButton    buttonAdd;
     @outlet CPButton    buttonCancel;
+    @outlet CPPopover   mainPopover;
     @outlet CPTextField newGroupName;
-    @outlet CPView      mainContentView;
-
-    TNAttachedWindow    _mainWindow;
 }
 
 
@@ -50,10 +48,6 @@
 - (void)awakeFromCib
 {
     [newGroupName setToolTip:CPLocalizedString(@"The name of the new group", @"The name of the new group")];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonAdd];
 }
 
 
@@ -118,12 +112,14 @@
 - (IBAction)showWindow:(id)aSender
 {
     [newGroupName setStringValue:@""];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover setDefaultButton:buttonAdd];
+    [mainPopover makeFirstResponder:newGroupName];
 }
 
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! add a group according to the outlets
@@ -149,7 +145,7 @@
         [growl pushNotificationWithTitle:CPLocalizedString(@"Group", @"Group")
                                  message:CPLocalizedString(@"Group ", @"Group ") + groupName + CPLocalizedString(@" has been created", @" has been created")];
 
-        [_mainWindow close];
+        [mainPopover close];
     }
 }
 

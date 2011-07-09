@@ -21,7 +21,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
-@import <TNKit/TNAttachedWindow.j>
 
 var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
     TNArchipelTypeHypervisorVMCastingRegister           = @"register",
@@ -34,23 +33,12 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 @implementation TNVMCastRegistrationController : CPObject
 {
     @outlet CPButton        buttonNewVMCast;
+    @outlet CPPopover       mainPopover;
     @outlet CPTextField     fieldNewURL;
-    @outlet CPView          mainContentView;
 
     id                      _delegate   @accessors(property=delegate);
-
-    TNAttachedWindow        _mainWindow;
 }
 
-#pragma mark -
-#pragma mark Initialization
-
-- (void)awakeFromCib
-{
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonNewVMCast];
-}
 
 #pragma mark -
 #pragma mark Action
@@ -61,8 +49,9 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 - (IBAction)openWindow:(id)aSender
 {
     [fieldNewURL setStringValue:@""];
-    [_mainWindow makeFirstResponder:fieldNewURL];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover setDefaultButton:buttonNewVMCast];
+    [mainPopover makeFirstResponder:fieldNewURL];
 }
 
 /*! close the window
@@ -70,7 +59,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close]
+    [mainPopover close]
 }
 
 /*! add new VMCast
@@ -78,7 +67,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 */
 - (IBAction)addNewVMCast:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
     [self addNewVMCast];
 }
 

@@ -21,7 +21,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
-@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTextFieldStepper.j>
 
 var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
@@ -56,12 +55,10 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
     @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
     @outlet TNTextFieldStepper      stepperSecond;
-    @outlet CPView                  mainContentView;
     @outlet CPTabView               tabViewJobSchedule;
+    @outlet CPPopover               mainPopover;
 
     id                              _delegate   @accessors(property=delegate);
-
-    TNAttachedWindow                _mainWindow;
 }
 
 #pragma mark -
@@ -93,10 +90,6 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [stepperNewRecurrentJobDay setMinValue:1];
     [stepperNewRecurrentJobHour setMaxValue:23];
     [stepperNewRecurrentJobHour setMinValue:0];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonNewJobOK];
 }
 
 
@@ -124,8 +117,9 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [stepperNewRecurrentJobMinute setDoubleValue:[date format:@"i"]];
     [stepperNewRecurrentJobSecond setDoubleValue:0.0];
 
-    [_mainWindow makeFirstResponder:fieldNewJobComment];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover makeFirstResponder:fieldNewJobComment];
+    [mainPopover setDefaultButton:buttonNewJobOK];
 }
 
 /*! close the window
@@ -133,7 +127,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close]
+    [mainPopover close]
 }
 
 /*! alloc a new virtual machine
@@ -141,7 +135,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 */
 - (IBAction)alloc:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
     [self alloc];
 }
 
@@ -149,7 +143,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 */
 - (IBAction)schedule:(id)sender
 {
-    [_mainWindow close];
+    [mainPopover close];
     [self schedule];
 }
 

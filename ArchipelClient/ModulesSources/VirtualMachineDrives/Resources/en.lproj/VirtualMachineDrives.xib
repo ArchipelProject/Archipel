@@ -19,6 +19,7 @@
 			<string>NSImageCell</string>
 			<string>NSTableView</string>
 			<string>NSCustomView</string>
+			<string>NSViewController</string>
 			<string>NSSearchField</string>
 			<string>NSTextField</string>
 			<string>NSSearchFieldCell</string>
@@ -29,6 +30,7 @@
 			<string>NSView</string>
 			<string>NSPopUpButtonCell</string>
 			<string>NSScrollView</string>
+			<string>NSPopover</string>
 			<string>NSScroller</string>
 			<string>NSPopUpButton</string>
 			<string>NSMenuItem</string>
@@ -383,62 +385,6 @@
 				<reference key="NSNextKeyView" ref="930800711"/>
 				<string key="NSClassName">NSView</string>
 			</object>
-			<object class="NSCustomView" id="53253902">
-				<nil key="NSNextResponder"/>
-				<int key="NSvFlags">274</int>
-				<object class="NSMutableArray" key="NSSubviews">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSTextField" id="879310057">
-						<reference key="NSNextResponder" ref="53253902"/>
-						<int key="NSvFlags">301</int>
-						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
-						<reference key="NSSuperview" ref="53253902"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="158328889">
-							<int key="NSCellFlags">67239424</int>
-							<int key="NSCellFlags2">138412032</int>
-							<string key="NSContents">You need to stop the virtual machine to be able to manage its drives.</string>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">9</double>
-								<int key="NSfFlags">16</int>
-							</object>
-							<reference key="NSControlView" ref="879310057"/>
-							<reference key="NSBackgroundColor" ref="544579453"/>
-							<reference key="NSTextColor" ref="407466064"/>
-						</object>
-					</object>
-					<object class="NSTextField" id="50341089">
-						<reference key="NSNextResponder" ref="53253902"/>
-						<int key="NSvFlags">301</int>
-						<string key="NSFrame">{{17, 176}, {354, 26}}</string>
-						<reference key="NSSuperview" ref="53253902"/>
-						<reference key="NSNextKeyView" ref="879310057"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="156125754">
-							<int key="NSCellFlags">67239424</int>
-							<int key="NSCellFlags2">138412032</int>
-							<string key="NSContents">Virtual machine is running</string>
-							<reference key="NSSupport" ref="883883335"/>
-							<reference key="NSControlView" ref="50341089"/>
-							<reference key="NSBackgroundColor" ref="544579453"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">2</int>
-								<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
-							</object>
-						</object>
-					</object>
-				</object>
-				<string key="NSFrameSize">{388, 297}</string>
-				<reference key="NSNextKeyView" ref="50341089"/>
-				<string key="NSClassName">NSView</string>
-			</object>
-			<object class="NSCustomObject" id="923147024">
-				<string key="NSClassName">TNNewDriveController</string>
-			</object>
-			<object class="NSCustomObject" id="762612592">
-				<string key="NSClassName">TNEditDriveController</string>
-			</object>
 			<object class="NSCustomView" id="481583244">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
@@ -650,6 +596,69 @@
 				<reference key="NSNextKeyView" ref="799735575"/>
 				<string key="NSReuseIdentifierKey">_NS:499</string>
 				<string key="NSClassName">TNDriveDataView</string>
+			</object>
+			<object class="NSCustomView" id="53253902">
+				<nil key="NSNextResponder"/>
+				<int key="NSvFlags">274</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="879310057">
+						<reference key="NSNextResponder" ref="53253902"/>
+						<int key="NSvFlags">301</int>
+						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
+						<reference key="NSSuperview" ref="53253902"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="158328889">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string key="NSContents">You need to stop the virtual machine to be able to manage its drives.</string>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">9</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="879310057"/>
+							<reference key="NSBackgroundColor" ref="544579453"/>
+							<reference key="NSTextColor" ref="407466064"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="50341089">
+						<reference key="NSNextResponder" ref="53253902"/>
+						<int key="NSvFlags">301</int>
+						<string key="NSFrame">{{17, 176}, {354, 26}}</string>
+						<reference key="NSSuperview" ref="53253902"/>
+						<reference key="NSNextKeyView" ref="879310057"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="156125754">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string key="NSContents">Virtual machine is running</string>
+							<reference key="NSSupport" ref="883883335"/>
+							<reference key="NSControlView" ref="50341089"/>
+							<reference key="NSBackgroundColor" ref="544579453"/>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
+							</object>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{388, 297}</string>
+				<reference key="NSNextKeyView" ref="50341089"/>
+				<string key="NSClassName">NSView</string>
+			</object>
+			<object class="NSCustomObject" id="923147024">
+				<string key="NSClassName">TNNewDriveController</string>
+			</object>
+			<object class="NSViewController" id="245251930"/>
+			<object class="NSPopover" id="222290834">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="245251930"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="182673466">
 				<nil key="NSNextResponder"/>
@@ -1124,6 +1133,19 @@
 				<string key="NSFrameSize">{451, 292}</string>
 				<reference key="NSNextKeyView" ref="269623654"/>
 			</object>
+			<object class="NSCustomObject" id="762612592">
+				<string key="NSClassName">TNEditDriveController</string>
+			</object>
+			<object class="NSViewController" id="108710004"/>
+			<object class="NSPopover" id="22334157">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="108710004"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
 			<object class="NSView" id="449549081">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">256</int>
@@ -1377,6 +1399,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{451, 214}</string>
+				<reference key="NSNextKeyView" ref="435329776"/>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -1696,35 +1719,75 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="923147024"/>
-						<reference key="destination" ref="182673466"/>
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="222290834"/>
+						<reference key="destination" ref="245251930"/>
 					</object>
-					<int key="connectionID">327</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closeMainWindow:</string>
-						<reference key="source" ref="923147024"/>
-						<reference key="destination" ref="112572689"/>
-					</object>
-					<int key="connectionID">328</int>
+					<int key="connectionID">361</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="923147024"/>
+						<reference key="destination" ref="222290834"/>
+					</object>
+					<int key="connectionID">362</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="245251930"/>
+						<reference key="destination" ref="182673466"/>
+					</object>
+					<int key="connectionID">363</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="22334157"/>
+						<reference key="destination" ref="108710004"/>
+					</object>
+					<int key="connectionID">366</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
 						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="22334157"/>
+					</object>
+					<int key="connectionID">367</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="108710004"/>
 						<reference key="destination" ref="449549081"/>
 					</object>
-					<int key="connectionID">357</int>
+					<int key="connectionID">368</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">closeMainWindow:</string>
+						<string key="label">closeWindow:</string>
 						<reference key="source" ref="762612592"/>
 						<reference key="destination" ref="304734839"/>
 					</object>
-					<int key="connectionID">358</int>
+					<int key="connectionID">369</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">closeWindow:</string>
+						<reference key="source" ref="923147024"/>
+						<reference key="destination" ref="112572689"/>
+					</object>
+					<int key="connectionID">370</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="454242853"/>
+						<reference key="destination" ref="1001"/>
+					</object>
+					<int key="connectionID">371</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2406,6 +2469,7 @@
 							<reference ref="587710888"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">View Edit disk</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">16</int>
@@ -2568,6 +2632,30 @@
 						<reference key="object" ref="260807464"/>
 						<reference key="parent" ref="435329776"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">359</int>
+						<reference key="object" ref="245251930"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover New Drive VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">360</int>
+						<reference key="object" ref="222290834"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover New Drive</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">364</int>
+						<reference key="object" ref="108710004"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover EditDrive VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">365</int>
+						<reference key="object" ref="22334157"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover EditDrive</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2643,7 +2731,11 @@
 					<string>33.IBPluginDependency</string>
 					<string>34.IBPluginDependency</string>
 					<string>35.IBPluginDependency</string>
+					<string>359.IBPluginDependency</string>
 					<string>36.IBPluginDependency</string>
+					<string>360.IBPluginDependency</string>
+					<string>364.IBPluginDependency</string>
+					<string>365.IBPluginDependency</string>
 					<string>37.IBPluginDependency</string>
 					<string>38.IBPluginDependency</string>
 					<string>4.IBPluginDependency</string>
@@ -2798,6 +2890,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>CPCheckBox</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2819,7 +2915,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">358</int>
+			<int key="maxID">371</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2920,9 +3016,9 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>closeMainWindow:</string>
+							<string>closeWindow:</string>
 							<string>convert:</string>
-							<string>openMainWindow:</string>
+							<string>openWindow:</string>
 							<string>rename:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -2937,15 +3033,15 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>closeMainWindow:</string>
+							<string>closeWindow:</string>
 							<string>convert:</string>
-							<string>openMainWindow:</string>
+							<string>openWindow:</string>
 							<string>rename:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
-								<string key="name">closeMainWindow:</string>
+								<string key="name">closeWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -2953,7 +3049,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">openMainWindow:</string>
+								<string key="name">openWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -2970,7 +3066,7 @@
 							<string>buttonEditDiskFormat</string>
 							<string>buttonOK</string>
 							<string>fieldEditDiskName</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -2979,7 +3075,7 @@
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
 						</object>
 					</object>
@@ -2991,7 +3087,7 @@
 							<string>buttonEditDiskFormat</string>
 							<string>buttonOK</string>
 							<string>fieldEditDiskName</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -3013,8 +3109,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>
@@ -3092,11 +3188,11 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>closeMainWindow:</string>
+							<string>closeWindow:</string>
 							<string>createDisk:</string>
 							<string>didCheckBoxesChange:</string>
 							<string>diskCreationFormatChanged:</string>
-							<string>openMainWindow:</string>
+							<string>openWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3111,16 +3207,16 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>closeMainWindow:</string>
+							<string>closeWindow:</string>
 							<string>createDisk:</string>
 							<string>didCheckBoxesChange:</string>
 							<string>diskCreationFormatChanged:</string>
-							<string>openMainWindow:</string>
+							<string>openWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
-								<string key="name">closeMainWindow:</string>
+								<string key="name">closeWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -3136,7 +3232,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">openMainWindow:</string>
+								<string key="name">openWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>
@@ -3153,7 +3249,7 @@
 							<string>checkBoxUseQCOW2Preallocation</string>
 							<string>fieldNewDiskName</string>
 							<string>fieldNewDiskSize</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -3166,7 +3262,7 @@
 							<string>CPCheckBox</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
 						</object>
 					</object>
@@ -3182,7 +3278,7 @@
 							<string>checkBoxUseQCOW2Preallocation</string>
 							<string>fieldNewDiskName</string>
 							<string>fieldNewDiskSize</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -3220,8 +3316,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>

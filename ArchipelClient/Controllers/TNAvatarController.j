@@ -25,7 +25,6 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPView.j>
 
-@import <TNKit/TNAttachedWindow.j>
 
 @import "../Views/TNAvatarImage.j"
 @import "../Views/TNAvatarView.j"
@@ -47,12 +46,11 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     @outlet CPButton            buttonChange;
     @outlet CPCollectionView    collectionViewAvatars;
     @outlet CPImageView         imageSpinner;
-    @outlet CPView              mainContentView;
+    @outlet CPPopover           mainPopover;
 
     TNStropheContact            _entity                 @accessors(property=entity);
 
     BOOL                        isReady;
-    TNAttachedWindow            _mainWindow;
 }
 
 
@@ -79,10 +77,6 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     [collectionViewAvatars setItemPrototype:itemPrototype];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
-
-    [_mainWindow setDefaultButton:buttonChange];
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
 }
 
 
@@ -165,7 +159,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     if ([aStanza type] == @"result")
     {
         CPLog.info("Avatar changed for entity " + [_entity JID]);
-        [_mainWindow close];
+        [mainPopover close];
     }
 }
 
@@ -176,22 +170,23 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 /*! Open the main window
     @param sender the sender of the action
 */
-- (IBAction)showWindow:(id)aSender
+- (IBAction)showPopover:(id)aSender
 {
     [[TNPermissionsCenter defaultCenter] setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatars"] forEntity:_entity specialCondition:YES];
 
     if ([[TNPermissionsCenter defaultCenter] hasPermission:@"getavatars" forEntity:_entity])
     {
         [self getAvailableAvatars];
-        [_mainWindow positionRelativeToView:aSender];
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+        [mainPopover setDefaultButton:buttonChange];
     }
 }
 
 /*! Close the window
 */
-- (IBAction)closeWindow:(id)aSender
+- (IBAction)closePopover:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 

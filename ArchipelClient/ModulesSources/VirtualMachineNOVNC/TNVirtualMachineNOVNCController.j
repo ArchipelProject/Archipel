@@ -26,7 +26,6 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNUIKitScrollView.j>
-@import <TNKit/TNAttachedWindow.j>
 @import <VNCCappuccino/TNVNCView.j>
 
 @import "TNExternalVNCWindow.j";
@@ -58,13 +57,13 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPButton                buttonZoomReset;
     @outlet CPCheckBox              checkboxPasswordRemember;
     @outlet CPImageView             imageViewSecureConnection;
+    @outlet CPPopover               popoverPasteBoard;
     @outlet CPSlider                sliderScaling;
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
     @outlet CPView                  viewControls;
     @outlet CPWindow                windowPassword;
-    @outlet CPView                  viewPasteBoard;
     @outlet LPMultiLineTextField    fieldPasteBoard;
     @outlet TNSwitch                switchPreferencesPreferSSL;
     @outlet TNUIKitScrollView       mainScrollView;
@@ -76,7 +75,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     CPString                        _VMHost;
     CPString                        _vncDirectPort;
     CPString                        _vncProxyPort;
-    TNAttachedWindow                _windowPasteBoard;
     TNVNCView                       _vncView;
 }
 
@@ -89,11 +87,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (void)awakeFromCib
 {
     [windowPassword setDefaultButton:buttonPasswordSend];
-
-    _windowPasteBoard = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [viewPasteBoard frameSize].width, [viewPasteBoard frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_windowPasteBoard setContentView:viewPasteBoard];
-    [_windowPasteBoard setDefaultButton:buttonPasteBoardSend];
-
     [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],
@@ -482,7 +475,9 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)openPasteBoardWindow:(id)aSender
 {
-    [_windowPasteBoard positionRelativeToView:aSender];
+    [popoverPasteBoard showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverPasteBoard setDefaultButton:buttonPasteBoardSend];
+    [popoverPasteBoard makeFirstResponder:fieldPasteBoard];
 }
 
 /*! close the pasteboard window
@@ -490,7 +485,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)closePasteBoardWindow:(id)aSender
 {
-    [_windowPasteBoard close];
+    [popoverPasteBoard close];
 }
 
 /*! set the zoom factor
@@ -555,7 +550,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [fieldPasteBoard setStringValue:@""];
 
-    [_windowPasteBoard close];
+    [popoverPasteBoard close];
 }
 
 /*! remeber the password

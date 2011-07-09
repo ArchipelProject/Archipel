@@ -37,9 +37,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     @outlet CPButton                buttonConvert;
     @outlet CPButton                buttonOK;
+    @outlet CPPopover               mainPopover;
     @outlet CPPopUpButton           buttonEditDiskFormat;
     @outlet CPTextField             fieldEditDiskName;
-    @outlet CPView                  mainContentView;
 
     id                              _delegate           @accessors(property=delegate);
     CPDictionary                    _currentEditedDisk  @accessors(property=currentEditedDisk);
@@ -58,10 +58,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     [fieldEditDiskName setToolTip:CPBundleLocalizedString(@"Set the name of the virtual drive", @"Set the name of the virtual drive")];
     [buttonEditDiskFormat setToolTip:CPBundleLocalizedString(@"Choose the format of the virtual drive", @"Choose the format of the virtual drive")];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:TNAttachedWhiteWindowMask | CPClosableWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -93,30 +89,31 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonEditDiskFormat selectItemWithTitle:[_currentEditedDisk format]];
     [fieldEditDiskName setStringValue:[_currentEditedDisk name]];
 
-    [_mainWindow makeFirstResponder:fieldEditDiskName];
-
     if ([aSender isKindOfClass:CPTableView])
     {
         var rect = [aSender rectOfRow:[aSender selectedRow]];
         rect.origin.y += rect.size.height
         rect.origin.x += rect.size.width / 2;
         var point = [[aSender superview] convertPoint:rect.origin toView:nil];
-        [_mainWindow positionRelativeToPoint:point gravity:TNAttachedWindowGravityDown];
+        [mainPopover showRelativeToRect:CPRectMake(point.x, point.y, 10, 19) ofView:nil preferredEdge:CPMaxYEdge];
     }
     else
-        [_mainWindow positionRelativeToView:aSender];
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    [mainPopover makeFirstResponder:fieldEditDiskName];
+    [mainPopover setDefaultButton:buttonOK];
 }
 
 /*! close the controller window
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 
-// #pragma mark -
-// #pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! converts a disk
     @param aSender the sender of the action

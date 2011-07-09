@@ -12,24 +12,26 @@
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<string>NSScroller</string>
-			<string>NSSplitView</string>
-			<string>NSTableHeaderView</string>
 			<string>NSButton</string>
-			<string>NSScrollView</string>
+			<string>NSCustomObject</string>
+			<string>NSSplitView</string>
 			<string>NSImageView</string>
+			<string>NSImageCell</string>
+			<string>NSTableView</string>
+			<string>NSCustomView</string>
+			<string>NSSearchField</string>
+			<string>NSTextField</string>
+			<string>NSSearchFieldCell</string>
+			<string>NSViewController</string>
 			<string>NSTextFieldCell</string>
 			<string>NSButtonCell</string>
-			<string>NSImageCell</string>
-			<string>NSSearchField</string>
-			<string>NSTableView</string>
-			<string>NSBox</string>
-			<string>NSSearchFieldCell</string>
-			<string>NSCustomObject</string>
-			<string>NSCustomView</string>
 			<string>NSTableColumn</string>
+			<string>NSBox</string>
 			<string>NSView</string>
-			<string>NSTextField</string>
+			<string>NSScrollView</string>
+			<string>NSPopover</string>
+			<string>NSScroller</string>
+			<string>NSTableHeaderView</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -542,6 +544,16 @@
 			<object class="NSCustomObject" id="630613853">
 				<string key="NSClassName">TNRolesController</string>
 			</object>
+			<object class="NSViewController" id="555180488"/>
+			<object class="NSPopover" id="755849807">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="555180488"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
 			<object class="NSView" id="965184083">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">256</int>
@@ -993,6 +1005,16 @@
 				<string key="NSFrameSize">{513, 397}</string>
 				<reference key="NSNextKeyView" ref="852420955"/>
 			</object>
+			<object class="NSViewController" id="442518831"/>
+			<object class="NSPopover" id="907356276">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="442518831"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
 			<object class="NSView" id="88660364">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">256</int>
@@ -1395,22 +1417,6 @@
 					<int key="connectionID">141</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="630613853"/>
-						<reference key="destination" ref="965184083"/>
-					</object>
-					<int key="connectionID">199</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewNewTemplate</string>
-						<reference key="source" ref="630613853"/>
-						<reference key="destination" ref="88660364"/>
-					</object>
-					<int key="connectionID">200</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeNewTemplateWindow:</string>
 						<reference key="source" ref="630613853"/>
@@ -1449,6 +1455,54 @@
 						<reference key="destination" ref="997540605"/>
 					</object>
 					<int key="connectionID">207</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="755849807"/>
+						<reference key="destination" ref="555180488"/>
+					</object>
+					<int key="connectionID">210</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="630613853"/>
+						<reference key="destination" ref="755849807"/>
+					</object>
+					<int key="connectionID">211</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="555180488"/>
+						<reference key="destination" ref="965184083"/>
+					</object>
+					<int key="connectionID">212</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="907356276"/>
+						<reference key="destination" ref="442518831"/>
+					</object>
+					<int key="connectionID">215</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverNewTemplate</string>
+						<reference key="source" ref="630613853"/>
+						<reference key="destination" ref="907356276"/>
+					</object>
+					<int key="connectionID">216</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="442518831"/>
+						<reference key="destination" ref="88660364"/>
+					</object>
+					<int key="connectionID">217</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2037,6 +2091,30 @@
 						<reference key="object" ref="583752363"/>
 						<reference key="parent" ref="821866017"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">208</int>
+						<reference key="object" ref="555180488"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Role apply VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">209</int>
+						<reference key="object" ref="755849807"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Role apply</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">213</int>
+						<reference key="object" ref="442518831"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover NewTemplate VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">214</int>
+						<reference key="object" ref="907356276"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover NewTemplate</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2077,7 +2155,11 @@
 					<string>2.IBPluginDependency</string>
 					<string>202.IBPluginDependency</string>
 					<string>203.IBPluginDependency</string>
+					<string>208.IBPluginDependency</string>
+					<string>209.IBPluginDependency</string>
 					<string>21.IBPluginDependency</string>
+					<string>213.IBPluginDependency</string>
+					<string>214.IBPluginDependency</string>
 					<string>22.IBPluginDependency</string>
 					<string>24.IBPluginDependency</string>
 					<string>3.IBPluginDependency</string>
@@ -2202,6 +2284,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -2216,7 +2302,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">207</int>
+			<int key="maxID">217</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2521,11 +2607,11 @@
 							<string>fieldNewTemplateDescription</string>
 							<string>fieldNewTemplateName</string>
 							<string>filterField</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
+							<string>popoverNewTemplate</string>
 							<string>scrollViewTableRoles</string>
 							<string>tableRoles</string>
-							<string>viewNewTemplate</string>
 							<string>viewTableContainer</string>
 							<string>windowNewTemplate</string>
 						</object>
@@ -2536,11 +2622,11 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSSearchField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
+							<string>NSPopover</string>
 							<string>TNUIKitScrollView</string>
 							<string>NSTableView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 						</object>
@@ -2554,11 +2640,11 @@
 							<string>fieldNewTemplateDescription</string>
 							<string>fieldNewTemplateName</string>
 							<string>filterField</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
+							<string>popoverNewTemplate</string>
 							<string>scrollViewTableRoles</string>
 							<string>tableRoles</string>
-							<string>viewNewTemplate</string>
 							<string>viewTableContainer</string>
 							<string>windowNewTemplate</string>
 						</object>
@@ -2585,12 +2671,16 @@
 								<string key="candidateClassName">NSSearchField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>
 								<string key="candidateClassName">NSWindow</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">popoverNewTemplate</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewTableRoles</string>
@@ -2599,10 +2689,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableRoles</string>
 								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewTemplate</string>
-								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

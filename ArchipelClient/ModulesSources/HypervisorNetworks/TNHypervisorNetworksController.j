@@ -32,7 +32,7 @@
 
 @import "TNDHCPEntryObject.j"
 @import "TNHypervisorNetworkObject.j"
-@import "TNWindowNetworkController.j"
+@import "TNNetworkEditionController.j"
 @import "TNNetworkDataView.j";
 
 
@@ -57,10 +57,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 {
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterNetworks;
+    @outlet CPTableView                 tableViewNetworks;
     @outlet CPView                      viewTableContainer;
     @outlet TNNetworkDataView           networkDataViewPrototype;
-    @outlet TNWindowNetworkController   networkController;
-    @outlet CPTableView                 tableViewNetworks;
+    @outlet TNNetworkEditionController  networkController;
 
     CPButton                            _activateButton;
     CPButton                            _deactivateButton;

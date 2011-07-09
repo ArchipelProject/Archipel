@@ -21,7 +21,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
-@import <TNKit/TNAttachedWindow.j>
 
 var TNArchipelTypeSubscription                  = @"archipel:subscription",
     TNArchipelTypeSubscriptionAdd               = @"add",
@@ -35,32 +34,12 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 {
     @outlet CPButton        buttonAddSubscription;
     @outlet CPButton        buttonRemoveSubscription;
+    @outlet CPPopover       popoverAddSubscription;
+    @outlet CPPopover       popoverRemoveSubscription;
     @outlet CPTextField     fieldNewSubscriptionTarget;
     @outlet CPTextField     fieldRemoveSubscriptionTarget;
-    @outlet CPView          addSubscriptionContentView;
-    @outlet CPView          removeSubscriptionContentView;
 
     id                      _delegate   @accessors(property=delegate);
-
-    TNAttachedWindow        _windowAddSubscription;
-    TNAttachedWindow        _windowRemoveSubscription;
-}
-
-
-#pragma mark -
-#pragma mark Initialization
-
-/*! called at cib awakening
-*/
-- (void)awakeFromCib
-{
-    _windowAddSubscription = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [addSubscriptionContentView frameSize].width, [addSubscriptionContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_windowAddSubscription setContentView:addSubscriptionContentView];
-    [_windowAddSubscription setDefaultButton:buttonAddSubscription];
-
-    _windowRemoveSubscription = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [removeSubscriptionContentView frameSize].width, [removeSubscriptionContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_windowRemoveSubscription setContentView:removeSubscriptionContentView];
-    [_windowRemoveSubscription setDefaultButton:buttonRemoveSubscription];
 }
 
 
@@ -73,8 +52,10 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 - (IBAction)openAddSubsctiptionWindow:(id)aSender
 {
     [fieldNewSubscriptionTarget setStringValue:@""];
-    [_windowAddSubscription makeFirstResponder:fieldNewSubscriptionTarget];
-    [_windowAddSubscription positionRelativeToView:aSender];
+
+    [popoverAddSubscription showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverAddSubscription setDefaultButton:buttonAddSubscription];
+    [popoverAddSubscription makeFirstResponder:fieldNewSubscriptionTarget];
 }
 
 /*! open the remove subscription window
@@ -83,8 +64,10 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 - (IBAction)openRemoveSubscriptionWindow:(id)aSender
 {
     [fieldRemoveSubscriptionTarget setStringValue:@""];
-    [_windowRemoveSubscription makeFirstResponder:fieldRemoveSubscriptionTarget];
-    [_windowRemoveSubscription positionRelativeToView:aSender];
+
+    [popoverRemoveSubscription showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverRemoveSubscription makeFirstResponder:fieldRemoveSubscriptionTarget];
+    [popoverRemoveSubscription setDefaultButton:buttonRemoveSubscription];
 }
 
 /*! close the add subscription window
@@ -92,7 +75,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 */
 - (IBAction)closeAddSubscriptionWindow:(id)aSender
 {
-    [_windowAddSubscription close];
+    [popoverAddSubscription close];
 }
 
 /*! close the remove subscription window
@@ -100,7 +83,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 */
 - (IBAction)closeRemoveSubscriptionWindow:(id)aSender
 {
-    [_windowRemoveSubscription close];
+    [popoverRemoveSubscription close];
 }
 
 /*! add a new subscription
@@ -139,7 +122,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
     var vm      = [[tableVirtualMachines dataSource] objectAtIndex:[tableVirtualMachines selectedRow]],
         stanza  = [TNStropheStanza iqWithType:@"set"];
 
-    [_windowAddSubscription close];
+    [popoverAddSubscription close];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeSubscription}];
     [stanza addChildWithName:@"archipel" andAttributes:{
@@ -206,7 +189,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
-    [_windowRemoveSubscription close];
+    [popoverRemoveSubscription close];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeSubscription}];
     [stanza addChildWithName:@"archipel" andAttributes:{

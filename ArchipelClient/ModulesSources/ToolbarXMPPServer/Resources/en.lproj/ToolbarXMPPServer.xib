@@ -20,6 +20,7 @@
 			<string>NSTableView</string>
 			<string>NSCustomView</string>
 			<string>NSImageCell</string>
+			<string>NSViewController</string>
 			<string>NSSearchField</string>
 			<string>NSTextField</string>
 			<string>NSSearchFieldCell</string>
@@ -30,6 +31,7 @@
 			<string>NSPopUpButtonCell</string>
 			<string>NSView</string>
 			<string>NSScrollView</string>
+			<string>NSPopover</string>
 			<string>NSPopUpButton</string>
 			<string>NSMenuItem</string>
 			<string>NSScroller</string>
@@ -574,242 +576,6 @@
 				<string key="NSFrameSize">{599, 418}</string>
 				<reference key="NSNextKeyView" ref="412567765"/>
 				<string key="NSClassName">NSView</string>
-			</object>
-			<object class="NSCustomObject" id="226280714">
-				<string key="NSClassName">TNXMPPUsersController</string>
-			</object>
-			<object class="NSView" id="1003662678">
-				<nil key="NSNextResponder"/>
-				<int key="NSvFlags">256</int>
-				<object class="NSMutableArray" key="NSSubviews">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSTextField" id="714052138">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{16, 192}, {214, 26}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="576091681"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="702442713">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">New XMPP user</string>
-							<reference key="NSSupport" ref="684428243"/>
-							<reference key="NSControlView" ref="714052138"/>
-							<reference key="NSBackgroundColor" ref="439272691"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">2</int>
-								<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
-							</object>
-						</object>
-					</object>
-					<object class="NSTextField" id="576091681">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 159}, {345, 20}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="682506557"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="731798140">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Just enter the username without the @domain.</string>
-							<reference key="NSSupport" ref="782443273"/>
-							<reference key="NSControlView" ref="576091681"/>
-							<reference key="NSBackgroundColor" ref="439272691"/>
-							<reference key="NSTextColor" ref="209059108"/>
-						</object>
-					</object>
-					<object class="NSTextField" id="603919898">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{92, 130}, {311, 22}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="418600957"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="880814619">
-							<int key="NSCellFlags">-1804468671</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="7455733"/>
-							<string key="NSPlaceholderString">Username</string>
-							<reference key="NSControlView" ref="603919898"/>
-							<bool key="NSDrawsBackground">YES</bool>
-							<reference key="NSBackgroundColor" ref="725413806"/>
-							<object class="NSColor" key="NSTextColor" id="685949435">
-								<int key="NSColorSpace">6</int>
-								<string key="NSCatalogName">System</string>
-								<string key="NSColorName">textColor</string>
-								<reference key="NSColor" ref="652333853"/>
-							</object>
-						</object>
-					</object>
-					<object class="NSBox" id="249941781">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">34</int>
-						<string key="NSFrame">{{0, 58}, {423, 5}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="219211896"/>
-						<string key="NSOffsets">{0, 0}</string>
-						<object class="NSTextFieldCell" key="NSTitleCell">
-							<int key="NSCellFlags">67239424</int>
-							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Box</string>
-							<reference key="NSSupport" ref="7455733"/>
-							<reference key="NSBackgroundColor" ref="725413806"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">3</int>
-								<bytes key="NSWhite">MCAwLjgwMDAwMDAxMTkAA</bytes>
-							</object>
-						</object>
-						<int key="NSBorderType">3</int>
-						<int key="NSBoxType">2</int>
-						<int key="NSTitlePosition">0</int>
-						<bool key="NSTransparent">NO</bool>
-						<object class="NSColor" key="NSBorderColor2">
-							<int key="NSColorSpace">2</int>
-							<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
-						</object>
-					</object>
-					<object class="NSButton" id="81589311">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{291, 12}, {118, 32}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="921836070">
-							<int key="NSCellFlags">-2080244224</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Create</string>
-							<reference key="NSSupport" ref="7455733"/>
-							<reference key="NSControlView" ref="81589311"/>
-							<int key="NSButtonFlags">-2038021889</int>
-							<int key="NSButtonFlags2">129</int>
-							<reference key="NSAlternateImage" ref="7455733"/>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">400</int>
-							<int key="NSPeriodicInterval">75</int>
-						</object>
-					</object>
-					<object class="NSButton" id="219211896">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{173, 12}, {118, 32}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="81589311"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="415153444">
-							<int key="NSCellFlags">-2080244224</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
-							<reference key="NSSupport" ref="7455733"/>
-							<reference key="NSControlView" ref="219211896"/>
-							<int key="NSButtonFlags">-2038021889</int>
-							<int key="NSButtonFlags2">129</int>
-							<reference key="NSAlternateImage" ref="7455733"/>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">400</int>
-							<int key="NSPeriodicInterval">75</int>
-						</object>
-					</object>
-					<object class="NSTextField" id="682506557">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{11, 133}, {76, 17}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="603919898"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="90781970">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Username:</string>
-							<object class="NSFont" key="NSSupport" id="573017428">
-								<string key="NSName">LucidaGrande-Bold</string>
-								<double key="NSSize">13</double>
-								<int key="NSfFlags">16</int>
-							</object>
-							<reference key="NSControlView" ref="682506557"/>
-							<reference key="NSBackgroundColor" ref="439272691"/>
-							<reference key="NSTextColor" ref="209059108"/>
-						</object>
-					</object>
-					<object class="NSTextField" id="86345011">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{92, 103}, {311, 22}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="884412912"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="737689073">
-							<int key="NSCellFlags">-1804468671</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="7455733"/>
-							<string key="NSPlaceholderString">Desired password</string>
-							<reference key="NSControlView" ref="86345011"/>
-							<bool key="NSDrawsBackground">YES</bool>
-							<reference key="NSBackgroundColor" ref="725413806"/>
-							<reference key="NSTextColor" ref="685949435"/>
-						</object>
-					</object>
-					<object class="NSTextField" id="418600957">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{16, 106}, {71, 17}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="86345011"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="828597074">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Password:</string>
-							<reference key="NSSupport" ref="573017428"/>
-							<reference key="NSControlView" ref="418600957"/>
-							<reference key="NSBackgroundColor" ref="439272691"/>
-							<reference key="NSTextColor" ref="209059108"/>
-						</object>
-					</object>
-					<object class="NSTextField" id="497327443">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{92, 76}, {311, 22}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="249941781"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="86217097">
-							<int key="NSCellFlags">-1804468671</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="7455733"/>
-							<string key="NSPlaceholderString">Password confirmation</string>
-							<reference key="NSControlView" ref="497327443"/>
-							<bool key="NSDrawsBackground">YES</bool>
-							<reference key="NSBackgroundColor" ref="725413806"/>
-							<reference key="NSTextColor" ref="685949435"/>
-						</object>
-					</object>
-					<object class="NSTextField" id="884412912">
-						<reference key="NSNextResponder" ref="1003662678"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 79}, {70, 17}}</string>
-						<reference key="NSSuperview" ref="1003662678"/>
-						<reference key="NSNextKeyView" ref="497327443"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="155374258">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Confirm:</string>
-							<reference key="NSSupport" ref="573017428"/>
-							<reference key="NSControlView" ref="884412912"/>
-							<reference key="NSBackgroundColor" ref="439272691"/>
-							<reference key="NSTextColor" ref="209059108"/>
-						</object>
-					</object>
-				</object>
-				<string key="NSFrameSize">{423, 238}</string>
-				<reference key="NSNextKeyView" ref="714052138"/>
 			</object>
 			<object class="NSCustomView" id="320167751">
 				<nil key="NSNextResponder"/>
@@ -1408,8 +1174,264 @@
 				<reference key="NSNextKeyView" ref="466062466"/>
 				<string key="NSClassName">NSView</string>
 			</object>
+			<object class="NSCustomObject" id="226280714">
+				<string key="NSClassName">TNXMPPUsersController</string>
+			</object>
+			<object class="NSViewController" id="296137281"/>
+			<object class="NSPopover" id="11766146">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="296137281"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
+			<object class="NSView" id="1003662678">
+				<nil key="NSNextResponder"/>
+				<int key="NSvFlags">256</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="714052138">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{16, 192}, {214, 26}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="576091681"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="702442713">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">268436480</int>
+							<string key="NSContents">New XMPP user</string>
+							<reference key="NSSupport" ref="684428243"/>
+							<reference key="NSControlView" ref="714052138"/>
+							<reference key="NSBackgroundColor" ref="439272691"/>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
+							</object>
+						</object>
+					</object>
+					<object class="NSTextField" id="576091681">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{17, 159}, {345, 20}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="682506557"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="731798140">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">268436480</int>
+							<string key="NSContents">Just enter the username without the @domain.</string>
+							<reference key="NSSupport" ref="782443273"/>
+							<reference key="NSControlView" ref="576091681"/>
+							<reference key="NSBackgroundColor" ref="439272691"/>
+							<reference key="NSTextColor" ref="209059108"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="603919898">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{92, 130}, {311, 22}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="418600957"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="880814619">
+							<int key="NSCellFlags">-1804468671</int>
+							<int key="NSCellFlags2">268436480</int>
+							<string key="NSContents"/>
+							<reference key="NSSupport" ref="7455733"/>
+							<string key="NSPlaceholderString">Username</string>
+							<reference key="NSControlView" ref="603919898"/>
+							<bool key="NSDrawsBackground">YES</bool>
+							<reference key="NSBackgroundColor" ref="725413806"/>
+							<object class="NSColor" key="NSTextColor" id="685949435">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">textColor</string>
+								<reference key="NSColor" ref="652333853"/>
+							</object>
+						</object>
+					</object>
+					<object class="NSBox" id="249941781">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">34</int>
+						<string key="NSFrame">{{0, 58}, {423, 5}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="219211896"/>
+						<string key="NSOffsets">{0, 0}</string>
+						<object class="NSTextFieldCell" key="NSTitleCell">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">0</int>
+							<string key="NSContents">Box</string>
+							<reference key="NSSupport" ref="7455733"/>
+							<reference key="NSBackgroundColor" ref="725413806"/>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MCAwLjgwMDAwMDAxMTkAA</bytes>
+							</object>
+						</object>
+						<int key="NSBorderType">3</int>
+						<int key="NSBoxType">2</int>
+						<int key="NSTitlePosition">0</int>
+						<bool key="NSTransparent">NO</bool>
+						<object class="NSColor" key="NSBorderColor2">
+							<int key="NSColorSpace">2</int>
+							<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
+						</object>
+					</object>
+					<object class="NSButton" id="81589311">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">289</int>
+						<string key="NSFrame">{{291, 12}, {118, 32}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSButtonCell" key="NSCell" id="921836070">
+							<int key="NSCellFlags">-2080244224</int>
+							<int key="NSCellFlags2">134217728</int>
+							<string key="NSContents">Create</string>
+							<reference key="NSSupport" ref="7455733"/>
+							<reference key="NSControlView" ref="81589311"/>
+							<int key="NSButtonFlags">-2038021889</int>
+							<int key="NSButtonFlags2">129</int>
+							<reference key="NSAlternateImage" ref="7455733"/>
+							<string key="NSAlternateContents"/>
+							<string key="NSKeyEquivalent"/>
+							<int key="NSPeriodicDelay">400</int>
+							<int key="NSPeriodicInterval">75</int>
+						</object>
+					</object>
+					<object class="NSButton" id="219211896">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">289</int>
+						<string key="NSFrame">{{173, 12}, {118, 32}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="81589311"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSButtonCell" key="NSCell" id="415153444">
+							<int key="NSCellFlags">-2080244224</int>
+							<int key="NSCellFlags2">134217728</int>
+							<string key="NSContents">Cancel</string>
+							<reference key="NSSupport" ref="7455733"/>
+							<reference key="NSControlView" ref="219211896"/>
+							<int key="NSButtonFlags">-2038021889</int>
+							<int key="NSButtonFlags2">129</int>
+							<reference key="NSAlternateImage" ref="7455733"/>
+							<string key="NSAlternateContents"/>
+							<string key="NSKeyEquivalent"/>
+							<int key="NSPeriodicDelay">400</int>
+							<int key="NSPeriodicInterval">75</int>
+						</object>
+					</object>
+					<object class="NSTextField" id="682506557">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{11, 133}, {76, 17}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="603919898"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="90781970">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">71304192</int>
+							<string key="NSContents">Username:</string>
+							<object class="NSFont" key="NSSupport" id="573017428">
+								<string key="NSName">LucidaGrande-Bold</string>
+								<double key="NSSize">13</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="682506557"/>
+							<reference key="NSBackgroundColor" ref="439272691"/>
+							<reference key="NSTextColor" ref="209059108"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="86345011">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{92, 103}, {311, 22}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="884412912"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="737689073">
+							<int key="NSCellFlags">-1804468671</int>
+							<int key="NSCellFlags2">268436480</int>
+							<string key="NSContents"/>
+							<reference key="NSSupport" ref="7455733"/>
+							<string key="NSPlaceholderString">Desired password</string>
+							<reference key="NSControlView" ref="86345011"/>
+							<bool key="NSDrawsBackground">YES</bool>
+							<reference key="NSBackgroundColor" ref="725413806"/>
+							<reference key="NSTextColor" ref="685949435"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="418600957">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{16, 106}, {71, 17}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="86345011"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="828597074">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">71304192</int>
+							<string key="NSContents">Password:</string>
+							<reference key="NSSupport" ref="573017428"/>
+							<reference key="NSControlView" ref="418600957"/>
+							<reference key="NSBackgroundColor" ref="439272691"/>
+							<reference key="NSTextColor" ref="209059108"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="497327443">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{92, 76}, {311, 22}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="249941781"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="86217097">
+							<int key="NSCellFlags">-1804468671</int>
+							<int key="NSCellFlags2">268436480</int>
+							<string key="NSContents"/>
+							<reference key="NSSupport" ref="7455733"/>
+							<string key="NSPlaceholderString">Password confirmation</string>
+							<reference key="NSControlView" ref="497327443"/>
+							<bool key="NSDrawsBackground">YES</bool>
+							<reference key="NSBackgroundColor" ref="725413806"/>
+							<reference key="NSTextColor" ref="685949435"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="884412912">
+						<reference key="NSNextResponder" ref="1003662678"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{17, 79}, {70, 17}}</string>
+						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="497327443"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="155374258">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">71304192</int>
+							<string key="NSContents">Confirm:</string>
+							<reference key="NSSupport" ref="573017428"/>
+							<reference key="NSControlView" ref="884412912"/>
+							<reference key="NSBackgroundColor" ref="439272691"/>
+							<reference key="NSTextColor" ref="209059108"/>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{423, 238}</string>
+				<reference key="NSNextKeyView" ref="714052138"/>
+			</object>
 			<object class="NSCustomObject" id="412551308">
 				<string key="NSClassName">TNXMPPSharedGroupsController</string>
+			</object>
+			<object class="NSViewController" id="288045625"/>
+			<object class="NSPopover" id="591692251">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="288045625"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="65672009">
 				<nil key="NSNextResponder"/>
@@ -1598,6 +1620,16 @@
 				</object>
 				<string key="NSFrameSize">{423, 219}</string>
 				<reference key="NSNextKeyView" ref="972110503"/>
+			</object>
+			<object class="NSViewController" id="225002652"/>
+			<object class="NSPopover" id="804860812">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="225002652"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="234123777">
 				<nil key="NSNextResponder"/>
@@ -1980,6 +2012,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{498, 398}</string>
+				<reference key="NSNextKeyView" ref="808369162"/>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -2338,38 +2371,6 @@
 					<int key="connectionID">273</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewNewUser</string>
-						<reference key="source" ref="226280714"/>
-						<reference key="destination" ref="1003662678"/>
-					</object>
-					<int key="connectionID">274</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewNewGroup</string>
-						<reference key="source" ref="412551308"/>
-						<reference key="destination" ref="65672009"/>
-					</object>
-					<int key="connectionID">299</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closeNewGroupWindow:</string>
-						<reference key="source" ref="412551308"/>
-						<reference key="destination" ref="611661742"/>
-					</object>
-					<int key="connectionID">300</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewAddUserInGroup</string>
-						<reference key="source" ref="412551308"/>
-						<reference key="destination" ref="234123777"/>
-					</object>
-					<int key="connectionID">326</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeAddUserInGroupWindow:</string>
 						<reference key="source" ref="412551308"/>
@@ -2384,6 +2385,86 @@
 						<reference key="destination" ref="684655494"/>
 					</object>
 					<int key="connectionID">328</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="11766146"/>
+						<reference key="destination" ref="296137281"/>
+					</object>
+					<int key="connectionID">331</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverNewUser</string>
+						<reference key="source" ref="226280714"/>
+						<reference key="destination" ref="11766146"/>
+					</object>
+					<int key="connectionID">332</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="296137281"/>
+						<reference key="destination" ref="1003662678"/>
+					</object>
+					<int key="connectionID">333</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="591692251"/>
+						<reference key="destination" ref="288045625"/>
+					</object>
+					<int key="connectionID">336</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="804860812"/>
+						<reference key="destination" ref="225002652"/>
+					</object>
+					<int key="connectionID">339</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverNewGroup</string>
+						<reference key="source" ref="412551308"/>
+						<reference key="destination" ref="591692251"/>
+					</object>
+					<int key="connectionID">340</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="288045625"/>
+						<reference key="destination" ref="65672009"/>
+					</object>
+					<int key="connectionID">341</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverAddUserInGroup</string>
+						<reference key="source" ref="412551308"/>
+						<reference key="destination" ref="804860812"/>
+					</object>
+					<int key="connectionID">342</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="225002652"/>
+						<reference key="destination" ref="234123777"/>
+					</object>
+					<int key="connectionID">343</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">closeNewGroupWindow:</string>
+						<reference key="source" ref="412551308"/>
+						<reference key="destination" ref="611661742"/>
+					</object>
+					<int key="connectionID">344</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2424,6 +2505,7 @@
 							<reference ref="26161848"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Main view</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2</int>
@@ -2537,6 +2619,7 @@
 							<reference ref="190850301"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">XMPP User</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">21</int>
@@ -2610,6 +2693,7 @@
 							<reference ref="792059437"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Shared Groups</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">69</int>
@@ -3413,6 +3497,42 @@
 						<reference key="object" ref="374758360"/>
 						<reference key="parent" ref="808369162"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">329</int>
+						<reference key="object" ref="296137281"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Users Add VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">330</int>
+						<reference key="object" ref="11766146"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Users Add</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">334</int>
+						<reference key="object" ref="288045625"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover NewGroup VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">335</int>
+						<reference key="object" ref="591692251"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover NewGroup</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">337</int>
+						<reference key="object" ref="225002652"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover AddUserInGrp VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">338</int>
+						<reference key="object" ref="804860812"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover AddUserInGrp</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3508,7 +3628,13 @@
 					<string>3.IBPluginDependency</string>
 					<string>30.IBPluginDependency</string>
 					<string>301.IBPluginDependency</string>
+					<string>329.IBPluginDependency</string>
 					<string>33.IBPluginDependency</string>
+					<string>330.IBPluginDependency</string>
+					<string>334.IBPluginDependency</string>
+					<string>335.IBPluginDependency</string>
+					<string>337.IBPluginDependency</string>
+					<string>338.IBPluginDependency</string>
 					<string>34.IBPluginDependency</string>
 					<string>35.IBPluginDependency</string>
 					<string>36.IBPluginDependency</string>
@@ -3696,6 +3822,12 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3710,7 +3842,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">328</int>
+			<int key="maxID">344</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3936,6 +4068,8 @@
 							<string>filterFieldUsers</string>
 							<string>filterFieldUsersInGroup</string>
 							<string>mainView</string>
+							<string>popoverAddUserInGroup</string>
+							<string>popoverNewGroup</string>
 							<string>scrollViewGroups</string>
 							<string>scrollViewUsers</string>
 							<string>scrollViewUsersInGroup</string>
@@ -3943,8 +4077,6 @@
 							<string>tableGroups</string>
 							<string>tableUsers</string>
 							<string>tableUsersInGroup</string>
-							<string>viewAddUserInGroup</string>
-							<string>viewNewGroup</string>
 							<string>viewTableGroupsContainer</string>
 							<string>viewTableUsersInGroupContainer</string>
 							<string>windowAddUserInGroup</string>
@@ -3962,6 +4094,8 @@
 							<string>NSSearchField</string>
 							<string>NSSearchField</string>
 							<string>NSView</string>
+							<string>NSPopover</string>
+							<string>NSPopover</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
@@ -3969,8 +4103,6 @@
 							<string>NSTableView</string>
 							<string>NSTableView</string>
 							<string>NSTableView</string>
-							<string>NSView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
@@ -3991,6 +4123,8 @@
 							<string>filterFieldUsers</string>
 							<string>filterFieldUsersInGroup</string>
 							<string>mainView</string>
+							<string>popoverAddUserInGroup</string>
+							<string>popoverNewGroup</string>
 							<string>scrollViewGroups</string>
 							<string>scrollViewUsers</string>
 							<string>scrollViewUsersInGroup</string>
@@ -3998,8 +4132,6 @@
 							<string>tableGroups</string>
 							<string>tableUsers</string>
 							<string>tableUsersInGroup</string>
-							<string>viewAddUserInGroup</string>
-							<string>viewNewGroup</string>
 							<string>viewTableGroupsContainer</string>
 							<string>viewTableUsersInGroupContainer</string>
 							<string>windowAddUserInGroup</string>
@@ -4048,6 +4180,14 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">popoverAddUserInGroup</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">popoverNewGroup</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewGroups</string>
 								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
@@ -4074,14 +4214,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableUsersInGroup</string>
 								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewAddUserInGroup</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewGroup</string>
-								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableGroupsContainer</string>
@@ -4166,9 +4298,9 @@
 							<string>fieldNewUserUsername</string>
 							<string>filterField</string>
 							<string>mainView</string>
+							<string>popoverNewUser</string>
 							<string>scrollViewUsers</string>
 							<string>tableUsers</string>
-							<string>viewNewUser</string>
 							<string>viewTableContainer</string>
 							<string>windowNewUser</string>
 						</object>
@@ -4181,9 +4313,9 @@
 							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>TNUIKitScrollView</string>
 							<string>NSTableView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 						</object>
@@ -4199,9 +4331,9 @@
 							<string>fieldNewUserUsername</string>
 							<string>filterField</string>
 							<string>mainView</string>
+							<string>popoverNewUser</string>
 							<string>scrollViewUsers</string>
 							<string>tableUsers</string>
-							<string>viewNewUser</string>
 							<string>viewTableContainer</string>
 							<string>windowNewUser</string>
 						</object>
@@ -4236,16 +4368,16 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">popoverNewUser</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewUsers</string>
 								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableUsers</string>
 								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewUser</string>
-								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

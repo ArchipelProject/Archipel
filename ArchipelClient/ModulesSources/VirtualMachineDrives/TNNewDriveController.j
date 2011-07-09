@@ -33,17 +33,16 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 @implementation TNNewDriveController : CPObject
 {
     @outlet CPButton        buttonOK;
-    @outlet CPCheckBox      checkBoxUseQCOW2Preallocation;
     @outlet CPCheckBox      checkBoxUseMasterDrive;
+    @outlet CPCheckBox      checkBoxUseQCOW2Preallocation;
+    @outlet CPPopover       mainPopover;
     @outlet CPPopUpButton   buttonGoldenDrive;
     @outlet CPPopUpButton   buttonNewDiskFormat;
     @outlet CPPopUpButton   buttonNewDiskSizeUnit;
     @outlet CPTextField     fieldNewDiskName;
     @outlet CPTextField     fieldNewDiskSize;
-    @outlet CPView          mainContentView;
 
     id                      _delegate   @accessors(property=delegate);
-    TNAttachedWindow        _mainWindow;
 }
 
 
@@ -72,10 +71,6 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     [checkBoxUseQCOW2Preallocation setToolTip:CPBundleLocalizedString(@"If checked, the drive will not be in sparse mode", @"If checked, the drive will not be in sparse mode")];
     [checkBoxUseMasterDrive setToolTip:CPLocalizedString(@"Use a golden QCOW2 file for this drive", @"Use a golden QCOW2 file for this drive")];
     [buttonGoldenDrive setToolTip:CPLocalizedString(@"Select the golden drive you want to use", @"Select the golden drive you want to use")];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonOK];
 }
 
 
@@ -98,15 +93,16 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     [checkBoxUseMasterDrive setState:CPOffState];
     [checkBoxUseQCOW2Preallocation setState:CPOffState];
 
-    [_mainWindow makeFirstResponder:fieldNewDiskName];
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover setDefaultButton:buttonOK];
+    [mainPopover makeFirstResponder:fieldNewDiskName];
 }
 
 /*! close the controller window
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 
@@ -258,7 +254,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildWithName:@"archipel" andAttributes:params];
     [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didCreateDisk:) ofObject:self];
-    [_mainWindow close];
+    [mainPopover close];
     [fieldNewDiskName setStringValue:@""];
     [fieldNewDiskSize setStringValue:@""];
 }

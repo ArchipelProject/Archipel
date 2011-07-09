@@ -20,6 +20,7 @@
 			<string>NSImageCell</string>
 			<string>NSTableView</string>
 			<string>NSCustomView</string>
+			<string>NSViewController</string>
 			<string>NSSearchField</string>
 			<string>NSTextField</string>
 			<string>NSSearchFieldCell</string>
@@ -30,6 +31,7 @@
 			<string>NSView</string>
 			<string>NSPopUpButtonCell</string>
 			<string>NSScrollView</string>
+			<string>NSPopover</string>
 			<string>NSScroller</string>
 			<string>NSTableHeaderView</string>
 			<string>NSPopUpButton</string>
@@ -484,6 +486,16 @@
 			</object>
 			<object class="NSCustomObject" id="953738438">
 				<string key="NSClassName">TNSchedulerController</string>
+			</object>
+			<object class="NSViewController" id="228378207"/>
+			<object class="NSPopover" id="966211884">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="228378207"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="155689248">
 				<nil key="NSNextResponder"/>
@@ -1175,14 +1187,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">calendarViewNewJob</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="844399828"/>
-					</object>
-					<int key="connectionID">152</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">filterFieldJobs</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="564464291"/>
@@ -1220,14 +1224,6 @@
 						<reference key="destination" ref="266563233"/>
 					</object>
 					<int key="connectionID">205</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonNewJobOK</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="399064852"/>
-					</object>
-					<int key="connectionID">206</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1479,19 +1475,35 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="953738438"/>
-						<reference key="destination" ref="155689248"/>
-					</object>
-					<int key="connectionID">276</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">schedulerController</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="953738438"/>
 					</object>
 					<int key="connectionID">277</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="966211884"/>
+						<reference key="destination" ref="228378207"/>
+					</object>
+					<int key="connectionID">280</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="953738438"/>
+						<reference key="destination" ref="966211884"/>
+					</object>
+					<int key="connectionID">281</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="228378207"/>
+						<reference key="destination" ref="155689248"/>
+					</object>
+					<int key="connectionID">282</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2180,6 +2192,17 @@
 						<reference key="object" ref="477157285"/>
 						<reference key="parent" ref="741743513"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">278</int>
+						<reference key="object" ref="228378207"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">279</int>
+						<reference key="object" ref="966211884"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2252,6 +2275,8 @@
 					<string>26.IBPluginDependency</string>
 					<string>27.CustomClassName</string>
 					<string>27.IBPluginDependency</string>
+					<string>278.IBPluginDependency</string>
+					<string>279.IBPluginDependency</string>
 					<string>28.IBPluginDependency</string>
 					<string>29.IBPluginDependency</string>
 					<string>3.IBPluginDependency</string>
@@ -2359,6 +2384,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>CPCheckBox</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2401,7 +2428,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">277</int>
+			<int key="maxID">282</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2557,7 +2584,7 @@
 							<string>checkBoxEverySecond</string>
 							<string>checkBoxEveryYear</string>
 							<string>fieldNewJobComment</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>stepperHour</string>
 							<string>stepperMinute</string>
 							<string>stepperNewRecurrentJobDay</string>
@@ -2583,7 +2610,7 @@
 							<string>CPCheckBox</string>
 							<string>CPCheckBox</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>TNTextFieldStepper</string>
 							<string>TNTextFieldStepper</string>
 							<string>TNTextFieldStepper</string>
@@ -2612,7 +2639,7 @@
 							<string>checkBoxEverySecond</string>
 							<string>checkBoxEveryYear</string>
 							<string>fieldNewJobComment</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>stepperHour</string>
 							<string>stepperMinute</string>
 							<string>stepperNewRecurrentJobDay</string>
@@ -2669,8 +2696,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">stepperHour</string>

@@ -160,7 +160,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)willHide
 {
     [VMCloneController closeWindow:nil];
-    [VMSubscriptionController closeWindow:nil];
+    [VMSubscriptionController closeAddSubscriptionWindow:nil];
+    [VMSubscriptionController closeRemoveSubscriptionWindow:nil];
     [VMAllocationController closeWindow:nil];
 
     [super willHide];

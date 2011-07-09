@@ -35,11 +35,10 @@
 {
     @outlet CPButton        buttonAdd;
     @outlet CPButton        buttonCancel;
+    @outlet CPPopover       mainPopover;
     @outlet CPTextField     newContactJID;
     @outlet CPTextField     newContactName;
-    @outlet CPView          mainContentView;
 
-    TNAttachedWindow        _mainWindow;
     TNPubSubController      _pubsubController   @accessors(property=pubSubController);
 }
 
@@ -53,10 +52,6 @@
 
     [newContactName setToolTip:CPLocalizedString(@"The display name of the new contact", @"The display name of the new contact")];
     [newContactJID setToolTip:CPLocalizedString(@"The XMPP JID of the contact", @"The XMPP JID of the contact")];
-
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonAdd];
 }
 
 #pragma mark -
@@ -121,7 +116,9 @@
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
 
-    [_mainWindow positionRelativeToView:aSender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover setDefaultButton:buttonAdd];
+    [mainPopover makeFirstResponder:newContactJID];
 }
 
 /*! close the main window
@@ -129,7 +126,7 @@
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
 }
 
 /*! add a contact according to the values of the outlets
@@ -149,7 +146,7 @@
     }
     [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithPath:nil];
 
-    [_mainWindow close];
+    [mainPopover close];
 
     CPLog.info(@"added contact " + JID);
 

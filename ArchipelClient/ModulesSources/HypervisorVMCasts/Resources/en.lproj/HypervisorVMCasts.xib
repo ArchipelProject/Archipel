@@ -12,6 +12,7 @@
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>NSPopover</string>
 			<string>NSButton</string>
 			<string>NSButtonCell</string>
 			<string>NSImageView</string>
@@ -25,6 +26,7 @@
 			<string>NSWindowTemplate</string>
 			<string>NSView</string>
 			<string>NSTextField</string>
+			<string>NSViewController</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -304,6 +306,16 @@
 			<object class="NSCustomObject" id="976891823">
 				<string key="NSClassName">TNVMCastRegistrationController</string>
 			</object>
+			<object class="NSViewController" id="186959626"/>
+			<object class="NSPopover" id="572192156">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="186959626"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
 			<object class="NSView" id="92463836">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">256</int>
@@ -539,14 +551,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldNewURL</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="902649609"/>
-					</object>
-					<int key="connectionID">43</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">imageViewModuleReady</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="459723065"/>
@@ -587,27 +591,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonNewVMCast</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="637107661"/>
-					</object>
-					<int key="connectionID">57</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">VMCastRegistrationController</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="976891823"/>
 					</object>
 					<int key="connectionID">78</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="976891823"/>
-						<reference key="destination" ref="92463836"/>
-					</object>
-					<int key="connectionID">79</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -640,6 +628,30 @@
 						<reference key="destination" ref="981118937"/>
 					</object>
 					<int key="connectionID">83</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="572192156"/>
+						<reference key="destination" ref="186959626"/>
+					</object>
+					<int key="connectionID">86</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="976891823"/>
+						<reference key="destination" ref="572192156"/>
+					</object>
+					<int key="connectionID">87</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="186959626"/>
+						<reference key="destination" ref="92463836"/>
+					</object>
+					<int key="connectionID">88</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -906,6 +918,17 @@
 						<reference key="object" ref="976891823"/>
 						<reference key="parent" ref="0"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">84</int>
+						<reference key="object" ref="186959626"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">85</int>
+						<reference key="object" ref="572192156"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -948,6 +971,8 @@
 					<string>7.IBPluginDependency</string>
 					<string>77.IBPluginDependency</string>
 					<string>8.IBPluginDependency</string>
+					<string>84.IBPluginDependency</string>
+					<string>85.IBPluginDependency</string>
 					<string>9.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
@@ -989,6 +1014,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -1003,7 +1030,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">83</int>
+			<int key="maxID">88</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1291,13 +1318,13 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonNewVMCast</string>
 							<string>fieldNewURL</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -1306,7 +1333,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonNewVMCast</string>
 							<string>fieldNewURL</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1319,8 +1346,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 						</object>
 					</object>

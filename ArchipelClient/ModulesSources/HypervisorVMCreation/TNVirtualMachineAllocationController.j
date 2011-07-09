@@ -22,7 +22,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
-@import <TNKit/TNAttachedWindow.j>
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlAlloc        = @"alloc",
@@ -35,20 +34,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 @implementation TNVirtualMachineAllocationController : CPObject
 {
     @outlet CPButton        buttonAlloc;
+    @outlet CPPopover       mainPopover;
     @outlet CPTextField     fieldNewVMRequestedName;
-    @outlet CPView          mainContentView;
 
     id                      _delegate   @accessors(property=delegate);
-
-    TNAttachedWindow        _mainWindow;
 }
 
-- (void)awakeFromCib
-{
-    _mainWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, [mainContentView frameSize].width, [mainContentView frameSize].height) styleMask:CPClosableWindowMask | TNAttachedWhiteWindowMask];
-    [_mainWindow setContentView:mainContentView];
-    [_mainWindow setDefaultButton:buttonAlloc];
-}
 
 #pragma mark -
 #pragma mark Action
@@ -59,8 +50,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (IBAction)openWindow:(id)aSender
 {
     [fieldNewVMRequestedName setStringValue:@""];
-    [_mainWindow makeFirstResponder:fieldNewVMRequestedName];
-    [_mainWindow positionRelativeToView:aSender];
+
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [mainPopover makeFirstResponder:fieldNewVMRequestedName];
+    [mainPopover setDefaultButton:buttonAlloc];
 }
 
 /*! close the window
@@ -68,7 +61,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)closeWindow:(id)aSender
 {
-    [_mainWindow close]
+    [mainPopover close]
 }
 
 /*! alloc a new virtual machine
@@ -76,7 +69,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)alloc:(id)aSender
 {
-    [_mainWindow close];
+    [mainPopover close];
     [self alloc];
 }
 

@@ -20,6 +20,7 @@
 			<string>NSImageCell</string>
 			<string>NSTableView</string>
 			<string>NSCustomView</string>
+			<string>NSViewController</string>
 			<string>NSSearchField</string>
 			<string>NSTextField</string>
 			<string>NSSearchFieldCell</string>
@@ -30,6 +31,7 @@
 			<string>NSPopUpButtonCell</string>
 			<string>NSView</string>
 			<string>NSScrollView</string>
+			<string>NSPopover</string>
 			<string>NSPopUpButton</string>
 			<string>NSScroller</string>
 			<string>NSMenuItem</string>
@@ -316,6 +318,16 @@
 				<string key="NSFrameSize">{388, 297}</string>
 				<reference key="NSNextKeyView" ref="621817598"/>
 				<string key="NSClassName">NSView</string>
+			</object>
+			<object class="NSViewController" id="170816257"/>
+			<object class="NSPopover" id="751255479">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="170816257"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="526484131">
 				<nil key="NSNextResponder"/>
@@ -4208,6 +4220,16 @@
 			<object class="NSCustomObject" id="129978097">
 				<string key="NSClassName">TNDriveController</string>
 			</object>
+			<object class="NSViewController" id="96717294"/>
+			<object class="NSPopover" id="640965615">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="96717294"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
+			</object>
 			<object class="NSView" id="286755511">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">256</int>
@@ -4897,6 +4919,16 @@
 			</object>
 			<object class="NSCustomObject" id="127904015">
 				<string key="NSClassName">TNNetworkController</string>
+			</object>
+			<object class="NSViewController" id="306853748"/>
+			<object class="NSPopover" id="589754467">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="306853748"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="281604653">
 				<nil key="NSNextResponder"/>
@@ -6731,28 +6763,12 @@
 					<int key="connectionID">937</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="129978097"/>
-						<reference key="destination" ref="286755511"/>
-					</object>
-					<int key="connectionID">1005</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeWindow:</string>
 						<reference key="source" ref="129978097"/>
 						<reference key="destination" ref="212747124"/>
 					</object>
 					<int key="connectionID">1006</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="127904015"/>
-						<reference key="destination" ref="281604653"/>
-					</object>
-					<int key="connectionID">1073</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -6763,20 +6779,84 @@
 					<int key="connectionID">1074</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewXMLEditor</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="526484131"/>
-					</object>
-					<int key="connectionID">1091</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeXMLEditor:</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="796834848"/>
 					</object>
 					<int key="connectionID">1092</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="751255479"/>
+						<reference key="destination" ref="170816257"/>
+					</object>
+					<int key="connectionID">1095</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverXMLEditor</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="751255479"/>
+					</object>
+					<int key="connectionID">1096</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="170816257"/>
+						<reference key="destination" ref="526484131"/>
+					</object>
+					<int key="connectionID">1097</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="640965615"/>
+						<reference key="destination" ref="96717294"/>
+					</object>
+					<int key="connectionID">1100</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="129978097"/>
+						<reference key="destination" ref="640965615"/>
+					</object>
+					<int key="connectionID">1101</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="96717294"/>
+						<reference key="destination" ref="286755511"/>
+					</object>
+					<int key="connectionID">1102</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="589754467"/>
+						<reference key="destination" ref="306853748"/>
+					</object>
+					<int key="connectionID">1105</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="127904015"/>
+						<reference key="destination" ref="589754467"/>
+					</object>
+					<int key="connectionID">1106</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="306853748"/>
+						<reference key="destination" ref="281604653"/>
+					</object>
+					<int key="connectionID">1107</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -10530,6 +10610,42 @@
 						<reference key="object" ref="892029849"/>
 						<reference key="parent" ref="500338457"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1093</int>
+						<reference key="object" ref="170816257"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover XMLEd VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1094</int>
+						<reference key="object" ref="751255479"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover XMLEd</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1098</int>
+						<reference key="object" ref="96717294"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Drive VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1099</int>
+						<reference key="object" ref="640965615"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Drive</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1103</int>
+						<reference key="object" ref="306853748"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Network VC</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1104</int>
+						<reference key="object" ref="589754467"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover Network</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -10549,8 +10665,14 @@
 					<string>107.IBPluginDependency</string>
 					<string>1075.IBPluginDependency</string>
 					<string>108.IBPluginDependency</string>
+					<string>1093.IBPluginDependency</string>
+					<string>1094.IBPluginDependency</string>
+					<string>1098.IBPluginDependency</string>
+					<string>1099.IBPluginDependency</string>
 					<string>11.IBPluginDependency</string>
 					<string>110.IBPluginDependency</string>
+					<string>1103.IBPluginDependency</string>
+					<string>1104.IBPluginDependency</string>
 					<string>111.IBPluginDependency</string>
 					<string>113.IBPluginDependency</string>
 					<string>114.IBPluginDependency</string>
@@ -11122,6 +11244,12 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference key="dict.sortedKeys" ref="0"/>
@@ -11571,7 +11699,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1092</int>
+			<int key="maxID">1107</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -11674,7 +11802,7 @@
 							<string>buttonTargetDevice</string>
 							<string>buttonType</string>
 							<string>fieldDevicePath</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -11687,7 +11815,7 @@
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
 						</object>
 					</object>
@@ -11703,7 +11831,7 @@
 							<string>buttonTargetDevice</string>
 							<string>buttonType</string>
 							<string>fieldDevicePath</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -11741,8 +11869,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>
@@ -11906,7 +12034,7 @@
 							<string>buttonSource</string>
 							<string>buttonType</string>
 							<string>fieldMac</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 							<string>tableViewNetworkFilterParameters</string>
 							<string>viewNWFilterParametersContainer</string>
@@ -11920,7 +12048,7 @@
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
@@ -11937,7 +12065,7 @@
 							<string>buttonSource</string>
 							<string>buttonType</string>
 							<string>fieldMac</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 							<string>tableViewNetworkFilterParameters</string>
 							<string>viewNWFilterParametersContainer</string>
@@ -11973,8 +12101,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>
@@ -12379,6 +12507,7 @@
 							<string>fieldVNCPort</string>
 							<string>flipViewParameters</string>
 							<string>networkController</string>
+							<string>popoverXMLEditor</string>
 							<string>scrollViewContentView</string>
 							<string>scrollViewForDrives</string>
 							<string>scrollViewForNics</string>
@@ -12406,7 +12535,6 @@
 							<string>viewParametersEffectTop</string>
 							<string>viewParametersFront</string>
 							<string>viewParametersStandard</string>
-							<string>viewXMLEditor</string>
 							<string>windowXMLEditor</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -12458,6 +12586,7 @@
 							<string>NSTextField</string>
 							<string>TNFlipView</string>
 							<string>TNNetworkController</string>
+							<string>NSPopover</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
@@ -12473,7 +12602,6 @@
 							<string>TNTabView</string>
 							<string>NSTableView</string>
 							<string>NSTableView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -12540,6 +12668,7 @@
 							<string>fieldVNCPort</string>
 							<string>flipViewParameters</string>
 							<string>networkController</string>
+							<string>popoverXMLEditor</string>
 							<string>scrollViewContentView</string>
 							<string>scrollViewForDrives</string>
 							<string>scrollViewForNics</string>
@@ -12567,7 +12696,6 @@
 							<string>viewParametersEffectTop</string>
 							<string>viewParametersFront</string>
 							<string>viewParametersStandard</string>
-							<string>viewXMLEditor</string>
 							<string>windowXMLEditor</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -12761,6 +12889,10 @@
 								<string key="candidateClassName">TNNetworkController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">popoverXMLEditor</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewContentView</string>
 								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
@@ -12866,10 +12998,6 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewParametersStandard</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewXMLEditor</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">

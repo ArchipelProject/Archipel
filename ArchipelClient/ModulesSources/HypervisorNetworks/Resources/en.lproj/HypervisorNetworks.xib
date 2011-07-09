@@ -20,6 +20,7 @@
 			<string>NSImageCell</string>
 			<string>NSTableView</string>
 			<string>NSCustomView</string>
+			<string>NSViewController</string>
 			<string>NSSearchField</string>
 			<string>NSTextField</string>
 			<string>NSSearchFieldCell</string>
@@ -30,6 +31,7 @@
 			<string>NSView</string>
 			<string>NSPopUpButtonCell</string>
 			<string>NSScrollView</string>
+			<string>NSPopover</string>
 			<string>NSScroller</string>
 			<string>NSTableHeaderView</string>
 			<string>NSPopUpButton</string>
@@ -110,7 +112,7 @@
 												<int key="NSvFlags">256</int>
 												<string key="NSFrameSize">{729, 361}</string>
 												<reference key="NSSuperview" ref="289301026"/>
-												<reference key="NSNextKeyView" ref="1064896233"/>
+												<reference key="NSNextKeyView" ref="942821759"/>
 												<string key="NSReuseIdentifierKey">_NS:1197</string>
 												<bool key="NSEnabled">YES</bool>
 												<object class="_NSCornerView" key="NSCornerView">
@@ -231,6 +233,7 @@
 										<int key="NSvFlags">-2147483392</int>
 										<string key="NSFrame">{{0, 342}, {976, 15}}</string>
 										<reference key="NSSuperview" ref="541026557"/>
+										<reference key="NSNextKeyView" ref="76838021"/>
 										<string key="NSReuseIdentifierKey">_NS:1216</string>
 										<int key="NSsFlags">1</int>
 										<reference key="NSTarget" ref="541026557"/>
@@ -258,6 +261,7 @@
 						</object>
 						<string key="NSFrame">{{20, 20}, {659, 389}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="541026557"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 					<object class="NSSearchField" id="968821087">
@@ -1019,7 +1023,6 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{224, 17}, {15, 102}}</string>
 								<reference key="NSSuperview" ref="485000216"/>
-								<reference key="NSNextKeyView" ref="942821759"/>
 								<string key="NSReuseIdentifierKey">_NS:1214</string>
 								<reference key="NSTarget" ref="485000216"/>
 								<string key="NSAction">_doScroller:</string>
@@ -1621,7 +1624,17 @@
 				<string key="NSClassName">TNNetworkDataView</string>
 			</object>
 			<object class="NSCustomObject" id="416875448">
-				<string key="NSClassName">TNWindowNetworkController</string>
+				<string key="NSClassName">TNNetworkEditionController</string>
+			</object>
+			<object class="NSViewController" id="622002801"/>
+			<object class="NSPopover" id="802441286">
+				<nil key="NSNextResponder"/>
+				<reference key="NSContentViewController" ref="622002801"/>
+				<int key="NSAppearance">0</int>
+				<int key="NSBehavior">0</int>
+				<double key="NSContentWidth">0.0</double>
+				<double key="NSContentHeight">0.0</double>
+				<bool key="NSAnimates">YES</bool>
 			</object>
 			<object class="NSView" id="101047790">
 				<nil key="NSNextResponder"/>
@@ -2669,20 +2682,36 @@
 					<int key="connectionID">352</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="101047790"/>
-					</object>
-					<int key="connectionID">417</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeWindow:</string>
 						<reference key="source" ref="416875448"/>
 						<reference key="destination" ref="159830380"/>
 					</object>
 					<int key="connectionID">418</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="802441286"/>
+						<reference key="destination" ref="622002801"/>
+					</object>
+					<int key="connectionID">421</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="622002801"/>
+						<reference key="destination" ref="101047790"/>
+					</object>
+					<int key="connectionID">423</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="802441286"/>
+					</object>
+					<int key="connectionID">424</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3910,6 +3939,17 @@
 						<reference key="object" ref="306483877"/>
 						<reference key="parent" ref="199864873"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">419</int>
+						<reference key="object" ref="622002801"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Popover View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">420</int>
+						<reference key="object" ref="802441286"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4036,7 +4076,9 @@
 					<string>4.IBPluginDependency</string>
 					<string>40.IBPluginDependency</string>
 					<string>41.IBPluginDependency</string>
+					<string>419.IBPluginDependency</string>
 					<string>42.IBPluginDependency</string>
+					<string>420.IBPluginDependency</string>
 					<string>43.IBPluginDependency</string>
 					<string>44.IBPluginDependency</string>
 					<string>45.IBPluginDependency</string>
@@ -4085,6 +4127,8 @@
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -4265,7 +4309,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">418</int>
+			<int key="maxID">424</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4637,6 +4681,246 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNNetworkEditionController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addDHCPHost:</string>
+							<string>addDHCPRange:</string>
+							<string>closeWindow:</string>
+							<string>forwardModeChanged:</string>
+							<string>openWindow:</string>
+							<string>removeDHCPHost:</string>
+							<string>removeDHCPRange:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addDHCPHost:</string>
+							<string>addDHCPRange:</string>
+							<string>closeWindow:</string>
+							<string>forwardModeChanged:</string>
+							<string>openWindow:</string>
+							<string>removeDHCPHost:</string>
+							<string>removeDHCPRange:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">addDHCPHost:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addDHCPRange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">forwardModeChanged:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeDHCPHost:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeDHCPRange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarControlDHCPHosts</string>
+							<string>buttonBarControlDHCPRanges</string>
+							<string>buttonForwardDevice</string>
+							<string>buttonForwardMode</string>
+							<string>buttonOK</string>
+							<string>checkBoxDHCPEnabled</string>
+							<string>checkBoxSTPEnabled</string>
+							<string>fieldBridgeDelay</string>
+							<string>fieldBridgeIP</string>
+							<string>fieldBridgeName</string>
+							<string>fieldBridgeNetmask</string>
+							<string>fieldNetworkName</string>
+							<string>mainPopover</string>
+							<string>tabViewDHCP</string>
+							<string>tableViewHosts</string>
+							<string>tableViewRanges</string>
+							<string>viewHostsConf</string>
+							<string>viewRangesConf</string>
+							<string>viewTableHostsContainer</string>
+							<string>viewTableRangesContainer</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>CPCheckBox</string>
+							<string>CPCheckBox</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+							<string>NSTabView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarControlDHCPHosts</string>
+							<string>buttonBarControlDHCPRanges</string>
+							<string>buttonForwardDevice</string>
+							<string>buttonForwardMode</string>
+							<string>buttonOK</string>
+							<string>checkBoxDHCPEnabled</string>
+							<string>checkBoxSTPEnabled</string>
+							<string>fieldBridgeDelay</string>
+							<string>fieldBridgeIP</string>
+							<string>fieldBridgeName</string>
+							<string>fieldBridgeNetmask</string>
+							<string>fieldNetworkName</string>
+							<string>mainPopover</string>
+							<string>tabViewDHCP</string>
+							<string>tableViewHosts</string>
+							<string>tableViewRanges</string>
+							<string>viewHostsConf</string>
+							<string>viewRangesConf</string>
+							<string>viewTableHostsContainer</string>
+							<string>viewTableRangesContainer</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControlDHCPHosts</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControlDHCPRanges</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonForwardDevice</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonForwardMode</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxDHCPEnabled</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxSTPEnabled</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeDelay</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeIP</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeNetmask</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNetworkName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabViewDHCP</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableViewHosts</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableViewRanges</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewHostsConf</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewRangesConf</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableHostsContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableRangesContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNNetworkEditionController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNWindowNetworkController</string>
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -4743,7 +5027,7 @@
 							<string>fieldBridgeName</string>
 							<string>fieldBridgeNetmask</string>
 							<string>fieldNetworkName</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 							<string>scrollViewDHCPHosts</string>
 							<string>scrollViewDHCPRanges</string>
@@ -4769,7 +5053,7 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
+							<string>NSPopover</string>
 							<string>NSWindow</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
@@ -4798,7 +5082,7 @@
 							<string>fieldBridgeName</string>
 							<string>fieldBridgeNetmask</string>
 							<string>fieldNetworkName</string>
-							<string>mainContentView</string>
+							<string>mainPopover</string>
 							<string>mainWindow</string>
 							<string>scrollViewDHCPHosts</string>
 							<string>scrollViewDHCPRanges</string>
@@ -4861,8 +5145,8 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainWindow</string>
