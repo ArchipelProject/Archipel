@@ -43,6 +43,7 @@
     @outlet CPButton            buttonOK;
     @outlet CPButtonBar         buttonBarControlDHCPHosts;
     @outlet CPButtonBar         buttonBarControlDHCPRanges;
+    @outlet CPCheckBox          checkBoxAutostart;
     @outlet CPCheckBox          checkBoxDHCPEnabled;
     @outlet CPCheckBox          checkBoxSTPEnabled;
     @outlet CPPopover           mainPopover;
@@ -156,6 +157,7 @@
     [fieldBridgeNetmask setToolTip:CPBundleLocalizedString(@"The netmask to use for the bridge", @"The netmask to use for the bridge")];
     [checkBoxSTPEnabled setToolTip:CPBundleLocalizedString(@"Activate or deactivate Spanning Tree Protocol for the bridge", @"Activate or deactivate Spanning Tree Protocol for the bridge")];
     [checkBoxDHCPEnabled setToolTip:CPBundleLocalizedString(@"Enable DHCP for this virtual network", @"Enable DHCP for this virtual network")];
+    [checkBoxAutostart setToolTip:CPLocalizedString(@"Define if network should start with host", @"Define if network should start with host")];
 }
 
 
@@ -185,6 +187,7 @@
 
     [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
     [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
+    [checkBoxAutostart setState:([_network isAutostart]) ? CPOnState : CPOffState];
 
     [_datasourceDHCPRanges setContent:[_network DHCPEntriesRanges]];
     [_datasourceDHCPHosts setContent:[_network DHCPEntriesHosts]];
@@ -205,6 +208,7 @@
     [_network setNetworkName:[fieldNetworkName stringValue]];
     [_network setBridgeName:[fieldBridgeName stringValue]];
     [_network setBridgeDelay:[fieldBridgeDelay stringValue]];
+
     if ([buttonForwardMode title] != @"isolated")
     {
         [_network setBridgeForwardMode:[buttonForwardMode title]];
@@ -222,6 +226,7 @@
     [_network setDHCPEntriesHosts:[_datasourceDHCPHosts content]];
     [_network setSTPEnabled:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
+    [_network setAutostart:([checkBoxAutostart state] == CPOnState) ? YES : NO];
 
     [_delegate defineNetwork:_network];
     [mainPopover close];

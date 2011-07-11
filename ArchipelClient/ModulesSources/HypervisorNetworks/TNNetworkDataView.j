@@ -41,6 +41,7 @@
     @outlet CPTextField         fieldBridgeNetmask;
     @outlet CPTextField         fieldBridgeSTP;
     @outlet CPTextField         fieldName;
+    @outlet CPTextField         fieldAutostart;
     @outlet CPTextField         labelBridgeDelay;
     @outlet CPTextField         labelBridgeForwardDevice;
     @outlet CPTextField         labelBridgeForwardMode;
@@ -51,6 +52,7 @@
     @outlet CPTextField         labelBridgeSTP;
     @outlet CPTextField         labelDHCPHosts;
     @outlet CPTextField         labelDHCPRanges;
+    @outlet CPTextField         labelAutostart;
 
     TNHypervisorNetwork         _network;
     TNTableViewDataSource       _datasourceHosts;
@@ -68,6 +70,7 @@
         [fieldBridgeName setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [fieldBridgeNetmask setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [fieldBridgeSTP setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [fieldAutostart setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [labelBridgeDelay setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [labelBridgeForwardDevice setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [labelBridgeForwardMode setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
@@ -78,6 +81,7 @@
         [labelBridgeInformation setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [labelDHCPRanges setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [labelDHCPHosts setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [labelAutostart setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
 
         [tableDHCPRanges setIntercellSpacing:CPSizeMake(2.0, 2.0)];
         [tableDHCPHosts setIntercellSpacing:CPSizeMake(2.0, 2.0)];
@@ -107,6 +111,7 @@
     [fieldBridgeNetmask setStringValue:[aNetwork bridgeNetmask]];
     [fieldBridgeSTP setStringValue:[aNetwork isSTPEnabled] ? @"Yes" : @"No"];
     [fieldBridgeDelay setStringValue:[aNetwork bridgeDelay]];
+    [fieldAutostart setStringValue:([aNetwork isAutostart]) ? @"On" : @"Off"];
 
     [tableDHCPRanges setDataSource:_datasourceRanges];
     [_datasourceRanges setTable:tableDHCPRanges];
@@ -138,6 +143,7 @@
     [fieldBridgeName setThemeState:aState];
     [fieldBridgeNetmask setThemeState:aState];
     [fieldBridgeSTP setThemeState:aState];
+    [fieldAutostart setThemeState:aState];
     [labelBridgeDelay setTextColor:[CPColor whiteColor]];
     [labelBridgeForwardDevice setThemeState:aState];
     [labelBridgeForwardMode setThemeState:aState];
@@ -148,6 +154,7 @@
     [labelBridgeInformation setThemeState:aState];
     [labelDHCPRanges setThemeState:aState];
     [labelDHCPHosts setThemeState:aState];
+    [labelAutostart setThemeState:aState];
 }
 
 /*! forward the theme state unset to the inner controls
@@ -165,6 +172,7 @@
     [fieldBridgeName unsetThemeState:aState];
     [fieldBridgeNetmask unsetThemeState:aState];
     [fieldBridgeSTP unsetThemeState:aState];
+    [fieldAutostart unsetThemeState:aState];
     [labelBridgeDelay unsetThemeState:aState];
     [labelBridgeForwardDevice unsetThemeState:aState];
     [labelBridgeForwardMode unsetThemeState:aState];
@@ -175,6 +183,7 @@
     [labelBridgeInformation unsetThemeState:aState];
     [labelDHCPRanges unsetThemeState:aState];
     [labelDHCPHosts unsetThemeState:aState];
+    [labelAutostart unsetThemeState:aState];
 }
 
 
@@ -200,6 +209,7 @@
         fieldBridgeNetmask = [aCoder decodeObjectForKey:@"fieldBridgeNetmask"];
         fieldBridgeSTP = [aCoder decodeObjectForKey:@"fieldBridgeSTP"];
         fieldBridgeDelay = [aCoder decodeObjectForKey:@"fieldBridgeDelay"];
+        fieldAutostart = [aCoder decodeObjectForKey:@"fieldAutostart"];
         labelBridgeDelay = [aCoder decodeObjectForKey:@"labelBridgeDelay"];
         labelBridgeForwardDevice = [aCoder decodeObjectForKey:@"labelBridgeForwardDevice"];
         labelBridgeForwardMode = [aCoder decodeObjectForKey:@"labelBridgeForwardMode"];
@@ -210,6 +220,7 @@
         labelBridgeInformation = [aCoder decodeObjectForKey:@"labelBridgeInformation"];
         labelDHCPRanges = [aCoder decodeObjectForKey:@"labelDHCPRanges"];
         labelDHCPHosts = [aCoder decodeObjectForKey:@"labelDHCPHosts"];
+        labelAutostart = [aCoder decodeObjectForKey:@"labelAutostart"];
 
         // yeah, well, with its little friends it doesn't work for this field...
         // sometimes I feel tired...
@@ -236,6 +247,7 @@
     [aCoder encodeObject:fieldBridgeNetmask forKey:@"fieldBridgeNetmask"];
     [aCoder encodeObject:fieldBridgeSTP forKey:@"fieldBridgeSTP"];
     [aCoder encodeObject:fieldBridgeDelay forKey:@"fieldBridgeDelay"];
+    [aCoder encodeObject:fieldAutostart forKey:@"fieldAutostart"];
     [aCoder encodeObject:labelBridgeDelay forKey:@"labelBridgeDelay"];
     [aCoder encodeObject:labelBridgeForwardDevice forKey:@"labelBridgeForwardDevice"];
     [aCoder encodeObject:labelBridgeForwardMode forKey:@"labelBridgeForwardMode"];
@@ -246,6 +258,7 @@
     [aCoder encodeObject:labelBridgeInformation forKey:@"labelBridgeInformation"];
     [aCoder encodeObject:labelDHCPRanges forKey:@"labelDHCPRanges"];
     [aCoder encodeObject:labelDHCPHosts forKey:@"labelDHCPHosts"];
+    [aCoder encodeObject:labelAutostart forKey:@"labelAutostart"];
 }
 
 @end

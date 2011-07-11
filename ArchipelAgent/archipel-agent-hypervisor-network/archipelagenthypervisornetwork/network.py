@@ -229,6 +229,36 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             ret.append(os.path.splitext(nwfilter)[0])
         return ret
 
+    def setAutostart(self, identifier, shouldAutostart):
+        """
+        Set the network to start with the host
+        @type network_identifier: string
+        @param identifier: the UUID or the name of the network
+        @type identifier: boolean
+        @param shouldAutostart: set if autostart should be set
+        @rtype: integer
+        @return: the result of the libvirt call
+        """
+        try:
+            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
+        except:
+            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        return libvirt_network.setAutostart(shouldAutostart)
+
+    def getAutostart(self, identifier):
+        """
+        Set the network to start with the host
+        @type identifier: string
+        @param identifier: the UUID or the name of the network
+        @rtype: Boolean
+        @return: True is network is in autostart mode
+        """
+        try:
+            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
+        except:
+            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        return libvirt_network.autostart()
+
 
     ### XMPP Processing
 
@@ -310,6 +340,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             reply           = iq.buildReply("result")
             network_node    = iq.getTag("query").getTag("archipel").getTag("network")
             self.define(network_node)
+            if iq.getTag("query").getTag("archipel").getAttr("autostart") == "1":
+                self.setAutostart(network_node.getTag("uuid").getData(), True)
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -425,11 +457,13 @@ class TNHypervisorNetworks (TNArchipelPlugin):
                 network = self.entity.libvirt_connection.networkLookupByName(network_name)
                 desc = network.XMLDesc(0)
                 n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
+                n.setAttr("autostart", self.getAutostart(network_name))
                 active_networks_nodes.append(n)
             for network_name in networks["inactive"]:
                 network = self.entity.libvirt_connection.networkLookupByName(network_name)
                 desc = network.XMLDesc(0)
                 n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
+                n.setAttr("autostart", self.getAutostart(network_name))
                 inactive_networks_nodes.append(n)
             active_networks_root_node   = xmpp.Node(tag="activedNetworks", payload=active_networks_nodes)
             inactive_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=inactive_networks_nodes)

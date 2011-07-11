@@ -260,7 +260,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkDefine}];
+        "action": TNArchipelTypeHypervisorNetworkDefine,
+        "autostart": [aNetwork isAutostart] ? @"1" : @"0"}];
 
     [stanza addChildWithName:@"network"];
 
@@ -343,18 +344,19 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
         baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
         newNetwork      = [TNHypervisorNetwork networkWithName:uuid
-                                                UUID:uuid
-                                          bridgeName:@"br" + Math.round((Math.random() * 42000))
-                                         bridgeDelay:@"0"
-                                   bridgeForwardMode:@"nat"
-                                 bridgeForwardDevice:@"eth0"
-                                            bridgeIP:ip
-                                       bridgeNetmask:@"255.255.0.0"
-                                   DHCPEntriesRanges:[baseDHCPEntry]
-                                    DHCPEntriesHosts:[CPArray array]
-                                      networkEnabled:NO
-                                          STPEnabled:NO
-                                         DHCPEnabled:YES];
+                                                          UUID:uuid
+                                                    bridgeName:@"br" + Math.round((Math.random() * 42000))
+                                                   bridgeDelay:@"0"
+                                             bridgeForwardMode:@"nat"
+                                           bridgeForwardDevice:@"eth0"
+                                                      bridgeIP:ip
+                                                 bridgeNetmask:@"255.255.0.0"
+                                             DHCPEntriesRanges:[baseDHCPEntry]
+                                              DHCPEntriesHosts:[CPArray array]
+                                                networkEnabled:NO
+                                                    STPEnabled:NO
+                                                   DHCPEnabled:YES
+                                                     autostart:YES];
 
     [networkController setNetwork:newNetwork];
     [networkController openWindow:aSender];
@@ -491,6 +493,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         for (var i = 0; i < [allNetworks count]; i++)
         {
             var network                 = [allNetworks objectAtIndex:i],
+                autostart               = ([network valueForAttribute:@"autostart"] == @"1") ? YES : NO,
                 name                    = [[network firstChildWithName:@"name"] text],
                 uuid                    = [[network firstChildWithName:@"uuid"] text],
                 bridge                  = [network firstChildWithName:@"bridge"],
@@ -544,7 +547,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
                                         DHCPEntriesHosts:DHCPHostEntriesArray
                                           networkEnabled:networkActive
                                               STPEnabled:bridgeSTP
-                                             DHCPEnabled:DHCPEnabled];
+                                             DHCPEnabled:DHCPEnabled
+                                               autostart:autostart];
 
             [_datasourceNetworks addObject:newNetwork];
         }

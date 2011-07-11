@@ -206,3 +206,12 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "351"; */
 "351.title" = "Text Cell";
 
+/* Class = "NSTextFieldCell"; title = "Auto start:"; ObjectID = "428"; */
+"428.title" = "Auto start:";
+
+/* Class = "NSTextFieldCell"; title = "Autostart:"; ObjectID = "432"; */
+"432.title" = "Autostart:";
+
+/* Class = "NSTextFieldCell"; title = "On | Off"; ObjectID = "433"; */
+"433.title" = "On | Off";
+

@@ -27,22 +27,23 @@
 */
 @implementation TNHypervisorNetwork : CPObject
 {
-    BOOL        _isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
-    BOOL        _isNetworkEnabled        @accessors(getter=isNetworkEnabled, setter=setNetworkEnabled:);
-    BOOL        _isSTPEnabled            @accessors(getter=isSTPEnabled, setter=setSTPEnabled:);
-    CPArray     _DHCPEntriesHosts        @accessors(property=DHCPEntriesHosts);
-    CPArray     _DHCPEntriesRanges       @accessors(property=DHCPEntriesRanges);
-    CPImage     _icon                    @accessors(property=icon);
-    CPImage     _imageNetworkActive      @accessors(property=imageNetworkActive);
-    CPImage     _imageNetworkUnactive    @accessors(property=imageNetworkUnactive);
-    CPString    _bridgeDelay             @accessors(property=bridgeDelay);
-    CPString    _bridgeForwardDevice     @accessors(property=bridgeForwardDevice);
-    CPString    _bridgeForwardMode       @accessors(property=bridgeForwardMode);
-    CPString    _bridgeIP                @accessors(property=bridgeIP);
-    CPString    _bridgeName              @accessors(property=bridgeName);
-    CPString    _bridgeNetmask           @accessors(property=bridgeNetmask);
-    CPString    _networkName             @accessors(property=networkName);
-    CPString    _UUID                    @accessors(property=UUID);
+    BOOL        _isDHCPEnabled          @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
+    BOOL        _isNetworkEnabled       @accessors(getter=isNetworkEnabled, setter=setNetworkEnabled:);
+    BOOL        _isSTPEnabled           @accessors(getter=isSTPEnabled, setter=setSTPEnabled:);
+    BOOL        _isAutostart            @accessors(getter=isAutostart, setter=setAutostart:);
+    CPArray     _DHCPEntriesHosts       @accessors(property=DHCPEntriesHosts);
+    CPArray     _DHCPEntriesRanges      @accessors(property=DHCPEntriesRanges);
+    CPImage     _icon                   @accessors(property=icon);
+    CPImage     _imageNetworkActive     @accessors(property=imageNetworkActive);
+    CPImage     _imageNetworkUnactive   @accessors(property=imageNetworkUnactive);
+    CPString    _bridgeDelay            @accessors(property=bridgeDelay);
+    CPString    _bridgeForwardDevice    @accessors(property=bridgeForwardDevice);
+    CPString    _bridgeForwardMode      @accessors(property=bridgeForwardMode);
+    CPString    _bridgeIP               @accessors(property=bridgeIP);
+    CPString    _bridgeName             @accessors(property=bridgeName);
+    CPString    _bridgeNetmask          @accessors(property=bridgeNetmask);
+    CPString    _networkName            @accessors(property=networkName);
+    CPString    _UUID                   @accessors(property=UUID);
 }
 
 
@@ -91,6 +92,7 @@
               networkEnabled:(BOOL)networkEnabled
                   STPEnabled:(BOOL)STPEnabled
                  DHCPEnabled:(BOOL)DHCPEnabled
+                   autostart:(BOOL)shouldAutostart
 {
     var net = [[TNHypervisorNetwork alloc] init];
 
@@ -99,6 +101,7 @@
     [net setBridgeName:aBridgeName];
     [net setBridgeDelay:aBridgeDelay];
     [net setBridgeForwardMode:aForwardMode];
+    [net setAutostart:shouldAutostart];
 
     if (aForwardDevice)
         [net setBridgeForwardDevice:aForwardDevice];
