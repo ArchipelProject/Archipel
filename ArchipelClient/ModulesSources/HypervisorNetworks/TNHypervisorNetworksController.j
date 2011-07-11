@@ -88,10 +88,13 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [tableViewNetworks setTarget:self];
     [tableViewNetworks setDoubleAction:@selector(editNetwork:)];
     [_datasourceNetworks setTable:tableViewNetworks];
+    [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"UUID", @"bridgeName"]];
     [tableViewNetworks setDataSource:_datasourceNetworks];
     [tableViewNetworks setDelegate:self];
-
     [networkController setDelegate:self];
+
+    [fieldFilterNetworks setTarget:_datasourceNetworks];
+    [fieldFilterNetworks setAction:@selector(filterObjects:)];
 
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual network", @"Create new virtual network") action:@selector(addNetwork:) keyEquivalent:@""];
