@@ -68,6 +68,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (IBAction)openWindow:(id)aSender
 {
+    [mainPopover close];
     if (!_currentEditedDisk)
     {
         CPLog.error("Cannot open edit panel without having a drive to edit");

@@ -59,8 +59,6 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     [buttonNewDiskSizeUnit removeAllItems];
     [buttonNewDiskSizeUnit addItemsWithTitles:[CPBundleLocalizedString(@"GB", @"GB"), CPBundleLocalizedString(@"MB", @"MB")]];
 
-    [buttonGoldenDrive removeAllItems];
-
     [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     [fieldNewDiskSize setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
 
@@ -81,6 +79,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 */
 - (IBAction)openWindow:(id)aSender
 {
+    [buttonGoldenDrive removeAllItems];
     [self getGoldenList];
     [fieldNewDiskName setStringValue:@""];
     [fieldNewDiskSize setStringValue:@""];
