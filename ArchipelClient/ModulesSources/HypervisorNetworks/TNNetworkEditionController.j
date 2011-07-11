@@ -290,6 +290,7 @@
 */
 - (IBAction)openWindow:(id)aSender
 {
+    [mainPopover close];
     [self update];
 
     if ([aSender isKindOfClass:CPTableView])
