@@ -49,6 +49,19 @@ TNLibvirtDeviceInputTypes               = [TNLibvirtDeviceInputTypesTypeTablet,
 #pragma mark -
 #pragma mark Initialization
 
+/*! initialize the TNLibvirtDeviceInput
+*/
+- (TNLibvirtDeviceInput)init
+{
+    if (self = [super init])
+    {
+        _bus = TNLibvirtDeviceInputBusUSB;
+        _type = TNLibvirtDeviceInputTypesTypeTablet;
+    }
+
+    return self;
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */

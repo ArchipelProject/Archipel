@@ -96,20 +96,16 @@
 	<string>Set the default machine type for new domains</string>
 	<key>Set the default number of CPUs for new domains</key>
 	<string>Set the default number of CPUs for new domains</string>
+	<key>Set the default usage of VNC for new domains</key>
+	<string>Set the default usage of VNC for new domains</string>
 	<key>Set the default usage of huge pages for new domains</key>
 	<string>Set the default usage of huge pages for new domains</string>
-	<key>Set the defaulut usage of VNC for new domains</key>
-	<string>Set the defaulut usage of VNC for new domains</string>
 	<key>Set the domain machine type</key>
 	<string>Set the domain machine type</string>
 	<key>Set the domain type</key>
 	<string>Set the domain type</string>
 	<key>Set the guest type</key>
 	<string>Set the guest type</string>
-	<key>Set the input device</key>
-	<string>Set the input device</string>
-	<key>Set the input device's bus</key>
-	<string>Set the input device's bus</string>
 	<key>Set the mode of the virtual machine clock</key>
 	<string>Set the mode of the virtual machine clock</string>
 	<key>Set the model of the card</key>

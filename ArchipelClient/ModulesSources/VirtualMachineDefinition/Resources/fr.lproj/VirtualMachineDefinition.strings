@@ -47,9 +47,6 @@
 /* Class = "NSTextFieldCell"; title = "VNC keymap:"; ObjectID = "41"; */
 "41.title" = "VNC keymap:";
 
-/* Class = "NSTextFieldCell"; title = "Input type:"; ObjectID = "42"; */
-"42.title" = "Input type:";
-
 /* Class = "NSTextFieldCell"; title = "Configure the access of the virtual machine"; ObjectID = "43"; */
 "43.title" = "Configure the access of the virtual machine";
 
@@ -524,18 +521,6 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "649"; */
 "649.title" = "Item 3";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "655"; */
-"655.title" = "OtherViews";
-
-/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "656"; */
-"656.title" = "Item 1";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "657"; */
-"657.title" = "Item 2";
-
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "658"; */
-"658.title" = "Item 3";
-
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "663"; */
 "663.title" = "OtherViews";
 
@@ -731,21 +716,6 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "812"; */
 "812.title" = "Text Cell";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "833"; */
-"833.title" = "OtherViews";
-
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "834"; */
-"834.title" = "Item 3";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "835"; */
-"835.title" = "Item 2";
-
-/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "836"; */
-"836.title" = "Item 1";
-
-/* Class = "NSTextFieldCell"; title = "Input bus:"; ObjectID = "837"; */
-"837.title" = "Input bus:";
-
 /* Class = "NSTextFieldCell"; title = "Advanced stuff will be added here"; ObjectID = "844"; */
 "844.title" = "Advanced stuff will be added here";
 
@@ -802,4 +772,70 @@
 
 /* Class = "NSTextFieldCell"; title = "Block I/O tuning"; ObjectID = "916"; */
 "916.title" = "Block I/O tuning";
+
+/* Class = "NSTableColumn"; headerCell.title = "Devices"; ObjectID = "1113"; */
+"1113.headerCell.title" = "Devices";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1116"; */
+"1116.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Set the input devices you want for this virtual machine"; ObjectID = "1119"; */
+"1119.title" = "Set the input devices you want for this virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Input devices"; ObjectID = "1120"; */
+"1120.title" = "Input devices";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1166"; */
+"1166.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1167"; */
+"1167.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1168"; */
+"1168.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1169"; */
+"1169.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1171"; */
+"1171.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "tablet"; ObjectID = "1172"; */
+"1172.title" = "tablet";
+
+/* Class = "NSMenuItem"; title = "mouse"; ObjectID = "1173"; */
+"1173.title" = "mouse";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1174"; */
+"1174.title" = "Item 3";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1180"; */
+"1180.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1183"; */
+"1183.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "1184"; */
+"1184.title" = "OK";
+
+/* Class = "NSTextFieldCell"; title = "Input type:"; ObjectID = "1188"; */
+"1188.title" = "Input type:";
+
+/* Class = "NSTextFieldCell"; title = "Input device"; ObjectID = "1190"; */
+"1190.title" = "Input device";
+
+/* Class = "NSTextFieldCell"; title = "Input bus:"; ObjectID = "1192"; */
+"1192.title" = "Input bus:";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1199"; */
+"1199.title" = "Type:";
+
+/* Class = "NSTextFieldCell"; title = "Bus:"; ObjectID = "1201"; */
+"1201.title" = "Bus:";
+
+/* Class = "NSTextFieldCell"; title = "Bus"; ObjectID = "1204"; */
+"1204.title" = "Bus";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1205"; */
+"1205.title" = "Type";
 

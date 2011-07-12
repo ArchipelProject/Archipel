@@ -130,11 +130,11 @@
 /* Set the default usage of huge pages for new domains */
 "Set the default usage of huge pages for new domains" = "Set the default usage of huge pages for new domains";
 
+/* Set the default usage of VNC for new domains */
+"Set the default usage of VNC for new domains" = "Set the default usage of VNC for new domains";
+
 /* Set the default VNC keymap for new domains */
 "Set the default VNC keymap for new domains" = "Set the default VNC keymap for new domains";
-
-/* Set the defaulut usage of VNC for new domains */
-"Set the defaulut usage of VNC for new domains" = "Set the defaulut usage of VNC for new domains";
 
 /* Set the domain machine type */
 "Set the domain machine type" = "Set the domain machine type";
@@ -144,12 +144,6 @@
 
 /* Set the guest type */
 "Set the guest type" = "Set the guest type";
-
-/* Set the input device */
-"Set the input device" = "Set the input device";
-
-/* Set the input device's bus */
-"Set the input device's bus" = "Set the input device's bus";
 
 /* Set the MAC address of the card */
 "Set the MAC address of the card" = "Set the MAC address of the card";

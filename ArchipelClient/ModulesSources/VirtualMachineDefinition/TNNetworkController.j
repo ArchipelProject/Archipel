@@ -119,6 +119,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     if ([_nic filterref])
         [_datasourceNWFilterParameters setContent:[[_nic filterref] parameters]];
+
     [tableViewNetworkFilterParameters reloadData];
 }
 
@@ -385,7 +386,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
             [buttonNetworkFilter addItemWithTitle:name];
         }
 
-        if ([_nic filterref])
+        if ([[_nic filterref] name])
             [buttonNetworkFilter selectItemWithTitle:[[_nic filterref] name]];
         else
             [buttonNetworkFilter selectItemWithTitle:@"None"];
