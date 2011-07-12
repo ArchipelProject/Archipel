@@ -18,7 +18,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION             = '0.2.2'
+VERSION             = '0.3.0'
 DESCRIPTION="""\
 ** Archipel Agent **
 
@@ -67,18 +67,18 @@ setup(name='archipel-agent',
       zip_safe=False,
       provides=["archipel"],
       install_requires=[
-        "archipel-core>=0.2.2beta",
-        "archipel-agent-action-scheduler>=0.2.2beta",
-        "archipel-agent-hypervisor-geolocalization>=0.2.2beta",
-        "archipel-agent-hypervisor-health>=0.2.2beta",
-        "archipel-agent-hypervisor-network>=0.2.2beta",
-        "archipel-agent-iphone-notification>=0.2.2beta",
-        "archipel-agent-virtualmachine-oomkiller>=0.2.2beta",
-        "archipel-agent-virtualmachine-snapshoting>=0.2.2beta",
-        "archipel-agent-virtualmachine-storage>=0.2.2beta",
-        "archipel-agent-vmcasting>=0.2.2beta",
-        "archipel-agent-xmppserver>=0.2.2beta",
-        "archipel-agent-virtualmachine-vnc>=0.2.2beta",
+        "archipel-core>=0.3.0beta",
+        "archipel-agent-action-scheduler>=0.3.0beta",
+        "archipel-agent-hypervisor-geolocalization>=0.3.0beta",
+        "archipel-agent-hypervisor-health>=0.3.0beta",
+        "archipel-agent-hypervisor-network>=0.3.0beta",
+        "archipel-agent-iphone-notification>=0.3.0beta",
+        "archipel-agent-virtualmachine-oomkiller>=0.3.0beta",
+        "archipel-agent-virtualmachine-snapshoting>=0.3.0beta",
+        "archipel-agent-virtualmachine-storage>=0.3.0beta",
+        "archipel-agent-vmcasting>=0.3.0beta",
+        "archipel-agent-xmppserver>=0.3.0beta",
+        "archipel-agent-virtualmachine-vnc>=0.3.0beta",
         "PIL"
       ],
       entry_points="""
