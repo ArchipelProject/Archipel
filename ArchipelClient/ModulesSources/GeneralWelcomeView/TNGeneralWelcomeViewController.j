@@ -48,7 +48,13 @@
 {
     [mainWebView setScrollMode:CPWebViewScrollNative];
 
-    var bundle = [CPBundle bundleForClass:[self class]];
+    var bundle      = [CPBundle bundleForClass:[self class]],
+        defaults    = [CPUserDefaults standardUserDefaults];
+
+    // register defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL"
+    ]];
 
     [imageViewBrowser setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"browser.png"]]];
     [fieldLoading setValue:[CPColor colorWithHexString:@"eee"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
