@@ -1,5 +1,5 @@
 /*
- * TNWindowDownloadQueue.j
+ * TNDownloadQueueController.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -34,15 +34,16 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 /*! @ingroup hypervisorvmcasts
     Download  progress window
 */
-@implementation TNWindowDownloadQueue : CPWindow
+@implementation TNDownloadQueueController : CPObject
 {
-    @outlet TNUIKitScrollView       mainScrollView;
+    @outlet CPPopover       mainPopover;
+    @outlet CPTableView     mainTableView;
+    @outlet CPTextField     labelTarget;
 
-    TNStropheContact                entity  @accessors;
+    id                      _delegate  @accessors(property=delegate);
 
-    CPTableView                     _mainTableView;
-    CPTimer                         _timer;
-    TNTableViewDataSource           _dlDatasource;
+    CPTimer                 _timer;
+    TNTableViewDataSource   _dlDatasource;
 }
 
 
@@ -54,57 +55,32 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 - (void)awakeFromCib
 {
     _dlDatasource = [[TNTableViewDataSource alloc] init];
-
-    _mainTableView = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
-    [_mainTableView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_mainTableView setUsesAlternatingRowBackgroundColors:YES];
-    [_mainTableView setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
-
-    var columnIdentifier = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        columnSize = [[CPTableColumn alloc] initWithIdentifier:@"totalSize"],
-        columnPercentage = [[CPTableColumn alloc] initWithIdentifier:@"percentage"];
-
-    [[columnIdentifier headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-
-    [[columnSize headerView] setStringValue:CPBundleLocalizedString(@"Size", @"Size")];
-    [columnSize setWidth:70.0];
-
-    [[columnPercentage headerView] setStringValue:CPBundleLocalizedString(@"Progress", @"Progress")];
-    [columnPercentage setWidth:130.0];
-    [columnPercentage setDataView:[[TNCellPercentageView alloc] init]];
-
-    [_mainTableView addTableColumn:columnIdentifier];
-    [_mainTableView addTableColumn:columnSize];
-    [_mainTableView addTableColumn:columnPercentage];
-
-    [_dlDatasource setTable:_mainTableView];
+    [_dlDatasource setTable:mainTableView];
     [_dlDatasource setSearchableKeyPaths:[@"name", @"totalSize", @"percentage"]];
-
-    [_mainTableView setDataSource:_dlDatasource];
-
-    [mainScrollView setAutohidesScrollers:YES];
-    [mainScrollView setBorderedWithHexColor:@"#C0C7D2"]
-    [mainScrollView setDocumentView:_mainTableView];
-    [_mainTableView reloadData];
+    [[mainTableView tableColumnWithIdentifier:@"percentage"] setDataView:[[TNCellPercentageView alloc] init]];
+    [mainTableView setDataSource:_dlDatasource];
+    [mainTableView reloadData];
 }
 
 
 #pragma mark -
 #pragma mark CPWindow overrides
 
-- (void)makeKeyAndOrderFront:(id)sender
+- (void)showWindow:(id)aSender
 {
+    [mainPopover close];
     [self getDownloadQueue:nil];
     if (!_timer)
         _timer = [CPTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(getDownloadQueue:) userInfo:nil repeats:YES];
-    [super makeKeyAndOrderFront:sender];
+    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [labelTarget setStringValue:CPLocalizedString(@"Download queue for ", @"Download queue for ") + [[_delegate entity] nickname]];
 }
 
-- (IBAction)performClose:(id)sender
+- (IBAction)closeWindow:(id)sender
 {
     [_timer invalidate];
     _timer = nil;
-    [super performClose:sender];
+    [mainPopover close];
 }
 
 
@@ -122,8 +98,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingDownloadQueue}];
 
-
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(_didReceiveDownloadQueue:) ofObject:self];
+    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didReceiveDownloadQueue:) ofObject:self];
 }
 
 /*! compute the answer containng the download progresses
@@ -149,7 +124,11 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
             [_dlDatasource addObject:dl];
         }
 
-        [_mainTableView reloadData];
+        [mainTableView reloadData];
+    }
+    else
+    {
+        [_delegate handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -160,5 +139,5 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 // the current bundle.
 function CPBundleLocalizedString(key, comment)
 {
-    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNWindowDownloadQueue], comment);
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNDownloadQueueController], comment);
 }

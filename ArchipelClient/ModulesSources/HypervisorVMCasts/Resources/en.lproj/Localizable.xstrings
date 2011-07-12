@@ -28,18 +28,14 @@
 	<string>Download</string>
 	<key>Download complete</key>
 	<string>Download complete</string>
-	<key>Download queue for </key>
-	<string>Download queue for </string>
+	<key>Download error</key>
+	<string>Download error</string>
 	<key>Download selected appliance</key>
 	<string>Download selected appliance</string>
+	<key>Download started</key>
+	<string>Download started</string>
 	<key>If checked, it will only displayed installed appliances</key>
 	<string>If checked, it will only displayed installed appliances</string>
-	<key>MB</key>
-	<string>MB</string>
-	<key>Name</key>
-	<string>Name</string>
-	<key>Progress</key>
-	<string>Progress</string>
 	<key>Register to a new VMCast feed</key>
 	<string>Register to a new VMCast feed</string>
 	<key>Register to a new VMCasts</key>
@@ -56,8 +52,6 @@
 	<string>Start to download selected appliance</string>
 	<key>Status</key>
 	<string>Status</string>
-	<key>URL</key>
-	<string>URL</string>
 	<key>Unregister</key>
 	<string>Unregister</string>
 	<key>Unregister from a VMCast feed</key>

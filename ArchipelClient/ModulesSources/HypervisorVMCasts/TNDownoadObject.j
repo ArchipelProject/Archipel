@@ -58,7 +58,7 @@
 */
 - (CPString)totalSize
 {
-    return @"" + Math.round((parseFloat(_totalSize) / 1024 / 1024)) + CPBundleLocalizedString("MB", "MB");
+    return [CPString formatByteSize:_totalSize];
 }
 
 @end

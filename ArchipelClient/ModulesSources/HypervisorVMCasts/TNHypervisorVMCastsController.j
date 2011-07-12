@@ -35,7 +35,7 @@
 @import "TNDownoadObject.j";
 @import "TNVMCastDatasource.j";
 @import "TNVMCastRegistrationController.j"
-
+@import "TNDownloadQueueController.j"
 
 var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_",
     TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
@@ -60,8 +60,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     @outlet TNUIKitScrollView               mainScrollView;
     @outlet CPSearchField                   fieldFilter;
     @outlet CPView                          viewTableContainer;
-    @outlet CPWindow                        windowDownloadQueue;
     @outlet TNVMCastRegistrationController  VMCastRegistrationController;
+    @outlet TNDownloadQueueController       downloadQueueController;
 
     CPOutlineView                           _mainOutlineView        @accessors(getter=mainOutlineView);
 
@@ -163,8 +163,9 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [checkBoxOnlyInstalled setToolTip:CPBundleLocalizedString(@"If checked, it will only displayed installed appliances", @"If checked, it will only displayed installed appliances")];
 
     [VMCastRegistrationController setDelegate:self];
+    [downloadQueueController setDelegate:self];
 
-    [checkBoxOnlyInstalled setState:CPOffState]
+    [checkBoxOnlyInstalled setState:CPOffState];
 }
 
 #pragma mark -
@@ -178,7 +179,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [windowDownloadQueue setEntity:_entity];
     [_mainOutlineView setDelegate:nil];
     [_mainOutlineView setDelegate:self];
 
@@ -192,7 +192,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)willUnload
 {
-    [windowDownloadQueue orderOut:nil];
+    [downloadQueueController closeWindow:nil];
     [VMCastRegistrationController closeWindow:nil];
 
     [_mainOutlineView deselectAll];
@@ -233,7 +233,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [self setControl:_plusButton enabledAccordingToPermission:@"vmcasting_register"];
 
     if (![self currentEntityHasPermission:@"vmcasting_downloadqueue"])
-        [windowDownloadQueue close];
+        [downloadQueueController closeWindow:nil];
 
     if (![self currentEntityHasPermission:@"vmcasting_register"])
         [VMCastRegistrationController closeWindow:nil];
@@ -358,8 +358,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)showDownloadQueue:(id)aSender
 {
-    [windowDownloadQueue setTitle:CPBundleLocalizedString(@"Download queue for ", @"Download queue for ") + [_entity nickname]];
-    [windowDownloadQueue makeKeyAndOrderFront:nil];
+    [downloadQueueController showWindow:aSender];
 }
 
 

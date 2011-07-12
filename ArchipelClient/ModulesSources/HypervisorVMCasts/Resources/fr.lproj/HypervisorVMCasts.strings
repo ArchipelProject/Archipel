@@ -8,9 +8,6 @@
 /* Class = "NSButtonCell"; title = "Display only installed"; ObjectID = "14"; */
 "14.title" = "Display only installed";
 
-/* Class = "TNWindowDownloadQueue"; title = "Download queue"; ObjectID = "23"; */
-"23.title" = "Download queue";
-
 /* Class = "NSTextFieldCell"; title = "Register to VMCast"; ObjectID = "27"; */
 "27.title" = "Register to VMCast";
 
@@ -31,4 +28,31 @@
 
 /* Class = "NSTextFieldCell"; title = "URL:"; ObjectID = "47"; */
 "47.title" = "URL:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "100"; */
+"100.headerCell.title" = "Name";
+
+/* Class = "NSTableColumn"; headerCell.title = "Total Size"; ObjectID = "101"; */
+"101.headerCell.title" = "Total Size";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "102"; */
+"102.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "103"; */
+"103.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Progress"; ObjectID = "109"; */
+"109.headerCell.title" = "Progress";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "110"; */
+"110.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Download queue for"; ObjectID = "113"; */
+"113.title" = "Download queue for";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "114"; */
+"114.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "118"; */
+"118.title" = "Close";
 
