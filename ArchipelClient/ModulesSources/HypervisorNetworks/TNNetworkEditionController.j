@@ -183,6 +183,7 @@
         [buttonForwardDevice setEnabled:YES];
         [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
         [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
+        [buttonForwardMode selectItemWithTitle:[_network bridgeForwardMode]];
     }
 
     [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
@@ -331,6 +332,10 @@
         [buttonForwardDevice removeAllItems];
         [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
         [buttonForwardDevice setEnabled:YES];
+        if ([[buttonForwardDevice itemTitles] containsObject:[_network bridgeForwardDevice]])
+            [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
+        else
+            [buttonForwardDevice selectItemAtIndex:0];
     }
 }
 
