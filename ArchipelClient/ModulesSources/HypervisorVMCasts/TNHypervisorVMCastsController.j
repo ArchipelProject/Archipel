@@ -93,7 +93,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     var columnName          = [[CPTableColumn alloc] initWithIdentifier:@"name"],
         columnDescription   = [[CPTableColumn alloc] initWithIdentifier:@"comment"],
-        columnUrl           = [[CPTableColumn alloc] initWithIdentifier:@"URL"],
         columnSize          = [[CPTableColumn alloc] initWithIdentifier:@"size"],
         columnStatus        = [[CPTableColumn alloc] initWithIdentifier:@"status"],
         dataViewPrototype   = [[TNCellApplianceStatus alloc] init];
@@ -105,10 +104,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [[columnDescription headerView] setStringValue:CPBundleLocalizedString(@"Comment", @"Comment")];
     [columnDescription setWidth:250];
     [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
-
-    [[columnUrl headerView] setStringValue:CPBundleLocalizedString(@"URL", @"URL")];
-    [columnUrl setWidth:250];
-    [columnUrl setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"URL" ascending:YES]];
 
     [[columnSize headerView] setStringValue:CPBundleLocalizedString(@"Size", @"Size")];
     [columnSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"size" ascending:YES]];
@@ -122,8 +117,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [_mainOutlineView addTableColumn:columnSize];
     [_mainOutlineView addTableColumn:columnStatus];
     [_mainOutlineView addTableColumn:columnDescription];
-    //[_mainOutlineView addTableColumn:columnUrl]
-
 
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setDocumentView:_mainOutlineView];
@@ -170,6 +163,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [checkBoxOnlyInstalled setToolTip:CPBundleLocalizedString(@"If checked, it will only displayed installed appliances", @"If checked, it will only displayed installed appliances")];
 
     [VMCastRegistrationController setDelegate:self];
+
+    [checkBoxOnlyInstalled setState:CPOffState]
 }
 
 #pragma mark -
@@ -274,10 +269,19 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     [self getVMCasts];
 
-    if (change == @"download_complete")
+    switch (change)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download complete", @"Download complete")];
+        case @"download_start":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download started", @"Download started")];
+            break
+        case @"download_complete":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download complete", @"Download complete")];
+            break;
+        case @"download_error":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download error", @"Download error") icon:TNGrowlIconError];
+            break
     }
+
     return YES;
 }
 
@@ -354,7 +358,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)showDownloadQueue:(id)aSender
 {
-    [windowNewCastURL setTitle:CPBundleLocalizedString(@"Download queue for ", @"Download queue for ") + [_entity nickname]];
+    [windowDownloadQueue setTitle:CPBundleLocalizedString(@"Download queue for ", @"Download queue for ") + [_entity nickname]];
     [windowDownloadQueue makeKeyAndOrderFront:nil];
 }
 

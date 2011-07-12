@@ -47,6 +47,9 @@ ARCHIPEL_ERROR_CODE_VMCASTS_GETAPPLIANCES       = -6006
 ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE     = -6007
 ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED        = -6008
 
+ARCHIPEL_DOWNLOAD_SUCCESS                       = 1
+ARCHIPEL_DOWNLOAD_ERROR                         = 2
+
 
 class TNApplianceDownloader (Thread):
     """
@@ -77,6 +80,7 @@ class TNApplianceDownloader (Thread):
         self.progress           = 0.0
         self.total_size         = None
         self.logger             = logger
+        self.error              = False
 
     def run(self):
         """
@@ -84,6 +88,8 @@ class TNApplianceDownloader (Thread):
         """
         self.logger.info("TNApplianceDownloader: starting to download appliance %s into %s" % (self.url, self.save_path))
         urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
+        if self.error:
+            self.finish_callback(ARCHIPEL_DOWNLOAD_ERROR, self.uuid, None)
 
     def get_progress(self):
         """
@@ -129,10 +135,13 @@ class TNApplianceDownloader (Thread):
         @param block_size: the size of one block
         @param total_size: the total size in bytes of the file downloaded
         """
+        if total_size <= 0:
+            self.error = True # avoid calling several time the callback if error
+            return;
         self.total_size = total_size
         percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100
         if percentage >= 100.0:
-            self.finish_callback(self.uuid, self.save_path)
+            self.finish_callback(ARCHIPEL_DOWNLOAD_SUCCESS, self.uuid, self.save_path)
         self.progress = percentage
 
 
@@ -243,7 +252,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
                 break
             time.sleep(self.configuration.getint("VMCASTING", "own_vmcast_refresh_interval"))
 
-    def on_download_complete(self, uuid, path):
+    def on_download_complete(self, code, uuid, path):
         """
         Callback triggered by a TNApplianceDownloader when download is over.
         @type uuid: string
@@ -251,12 +260,21 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         @type path: string
         @param path: the path of the downloaded file
         """
-        self.cursor.execute("UPDATE vmcastappliances SET status=%d, save_path='%s' WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLED, path, uuid))
-        del self.download_queue[uuid]
+        if code == ARCHIPEL_DOWNLOAD_SUCCESS:
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d, save_path='%s' WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLED, path, uuid))
+            self.entity.log.info("appliance %s is sucessfully downloaded")
+            self.entity.push_change("vmcasting", "download_complete")
+            self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid))
+        else:
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d, save_path='' WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLATION_ERROR, uuid))
+            self.database_connection.commit()
+            self.entity.log.error("appliance %s cannot be downloaded")
+            self.entity.push_change("vmcasting", "download_error")
+            self.entity.shout("vmcast", "Unable to download the applicance %s" % (uuid))
         self.database_connection.commit()
-        self.entity.push_change("vmcasting", "download_complete")
-        self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid))
+        del self.download_queue[uuid]
         self.entity.change_status(self.old_entity_status)
+
 
     def getFeed(self, data):
         """
@@ -453,12 +471,11 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             self.database_connection.commit()
             self.old_entity_status = self.entity.xmppstatus
             self.entity.push_change("vmcasting", "download_start")
-            for values in self.cursor:
-                name, description, url, uuid, status, source, path = values
-                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.entity.log, self.on_download_complete)
-                self.download_queue[uuid] = downloader
-                downloader.daemon  = True
-                downloader.start()
+            name, description, url, uuid, status, source, path = self.cursor.fetchone()
+            downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.entity.log, self.on_download_complete)
+            self.download_queue[uuid] = downloader
+            downloader.daemon  = True
+            downloader.start()
             self.entity.change_status("Downloading appliance...")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADAPPLIANCE)
@@ -508,10 +525,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         try:
             self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % uuid)
-            for values in self.cursor:
-                path = values[0]
-                name = values[1]
-                description = values[2]
+            path, name, description = self.cursor.fetchone()
             node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
             reply.setQueryPayload([node])
         except Exception as ex:
@@ -531,9 +545,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         try:
             self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
             for values in self.cursor:
-                path = values[0]
-                name = values[1]
-                description = values[2]
+                path, name, description = values
                 node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
                 nodes.append(node)
             reply.setQueryPayload(nodes)
