@@ -467,8 +467,8 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         try:
             self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid))
-            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
             self.database_connection.commit()
+            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
             self.old_entity_status = self.entity.xmppstatus
             self.entity.push_change("vmcasting", "download_start")
             name, description, url, uuid, status, source, path = self.cursor.fetchone()
