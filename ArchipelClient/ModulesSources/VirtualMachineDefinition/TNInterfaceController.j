@@ -32,7 +32,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 /*! @ingroup virtualmachinedefinition
     this is the virtual nic editor
 */
-@implementation TNNetworkController : CPObject
+@implementation TNInterfaceController : CPObject
 {
     @outlet CPButton        buttonOK;
     @outlet CPButtonBar     buttonBarNetworkParameters;
@@ -197,6 +197,10 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
         [_nic setFilterref:nil];
 
     [_delegate handleDefinitionEdition:YES];
+
+    if (![[_table dataSource] containsObject:_nic])
+        [[_table dataSource] addObject:_nic];
+
     [_table reloadData];
     [mainPopover close];
 }
@@ -402,5 +406,5 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 // the current bundle.
 function CPBundleLocalizedString(key, comment)
 {
-    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNNetworkController], comment);
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNInterfaceController], comment);
 }

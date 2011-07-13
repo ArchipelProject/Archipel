@@ -1,5 +1,5 @@
 /*
- * TNInputDeviceController.j
+ * TNGraphicDeviceController.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -26,18 +26,21 @@
 
 
 /*! @ingroup virtualmachinedefinition
-    this is the virtual input editor
+    this is the virtual graphic editor
 */
-@implementation TNInputDeviceController : CPObject
+@implementation TNGraphicDeviceController : CPObject
 {
     @outlet CPButton        buttonOK;
     @outlet CPPopover       mainPopover;
-    @outlet CPPopUpButton   buttonBus;
+    @outlet CPPopUpButton   buttonKeymap;
     @outlet CPPopUpButton   buttonType;
+    @outlet CPTextField     fieldPassword;
+    @outlet CPTextField     fieldListenAddress;
+    @outlet CPTextField     fieldListenPort;
 
     CPTableView             _table          @accessors(property=table);
     id                      _delegate       @accessors(property=delegate);
-    TNLibvirtDeviceInput    _inputDevice    @accessors(property=inputDevice);
+    TNLibvirtDeviceGraphic  _graphicDevice  @accessors(property=graphicDevice);
 }
 
 #pragma mark -
@@ -47,26 +50,35 @@
 */
 - (void)awakeFromCib
 {
+    [fieldPassword setSecure:YES];
+
+    [buttonKeymap removeAllItems];
+    [buttonKeymap addItemsWithTitles:TNLibvirtDeviceGraphicVNCKeymaps];
+    [buttonKeymap setToolTip:CPLocalizedString(@"Select the keymap to use", @"Select the keymap to use")];
+
     [buttonType removeAllItems];
-    [buttonBus removeAllItems];
+    [buttonType addItemsWithTitles:[TNLibvirtDeviceGraphicTypeVNC, TNLibvirtDeviceGraphicTypeRDP]];
+    [buttonType setToolTip:CPLocalizedString(@"Set the graphic type", @"Set the graphic type")];
 
-    [buttonType addItemsWithTitles:TNLibvirtDeviceInputTypes];
-    [buttonBus addItemsWithTitles:TNLibvirtDeviceInputBuses];
+    [fieldPassword setToolTip:CPBundleLocalizedString(@"Set the VNC password (no password if blank)", @"Set the VNC password (no password if blank)")];
+    [fieldListenAddress setToolTip:CPLocalizedString(@"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)", @"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)")];
+    [fieldListenPort setToolTip:CPLocalizedString(@"Set the real VNC server listen port. leave it to blank for autoport", @"Set the real VNC server listen port. leave it to blank for autoport")];
 
-    [buttonBus setToolTip:CPLocalizedString(@"Set the bus of the input device", @"Set the bus of the input device")];
-    [buttonType setToolTip:CPLocalizedString(@"Set the type of the input device", @"Set the type of the input device")];
 }
 
 
 #pragma mark -
 #pragma mark Utilities
 
-/*! update the editor according to the current input device to edit
+/*! update the editor according to the current graphic device to edit
 */
 - (void)update
 {
-    [buttonType selectItemWithTitle:[_inputDevice type]];
-    [buttonBus selectItemWithTitle:[_inputDevice bus]];
+    [buttonKeymap selectItemWithTitle:[_graphicDevice keymap]];
+    [buttonType selectItemWithTitle:[_graphicDevice type]];
+    [fieldPassword setStringValue:[_graphicDevice password]];
+    [fieldListenAddress setStringValue:([_graphicDevice listen] && [_graphicDevice listen] != @"") ? [_graphicDevice listen] : @""];
+    [fieldListenPort setStringValue:([_graphicDevice port] && [_graphicDevice port] != @"-1") ? [_graphicDevice port] : @""];
 }
 
 
@@ -78,11 +90,15 @@
 */
 - (IBAction)save:(id)aSender
 {
-    [_inputDevice setType:[buttonType title]];
-    [_inputDevice setBus:[buttonBus title]];
+    [_graphicDevice setType:[buttonType title]];
+    [_graphicDevice setKeymap:[buttonKeymap title]];
+    [_graphicDevice setListen:[fieldListenAddress stringValue]];
+    [_graphicDevice setPort:[fieldListenPort stringValue]];
+    [_graphicDevice setPassword:[fieldPassword stringValue]];
+    [_graphicDevice setAutoPort:([fieldListenPort stringValue] == @"")];
 
-    if (![[_table dataSource] containsObject:_inputDevice])
-        [[_table dataSource] addObject:_inputDevice];
+    if (![[_table dataSource] containsObject:_graphicDevice])
+        [[_table dataSource] addObject:_graphicDevice];
 
     [_delegate handleDefinitionEdition:YES];
     [_table reloadData];
@@ -128,5 +144,5 @@
 // the current bundle.
 function CPBundleLocalizedString(key, comment)
 {
-    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNInputDeviceController], comment);
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNGraphicDeviceController], comment);
 }

@@ -130,9 +130,6 @@
 /* Set the default usage of huge pages for new domains */
 "Set the default usage of huge pages for new domains" = "Set the default usage of huge pages for new domains";
 
-/* Set the default usage of VNC for new domains */
-"Set the default usage of VNC for new domains" = "Set the default usage of VNC for new domains";
-
 /* Set the default VNC keymap for new domains */
 "Set the default VNC keymap for new domains" = "Set the default VNC keymap for new domains";
 
@@ -165,9 +162,6 @@
 
 /* Set the target to use for the drive */
 "Set the target to use for the drive" = "Set the target to use for the drive";
-
-/* Set the VNC keymap to use */
-"Set the VNC keymap to use" = "Set the VNC keymap to use";
 
 /* Set the VNC password (no password if blank) */
 "Set the VNC password (no password if blank)" = "Set the VNC password (no password if blank)";

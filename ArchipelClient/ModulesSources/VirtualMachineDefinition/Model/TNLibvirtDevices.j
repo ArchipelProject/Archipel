@@ -77,7 +77,7 @@
 
         var graphicNodes = [aNode ownChildrenWithName:@"graphics"];
         for (var i = 0; i < [graphicNodes count]; i++)
-            [_graphics addObject:[[TNLibvirtDeviceGraphics alloc] initWithXMLNode:[graphicNodes objectAtIndex:i]]];
+            [_graphics addObject:[[TNLibvirtDeviceGraphic alloc] initWithXMLNode:[graphicNodes objectAtIndex:i]]];
 
         var inputNodes = [aNode ownChildrenWithName:@"input"];
         for (var i = 0; i < [inputNodes count]; i++)

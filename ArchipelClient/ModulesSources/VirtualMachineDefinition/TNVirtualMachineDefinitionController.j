@@ -39,10 +39,14 @@
 
 @import "Model/TNLibvirt.j"
 @import "TNDriveController.j"
-@import "TNInputDeviceDataView.j"
-@import "TNNetworkController.j"
-@import "TNVirtualMachineGuestItem.j"
+@import "TNDriveDeviceDataView.j"
+@import "TNGraphicDeviceController.j"
+@import "TNGraphicDeviceDataView.j"
 @import "TNInputDeviceController.j"
+@import "TNInputDeviceDataView.j"
+@import "TNInterfaceDeviceDataView.j"
+@import "TNInterfaceController.j"
+@import "TNVirtualMachineGuestItem.j"
 
 var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinitionUpdatedNotification",
     TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control",
@@ -70,92 +74,95 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 @implementation TNVirtualMachineDefinitionController : TNModule
 {
-    @outlet CPButton                buttonClocks;
-    @outlet CPButton                buttonDefine;
-    @outlet CPButton                buttonDomainType;
-    @outlet CPButton                buttonOnCrash;
-    @outlet CPButton                buttonOnPowerOff;
-    @outlet CPButton                buttonOnReboot;
-    @outlet CPButton                buttonUndefine;
-    @outlet CPButton                buttonXMLEditor;
-    @outlet CPButton                buttonXMLEditorDefine;
-    @outlet CPButtonBar             buttonBarControlDrives;
-    @outlet CPButtonBar             buttonBarControlNics;
-    @outlet CPButtonBar             buttonBarInputDevices;
-    @outlet CPPopover               popoverXMLEditor;
-    @outlet CPPopUpButton           buttonBoot;
-    @outlet CPPopUpButton           buttonGuests;
-    @outlet CPPopUpButton           buttonMachines;
-    @outlet CPPopUpButton           buttonPreferencesBoot;
-    @outlet CPPopUpButton           buttonPreferencesClockOffset;
-    @outlet CPPopUpButton           buttonPreferencesDriveCache;
-    @outlet CPPopUpButton           buttonPreferencesInput;
-    @outlet CPPopUpButton           buttonPreferencesNumberOfCPUs;
-    @outlet CPPopUpButton           buttonPreferencesOnCrash;
-    @outlet CPPopUpButton           buttonPreferencesOnPowerOff;
-    @outlet CPPopUpButton           buttonPreferencesOnReboot;
-    @outlet CPPopUpButton           buttonPreferencesVNCKeyMap;
-    @outlet CPPopUpButton           buttonVNCKeymap;
-    @outlet CPSearchField           fieldFilterDrives;
-    @outlet CPSearchField           fieldFilterNics;
-    @outlet CPTableView             tableDrives;
-    @outlet CPTableView             tableInputDevices;
-    @outlet CPTableView             tableInterfaces;
-    @outlet CPTextField             fieldBlockIOTuningWeight;
-    @outlet CPTextField             fieldMemory;
-    @outlet CPTextField             fieldMemoryTuneGuarantee;
-    @outlet CPTextField             fieldMemoryTuneHardLimit;
-    @outlet CPTextField             fieldMemoryTuneSoftLimit;
-    @outlet CPTextField             fieldMemoryTuneSwapHardLimit;
-    @outlet CPTextField             fieldPreferencesDomainType;
-    @outlet CPTextField             fieldPreferencesGuest;
-    @outlet CPTextField             fieldPreferencesMachine;
-    @outlet CPTextField             fieldPreferencesMemory;
-    @outlet CPTextField             fieldVNCListen;
-    @outlet CPTextField             fieldVNCPassword;
-    @outlet CPTextField             fieldVNCPort;
-    @outlet CPView                  viewBottomControl;
-    @outlet CPView                  viewDeviceVirtualDrives;
-    @outlet CPView                  viewDeviceVirtualNics;
-    @outlet CPView                  viewDrivesContainer;
-    @outlet CPView                  viewInputDevicesContainer;
-    @outlet CPView                  viewMainContent;
-    @outlet CPView                  viewNicsContainer;
-    @outlet CPView                  viewParametersAdvanced;
-    @outlet CPView                  viewParametersEffectBottom;
-    @outlet CPView                  viewParametersEffectTop;
-    @outlet CPView                  viewParametersStandard;
-    @outlet LPMultiLineTextField    fieldStringXMLDesc;
-    @outlet TNDriveController       driveController;
-    @outlet TNInputDeviceController inputDeviceController;
-    @outlet TNInputDeviceDataView   dataViewInputDevicePrototype;
-    @outlet TNNetworkController     networkController;
-    @outlet TNSwitch                switchACPI;
-    @outlet TNSwitch                switchAPIC;
-    @outlet TNSwitch                switchEnableVNC;
-    @outlet TNSwitch                switchHugePages;
-    @outlet TNSwitch                switchPAE;
-    @outlet TNSwitch                switchPreferencesEnableVNC;
-    @outlet TNSwitch                switchPreferencesHugePages;
-    @outlet TNTabView               tabViewParameters;
-    @outlet TNTextFieldStepper      stepperNumberCPUs;
-    @outlet TNUIKitScrollView       scrollViewContentView;
+    @outlet CPButton                    buttonClocks;
+    @outlet CPButton                    buttonDefine;
+    @outlet CPButton                    buttonDomainType;
+    @outlet CPButton                    buttonOnCrash;
+    @outlet CPButton                    buttonOnPowerOff;
+    @outlet CPButton                    buttonOnReboot;
+    @outlet CPButton                    buttonUndefine;
+    @outlet CPButton                    buttonXMLEditor;
+    @outlet CPButton                    buttonXMLEditorDefine;
+    @outlet CPButtonBar                 buttonBarControlDrives;
+    @outlet CPButtonBar                 buttonBarControlNics;
+    @outlet CPButtonBar                 buttonBarInputDevices;
+    @outlet CPButtonBar                 buttonBarGraphicDevices;
+    @outlet CPPopover                   popoverXMLEditor;
+    @outlet CPPopUpButton               buttonBoot;
+    @outlet CPPopUpButton               buttonGuests;
+    @outlet CPPopUpButton               buttonMachines;
+    @outlet CPPopUpButton               buttonPreferencesBoot;
+    @outlet CPPopUpButton               buttonPreferencesClockOffset;
+    @outlet CPPopUpButton               buttonPreferencesDriveCache;
+    @outlet CPPopUpButton               buttonPreferencesInput;
+    @outlet CPPopUpButton               buttonPreferencesNumberOfCPUs;
+    @outlet CPPopUpButton               buttonPreferencesOnCrash;
+    @outlet CPPopUpButton               buttonPreferencesOnPowerOff;
+    @outlet CPPopUpButton               buttonPreferencesOnReboot;
+    @outlet CPPopUpButton               buttonPreferencesVNCKeyMap;
+    @outlet CPSearchField               fieldFilterDrives;
+    @outlet CPSearchField               fieldFilterNics;
+    @outlet CPTableView                 tableDrives;
+    @outlet CPTableView                 tableInputDevices;
+    @outlet CPTableView                 tableGraphicsDevices;
+    @outlet CPTableView                 tableInterfaces;
+    @outlet CPTextField                 fieldBlockIOTuningWeight;
+    @outlet CPTextField                 fieldMemory;
+    @outlet CPTextField                 fieldMemoryTuneGuarantee;
+    @outlet CPTextField                 fieldMemoryTuneHardLimit;
+    @outlet CPTextField                 fieldMemoryTuneSoftLimit;
+    @outlet CPTextField                 fieldMemoryTuneSwapHardLimit;
+    @outlet CPTextField                 fieldPreferencesDomainType;
+    @outlet CPTextField                 fieldPreferencesGuest;
+    @outlet CPTextField                 fieldPreferencesMachine;
+    @outlet CPTextField                 fieldPreferencesMemory;
+    @outlet CPView                      viewBottomControl;
+    @outlet CPView                      viewDeviceVirtualDrives;
+    @outlet CPView                      viewDeviceVirtualNics;
+    @outlet CPView                      viewDrivesContainer;
+    @outlet CPView                      viewInputDevicesContainer;
+    @outlet CPView                      viewMainContent;
+    @outlet CPView                      viewNicsContainer;
+    @outlet CPView                      viewParametersAdvanced;
+    @outlet CPView                      viewParametersEffectBottom;
+    @outlet CPView                      viewParametersEffectTop;
+    @outlet CPView                      viewParametersStandard;
+    @outlet CPView                      viewGraphicDevicesContainer;
+    @outlet LPMultiLineTextField        fieldStringXMLDesc;
+    @outlet TNDriveController           driveController;
+    @outlet TNInputDeviceController     inputDeviceController;
+    @outlet TNInputDeviceDataView       dataViewInputDevicePrototype;
+    @outlet TNGraphicDeviceDataView     dataViewGraphicDevicePrototype;
+    @outlet TNDriveDeviceDataView       dataViewDrivesPrototype;
+    @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
+    @outlet TNInterfaceController       interfaceController;
+    @outlet TNGraphicDeviceController   graphicDeviceController;
+    @outlet TNSwitch                    switchACPI;
+    @outlet TNSwitch                    switchAPIC;
+    @outlet TNSwitch                    switchHugePages;
+    @outlet TNSwitch                    switchPAE;
+    @outlet TNSwitch                    switchPreferencesEnableVNC;
+    @outlet TNSwitch                    switchPreferencesHugePages;
+    @outlet TNTabView                   tabViewParameters;
+    @outlet TNTextFieldStepper          stepperNumberCPUs;
+    @outlet TNUIKitScrollView           scrollViewContentView;
 
-    BOOL                            _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
-    BOOL                            _definitionRecovered;
-    CPButton                        _editButtonDrives;
-    CPButton                        _editButtonNics;
-    CPButton                        _minusButtonDrives;
-    CPButton                        _minusButtonNics;
-    CPButton                        _plusButtonDrives;
-    CPButton                        _plusButtonNics;
-    CPImage                         _imageDefining;
-    CPImage                         _imageEdited;
-    CPString                        _stringXMLDesc;
-    TNTableViewDataSource           _drivesDatasource;
-    TNTableViewDataSource           _inputDevicesDatasource;
-    TNTableViewDataSource           _nicsDatasource;
-    TNXMLNode                       _libvirtCapabilities;
+    BOOL                                _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
+    BOOL                                _definitionRecovered;
+    CPButton                            _editButtonDrives;
+    CPButton                            _editButtonNics;
+    CPButton                            _minusButtonDrives;
+    CPButton                            _minusButtonNics;
+    CPButton                            _plusButtonDrives;
+    CPButton                            _plusButtonNics;
+    CPImage                             _imageDefining;
+    CPImage                             _imageEdited;
+    CPString                            _stringXMLDesc;
+    TNTableViewDataSource               _drivesDatasource;
+    TNTableViewDataSource               _inputDevicesDatasource;
+    TNTableViewDataSource               _nicsDatasource;
+    TNTableViewDataSource               _graphicDevicesDatasource;
+    TNXMLNode                           _libvirtCapabilities;
 }
 
 
@@ -243,6 +250,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _drivesDatasource = [[TNTableViewDataSource alloc] init];
     [_drivesDatasource setTable:tableDrives];
     [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.sourceObject", @"target.bus", @"driver.cache"]];
+    [[tableDrives tableColumnWithIdentifier:@"self"] setDataView:[dataViewDrivesPrototype duplicate]];
     [tableDrives setDataSource:_drivesDatasource];
     [tableDrives setTarget:self];
     [tableDrives setDoubleAction:@selector(editDrive:)];
@@ -279,13 +287,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _nicsDatasource = [[TNTableViewDataSource alloc] init];
     [_nicsDatasource setTable:tableInterfaces];
     [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"MAC", @"source.bridge"]];
+    [[tableInterfaces tableColumnWithIdentifier:@"self"] setDataView:[dataViewNICsPrototype duplicate]];
     [tableInterfaces setDataSource:_nicsDatasource];
     [tableInterfaces setTarget:self];
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
 
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    [networkController setDelegate:self];
+    [interfaceController setDelegate:self];
 
     [fieldFilterNics setTarget:_nicsDatasource];
     [fieldFilterNics setAction:@selector(filterObjects:)];
@@ -312,9 +321,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
 
     // Input Devices
-    var inputDevProto = [CPKeyedArchiver archivedDataWithRootObject:dataViewInputDevicePrototype];
     _inputDevicesDatasource = [[TNTableViewDataSource alloc] init];
-    [[tableInputDevices tableColumnWithIdentifier:@"self"] setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:inputDevProto]];
+    [[tableInputDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewInputDevicePrototype duplicate]];
     [tableInputDevices setTarget:self];
     [tableInputDevices setDoubleAction:@selector(editInputDevice:)];
 
@@ -338,15 +346,44 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [editButtonInputDevice setAction:@selector(editInputDevice:)];
     [editButtonInputDevice setToolTip:CPLocalizedString(@"Edit the current selected input device", @"Edit the current selected input device")];
 
-
     [buttonBarInputDevices setButtons:[plusButtonInputDevice, minusButtonInputDevice, editButtonInputDevice]];
 
     [inputDeviceController setDelegate:self];
 
+
+    // Graphic Devices
+    _graphicDevicesDatasource = [[TNTableViewDataSource alloc] init];
+    [[tableGraphicsDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewGraphicDevicePrototype duplicate]];
+    [tableGraphicsDevices setTarget:self];
+    [tableGraphicsDevices setDoubleAction:@selector(editGraphicDevice:)];
+
+    [_graphicDevicesDatasource setTable:tableGraphicsDevices];
+    [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
+    [viewGraphicDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+
+    var plusButtonGraphicDevice = [CPButtonBar plusButton];
+    [plusButtonGraphicDevice setTarget:self];
+    [plusButtonGraphicDevice setAction:@selector(addGraphicDevice:)];
+    [plusButtonGraphicDevice setToolTip:CPLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
+
+    var minusButtonGraphicDevice = [CPButtonBar minusButton];
+    [minusButtonGraphicDevice setTarget:self];
+    [minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
+    [minusButtonGraphicDevice setToolTip:CPLocalizedString(@"Remove the selected graphic device", @"Remove the selected graphic device")];
+
+    var editButtonGraphicDevice = [CPButtonBar plusButton];
+    [editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [editButtonGraphicDevice setTarget:self];
+    [editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
+    [editButtonGraphicDevice setToolTip:CPLocalizedString(@"Edit the current selected graphic device", @"Edit the current selected graphic device")];
+
+    [buttonBarGraphicDevices setButtons:[plusButtonGraphicDevice, minusButtonGraphicDevice, editButtonGraphicDevice]];
+
+    [graphicDeviceController setDelegate:self];
+
     // others..
     [buttonBoot removeAllItems];
     [buttonDomainType removeAllItems];
-    [buttonVNCKeymap removeAllItems];
     [buttonMachines removeAllItems];
     [buttonOnPowerOff removeAllItems];
     [buttonOnReboot removeAllItems];
@@ -369,8 +406,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonPreferencesNumberOfCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
 
-    [buttonVNCKeymap addItemsWithTitles:TNLibvirtDeviceGraphicsVNCKeymaps];
-    [buttonPreferencesVNCKeyMap addItemsWithTitles:TNLibvirtDeviceGraphicsVNCKeymaps];
+    [buttonPreferencesVNCKeyMap addItemsWithTitles:TNLibvirtDeviceGraphicVNCKeymaps];
 
     [buttonOnPowerOff addItemsWithTitles:TNLibvirtDomainLifeCycles];
     [buttonPreferencesOnPowerOff addItemsWithTitles:TNLibvirtDomainLifeCycles];
@@ -403,11 +439,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteDrive:) keyEquivalent:@""];
     [tableDrives setMenu:menuDrive];
 
-    [fieldVNCPassword setSecure:YES];
-
     [driveController setTable:tableDrives];
-    [networkController setTable:tableInterfaces];
+    [interfaceController setTable:tableInterfaces];
     [inputDeviceController setTable:tableInputDevices];
+    [graphicDeviceController setTable:tableGraphicsDevices];
 
     // switch
     [switchPAE setOn:NO animated:YES sendAction:NO];
@@ -415,7 +450,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchACPI setOn:NO animated:YES sendAction:NO];
     [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable or disable PAE", @"Enable or disable PAE")];
     [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
-    [switchEnableVNC setToolTip:CPLocalizedString(@"Enable or disable the VNC screen for this virtual machine", @"Enable or disable the VNC screen for this virtual machine")];
 
     //CPUStepper
     [stepperNumberCPUs setMaxValue:4];
@@ -440,14 +474,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnPowerOff setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is stopped", @"Set what to do when virtual machine is stopped")];
     [buttonOnReboot setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is rebooted", @"Set what to do when virtual machine is rebooted")];
     [buttonUndefine setToolTip:CPBundleLocalizedString(@"Undefine the domain", @"Undefine the domain")];
-    [buttonVNCKeymap setToolTip:CPBundleLocalizedString(@"Set the VNC keymap to use", @"Set the VNC keymap to use")];
     [switchPAE setToolTip:CPBundleLocalizedString(@"Enable usage of PAE", @"Enable usage of PAE")];
     [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable usage of APIC", @"Enable usage of APIC")];
     [switchACPI setToolTip:CPBundleLocalizedString(@"Enable usage of ACPI (allow to use 'shutdown' control)", @"Enable usage of ACPI (allow to use 'shutdown' control)")];
     [fieldMemory setToolTip:CPBundleLocalizedString(@"Set amount of memort (in Mb)", @"Set amount of memort (in Mb)")];
-    [fieldVNCPassword setToolTip:CPBundleLocalizedString(@"Set the VNC password (no password if blank)", @"Set the VNC password (no password if blank)")];
-    [fieldVNCListen setToolTip:CPLocalizedString(@"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)", @"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)")];
-    [fieldVNCPort setToolTip:CPLocalizedString(@"Set the real VNC server listen port. leave it to blank for autoport", @"Set the real VNC server listen port. leave it to blank for autoport")];
     [buttonPreferencesBoot setToolTip:CPBundleLocalizedString(@"Set the default boot device for new domains", @"Set the default boot device for new domains")];
     [buttonPreferencesClockOffset setToolTip:CPBundleLocalizedString(@"Set the default clock offset for new domains", @"Set the default clock offset for new domains")];
     [buttonPreferencesInput setToolTip:CPBundleLocalizedString(@"Set the default input type for new domains", @"Set the default input type for new domains")];
@@ -462,7 +492,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldPreferencesMachine setToolTip:CPBundleLocalizedString(@"Set the default machine type for new domains", @"Set the default machine type for new domains")];
     [fieldPreferencesMemory setToolTip:CPBundleLocalizedString(@"Set the default amount of memory for new domains", @"Set the default amount of memory for new domains")];
     [switchPreferencesHugePages setToolTip:CPBundleLocalizedString(@"Set the default usage of huge pages for new domains", @"Set the default usage of huge pages for new domains")];
-    [switchPreferencesEnableVNC setToolTip:CPBundleLocalizedString(@"Set the default usage of VNC for new domains", @"Set the default usage of VNC for new domains")];
 
     [self applyShadow];
 }
@@ -504,9 +533,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldMemory];
-    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
-    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldVNCListen];
-    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldVNCPort];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 
@@ -521,9 +547,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [driveController setDelegate:self];
     [driveController setEntity:_entity];
 
-    [networkController setDelegate:nil];
-    [networkController setDelegate:self];
-    [networkController setEntity:_entity];
+    [interfaceController setDelegate:nil];
+    [interfaceController setDelegate:self];
+    [interfaceController setEntity:_entity];
 
     [self setDefaultValues];
 
@@ -561,7 +587,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)willHide
 {
-    [networkController closeWindow:nil];
+    [interfaceController closeWindow:nil];
     [driveController closeWindow:nil];
     [popoverXMLEditor close];
 
@@ -581,7 +607,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
         [alert setUserInfo:[CPArray arrayWithObjects:nextItem, anObject]];
 
-        [networkController closeWindow:nil];
+        [interfaceController closeWindow:nil];
         [driveController closeWindow:nil];
         [popoverXMLEditor close];
 
@@ -599,7 +625,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setBool:[switchPreferencesHugePages isOn] forKey:@"TNDescDefaultHugePages"];
-    [defaults setBool:[switchPreferencesEnableVNC isOn] forKey:@"TNDescDefaultEnableVNC"];
     [defaults setObject:[buttonPreferencesBoot title] forKey:@"TNDescDefaultBoot"];
     [defaults setObject:[buttonPreferencesClockOffset title] forKey:@"TNDescDefaultClockOffset"];
     [defaults setObject:[buttonPreferencesInput title] forKey:@"TNDescDefaultInputType"];
@@ -635,7 +660,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldPreferencesMachine setIntValue:[defaults objectForKey:@"TNDescDefaultMachine"]];
     [fieldPreferencesMemory setStringValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
     [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
-    [switchPreferencesEnableVNC setOn:[defaults boolForKey:@"TNDescDefaultEnableVNC"] animated:YES sendAction:NO];
 }
 
 /*! called when MainMenu is ready
@@ -680,28 +704,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:_plusButtonDrives enabledAccordingToPermission:@"define"];
     [self setControl:_plusButtonNics enabledAccordingToPermission:@"define"];
 
-    if ([switchEnableVNC isOn])
-    {
-        [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
-        [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
-        [self setControl:fieldVNCListen enabledAccordingToPermission:@"define"];
-        [self setControl:fieldVNCPort enabledAccordingToPermission:@"define"];
-    }
-    else
-    {
-        [buttonVNCKeymap setEnabled:NO];
-        [fieldVNCPassword setEnabled:NO];
-        [fieldVNCListen setEnabled:NO];
-        [fieldVNCPort setEnabled:NO];
-    }
-
     if (![self currentEntityHasPermission:@"define"])
     {
-        [networkController closeWindow:nil];
+        [interfaceController closeWindow:nil];
         [driveController closeWindow:nil];
     }
 
-    [networkController updateAfterPermissionChanged];
+    [interfaceController updateAfterPermissionChanged];
     [driveController updateAfterPermissionChanged];
 }
 
@@ -852,7 +861,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         or          = [defaults objectForKey:@"TNDescDefaultOnReboot"],
         oc          = [defaults objectForKey:@"TNDescDefaultOnCrash"],
         hp          = [defaults boolForKey:@"TNDescDefaultHugePages"],
-        vnc         = [defaults boolForKey:@"TNDescDefaultEnableVNC"],
         clock       = [defaults objectForKey:@"TNDescDefaultClockOffset"],
         pae         = [defaults boolForKey:@"TNDescDefaultPAE"],
         acpi        = [defaults boolForKey:@"TNDescDefaultACPI"],
@@ -862,11 +870,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [stepperNumberCPUs setDoubleValue:cpu];
     [fieldMemory setStringValue:mem];
-    [fieldVNCPassword setStringValue:@""];
-    [fieldVNCListen setStringValue:@""];
-    [fieldVNCPort setStringValue:@""];
     [fieldStringXMLDesc setStringValue:@""];
-    [buttonVNCKeymap selectItemWithTitle:vnck];
     [buttonOnPowerOff selectItemWithTitle:opo];
     [buttonOnReboot selectItemWithTitle:or];
     [buttonOnCrash selectItemWithTitle:oc];
@@ -875,31 +879,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchEnableVNC setOn:((vnc == 1) ? YES : NO) animated:YES sendAction:NO];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
-
-    if (vnc == 1)
-    {
-        [buttonVNCKeymap setEnabled:YES];
-        [fieldVNCPassword setEnabled:YES];
-        [fieldVNCListen setEnabled:YES];
-        [fieldVNCPort setEnabled:YES];
-    }
-    else
-    {
-        [buttonVNCKeymap setEnabled:NO];
-        [fieldVNCPassword setEnabled:NO];
-        [fieldVNCListen setEnabled:NO];
-        [fieldVNCPort setEnabled:NO];
-    }
-
     [_nicsDatasource removeAllObjects];
     [_drivesDatasource removeAllObjects];
     [_inputDevicesDatasource removeAllObjects];
+    [_graphicDevicesDatasource removeAllObjects];
+
     [tableInterfaces reloadData];
     [tableDrives reloadData];
     [tableInputDevices reloadData];
+    [tableGraphicsDevices reloadData];
 }
 
 /*! checks if virtual machine is running. if yes, display the masking view
@@ -1107,10 +1097,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![_libvirtDomain devices])
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
-    [_inputDevicesDatasource addObject:inputDevice];
-    [tableInputDevices reloadData];
-    [self makeDefinitionEdited:YES];
-
     [inputDeviceController setInputDevice:inputDevice];
     [inputDeviceController openWindow:aSender];
 }
@@ -1144,6 +1130,54 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInputDevices reloadData];
     [self makeDefinitionEdited:YES];
 }
+
+
+/*! add graphic device
+    @param aSender the sender of the action
+*/
+- (IBAction)addGraphicDevice:(id)aSender
+{
+    var graphicDevice = [[TNLibvirtDeviceGraphic alloc] init];
+    [graphicDevice setType:TNLibvirtDeviceGraphicTypeVNC];
+    [graphicDevice setKeymap:TNLibvirtDeviceGraphicVNCKeymapEN_US];
+
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    [graphicDeviceController setGraphicDevice:graphicDevice];
+    [graphicDeviceController openWindow:aSender];
+}
+
+/*! edit the selected graphic device
+    @param aSender the sender of the action
+*/
+- (IBAction)editGraphicDevice:(id)aSender
+{
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
+    if ([tableGraphicsDevices numberOfSelectedRows] <= 0)
+    {
+         [self addGraphicDevice:aSender];
+         return;
+    }
+
+    var graphicDevice = [_graphicDevicesDatasource objectAtIndex:[tableGraphicsDevices selectedRow]];
+
+    [graphicDeviceController setGraphicDevice:graphicDevice];
+    [graphicDeviceController openWindow:aSender];
+}
+
+/*! remove the selected graphic device
+    @param aSender the sender of the action
+*/
+- (IBAction)deleteGraphicDevice:(id)aSender
+{
+    [_graphicDevicesDatasource removeObjectAtIndex:[tableGraphicsDevices selectedRow]];
+    [tableGraphicsDevices reloadData];
+    [self makeDefinitionEdited:YES];
+}
+
 
 /*! open the manual XML editor
     @param sender the sender of the action
@@ -1206,11 +1240,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newNic setModel:TNLibvirtDeviceInterfaceModelPCNET];
     [newNic setMAC:[self generateMacAddr]];
     [newNic setSource:newNicSource];
+    [interfaceController setNic:newNic];
+    [interfaceController openWindow:aSender];
 
-    [_nicsDatasource addObject:newNic];
-    [tableInterfaces reloadData];
-    [networkController setNic:newNic];
-    [networkController openWindow:aSender];
     [self makeDefinitionEdited:YES];
 }
 
@@ -1230,8 +1262,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     var nicObject = [_nicsDatasource objectAtIndex:[tableInterfaces selectedRow]];
 
-    [networkController setNic:nicObject];
-    [networkController openWindow:aSender];
+    [interfaceController setNic:nicObject];
+    [interfaceController openWindow:aSender];
 }
 
 /*! delete a network card
@@ -1284,9 +1316,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newDrive setSource:newDriveSource];
     [newDrive setTarget:newDriveTarget];
     [newDrive setDriver:newDriveDriver];
-
-    [_drivesDatasource addObject:newDrive];
-    [tableDrives reloadData];
     [driveController setDrive:newDrive];
 
     [driveController openWindow:aSender];
@@ -1378,118 +1407,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[_libvirtDomain OS] setBoot:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
-
-/*! update the value for VNC activation
-    @param aSender the sender of the action
-*/
-- (IBAction)didChangeVNCEnabled:(id)aSender
-{
-    if ([aSender isOn])
-    {
-        if (![_libvirtDomain devices])
-            [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
-
-        if ([[[_libvirtDomain devices] graphics] count] == 0)
-        {
-            var graphicVNC = [[TNLibvirtDeviceGraphics alloc] init];
-            [graphicVNC setType:TNLibvirtDeviceGraphicsTypeVNC];
-            [[[_libvirtDomain devices] graphics] addObject:graphicVNC];
-            [self didChangeVNCKeymap:buttonVNCKeymap];
-        }
-    }
-    else
-    {
-        [[[_libvirtDomain devices] graphics] removeAllObjects];
-    }
-
-    [fieldVNCPassword setEnabled:[aSender isOn]];
-    [buttonVNCKeymap setEnabled:[aSender isOn]];
-    [fieldVNCListen setEnabled:[aSender isOn]];
-    [fieldVNCPort setEnabled:[aSender isOn]];
-
-    [self makeDefinitionEdited:aSender];
-}
-
-/*! update the value for VNC keymap
-    @param aSender the sender of the action
-*/
-- (IBAction)didChangeVNCKeymap:(id)aSender
-{
-    if (![_libvirtDomain devices])
-        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
-
-    if ([[[_libvirtDomain devices] graphics] count] == 0)
-    {
-        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
-        [self didChangeVNCEnabled:switchEnableVNC];
-    }
-
-
-    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
-    [vnc setKeymap:[aSender title]];
-    [self makeDefinitionEdited:aSender];
-}
-
-/*! update the value for VNC Password
-    @param aSender the sender of the action
-*/
-- (IBAction)didChangeVNCPassword:(id)aSender
-{
-    if (![_libvirtDomain devices])
-        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
-
-    if ([[[_libvirtDomain devices] graphics] count] == 0)
-        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
-
-    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
-    [vnc setPassword:[aSender stringValue]];
-
-    [self makeDefinitionEdited:aSender];
-}
-
-/*! update the value for VNC Password
-    @param aSender the sender of the action
-*/
-- (IBAction)didChangeVNCListen:(id)aSender
-{
-    if (![_libvirtDomain devices])
-        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
-
-    if ([[[_libvirtDomain devices] graphics] count] == 0)
-        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
-
-    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
-    [vnc setListen:[aSender stringValue]];
-
-    [self makeDefinitionEdited:aSender];
-}
-
-/*! update the value for VNC Password
-    @param aSender the sender of the action
-*/
-- (IBAction)didChangeVNCPort:(id)aSender
-{
-    if (![_libvirtDomain devices])
-        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
-
-    if ([[[_libvirtDomain devices] graphics] count] == 0)
-        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
-
-    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
-
-    if ([aSender stringValue] != @"")
-    {
-        [vnc setPort:[aSender stringValue]];
-        [vnc setAutoPort:NO];
-    }
-    else
-    {
-        [vnc setPort:nil];
-        [vnc setAutoPort:YES];
-    }
-    [self makeDefinitionEdited:aSender];
-}
-
 
 /*! update the value for onPowerOff
     @param aSender the sender of the action
@@ -1790,13 +1707,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
 
-        [self didChangeVNCEnabled:switchEnableVNC];
         [self didChangeAPIC:switchAPIC];
         [self didChangeAPIC:switchACPI];
         [self didChangeAPIC:switchPAE];
         [self didChangeHugePages:switchHugePages];
         [_inputDevicesDatasource addObject:[[TNLibvirtDeviceInput alloc] init]];
+        [_graphicDevicesDatasource addObject:[[TNLibvirtDeviceGraphic alloc] init]];
         [tableInputDevices reloadData];
+        [tableGraphicsDevices reloadData];
 
         if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] != "not-defined")
             [self handleIqErrorFromStanza:aStanza];
@@ -1836,38 +1754,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnReboot selectItemWithTitle:[_libvirtDomain onReboot]];
     [buttonOnCrash selectItemWithTitle:[_libvirtDomain onCrash]];
 
-    // graphics
-    [self setControl:switchEnableVNC enabledAccordingToPermission:@"define"];
-    [switchEnableVNC setOn:([[[_libvirtDomain devices] graphics] count] > 0) animated:YES sendAction:NO];
-
-    if ([switchEnableVNC isOn])
-    {
-        [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
-        [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
-        [self setControl:fieldVNCListen enabledAccordingToPermission:@"define"];
-        [self setControl:fieldVNCPort enabledAccordingToPermission:@"define"];
-    }
-    else
-    {
-        [fieldVNCPassword setEnabled:NO];
-        [buttonVNCKeymap setEnabled:NO];
-        [fieldVNCListen setEnabled:NO];
-        [fieldVNCPort setEnabled:NO];
-    }
-
-    for (var i = 0; i < [[[_libvirtDomain devices] graphics] count]; i++)
-    {
-        var graphic = [[[_libvirtDomain devices] graphics] objectAtIndex:i];
-        if ([graphic type] == "vnc")
-        {
-            [buttonVNCKeymap selectItemWithTitle:[graphic keymap]];
-
-            [fieldVNCPassword setStringValue:[graphic password]];
-            [fieldVNCListen setStringValue:[graphic listen]];
-            [fieldVNCPort setStringValue:([graphic port] != -1) ? [graphic port] : @""];
-        }
-    }
-
     // APIC
     [switchAPIC setOn:NO animated:NO sendAction:NO];
     [switchAPIC setOn:[[_libvirtDomain features] isAPIC] animated:NO sendAction:NO];
@@ -1900,6 +1786,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     // INPUT DEVICES
     [_inputDevicesDatasource setContent:[[_libvirtDomain devices] inputs]];
     [tableInputDevices reloadData];
+
+    // GRAPHIC DEVICES
+    [_graphicDevicesDatasource setContent:[[_libvirtDomain devices] graphics]];
+    [tableGraphicsDevices reloadData];
 
 
     // MEMORY TUNING
@@ -1955,6 +1845,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPLog.info("XML Definition is : " + [[_libvirtDomain XMLNode] stringValue]);
     [stanza addNode:[_libvirtDomain XMLNode]];
     [buttonDefine setImage:_imageDefining];
+    [buttonDefine setStringValue:CPLocalizedString(@"Sending...", @"Sending...")];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
 }
 
@@ -1983,6 +1874,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var responseType    = [aStanza type],
         responseFrom    = [aStanza from];
 
+    [buttonDefine setStringValue:CPLocalizedString(@"Validate", @"Validate")];
     if (responseType == @"result")
     {
         CPLog.info(@"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated")

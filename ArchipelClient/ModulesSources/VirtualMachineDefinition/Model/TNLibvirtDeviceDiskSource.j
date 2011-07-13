@@ -44,7 +44,8 @@
 {
     if (self = [super init])
     {
-        _hosts  = [CPArray array];
+        _hosts      = [CPArray array];
+        _file       = @"/dev/null";
     }
 
     return self

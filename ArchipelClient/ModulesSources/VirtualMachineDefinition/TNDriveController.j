@@ -107,11 +107,12 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             break;
     }
 
+    [self performDeviceTypeChanged:nil];
+
     [buttonDriverCache selectItemWithTitle:[[_drive driver] cache]];
     [buttonType selectItemWithTitle:[_drive type]];
     [buttonTargetDevice selectItemWithTitle:[[_drive target] device]];
     [buttonTargetBus selectItemWithTitle:[[_drive target] bus]];
-
     [self driveTypeDidChange:nil];
 }
 
@@ -144,6 +145,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
     [[_drive target] setBus:[buttonTargetBus title]];
     [[_drive target] setDevice:[buttonTargetDevice title]];
+
+    if (![[_table dataSource] containsObject:_drive])
+        [[_table dataSource] addObject:_drive];
 
     [_table reloadData];
 
@@ -270,6 +274,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             [buttonSourcePath addItem:item];
         }
 
+        [buttonSourcePath selectItemAtIndex:0];
         for (var i = 0; i < [[buttonSourcePath itemArray] count]; i++)
         {
             var item  = [[buttonSourcePath itemArray] objectAtIndex:i];

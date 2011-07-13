@@ -62,8 +62,6 @@
 	<string>Set boot origin</string>
 	<key>Set the MAC address of the card</key>
 	<string>Set the MAC address of the card</string>
-	<key>Set the VNC keymap to use</key>
-	<string>Set the VNC keymap to use</string>
 	<key>Set the VNC password (no password if blank)</key>
 	<string>Set the VNC password (no password if blank)</string>
 	<key>Set the bus to use for the drive</key>
@@ -96,8 +94,6 @@
 	<string>Set the default machine type for new domains</string>
 	<key>Set the default number of CPUs for new domains</key>
 	<string>Set the default number of CPUs for new domains</string>
-	<key>Set the default usage of VNC for new domains</key>
-	<string>Set the default usage of VNC for new domains</string>
 	<key>Set the default usage of huge pages for new domains</key>
 	<string>Set the default usage of huge pages for new domains</string>
 	<key>Set the domain machine type</key>

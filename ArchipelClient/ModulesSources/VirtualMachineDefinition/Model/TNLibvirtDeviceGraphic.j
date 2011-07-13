@@ -1,5 +1,5 @@
 /*
- * TNLibvirtDeviceGraphics.j
+ * TNLibvirtDeviceGraphic.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -21,22 +21,25 @@
 
 @import "TNLibvirtBase.j";
 
-TNLibvirtDeviceGraphicsTypeVNC          = @"vnc";
-TNLibvirtDeviceGraphicsTypeSDL          = @"sdl";
+TNLibvirtDeviceGraphicTypeVNC           = @"vnc";
+TNLibvirtDeviceGraphicTypeSDL           = @"sdl";
+TNLibvirtDeviceGraphicTypeRDP           = @"rdp";
+TNLibvirtDeviceGraphicTypeSPICE         = @"spice";
+TNLibvirtDeviceGraphicTypeDESKTOP       = @"desktop";
 
-TNLibvirtDeviceGraphicsVNCKeymapFR      = @"fr";
-TNLibvirtDeviceGraphicsVNCKeymapEN_US   = @"en-us";
-TNLibvirtDeviceGraphicsVNCKeymapDeutch  = @"de";
+TNLibvirtDeviceGraphicVNCKeymapFR      = @"fr";
+TNLibvirtDeviceGraphicVNCKeymapEN_US   = @"en-us";
+TNLibvirtDeviceGraphicVNCKeymapDeutch  = @"de";
 
-TNLibvirtDeviceGraphicsVNCKeymaps       = [ TNLibvirtDeviceGraphicsVNCKeymapEN_US,
-                                            TNLibvirtDeviceGraphicsVNCKeymapFR,
-                                            TNLibvirtDeviceGraphicsVNCKeymapDeutch];
+TNLibvirtDeviceGraphicVNCKeymaps       = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
+                                            TNLibvirtDeviceGraphicVNCKeymapFR,
+                                            TNLibvirtDeviceGraphicVNCKeymapDeutch];
 
 
 /*! @ingroup virtualmachinedefinition
     Model for graphics
 */
-@implementation TNLibvirtDeviceGraphics : TNLibvirtBase
+@implementation TNLibvirtDeviceGraphic : TNLibvirtBase
 {
     BOOL        _autoPort       @accessors(getter=isAutoPort, setter=setAutoPort:);
     BOOL        _fullScreen     @accessors(getter=isFullScreen, setter=setFullScreen:);
@@ -107,7 +110,7 @@ TNLibvirtDeviceGraphicsVNCKeymaps       = [ TNLibvirtDeviceGraphicsVNCKeymapEN_U
         [node setValue:(_multiUser ? @"yes" : @"no") forAttribute:@"multiUser"];
     if (_fullScreen != nil)
         [node setValue:(_fullScreen ? @"yes" : @"no") forAttribute:@"fullscreen"];
-    
+
     return node;
 }
 
