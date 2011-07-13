@@ -86,9 +86,13 @@ class TNApplianceDownloader (Thread):
         """
         Main loop of the thread. Will start to download.
         """
-        self.logger.info("TNApplianceDownloader: starting to download appliance %s into %s" % (self.url, self.save_path))
-        urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
-        if self.error:
+        try:
+            self.logger.info("TNApplianceDownloader: starting to download appliance %s into %s" % (self.url, self.save_path))
+            urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
+            if self.error:
+                self.finish_callback(ARCHIPEL_DOWNLOAD_ERROR, self.uuid, None)
+        except Exception as ex:
+            self.logger.error("Unable to download %s at path %s: %s" % (self.url, self.save_path, str(ex)))
             self.finish_callback(ARCHIPEL_DOWNLOAD_ERROR, self.uuid, None)
 
     def get_progress(self):
