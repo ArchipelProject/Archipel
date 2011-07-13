@@ -1,5 +1,5 @@
 /*
- * TNCategories.j
+ * CPObject+Duplication.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,22 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/CPObject.j>
 
-/*! @defgroup categories Archipel Utilities
-    @desc Simples categories made to live ina better world
+
+ /*! @ingroup categories
+     Categories that allows CPObject to perform a deep copy of itself
+ */
+@implementation CPObject (duplicate)
+
+
+/*! create and return a deep copy of the object
+    @return copied object
 */
+- (id)duplicate
+{
+    var copy = [CPKeyedArchiver archivedDataWithRootObject:self];
+    return [CPKeyedUnarchiver unarchiveObjectWithData:copy];
+}
 
-
-@import "CPDate+Format.j"
-@import "CPObject+Duplication.j"
-@import "CPOutlineView+Extend.j"
-@import "CPPlatformWindow+Title.j"
-@import "CPPopover+TNAttachedWindowAPI.j"
-@import "CPSearchField+CancelButton.j"
-@import "CPSegmentedControl+SegmentView.j"
-@import "CPString+FormatByteSize.j"
-@import "CPString+UUIDRFC4122.j"
-@import "CPTabView+Border.j"
-@import "CPView+Border.j"
-@import "TNStropheClient+Singleton.j"
-@import "TNStropheGroup+Capitalized.j"
+@end
