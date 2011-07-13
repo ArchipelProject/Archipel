@@ -501,27 +501,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldPreferencesMemory setToolTip:CPBundleLocalizedString(@"Set the default amount of memory for new domains", @"Set the default amount of memory for new domains")];
     [switchPreferencesHugePages setToolTip:CPBundleLocalizedString(@"Set the default usage of huge pages for new domains", @"Set the default usage of huge pages for new domains")];
 
-    [self applyShadow];
-}
-
-/*! Seriously, this is a waaay faster that editing the xib ;)
-*/
-- (void)applyShadow
-{
-    var subviews = [CPArray arrayWithArray:[viewParametersStandard subviews]];
-    subviews = [subviews arrayByAddingObjectsFromArray:[viewParametersAdvanced subviews]];
-    subviews = [subviews arrayByAddingObjectsFromArray:[viewDeviceVirtualDrives subviews]];
-    subviews = [subviews arrayByAddingObjectsFromArray:[viewDeviceVirtualNics subviews]];
-
-    for (var i = 0; i < [subviews count]; i++)
-    {
-        var v = [subviews objectAtIndex:i];
-        if ([v isKindOfClass:CPTextField])
-        {
-            [v setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
-            [v setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
-        }
-    }
+    [viewParametersStandard applyShadow];
+    [viewParametersAdvanced applyShadow];
+    [viewParametersAdvanced applyShadow];
+    [viewDeviceVirtualNics applyShadow];
 }
 
 

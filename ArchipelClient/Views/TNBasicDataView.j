@@ -40,21 +40,6 @@
     return self;
 }
 
-- (void)applyShadow
-{
-    var subviews = [CPArray arrayWithArray:[self subviews]];
-
-    for (var i = 0; i < [subviews count]; i++)
-    {
-        var v = [subviews objectAtIndex:i];
-        if ([v isKindOfClass:CPTextField])
-        {
-            [v setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
-            [v setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
-        }
-    }
-}
-
 - (void)drawRect:(CGRect)aRect
 {
     [super drawRect:aRect];
