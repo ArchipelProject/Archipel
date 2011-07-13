@@ -632,12 +632,6 @@
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
 
-/* Class = "NSTableColumn"; headerCell.title = "Type"; ObjectID = "792"; */
-"792.headerCell.title" = "Type";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "795"; */
-"795.title" = "Text Cell";
-
 /* Class = "NSTextFieldCell"; title = "Advanced stuff will be added here"; ObjectID = "844"; */
 "844.title" = "Advanced stuff will be added here";
 
@@ -889,4 +883,10 @@
 
 /* Class = "NSTextFieldCell"; title = "MAC ADDRESS"; ObjectID = "1402"; */
 "1402.title" = "MAC ADDRESS";
+
+/* Class = "NSTableColumn"; headerCell.title = "Virtual Newtork interfaces"; ObjectID = "1435"; */
+"1435.headerCell.title" = "Virtual Newtork interfaces";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1438"; */
+"1438.title" = "Text Cell";
 

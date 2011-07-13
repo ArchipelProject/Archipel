@@ -23,7 +23,7 @@
 var TNGraphicDeviceDataViewIconVNC,
     TNGraphicDeviceDataViewIconRDP;
 
-@implementation TNGraphicDeviceDataView : CPView
+@implementation TNGraphicDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView     imageIcon;
     @outlet CPTextField     fieldKeymap;
@@ -51,13 +51,6 @@ var TNGraphicDeviceDataViewIconVNC,
             TNGraphicDeviceDataViewIconVNC = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-vnc.png"] size:CPSizeMake(26.0, 26.0)];
             TNGraphicDeviceDataViewIconRDP = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-rdp.png"] size:CPSizeMake(26.0, 26.0)];
         }
-
-        [fieldKeymap setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldListen setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelKeymap setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelListen setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;
@@ -93,36 +86,6 @@ var TNGraphicDeviceDataViewIconVNC,
     [fieldKeymap setStringValue:[_currentGraphicDevice keymap]];
     [fieldListen setStringValue:listenString];
     [fieldPassword setStringValue:([_currentGraphicDevice password]) ? @"Protected" : @"Not protected"];
-}
-
-/*! forward the theme state set to the inner controls
-    @param aState the theme state
-*/
-- (void)setThemeState:(id)aState
-{
-    [super setThemeState:aState];
-
-    [fieldKeymap setThemeState:aState];
-    [fieldListen setThemeState:aState];
-    [fieldPassword setThemeState:aState];
-    [labelKeymap setThemeState:aState];
-    [labelListen setThemeState:aState];
-    [labelPassword setThemeState:aState];
-}
-
-/*! forward the theme state unset to the inner controls
-    @param aState the theme state
-*/
-- (void)unsetThemeState:(id)aState
-{
-    [super unsetThemeState:aState];
-
-    [fieldKeymap unsetThemeState:aState];
-    [fieldListen unsetThemeState:aState];
-    [fieldPassword unsetThemeState:aState];
-    [labelKeymap unsetThemeState:aState];
-    [labelListen unsetThemeState:aState];
-    [labelPassword unsetThemeState:aState];
 }
 
 

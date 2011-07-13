@@ -29,7 +29,7 @@ var TNInterfaceDeviceDataViewIconNetwork,
     TNInterfaceDeviceDataViewIconBridge;
 
 
-@implementation TNInterfaceDeviceDataView : CPView
+@implementation TNInterfaceDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView         imageIcon;
     @outlet CPTextField         fieldMAC;
@@ -61,16 +61,6 @@ var TNInterfaceDeviceDataViewIconNetwork,
             TNInterfaceDeviceDataViewIconUser = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"nic_user.png"]];
             TNInterfaceDeviceDataViewIconBridge = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"nic_bridge.png"]];
         }
-
-        [fieldMAC setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldType setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldModel setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldSource setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldFilter setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelType setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelModel setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelSource setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelFilter setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;
@@ -108,42 +98,6 @@ var TNInterfaceDeviceDataViewIconNetwork,
     [fieldFilter setStringValue:[[_currentInterface filterref] name]];
 }
 
-/*! forward the theme state set to the inner controls
-    @param aState the theme state
-*/
-- (void)setThemeState:(id)aState
-{
-    [super setThemeState:aState];
-
-    [fieldMAC setThemeState:aState];
-    [fieldType setThemeState:aState];
-    [fieldModel setThemeState:aState];
-    [fieldSource setThemeState:aState];
-    [fieldFilter setThemeState:aState];
-    [labelType setThemeState:aState];
-    [labelModel setThemeState:aState];
-    [labelSource setThemeState:aState];
-    [labelFilter setThemeState:aState];
-}
-
-/*! forward the theme state unset to the inner controls
-    @param aState the theme state
-*/
-- (void)unsetThemeState:(id)aState
-{
-    [super unsetThemeState:aState];
-
-    [fieldMAC unsetThemeState:aState];
-    [fieldType unsetThemeState:aState];
-    [fieldModel unsetThemeState:aState];
-    [fieldSource unsetThemeState:aState];
-    [fieldFilter unsetThemeState:aState];
-    [labelType unsetThemeState:aState];
-    [labelModel unsetThemeState:aState];
-    [labelSource unsetThemeState:aState];
-    [labelFilter unsetThemeState:aState];
-}
-
 
 #pragma mark -
 #pragma mark CPCoding
@@ -166,8 +120,6 @@ var TNInterfaceDeviceDataViewIconNetwork,
         labelModel = [aCoder decodeObjectForKey:@"labelModel"];
         labelSource = [aCoder decodeObjectForKey:@"labelSource"];
         labelFilter = [aCoder decodeObjectForKey:@"labelFilter"];
-
-        [fieldMAC setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;

@@ -30,7 +30,7 @@ var TNDriveDeviceDataViewIconQCOW2,
     TNDriveDeviceDataViewIconRAW,
     TNDriveDeviceDataViewIconCDROM;
 
-@implementation TNDriveDeviceDataView : CPView
+@implementation TNDriveDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView     imageIcon;
     @outlet CPTextField     fieldPath;
@@ -67,18 +67,6 @@ var TNDriveDeviceDataViewIconQCOW2,
             TNDriveDeviceDataViewIconRAW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_raw.png"]];
             TNDriveDeviceDataViewIconCDROM = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_cdrom.png"]];
         }
-
-        [fieldPath setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldType setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldDevice setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldTarget setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldCache setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldFormat setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelType setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelDevice setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelTarget setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelCache setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelFormat setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;
@@ -125,45 +113,6 @@ var TNDriveDeviceDataViewIconQCOW2,
     [fieldFormat setStringValue:[[_currentDisk driver] type]];
 }
 
-/*! forward the theme state set to the inner controls
-    @param aState the theme state
-*/
-- (void)setThemeState:(id)aState
-{
-    [super setThemeState:aState];
-
-    [fieldPath setThemeState:aState];
-    [fieldType setThemeState:aState];
-    [fieldDevice setThemeState:aState];
-    [fieldTarget setThemeState:aState];
-    [fieldCache setThemeState:aState];
-    [fieldFormat setThemeState:aState];
-    [labelType setThemeState:aState];
-    [labelDevice setThemeState:aState];
-    [labelTarget setThemeState:aState];
-    [labelCache setThemeState:aState];
-    [labelFormat setThemeState:aState];
-}
-
-/*! forward the theme state unset to the inner controls
-    @param aState the theme state
-*/
-- (void)unsetThemeState:(id)aState
-{
-    [super unsetThemeState:aState];
-
-    [fieldPath unsetThemeState:aState];
-    [fieldType unsetThemeState:aState];
-    [fieldDevice unsetThemeState:aState];
-    [fieldTarget unsetThemeState:aState];
-    [fieldCache unsetThemeState:aState];
-    [fieldFormat unsetThemeState:aState];
-    [labelType unsetThemeState:aState];
-    [labelDevice unsetThemeState:aState];
-    [labelTarget unsetThemeState:aState];
-    [labelCache unsetThemeState:aState];
-    [labelFormat unsetThemeState:aState];
-}
 
 
 #pragma mark -
@@ -189,8 +138,6 @@ var TNDriveDeviceDataViewIconQCOW2,
         labelTarget = [aCoder decodeObjectForKey:@"labelTarget"];
         labelCache = [aCoder decodeObjectForKey:@"labelCache"];
         labelFormat = [aCoder decodeObjectForKey:@"labelFormat"];
-
-        [fieldPath setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;

@@ -32,7 +32,7 @@ var TNDriveDataViewIconQCOW2,
 /*! @ingroup virtualmachinedrives
     This class represent a drive DataView
 */
-@implementation TNDriveDataView : CPView
+@implementation TNDriveDataView : TNBasicDataView
 {
     @outlet CPImageView imageDriveIcon;
     @outlet CPTextField fieldDriveName;
@@ -64,14 +64,6 @@ var TNDriveDataViewIconQCOW2,
             TNDriveDataViewIconVMDK     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_vmdk.png"]];
             TNDriveDataViewIconRAW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_raw.png"]];
         }
-        [fieldDriveName setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldVirtualSize setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldRealSize setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldGoldenDrive setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldPath setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelVirtualSize setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelRealSize setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelGoldenDrive setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;
@@ -126,44 +118,6 @@ var TNDriveDataViewIconQCOW2,
 
 
 #pragma mark -
-#pragma mark Overrides
-
-/*! forward the theme state set to the inner controls
-    @param aState the theme state
-*/
-- (void)setThemeState:(id)aState
-{
-    [super setThemeState:aState];
-
-    [fieldDriveName setThemeState:aState];
-    [fieldVirtualSize setThemeState:aState];
-    [fieldRealSize setThemeState:aState];
-    [fieldGoldenDrive setThemeState:aState];
-    [fieldPath setThemeState:aState];
-    [labelRealSize setThemeState:aState];
-    [labelVirtualSize setThemeState:aState];
-    [labelGoldenDrive setThemeState:aState];
-}
-
-/*! forward the theme state unset to the inner controls
-    @param aState the theme state
-*/
-- (void)unsetThemeState:(id)aState
-{
-    [super unsetThemeState:aState];
-
-    [fieldDriveName unsetThemeState:aState];
-    [fieldVirtualSize unsetThemeState:aState];
-    [fieldRealSize unsetThemeState:aState];
-    [fieldGoldenDrive unsetThemeState:aState];
-    [fieldPath unsetThemeState:aState];
-    [labelRealSize unsetThemeState:aState];
-    [labelVirtualSize unsetThemeState:aState];
-    [labelGoldenDrive unsetThemeState:aState];
-}
-
-
-#pragma mark -
 #pragma mark CPCoding compliance
 
 /*! CPCoder compliance
@@ -183,8 +137,6 @@ var TNDriveDataViewIconQCOW2,
         labelGoldenDrive = [aCoder decodeObjectForKey:@"labelGoldenDrive"];
         labelVirtualSize = [aCoder decodeObjectForKey:@"labelVirtualSize"];
         labelRealSize = [aCoder decodeObjectForKey:@"labelRealSize"];
-
-        [fieldDriveName setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;

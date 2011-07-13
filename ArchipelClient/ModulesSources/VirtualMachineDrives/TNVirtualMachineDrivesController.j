@@ -87,9 +87,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [tableMedias setTarget:self];
     [tableMedias setDoubleAction:@selector(openEditWindow:)];
     [tableMedias setDelegate:self];
+    [tableMedias setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+    [tableMedias setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
-    var prototype = [CPKeyedArchiver archivedDataWithRootObject:dataViewDrivePrototype];
-    [[tableMedias tableColumnWithIdentifier:@"self"] setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
+    [[tableMedias tableColumnWithIdentifier:@"self"] setDataView:[dataViewDrivePrototype duplicate]];
     [_mediasDatasource setSearchableKeyPaths:[@"name", @"path", @"format"]];
     [_mediasDatasource setTable:tableMedias];
     [tableMedias setDataSource:_mediasDatasource];

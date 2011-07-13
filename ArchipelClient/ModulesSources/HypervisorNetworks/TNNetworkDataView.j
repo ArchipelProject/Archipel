@@ -28,7 +28,7 @@
 /*! @ingroup hypervisornetworks
     This class represent a network DataView
 */
-@implementation TNNetworkDataView : CPView
+@implementation TNNetworkDataView : TNBasicDataView
 {
     @outlet CPImageView         imageStatus;
     @outlet CPTableView         tableDHCPHosts;
@@ -63,26 +63,6 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        [fieldBridgeDelay setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBridgeForwardDevice setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBridgeForwardMode setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBridgeIP setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBridgeName setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBridgeNetmask setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBridgeSTP setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldAutostart setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeDelay setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeForwardDevice setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeForwardMode setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeIP setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeName setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeNetmask setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeSTP setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBridgeInformation setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelDHCPRanges setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelDHCPHosts setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelAutostart setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-
         [tableDHCPRanges setIntercellSpacing:CPSizeMake(2.0, 2.0)];
         [tableDHCPHosts setIntercellSpacing:CPSizeMake(2.0, 2.0)];
     }
@@ -126,68 +106,6 @@
 
 
 #pragma mark -
-#pragma mark Overrides
-
-/*! forward the theme state set to the inner controls
-    @param aState the theme state
-*/
-- (void)setThemeState:(id)aState
-{
-    [super setThemeState:aState];
-
-    [fieldName setThemeState:aState];
-    [fieldBridgeDelay setThemeState:aState];
-    [fieldBridgeForwardDevice setThemeState:aState];
-    [fieldBridgeForwardMode setThemeState:aState];
-    [fieldBridgeIP setThemeState:aState];
-    [fieldBridgeName setThemeState:aState];
-    [fieldBridgeNetmask setThemeState:aState];
-    [fieldBridgeSTP setThemeState:aState];
-    [fieldAutostart setThemeState:aState];
-    [labelBridgeDelay setTextColor:[CPColor whiteColor]];
-    [labelBridgeForwardDevice setThemeState:aState];
-    [labelBridgeForwardMode setThemeState:aState];
-    [labelBridgeIP setThemeState:aState];
-    [labelBridgeName setThemeState:aState];
-    [labelBridgeNetmask setThemeState:aState];
-    [labelBridgeSTP setThemeState:aState];
-    [labelBridgeInformation setThemeState:aState];
-    [labelDHCPRanges setThemeState:aState];
-    [labelDHCPHosts setThemeState:aState];
-    [labelAutostart setThemeState:aState];
-}
-
-/*! forward the theme state unset to the inner controls
-    @param aState the theme state
-*/
-- (void)unsetThemeState:(id)aState
-{
-    [super unsetThemeState:aState];
-
-    [fieldName unsetThemeState:aState];
-    [fieldBridgeDelay unsetThemeState:aState];
-    [fieldBridgeForwardDevice unsetThemeState:aState];
-    [fieldBridgeForwardMode unsetThemeState:aState];
-    [fieldBridgeIP unsetThemeState:aState];
-    [fieldBridgeName unsetThemeState:aState];
-    [fieldBridgeNetmask unsetThemeState:aState];
-    [fieldBridgeSTP unsetThemeState:aState];
-    [fieldAutostart unsetThemeState:aState];
-    [labelBridgeDelay unsetThemeState:aState];
-    [labelBridgeForwardDevice unsetThemeState:aState];
-    [labelBridgeForwardMode unsetThemeState:aState];
-    [labelBridgeIP unsetThemeState:aState];
-    [labelBridgeName unsetThemeState:aState];
-    [labelBridgeNetmask unsetThemeState:aState];
-    [labelBridgeSTP unsetThemeState:aState];
-    [labelBridgeInformation unsetThemeState:aState];
-    [labelDHCPRanges unsetThemeState:aState];
-    [labelDHCPHosts unsetThemeState:aState];
-    [labelAutostart unsetThemeState:aState];
-}
-
-
-#pragma mark -
 #pragma mark CPCoding compliance
 
 /*! CPCoder compliance
@@ -221,10 +139,6 @@
         labelDHCPRanges = [aCoder decodeObjectForKey:@"labelDHCPRanges"];
         labelDHCPHosts = [aCoder decodeObjectForKey:@"labelDHCPHosts"];
         labelAutostart = [aCoder decodeObjectForKey:@"labelAutostart"];
-
-        // yeah, well, with its little friends it doesn't work for this field...
-        // sometimes I feel tired...
-        [fieldName setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;

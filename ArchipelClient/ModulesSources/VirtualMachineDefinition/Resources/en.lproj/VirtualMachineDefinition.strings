@@ -41,10 +41,10 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "27"; */
 "27.title" = "MB";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "40"; */
+/* Class = "NSTextFieldCell"; title = "VNC password:"; ObjectID = "40"; */
 "40.title" = "VNC password:";
 
-/* Class = "NSTextFieldCell"; title = "Keymap:"; ObjectID = "41"; */
+/* Class = "NSTextFieldCell"; title = "VNC keymap:"; ObjectID = "41"; */
 "41.title" = "VNC keymap:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "My passsword"; ObjectID = "48"; */
@@ -587,7 +587,7 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "706"; */
 "706.title" = "Item 3";
 
-/* Class = "NSTextFieldCell"; title = "Listen:"; ObjectID = "727"; */
+/* Class = "NSTextFieldCell"; title = "Listen address:"; ObjectID = "727"; */
 "727.title" = "Listen address:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "127.0.0.1"; ObjectID = "728"; */
@@ -631,12 +631,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
-
-/* Class = "NSTableColumn"; headerCell.title = "Virtual Network Interfaces"; ObjectID = "792"; */
-"792.headerCell.title" = "Type";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "795"; */
-"795.title" = "Text Cell";
 
 /* Class = "NSTextFieldCell"; title = "Advanced stuff will be added here"; ObjectID = "844"; */
 "844.title" = "Advanced stuff will be added here";
@@ -695,7 +689,7 @@
 /* Class = "NSTextFieldCell"; title = "Block I/O tuning"; ObjectID = "916"; */
 "916.title" = "Block I/O tuning";
 
-/* Class = "NSTableColumn"; headerCell.title = "Inputs"; ObjectID = "1113"; */
+/* Class = "NSTableColumn"; headerCell.title = "Devices"; ObjectID = "1113"; */
 "1113.headerCell.title" = "Devices";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1116"; */
@@ -889,4 +883,10 @@
 
 /* Class = "NSTextFieldCell"; title = "MAC ADDRESS"; ObjectID = "1402"; */
 "1402.title" = "MAC ADDRESS";
+
+/* Class = "NSTableColumn"; headerCell.title = "Virtual Newtork interfaces"; ObjectID = "1435"; */
+"1435.headerCell.title" = "Virtual Newtork interfaces";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1438"; */
+"1438.title" = "Text Cell";
 

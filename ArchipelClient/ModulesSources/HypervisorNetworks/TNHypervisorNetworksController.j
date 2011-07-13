@@ -87,6 +87,9 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [[tableViewNetworks tableColumnWithIdentifier:@"self"] setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
     [tableViewNetworks setTarget:self];
     [tableViewNetworks setDoubleAction:@selector(editNetwork:)];
+    [tableViewNetworks setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+    [tableViewNetworks setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+
     [_datasourceNetworks setTable:tableViewNetworks];
     [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"UUID", @"bridgeName"]];
     [tableViewNetworks setDataSource:_datasourceNetworks];

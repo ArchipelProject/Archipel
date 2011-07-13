@@ -23,7 +23,7 @@
 var TNInputDeviceDataViewIconTablet,
     TNInputDeviceDataViewIconMouse;
 
-@implementation TNInputDeviceDataView : CPView
+@implementation TNInputDeviceDataView : TNBasicDataView
 {
     @outlet CPTextField     fieldType;
     @outlet CPTextField     fieldBus;
@@ -49,11 +49,6 @@ var TNInputDeviceDataViewIconTablet,
             TNInputDeviceDataViewIconTablet = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-tablet.png"] size:CPSizeMake(26.0, 26.0)];
             TNInputDeviceDataViewIconMouse = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-mouse.png"] size:CPSizeMake(26.0, 26.0)];
         }
-
-        [fieldType setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [fieldBus setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBus setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [labelBus setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     }
 
     return self;
@@ -73,32 +68,6 @@ var TNInputDeviceDataViewIconTablet,
     [imageIcon setImage:([_currentInputDevice type] == TNLibvirtDeviceInputTypesTypeTablet) ? TNInputDeviceDataViewIconTablet : TNInputDeviceDataViewIconMouse];
     [fieldType setStringValue:[_currentInputDevice type]];
     [fieldBus setStringValue:[_currentInputDevice bus]];
-}
-
-/*! forward the theme state set to the inner controls
-    @param aState the theme state
-*/
-- (void)setThemeState:(id)aState
-{
-    [super setThemeState:aState];
-
-    [fieldType setThemeState:aState];
-    [fieldBus setThemeState:aState];
-    [labelType setThemeState:aState];
-    [labelBus setThemeState:aState];
-}
-
-/*! forward the theme state unset to the inner controls
-    @param aState the theme state
-*/
-- (void)unsetThemeState:(id)aState
-{
-    [super unsetThemeState:aState];
-
-    [fieldType unsetThemeState:aState];
-    [fieldBus unsetThemeState:aState];
-    [labelType unsetThemeState:aState];
-    [labelBus unsetThemeState:aState];
 }
 
 
