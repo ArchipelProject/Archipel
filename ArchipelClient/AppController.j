@@ -783,7 +783,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [_rosterOutlineView setDataSource:[[TNStropheIMClient defaultClient] roster]];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
-
+    [_rosterOutlineView deselectAll];
     [[TNPermissionsCenter defaultCenter] watchPubSub];
 
     if (_tagsVisible)
@@ -1377,8 +1377,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
     var defaults    = [CPUserDefaults standardUserDefaults],
-        index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        item        = [_rosterOutlineView itemAtRow:index],
+        item        = [_rosterOutlineView itemAtRow:[_rosterOutlineView selectedRow]],
         loadDelay   = [defaults floatForKey:@"TNArchipelModuleLoadingDelay"];
 
     if (_moduleLoadingDelay)
@@ -1418,11 +1417,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [moduleController setCurrentEntityForToolbarModules:item];
             break;
 
-        case nil:
+        default:
             [moduleController setEntity:nil ofType:TNArchipelEntityTypeGeneral];
             [moduleController setCurrentEntityForToolbarModules:nil];
             [propertiesController hideView];
-            break;
     }
 
     // post a system wide notification about the changes
