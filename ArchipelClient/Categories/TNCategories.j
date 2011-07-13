@@ -32,6 +32,7 @@
 @import "CPString+FormatByteSize.j"
 @import "CPString+UUIDRFC4122.j"
 @import "CPTabView+Border.j"
+@import "CPView+ApplyShadow.j"
 @import "CPView+Border.j"
 @import "TNStropheClient+Singleton.j"
 @import "TNStropheGroup+Capitalized.j"
