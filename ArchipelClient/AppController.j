@@ -63,6 +63,7 @@
 @import "Model/TNDatasourceRoster.j"
 @import "Model/TNModule.j"
 @import "Model/TNVersion.j"
+@import "Views/TNBasicDataView.j"
 @import "Views/TNButtonBarPopUpButton.j"
 @import "Views/TNCalendarView.j"
 @import "Views/TNEditableLabel.j"
