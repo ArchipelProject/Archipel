@@ -1,5 +1,5 @@
 /*  MB */
-" MB" = " MB";
+" MB" = " Mo";
 
 /* Activate the statistics auto fetching */
 "Activate the statistics auto fetching" = "Active la récupération dynamique des statistiques";
@@ -17,7 +17,7 @@
 "Display the file column in the log table" = "Affiche la colonne Fichier dans le tableau de log";
 
 /* Display the method column in the log table */
-"Display the method column in the log table" = "Affiche la colonne Method dans le tableau de log";
+"Display the method column in the log table" = "Affiche la colonne Methode dans le tableau de log";
 
 /* file */
 "file" = "fichier";
@@ -35,13 +35,13 @@
 "message" = "message";
 
 /* method */
-"method" = "methode";
+"method" = "méthode";
 
 /* Partition name */
 "Partition name" = "Partition";
 
 /* Set the delay between asking hypervisor statistics */
-"Set the delay between asking hypervisor statistics" = "Définit l'interval entre deux collecte de statistiques";
+"Set the delay between asking hypervisor statistics" = "Définit l'intervale entre deux collecte de statistiques";
 
 /* Set the max number of log item to fetch */
 "Set the max number of log item to fetch" = "Définit le nombre maximum d'entrées de log à récupérer";

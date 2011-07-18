@@ -30,6 +30,8 @@
 	<string>Download complete</string>
 	<key>Download error</key>
 	<string>Download error</string>
+	<key>Download queue for </key>
+	<string>Download queue for </string>
 	<key>Download selected appliance</key>
 	<string>Download selected appliance</string>
 	<key>Download started</key>

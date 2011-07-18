@@ -48,7 +48,7 @@
 "899.placeholderString" = "John Doe";
 
 /* Class = "NSWindow"; title = "About Archipel"; ObjectID = "900"; */
-"900.title" = "A propos Archipel";
+"900.title" = "A propos d'Archipel";
 
 /* Class = "NSTextFieldCell"; title = "Version XX"; ObjectID = "910"; */
 "910.title" = "Version XX";
@@ -60,7 +60,7 @@
 "927.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "Pick up the new avatar of the entity from the following list."; ObjectID = "929"; */
-"929.title" = "Choisissez un avatar depuis la liste.";
+"929.title" = "Choisissez un avatar dans la liste.";
 
 /* Class = "NSTextFieldCell"; title = "Change avatar"; ObjectID = "930"; */
 "930.title" = "Changer l'avatar";
@@ -87,7 +87,7 @@
 "958.title" = "Une nouvelle version est disponible";
 
 /* Class = "NSTextFieldCell"; title = "Current version"; ObjectID = "959"; */
-"959.title" = "Version courrant";
+"959.title" = "Version courrante";
 
 /* Class = "NSTextFieldCell"; title = "New version"; ObjectID = "962"; */
 "962.title" = "Nouvelle version";
@@ -123,7 +123,7 @@
 "988.title" = "Box";
 
 /* Class = "NSTextFieldCell"; placeholderString = "user@domain.com"; ObjectID = "989"; */
-"989.placeholderString" = "user@domain.com";
+"989.placeholderString" = "utilisateur@domaine.com";
 
 /* Class = "NSTextFieldCell"; title = "Logon"; ObjectID = "991"; */
 "991.title" = "Connexion";
@@ -138,13 +138,13 @@
 "998.title" = "Mot de passe";
 
 /* Class = "NSTextFieldCell"; placeholderString = "My password"; ObjectID = "999"; */
-"999.placeholderString" = "My password";
+"999.placeholderString" = "Mon mot de passe";
 
 /* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
 "1002.title" = "Service BOSH";
 
 /* Class = "NSTextFieldCell"; placeholderString = "http://domain.com:5280/http-bind"; ObjectID = "1003"; */
-"1003.placeholderString" = "http://domain.com:5280/http-bind";
+"1003.placeholderString" = "http://domaine.com:5280/http-bind";
 
 /* Class = "NSTextFieldCell"; title = "Remember"; ObjectID = "1005"; */
 "1005.title" = "Enregistrer";
@@ -159,7 +159,7 @@
 "1019.title" = "Ressource";
 
 /* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "1022"; */
-"1022.title" = "Domain";
+"1022.title" = "Domaine";
 
 /* Class = "NSTextFieldCell"; title = "domain"; ObjectID = "1023"; */
 "1023.title" = "domaine";
@@ -171,13 +171,13 @@
 "1029.title" = "type";
 
 /* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "1030"; */
-"1030.title" = "Status";
+"1030.title" = "Statut";
 
 /* Class = "NSTextFieldCell"; title = "status"; ObjectID = "1031"; */
 "1031.title" = "statuts";
 
 /* Class = "NSTextFieldCell"; title = "General preferences"; ObjectID = "1051"; */
-"1051.title" = "Préférences Generales";
+"1051.title" = "Préférences Générales";
 
 /* Class = "NSTextFieldCell"; title = "You can configure general preferences of Archipel. This is stored using local storage."; ObjectID = "1052"; */
 "1052.title" = "Vous pouvez configurer les préférences générales d'Archipel. Elle seront sauvées dans le serveur XMPP";
@@ -201,7 +201,7 @@
 "1060.title" = "Utiliser les animations";
 
 /* Class = "NSTextFieldCell"; title = "This change need to reconnect to be considered by XMPP server."; ObjectID = "1063"; */
-"1063.title" = "Ce paramêtre nécessite de redemarrer.";
+"1063.title" = "Ce paramêtre nécessite un rechargement.";
 
 /* Class = "NSTextFieldCell"; title = "Using animations can slow down the performances."; ObjectID = "1065"; */
 "1065.title" = "Utiliser les animations peut impacter les performances.";
@@ -288,7 +288,7 @@
 "1294.title" = "Ajouter un contact";
 
 /* Class = "NSTextFieldCell"; title = "The next generation orchestrator"; ObjectID = "1312"; */
-"1312.title" = "L'orchestrateur nouvelle génératon";
+"1312.title" = "L'orchestrateur nouvelle génération";
 
 /* Class = "NSTextFieldCell"; title = "For now, your roster is empty. You should already have installed an Archipel Agent on your hypervisor and you can now add it as a \"friend\" just like you would do on standard messaging application. To do so, click on the \"+\" button at the bottom left of the interface and choose \"Add contact\" ."; ObjectID = "1316"; */
 "1316.title" = "Pour le moment, votre roster est vide. You devriez déjà disposer d'au moins un agent Archipel sur votre hyperviseur et vous pouvez maintenant l'ajouter en tant que contact, de la même manière qu'avec n'importe quelle application de discussion. Cliquez sur le bouton \"+\" en bas de l'interface en choisisse \"Ajouter un contact\".";
@@ -423,14 +423,14 @@
 "1478.title" = "Plus à venir...";
 
 /* Class = "NSButtonCell"; title = "Hide offline users"; ObjectID = "1488"; */
-"1488.title" = "Hide offline users";
+"1488.title" = "Cacher les contacts hors-ligne";
 
 /* Class = "NSTextFieldCell"; title = "Offline users"; ObjectID = "1489"; */
-"1489.title" = "Offline users";
+"1489.title" = "Contacts hors-ligne";
 
 /* Class = "NSTextFieldCell"; title = "Node"; ObjectID = "1493"; */
-"1493.title" = "Node";
+"1493.title" = "Noeud";
 
 /* Class = "NSTextFieldCell"; title = "node"; ObjectID = "1494"; */
-"1494.title" = "node";
+"1494.title" = "noeud";
 

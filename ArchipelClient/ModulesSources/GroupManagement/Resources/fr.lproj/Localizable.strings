@@ -1,57 +1,57 @@
 /*  is migrating */
-" is migrating" = " is migrating";
+" is migrating" = " est en train de migrer";
 
 /*  state modified */
-" state modified" = " state modified";
+" state modified" = " étaut modifié";
 
 /*  to the selected hypervisor */
-" to the selected hypervisor" = " to the selected hypervisor";
+" to the selected hypervisor" = " vers l'hyperviseur séléctionné";
 
 /* Cannot migrate virtual machine  */
-"Cannot migrate virtual machine " = "Cannot migrate virtual machine ";
+"Cannot migrate virtual machine " = "Impossible de migrer la VM ";
 
 /* Destroy all selected virtual machines */
-"Destroy all selected virtual machines" = "Destroy all selected virtual machines";
+"Destroy all selected virtual machines" = "Détruire toutes les VMs séléctionnées";
 
 /* Destroy selected virtual machines */
-"Destroy selected virtual machines" = "Destroy selected virtual machines";
+"Destroy selected virtual machines" = "Détruire la VM séléctionnée";
 
 /* Migrate all selected virtual machines */
-"Migrate all selected virtual machines" = "Migrate all selected virtual machines";
+"Migrate all selected virtual machines" = "Migrer toutes les VMs séléctionnées";
 
 /* Pause all selected virtual machines */
-"Pause all selected virtual machines" = "Pause all selected virtual machines";
+"Pause all selected virtual machines" = "Mettre en pause toutes les VMs séléctionnées";
 
 /* Pause selected virtual machines */
-"Pause selected virtual machines" = "Pause selected virtual machines";
+"Pause selected virtual machines" = "Mettre en pause la VM séléctionnée";
 
 /* Reboot all selected virtual machines (not supported by all hypervisors) */
-"Reboot all selected virtual machines (not supported by all hypervisors)" = "Reboot all selected virtual machines (not supported by all hypervisors)";
+"Reboot all selected virtual machines (not supported by all hypervisors)" = "Redémarrer toutes les VMs séléctionnées (ceci n'est pas supporté par tous les hyperviseurs)";
 
 /* Reboot selected virtual machines */
-"Reboot selected virtual machines" = "Reboot selected virtual machines";
+"Reboot selected virtual machines" = "Redémarrer toutes les VMs séléctionnées";
 
 /* Resume all selected virtual machines */
-"Resume all selected virtual machines" = "Resume all selected virtual machines";
+"Resume all selected virtual machines" = "Reprendre l'exécution de toutes les VMs séléctionnées";
 
 /* Resume selected virtual machines */
-"Resume selected virtual machines" = "Resume selected virtual machines";
+"Resume selected virtual machines" = "Reprendre l'exécution de la VM séléctionnée";
 
 /* Shutdown all selected virtual machines */
-"Shutdown all selected virtual machines" = "Shutdown all selected virtual machines";
+"Shutdown all selected virtual machines" = "Eteindre toutes les VMs séléctionnées";
 
 /* Shutdown selected virtual machines */
-"Shutdown selected virtual machines" = "Shutdown selected virtual machines";
+"Shutdown selected virtual machines" = "Eteindre la VM séléctionnée";
 
 /* Start all selected virtual machines */
-"Start all selected virtual machines" = "Start all selected virtual machines";
+"Start all selected virtual machines" = "Démarrer la VM séléctionnée";
 
 /* Start selected virtual machines */
-"Start selected virtual machines" = "Start selected virtual machines";
+"Start selected virtual machines" = "Démarrer toutes les VMs séléctionnées";
 
 /* Virtual Machine */
-"Virtual Machine" = "Virtual Machine";
+"Virtual Machine" = "Machine Virtuelle";
 
 /* Virtual machine  */
-"Virtual machine " = "Virtual machine ";
+"Virtual machine " = "Machine Virtuelle ";
 

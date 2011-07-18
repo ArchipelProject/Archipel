@@ -3,68 +3,68 @@
 <plist version="1.0">
 <dict>
 	<key> has been created</key>
-	<string> has been created</string>
+	<string> a été créée</string>
 	<key> to your roster</key>
-	<string> to your roster</string>
+	<string> à votre roster.</string>
 	<key>Add contact</key>
-	<string>Add contact</string>
+	<string>Ajouter contact</string>
 	<key>Added new subscription to virtual machine</key>
-	<string>Added new subscription to virtual machine</string>
+	<string>Souscription ajoutée</string>
 	<key>Adding contact</key>
-	<string>Adding contact</string>
+	<string>Ajout du contact</string>
 	<key>Are you sure you want to completely remove theses virtual machines ?</key>
-	<string>Are you sure you want to completely remove theses virtual machines ?</string>
+	<string>Etes-vous sûr de vouloir supprimer les machines virtuelles séléctionnées ?</string>
 	<key>Are you sure you want to completely remove this virtual machine ?</key>
-	<string>Are you sure you want to completely remove this virtual machine ?</string>
+	<string>Etes-vous sûr de vouloir supprimer la machine virtuelle séléctionnée ?</string>
 	<key>Are you sure you want to remove the subscription for this user ?</key>
-	<string>Are you sure you want to remove the subscription for this user ?</string>
+	<string>Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?</string>
 	<key>Ask hypervisor to completely destroy all selected virtual machine</key>
-	<string>Ask hypervisor to completely destroy all selected virtual machine</string>
+	<string>Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles séléctionnées.</string>
 	<key>Ask hypervisor to create a new virtual machine</key>
-	<string>Ask hypervisor to create a new virtual machine</string>
+	<string>Demande à l'hypervisor de créer une nouvelle machine virtuelle.</string>
 	<key>Ask the virtual machine to add in its contact a user</key>
-	<string>Ask the virtual machine to add in its contact a user</string>
+	<string>Demande à la machine virtuelle d'ajouter un contact à son roster.</string>
 	<key>Ask the virtual machine to remove a user from its contact</key>
-	<string>Ask the virtual machine to remove a user from its contact</string>
+	<string>Demande à la machine virtuelle de supprimer un contact de son roster.</string>
 	<key>Cancel</key>
-	<string>Cancel</string>
+	<string>Annuler</string>
 	<key>Clone this virtual machine</key>
-	<string>Clone this virtual machine</string>
+	<string>Cloner cette machine virtuelle</string>
 	<key>Create a clone virtual machine from the selected one</key>
-	<string>Create a clone virtual machine from the selected one</string>
+	<string>Crée un clone de la machine virtuelle sélectionnée.</string>
 	<key>Create new virtual machine</key>
-	<string>Create new virtual machine</string>
+	<string>Créer une nouvelle machine virtuelle</string>
 	<key>Delete</key>
-	<string>Delete</string>
+	<string>Supprimer</string>
 	<key>Delete virtual machine</key>
-	<string>Delete virtual machine</string>
+	<string>Supprimer la machine virtuelle.</string>
 	<key>Destroying a Virtual Machine</key>
-	<string>Destroying a Virtual Machine</string>
+	<string>Suppression de la machine virtuelle.</string>
 	<key>Destroying some Virtual Machines</key>
-	<string>Destroying some Virtual Machines</string>
+	<string>Suppression des machines virtuelles.</string>
 	<key>Error</key>
-	<string>Error</string>
+	<string>Erreur</string>
 	<key>Remove</key>
-	<string>Remove</string>
+	<string>Supprimer</string>
 	<key>Removing subscription</key>
-	<string>Removing subscription</string>
+	<string>Supprimer la souscription</string>
 	<key>Subscription have been removed</key>
-	<string>Subscription have been removed</string>
+	<string>La souscription a été supprimée.</string>
 	<key>Subscription request</key>
-	<string>Subscription request</string>
+	<string>Requete de souscription</string>
 	<key>Virtual Machine</key>
-	<string>Virtual Machine</string>
+	<string>Machine Virtuelle</string>
 	<key>Virtual machine </key>
-	<string>Virtual machine </string>
+	<string>Machine virtuelle </string>
 	<key>Virtual machine has been cloned</key>
-	<string>Virtual machine has been cloned</string>
+	<string>La machine virtuelle a été clonée.</string>
 	<key>Virtual machine has been removed</key>
-	<string>Virtual machine has been removed</string>
+	<string>La machine virtuelle a été supprimée.</string>
 	<key>Would you like to add </key>
-	<string>Would you like to add </string>
+	<string>Voulez-vous ajouter </string>
 	<key>You must select a virtual machine</key>
-	<string>You must select a virtual machine</string>
+	<string>Vous devez sélectionner une machine virtuelle</string>
 	<key>You must select one (and only one) virtual machine</key>
-	<string>You must select one (and only one) virtual machine</string>
+	<string>Vous devez sélectionner une seule machine virtuelle</string>
 </dict>
 </plist>

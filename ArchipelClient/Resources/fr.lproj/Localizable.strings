@@ -53,7 +53,7 @@
 "authenticating" = "Authentification";
 
 /* authentification-failed */
-"authentification-failed" = "Echec d'Authentification";
+"authentification-failed" = "Echec d'authentification";
 
 /* Available */
 "Available" = "Disponible";
@@ -80,16 +80,16 @@
 "Change your current avatar. This picture will be visible by all your contacts" = "Changer votre avatar. Cette image sera visible par tous vos contacts";
 
 /* Click here to change the displayed named of the current contact or group */
-"Click here to change the displayed named of the current contact or group" = "Cliquez ici pour changer le nom du contact ou du group";
+"Click here to change the displayed named of the current contact or group" = "Cliquez ici pour changer le nom du contact ou du groupe";
 
 /* Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users) */
 "Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)" = "Cliquez ici pour changer l'avatar du contact (seulement pour les contacts Archipel. Pas les utilisateurs)";
 
 /* Collapse all groups */
-"Collapse all groups" = "Reduire tous les groupes";
+"Collapse all groups" = "Réduire tous les groupes";
 
 /* Expand group */
-"Collapse group" = "Reduire le groupe";
+"Collapse group" = "Réduire le groupe";
 
 /* connect */
 "connect" = "Connexion";
@@ -131,7 +131,7 @@
 "Decline" = "Refuser";
 
 /* Delay before loading a module. This avoid to load server with stanzas */
-"Delay before loading a module. This avoid to load server with stanzas" = "Delai de chargement des modules. Cela evite de surcharger le serveur XMPP.";
+"Delay before loading a module. This avoid to load server with stanzas" = "Delai de chargement des modules. Cela évite de surcharger le serveur XMPP.";
 
 /* Delete */
 "Delete" = "Supprimer";
@@ -174,7 +174,7 @@
 "Filter contacts by name or tags" = "Filtrer par nom ou par étiquette";
 
 /* GB */
-"GB" = "GB";
+"GB" = "Go";
 
 /* Go to website */
 "Go to website" = "Visiter le site web";
@@ -201,7 +201,7 @@
 "Hide main menu" = "Chacher le menu principal";
 
 /* host-unreachable */
-"host-unreachable" = "hôte injoingnable";
+"host-unreachable" = "Hôte injoingnable";
 
 /* Hypervisor */
 "Hypervisor" = "Hyperviseur";
@@ -228,7 +228,7 @@
 "Make a donation" = "Faire un don";
 
 /* MB */
-"MB" = "MB";
+"MB" = "Mo";
 
 /* Modules */
 "Modules" = "Modules";
@@ -288,10 +288,10 @@
 "Search entity" = "Rechercher une entité";
 
 /* Select a contact */
-"Select a contact" = "Select a contact";
+"Select a contact" = "Sélectionner un contact";
 
 /* Select a group */
-"Select a group" = "Select a group";
+"Select a group" = "Sélectionner un groupe";
 
 /* Select all */
 "Select all" = "Tout séléctionner";
@@ -330,13 +330,13 @@
 "The current logged account" = "Le compte courrant";
 
 /* The current status of the contact */
-"The current status of the contact" = "The current status of the contact";
+"The current status of the contact" = "Le status courrant du contact";
 
 /* The display name of the new contact */
 "The display name of the new contact" = "Le nom du contact";
 
 /* The domain (XMPP server) of the contact */
-"The domain (XMPP server) of the contact" = "The domain (XMPP server) of the contact";
+"The domain (XMPP server) of the contact" = "Le domaine (serveur XMPP) du contact";
 
 /* The group has been removed */
 "The group has been removed" = "Le groupe a été supprimé";
@@ -363,10 +363,10 @@
 "The resource to use" = "La ressource à utiliser";
 
 /* The service BOSH (XMPP over HTTP) to use */
-"The service BOSH (XMPP over HTTP) to use" = "The service BOSH (XMPP sur HTTP) à utiliser";
+"The service BOSH (XMPP over HTTP) to use" = "Le service BOSH (XMPP sur HTTP) à utiliser";
 
 /* The type of contact (hypervisor, virtual machine or user) */
-"The type of contact (hypervisor, virtual machine or user)" = "The type of contact (hypervisor, virtual machine or user)";
+"The type of contact (hypervisor, virtual machine or user)" = "Le type du contact (hyperviseur, machine virtuelle or utilisateur)";
 
 /* The XMPP JID of the contact */
 "The XMPP JID of the contact" = "Le JID du contact";

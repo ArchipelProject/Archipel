@@ -2,98 +2,101 @@
 "Appliance" = "Appliance";
 
 /* Appliance has been uninstalled */
-"Appliance has been uninstalled" = "Appliance has been uninstalled";
+"Appliance has been uninstalled" = "L'appliance a été désinstallée";
 
 /* Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module. */
-"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module." = "Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.";
+"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module." = "L'appliance est déjà téléchargée. Si vous voulez l'instancier, créez une machine virtuelle et choisissez le module Appliance.";
 
 /* Are you sure you want to download this appliance? */
-"Are you sure you want to download this appliance?" = "Are you sure you want to download this appliance?";
+"Are you sure you want to download this appliance?" = "Etes-vous sûr de voulour télécharger cette appliance ?";
 
 /* Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template. */
-"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template." = "Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template.";
+"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template." = "Etes-vous sûr de vouloir supprimer cette appliance ? Les machines virtuelles qui l'utilisent ne seront pas affectées.";
 
 /* Are you sure you want to unregister fro this VMCast? All its appliances will be deleted. */
-"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted." = "Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.";
+"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted." = "Etes-vous sûr de voulour vous désabonner de ce VMCast ? Toutes les appliances téléchargées seront supprimées.";
 
 /* Cancel */
-"Cancel" = "Cancel";
+"Cancel" = "Annuler";
 
 /* Comment */
-"Comment" = "Comment";
+"Comment" = "Commentaire";
 
 /* Delete appliance */
-"Delete appliance" = "Delete appliance";
+"Delete appliance" = "Supprimer l'appliance";
 
 /* Delete the selected appliance from the hypervisor repository */
-"Delete the selected appliance from the hypervisor repository" = "Delete the selected appliance from the hypervisor repository";
+"Delete the selected appliance from the hypervisor repository" = "Supprimer l'appliance sélectionnée du répértoire de l'hyperviseur.";
 
 /* Delete VMCast */
-"Delete VMCast" = "Delete VMCast";
+"Delete VMCast" = "Supprimer VMCast";
 
 /* Download */
-"Download" = "Download";
+"Download" = "Télécharger";
 
 /* Download complete */
-"Download complete" = "Download complete";
+"Download complete" = "Téléchargement complet";
 
 /* Download error */
-"Download error" = "Download error";
+"Download error" = "Erreur de téléchargement";
+
+/* Download queue for  */
+"Download queue for " = "Téléchargements pour ";
 
 /* Download selected appliance */
-"Download selected appliance" = "Download selected appliance";
+"Download selected appliance" = "Télécharge l'appliance sélectionnée.";
 
 /* Download started */
-"Download started" = "Download started";
+"Download started" = "Le téléchargement a démarré";
 
 /* If checked, it will only displayed installed appliances */
-"If checked, it will only displayed installed appliances" = "If checked, it will only displayed installed appliances";
+"If checked, it will only displayed installed appliances" = "Afficher uniquement les appliances téléchargées si cette case est cochée.";
 
 /* Register to a new VMCast feed */
-"Register to a new VMCast feed" = "Register to a new VMCast feed";
+"Register to a new VMCast feed" = "S'abonner à un flux VMCast";
 
 /* Register to a new VMCasts */
-"Register to a new VMCasts" = "Register to a new VMCasts";
+"Register to a new VMCasts" = "S'abonner à un nouveau VMCasts";
 
 /* Remove selected appliance */
-"Remove selected appliance" = "Remove selected appliance";
+"Remove selected appliance" = "Supprimer l'appliance sélectionnée.";
 
 /* Show activity monitor */
-"Show activity monitor" = "Show activity monitor";
+"Show activity monitor" = "Ouvrir le moniteur de téléchargements.";
 
 /* Show all current downloads */
-"Show all current downloads" = "Show all current downloads";
+"Show all current downloads" = "Afficher tous les téléchargements en cours";
 
 /* Size */
-"Size" = "Size";
+"Size" = "Taille";
 
 /* Start to download selected appliance */
-"Start to download selected appliance" = "Start to download selected appliance";
+"Start to download selected appliance" = "Commence le téléchargement de l'appliance sélectionnée.";
 
 /* Status */
-"Status" = "Status";
+"Status" = "Statut";
 
 /* Unregister */
-"Unregister" = "Unregister";
+"Unregister" = "Désabonnement";
 
 /* Unregister from a VMCast feed */
-"Unregister from a VMCast feed" = "Unregister from a VMCast feed";
+"Unregister from a VMCast feed" = "Se désabonner d'un flux VMCast.";
 
 /* Unregister from selected VMCast */
-"Unregister from selected VMCast" = "Unregister from selected VMCast";
+"Unregister from selected VMCast" = "Se désabonner du flux VMCast sélectionné.";
 
 /* VMCast */
 "VMCast" = "VMCast";
 
 /* VMcast has been registred */
-"VMcast has been registred" = "VMcast has been registred";
+"VMcast has been registred" = "Abonnement au VMcast effectué";
 
 /* VMcast has been unregistred */
-"VMcast has been unregistred" = "VMcast has been unregistred";
+"VMcast has been unregistred" = "Désabonnement du VMCast effectué";
 
 /* VMCasts */
 "VMCasts" = "VMCasts";
 
 /* You must select a VMCast or an Appliance */
-"You must select a VMCast or an Appliance" = "You must select a VMCast or an Appliance";
+"You must select a VMCast or an Appliance" = "Vous devez sélectionner un VMCast ou une appliance.";
 

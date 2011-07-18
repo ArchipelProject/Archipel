@@ -3,25 +3,25 @@
 "4.title" = "Santé";
 
 /* Class = "NSTextFieldCell"; title = "CPU usage:"; ObjectID = "6"; */
-"6.title" = "Utilisation CPU:";
+"6.title" = "Utilisation CPU :";
 
 /* Class = "NSTextFieldCell"; title = "Disk usage:"; ObjectID = "8"; */
-"8.title" = "Utilisation disque:";
+"8.title" = "Utilisation disque :";
 
 /* Class = "NSTextFieldCell"; title = "Load average:"; ObjectID = "11"; */
-"11.title" = "Charge moyenne:";
+"11.title" = "Charge moyenne :";
 
 /* Class = "NSTextFieldCell"; title = "Free memory:"; ObjectID = "12"; */
-"12.title" = "Mémoire libre:";
+"12.title" = "Mémoire libre :";
 
 /* Class = "NSTextFieldCell"; title = "Machine:"; ObjectID = "15"; */
-"15.title" = "Machine:";
+"15.title" = "Machine :";
 
 /* Class = "NSTextFieldCell"; title = "Swapped:"; ObjectID = "16"; */
-"16.title" = "Swap:";
+"16.title" = "Swap :";
 
 /* Class = "NSTextFieldCell"; title = "Uptime:"; ObjectID = "20"; */
-"20.title" = "Uptime:";
+"20.title" = "Uptime :";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "22"; */
 "22.title" = "...";
@@ -69,7 +69,7 @@
 "68.title" = "0Go";
 
 /* Class = "NSTextFieldCell"; title = "Load History"; ObjectID = "76"; */
-"76.title" = "Historique charge";
+"76.title" = "Historique de charge";
 
 /* Class = "NSTextFieldCell"; title = "10"; ObjectID = "78"; */
 "78.title" = "10";
@@ -90,32 +90,32 @@
 "92.title" = "Utilisation réseau";
 
 /* Class = "NSTextFieldCell"; title = "Disks usage"; ObjectID = "104"; */
-"104.title" = "Historique mémoire";
+"104.title" = "Utilisation disque";
 
 /* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "126"; */
 "126.title" = "Ce tableau contient les logs de l'hyperviseur";
 
 /* Class = "NSTextFieldCell"; title = "Health preferences"; ObjectID = "136"; */
-"136.title" = "Preferences Santé";
+"136.title" = "Préférences Santé";
 
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for the health module."; ObjectID = "138"; */
 "138.title" = "Vous pouvez configurer les préférences du module de santé";
 
 /* Class = "NSTextFieldCell"; title = "Auto refresh interval:"; ObjectID = "140"; */
-"140.title" = "Interval de MaJ:";
+"140.title" = "Interval de MaJ :";
 
 /* Class = "NSTextFieldCell"; title = "Max items in history:"; ObjectID = "142"; */
-"142.title" = "Nombre max d'historique:";
+"142.title" = "Nombre max d'historiques :";
 
 /* Class = "NSTextFieldCell"; title = "Max log lines:"; ObjectID = "144"; */
-"144.title" = "Nombre max de logs:";
+"144.title" = "Nombre max de logs :";
 
 /* Class = "NSTextFieldCell"; title = "Show \"Method\" column:"; ObjectID = "146"; */
-"146.title" = "Affiche la colonne \"Methode\":";
+"146.title" = "Affiche la colonne \"Méthode\" :";
 
 /* Class = "NSTextFieldCell"; title = "Show \"File\" column:"; ObjectID = "148"; */
-"148.title" = "Affiche la colonne \"Fichier\":";
+"148.title" = "Affiche la colonne \"Fichier\" :";
 
 /* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
-"150.title" = "Refraichissement auto:";
+"150.title" = "Rafraichissement auto :";
 

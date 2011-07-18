@@ -5,92 +5,92 @@
 	<key>Activate</key>
 	<string>Activate</string>
 	<key>Activate or deactivate Spanning Tree Protocol for the bridge</key>
-	<string>Activate or deactivate Spanning Tree Protocol for the bridge</string>
+	<string>Activer ou désactiver Spanning Tree Protocol</string>
 	<key>Activate selected networks</key>
-	<string>Activate selected networks</string>
+	<string>Activer les réseaux séléctionnés</string>
 	<key>Activate this network</key>
-	<string>Activate this network</string>
+	<string>Activer ce réseau</string>
 	<key>Add new host reservation</key>
-	<string>Add new host reservation</string>
+	<string>Ajouter une nouvelle réservation d'hôte</string>
 	<key>Add new range</key>
-	<string>Add new range</string>
+	<string>Ajouter une nouvelle gamme DHCP</string>
 	<key>Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.</key>
-	<string>Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.</string>
+	<string>Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.</string>
 	<key>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</key>
-	<string>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</string>
+	<string>Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.</string>
 	<key>Cancel</key>
-	<string>Cancel</string>
+	<string>Annuler</string>
 	<key>Choose the forward mode for this virtual network</key>
-	<string>Choose the forward mode for this virtual network</string>
+	<string>Choissisez le mode de renvoi pour ce réseau</string>
 	<key>Create a new DHCP range</key>
-	<string>Create a new DHCP range</string>
+	<string>Créer une nouvelle gamme DHCP</string>
 	<key>Create a new DHCP reservation</key>
-	<string>Create a new DHCP reservation</string>
+	<string>Créer une nouvelle réservation d'hôte</string>
 	<key>Create a new network</key>
-	<string>Create a new network</string>
+	<string>Créer un réseau</string>
 	<key>Create new virtual network</key>
-	<string>Create new virtual network</string>
+	<string>Créer un nouveau réseau</string>
 	<key>DHCP Hosts</key>
-	<string>DHCP Hosts</string>
+	<string>Hôtes DHCP</string>
 	<key>DHCP Ranges</key>
-	<string>DHCP Ranges</string>
+	<string>Gammes DHCP</string>
 	<key>Deactivate</key>
-	<string>Deactivate</string>
+	<string>Désactiver</string>
 	<key>Deactivate Network</key>
-	<string>Deactivate Network</string>
+	<string>Désactiver réseau</string>
 	<key>Deactivate selected networks</key>
-	<string>Deactivate selected networks</string>
+	<string>Désactiver les réseaux sélectionnés</string>
 	<key>Deactivate this network</key>
-	<string>Deactivate this network</string>
+	<string>Désactiver ce réseau</string>
 	<key>Delete</key>
-	<string>Delete</string>
+	<string>Supprimer</string>
 	<key>Delete Network</key>
-	<string>Delete Network</string>
+	<string>Supprimer réseau</string>
 	<key>Delete selected network</key>
-	<string>Delete selected network</string>
+	<string>Supprimer le réseau sélectionné</string>
 	<key>Delete selected networks</key>
-	<string>Delete selected networks</string>
+	<string>Supprimer les réseaux sélectionnés</string>
 	<key>Edit</key>
-	<string>Edit</string>
+	<string>Editer</string>
 	<key>Edit selected network</key>
-	<string>Edit selected network</string>
+	<string>Editer le réseau sélectionné</string>
 	<key>Enable DHCP for this virtual network</key>
-	<string>Enable DHCP for this virtual network</string>
+	<string>Activer DHCP pour ce réseau</string>
 	<key>Enter the name of the bridge to create when this network is activated</key>
-	<string>Enter the name of the bridge to create when this network is activated</string>
+	<string>Entrer le nom du pont réseau à utiliser</string>
 	<key>Enter the name of the virtual network</key>
-	<string>Enter the name of the virtual network</string>
+	<string>Entrer le nom du réseau</string>
 	<key>Enter the value of delay for the bridge</key>
-	<string>Enter the value of delay for the bridge</string>
+	<string>Entrer la valeur du délai</string>
 	<key>Error</key>
-	<string>Error</string>
+	<string>Erreur</string>
 	<key>Network</key>
-	<string>Network</string>
+	<string>Réseau</string>
 	<key>Network has been defined</key>
-	<string>Network has been defined</string>
+	<string>Le réseau a été défini</string>
 	<key>Network has been removed</key>
-	<string>Network has been removed</string>
+	<string>Le réseau a été supprimé</string>
 	<key>Network status has changed</key>
-	<string>Network status has changed</string>
+	<string>Le statut du réseau a changé</string>
 	<key>Open configuration panel for selected network</key>
-	<string>Open configuration panel for selected network</string>
+	<string>Ouvrir le panneau de configuration pour le résau sélectionné</string>
 	<key>Remove</key>
-	<string>Remove</string>
+	<string>Supprimer</string>
 	<key>Remove selected DHCP range</key>
-	<string>Remove selected DHCP range</string>
+	<string>Supprimer la gamme DHCP</string>
 	<key>Remove selected DHCP reservation</key>
-	<string>Remove selected DHCP reservation</string>
+	<string>Supprimer la réservation d'hôte sélectionnée</string>
 	<key>Select the hypervisor network card you want to use for this virtual network</key>
-	<string>Select the hypervisor network card you want to use for this virtual network</string>
+	<string>Sélectionner la carte réseau à utiliser pour ce réseau</string>
 	<key>The IP address to assign to the bridge</key>
-	<string>The IP address to assign to the bridge</string>
+	<string>L'addresse IP à assigner au pont</string>
 	<key>The netmask to use for the bridge</key>
-	<string>The netmask to use for the bridge</string>
+	<string>Le masque réseau à utiliser pour le pont</string>
 	<key>You can't edit a running network</key>
-	<string>You can't edit a running network</string>
+	<string>Vous ne pouvez pas éditer un reseau activé</string>
 	<key>You can't update a running network</key>
-	<string>You can't update a running network</string>
+	<string>Vous ne pouvez pas mettre à jour un réseau activé</string>
 	<key>domain.com</key>
-	<string>domain.com</string>
+	<string>domaine.com</string>
 </dict>
 </plist>

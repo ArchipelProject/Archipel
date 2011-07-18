@@ -3,14 +3,14 @@
 "95.placeholderString" = "http://welcome.archipelproject.org";
 
 /* Class = "NSTextFieldCell"; title = "Welcome view URL"; ObjectID = "99"; */
-"99.title" = "Welcome view URL";
+"99.title" = "URL de la page";
 
 /* Class = "NSTextFieldCell"; title = "You can configure the preferences for the welcome view."; ObjectID = "100"; */
-"100.title" = "You can configure the preferences for the welcome view.";
+"100.title" = "Vous pouvez configurer les préférences de la page de bienvenue.";
 
 /* Class = "NSTextFieldCell"; title = "Welcome view preferences"; ObjectID = "101"; */
-"101.title" = "Welcome view preferences";
+"101.title" = "Préférences de Bienvenue";
 
 /* Class = "NSTextFieldCell"; title = "Loading"; ObjectID = "110"; */
-"110.title" = "Loading";
+"110.title" = "Chargement";
 

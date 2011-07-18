@@ -3,42 +3,42 @@
 <plist version="1.0">
 <dict>
 	<key> is migrating</key>
-	<string> is migrating</string>
+	<string> est en train de migrer</string>
 	<key> state modified</key>
-	<string> state modified</string>
+	<string> étaut modifié</string>
 	<key> to the selected hypervisor</key>
-	<string> to the selected hypervisor</string>
+	<string> vers l'hyperviseur séléctionné</string>
 	<key>Cannot migrate virtual machine </key>
-	<string>Cannot migrate virtual machine </string>
+	<string>Impossible de migrer la VM </string>
 	<key>Destroy all selected virtual machines</key>
-	<string>Destroy all selected virtual machines</string>
+	<string>Détruire toutes les VMs séléctionnées</string>
 	<key>Destroy selected virtual machines</key>
-	<string>Destroy selected virtual machines</string>
+	<string>Détruire la VM séléctionnée</string>
 	<key>Migrate all selected virtual machines</key>
-	<string>Migrate all selected virtual machines</string>
+	<string>Migrer toutes les VMs séléctionnées</string>
 	<key>Pause all selected virtual machines</key>
-	<string>Pause all selected virtual machines</string>
+	<string>Mettre en pause toutes les VMs séléctionnées</string>
 	<key>Pause selected virtual machines</key>
-	<string>Pause selected virtual machines</string>
+	<string>Mettre en pause la VM séléctionnée</string>
 	<key>Reboot all selected virtual machines (not supported by all hypervisors)</key>
-	<string>Reboot all selected virtual machines (not supported by all hypervisors)</string>
+	<string>Redémarrer toutes les VMs séléctionnées (ceci n'est pas supporté par tous les hyperviseurs)</string>
 	<key>Reboot selected virtual machines</key>
-	<string>Reboot selected virtual machines</string>
+	<string>Redémarrer toutes les VMs séléctionnées</string>
 	<key>Resume all selected virtual machines</key>
-	<string>Resume all selected virtual machines</string>
+	<string>Reprendre l'exécution de toutes les VMs séléctionnées</string>
 	<key>Resume selected virtual machines</key>
-	<string>Resume selected virtual machines</string>
+	<string>Reprendre l'exécution de la VM séléctionnée</string>
 	<key>Shutdown all selected virtual machines</key>
-	<string>Shutdown all selected virtual machines</string>
+	<string>Eteindre toutes les VMs séléctionnées</string>
 	<key>Shutdown selected virtual machines</key>
-	<string>Shutdown selected virtual machines</string>
+	<string>Eteindre la VM séléctionnée</string>
 	<key>Start all selected virtual machines</key>
-	<string>Start all selected virtual machines</string>
+	<string>Démarrer la VM séléctionnée</string>
 	<key>Start selected virtual machines</key>
-	<string>Start selected virtual machines</string>
+	<string>Démarrer toutes les VMs séléctionnées</string>
 	<key>Virtual Machine</key>
-	<string>Virtual Machine</string>
+	<string>Machine Virtuelle</string>
 	<key>Virtual machine </key>
-	<string>Virtual machine </string>
+	<string>Machine Virtuelle </string>
 </dict>
 </plist>

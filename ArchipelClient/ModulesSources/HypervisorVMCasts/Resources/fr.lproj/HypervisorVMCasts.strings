@@ -1,39 +1,39 @@
 
 /* Class = "NSTextFieldCell"; title = "VMCasts management"; ObjectID = "3"; */
-"3.title" = "VMCasts management";
+"3.title" = "Management des VMCasts";
 
 /* Class = "NSTextFieldCell"; title = "You can manage the VMCasts of the hypervisor or download appliances that can be used by virtual machines."; ObjectID = "7"; */
-"7.title" = "You can manage the VMCasts of the hypervisor or download appliances that can be used by virtual machines.";
+"7.title" = "Vous pouvez controler les VMCasts de l'hyperviseur ou télécharger des appliances qui pourront être utilisés par les machines virtuelles.";
 
 /* Class = "NSButtonCell"; title = "Display only installed"; ObjectID = "14"; */
-"14.title" = "Display only installed";
+"14.title" = "Afficher seulement les appliances installées";
 
 /* Class = "NSTextFieldCell"; title = "Register to VMCast"; ObjectID = "27"; */
-"27.title" = "Register to VMCast";
+"27.title" = "S'abonner à un VMCast";
 
 /* Class = "NSTextFieldCell"; title = "Enter the URL of the VMCast to add"; ObjectID = "29"; */
-"29.title" = "Enter the URL of the VMCast to add";
+"29.title" = "Entrez l'URL du VMCast à ajouter";
 
 /* Class = "NSTextFieldCell"; placeholderString = "http://myvmcastprovider.com"; ObjectID = "31"; */
-"31.placeholderString" = "http://myvmcastprovider.com";
+"31.placeholderString" = "http://monfournisseur.com";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "35"; */
 "35.title" = "Box";
 
 /* Class = "NSButtonCell"; title = "Register"; ObjectID = "37"; */
-"37.title" = "Register";
+"37.title" = "S'abonner";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
-"39.title" = "Cancel";
+"39.title" = "Annuler";
 
 /* Class = "NSTextFieldCell"; title = "URL:"; ObjectID = "47"; */
 "47.title" = "URL:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "100"; */
-"100.headerCell.title" = "Name";
+"100.headerCell.title" = "Nom";
 
 /* Class = "NSTableColumn"; headerCell.title = "Total Size"; ObjectID = "101"; */
-"101.headerCell.title" = "Total Size";
+"101.headerCell.title" = "Taille totale";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "102"; */
 "102.title" = "Text Cell";
@@ -42,17 +42,17 @@
 "103.title" = "Text Cell";
 
 /* Class = "NSTableColumn"; headerCell.title = "Progress"; ObjectID = "109"; */
-"109.headerCell.title" = "Progress";
+"109.headerCell.title" = "Progression";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "110"; */
 "110.title" = "Text Cell";
 
 /* Class = "NSTextFieldCell"; title = "Download queue for"; ObjectID = "113"; */
-"113.title" = "Download queue for";
+"113.title" = "Queue de téléchargement pour ";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "114"; */
 "114.title" = "Box";
 
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "118"; */
-"118.title" = "Close";
+"118.title" = "Fermer";
 

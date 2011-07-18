@@ -333,15 +333,15 @@
 					</object>
 					<object class="NSTextField" id="820055898">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 447}, {512, 20}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 447}, {665, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="968821087"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="282853100">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">You can manage the hypervisor's network.</string>
+							<string key="NSContents">Vous pouvez piloter les réseaux de l'hyperviseur</string>
 							<object class="NSFont" key="NSSupport" id="179505641">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -359,15 +359,15 @@
 					</object>
 					<object class="NSTextField" id="149622864">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 475}, {274, 26}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 475}, {665, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="993959355"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="23418014">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Manage hypervisor networks</string>
+							<string key="NSContents">Piloter les réseaux de l'hyperviseur</string>
 							<object class="NSFont" key="NSSupport" id="548128472">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
@@ -439,7 +439,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75628096</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Start</string>
+															<string key="NSContents">Début</string>
 															<reference key="NSSupport" ref="26"/>
 															<object class="NSColor" key="NSBackgroundColor" id="969551036">
 																<int key="NSColorSpace">3</int>
@@ -474,7 +474,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75628096</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">End</string>
+															<string key="NSContents">Fin</string>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSBackgroundColor" ref="969551036"/>
 															<reference key="NSTextColor" ref="349294912"/>
@@ -597,7 +597,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="281572311">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">You can create auto IP assignation ranges.</string>
+							<string key="NSContents">Vous pouvez créer des assignation automatique d'IP.</string>
 							<reference key="NSSupport" ref="179505641"/>
 							<reference key="NSControlView" ref="166828986"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -662,7 +662,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75628096</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">MAC Address</string>
+															<string key="NSContents">Addresse MAC</string>
 															<reference key="NSSupport" ref="26"/>
 															<object class="NSColor" key="NSBackgroundColor" id="978407914">
 																<int key="NSColorSpace">3</int>
@@ -697,7 +697,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75628096</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Name</string>
+															<string key="NSContents">Nom</string>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSBackgroundColor" ref="978407914"/>
 															<reference key="NSTextColor" ref="349294912"/>
@@ -857,7 +857,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="472678378">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">You can create host address reservation.</string>
+							<string key="NSContents">Vous pouvez créer des résérvation de nom d'hôte.</string>
 							<reference key="NSSupport" ref="179505641"/>
 							<reference key="NSControlView" ref="1052842031"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -975,7 +975,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Name</string>
+													<string key="NSContents">Nom</string>
 													<reference key="NSSupport" ref="26"/>
 													<reference key="NSBackgroundColor" ref="797341924"/>
 													<reference key="NSTextColor" ref="349294912"/>
@@ -1069,7 +1069,7 @@
 					<object class="NSTextField" id="280132104">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{619, 108}, {170, 14}}</string>
+						<string key="NSFrame">{{619, 108}, {307, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="331373945"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1077,7 +1077,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="233634488">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">IP Reservation</string>
+							<string key="NSContents">Réservation IP</string>
 							<object class="NSFont" key="NSSupport" id="241279421">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">11</double>
@@ -1131,7 +1131,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Start</string>
+													<string key="NSContents">Début</string>
 													<reference key="NSSupport" ref="26"/>
 													<object class="NSColor" key="NSBackgroundColor" id="351536825">
 														<int key="NSColorSpace">3</int>
@@ -1160,7 +1160,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">End</string>
+													<string key="NSContents">Fin</string>
 													<reference key="NSSupport" ref="26"/>
 													<reference key="NSBackgroundColor" ref="351536825"/>
 													<reference key="NSTextColor" ref="349294912"/>
@@ -1255,7 +1255,7 @@
 					<object class="NSTextField" id="516412161">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{180, 35}, {61, 14}}</string>
+						<string key="NSFrame">{{173, 34}, {68, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="121981814"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1274,7 +1274,7 @@
 					<object class="NSTextField" id="121981814">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{243, 34}, {104, 17}}</string>
+						<string key="NSFrame">{{243, 31}, {104, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="78311330"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1297,7 +1297,7 @@
 					<object class="NSTextField" id="221377303">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{193, 20}, {48, 14}}</string>
+						<string key="NSFrame">{{174, 19}, {67, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="388308990"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1305,7 +1305,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="844278278">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Delay:</string>
+							<string key="NSContents">Délai:</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="221377303"/>
@@ -1316,7 +1316,7 @@
 					<object class="NSTextField" id="388308990">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{243, 19}, {104, 17}}</string>
+						<string key="NSFrame">{{243, 16}, {104, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="1072762059"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1324,7 +1324,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="786391202">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">delay</string>
+							<string key="NSContents">délai</string>
 							<reference key="NSSupport" ref="859373352"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="388308990"/>
@@ -1335,7 +1335,7 @@
 					<object class="NSTextField" id="706376519">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{193, 50}, {48, 14}}</string>
+						<string key="NSFrame">{{174, 49}, {67, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="232431832"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1343,7 +1343,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="560397784">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Mask:</string>
+							<string key="NSContents">Masque:</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="706376519"/>
@@ -1354,7 +1354,7 @@
 					<object class="NSTextField" id="23622199">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{193, 65}, {48, 14}}</string>
+						<string key="NSFrame">{{174, 64}, {67, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="223609598"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1373,7 +1373,7 @@
 					<object class="NSTextField" id="178228643">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{87, 19}, {104, 17}}</string>
+						<string key="NSFrame">{{87, 16}, {84, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="221377303"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1392,7 +1392,7 @@
 					<object class="NSTextField" id="78311330">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{37, 20}, {48, 14}}</string>
+						<string key="NSFrame">{{37, 19}, {48, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="178228643"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1411,7 +1411,7 @@
 					<object class="NSTextField" id="439480832">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{87, 34}, {104, 17}}</string>
+						<string key="NSFrame">{{87, 31}, {84, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="706376519"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1430,7 +1430,7 @@
 					<object class="NSTextField" id="14035217">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{37, 35}, {48, 14}}</string>
+						<string key="NSFrame">{{37, 34}, {48, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="516412161"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1449,7 +1449,7 @@
 					<object class="NSTextField" id="232431832">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{243, 49}, {104, 17}}</string>
+						<string key="NSFrame">{{243, 46}, {104, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="14035217"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1468,7 +1468,7 @@
 					<object class="NSTextField" id="223609598">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{243, 65}, {104, 17}}</string>
+						<string key="NSFrame">{{243, 61}, {104, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="527522555"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1487,7 +1487,7 @@
 					<object class="NSTextField" id="527522555">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{37, 50}, {48, 14}}</string>
+						<string key="NSFrame">{{37, 49}, {48, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="827772003"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1495,7 +1495,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="555397735">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Device:</string>
+							<string key="NSContents">Carte :</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="527522555"/>
@@ -1506,7 +1506,7 @@
 					<object class="NSTextField" id="827772003">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{87, 49}, {104, 17}}</string>
+						<string key="NSFrame">{{87, 46}, {84, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="439480832"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1514,7 +1514,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="611847446">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">device</string>
+							<string key="NSContents">carte</string>
 							<reference key="NSSupport" ref="859373352"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="827772003"/>
@@ -1525,7 +1525,7 @@
 					<object class="NSTextField" id="130060420">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{87, 64}, {104, 17}}</string>
+						<string key="NSFrame">{{87, 61}, {84, 17}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="23622199"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1533,7 +1533,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="708082869">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">name</string>
+							<string key="NSContents">nom</string>
 							<reference key="NSSupport" ref="859373352"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="130060420"/>
@@ -1544,7 +1544,7 @@
 					<object class="NSTextField" id="392661939">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{37, 65}, {48, 14}}</string>
+						<string key="NSFrame">{{37, 64}, {48, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="130060420"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1552,7 +1552,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="515754482">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Name: </string>
+							<string key="NSContents">Nom : </string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="392661939"/>
@@ -1563,7 +1563,7 @@
 					<object class="NSTextField" id="1023278182">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{364, 110}, {170, 14}}</string>
+						<string key="NSFrame">{{364, 110}, {232, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="280132104"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1571,7 +1571,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="114484620">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">DHCP Ranges</string>
+							<string key="NSContents">Gamme DHCP</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="1023278182"/>
@@ -1582,7 +1582,7 @@
 					<object class="NSTextField" id="331373945">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{37, 85}, {170, 14}}</string>
+						<string key="NSFrame">{{37, 85}, {310, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="392661939"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1590,7 +1590,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="595052574">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">Bridge information</string>
+							<string key="NSContents">Information du pont</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="331373945"/>
@@ -1601,7 +1601,7 @@
 					<object class="NSTextField" id="937961799">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{35, 108}, {378, 18}}</string>
+						<string key="NSFrame">{{35, 108}, {312, 18}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="1023278182"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -1609,7 +1609,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="256879915">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Network name</string>
+							<string key="NSContents">Nom du réseau</string>
 							<object class="NSFont" key="NSSupport">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">14</double>
@@ -1689,7 +1689,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="306483877">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Name:</string>
+							<string key="NSContents">Nom:</string>
 							<object class="NSFont" key="NSSupport" id="965450233">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -1710,7 +1710,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="796021556">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Bridge address:</string>
+							<string key="NSContents">Addresse du pont:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="745258264"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1727,7 +1727,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="97135927">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Forward device:</string>
+							<string key="NSContents">Carte de sortie:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="479764993"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1744,7 +1744,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="678622548">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Network basics</string>
+							<string key="NSContents">Infos basiques</string>
 							<reference key="NSSupport" ref="548128472"/>
 							<reference key="NSControlView" ref="44947341"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1764,7 +1764,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1054732532">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Addressing</string>
+							<string key="NSContents">Addressage</string>
 							<reference key="NSSupport" ref="548128472"/>
 							<reference key="NSControlView" ref="169193509"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1786,7 +1786,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">Name of the network</string>
+							<string key="NSPlaceholderString">Nom du réseau</string>
 							<reference key="NSControlView" ref="396097288"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -1808,7 +1808,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="753534544">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Bridge name:</string>
+							<string key="NSContents">Nom du pont :</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="270522499"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1827,7 +1827,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">Name of the network bridge</string>
+							<string key="NSPlaceholderString">Nom du pont</string>
 							<reference key="NSControlView" ref="193292368"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -1844,7 +1844,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="199565340">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Bridge delay: </string>
+							<string key="NSContents">Delai du pont: </string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="40168493"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1863,7 +1863,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">Fordard delay</string>
+							<string key="NSPlaceholderString">Delai de renvoi</string>
 							<reference key="NSControlView" ref="132394055"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -1899,7 +1899,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="930233789">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Netmask:</string>
+							<string key="NSContents">Masque:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="209231076"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2008,7 +2008,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="757252273">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Forward mode:</string>
+							<string key="NSContents">Mode de renvoi:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="196422198"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2092,7 +2092,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="143120818">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Activate STP:</string>
+							<string key="NSContents">Activer STP:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="455799328"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2176,7 +2176,7 @@
 						<object class="NSButtonCell" key="NSCell" id="664033214">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">DHCP enabled</string>
+							<string key="NSContents">DHCP activé</string>
 							<reference key="NSSupport" ref="5247702"/>
 							<reference key="NSControlView" ref="350876592"/>
 							<int key="NSButtonFlags">1211912703</int>
@@ -2260,7 +2260,7 @@
 						<object class="NSButtonCell" key="NSCell" id="845902540">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Save</string>
+							<string key="NSContents">Sauver</string>
 							<reference key="NSSupport" ref="5247702"/>
 							<reference key="NSControlView" ref="204776721"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -2282,7 +2282,7 @@
 						<object class="NSButtonCell" key="NSCell" id="511731036">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
+							<string key="NSContents">Annuler</string>
 							<reference key="NSSupport" ref="5247702"/>
 							<reference key="NSControlView" ref="159830380"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -4496,6 +4496,14 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNBasicDataView</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNBasicDataView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNHypervisorNetworksController</string>
 					<string key="superclassName">TNModule</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -4574,7 +4582,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPButtonBar</string>
 							<string>NSSearchField</string>
-							<string>TNNetworkEditionController</string>
+							<string>TNWindowNetworkController</string>
 							<string>TNNetworkDataView</string>
 							<string>TNUIKitScrollView</string>
 							<string>NSTableView</string>
@@ -4605,7 +4613,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">networkController</string>
-								<string key="candidateClassName">TNNetworkEditionController</string>
+								<string key="candidateClassName">TNWindowNetworkController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">networkDataViewPrototype</string>
@@ -4690,7 +4698,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">TNNetworkDataView</string>
-					<string key="superclassName">NSView</string>
+					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
@@ -5120,6 +5128,281 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNNetworkEditionController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNWindowNetworkController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addDHCPHost:</string>
+							<string>addDHCPRange:</string>
+							<string>closeWindow:</string>
+							<string>forwardModeChanged:</string>
+							<string>hideWindow:</string>
+							<string>openWindow:</string>
+							<string>removeDHCPHost:</string>
+							<string>removeDHCPRange:</string>
+							<string>save:</string>
+							<string>showWindow:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addDHCPHost:</string>
+							<string>addDHCPRange:</string>
+							<string>closeWindow:</string>
+							<string>forwardModeChanged:</string>
+							<string>hideWindow:</string>
+							<string>openWindow:</string>
+							<string>removeDHCPHost:</string>
+							<string>removeDHCPRange:</string>
+							<string>save:</string>
+							<string>showWindow:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">addDHCPHost:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addDHCPRange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">forwardModeChanged:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">hideWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeDHCPHost:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeDHCPRange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarControlDHCPHosts</string>
+							<string>buttonBarControlDHCPRanges</string>
+							<string>buttonForwardDevice</string>
+							<string>buttonForwardMode</string>
+							<string>buttonOK</string>
+							<string>checkBoxDHCPEnabled</string>
+							<string>checkBoxSTPEnabled</string>
+							<string>fieldBridgeDelay</string>
+							<string>fieldBridgeIP</string>
+							<string>fieldBridgeName</string>
+							<string>fieldBridgeNetmask</string>
+							<string>fieldNetworkName</string>
+							<string>mainPopover</string>
+							<string>mainWindow</string>
+							<string>scrollViewDHCPHosts</string>
+							<string>scrollViewDHCPRanges</string>
+							<string>tabViewDHCP</string>
+							<string>tableViewHosts</string>
+							<string>tableViewRanges</string>
+							<string>viewHostsConf</string>
+							<string>viewRangesConf</string>
+							<string>viewTableHostsContainer</string>
+							<string>viewTableRangesContainer</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>CPCheckBox</string>
+							<string>CPCheckBox</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+							<string>NSWindow</string>
+							<string>TNUIKitScrollView</string>
+							<string>TNUIKitScrollView</string>
+							<string>NSTabView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarControlDHCPHosts</string>
+							<string>buttonBarControlDHCPRanges</string>
+							<string>buttonForwardDevice</string>
+							<string>buttonForwardMode</string>
+							<string>buttonOK</string>
+							<string>checkBoxDHCPEnabled</string>
+							<string>checkBoxSTPEnabled</string>
+							<string>fieldBridgeDelay</string>
+							<string>fieldBridgeIP</string>
+							<string>fieldBridgeName</string>
+							<string>fieldBridgeNetmask</string>
+							<string>fieldNetworkName</string>
+							<string>mainPopover</string>
+							<string>mainWindow</string>
+							<string>scrollViewDHCPHosts</string>
+							<string>scrollViewDHCPRanges</string>
+							<string>tabViewDHCP</string>
+							<string>tableViewHosts</string>
+							<string>tableViewRanges</string>
+							<string>viewHostsConf</string>
+							<string>viewRangesConf</string>
+							<string>viewTableHostsContainer</string>
+							<string>viewTableRangesContainer</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControlDHCPHosts</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControlDHCPRanges</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonForwardDevice</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonForwardMode</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxDHCPEnabled</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxSTPEnabled</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeDelay</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeIP</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBridgeNetmask</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNetworkName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainWindow</string>
+								<string key="candidateClassName">NSWindow</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">scrollViewDHCPHosts</string>
+								<string key="candidateClassName">TNUIKitScrollView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">scrollViewDHCPRanges</string>
+								<string key="candidateClassName">TNUIKitScrollView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabViewDHCP</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableViewHosts</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableViewRanges</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewHostsConf</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewRangesConf</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableHostsContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableRangesContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNWindowNetworkController.h</string>
 					</object>
 				</object>
 			</object>

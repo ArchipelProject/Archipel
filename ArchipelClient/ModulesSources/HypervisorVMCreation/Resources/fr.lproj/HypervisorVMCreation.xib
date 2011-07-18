@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
 		<string key="IBDocument.SystemVersion">11A511</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1615</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
 		<string key="IBDocument.AppKitVersion">1138</string>
 		<string key="IBDocument.HIToolboxVersion">566.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1615</string>
+			<string key="NS.object.0">1617</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -182,7 +182,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75628096</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Name</string>
+															<string key="NSContents">Nom</string>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSBackgroundColor" ref="365546131"/>
 															<reference key="NSTextColor" ref="587272129"/>
@@ -418,15 +418,15 @@
 					</object>
 					<object class="NSTextField" id="149182491">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 448}, {666, 20}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 448}, {691, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="437751216"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="969419775">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container.</string>
+							<string key="NSContents">Vous pouvez créer ou supprimer des machines virtuelles. Notez que cela ne crée qu'un conteneur XMPP.</string>
 							<object class="NSFont" key="NSSupport" id="940602514">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -444,15 +444,15 @@
 					</object>
 					<object class="NSTextField" id="612623670">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 476}, {691, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="481356683"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="976819694">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Virtual Machines</string>
+							<string key="NSContents">Machines Virtuelles</string>
 							<object class="NSFont" key="NSSupport" id="739828074">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
@@ -492,14 +492,14 @@
 					<object class="NSTextField" id="13781869">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 137}, {214, 26}}</string>
+						<string key="NSFrame">{{17, 137}, {403, 26}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="743773501"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="55534581">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">New virtual machine</string>
+							<string key="NSContents">Nouvelle machine virtuelle</string>
 							<reference key="NSSupport" ref="739828074"/>
 							<reference key="NSControlView" ref="13781869"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -512,14 +512,14 @@
 					<object class="NSTextField" id="743773501">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 104}, {374, 20}}</string>
+						<string key="NSFrame">{{17, 104}, {403, 20}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="588293536"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="886213126">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">If you leave name blank, the name will be generated.</string>
+							<string key="NSContents">Si vous laissez ce champ vide, le nom sera généré.</string>
 							<reference key="NSSupport" ref="940602514"/>
 							<reference key="NSControlView" ref="743773501"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -586,7 +586,7 @@
 						<object class="NSButtonCell" key="NSCell" id="339611916">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Create</string>
+							<string key="NSContents">Créer</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="227086769"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -608,7 +608,7 @@
 						<object class="NSButtonCell" key="NSCell" id="223676074">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
+							<string key="NSContents">Annuler</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="434914358"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -630,7 +630,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="642696251">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Name:</string>
+							<string key="NSContents">Nom :</string>
 							<object class="NSFont" key="NSSupport" id="888678750">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -666,14 +666,14 @@
 					<object class="NSTextField" id="1052651364">
 						<reference key="NSNextResponder" ref="990747162"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 138}, {214, 26}}</string>
+						<string key="NSFrame">{{17, 138}, {403, 26}}</string>
 						<reference key="NSSuperview" ref="990747162"/>
 						<reference key="NSNextKeyView" ref="354586897"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="445137158">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Add subscription</string>
+							<string key="NSContents">Ajouter souscription</string>
 							<reference key="NSSupport" ref="739828074"/>
 							<reference key="NSControlView" ref="1052651364"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -686,14 +686,14 @@
 					<object class="NSTextField" id="354586897">
 						<reference key="NSNextResponder" ref="990747162"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 105}, {371, 20}}</string>
+						<string key="NSFrame">{{17, 105}, {403, 20}}</string>
 						<reference key="NSSuperview" ref="990747162"/>
 						<reference key="NSNextKeyView" ref="37452216"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="478740937">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Enter the JID you want the virtual machine to subscribe to.</string>
+							<string key="NSContents">Entrez le JID auprès duquel vous désirez que la machine virtuelle demande une souscription</string>
 							<reference key="NSSupport" ref="940602514"/>
 							<reference key="NSControlView" ref="354586897"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -712,7 +712,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="227545601"/>
-							<string key="NSPlaceholderString">JID of a user</string>
+							<string key="NSPlaceholderString">JID de l'utilisateur</string>
 							<reference key="NSControlView" ref="514791403"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="34460039"/>
@@ -755,7 +755,7 @@
 						<object class="NSButtonCell" key="NSCell" id="407685942">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Add</string>
+							<string key="NSContents">Ajouter</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="854176317"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -777,7 +777,7 @@
 						<object class="NSButtonCell" key="NSCell" id="698308443">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
+							<string key="NSContents">Annuler</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="466085976"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -799,7 +799,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="918541897">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">JID:</string>
+							<string key="NSContents">JID :</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="37452216"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -828,14 +828,14 @@
 					<object class="NSTextField" id="282676886">
 						<reference key="NSNextResponder" ref="368266890"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 139}, {214, 26}}</string>
+						<string key="NSFrame">{{17, 139}, {404, 26}}</string>
 						<reference key="NSSuperview" ref="368266890"/>
 						<reference key="NSNextKeyView" ref="928565043"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="299958378">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Remove subscription</string>
+							<string key="NSContents">Supprimer souscription</string>
 							<reference key="NSSupport" ref="739828074"/>
 							<reference key="NSControlView" ref="282676886"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -855,7 +855,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="704986519">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Enter the JID you want the virtual machine to unsubscribe from.</string>
+							<string key="NSContents">Entrez le JID auprès duquel vous désirez que la machine virtuelle supprime sa souscription</string>
 							<reference key="NSSupport" ref="940602514"/>
 							<reference key="NSControlView" ref="928565043"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -874,7 +874,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="227545601"/>
-							<string key="NSPlaceholderString">JID of the user</string>
+							<string key="NSPlaceholderString">JID de l'utilisateur</string>
 							<reference key="NSControlView" ref="320820871"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="34460039"/>
@@ -917,7 +917,7 @@
 						<object class="NSButtonCell" key="NSCell" id="73323103">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Remove</string>
+							<string key="NSContents">Supprimer</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="141180765"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -939,7 +939,7 @@
 						<object class="NSButtonCell" key="NSCell" id="422312631">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
+							<string key="NSContents">Annuler</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="735135430"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -961,7 +961,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="650125592">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">JID:</string>
+							<string key="NSContents">JID :</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="594594008"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -1000,7 +1000,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="424709708">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Clone virtual machine</string>
+							<string key="NSContents">Cloneer la machine virtuelle</string>
 							<reference key="NSSupport" ref="739828074"/>
 							<reference key="NSControlView" ref="30796656"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -1013,14 +1013,14 @@
 					<object class="NSTextField" id="146053178">
 						<reference key="NSNextResponder" ref="208505022"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 104}, {374, 20}}</string>
+						<string key="NSFrame">{{17, 104}, {403, 20}}</string>
 						<reference key="NSSuperview" ref="208505022"/>
 						<reference key="NSNextKeyView" ref="233633470"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="521463893">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Choose the name for the clone. Leave it blank to generate.</string>
+							<string key="NSContents">Si vous laissez ce champ vide, le nom sera généré.</string>
 							<reference key="NSSupport" ref="940602514"/>
 							<reference key="NSControlView" ref="146053178"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -1039,7 +1039,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="227545601"/>
-							<string key="NSPlaceholderString">My Cloned VM</string>
+							<string key="NSPlaceholderString">Ma VM clone</string>
 							<reference key="NSControlView" ref="67898124"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="34460039"/>
@@ -1082,7 +1082,7 @@
 						<object class="NSButtonCell" key="NSCell" id="1059063661">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Create</string>
+							<string key="NSContents">Créer</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="771616922"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -1104,7 +1104,7 @@
 						<object class="NSButtonCell" key="NSCell" id="913932235">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
+							<string key="NSContents">Annuler</string>
 							<reference key="NSSupport" ref="227545601"/>
 							<reference key="NSControlView" ref="87663397"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -1119,14 +1119,14 @@
 					<object class="NSTextField" id="233633470">
 						<reference key="NSNextResponder" ref="208505022"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 78}, {46, 17}}</string>
+						<string key="NSFrame">{{5, 78}, {58, 17}}</string>
 						<reference key="NSSuperview" ref="208505022"/>
 						<reference key="NSNextKeyView" ref="67898124"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="48195813">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Name:</string>
+							<int key="NSCellFlags2">67109888</int>
+							<string key="NSContents">Nom :</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="233633470"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>

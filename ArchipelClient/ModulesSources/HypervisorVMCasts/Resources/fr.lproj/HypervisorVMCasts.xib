@@ -91,14 +91,14 @@
 					<object class="NSButton" id="405108041">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 422}, {158, 20}}</string>
+						<string key="NSFrame">{{18, 422}, {474, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="590245974"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="4504155">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Display only installed</string>
+							<string key="NSContents">Afficher seulement les appliances installées</string>
 							<object class="NSFont" key="NSSupport" id="308336826">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -226,7 +226,7 @@
 					</object>
 					<object class="NSTextField" id="897131327">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
+						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 451}, {692, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="405108041"/>
@@ -234,7 +234,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="826338067">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">You can manage the VMCasts of the hypervisor or download appliances that can be used by virtual machines.</string>
+							<string key="NSContents">Vous pouvez controler les VMCasts de l'hyperviseur ou télécharger des appliances qui pourront être utilisés par les machines virtuelles.</string>
 							<reference key="NSSupport" ref="308336826"/>
 							<reference key="NSControlView" ref="897131327"/>
 							<object class="NSColor" key="NSBackgroundColor" id="524371815">
@@ -251,15 +251,15 @@
 					</object>
 					<object class="NSTextField" id="537587155">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 479}, {214, 26}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 479}, {701, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="459723065"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="563196763">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">VMCasts management</string>
+							<string key="NSContents">Management des VMCasts</string>
 							<object class="NSFont" key="NSSupport" id="25815913">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
@@ -339,7 +339,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Name</string>
+													<string key="NSContents">Nom</string>
 													<object class="NSFont" key="NSSupport" id="26">
 														<string key="NSName">LucidaGrande</string>
 														<double key="NSSize">11</double>
@@ -391,7 +391,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Total Size</string>
+													<string key="NSContents">Taille totale</string>
 													<reference key="NSSupport" ref="26"/>
 													<reference key="NSBackgroundColor" ref="101258728"/>
 													<reference key="NSTextColor" ref="883675826"/>
@@ -422,7 +422,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75628096</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Progress</string>
+													<string key="NSContents">Progression</string>
 													<reference key="NSSupport" ref="26"/>
 													<object class="NSColor" key="NSBackgroundColor">
 														<int key="NSColorSpace">6</int>
@@ -537,7 +537,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="141425314">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Download queue for</string>
+							<string key="NSContents">Queue de téléchargement pour </string>
 							<reference key="NSSupport" ref="25815913"/>
 							<reference key="NSControlView" ref="631636219"/>
 							<reference key="NSBackgroundColor" ref="524371815"/>
@@ -582,7 +582,7 @@
 						<object class="NSButtonCell" key="NSCell" id="263316007">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Close</string>
+							<string key="NSContents">Fermer</string>
 							<reference key="NSSupport" ref="701878033"/>
 							<reference key="NSControlView" ref="967070361"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -619,14 +619,14 @@
 					<object class="NSTextField" id="683503369">
 						<reference key="NSNextResponder" ref="92463836"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 149}, {214, 26}}</string>
+						<string key="NSFrame">{{17, 149}, {450, 26}}</string>
 						<reference key="NSSuperview" ref="92463836"/>
 						<reference key="NSNextKeyView" ref="888075161"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="968303805">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Register to VMCast</string>
+							<string key="NSContents">S'abonner à un VMCast</string>
 							<reference key="NSSupport" ref="25815913"/>
 							<reference key="NSControlView" ref="683503369"/>
 							<reference key="NSBackgroundColor" ref="524371815"/>
@@ -639,14 +639,14 @@
 					<object class="NSTextField" id="888075161">
 						<reference key="NSNextResponder" ref="92463836"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 111}, {288, 20}}</string>
+						<string key="NSFrame">{{17, 111}, {450, 20}}</string>
 						<reference key="NSSuperview" ref="92463836"/>
 						<reference key="NSNextKeyView" ref="582577112"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1041356234">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Enter the URL of the VMCast to add</string>
+							<string key="NSContents">Entrez l'URL du VMCast à ajouter</string>
 							<reference key="NSSupport" ref="308336826"/>
 							<reference key="NSControlView" ref="888075161"/>
 							<reference key="NSBackgroundColor" ref="524371815"/>
@@ -665,7 +665,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="701878033"/>
-							<string key="NSPlaceholderString">http://myvmcastprovider.com</string>
+							<string key="NSPlaceholderString">http://monfournisseur.com</string>
 							<reference key="NSControlView" ref="902649609"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="418379342"/>
@@ -713,7 +713,7 @@
 						<object class="NSButtonCell" key="NSCell" id="236838998">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Register</string>
+							<string key="NSContents">S'abonner</string>
 							<reference key="NSSupport" ref="701878033"/>
 							<reference key="NSControlView" ref="637107661"/>
 							<int key="NSButtonFlags">-2038021889</int>
@@ -735,7 +735,7 @@
 						<object class="NSButtonCell" key="NSCell" id="667636744">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
+							<string key="NSContents">Annuler</string>
 							<reference key="NSSupport" ref="701878033"/>
 							<reference key="NSControlView" ref="981118937"/>
 							<int key="NSButtonFlags">-2038021889</int>

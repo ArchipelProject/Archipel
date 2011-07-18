@@ -5,68 +5,70 @@
 	<key>Appliance</key>
 	<string>Appliance</string>
 	<key>Appliance has been uninstalled</key>
-	<string>Appliance has been uninstalled</string>
+	<string>L'appliance a été désinstallée</string>
 	<key>Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.</key>
-	<string>Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.</string>
+	<string>L'appliance est déjà téléchargée. Si vous voulez l'instancier, créez une machine virtuelle et choisissez le module Appliance.</string>
 	<key>Are you sure you want to download this appliance?</key>
-	<string>Are you sure you want to download this appliance?</string>
+	<string>Etes-vous sûr de voulour télécharger cette appliance ?</string>
 	<key>Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template.</key>
-	<string>Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template.</string>
+	<string>Etes-vous sûr de vouloir supprimer cette appliance ? Les machines virtuelles qui l'utilisent ne seront pas affectées.</string>
 	<key>Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.</key>
-	<string>Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.</string>
+	<string>Etes-vous sûr de voulour vous désabonner de ce VMCast ? Toutes les appliances téléchargées seront supprimées.</string>
 	<key>Cancel</key>
-	<string>Cancel</string>
+	<string>Annuler</string>
 	<key>Comment</key>
-	<string>Comment</string>
+	<string>Commentaire</string>
 	<key>Delete VMCast</key>
-	<string>Delete VMCast</string>
+	<string>Supprimer VMCast</string>
 	<key>Delete appliance</key>
-	<string>Delete appliance</string>
+	<string>Supprimer l'appliance</string>
 	<key>Delete the selected appliance from the hypervisor repository</key>
-	<string>Delete the selected appliance from the hypervisor repository</string>
+	<string>Supprimer l'appliance sélectionnée du répértoire de l'hyperviseur.</string>
 	<key>Download</key>
-	<string>Download</string>
+	<string>Télécharger</string>
 	<key>Download complete</key>
-	<string>Download complete</string>
+	<string>Téléchargement complet</string>
 	<key>Download error</key>
-	<string>Download error</string>
+	<string>Erreur de téléchargement</string>
+	<key>Download queue for </key>
+	<string>Téléchargements pour </string>
 	<key>Download selected appliance</key>
-	<string>Download selected appliance</string>
+	<string>Télécharge l'appliance sélectionnée.</string>
 	<key>Download started</key>
-	<string>Download started</string>
+	<string>Le téléchargement a démarré</string>
 	<key>If checked, it will only displayed installed appliances</key>
-	<string>If checked, it will only displayed installed appliances</string>
+	<string>Afficher uniquement les appliances téléchargées si cette case est cochée.</string>
 	<key>Register to a new VMCast feed</key>
-	<string>Register to a new VMCast feed</string>
+	<string>S'abonner à un flux VMCast</string>
 	<key>Register to a new VMCasts</key>
-	<string>Register to a new VMCasts</string>
+	<string>S'abonner à un nouveau VMCasts</string>
 	<key>Remove selected appliance</key>
-	<string>Remove selected appliance</string>
+	<string>Supprimer l'appliance sélectionnée.</string>
 	<key>Show activity monitor</key>
-	<string>Show activity monitor</string>
+	<string>Ouvrir le moniteur de téléchargements.</string>
 	<key>Show all current downloads</key>
-	<string>Show all current downloads</string>
+	<string>Afficher tous les téléchargements en cours</string>
 	<key>Size</key>
-	<string>Size</string>
+	<string>Taille</string>
 	<key>Start to download selected appliance</key>
-	<string>Start to download selected appliance</string>
+	<string>Commence le téléchargement de l'appliance sélectionnée.</string>
 	<key>Status</key>
-	<string>Status</string>
+	<string>Statut</string>
 	<key>Unregister</key>
-	<string>Unregister</string>
+	<string>Désabonnement</string>
 	<key>Unregister from a VMCast feed</key>
-	<string>Unregister from a VMCast feed</string>
+	<string>Se désabonner d'un flux VMCast.</string>
 	<key>Unregister from selected VMCast</key>
-	<string>Unregister from selected VMCast</string>
+	<string>Se désabonner du flux VMCast sélectionné.</string>
 	<key>VMCast</key>
 	<string>VMCast</string>
 	<key>VMCasts</key>
 	<string>VMCasts</string>
 	<key>VMcast has been registred</key>
-	<string>VMcast has been registred</string>
+	<string>Abonnement au VMcast effectué</string>
 	<key>VMcast has been unregistred</key>
-	<string>VMcast has been unregistred</string>
+	<string>Désabonnement du VMCast effectué</string>
 	<key>You must select a VMCast or an Appliance</key>
-	<string>You must select a VMCast or an Appliance</string>
+	<string>Vous devez sélectionner un VMCast ou une appliance.</string>
 </dict>
 </plist>

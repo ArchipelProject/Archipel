@@ -53,13 +53,13 @@
 	<key>Change your current avatar. This picture will be visible by all your contacts</key>
 	<string>Changer votre avatar. Cette image sera visible par tous vos contacts</string>
 	<key>Click here to change the displayed named of the current contact or group</key>
-	<string>Cliquez ici pour changer le nom du contact ou du group</string>
+	<string>Cliquez ici pour changer le nom du contact ou du groupe</string>
 	<key>Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)</key>
 	<string>Cliquez ici pour changer l'avatar du contact (seulement pour les contacts Archipel. Pas les utilisateurs)</string>
 	<key>Collapse all groups</key>
-	<string>Reduire tous les groupes</string>
+	<string>Réduire tous les groupes</string>
 	<key>Collapse group</key>
-	<string>Reduire le groupe</string>
+	<string>Réduire le groupe</string>
 	<key>Connected as </key>
 	<string>Connecté en tant que </string>
 	<key>Contact</key>
@@ -77,7 +77,7 @@
 	<key>Decline</key>
 	<string>Refuser</string>
 	<key>Delay before loading a module. This avoid to load server with stanzas</key>
-	<string>Delai de chargement des modules. Cela evite de surcharger le serveur XMPP.</string>
+	<string>Delai de chargement des modules. Cela évite de surcharger le serveur XMPP.</string>
 	<key>Delete</key>
 	<string>Supprimer</string>
 	<key>Delete contact</key>
@@ -101,7 +101,7 @@
 	<key>Filter contacts by name or tags</key>
 	<string>Filtrer par nom ou par étiquette</string>
 	<key>GB</key>
-	<string>GB</string>
+	<string>Go</string>
 	<key>Go to website</key>
 	<string>Visiter le site web</string>
 	<key>Group</key>
@@ -133,7 +133,7 @@
 	<key>Logon</key>
 	<string>Connexion</string>
 	<key>MB</key>
-	<string>MB</string>
+	<string>Mo</string>
 	<key>Make a donation</key>
 	<string>Faire un don</string>
 	<key>Modules</key>
@@ -175,9 +175,9 @@
 	<key>Search entity</key>
 	<string>Rechercher une entité</string>
 	<key>Select a contact</key>
-	<string>Select a contact</string>
+	<string>Sélectionner un contact</string>
 	<key>Select a group</key>
-	<string>Select a group</string>
+	<string>Sélectionner un groupe</string>
 	<key>Select all</key>
 	<string>Tout séléctionner</string>
 	<key>Select next entity</key>
@@ -207,11 +207,11 @@
 	<key>The current logged account</key>
 	<string>Le compte courrant</string>
 	<key>The current status of the contact</key>
-	<string>The current status of the contact</string>
+	<string>Le status courrant du contact</string>
 	<key>The display name of the new contact</key>
 	<string>Le nom du contact</string>
 	<key>The domain (XMPP server) of the contact</key>
-	<string>The domain (XMPP server) of the contact</string>
+	<string>Le domaine (serveur XMPP) du contact</string>
 	<key>The group has been removed</key>
 	<string>Le groupe a été supprimé</string>
 	<key>The group must be empty</key>
@@ -227,9 +227,9 @@
 	<key>The resource to use</key>
 	<string>La ressource à utiliser</string>
 	<key>The service BOSH (XMPP over HTTP) to use</key>
-	<string>The service BOSH (XMPP sur HTTP) à utiliser</string>
+	<string>Le service BOSH (XMPP sur HTTP) à utiliser</string>
 	<key>The type of contact (hypervisor, virtual machine or user)</key>
-	<string>The type of contact (hypervisor, virtual machine or user)</string>
+	<string>Le type du contact (hyperviseur, machine virtuelle or utilisateur)</string>
 	<key>This LED is ON when XMPP data are received</key>
 	<string>Cette LED est allumée lors de la reception de donnnées XMPP</string>
 	<key>This LED is ON when XMPP data are sent</key>
@@ -277,7 +277,7 @@
 	<key>authenticating</key>
 	<string>Authentification</string>
 	<key>authentification-failed</key>
-	<string>Echec d'Authentification</string>
+	<string>Echec d'authentification</string>
 	<key>cancel</key>
 	<string>Annuler</string>
 	<key>connect</key>
@@ -293,7 +293,7 @@
 	<key>disconnecting</key>
 	<string>Deconnexion...</string>
 	<key>host-unreachable</key>
-	<string>hôte injoingnable</string>
+	<string>Hôte injoingnable</string>
 	<key>unknown-error</key>
 	<string>Erreur inconnue</string>
 </dict>

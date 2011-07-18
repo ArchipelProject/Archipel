@@ -40,6 +40,9 @@
 /* Download error */
 "Download error" = "Download error";
 
+/* Download queue for  */
+"Download queue for " = "Download queue for ";
+
 /* Download selected appliance */
 "Download selected appliance" = "Download selected appliance";
 

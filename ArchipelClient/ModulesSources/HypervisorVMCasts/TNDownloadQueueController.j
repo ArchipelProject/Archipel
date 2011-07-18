@@ -73,7 +73,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
     if (!_timer)
         _timer = [CPTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(getDownloadQueue:) userInfo:nil repeats:YES];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
-    [labelTarget setStringValue:CPLocalizedString(@"Download queue for ", @"Download queue for ") + [[_delegate entity] nickname]];
+    [labelTarget setStringValue:CPBundleLocalizedString(@"Download queue for ", @"Download queue for ") + [[_delegate entity] nickname]];
 }
 
 - (IBAction)closeWindow:(id)sender

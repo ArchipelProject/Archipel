@@ -1,96 +1,96 @@
 /*  has been created */
-" has been created" = " has been created";
+" has been created" = " a été créée";
 
 /*  to your roster */
-" to your roster" = " to your roster";
+" to your roster" = " à votre roster.";
 
 /* Add contact */
-"Add contact" = "Add contact";
+"Add contact" = "Ajouter contact";
 
 /* Added new subscription to virtual machine */
-"Added new subscription to virtual machine" = "Added new subscription to virtual machine";
+"Added new subscription to virtual machine" = "Souscription ajoutée";
 
 /* Adding contact */
-"Adding contact" = "Adding contact";
+"Adding contact" = "Ajout du contact";
 
 /* Are you sure you want to completely remove theses virtual machines ? */
-"Are you sure you want to completely remove theses virtual machines ?" = "Are you sure you want to completely remove theses virtual machines ?";
+"Are you sure you want to completely remove theses virtual machines ?" = "Etes-vous sûr de vouloir supprimer les machines virtuelles séléctionnées ?";
 
 /* Are you sure you want to completely remove this virtual machine ? */
-"Are you sure you want to completely remove this virtual machine ?" = "Are you sure you want to completely remove this virtual machine ?";
+"Are you sure you want to completely remove this virtual machine ?" = "Etes-vous sûr de vouloir supprimer la machine virtuelle séléctionnée ?";
 
 /* Are you sure you want to remove the subscription for this user ? */
-"Are you sure you want to remove the subscription for this user ?" = "Are you sure you want to remove the subscription for this user ?";
+"Are you sure you want to remove the subscription for this user ?" = "Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?";
 
 /* Ask hypervisor to completely destroy all selected virtual machine */
-"Ask hypervisor to completely destroy all selected virtual machine" = "Ask hypervisor to completely destroy all selected virtual machine";
+"Ask hypervisor to completely destroy all selected virtual machine" = "Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles séléctionnées.";
 
 /* Ask hypervisor to create a new virtual machine */
-"Ask hypervisor to create a new virtual machine" = "Ask hypervisor to create a new virtual machine";
+"Ask hypervisor to create a new virtual machine" = "Demande à l'hypervisor de créer une nouvelle machine virtuelle.";
 
 /* Ask the virtual machine to add in its contact a user */
-"Ask the virtual machine to add in its contact a user" = "Ask the virtual machine to add in its contact a user";
+"Ask the virtual machine to add in its contact a user" = "Demande à la machine virtuelle d'ajouter un contact à son roster.";
 
 /* Ask the virtual machine to remove a user from its contact */
-"Ask the virtual machine to remove a user from its contact" = "Ask the virtual machine to remove a user from its contact";
+"Ask the virtual machine to remove a user from its contact" = "Demande à la machine virtuelle de supprimer un contact de son roster.";
 
 /* Cancel */
-"Cancel" = "Cancel";
+"Cancel" = "Annuler";
 
 /* Clone this virtual machine */
-"Clone this virtual machine" = "Clone this virtual machine";
+"Clone this virtual machine" = "Cloner cette machine virtuelle";
 
 /* Create a clone virtual machine from the selected one */
-"Create a clone virtual machine from the selected one" = "Create a clone virtual machine from the selected one";
+"Create a clone virtual machine from the selected one" = "Crée un clone de la machine virtuelle sélectionnée.";
 
 /* Create new virtual machine */
-"Create new virtual machine" = "Create new virtual machine";
+"Create new virtual machine" = "Créer une nouvelle machine virtuelle";
 
 /* Delete */
-"Delete" = "Delete";
+"Delete" = "Supprimer";
 
 /* Delete virtual machine */
-"Delete virtual machine" = "Delete virtual machine";
+"Delete virtual machine" = "Supprimer la machine virtuelle.";
 
 /* Destroying a Virtual Machine */
-"Destroying a Virtual Machine" = "Destroying a Virtual Machine";
+"Destroying a Virtual Machine" = "Suppression de la machine virtuelle.";
 
 /* Destroying some Virtual Machines */
-"Destroying some Virtual Machines" = "Destroying some Virtual Machines";
+"Destroying some Virtual Machines" = "Suppression des machines virtuelles.";
 
 /* Error */
-"Error" = "Error";
+"Error" = "Erreur";
 
 /* Remove */
-"Remove" = "Remove";
+"Remove" = "Supprimer";
 
 /* Removing subscription */
-"Removing subscription" = "Removing subscription";
+"Removing subscription" = "Supprimer la souscription";
 
 /* Subscription have been removed */
-"Subscription have been removed" = "Subscription have been removed";
+"Subscription have been removed" = "La souscription a été supprimée.";
 
 /* Subscription request */
-"Subscription request" = "Subscription request";
+"Subscription request" = "Requete de souscription";
 
 /* Virtual Machine */
-"Virtual Machine" = "Virtual Machine";
+"Virtual Machine" = "Machine Virtuelle";
 
 /* Virtual machine  */
-"Virtual machine " = "Virtual machine ";
+"Virtual machine " = "Machine virtuelle ";
 
 /* Virtual machine has been cloned */
-"Virtual machine has been cloned" = "Virtual machine has been cloned";
+"Virtual machine has been cloned" = "La machine virtuelle a été clonée.";
 
 /* Virtual machine has been removed */
-"Virtual machine has been removed" = "Virtual machine has been removed";
+"Virtual machine has been removed" = "La machine virtuelle a été supprimée.";
 
 /* Would you like to add  */
-"Would you like to add " = "Would you like to add ";
+"Would you like to add " = "Voulez-vous ajouter ";
 
 /* You must select a virtual machine */
-"You must select a virtual machine" = "You must select a virtual machine";
+"You must select a virtual machine" = "Vous devez sélectionner une machine virtuelle";
 
 /* You must select one (and only one) virtual machine */
-"You must select one (and only one) virtual machine" = "You must select one (and only one) virtual machine";
+"You must select one (and only one) virtual machine" = "Vous devez sélectionner une seule machine virtuelle";
 
