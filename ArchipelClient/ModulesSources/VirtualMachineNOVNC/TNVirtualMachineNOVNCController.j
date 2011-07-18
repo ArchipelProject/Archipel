@@ -475,6 +475,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)openPasteBoardWindow:(id)aSender
 {
+    [popoverPasteBoard close];
     [popoverPasteBoard showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverPasteBoard setDefaultButton:buttonPasteBoardSend];
     [popoverPasteBoard makeFirstResponder:fieldPasteBoard];

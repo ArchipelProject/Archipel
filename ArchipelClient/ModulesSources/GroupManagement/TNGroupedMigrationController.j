@@ -91,6 +91,7 @@
 - (IBAction)openWindow:(id)aSender
 {
     [self populateHypervisors];
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [mainPopover setDefaultButton:buttonMigrate];
 }

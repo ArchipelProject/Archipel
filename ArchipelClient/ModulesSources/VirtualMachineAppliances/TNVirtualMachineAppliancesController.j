@@ -272,6 +272,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [fieldNewApplianceName setStringValue:[CPString UUID]];
     [checkBoxShouldGZIP setState:CPOnState];
 
+    [popoverNewAppliances close];
     [popoverNewAppliances showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverNewAppliances makeFirstResponder:fieldNewApplianceName];
     [popoverNewAppliances setDefaultButton:buttonCreate];

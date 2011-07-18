@@ -48,6 +48,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (IBAction)openWindow:(id)aSender
 {
     [fieldCloneVirtualMachineName setStringValue:@""];
+
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [mainPopover makeFirstResponder:fieldCloneVirtualMachineName];
     [mainPopover setDefaultButton:buttonClone];

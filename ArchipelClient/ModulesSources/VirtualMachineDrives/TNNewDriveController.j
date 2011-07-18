@@ -92,6 +92,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     [checkBoxUseMasterDrive setState:CPOffState];
     [checkBoxUseQCOW2Preallocation setState:CPOffState];
 
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [mainPopover setDefaultButton:buttonOK];
     [mainPopover makeFirstResponder:fieldNewDiskName];

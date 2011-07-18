@@ -134,6 +134,7 @@
 - (IBAction)openWindow:(id)aSender
 {
     [self reload];
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
 }
 

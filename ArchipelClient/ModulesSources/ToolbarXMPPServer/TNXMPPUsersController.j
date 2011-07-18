@@ -145,6 +145,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [fieldNewUserPassword setStringValue:@""];
     [fieldNewUserPasswordConfirm setStringValue:@""];
 
+    [popoverNewUser close];
     [popoverNewUser showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverNewUser setDefaultButton:buttonCreate];
     [popoverNewUser makeFirstResponder:fieldNewUserUsername];

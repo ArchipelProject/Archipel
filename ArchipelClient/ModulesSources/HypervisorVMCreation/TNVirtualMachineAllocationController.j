@@ -51,6 +51,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     [fieldNewVMRequestedName setStringValue:@""];
 
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [mainPopover makeFirstResponder:fieldNewVMRequestedName];
     [mainPopover setDefaultButton:buttonAlloc];

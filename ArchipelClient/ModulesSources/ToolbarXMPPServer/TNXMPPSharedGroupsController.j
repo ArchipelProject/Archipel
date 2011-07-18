@@ -187,6 +187,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [fieldNewGroupName setStringValue:@""];
     [fieldNewGroupDescription setStringValue:@""];
 
+    [popoverNewGroup close];
     [popoverNewGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverNewGroup setDefaultButton:buttonCreate];
     [popoverNewGroup makeFirstResponder:fieldNewGroupName];
@@ -207,6 +208,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     [_datasourceUsers setContent:[[_usersController users] copy]];
 
+    [popoverAddUserInGroup close];
     [popoverAddUserInGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverAddUserInGroup setDefaultButton:buttonAdd];
 

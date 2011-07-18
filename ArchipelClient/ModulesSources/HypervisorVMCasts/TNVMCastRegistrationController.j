@@ -49,6 +49,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 - (IBAction)openWindow:(id)aSender
 {
     [fieldNewURL setStringValue:@""];
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [mainPopover setDefaultButton:buttonNewVMCast];
     [mainPopover makeFirstResponder:fieldNewURL];

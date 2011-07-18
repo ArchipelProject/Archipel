@@ -278,6 +278,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [fieldNewSnapshotDescription setStringValue:@""];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
 
+    [popoverNewSnapshot close];
     [popoverNewSnapshot showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [popoverNewSnapshot setDefaultButton:buttonSnapshotTake];

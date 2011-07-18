@@ -117,6 +117,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [stepperNewRecurrentJobMinute setDoubleValue:[date format:@"i"]];
     [stepperNewRecurrentJobSecond setDoubleValue:0.0];
 
+    [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [mainPopover makeFirstResponder:fieldNewJobComment];
     [mainPopover setDefaultButton:buttonNewJobOK];
