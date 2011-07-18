@@ -315,7 +315,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [_tablePartitions setDataSource:_datasourcePartitions];
     [_tableLogs setDataSource:_datasourceLogs];
 
-    // [self getHypervisorLog:nil];
+    [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];

@@ -260,8 +260,6 @@ class TNHypervisorHealth (TNArchipelPlugin):
             nodes = []
             for line in output.split("\n"):
                 infos = line.split("::")
-                if not len(infos) == 2:
-                    continue
                 log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": "", "method": ""})
                 log_node.setData(line)
                 nodes.append(log_node)
