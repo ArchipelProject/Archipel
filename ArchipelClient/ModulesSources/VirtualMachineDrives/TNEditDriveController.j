@@ -167,7 +167,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (BOOL)_didConvertDisk:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Disk has been converted", @"Disk has been converted")];
     else if ([aStanza type] == @"error")
         [self handleIqErrorFromStanza:aStanza];
@@ -181,7 +181,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     if ([_delegate isEntityOnline])
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"You can't edit disks of a running virtual machine", @"You can't edit disks of a running virtual machine") icon:TNGrowlIconError];
         return;
     }
@@ -211,7 +211,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (BOOL)_didRename:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Disk has been renamed", @"Disk has been renamed")];
     else if ([aStanza type] == @"error")
         [self handleIqErrorFromStanza:aStanza];

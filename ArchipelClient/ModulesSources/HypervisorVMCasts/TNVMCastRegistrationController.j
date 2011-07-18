@@ -99,7 +99,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 - (BOOL)_didAddNewVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") message:CPBundleLocalizedString(@"VMcast has been registred", @"VMcast has been registred")];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname] message:CPBundleLocalizedString(@"VMcast has been registred", @"VMcast has been registred")];
     else
         [_delegate handleIqErrorFromStanza:aStanza];
 
@@ -141,7 +141,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 - (BOOL)_didRemoveVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"VMcast has been unregistred", @"VMcast has been unregistred")];
     else
         [_delegate handleIqErrorFromStanza:aStanza];

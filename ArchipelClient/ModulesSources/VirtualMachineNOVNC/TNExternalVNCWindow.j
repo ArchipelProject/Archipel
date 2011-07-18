@@ -266,7 +266,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         case TNVNCCappuccinoStateFailed:
             var growl = [[TNGrowlCenter alloc] init];
             [growl setView:[self contentView]];
-            [growl pushNotificationWithTitle:CPBundleLocalizedString(@"Connection fail", @"Connection fail")
+            [growl pushNotificationWithTitle:[_entity nickname]
                                      message:CPBundleLocalizedString(@"Cannot connect to the VNC screen at ", @"Cannot connect to the VNC screen at ") + [_vncView host] + @":" + [_vncView port]
                                         icon:TNGrowlIconError];
 
@@ -298,7 +298,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 {
     var growl = [[TNGrowlCenter alloc] init];
     [growl setView:[self contentView]];
-    [growl pushNotificationWithTitle:CPBundleLocalizedString(@"FullScreen not supported", @"FullScreen not supported")
+    [growl pushNotificationWithTitle:[_entity nickname]
                              message:CPBundleLocalizedString(@"Your browser does not support javascript fullscreen", @"Your browser does not support javascript fullscreen")
                                 icon:TNGrowlIconWarning];
 }

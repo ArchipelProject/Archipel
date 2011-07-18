@@ -103,7 +103,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
         CPLog.info(@"sucessfully create a virtual machine");
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + vmJID + CPBundleLocalizedString(@" has been created", @" has been created")];
     }
     else
@@ -183,7 +183,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     {
         CPLog.info(@"sucessfully deallocating a virtual machine");
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine has been removed", @"Virtual machine has been removed")];
     }
     else

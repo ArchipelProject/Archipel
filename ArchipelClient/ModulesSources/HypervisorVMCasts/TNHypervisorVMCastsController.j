@@ -272,13 +272,13 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     switch (change)
     {
         case @"download_start":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download started", @"Download started")];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Appliance download started", @"Appliance download started")];
             break
         case @"download_complete":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download complete", @"Download complete")];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Appliance download complete", @"Appliance download complete")];
             break;
         case @"download_error":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download error", @"Download error") icon:TNGrowlIconError];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Appliance download error", @"Appliance download error") icon:TNGrowlIconError];
             break
     }
 
@@ -457,7 +457,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 {
     if (([_mainOutlineView numberOfRows] == 0) || ([_mainOutlineView numberOfSelectedRows] <= 0))
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") message:CPBundleLocalizedString(@"You must select a VMCast or an Appliance", @"You must select a VMCast or an Appliance") icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"You must select a VMCast or an Appliance", @"You must select a VMCast or an Appliance") icon:TNGrowlIconError];
 
         return;
     }
@@ -507,7 +507,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (BOOL)_didDeleteAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Appliance has been uninstalled", @"Appliance has been uninstalled")];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Appliance has been uninstalled", @"Appliance has been uninstalled")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -523,7 +523,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     if (([item status] != TNArchipelApplianceNotInstalled) && ([item status] != TNArchipelApplianceInstallationError))
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.", @"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.")
                                                             icon:TNGrowlIconError];
 

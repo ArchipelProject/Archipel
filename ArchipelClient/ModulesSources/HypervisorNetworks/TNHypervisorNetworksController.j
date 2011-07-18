@@ -657,7 +657,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (BOOL)_didDefineNetwork:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Network", @"Network") message:CPBundleLocalizedString(@"Network has been defined", @"Network has been defined")];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Network has been defined", @"Network has been defined")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -719,7 +719,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (BOOL)_didNetworkStatusChange:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Network", @"Network") message:CPBundleLocalizedString(@"Network status has changed", @"Network status has changed")];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Network status has changed", @"Network status has changed")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -760,7 +760,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (BOOL)_didDelNetwork:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Network", @"Network") message:CPBundleLocalizedString(@"Network has been removed", @"Network has been removed")];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname] message:CPBundleLocalizedString(@"Network has been removed", @"Network has been removed")];
     else
         [self handleIqErrorFromStanza:aStanza];
 

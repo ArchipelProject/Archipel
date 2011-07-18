@@ -357,7 +357,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + sender + CPBundleLocalizedString(" state modified", " state modified")];
 
         [tableVirtualMachines reloadData];
@@ -396,10 +396,10 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     var sender = [aStanza fromUser];
 
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + sender + CPBundleLocalizedString(" is migrating", " is migrating")];
     else
-         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                           message:CPBundleLocalizedString(@"Cannot migrate virtual machine ", @"Cannot migrate virtual machine ") + sender + CPBundleLocalizedString(" to the selected hypervisor", " to the selected hypervisor")];
 
     [tableVirtualMachines reloadData];

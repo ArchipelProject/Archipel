@@ -507,7 +507,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 - (void)_didChangePermissionsState:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Permissions saved", @"Permissions saved")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Permission for selected user has been saved.", @"Permission for selected user has been saved.")];
     else
         [self handleIqErrorFromStanza:aStanza];

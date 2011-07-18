@@ -1505,7 +1505,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [_libvirtDomain setPAE:[aSender isOn]];
+    [[_libvirtDomain features] setPAE:[aSender isOn]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1705,7 +1705,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
         if ([guests count] == 0)
         {
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Capabilities", @"Capabilities")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.", @"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.")
                                                                 icon:TNGrowlIconError];
             //[self showMaskView:YES];
@@ -1767,10 +1767,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([aStanza type] == @"error")
     {
+        if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] != "not-defined")
+            [self handleIqErrorFromStanza:aStanza];
+
         _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
 
+        [self didChangeGuest:buttonGuests];
         [self didChangeAPIC:switchAPIC];
         [self didChangeACPI:switchACPI];
         [self didChangePAE:switchPAE];
@@ -1782,9 +1786,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_graphicDevicesDatasource removeAllObjects];
         [tableGraphicsDevices reloadData];
 
-        if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] != "not-defined")
-            [self handleIqErrorFromStanza:aStanza];
-
         [self buildGUIAccordingToCurrentGuest];
         _definitionRecovered = YES;
         [self handleDefinitionEdition:NO];
@@ -1793,7 +1794,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
 
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
-
 
     [self selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
     [self buildGUIAccordingToCurrentGuest];
@@ -1891,7 +1891,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         _stringXMLDesc  = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
         [fieldStringXMLDesc setStringValue:_stringXMLDesc];
     }
-
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
@@ -1991,7 +1990,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual machine", @"Virtual machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
         _libvirtDomain = nil;
         [self setDefaultValues];

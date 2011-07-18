@@ -976,7 +976,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine is running.", @"Virtual machine is running.")];
     }
     else
@@ -1024,7 +1024,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         [self enableButtonsForPaused];
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine is paused.", @"Virtual machine is paused.")];
     }
     else
@@ -1044,7 +1044,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine was resumed.", @"Virtual machine was resumed.")];
     }
     else
@@ -1077,7 +1077,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine is shutting down.", @"Virtual machine is shutting down.")];
     }
     else
@@ -1133,7 +1133,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             [_screenshotTimer invalidate];
             _screenshotTimer = nil;
         }
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine has been destroyed.", @"Virtual machine has been destroyed.")];
     }
     else
@@ -1164,7 +1164,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine is rebooting.", @"Virtual machine is rebooting.")];
     }
     else
@@ -1198,10 +1198,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         if ([switchAutoStart isOn])
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Autostart", @"Autostart")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"Autostart has been set.", @"Autostart has been set.")];
         else
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Autostart", @"Autostart")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"Autostart has been unset.", @"Autostart has been unset.")];
     }
     else
@@ -1275,10 +1275,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         if ([switchPreventOOMKiller isOn])
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"OOM", @"OOM")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"OOM Killer cannot kill this virtual machine.", @"OOM Killer cannot kill this virtual machine.")];
         else
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"OOM", @"OOM")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"OOM Killer can kill this virtual machine.", @"OOM Killer can kill this virtual machine.")];
 
         if ([self currentEntityHasPermission:@"oom_getadjust"])
@@ -1363,7 +1363,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     if ([destinationHypervisor fullJID] == _currentHypervisorJID)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"You can't migrate to the initial virtual machine's hypervisor.", @"You can't migrate to the initial virtual machine's hypervisor.")
                                                             icon:TNGrowlIconError];
         return
@@ -1400,7 +1400,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Migration has started.", @"Migration has started.")];
     }
     else
@@ -1445,7 +1445,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         [[[TNStropheIMClient defaultClient] roster] removeContact:_virtualMachineToFree];
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine killed.", @"Virtual machine killed.")];
         [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewDeselectAll object:self];
         _virtualMachineToFree = nil;

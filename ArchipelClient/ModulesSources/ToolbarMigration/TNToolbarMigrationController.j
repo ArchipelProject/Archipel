@@ -260,7 +260,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [tableHypervisorVirtualMachines deselectAll];
         [tableHypervisorOrigin deselectAll];
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"Migration has started. It can take a while", @"Migration has started. It can take a while")];
     }
     else

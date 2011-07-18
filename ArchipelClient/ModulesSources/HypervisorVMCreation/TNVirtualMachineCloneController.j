@@ -114,7 +114,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     {
         CPLog.info(@"sucessfully cloning a virtual machine");
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Virtual machine has been cloned", @"Virtual machine has been cloned")];
     }
     else

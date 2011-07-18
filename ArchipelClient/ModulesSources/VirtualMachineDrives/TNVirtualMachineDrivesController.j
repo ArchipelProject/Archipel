@@ -230,10 +230,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     if (type == TNArchipelPushNotificationDisk)
     {
         if (change == @"created")
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"Disk has been created", @"Disk has been created")];
         else if (change == @"deleted")
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"Disk has been removed", @"Disk has been removed")];
     }
 
@@ -282,7 +282,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
     if (_isEntityOnline)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                          message:CPBundleLocalizedString(@"You can't edit disks of a running virtual machine", @"You can't edit disks of a running virtual machine")
                                                             icon:TNGrowlIconError];
     }
@@ -293,7 +293,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
         if ([tableMedias numberOfSelectedRows] > 1)
         {
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"You can't edit multiple disk", @"You can't edit multiple disk")
                                                                 icon:TNGrowlIconError];
             return;
