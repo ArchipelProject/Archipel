@@ -276,7 +276,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     if (!(_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1)))
         return;
 
-    CPLog.warn("recovering last selected tab index " + oldSelectedIndex);
+    CPLog.info("recovering last selected tab index " + oldSelectedIndex);
     [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
