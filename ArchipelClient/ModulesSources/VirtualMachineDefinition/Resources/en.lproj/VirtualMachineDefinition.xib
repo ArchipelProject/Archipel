@@ -7708,14 +7708,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">dataViewInputTypePrototype</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="468576456"/>
-					</object>
-					<int key="connectionID">1141</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">dataViewInputDevicePrototype</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="468576456"/>
