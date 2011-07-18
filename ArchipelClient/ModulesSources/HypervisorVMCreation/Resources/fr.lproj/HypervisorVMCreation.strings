@@ -81,7 +81,7 @@
 "105.title" = "Nom :";
 
 /* Class = "NSTextFieldCell"; title = "Clone virtual machine"; ObjectID = "106"; */
-"106.title" = "Cloneer la machine virtuelle";
+"106.title" = "Cloner la machine virtuelle";
 
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "107"; */
 "107.title" = "Créer";

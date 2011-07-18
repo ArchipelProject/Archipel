@@ -1000,7 +1000,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="424709708">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Cloneer la machine virtuelle</string>
+							<string key="NSContents">Cloner la machine virtuelle</string>
 							<reference key="NSSupport" ref="739828074"/>
 							<reference key="NSControlView" ref="30796656"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
