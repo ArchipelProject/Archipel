@@ -53,6 +53,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 {
     [fieldNewSubscriptionTarget setStringValue:@""];
 
+    [popoverAddSubscription close];
     [popoverAddSubscription showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverAddSubscription setDefaultButton:buttonAddSubscription];
     [popoverAddSubscription makeFirstResponder:fieldNewSubscriptionTarget];
@@ -65,6 +66,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 {
     [fieldRemoveSubscriptionTarget setStringValue:@""];
 
+    [popoverRemoveSubscription close];
     [popoverRemoveSubscription showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverRemoveSubscription makeFirstResponder:fieldRemoveSubscriptionTarget];
     [popoverRemoveSubscription setDefaultButton:buttonRemoveSubscription];
