@@ -155,6 +155,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPButton                            _minusButtonNics;
     CPButton                            _plusButtonDrives;
     CPButton                            _plusButtonNics;
+    CPButton                            _plusButtonInputs;
+    CPButton                            _plusButtonGraphics;
     CPImage                             _imageDefining;
     CPImage                             _imageEdited;
     CPString                            _stringXMLDesc;
@@ -336,10 +338,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInputDevices setDataSource:_inputDevicesDatasource];
     [viewInputDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    var plusButtonInputDevice = [CPButtonBar plusButton];
-    [plusButtonInputDevice setTarget:self];
-    [plusButtonInputDevice setAction:@selector(addInputDevice:)];
-    [plusButtonInputDevice setToolTip:CPLocalizedString(@"Add a new input device", @"Add a new input device")];
+    _plusButtonInputs = [CPButtonBar plusButton];
+    [_plusButtonInputs setTarget:self];
+    [_plusButtonInputs setAction:@selector(addInputDevice:)];
+    [_plusButtonInputs setToolTip:CPLocalizedString(@"Add a new input device", @"Add a new input device")];
 
     var minusButtonInputDevice = [CPButtonBar minusButton];
     [minusButtonInputDevice setTarget:self];
@@ -352,7 +354,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [editButtonInputDevice setAction:@selector(editInputDevice:)];
     [editButtonInputDevice setToolTip:CPLocalizedString(@"Edit the current selected input device", @"Edit the current selected input device")];
 
-    [buttonBarInputDevices setButtons:[plusButtonInputDevice, minusButtonInputDevice, editButtonInputDevice]];
+    [buttonBarInputDevices setButtons:[_plusButtonInputs, minusButtonInputDevice, editButtonInputDevice]];
 
     [inputDeviceController setDelegate:self];
 
@@ -369,10 +371,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
     [viewGraphicDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    var plusButtonGraphicDevice = [CPButtonBar plusButton];
-    [plusButtonGraphicDevice setTarget:self];
-    [plusButtonGraphicDevice setAction:@selector(addGraphicDevice:)];
-    [plusButtonGraphicDevice setToolTip:CPLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
+    _plusButtonGraphics = [CPButtonBar plusButton];
+    [_plusButtonGraphics setTarget:self];
+    [_plusButtonGraphics setAction:@selector(addGraphicDevice:)];
+    [_plusButtonGraphics setToolTip:CPLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
 
     var minusButtonGraphicDevice = [CPButtonBar minusButton];
     [minusButtonGraphicDevice setTarget:self];
@@ -385,7 +387,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
     [editButtonGraphicDevice setToolTip:CPLocalizedString(@"Edit the current selected graphic device", @"Edit the current selected graphic device")];
 
-    [buttonBarGraphicDevices setButtons:[plusButtonGraphicDevice, minusButtonGraphicDevice, editButtonGraphicDevice]];
+    [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, minusButtonGraphicDevice, editButtonGraphicDevice]];
 
     [graphicDeviceController setDelegate:self];
 
@@ -872,6 +874,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
+
     [_nicsDatasource removeAllObjects];
     [_drivesDatasource removeAllObjects];
     [_inputDevicesDatasource removeAllObjects];
@@ -1102,7 +1105,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([tableInputDevices numberOfSelectedRows] <= 0)
     {
-         [self addInputDevice:aSender];
+         [self addInputDevice:_plusButtonInputs];
          return;
     }
 
@@ -1149,7 +1152,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([tableGraphicsDevices numberOfSelectedRows] <= 0)
     {
-         [self addGraphicDevice:aSender];
+         [self addGraphicDevice:_plusButtonGraphics];
          return;
     }
 
@@ -1175,6 +1178,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
+    [popoverXMLEditor close];
     [popoverXMLEditor showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
 }
@@ -1247,7 +1251,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([tableInterfaces numberOfSelectedRows] <= 0)
     {
-         [self addNetworkCard:aSender];
+         [self addNetworkCard:_plusButtonNics];
          return;
     }
 
@@ -1323,7 +1327,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([tableDrives numberOfSelectedRows] <= 0)
     {
-         [self addDrive:aSender];
+         [self addDrive:_plusButtonDrives];
          return;
     }
 
@@ -1703,8 +1707,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeAPIC:switchPAE];
         [self didChangeHugePages:switchHugePages];
         [_inputDevicesDatasource addObject:[[TNLibvirtDeviceInput alloc] init]];
-        [_graphicDevicesDatasource addObject:[[TNLibvirtDeviceGraphic alloc] init]];
+
+        [_inputDevicesDatasource removeAllObjects];
         [tableInputDevices reloadData];
+        [_graphicDevicesDatasource removeAllObjects];
         [tableGraphicsDevices reloadData];
 
         if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] != "not-defined")
