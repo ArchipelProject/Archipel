@@ -111,8 +111,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     [buttonDriverCache selectItemWithTitle:[[_drive driver] cache]];
     [buttonType selectItemWithTitle:[_drive type]];
-    [buttonTargetDevice selectItemWithTitle:[[_drive target] device]];
+    [self busTypeChanged:buttonTargetBus];
     [buttonTargetBus selectItemWithTitle:[[_drive target] bus]];
+    [self busTypeChanged:buttonTargetBus];
     [self driveTypeDidChange:nil];
 }
 
@@ -177,7 +178,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     }
 }
 
-/*! hange the type of the drive (file or block)
+/*! Change the type of the drive (file or block)
     @param aSender the sender of the action
 */
 - (IBAction)driveTypeDidChange:(id)aSender
@@ -203,6 +204,34 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
         [fieldDevicePath setStringValue:@""];
     }
+}
+
+/*! Called when changing the bus type. It will update the targets
+    @param aSender the sender of the action
+*/
+- (IBAction)busTypeChanged:(id)aSender
+{
+    [buttonTargetDevice removeAllItems];
+
+    switch ([buttonTargetBus title])
+    {
+        case TNLibvirtDeviceDiskTargetBusIDE:
+            [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesIDE];
+            break;
+        case TNLibvirtDeviceDiskTargetBusSCSI:
+            [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesSCSI];
+            break;
+        case TNLibvirtDeviceDiskTargetBusXEN:
+            [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesXEN];
+            break;
+        default:
+            [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevices];
+    }
+
+    if ([[buttonTargetDevice itemTitles] containsObject:[[_drive target] device]])
+        [buttonTargetDevice selectItemWithTitle:[[_drive target] device]];
+    else
+        [buttonTargetDevice selectItemAtIndex:0];
 }
 
 /*! show the main window
