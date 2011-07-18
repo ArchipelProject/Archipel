@@ -116,6 +116,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldPreferencesGuest;
     @outlet CPTextField                 fieldPreferencesMachine;
     @outlet CPTextField                 fieldPreferencesMemory;
+    @outlet CPTextField                 labelVirtualMachineIsRunning;
     @outlet CPView                      viewBottomControl;
     @outlet CPView                      viewDeviceVirtualDrives;
     @outlet CPView                      viewDeviceVirtualNics;
@@ -150,20 +151,24 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     BOOL                                _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                                _definitionRecovered;
     CPButton                            _editButtonDrives;
+    CPButton                            _editButtonGraphicDevice;
+    CPButton                            _editButtonInputDevice;
     CPButton                            _editButtonNics;
     CPButton                            _minusButtonDrives;
+    CPButton                            _minusButtonGraphicDevice;
+    CPButton                            _minusButtonInputDevice;
     CPButton                            _minusButtonNics;
     CPButton                            _plusButtonDrives;
-    CPButton                            _plusButtonNics;
-    CPButton                            _plusButtonInputs;
     CPButton                            _plusButtonGraphics;
+    CPButton                            _plusButtonInputs;
+    CPButton                            _plusButtonNics;
     CPImage                             _imageDefining;
     CPImage                             _imageEdited;
     CPString                            _stringXMLDesc;
     TNTableViewDataSource               _drivesDatasource;
+    TNTableViewDataSource               _graphicDevicesDatasource;
     TNTableViewDataSource               _inputDevicesDatasource;
     TNTableViewDataSource               _nicsDatasource;
-    TNTableViewDataSource               _graphicDevicesDatasource;
     TNXMLNode                           _libvirtCapabilities;
 }
 
@@ -343,18 +348,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_plusButtonInputs setAction:@selector(addInputDevice:)];
     [_plusButtonInputs setToolTip:CPLocalizedString(@"Add a new input device", @"Add a new input device")];
 
-    var minusButtonInputDevice = [CPButtonBar minusButton];
-    [minusButtonInputDevice setTarget:self];
-    [minusButtonInputDevice setAction:@selector(deleteInputDevice:)];
-    [minusButtonInputDevice setToolTip:CPLocalizedString(@"Remove the selected input device", @"Remove the selected input device")];
+    _minusButtonInputDevice = [CPButtonBar minusButton];
+    [_minusButtonInputDevice setTarget:self];
+    [_minusButtonInputDevice setAction:@selector(deleteInputDevice:)];
+    [_minusButtonInputDevice setToolTip:CPLocalizedString(@"Remove the selected input device", @"Remove the selected input device")];
 
-    var editButtonInputDevice = [CPButtonBar plusButton];
-    [editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
-    [editButtonInputDevice setTarget:self];
-    [editButtonInputDevice setAction:@selector(editInputDevice:)];
-    [editButtonInputDevice setToolTip:CPLocalizedString(@"Edit the current selected input device", @"Edit the current selected input device")];
+    _editButtonInputDevice = [CPButtonBar plusButton];
+    [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonInputDevice setTarget:self];
+    [_editButtonInputDevice setAction:@selector(editInputDevice:)];
+    [_editButtonInputDevice setToolTip:CPLocalizedString(@"Edit the current selected input device", @"Edit the current selected input device")];
 
-    [buttonBarInputDevices setButtons:[_plusButtonInputs, minusButtonInputDevice, editButtonInputDevice]];
+    [buttonBarInputDevices setButtons:[_plusButtonInputs, _minusButtonInputDevice, _editButtonInputDevice]];
 
     [inputDeviceController setDelegate:self];
 
@@ -376,18 +381,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_plusButtonGraphics setAction:@selector(addGraphicDevice:)];
     [_plusButtonGraphics setToolTip:CPLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
 
-    var minusButtonGraphicDevice = [CPButtonBar minusButton];
-    [minusButtonGraphicDevice setTarget:self];
-    [minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
-    [minusButtonGraphicDevice setToolTip:CPLocalizedString(@"Remove the selected graphic device", @"Remove the selected graphic device")];
+    _minusButtonGraphicDevice = [CPButtonBar minusButton];
+    [_minusButtonGraphicDevice setTarget:self];
+    [_minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
+    [_minusButtonGraphicDevice setToolTip:CPLocalizedString(@"Remove the selected graphic device", @"Remove the selected graphic device")];
 
-    var editButtonGraphicDevice = [CPButtonBar plusButton];
-    [editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
-    [editButtonGraphicDevice setTarget:self];
-    [editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
-    [editButtonGraphicDevice setToolTip:CPLocalizedString(@"Edit the current selected graphic device", @"Edit the current selected graphic device")];
+    _editButtonGraphicDevice = [CPButtonBar plusButton];
+    [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonGraphicDevice setTarget:self];
+    [_editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
+    [_editButtonGraphicDevice setToolTip:CPLocalizedString(@"Edit the current selected graphic device", @"Edit the current selected graphic device")];
 
-    [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, minusButtonGraphicDevice, editButtonGraphicDevice]];
+    [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, _minusButtonGraphicDevice, _editButtonGraphicDevice]];
 
     [graphicDeviceController setDelegate:self];
 
@@ -507,6 +512,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewParametersAdvanced applyShadow];
     [viewParametersAdvanced applyShadow];
     [viewDeviceVirtualNics applyShadow];
+
+    [labelVirtualMachineIsRunning setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
+    [labelVirtualMachineIsRunning setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
 }
 
 
@@ -894,14 +902,22 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if (XMPPShow != TNStropheContactStatusBusy)
     {
-        [self showMaskView:YES];
+        //[self showMaskView:YES];
+        [self enableGUI:NO];
+
+        [driveController closeWindow:nil];
+        [inputDeviceController closeWindow:nil];
+        [interfaceController closeWindow:nil];
+        [graphicDeviceController closeWindow:nil];
+
         if (_definitionEdited)
             [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Definition edited", @"Definition edited")
                               informative:CPBundleLocalizedString(@"You started the virtual machine, but you haven't save the current changes.", @"You started the virtual machine, but you haven't save the current changes.")];
     }
     else
     {
-        [self showMaskView:NO];
+        // [self showMaskView:NO];
+        [self enableGUI:YES];
     }
 }
 
@@ -1003,7 +1019,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         var features = [capabilities firstChildWithName:@"features"];
 
         [switchPAE setEnabled:NO];
-        if ([features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"])
+        if ([features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"] )
             [switchPAE setEnabled:YES];
         if (![features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"])
             [switchPAE setOn:YES animated:NO sendAction:NO];
@@ -1075,7 +1091,59 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self handleDefinitionEdition:YES];
 }
 
+/*! make the GUI in disabled mode
+    @param shouldEnableGUI set if GUI should be enabled or disabled
+*/
+- (void)enableGUI:(BOOL)shouldEnableGUI
+{
+    [buttonBoot setEnabled:shouldEnableGUI];
+    [buttonClocks setEnabled:shouldEnableGUI];
+    [buttonDefine setEnabled:shouldEnableGUI];
+    [buttonDomainType setEnabled:shouldEnableGUI];
+    [buttonGuests setEnabled:shouldEnableGUI];
+    [buttonMachines setEnabled:shouldEnableGUI];
+    [buttonOnCrash setEnabled:shouldEnableGUI];
+    [buttonOnPowerOff setEnabled:shouldEnableGUI];
+    [buttonOnReboot setEnabled:shouldEnableGUI];
+    [buttonUndefine setEnabled:shouldEnableGUI];
+    [buttonXMLEditor setEnabled:shouldEnableGUI];
+    [buttonXMLEditorDefine setEnabled:shouldEnableGUI];
+    [fieldBlockIOTuningWeight setEnabled:shouldEnableGUI];
+    [fieldFilterNics setEnabled:shouldEnableGUI];
+    [fieldMemory setEnabled:shouldEnableGUI];
+    [fieldMemoryTuneGuarantee setEnabled:shouldEnableGUI];
+    [fieldMemoryTuneHardLimit setEnabled:shouldEnableGUI];
+    [fieldMemoryTuneSoftLimit setEnabled:shouldEnableGUI];
+    [fieldMemoryTuneSwapHardLimit setEnabled:shouldEnableGUI];
+    [fieldStringXMLDesc setEnabled:shouldEnableGUI];
+    [stepperNumberCPUs setEnabled:shouldEnableGUI];
+    [tableDrives setEnabled:shouldEnableGUI];
+    [tableGraphicsDevices setEnabled:shouldEnableGUI];
+    [tableInputDevices setEnabled:shouldEnableGUI];
+    [tableInterfaces setEnabled:shouldEnableGUI];
+    [_editButtonDrives setEnabled:shouldEnableGUI];
+    [_editButtonGraphicDevice setEnabled:shouldEnableGUI];
+    [_editButtonInputDevice setEnabled:shouldEnableGUI];
+    [_editButtonNics setEnabled:shouldEnableGUI];
+    [_minusButtonDrives setEnabled:shouldEnableGUI];
+    [_minusButtonGraphicDevice setEnabled:shouldEnableGUI];
+    [_minusButtonInputDevice setEnabled:shouldEnableGUI];
+    [_minusButtonNics setEnabled:shouldEnableGUI];
+    [_plusButtonDrives setEnabled:shouldEnableGUI];
+    [_plusButtonGraphics setEnabled:shouldEnableGUI];
+    [_plusButtonInputs setEnabled:shouldEnableGUI];
+    [_plusButtonNics setEnabled:shouldEnableGUI];
+    [switchACPI setEnabled:shouldEnableGUI];
+    [switchAPIC setEnabled:shouldEnableGUI];
+    [switchHugePages setEnabled:shouldEnableGUI];
+    [switchPAE setEnabled:shouldEnableGUI];
 
+    if (shouldEnableGUI)
+        [self buildGUIAccordingToCurrentGuest];
+    [self handleDefinitionEdition:NO];
+
+    [labelVirtualMachineIsRunning setHidden:shouldEnableGUI];
+}
 
 #pragma mark -
 #pragma mark Actions
@@ -1437,7 +1505,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [_libvirtDomain setOnCrash:[aSender title]];
+    [_libvirtDomain setPAE:[aSender isOn]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1640,7 +1708,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Capabilities", @"Capabilities")
                                                              message:CPBundleLocalizedString(@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.", @"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.")
                                                                 icon:TNGrowlIconError];
-            [self showMaskView:YES];
+            //[self showMaskView:YES];
+            [self enableGUI:NO];
         }
 
         [_libvirtCapabilities setObject:host forKey:@"host"];
@@ -1703,8 +1772,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_libvirtDomain setUUID:[[_entity JID] node]];
 
         [self didChangeAPIC:switchAPIC];
-        [self didChangeAPIC:switchACPI];
-        [self didChangeAPIC:switchPAE];
+        [self didChangeACPI:switchACPI];
+        [self didChangePAE:switchPAE];
         [self didChangeHugePages:switchHugePages];
         [_inputDevicesDatasource addObject:[[TNLibvirtDeviceInput alloc] init]];
 
@@ -1826,6 +1895,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
+
+    if ([_entity XMPPShow] != TNStropheContactStatusBusy)
+        [self enableGUI:NO];
+    else
+        [self enableGUI:YES];
+
     return NO;
 }
 

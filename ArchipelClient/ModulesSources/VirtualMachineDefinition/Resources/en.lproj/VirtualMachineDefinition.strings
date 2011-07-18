@@ -890,3 +890,6 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1438"; */
 "1438.title" = "Text Cell";
 
+/* Class = "NSTextFieldCell"; title = "To edit definition, stop the virtual machine"; ObjectID = "1442"; */
+"1442.title" = "To edit definition, stop the virtual machine";
+

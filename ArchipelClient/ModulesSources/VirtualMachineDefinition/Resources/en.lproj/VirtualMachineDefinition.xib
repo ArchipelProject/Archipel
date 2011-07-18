@@ -224,10 +224,41 @@
 							<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
 						</object>
 					</object>
+					<object class="NSTextField" id="825556690">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">265</int>
+						<string key="NSFrame">{{562, 613}, {291, 26}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="476727981">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">67109888</int>
+							<string key="NSContents">To edit definition, stop the virtual machine</string>
+							<object class="NSFont" key="NSSupport" id="100737951">
+								<string key="NSName">LucidaGrande-Bold</string>
+								<double key="NSSize">13</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="825556690"/>
+							<object class="NSColor" key="NSBackgroundColor" id="136877179">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">controlColor</string>
+								<object class="NSColor" key="NSColor" id="455296927">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+								</object>
+							</object>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC45NjQ3MDU5NDQxIDAuNjY2NjY2Njg2NSAwLjI2Mjc0NTExMjIAA</bytes>
+							</object>
+						</object>
+					</object>
 					<object class="NSTextField" id="924747925">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 613}, {252, 26}}</string>
+						<string key="NSFrame">{{17, 613}, {534, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="970672378"/>
 						<bool key="NSEnabled">YES</bool>
@@ -241,15 +272,7 @@
 								<int key="NSfFlags">16</int>
 							</object>
 							<reference key="NSControlView" ref="924747925"/>
-							<object class="NSColor" key="NSBackgroundColor" id="136877179">
-								<int key="NSColorSpace">6</int>
-								<string key="NSCatalogName">System</string>
-								<string key="NSColorName">controlColor</string>
-								<object class="NSColor" key="NSColor" id="455296927">
-									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-								</object>
-							</object>
+							<reference key="NSBackgroundColor" ref="136877179"/>
 							<object class="NSColor" key="NSTextColor">
 								<int key="NSColorSpace">2</int>
 								<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
@@ -521,11 +544,7 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Swap hard limit:</string>
-							<object class="NSFont" key="NSSupport" id="100737951">
-								<string key="NSName">LucidaGrande-Bold</string>
-								<double key="NSSize">13</double>
-								<int key="NSfFlags">16</int>
-							</object>
+							<reference key="NSSupport" ref="100737951"/>
 							<reference key="NSControlView" ref="209014362"/>
 							<reference key="NSBackgroundColor" ref="136877179"/>
 							<reference key="NSTextColor" ref="936819863"/>
@@ -8274,6 +8293,14 @@
 					</object>
 					<int key="connectionID">1440</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">labelVirtualMachineIsRunning</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="825556690"/>
+					</object>
+					<int key="connectionID">1443</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -8314,6 +8341,7 @@
 							<reference ref="862158691"/>
 							<reference ref="2937892"/>
 							<reference ref="867357855"/>
+							<reference ref="825556690"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">definition view</string>
@@ -12821,6 +12849,20 @@
 						<reference key="object" ref="159900328"/>
 						<reference key="parent" ref="496672212"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1441</int>
+						<reference key="object" ref="825556690"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="476727981"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1442</int>
+						<reference key="object" ref="476727981"/>
+						<reference key="parent" ref="825556690"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -13027,6 +13069,8 @@
 					<string>1434.IBPluginDependency</string>
 					<string>1435.IBPluginDependency</string>
 					<string>1438.IBPluginDependency</string>
+					<string>1441.IBPluginDependency</string>
+					<string>1442.IBPluginDependency</string>
 					<string>15.IBPluginDependency</string>
 					<string>153.IBPluginDependency</string>
 					<string>154.IBPluginDependency</string>
@@ -13684,6 +13728,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference key="dict.sortedKeys" ref="0"/>
@@ -14078,7 +14124,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1440</int>
+			<int key="maxID">1443</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -15621,6 +15667,7 @@
 							<string>graphicDeviceController</string>
 							<string>inputDeviceController</string>
 							<string>interfaceController</string>
+							<string>labelVirtualMachineIsRunning</string>
 							<string>networkController</string>
 							<string>popoverXMLEditor</string>
 							<string>scrollViewContentView</string>
@@ -15713,6 +15760,7 @@
 							<string>TNGraphicDeviceController</string>
 							<string>TNInputDeviceController</string>
 							<string>TNInterfaceController</string>
+							<string>NSTextField</string>
 							<string>TNNetworkController</string>
 							<string>NSPopover</string>
 							<string>TNUIKitScrollView</string>
@@ -15808,6 +15856,7 @@
 							<string>graphicDeviceController</string>
 							<string>inputDeviceController</string>
 							<string>interfaceController</string>
+							<string>labelVirtualMachineIsRunning</string>
 							<string>networkController</string>
 							<string>popoverXMLEditor</string>
 							<string>scrollViewContentView</string>
@@ -16064,6 +16113,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">interfaceController</string>
 								<string key="candidateClassName">TNInterfaceController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelVirtualMachineIsRunning</string>
+								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">networkController</string>
