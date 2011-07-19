@@ -5343,14 +5343,6 @@
 					<int key="connectionID">1528</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="583409964"/>
-						<reference key="destination" ref="184143354"/>
-					</object>
-					<int key="connectionID">1547</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeWindow:</string>
 						<reference key="source" ref="583409964"/>
@@ -5359,28 +5351,12 @@
 					<int key="connectionID">1548</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="1055397352"/>
-						<reference key="destination" ref="552871700"/>
-					</object>
-					<int key="connectionID">1580</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">closeWindow:</string>
 						<reference key="source" ref="1055397352"/>
 						<reference key="destination" ref="1047952257"/>
 					</object>
 					<int key="connectionID">1581</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainContentView</string>
-						<reference key="source" ref="442700912"/>
-						<reference key="destination" ref="635409784"/>
-					</object>
-					<int key="connectionID">1604</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -9043,6 +9019,8 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addContact:</string>
 							<string>addGroup:</string>
+							<string>chooseFolder:</string>
+							<string>clearErrors:</string>
 							<string>collapseAllGroups:</string>
 							<string>collapseGroup:</string>
 							<string>deleteContact:</string>
@@ -9056,6 +9034,7 @@
 							<string>openReleaseNotes:</string>
 							<string>openWebsite:</string>
 							<string>openWiki:</string>
+							<string>openXCode:</string>
 							<string>renameContact:</string>
 							<string>renameGroup:</string>
 							<string>selectNextEntity:</string>
@@ -9064,6 +9043,7 @@
 							<string>showNotificationWindow:</string>
 							<string>showPreferencesWindow:</string>
 							<string>showXMPPAccountWindow:</string>
+							<string>stopListener:</string>
 							<string>switchMainMenu:</string>
 							<string>toggleShowPropertiesView:</string>
 							<string>toogleRemoveEntity:</string>
@@ -9074,6 +9054,10 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -9112,6 +9096,8 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addContact:</string>
 							<string>addGroup:</string>
+							<string>chooseFolder:</string>
+							<string>clearErrors:</string>
 							<string>collapseAllGroups:</string>
 							<string>collapseGroup:</string>
 							<string>deleteContact:</string>
@@ -9125,6 +9111,7 @@
 							<string>openReleaseNotes:</string>
 							<string>openWebsite:</string>
 							<string>openWiki:</string>
+							<string>openXCode:</string>
 							<string>renameContact:</string>
 							<string>renameGroup:</string>
 							<string>selectNextEntity:</string>
@@ -9133,6 +9120,7 @@
 							<string>showNotificationWindow:</string>
 							<string>showPreferencesWindow:</string>
 							<string>showXMPPAccountWindow:</string>
+							<string>stopListener:</string>
 							<string>switchMainMenu:</string>
 							<string>toggleShowPropertiesView:</string>
 							<string>toogleRemoveEntity:</string>
@@ -9149,6 +9137,14 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">addGroup:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">chooseFolder:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">clearErrors:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -9204,6 +9200,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">openXCode:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">renameContact:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -9233,6 +9233,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showXMPPAccountWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">stopListener:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -9272,28 +9276,42 @@
 							<string>XMPPAccountController</string>
 							<string>avatarController</string>
 							<string>buttonBarLeft</string>
+							<string>buttonOpenXCode</string>
+							<string>buttonStart</string>
+							<string>buttonStop</string>
 							<string>connectionController</string>
 							<string>contactsController</string>
+							<string>errorsPanel</string>
+							<string>errorsTable</string>
 							<string>filterField</string>
 							<string>filterView</string>
 							<string>groupsController</string>
 							<string>hintController</string>
 							<string>imageViewBundleLoading</string>
 							<string>imageViewLogoAbout</string>
+							<string>labelCurrentPath</string>
 							<string>labelCurrentUser</string>
+							<string>labelPath</string>
+							<string>labelStatus</string>
 							<string>ledIn</string>
 							<string>ledOut</string>
 							<string>leftView</string>
+							<string>mainWindow</string>
+							<string>menuItemOpenXCode</string>
+							<string>menuItemStart</string>
+							<string>menuItemStop</string>
 							<string>moduleController</string>
 							<string>notificationHistoryController</string>
 							<string>preferencesController</string>
 							<string>progressIndicatorModulesLoading</string>
 							<string>propertiesController</string>
 							<string>rightView</string>
+							<string>spinner</string>
 							<string>splitViewHorizontalRoster</string>
 							<string>splitViewMain</string>
 							<string>splitViewTagsContents</string>
 							<string>statusBar</string>
+							<string>statusMenu</string>
 							<string>tagsController</string>
 							<string>textFieldAboutVersion</string>
 							<string>theWindow</string>
@@ -9309,8 +9327,13 @@
 							<string>TNXMPPAccountController</string>
 							<string>TNAvatarController</string>
 							<string>CPButtonBar</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>TNConnectionController</string>
 							<string>TNContactsController</string>
+							<string>NSPanel</string>
+							<string>NSTableView</string>
 							<string>TNSearchField</string>
 							<string>NSView</string>
 							<string>TNGroupsController</string>
@@ -9318,19 +9341,28 @@
 							<string>NSImageView</string>
 							<string>NSImageView</string>
 							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
 							<string>NSImageView</string>
 							<string>NSImageView</string>
 							<string>TNFlipView</string>
+							<string>NSWindow</string>
+							<string>NSMenuItem</string>
+							<string>NSMenuItem</string>
+							<string>NSMenuItem</string>
 							<string>TNModuleController</string>
 							<string>TNNotificationHistoryController</string>
 							<string>TNPreferencesController</string>
 							<string>NSProgressIndicator</string>
 							<string>TNPropertiesController</string>
 							<string>TNFlipView</string>
+							<string>NSProgressIndicator</string>
 							<string>NSSplitView</string>
 							<string>NSSplitView</string>
 							<string>NSSplitView</string>
 							<string>NSView</string>
+							<string>NSMenu</string>
 							<string>TNTagsController</string>
 							<string>NSTextField</string>
 							<string>NSWindow</string>
@@ -9349,28 +9381,42 @@
 							<string>XMPPAccountController</string>
 							<string>avatarController</string>
 							<string>buttonBarLeft</string>
+							<string>buttonOpenXCode</string>
+							<string>buttonStart</string>
+							<string>buttonStop</string>
 							<string>connectionController</string>
 							<string>contactsController</string>
+							<string>errorsPanel</string>
+							<string>errorsTable</string>
 							<string>filterField</string>
 							<string>filterView</string>
 							<string>groupsController</string>
 							<string>hintController</string>
 							<string>imageViewBundleLoading</string>
 							<string>imageViewLogoAbout</string>
+							<string>labelCurrentPath</string>
 							<string>labelCurrentUser</string>
+							<string>labelPath</string>
+							<string>labelStatus</string>
 							<string>ledIn</string>
 							<string>ledOut</string>
 							<string>leftView</string>
+							<string>mainWindow</string>
+							<string>menuItemOpenXCode</string>
+							<string>menuItemStart</string>
+							<string>menuItemStop</string>
 							<string>moduleController</string>
 							<string>notificationHistoryController</string>
 							<string>preferencesController</string>
 							<string>progressIndicatorModulesLoading</string>
 							<string>propertiesController</string>
 							<string>rightView</string>
+							<string>spinner</string>
 							<string>splitViewHorizontalRoster</string>
 							<string>splitViewMain</string>
 							<string>splitViewTagsContents</string>
 							<string>statusBar</string>
+							<string>statusMenu</string>
 							<string>tagsController</string>
 							<string>textFieldAboutVersion</string>
 							<string>theWindow</string>
@@ -9396,12 +9442,32 @@
 								<string key="candidateClassName">CPButtonBar</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOpenXCode</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonStart</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonStop</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">connectionController</string>
 								<string key="candidateClassName">TNConnectionController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">contactsController</string>
 								<string key="candidateClassName">TNContactsController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">errorsPanel</string>
+								<string key="candidateClassName">NSPanel</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">errorsTable</string>
+								<string key="candidateClassName">NSTableView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">filterField</string>
@@ -9428,7 +9494,19 @@
 								<string key="candidateClassName">NSImageView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">labelCurrentPath</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">labelCurrentUser</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelPath</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelStatus</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -9442,6 +9520,22 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">leftView</string>
 								<string key="candidateClassName">TNFlipView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainWindow</string>
+								<string key="candidateClassName">NSWindow</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">menuItemOpenXCode</string>
+								<string key="candidateClassName">NSMenuItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">menuItemStart</string>
+								<string key="candidateClassName">NSMenuItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">menuItemStop</string>
+								<string key="candidateClassName">NSMenuItem</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">moduleController</string>
@@ -9468,6 +9562,10 @@
 								<string key="candidateClassName">TNFlipView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">spinner</string>
+								<string key="candidateClassName">NSProgressIndicator</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">splitViewHorizontalRoster</string>
 								<string key="candidateClassName">NSSplitView</string>
 							</object>
@@ -9482,6 +9580,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">statusBar</string>
 								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">statusMenu</string>
+								<string key="candidateClassName">NSMenu</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tagsController</string>
