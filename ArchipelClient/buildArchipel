@@ -30,10 +30,10 @@ os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughel", [   "project", "all", "modules=", "allmodules", "native=", "clean",
+        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughels", [   "project", "all", "modules=", "allmodules", "native=", "clean",
                                                                     "config=", "build", "installmodules", "uninstallmodules",
                                                                     "generateplist", "help", "example", "ignoremodules=",
-                                                                    "sdk=", "export=", "localize"])
+                                                                    "sdk=", "export=", "localize", "samples"])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -47,6 +47,7 @@ def main():
     opt_build_only_modules      = False;
     opt_should_clean            = False;
     opt_should_localize         = False;
+    opt_allow_samples           = False;
     opt_export_sdk_path         = None;
     opt_export_archipel_path    = None;
     opt_build_native            = None;
@@ -104,6 +105,9 @@ def main():
         if o in ("--export"):
             opt_export_archipel_path = a
 
+        if o in ("-s", "--samples"):
+            opt_allow_samples = True
+
         if o in ("-u", "--uninstallmodules"):
             opt_should_copy_modules = False;
             opt_should_remove_modules = True;
@@ -131,19 +135,19 @@ def main():
         clean(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
 
     if opt_should_localize:
-        localize(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
+        localize(opt_build_paths, opt_build_config, opt_ignore_modules_paths, opt_allow_samples)
 
     if opt_should_build:
-        build(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
+        build(opt_build_paths, opt_build_config, opt_ignore_modules_paths, opt_allow_samples)
 
     if opt_should_generate_plist:
-        generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths)
+        generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths, opt_allow_samples)
 
     if (opt_should_build and len(opt_modules_paths) > 0) or opt_should_copy_modules:
-        copy_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths)
+        copy_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths, opt_allow_samples)
 
     if opt_should_remove_modules:
-        remove_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths);
+        remove_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths, opt_allow_samples);
 
     if opt_build_native:
         make_native_app(opt_build_native, opt_build_config);
@@ -167,7 +171,7 @@ def clean(paths, config, ignorepaths):
         remove_modules([path], config, ignorepaths)
 
 
-def localize(paths, config, ignorepaths):
+def localize(paths, config, ignorepaths, allowSamples=False):
     return_code = 0;
 
     print "# begining localize"
@@ -176,7 +180,7 @@ def localize(paths, config, ignorepaths):
         if path in ignorepaths:
             continue
 
-        if path.lower().find("sample") > -1:
+        if not allowSamples and path.lower().find("sample") > -1 :
             continue
 
         print "# moving to " + path
@@ -192,7 +196,7 @@ def localize(paths, config, ignorepaths):
         print "# get back to " + GLOBAL_BASE_PATH
         os.chdir(GLOBAL_BASE_PATH);
 
-def build(paths, config, ignorepaths):
+def build(paths, config, ignorepaths, allowSamples=False):
     return_code = 0;
 
     print "# begining build #%s" % (GLOBAL_BUILD_NUMBER)
@@ -201,7 +205,7 @@ def build(paths, config, ignorepaths):
         if path in ignorepaths:
             continue
 
-        if path.lower().find("sample") > -1:
+        if not allowSamples and path.lower().find("sample") > -1 :
             continue
 
         print "# moving to " + path
@@ -221,12 +225,12 @@ def build(paths, config, ignorepaths):
     print "# Build #%s success." % (GLOBAL_BUILD_NUMBER)
 
 
-def copy_modules(modules_paths, config, ignorepaths):
+def copy_modules(modules_paths, config, ignorepaths, allowSamples=False):
     for path in modules_paths:
         if path in ignorepaths:
             continue
 
-        if path.lower().find("sample") > -1:
+        if not allowSamples and path.lower().find("sample") > -1 :
             continue
 
         config              = config.capitalize()
@@ -242,12 +246,12 @@ def copy_modules(modules_paths, config, ignorepaths):
     os.system("cp -a " + GLOBAL_MODULES_PLIST_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", "") + "/Modules");
 
 
-def remove_modules(modules_paths, config, ignorepaths):
+def remove_modules(modules_paths, config, ignorepaths, allowSamples=False):
     for path in modules_paths:
         if path in ignorepaths:
             continue
 
-        if path.lower().find("sample") > -1:
+        if not allowSamples and path.lower().find("sample") > -1 :
             continue
 
 
@@ -267,7 +271,7 @@ def make_native_app(platform, config):
     os.system("cp -a ./Modules/* ./Build/Desktop/Archipel/Archipel.app/Contents/Resources/Archipel/Modules/")
 
 
-def generate_modules_plist(modules_paths, ignorepaths):
+def generate_modules_plist(modules_paths, ignorepaths, allowSamples=False):
     print "# Generating modules PLIST file"
     plist = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -280,7 +284,7 @@ def generate_modules_plist(modules_paths, ignorepaths):
         if path in ignorepaths:
             continue
 
-        if path.lower().find("sample") > -1:
+        if not allowSamples and path.lower().find("sample") > -1 :
             continue
 
         module_name         = path.split("/")[-1]
@@ -322,7 +326,8 @@ Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
         -u | --uninstallmodules  : remove all the builded modules according to TARGET from the destination dir.
         -g | --generateplist     : generate a modules.plist file according to TARGET.
         -h | --help              : display this message
-        -e | --example           : display some usage example;
+        -e | --example           : display some usage example
+        -s | --samples           : allow to manipulate sample modules
         --native=<platform>      : generate a native app. platform supported are [MacOS] (case sensitive).
         --ignoremodules=<list>   : ignore list of modules. <list> is "moduleA,moduleC" whith no space.
         --exportsdk=<path>       : generate and export Archipel SDK to <path>
