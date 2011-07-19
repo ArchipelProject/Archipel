@@ -38,6 +38,7 @@
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <LPKit/LPMultiLineTextField.j>
+@import <LPKit/LPCrashReporter.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNUIKitScrollView.j>
@@ -222,7 +223,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
         center      = [CPNotificationCenter defaultCenter];
-
 
     /* register logs */
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
@@ -815,6 +815,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [connectionController showWindow:nil];
     [labelCurrentUser setStringValue:@""];
     [CPMenu setMenuBarVisible:NO];
+    document.getElementById("copyright_label").style.textShadow = @"";
 }
 
 /*! Notification responder for TNStropheRosterRetrievedNotification

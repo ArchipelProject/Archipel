@@ -19,7 +19,7 @@
     <key>CPPrincipalClass</key>
     <string>CPApplication</string>
     <key>LPCrashReporterLoggingURL</key>
-    <string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
+    <string>http://crashes.archipelproject.org/reports.php</string>
     <key>Main cib file base name</key>
     <string>MainMenu.cib</string>
     <key>TNArchipelAnimationsDuration</key>
