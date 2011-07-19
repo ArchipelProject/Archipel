@@ -56,6 +56,20 @@ TNLibvirtDeviceGraphicVNCKeymaps       = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
 #pragma mark -
 #pragma mark Initialization
 
+/*! initialize the TNLibvirtDeviceGraphic
+*/
+- (TNLibvirtDeviceGraphic)init
+{
+    if (self = [super init])
+    {
+        _keymap = TNLibvirtDeviceGraphicVNCKeymapEN_US;
+        _type = TNLibvirtDeviceGraphicTypeVNC;
+        _autoPort = YES;
+    }
+
+    return self;
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */

@@ -1200,8 +1200,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)addGraphicDevice:(id)aSender
 {
     var graphicDevice = [[TNLibvirtDeviceGraphic alloc] init];
-    [graphicDevice setType:TNLibvirtDeviceGraphicTypeVNC];
-    [graphicDevice setKeymap:TNLibvirtDeviceGraphicVNCKeymapEN_US];
 
     if (![_libvirtDomain devices])
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
@@ -1773,18 +1771,26 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
+        [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
+        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphic alloc] init]];
 
         [self didChangeGuest:buttonGuests];
         [self didChangeAPIC:switchAPIC];
         [self didChangeACPI:switchACPI];
         [self didChangePAE:switchPAE];
         [self didChangeHugePages:switchHugePages];
-        [_inputDevicesDatasource addObject:[[TNLibvirtDeviceInput alloc] init]];
 
-        [_inputDevicesDatasource removeAllObjects];
+        [_inputDevicesDatasource setContent:[[_libvirtDomain devices] inputs]];
         [tableInputDevices reloadData];
-        [_graphicDevicesDatasource removeAllObjects];
+
+        [_graphicDevicesDatasource setContent:[[_libvirtDomain devices] graphics]];
         [tableGraphicsDevices reloadData];
+
+        [_drivesDatasource setContent:[[_libvirtDomain devices] disks]];
+        [tableDrives reloadData];
+
+        [_nicsDatasource setContent:[[_libvirtDomain devices] interfaces]];
+        [tableInterfaces reloadData];
 
         [self buildGUIAccordingToCurrentGuest];
         _definitionRecovered = YES;
