@@ -186,6 +186,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 {
     [rolesController closeWindow:nil];
     [rolesController closeNewTemplateWindow:nil];
+    [super willHide];
 }
 
 /*! called when module is unloaded
