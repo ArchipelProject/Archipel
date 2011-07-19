@@ -259,10 +259,13 @@ class TNHypervisorHealth (TNArchipelPlugin):
             output = commands.getoutput("tail -n %d %s" % (limit, self.logfile))
             nodes = []
             for line in output.split("\n"):
-                infos = line.split("::")
-                log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": "", "method": ""})
-                log_node.setData(line)
-                nodes.append(log_node)
+                try:
+                    infos = line.split("::")
+                    log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": "", "method": ""})
+                    log_node.setData(line)
+                    nodes.append(log_node)
+                except Exception as ex:
+                    pass
             reply.setQueryPayload(nodes)
         except Exception as ex:
             print str(ex)
