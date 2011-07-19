@@ -208,6 +208,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (void)willHide
 {
     [VMCastRegistrationController closeWindow:nil];
+    [downloadQueueController closeWindow:nil];
 
     [super willHide];
 }

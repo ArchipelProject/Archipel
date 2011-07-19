@@ -343,7 +343,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [self recoverFromLastSelectedIndex];
 }
 
-/*! will remove all loaded modules and send message willUnload to all TNModules
+/*! will remove all loaded modules and send message willHide willUnload to all TNModules
 */
 - (void)_removeAllTabsFromModulesTabView
 {
@@ -356,6 +356,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     {
         var tabViewItem = [arrayCpy objectAtIndex:i],
             module      = [tabViewItem module];
+
+        if ([module isVisible])
+            [module willHide];
 
         [module willUnload];
         [module setEntity:nil];

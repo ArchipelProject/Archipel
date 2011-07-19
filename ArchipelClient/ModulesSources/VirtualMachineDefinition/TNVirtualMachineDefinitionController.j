@@ -221,7 +221,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tabViewParameters addTabViewItem:tabViewItemAdvanced];
     [tabViewParameters addTabViewItem:tabViewItemDrives];
     [tabViewParameters addTabViewItem:tabViewItemNics];
-
+    [tabViewParameters setDelegate:self];
 
     var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CPSizeMake(1.0, 10.0)],
         shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CPSizeMake(1.0, 10.0)];
@@ -590,6 +590,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     [interfaceController closeWindow:nil];
     [driveController closeWindow:nil];
+    [inputDeviceController closeWindow:nil];
+    [graphicDeviceController closeWindow:nil];
+
     [popoverXMLEditor close];
 
     [super willHide];
@@ -2037,6 +2040,16 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
         }
     }
+}
+
+/*! tabview delegate
+*/
+- (void)tabView:(TNTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    [interfaceController closeWindow:nil];
+    [driveController closeWindow:nil];
+    [inputDeviceController closeWindow:nil];
+    [graphicDeviceController closeWindow:nil];
 }
 
 @end

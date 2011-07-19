@@ -131,6 +131,10 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)willHide
 {
+    [sharedGroupsController closeNewGroupWindow:nil];
+    [sharedGroupsController closeAddUserInGroupWindow:nil];
+    [usersController closeRegisterUserWindow:nil];
+
     [super willHide];
     // message sent when the tab is changed
 }
