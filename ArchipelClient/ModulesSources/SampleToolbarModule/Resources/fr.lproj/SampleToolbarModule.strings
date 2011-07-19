@@ -1,0 +1,7 @@
+
+/* Class = "NSButtonCell"; title = "Display Growl"; ObjectID = "10"; */
+"10.title" = "Affiche growl";
+
+/* Class = "NSTextFieldCell"; title = "I'm a Toolbar module!"; ObjectID = "14"; */
+"14.title" = "Je suis un module de type barre d'outils";
+

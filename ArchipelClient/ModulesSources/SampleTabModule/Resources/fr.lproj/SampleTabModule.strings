@@ -1,0 +1,13 @@
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "3"; */
+"3.title" = "Label";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "5"; */
+"5.title" = "Label";
+
+/* Class = "NSButtonCell"; title = "Send Hello"; ObjectID = "10"; */
+"10.title" = "Dis Bonjour";
+
+/* Class = "NSTextFieldCell"; title = "I'm a Tab module!"; ObjectID = "13"; */
+"13.title" = "Je suis un module de type tabulation";
+

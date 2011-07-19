@@ -85,6 +85,7 @@
             <string>hypervisor</string>
             <string>user</string>
             <string>group</string>
+            <!-- <string>general</string> -->
         </array>
 
         <!--
@@ -93,6 +94,25 @@
         <key>UseModuleMenu</key>
 		<integer>1</integer>
 
+        <!--
+            If set to 1, the module will expand with the window. Otherwise,
+            you are responsible for the height of the module
+        -->
+        <key>FullscreenModule</key>
+        <integer>1</integer>
+
+
+        <!--
+            This is the minimal required set of permissions you need
+            to be able to display the module.
+        -->
+        <!--
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>perm_name_A</string>
+            <string>perm_name_B</string>
+        </array>
+        -->
 
         <!--
             This indicate to the module loader which CIB to load.

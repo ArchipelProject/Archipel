@@ -31,7 +31,8 @@
 */
 @implementation TNSampleToolbarModuleController : TNModule
 {
-
+    @outlet CPTextField fieldName;
+    @outlet CPTextField fieldJID;
 }
 
 #pragma mark -
@@ -48,6 +49,9 @@
 - (void)willLoad
 {
     [super willLoad];
+
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 }
 
 /*! this message is called when module is unloaded
@@ -64,7 +68,9 @@
 {
     if (![super willShow])
         return NO;
-    // message sent when the tab is clicked
+
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity JID]];
 
     return YES;
 }
@@ -84,10 +90,17 @@
     [super permissionsChanged]
 }
 
+
 #pragma mark -
 #pragma mark Notification handlers
 
-// put your notification handlers here
+/*! called when entity' nickname changed
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
+{
+    [fieldName setStringValue:[_entity nickname]];
+}
 
 
 #pragma mark -
@@ -99,13 +112,22 @@
 #pragma mark -
 #pragma mark Actions
 
-// put your IBAction here
+/*! send hello to entity
+    @param aSender the sender of the action
+*/
+- (IBAction)showGrowl:(id)aSender
+{
+    // You can use Growl if you want to notify the user about something.
+    // Do not forget to localize your strings using CPLocalizedString (defined at the end of this file)
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+                                                     message:CPBundleLocalizedString(@"Hello world!", @"Hello world!")];
+}
 
 
 #pragma mark -
 #pragma mark XMPP Controls
 
-// put your IBActions here
+// Your XMPP controls here
 
 
 #pragma mark -
@@ -116,4 +138,10 @@
 @end
 
 
-
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    // DO NOT FORGET TO CHANGE THE CLASS NAME HERE
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNSampleToolbarModuleController], comment);
+}

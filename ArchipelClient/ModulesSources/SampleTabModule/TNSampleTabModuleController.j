@@ -19,7 +19,15 @@
 
 @import <Foundation/Foundation.j>
 
+// import only AppKit part you need here.
 @import <AppKit/CPTextField.j>
+
+
+// if you don't need this variables outside of this file,
+// *always* use the 'var' keyword to make them filescoped
+// otherwise, it will be application scoped
+var TNArchipelTypeDummyNamespace = @"archipel:dummy",
+    TNArchipelTypeDummyNamespaceSayHello = @"sayhello";
 
 /*! @defgroup  sampletabmodule Module SampleTabModule
     @desc Development starting point to create a Tab module
@@ -27,12 +35,12 @@
 
 /*! @ingroup sampletabmodule
     Sample tabbed module implementation
-    Please respect the pragma marks as musch as possible.
+    Please respect the pragma marks as much as possible.
 */
 @implementation TNSampleTabModuleController : TNModule
 {
-    @outlet CPTextField             fieldJID                @accessors;
-    @outlet CPTextField             fieldName               @accessors;
+    @outlet CPTextField     fieldJID;
+    @outlet CPTextField     fieldName;
 }
 
 
@@ -57,7 +65,6 @@
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 /*! called when module is unloaded
@@ -84,6 +91,8 @@
 */
 - (void)willHide
 {
+    // you should close all your opened windows and popover now.
+
     [super willHide];
 }
 
@@ -91,7 +100,10 @@
 */
 - (void)permissionsChanged
 {
-    [super permissionsChanged]
+    [super permissionsChanged];
+
+    // You may need to update your GUI to disable some
+    // controls if permissions changed
 }
 
 
@@ -103,10 +115,7 @@
 */
 - (void)_didUpdateNickName:(CPNotification)aNotification
 {
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
+    [fieldName setStringValue:[_entity nickname]];
 }
 
 
@@ -119,13 +128,58 @@
 #pragma mark -
 #pragma mark Actions
 
-// put your IBAction here
+/*! send hello to entity
+    @param aSender the sender of the action
+*/
+- (IBAction)sendHello:(id)aSender
+{
+    // try to always proxy your IBAction like this.
+    [self sayHello];
+}
 
 
 #pragma mark -
 #pragma mark XMPP Controls
 
-// put your IBActions here
+/*! Send the dummy hello stanza to the current entity
+*/
+- (void)sayHello
+{
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeDummyNamespace}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeDummyNamespaceSayHello}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didSayHello:) ofObject:self];
+}
+
+/*! compute the answer about the hello command
+    @param aStanza TNStropheStanza that contains the hypervisor answer
+*/
+- (BOOL)_didSayHello:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"success")
+    {
+        // You can use Growl if you want to notify the user about something.
+        // Do not forget to localize your strings using CPLocalizedString (defined at the end of this file)
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+                                                         message:CPBundleLocalizedString(@"Hello sent!", @"Hello sent!")];
+    }
+    else
+    {
+        // Then we got an error. You can manage it as you want,
+        // but in any way it is strongly suggested to use the
+        // standard handling of the TNModule
+        // This will display a growl notification and will log relevant
+        // info into the JS console.
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    // return NO to not be notified next time
+    // Most of the time you want to return NO.
+    return NO;
+}
 
 
 #pragma mark -
@@ -136,4 +190,10 @@
 @end
 
 
-
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    // DO NOT FORGET TO CHANGE THE CLASS NAME HERE
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNSampleTabModuleController], comment);
+}
