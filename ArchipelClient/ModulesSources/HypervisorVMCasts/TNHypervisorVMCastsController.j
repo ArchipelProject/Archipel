@@ -560,7 +560,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (BOOL)_didDownload:(TNStropheStanza)aStanza
 {
-    [windowDownloadQueue makeKeyAndOrderFront:nil];
+    [downloadQueueController closeWindow:nil];
+    [downloadQueueController showWindow:_plusButton];
 
     return NO;
 }
