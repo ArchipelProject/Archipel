@@ -170,7 +170,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Disk has been converted", @"Disk has been converted")];
     else if ([aStanza type] == @"error")
-        [self handleIqErrorFromStanza:aStanza];
+        [_delegate handleIqErrorFromStanza:aStanza];
 
     return NO;
 }
@@ -214,7 +214,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
                                                          message:CPBundleLocalizedString(@"Disk has been renamed", @"Disk has been renamed")];
     else if ([aStanza type] == @"error")
-        [self handleIqErrorFromStanza:aStanza];
+        [_delegate handleIqErrorFromStanza:aStanza];
 
     return NO;
 }

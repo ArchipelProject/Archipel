@@ -189,7 +189,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 {
     if ([aStanza type] == @"error")
     {
-        [self handleIqErrorFromStanza:aStanza];
+        [_delegate handleIqErrorFromStanza:aStanza];
         return NO;
     }
 
@@ -265,7 +265,7 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 - (BOOL)_didCreateDisk:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"error")
-        [self handleIqErrorFromStanza:aStanza];
+        [_delegate handleIqErrorFromStanza:aStanza];
 
     return NO;
 }
