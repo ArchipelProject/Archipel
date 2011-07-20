@@ -39,6 +39,19 @@ def prepare_environment(prefix="", force=False, xmpp_server="auto", hypervisor_n
 
     if force:
         try:
+            print "\033[31m****** WARNING ******"
+            print "using --force will remove ALL your Archipel Installation, including the /vm folder"
+            print "This mean you will lost ALL OF YOUR VIRTUAL MACHINE and other data"
+            print "Do this only if you are completely sure"
+            c = raw_input("Do you really want to force the reinstallation ? [NO/yes] : ")
+            if not c == "yes":
+                print "\033[0mouf..."
+                return
+            c = raw_input("Really really sure (last chance) ? [NO/yes] : ")
+            if not c == "yes":
+                print "\033[0mouf..."
+                return
+            print "ok. you have been warned...\033[0m"
             print "# cleaning old existing files"
             print " - cleaning init script from %s/etc/init.d/archipel" % prefix
             os.system("rm -rf %s/etc/init.d/archipel" % prefix)
