@@ -19,9 +19,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+import subprocess
 import xmlrpclib
 import xmpp
-import subprocess
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
@@ -99,13 +100,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.xmpp_server        = entity.jid.getDomain()
-        self.xmlrpc_host        = self.configuration.get("XMPPSERVER", "xmlrpc_host")
-        self.xmlrpc_port        = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
-        self.xmlrpc_user        = self.configuration.get("XMPPSERVER", "xmlrpc_user")
-        self.xmlrpc_password    = self.configuration.get("XMPPSERVER", "xmlrpc_password")
-        self.xmlrpc_call        = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
-        self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
-        self.ejabberdctl_path   = "/opt/ejabberd-src-2.1.8/sbin/ejabberdctl" # @ TODO
+        self.ejabberdctl_path   = self.configuration.get("XMPPSERVER", "ejabberdctl_path")
 
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
@@ -145,10 +140,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         plugin_friendly_name           = "XMPP Server Manager"
         plugin_identifier              = "xmppserver"
         plugin_configuration_section   = "XMPPSERVER"
-        plugin_configuration_tokens    = [  "xmlrpc_host",
-                                            "xmlrpc_port",
-                                            "xmlrpc_user",
-                                            "xmlrpc_password"]
+        plugin_configuration_tokens    = ["ejabberdctl_path"]
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -196,18 +188,16 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
-            groupID     = iq.getTag("query").getTag("archipel").getAttr("id")
-            groupName   = iq.getTag("query").getTag("archipel").getAttr("name")
-            groupDesc   = iq.getTag("query").getTag("archipel").getAttr("description")
-            server      = self.entity.jid.getDomain()
-            answer      = self.xmlrpc_server.srg_create({"host": server, "display": groupID, "name": groupName, "description": groupDesc, "group": groupID})
-            if not answer['res'] == 0:
-                raise Exception("Cannot create shared roster group.")
-            self.entity.log.info("Creating a new shared group %s" % groupID)
+            reply = iq.buildReply("result")
+            groupID = iq.getTag("query").getTag("archipel").getAttr("id")
+            groupName = iq.getTag("query").getTag("archipel").getAttr("name")
+            groupDesc = iq.getTag("query").getTag("archipel").getAttr("description")
+            server = self.entity.jid.getDomain()
+            subprocess.check_call([self.ejabberdctl_path, "srg-create", groupID, server, "'%s'" % groupName, "'%s'" % groupDesc, groupID])
+            self.entity.log.info("created a new shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
+            reply = build_error_iq(self, ex, iq)
         return reply
 
     def iq_group_delete(self, iq):
@@ -219,16 +209,14 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
-            groupID     = iq.getTag("query").getTag("archipel").getAttr("id")
-            server      = self.entity.jid.getDomain()
-            answer      = self.xmlrpc_server.srg_delete({"host": server, "group": groupID})
-            if not answer['res'] == 0:
-                raise Exception("Cannot create shared roster group.")
-            self.entity.log.info("Removing a shared group %s" % groupID)
+            reply = iq.buildReply("result")
+            groupID = iq.getTag("query").getTag("archipel").getAttr("id")
+            server = self.entity.jid.getDomain()
+            subprocess.check_call([self.ejabberdctl_path, "srg-delete", groupID, server])
+            self.entity.log.info("removed a shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE)
+            reply = build_error_iq(self, ex, iq)
         return reply
 
     def iq_group_list(self, iq):
@@ -240,30 +228,29 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
-            server      = self.entity.jid.getDomain()
-            answer      = self.xmlrpc_server.srg_list({"host": server})
-            groups      = answer["groups"]
-            groupsNode  = []
-
+            reply = iq.buildReply("result")
+            groupsNode = []
+            server = self.entity.jid.getDomain()
+            output = subprocess.check_output([self.ejabberdctl_path, "srg-list", server])
+            groups = output.split()
             for group in groups:
-                answer          = self.xmlrpc_server.srg_get_info({"host": server, "group": group["id"]})
-                informations    = answer["informations"]
-                for info in informations:
-                    if info['information'][0]["key"] == "name":
-                        displayed_name = info['information'][1]["value"]
-                    if info['information'][0]["key"] == "description":
-                        description = info['information'][1]["value"]
-                info    = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", "")}
+                output = subprocess.check_output([self.ejabberdctl_path, "srg-get-info", group, server])
+                displayed_name, gid, description, trash = output.split("\n")
+                gid = re.findall('"([^"]*)"', gid)[0]
+                displayed_name = re.findall('"([^"]*)"', displayed_name)[0]
+                try:
+                    description = re.findall('"([^"]*)"', description)[0]
+                except:
+                    description = ""
+                info = {"id": gid, "displayed_name": displayed_name, "description": description}
                 newNode = xmpp.Node("group", attrs=info)
-                answer  = self.xmlrpc_server.srg_get_members({"host": server, "group": group["id"]})
-                members = answer["members"]
-                for member in members:
-                    newNode.addChild("user", attrs={"jid": member["member"]})
+                output = subprocess.check_output([self.ejabberdctl_path, "srg-get-members", group, server])
+                for jid in output.split():
+                    newNode.addChild("user", attrs={"jid": jid})
                 groupsNode.append(newNode)
-            reply.setQueryPayload(groupsNode)
+            reply.setQueryPayload(groupsNode);
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST)
+            reply = build_error_iq(self, ex, iq)
         return reply
 
     def iq_group_add_users(self, iq):
@@ -275,19 +262,17 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
-            groupID     = iq.getTag("query").getTag("archipel").getAttr("groupid")
-            users       = iq.getTag("query").getTag("archipel").getTags("user")
-            server      = self.entity.jid.getDomain()
+            reply = iq.buildReply("result")
+            groupID = iq.getTag("query").getTag("archipel").getAttr("groupid")
+            users = iq.getTag("query").getTag("archipel").getTags("user")
+            server = self.entity.jid.getDomain()
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                answer  = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
-                if not answer['res'] == 0:
-                    raise Exception("Cannot add user to shared roster group.")
-                self.entity.log.info("Adding user %s into shared group %s" % (userJID, groupID))
+                subprocess.check_call([self.ejabberdctl_path, "srg-user-add", userJID.getNode(), userJID.getDomain(), groupID, server])
+            self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS)
+            reply = build_error_iq(self, ex, iq)
         return reply
 
     def iq_group_delete_users(self, iq):
@@ -299,19 +284,17 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
-            groupID     = iq.getTag("query").getTag("archipel").getAttr("groupid")
-            users       = iq.getTag("query").getTag("archipel").getTags("user")
-            server      = self.entity.jid.getDomain()
+            reply = iq.buildReply("result")
+            groupID = iq.getTag("query").getTag("archipel").getAttr("groupid")
+            users = iq.getTag("query").getTag("archipel").getTags("user")
+            server = self.entity.jid.getDomain()
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
-                if not answer['res'] == 0:
-                    raise Exception("Cannot remove user from shared roster group.")
-                self.entity.log.info("Removing user %s from shared group %s" % (userJID, groupID))
+                subprocess.check_output([self.ejabberdctl_path, "srg-user-del", userJID.getNode(), userJID.getDomain(), groupID, server])
+                self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS)
+            reply = build_error_iq(self, ex, iq)
         return reply
 
 
