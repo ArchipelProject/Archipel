@@ -62,6 +62,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
+    @outlet CPTextField             labelWebsocketProblem;
     @outlet CPView                  viewControls;
     @outlet CPWindow                windowPassword;
     @outlet LPMultiLineTextField    fieldPasteBoard;
@@ -147,6 +148,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [fieldPreferencesCheckRate setToolTip:CPBundleLocalizedString(@"Set the VNC check rate value", @"Set the VNC check rate value")];
     [fieldPreferencesFBURefreshRate setToolTip:CPBundleLocalizedString(@"Set the VNC FBU refresg rate value", @"Set the VNC FBU refresg rate value")];
     [switchPreferencesPreferSSL setToolTip:CPBundleLocalizedString(@"Prefer SSL connection if possible", @"Prefer SSL connection if possible")];
+
+    [[self view] applyShadow];
 }
 
 
@@ -196,6 +199,9 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     if (![super willShow])
         return NO;
 
+    [_vncView setHidden:YES];
+    [labelWebsocketProblem setHidden:YES];
+
     [self handleDisplayVNCScreen];
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [[self view] setFrame:[[[self view] superview] bounds]];
@@ -211,6 +217,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     if ([windowPassword isVisible])
         [windowPassword close];
 
+    [_vncView setHidden:YES];
     if ([self isConnected])
     {
         [_vncView disconnect:nil];
@@ -397,8 +404,24 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
                 + _useSSL + "(checkRate: " + [defaults integerForKey:@"NOVNCheckRate"]
                 + ", FBURate: " + [defaults integerForKey:@"NOVNCFBURate"]);
 
-    [_vncView load];
-    [_vncView connect:nil];
+    LPCrashReporterDisable();
+    try
+    {
+        [_vncView load];
+        [_vncView connect:nil];
+        [_vncView setHidden:NO];
+        [labelWebsocketProblem setHidden:YES];
+    }
+    catch(e)
+    {
+        [_vncView setHidden:YES];
+        [labelWebsocketProblem setHidden:NO];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Websocket error for VNC", @"Websocket error for VNC")
+                          informative:CPBundleLocalizedString(@"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.", @"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.")
+                                style:CPCriticalAlertStyle];
+        CPLog.error("Websocket problem. unable to start noVNC subsystem.");
+    }
+    LPCrashReporterEnable();
 }
 
 /*! create a zoom animation between two zoom factor
@@ -666,6 +689,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
                 CPLog.error(@"disconnected from the VNC screen at " + _VMHost + @":" + _vncProxyPort);
             }
             [_vncView resetSize];
+            [_vncView setHidden:YES];
             break;
 
         case TNVNCCappuccinoStatePassword:

@@ -171,8 +171,21 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     CPLog.info("VNC: connecting to " + aHost + ":" + aPort + " using SSL:" + isEncrypted);
 
-    [_vncView load];
-    [_vncView connect:nil];
+    LPCrashReporterDisable();
+    try
+    {
+        [_vncView load];
+        [_vncView connect:nil];
+    }
+    catch(e)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Websocket error for VNC", @"Websocket error for VNC")
+                          informative:CPBundleLocalizedString(@"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.", @"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.")
+                                style:CPCriticalAlertStyle];
+        CPLog.error("Websocket problem. unable to start noVNC subsystem.");
+        [self close];
+    }
+    LPCrashReporterEnable();
 }
 
 - (void)fitWindowToVNCView

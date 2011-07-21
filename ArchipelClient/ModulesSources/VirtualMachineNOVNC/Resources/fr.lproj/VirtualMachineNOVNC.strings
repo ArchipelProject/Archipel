@@ -77,3 +77,9 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "149"; */
 "149.title" = "Cancel";
 
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "161"; */
+"161.title" = "Label";
+
+/* Class = "NSTextFieldCell"; title = "WebSocket problem"; ObjectID = "163"; */
+"163.title" = "WebSocket problem";
+

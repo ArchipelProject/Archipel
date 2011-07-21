@@ -4,9 +4,6 @@
 /* Cannot connect to the VNC screen at  */
 "Cannot connect to the VNC screen at " = "Cannot connect to the VNC screen at ";
 
-/* Connection fail */
-"Connection fail" = "Connection fail";
-
 /* Ctrl Alt Del */
 "Ctrl Alt Del" = "Ctrl Alt Del";
 
@@ -16,14 +13,14 @@
 /* Full Screen */
 "Full Screen" = "Full Screen";
 
-/* FullScreen not supported */
-"FullScreen not supported" = "FullScreen not supported";
-
 /* Get Clipboard */
 "Get Clipboard" = "Get Clipboard";
 
 /* Get the distant pasteboard (not implemented) */
 "Get the distant pasteboard (not implemented)" = "Get the distant pasteboard (not implemented)";
+
+/* It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'. */
+"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'." = "It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.";
 
 /* Make the screen fit the current window */
 "Make the screen fit the current window" = "Make the screen fit the current window";
@@ -60,6 +57,9 @@
 
 /* Set the VNC FBU refresg rate value */
 "Set the VNC FBU refresg rate value" = "Set the VNC FBU refresg rate value";
+
+/* Websocket error for VNC */
+"Websocket error for VNC" = "Websocket error for VNC";
 
 /* Your browser does not support javascript fullscreen */
 "Your browser does not support javascript fullscreen" = "Your browser does not support javascript fullscreen";

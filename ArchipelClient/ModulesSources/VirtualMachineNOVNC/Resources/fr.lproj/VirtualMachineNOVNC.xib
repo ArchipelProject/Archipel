@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
 		<string key="IBDocument.SystemVersion">11A511</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1615</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
 		<string key="IBDocument.AppKitVersion">1138</string>
 		<string key="IBDocument.HIToolboxVersion">566.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1615</string>
+			<string key="NS.object.0">1617</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -311,6 +311,31 @@
 						<reference key="NSSuperview" ref="927006720"/>
 						<reference key="NSNextKeyView" ref="1055932367"/>
 						<string key="NSClassName">NSView</string>
+					</object>
+					<object class="NSTextField" id="30832331">
+						<reference key="NSNextResponder" ref="927006720"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{179, 186}, {230, 43}}</string>
+						<reference key="NSSuperview" ref="927006720"/>
+						<string key="NSReuseIdentifierKey">_NS:3936</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="559035539">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string key="NSContents">WebSocket problem</string>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">21</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<string key="NSCellIdentifier">_NS:3936</string>
+							<reference key="NSControlView" ref="30832331"/>
+							<reference key="NSBackgroundColor" ref="33462811"/>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
+							</object>
+						</object>
 					</object>
 					<object class="NSCustomView" id="1071846967">
 						<reference key="NSNextResponder" ref="927006720"/>
@@ -874,6 +899,27 @@
 				<reference key="NSNextKeyView" ref="140692067"/>
 				<string key="NSClassName">NSView</string>
 			</object>
+			<object class="NSTextField" id="228454739">
+				<nil key="NSNextResponder"/>
+				<int key="NSvFlags">269</int>
+				<string key="NSFrameSize">{379, 17}</string>
+				<string key="NSReuseIdentifierKey">_NS:3936</string>
+				<bool key="NSEnabled">YES</bool>
+				<object class="NSTextFieldCell" key="NSCell" id="223243318">
+					<int key="NSCellFlags">68288064</int>
+					<int key="NSCellFlags2">272630784</int>
+					<string key="NSContents">Label</string>
+					<object class="NSFont" key="NSSupport">
+						<string key="NSName">LucidaGrande</string>
+						<double key="NSSize">27</double>
+						<int key="NSfFlags">16</int>
+					</object>
+					<string key="NSCellIdentifier">_NS:3936</string>
+					<reference key="NSControlView" ref="228454739"/>
+					<reference key="NSBackgroundColor" ref="33462811"/>
+					<reference key="NSTextColor" ref="989663373"/>
+				</object>
+			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -1198,6 +1244,14 @@
 					</object>
 					<int key="connectionID">159</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">labelWebsocketProblem</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="30832331"/>
+					</object>
+					<int key="connectionID">164</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1233,6 +1287,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="1071846967"/>
 							<reference ref="798677276"/>
+							<reference ref="30832331"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -1804,6 +1859,34 @@
 						<reference key="object" ref="381698769"/>
 						<reference key="parent" ref="0"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">160</int>
+						<reference key="object" ref="228454739"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="223243318"/>
+						</object>
+						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">161</int>
+						<reference key="object" ref="223243318"/>
+						<reference key="parent" ref="228454739"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">162</int>
+						<reference key="object" ref="30832331"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="559035539"/>
+						</object>
+						<reference key="parent" ref="927006720"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">163</int>
+						<reference key="object" ref="559035539"/>
+						<reference key="parent" ref="30832331"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1832,6 +1915,10 @@
 					<string>155.IBPluginDependency</string>
 					<string>156.IBPluginDependency</string>
 					<string>16.IBPluginDependency</string>
+					<string>160.IBPluginDependency</string>
+					<string>161.IBPluginDependency</string>
+					<string>162.IBPluginDependency</string>
+					<string>163.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
 					<string>19.IBPluginDependency</string>
@@ -1932,6 +2019,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1997,7 +2088,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">159</int>
+			<int key="maxID">164</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2193,6 +2284,7 @@
 							<string>fieldPreferencesCheckRate</string>
 							<string>fieldPreferencesFBURefreshRate</string>
 							<string>imageViewSecureConnection</string>
+							<string>labelWebsocketProblem</string>
 							<string>mainScrollView</string>
 							<string>popoverPasteBoard</string>
 							<string>sliderScaling</string>
@@ -2217,6 +2309,7 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSImageView</string>
+							<string>NSTextField</string>
 							<string>TNUIKitScrollView</string>
 							<string>NSPopover</string>
 							<string>NSSlider</string>
@@ -2244,6 +2337,7 @@
 							<string>fieldPreferencesCheckRate</string>
 							<string>fieldPreferencesFBURefreshRate</string>
 							<string>imageViewSecureConnection</string>
+							<string>labelWebsocketProblem</string>
 							<string>mainScrollView</string>
 							<string>popoverPasteBoard</string>
 							<string>sliderScaling</string>
@@ -2309,6 +2403,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">imageViewSecureConnection</string>
 								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelWebsocketProblem</string>
+								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainScrollView</string>

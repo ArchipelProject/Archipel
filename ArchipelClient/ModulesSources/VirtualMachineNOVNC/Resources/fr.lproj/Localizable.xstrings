@@ -6,20 +6,18 @@
 	<string>Adjust zoom</string>
 	<key>Cannot connect to the VNC screen at </key>
 	<string>Cannot connect to the VNC screen at </string>
-	<key>Connection fail</key>
-	<string>Connection fail</string>
 	<key>Ctrl Alt Del</key>
 	<string>Ctrl Alt Del</string>
 	<key>Fit screen to window</key>
 	<string>Fit screen to window</string>
 	<key>Full Screen</key>
 	<string>Full Screen</string>
-	<key>FullScreen not supported</key>
-	<string>FullScreen not supported</string>
 	<key>Get Clipboard</key>
 	<string>Get Clipboard</string>
 	<key>Get the distant pasteboard (not implemented)</key>
 	<string>Get the distant pasteboard (not implemented)</string>
+	<key>It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.</key>
+	<string>It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.</string>
 	<key>Make the screen fit the current window</key>
 	<string>Make the screen fit the current window</string>
 	<key>Open external VNC program</key>
@@ -44,6 +42,8 @@
 	<string>Set the VNC FBU refresg rate value</string>
 	<key>Set the VNC check rate value</key>
 	<string>Set the VNC check rate value</string>
+	<key>Websocket error for VNC</key>
+	<string>Websocket error for VNC</string>
 	<key>Your browser does not support javascript fullscreen</key>
 	<string>Your browser does not support javascript fullscreen</string>
 	<key>Zoom</key>
