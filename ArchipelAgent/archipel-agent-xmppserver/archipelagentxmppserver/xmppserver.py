@@ -413,29 +413,43 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
+            reply = iq.buildReply("result")
 
             def on_receive_users(conn, iq):
+                if not iq.getType() == "result":
+                    return
                 try:
                     items = iq.getTag("query").getTags("item")
                     users = map(lambda x: x.getAttr("jid"), items)
                     nodes = []
+                    number_of_users = len(users)
+                    number_of_vcards = 0
+
+                    def on_receive_vcard(conn, iq):
+                        try:
+                            if not iq.getType() == "result":
+                                return
+                            entity_type = "human"
+                            if iq.getTag("vCard") and iq.getTag("vCard").getTag("ROLE"):
+                                vcard_role = iq.getTag("vCard").getTag("ROLE").getData()
+                                if vcard_role in ("hypervisor", "virtualmachine"):
+                                    entity_type = vcard_role
+                            nodes.append(xmpp.Node("user", attrs={"jid": iq.getFrom().getStripped(), "type": entity_type}))
+                            if len(nodes) >= number_of_users:
+                                self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
+                        except Exception as ex:
+                            self.entity.log.error("Error while fetching contact vCard: %s" % str(ex))
+                            self.entity.push_change("xmppserver:users", "listfetcherror", content_node=iq)
+
                     for user in users:
-                        entity_type = "human"
-                        # user_jid = xmpp.JID(user)
-                        #
-                        # # @ TODO improve this. This waaaay too slow.
-                        # role  = subprocess.Popen([self.ejabberdctl_path, "get_vcard", user_jid.getNode(), user_jid.getDomain(), "ROLE"], stdout=subprocess.PIPE).communicate()[0]
-                        # if role.replace("\n", "") in ("hypervisor", "virtualmachine"):
-                        #     entity_type = role
-                        #
-                        # print "---> %s" % entity_type
-                        nodes.append(xmpp.Node("user", attrs={"jid": user, "type": entity_type}))
-                    self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
+                        iq_vcard = xmpp.Iq(typ="get", to=user)
+                        iq_vcard.addChild("vCard", namespace="vcard-temp")
+                        self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
+
                 except Exception as ex:
                     self.entity.log.error("Unable to manage to get users or their vcards. error is %s" % str(ex))
 
-            user_iq = xmpp.Node("iq", attrs={"type": "get", "to": self.entity.jid.getDomain()})
+            user_iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
             user_iq.addChild("query", attrs={"node": "all users"}, namespace="http://jabber.org/protocol/disco#items")
             self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_users)
 
