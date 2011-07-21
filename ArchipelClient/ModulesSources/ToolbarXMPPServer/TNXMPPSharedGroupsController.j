@@ -207,20 +207,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 - (IBAction)openAddUserInGroupWindow:(id)aSender
 {
     [_datasourceUsers setContent:[[_usersController users] copy]];
-
+    [tableUsers reloadData];
+    [tableUsers deselectAll];
     [popoverAddUserInGroup close];
     [popoverAddUserInGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverAddUserInGroup setDefaultButton:buttonAdd];
-
-    [tableUsers reloadData];
-    [tableUsers deselectAll];
-
-    // // fuck yea.
-    // var frame = [windowAddUserInGroup frame];
-    // frame.size.height++;
-    // [windowAddUserInGroup setFrame:frame];
-    // frame.size.height--;
-    // [windowAddUserInGroup setFrame:frame];
 }
 
 /*! close the add user in group window
