@@ -164,14 +164,15 @@ TNArchipelModuleStatusWaiting           = 2;
         infoDict    = [CPDictionary dictionaryWithObjectsAndKeys:   nodeOwner,  @"owner",
                                                                     pushType,   @"type",
                                                                     pushDate,   @"date",
-                                                                    pushChange, @"change"];
+                                                                    pushChange, @"change",
+                                                                    aStanza, @"rawStanza"];
 
     for (var i = 0; i < [_pubsubRegistrar count]; i++)
     {
         var item = [_pubsubRegistrar objectAtIndex:i];
 
         if (pushType == [item objectForKey:@"type"])
-            [self performSelector:[item objectForKey:@"selector"] withObject:infoDict]
+            [[item objectForKey:@"object"] performSelector:[item objectForKey:@"selector"] withObject:infoDict]
     }
 
     return YES;
@@ -196,12 +197,23 @@ TNArchipelModuleStatusWaiting           = 2;
 */
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
 {
+    [self registerSelector:aSelector ofObject:self forPushNotificationType:aPushType];
+}
+
+/*! register a selector of a given object to handle a push
+    @param aSelector the selector to perform
+    @param anObject the object
+    @param aPushType the type of push to listen
+*/
+- (void)registerSelector:(SEL)aSelector ofObject:(id)anObject forPushNotificationType:(CPString)aPushType
+{
     if ([_entity isKindOfClass:TNStropheContact])
     {
         var registrarItem = [CPDictionary dictionary];
 
         CPLog.info([self class] + @" is registring for push notification of type : " + aPushType);
         [registrarItem setValue:aSelector forKey:@"selector"];
+        [registrarItem setValue:anObject forKey:@"object"];
         [registrarItem setValue:aPushType forKey:@"type"];
 
         [_pubsubRegistrar addObject:registrarItem];
