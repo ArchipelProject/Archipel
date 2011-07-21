@@ -571,7 +571,7 @@ class TNArchipelEntity (object):
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         self.xmppclient.send(pres)
 
-    def push_change(self, namespace, change):
+    def push_change(self, namespace, change, content_node=None):
         """
         Push a change using archipel push system.
         This system will change with inclusion of pubsub.
@@ -583,6 +583,8 @@ class TNArchipelEntity (object):
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
         self.log.info("PUSH : pushing %s->%s" % (ns, change))
         push = xmpp.Node(tag="push", attrs={"date": datetime.datetime.now(), "xmlns": ns, "change": change})
+        if content_node:
+            push.addChild(node=content_node)
         self.pubSubNodeEvent.add_item(push)
 
     def shout(self, subject, message):
