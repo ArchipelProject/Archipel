@@ -19,14 +19,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-import subprocess
 import xmlrpclib
 import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
-
 
 
 ARCHIPEL_NS_XMPPSERVER_GROUPS   = "archipel:xmppserver:groups"
@@ -41,50 +38,6 @@ ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -10006
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -10007
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -10008
 
-IQ_REGISTER_USER_FORM = """
-<iq to='%s' type='set'>
-  <command xmlns='http://jabber.org/protocol/commands' node='http://jabber.org/protocol/admin#add-user'>
-    <x xmlns='jabber:x:data' type='submit'>
-      <field type='hidden' var='FORM_TYPE'>
-        <value>http://jabber.org/protocol/admin</value>
-      </field>
-      <field var='accountjid'>
-        <value>%s</value>
-      </field>
-      <field var='password'>
-        <value>%s</value>
-      </field>
-      <field var='password-verify'>
-        <value>%s</value>
-      </field>
-      <field var='email'>
-        <value>%s</value>
-      </field>
-      <field var='given_name'>
-        <value>%s</value>
-      </field>
-      <field var='surname'>
-        <value>%s</value>
-      </field>
-    </x>
-  </command>
-</iq>
-"""
-
-IQ_UNREGISTRATION_FORM = """
-<iq to='%s' type='set'>
-  <command xmlns='http://jabber.org/protocol/commands' node='http://jabber.org/protocol/admin#delete-user'>
-    <x xmlns='jabber:x:data' type='submit'>
-      <field type='hidden' var='FORM_TYPE'>
-        <value>http://jabber.org/protocol/admin</value>
-      </field>
-      <field var='accountjids'>
-%s
-      </field>
-    </x>
-  </command>
-</iq>
-"""
 
 class TNXMPPServerController (TNArchipelPlugin):
 
@@ -100,7 +53,14 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.xmpp_server        = entity.jid.getDomain()
-        self.ejabberdctl_path   = self.configuration.get("XMPPSERVER", "ejabberdctl_path")
+        self.xmlrpc_host        = self.configuration.get("XMPPSERVER", "xmlrpc_host")
+        self.xmlrpc_port        = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
+        self.xmlrpc_user        = self.configuration.get("XMPPSERVER", "xmlrpc_user")
+        self.xmlrpc_password    = self.configuration.get("XMPPSERVER", "xmlrpc_password")
+        self.xmlrpc_call        = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
+        self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
+
+        self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
 
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
@@ -140,7 +100,10 @@ class TNXMPPServerController (TNArchipelPlugin):
         plugin_friendly_name           = "XMPP Server Manager"
         plugin_identifier              = "xmppserver"
         plugin_configuration_section   = "XMPPSERVER"
-        plugin_configuration_tokens    = ["ejabberdctl_path"]
+        plugin_configuration_tokens    = [  "xmlrpc_host",
+                                            "xmlrpc_port",
+                                            "xmlrpc_user",
+                                            "xmlrpc_password"]
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -188,16 +151,18 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("id")
-            groupName = iq.getTag("query").getTag("archipel").getAttr("name")
-            groupDesc = iq.getTag("query").getTag("archipel").getAttr("description")
-            server = self.entity.jid.getDomain()
-            subprocess.check_call([self.ejabberdctl_path, "srg-create", groupID, server, "'%s'" % groupName, "'%s'" % groupDesc, groupID])
-            self.entity.log.info("created a new shared group %s" % groupID)
+            reply       = iq.buildReply("result")
+            groupID     = iq.getTag("query").getTag("archipel").getAttr("id")
+            groupName   = iq.getTag("query").getTag("archipel").getAttr("name")
+            groupDesc   = iq.getTag("query").getTag("archipel").getAttr("description")
+            server      = self.entity.jid.getDomain()
+            answer      = self.xmlrpc_server.srg_create({"host": server, "display": groupID, "name": groupName, "description": groupDesc, "group": groupID})
+            if not answer['res'] == 0:
+                raise Exception("Cannot create shared roster group. %s" % str(answer))
+            self.entity.log.info("XMPPSERVER: Creating a new shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
         return reply
 
     def iq_group_delete(self, iq):
@@ -209,14 +174,16 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("id")
-            server = self.entity.jid.getDomain()
-            subprocess.check_call([self.ejabberdctl_path, "srg-delete", groupID, server])
-            self.entity.log.info("removed a shared group %s" % groupID)
+            reply       = iq.buildReply("result")
+            groupID     = iq.getTag("query").getTag("archipel").getAttr("id")
+            server      = self.entity.jid.getDomain()
+            answer      = self.xmlrpc_server.srg_delete({"host": server, "group": groupID})
+            if not answer['res'] == 0:
+                raise Exception("Cannot create shared roster group. %s" % str(answer))
+            self.entity.log.info("XMPPSERVER: Removing a shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE)
         return reply
 
     def iq_group_list(self, iq):
@@ -228,29 +195,30 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupsNode = []
-            server = self.entity.jid.getDomain()
-            output = subprocess.check_output([self.ejabberdctl_path, "srg-list", server])
-            groups = output.split()
+            reply       = iq.buildReply("result")
+            server      = self.entity.jid.getDomain()
+            answer      = self.xmlrpc_server.srg_list({"host": server})
+            groups      = answer["groups"]
+            groupsNode  = []
+
             for group in groups:
-                output = subprocess.check_output([self.ejabberdctl_path, "srg-get-info", group, server])
-                displayed_name, gid, description, trash = output.split("\n")
-                gid = re.findall('"([^"]*)"', gid)[0]
-                displayed_name = re.findall('"([^"]*)"', displayed_name)[0]
-                try:
-                    description = re.findall('"([^"]*)"', description)[0]
-                except:
-                    description = ""
-                info = {"id": gid, "displayed_name": displayed_name, "description": description}
+                answer          = self.xmlrpc_server.srg_get_info({"host": server, "group": group["id"]})
+                informations    = answer["informations"]
+                for info in informations:
+                    if info['information'][0]["key"] == "name":
+                        displayed_name = info['information'][1]["value"]
+                    if info['information'][0]["key"] == "description":
+                        description = info['information'][1]["value"]
+                info    = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", "")}
                 newNode = xmpp.Node("group", attrs=info)
-                output = subprocess.check_output([self.ejabberdctl_path, "srg-get-members", group, server])
-                for jid in output.split():
-                    newNode.addChild("user", attrs={"jid": jid})
+                answer  = self.xmlrpc_server.srg_get_members({"host": server, "group": group["id"]})
+                members = answer["members"]
+                for member in members:
+                    newNode.addChild("user", attrs={"jid": member["member"]})
                 groupsNode.append(newNode)
-            reply.setQueryPayload(groupsNode);
+            reply.setQueryPayload(groupsNode)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST)
         return reply
 
     def iq_group_add_users(self, iq):
@@ -262,17 +230,19 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("groupid")
-            users = iq.getTag("query").getTag("archipel").getTags("user")
-            server = self.entity.jid.getDomain()
+            reply       = iq.buildReply("result")
+            groupID     = iq.getTag("query").getTag("archipel").getAttr("groupid")
+            users       = iq.getTag("query").getTag("archipel").getTags("user")
+            server      = self.entity.jid.getDomain()
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                subprocess.check_call([self.ejabberdctl_path, "srg-user-add", userJID.getNode(), userJID.getDomain(), groupID, server])
-            self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
+                answer  = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
+                if not answer['res'] == 0:
+                    raise Exception("Cannot add user to shared roster group. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Adding user %s into shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS)
         return reply
 
     def iq_group_delete_users(self, iq):
@@ -284,17 +254,19 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("groupid")
-            users = iq.getTag("query").getTag("archipel").getTags("user")
-            server = self.entity.jid.getDomain()
+            reply       = iq.buildReply("result")
+            groupID     = iq.getTag("query").getTag("archipel").getAttr("groupid")
+            users       = iq.getTag("query").getTag("archipel").getTags("user")
+            server      = self.entity.jid.getDomain()
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                subprocess.check_output([self.ejabberdctl_path, "srg-user-del", userJID.getNode(), userJID.getDomain(), groupID, server])
-                self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
+                answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
+                if not answer['res'] == 0:
+                    raise Exception("Cannot remove user from shared roster group. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS)
         return reply
 
 
@@ -334,23 +306,17 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            def on_receive_registration(conn, iq):
-                if iq.getType() == "result":
-                    self.entity.push_change("xmppserver:users", "registered")
-                    self.entity.log.info("Successfully registred user.")
-                else:
-                    self.entity.push_change("xmppserver:users", "registerationerror", content_node=iq)
-                    self.entity.log.error("unable to register user. %s" % str(iq))
-            reply = iq.buildReply("result")
-            users = iq.getTag("query").getTag("archipel").getTags("user")
-            server = self.entity.jid.getDomain()
+            reply       = iq.buildReply("result")
+            users       = iq.getTag("query").getTag("archipel").getTags("user")
+            server      = self.entity.jid.getDomain()
             for user in users:
                 username    = user.getAttr("username")
                 password    = user.getAttr("password")
-                iq_string = IQ_REGISTER_USER_FORM % (self.entity.jid.getDomain(), username, password, password, "", "", "")
-                iq = xmpp.simplexml.NodeBuilder(data=iq_string).getDom()
-                self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_registration)
-                self.entity.log.info("Registring a new user %s@%s" % (username, server))
+                answer      = self.xmlrpc_server.register({"user": username, "password": password, "host": server})
+                if not answer['res'] == 0:
+                    raise Exception("Cannot register new user. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Registred a new user %s@%s" % (username, server))
+            self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)
         return reply
@@ -364,25 +330,16 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            def on_receive_unregistration(conn, iq):
-                if iq.getType() == "result":
-                    self.entity.push_change("xmppserver:users", "unregistered")
-                    self.entity.log.info("Successfully unregistred user.")
-                else:
-                    self.entity.push_change("xmppserver:users", "unregisterationerror", content_node=iq)
-                    self.entity.log.error("unable to unregister user. %s" % str(iq))
-            reply = iq.buildReply("result")
-            users = iq.getTag("query").getTag("archipel").getTags("user")
-            server = self.entity.jid.getDomain()
-            jids_string_nodes = ""
+            reply       = iq.buildReply("result")
+            users       = iq.getTag("query").getTag("archipel").getTags("user")
+            server      = self.entity.jid.getDomain()
             for user in users:
                 username    = user.getAttr("username")
-                jid = "        <value>%s</value>\n" % username
-                jids_string_nodes = "%s%s" % (jids_string_nodes, jid)
-            iq_string = IQ_UNREGISTRATION_FORM % (self.entity.jid.getDomain(), jids_string_nodes)
-            iq = xmpp.simplexml.NodeBuilder(data=iq_string).getDom()
-            self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
-            self.entity.log.info("Unregistring a new users %s" % str(users))
+                answer      = self.xmlrpc_server.unregister({"user": username,"host": server})
+                if not answer['res'] == 0:
+                    raise Exception("Cannot unregister user. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Unregistred user %s@%s" % (username, server))
+            self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER)
         return reply
@@ -396,46 +353,21 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-
-            def on_receive_users(conn, iq):
-                if not iq.getType() == "result":
-                    return
+            reply       = iq.buildReply("result")
+            server      = self.entity.jid.getDomain()
+            answer      = self.xmlrpc_server.registered_users({"host": server})
+            nodes       = []
+            users       = answer["users"]
+            for user in users:
+                entity_type = "human"
                 try:
-                    items = iq.getTag("query").getTags("item")
-                    users = map(lambda x: x.getAttr("jid"), items)
-                    nodes = []
-                    number_of_users = len(users)
-                    number_of_vcards = 0
-
-                    def on_receive_vcard(conn, iq):
-                        try:
-                            if not iq.getType() == "result":
-                                return
-                            entity_type = "human"
-                            if iq.getTag("vCard") and iq.getTag("vCard").getTag("ROLE"):
-                                vcard_role = iq.getTag("vCard").getTag("ROLE").getData()
-                                if vcard_role in ("hypervisor", "virtualmachine"):
-                                    entity_type = vcard_role
-                            nodes.append(xmpp.Node("user", attrs={"jid": iq.getFrom().getStripped(), "type": entity_type}))
-                            if len(nodes) >= number_of_users:
-                                self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
-                        except Exception as ex:
-                            self.entity.log.error("Error while fetching contact vCard: %s" % str(ex))
-                            self.entity.push_change("xmppserver:users", "listfetcherror", content_node=iq)
-
-                    for user in users:
-                        iq_vcard = xmpp.Iq(typ="get", to=user)
-                        iq_vcard.addChild("vCard", namespace="vcard-temp")
-                        self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
-
-                except Exception as ex:
-                    self.entity.log.error("Unable to manage to get users or their vcards. error is %s" % str(ex))
-
-            user_iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
-            user_iq.addChild("query", attrs={"node": "all users"}, namespace="http://jabber.org/protocol/disco#items")
-            self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_users)
-
+                    answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                    if answer["content"] in ("hypervisor", "virtualmachine"):
+                        entity_type = answer["content"]
+                except:
+                    pass
+                nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
+            reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
         return reply
