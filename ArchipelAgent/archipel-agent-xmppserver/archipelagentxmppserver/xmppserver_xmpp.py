@@ -439,7 +439,6 @@ class TNXMPPServerController (TNArchipelPlugin):
                         iq_vcard = xmpp.Iq(typ="get", to=user)
                         iq_vcard.addChild("vCard", namespace="vcard-temp")
                         if not user in self.entities_types_cache:
-                            print str(self.entities_types_cache)
                             self.entity.log.debug("XMPPSERVER: Entity type of %s is not cached. fetching..." % user)
                             self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
                         else:
