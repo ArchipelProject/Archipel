@@ -105,7 +105,11 @@ var TNDriveDeviceDataViewIconQCOW2,
     if ([_currentDisk device] == TNLibvirtDeviceDiskDeviceCDROM)
         [imageIcon setImage:TNDriveDeviceDataViewIconCDROM];
 
-    [fieldPath setStringValue:[[[_currentDisk source] sourceObject].split("/") lastObject]];
+    if ([_currentDisk source] && [[_currentDisk source] sourceObject] && [[_currentDisk source] sourceObject] != @"")
+        [fieldPath setStringValue:[[[_currentDisk source] sourceObject].split("/") lastObject]];
+    else
+        [fieldPath setStringValue:@"No source supplied"];
+
     [fieldType setStringValue:[_currentDisk type]];
     [fieldDevice setStringValue:[_currentDisk device]];
     [fieldTarget setStringValue:[[_currentDisk target] bus] + @":" + [[_currentDisk target] device]];

@@ -142,6 +142,14 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             break;
     }
 
+    if (![[_drive source] sourceObject] || [[_drive source] sourceObject] == @"")
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Source is not selected", @"Source is not selected")
+                          informative:CPLocalizedString(@"You must select a source for your drive", @"You must select a source for your drive")];
+        [mainPopover close];
+        return;
+    }
+
     [[_drive driver] setCache:[buttonDriverCache title]];
     [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
     [[_drive target] setBus:[buttonTargetBus title]];
