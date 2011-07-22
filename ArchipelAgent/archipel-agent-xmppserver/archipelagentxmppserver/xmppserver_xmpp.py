@@ -102,7 +102,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.xmpp_server        = entity.jid.getDomain()
         self.entities_types_cache = {}
 
-        self.entity.log.info("XMPPSERVER: module is using XMPP + subprocess API for managing XMPP server")
+        self.entity.log.info("XMPPSERVER: module is using XMPP API for managing XMPP server")
 
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
