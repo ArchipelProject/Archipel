@@ -100,8 +100,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.xmpp_server        = entity.jid.getDomain()
-        self.ejabberdctl_path   = self.configuration.get("XMPPSERVER", "ejabberdctl_path")
-
         self.entities_types_cache = {}
 
         self.entity.log.info("XMPPSERVER: module is using XMPP + subprocess API for managing XMPP server")
@@ -144,7 +142,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         plugin_friendly_name           = "XMPP Server Manager"
         plugin_identifier              = "xmppserver"
         plugin_configuration_section   = "XMPPSERVER"
-        plugin_configuration_tokens    = ["ejabberdctl_path"]
+        plugin_configuration_tokens    = []
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -192,14 +190,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("id")
-            groupName = iq.getTag("query").getTag("archipel").getAttr("name")
-            groupDesc = iq.getTag("query").getTag("archipel").getAttr("description")
-            server = self.entity.jid.getDomain()
-            subprocess.check_call([self.ejabberdctl_path, "srg-create", groupID, server, "'%s'" % groupName, "'%s'" % groupDesc, groupID])
-            self.entity.log.info("XMPPSERVER: Created a new shared group %s" % groupID)
-            self.entity.push_change("xmppserver:groups", "created")
+            raise Exception("Shared roster group support is not implemented with XMPP API for now")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -213,12 +204,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("id")
-            server = self.entity.jid.getDomain()
-            subprocess.check_call([self.ejabberdctl_path, "srg-delete", groupID, server])
-            self.entity.log.info("XMPPSERVER: Removed a shared group %s" % groupID)
-            self.entity.push_change("xmppserver:groups", "deleted")
+            raise Exception("Shared roster group support is not implemented with XMPP API for now")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -232,27 +218,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupsNode = []
-            server = self.entity.jid.getDomain()
-            output = subprocess.check_output([self.ejabberdctl_path, "srg-list", server])
-            groups = output.split()
-            for group in groups:
-                output = subprocess.check_output([self.ejabberdctl_path, "srg-get-info", group, server])
-                displayed_name, gid, description, trash = output.split("\n")
-                gid = re.findall('"([^"]*)"', gid)[0]
-                displayed_name = re.findall('"([^"]*)"', displayed_name)[0]
-                try:
-                    description = re.findall('"([^"]*)"', description)[0]
-                except:
-                    description = ""
-                info = {"id": gid, "displayed_name": displayed_name, "description": description}
-                newNode = xmpp.Node("group", attrs=info)
-                output = subprocess.check_output([self.ejabberdctl_path, "srg-get-members", group, server])
-                for jid in output.split():
-                    newNode.addChild("user", attrs={"jid": jid})
-                groupsNode.append(newNode)
-            reply.setQueryPayload(groupsNode);
+            raise Exception("Shared roster group support is not implemented with XMPP API for now")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -266,15 +232,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("groupid")
-            users = iq.getTag("query").getTag("archipel").getTags("user")
-            server = self.entity.jid.getDomain()
-            for user in users:
-                userJID = xmpp.JID(user.getAttr("jid"))
-                subprocess.check_call([self.ejabberdctl_path, "srg-user-add", userJID.getNode(), userJID.getDomain(), groupID, server])
-            self.entity.log.info("XMPPSERVER: Adding user %s into shared group %s" % (userJID, groupID))
-            self.entity.push_change("xmppserver:groups", "usersadded")
+            raise Exception("Shared roster group support is not implemented with XMPP API for now")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -288,15 +246,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            groupID = iq.getTag("query").getTag("archipel").getAttr("groupid")
-            users = iq.getTag("query").getTag("archipel").getTags("user")
-            server = self.entity.jid.getDomain()
-            for user in users:
-                userJID = xmpp.JID(user.getAttr("jid"))
-                subprocess.check_output([self.ejabberdctl_path, "srg-user-del", userJID.getNode(), userJID.getDomain(), groupID, server])
-                self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, groupID))
-            self.entity.push_change("xmppserver:groups", "usersdeleted")
+            raise Exception("Shared roster group support is not implemented with XMPP API for now")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
