@@ -60,6 +60,8 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.xmlrpc_call        = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
         self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
 
+        self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
+
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
         self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
@@ -156,8 +158,8 @@ class TNXMPPServerController (TNArchipelPlugin):
             server      = self.entity.jid.getDomain()
             answer      = self.xmlrpc_server.srg_create({"host": server, "display": groupID, "name": groupName, "description": groupDesc, "group": groupID})
             if not answer['res'] == 0:
-                raise Exception("Cannot create shared roster group.")
-            self.entity.log.info("Creating a new shared group %s" % groupID)
+                raise Exception("Cannot create shared roster group. %s" % str(answer))
+            self.entity.log.info("XMPPSERVER: Creating a new shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
@@ -177,8 +179,8 @@ class TNXMPPServerController (TNArchipelPlugin):
             server      = self.entity.jid.getDomain()
             answer      = self.xmlrpc_server.srg_delete({"host": server, "group": groupID})
             if not answer['res'] == 0:
-                raise Exception("Cannot create shared roster group.")
-            self.entity.log.info("Removing a shared group %s" % groupID)
+                raise Exception("Cannot create shared roster group. %s" % str(answer))
+            self.entity.log.info("XMPPSERVER: Removing a shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE)
@@ -236,8 +238,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 userJID = xmpp.JID(user.getAttr("jid"))
                 answer  = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot add user to shared roster group.")
-                self.entity.log.info("Adding user %s into shared group %s" % (userJID, groupID))
+                    raise Exception("Cannot add user to shared roster group. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Adding user %s into shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS)
@@ -260,8 +262,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 userJID = xmpp.JID(user.getAttr("jid"))
                 answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot remove user from shared roster group.")
-                self.entity.log.info("Removing user %s from shared group %s" % (userJID, groupID))
+                    raise Exception("Cannot remove user from shared roster group. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS)
@@ -312,8 +314,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 password    = user.getAttr("password")
                 answer      = self.xmlrpc_server.register({"user": username, "password": password, "host": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot register new user.")
-                self.entity.log.info("Registred a new user %s@%s" % (username, server))
+                    raise Exception("Cannot register new user. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Registred a new user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)
@@ -335,8 +337,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 username    = user.getAttr("username")
                 answer      = self.xmlrpc_server.unregister({"user": username,"host": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot unregister user.")
-                self.entity.log.info("Unregistred user %s@%s" % (username, server))
+                    raise Exception("Cannot unregister user. %s" % str(answer))
+                self.entity.log.info("XMPPSERVER: Unregistred user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER)

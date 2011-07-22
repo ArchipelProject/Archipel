@@ -32,7 +32,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Username"; ObjectID = "40"; */
 "40.placeholderString" = "Username";
 
-/* Class = "NSTextFieldCell"; title = "Just enter the username without the @domain."; ObjectID = "41"; */
+/* Class = "NSTextFieldCell"; title = "Just enter the full JID of the contact"; ObjectID = "41"; */
 "41.title" = "Just enter the username without the @domain.";
 
 /* Class = "NSTextFieldCell"; title = "New XMPP user"; ObjectID = "42"; */

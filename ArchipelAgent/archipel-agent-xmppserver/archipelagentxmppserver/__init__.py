@@ -20,8 +20,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import xmppserver
-
 
 def make_archipel_plugin(configuration, entity, group):
     """
@@ -37,6 +35,11 @@ def make_archipel_plugin(configuration, entity, group):
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
     """
+    if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
+        import xmppserver_xmlrpc as xmppserver
+    else:
+        import xmppserver_xmpp as xmppserver
+
     return [{"info": xmppserver.TNXMPPServerController.plugin_info(),
              "plugin": xmppserver.TNXMPPServerController(configuration, entity, group)}]
 
@@ -49,4 +52,5 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-xmppserver").version, [xmppserver.TNXMPPServerController.plugin_info()])
+    import xmppserver_xmpp
+    return (__name__, pkg_resources.get_distribution("archipel-agent-xmppserver").version, [xmppserver_xmpp.TNXMPPServerController.plugin_info()])

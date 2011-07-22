@@ -110,6 +110,60 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 
 #pragma mark -
+#pragma mark Notification handlers
+
+- (void)_didReceiveUsersPush:(CPDictionary)somePushInfo
+{
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"],
+        stanza  = [somePushInfo objectForKey:@"rawStanza"];
+
+    if (change == @"listfetched")
+    {
+        var users = [stanza childrenWithName:@"user"];
+
+        [_datasourceUsers removeAllObjects];
+        [_users removeAllObjects];
+
+        for (var i = 0; i < [users count]; i++)
+        {
+            var user        = [users objectAtIndex:i],
+                jid         = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
+                usertype    = [user valueForAttribute:@"type"],
+                name        = [jid node],
+                contact     = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
+                newItem;
+
+            if (contact)
+                name = [contact nickname];
+
+            var icon = _iconEntityTypeHuman;
+            switch (usertype)
+            {
+                case "virtualmachine":
+                    icon = _iconEntityTypeVM;
+                    break;
+                case "hypervisor":
+                    icon = _iconEntityTypeHypervisor;
+                    break;
+            }
+
+            newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon] forKeys:[@"name", @"jid", @"type", @"icon"]]
+            [_users addObject:newItem];
+
+            if (usertype == "human")
+                [_datasourceUsers addObject:newItem];
+        }
+
+        [tableUsers reloadData];
+    }
+
+
+    return YES;
+}
+#pragma mark -
 #pragma mark Utilities
 
 /*! called when permissions has changed
@@ -201,7 +255,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     for (var i = 0; i < [users count]; i ++)
     {
         var user = [users objectAtIndex:i];
-        [usernames addObject:[[user objectForKey:@"jid"] node]];
+        [usernames addObject:[[user objectForKey:@"jid"] stringValue]];
     }
 
     var thealert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unregister", @"Unregister")
@@ -242,49 +296,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)_didGetXMPPUsers:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        var users = [aStanza childrenWithName:@"user"];
-
-        [_datasourceUsers removeAllObjects];
-        [_users removeAllObjects];
-
-        for (var i = 0; i < [users count]; i++)
-        {
-            var user    = [users objectAtIndex:i],
-                jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-                type    = [user valueForAttribute:@"type"],
-                name    = [jid node],
-                contact = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
-                newItem;
-
-            if (contact)
-                name = [contact nickname];
-
-            var icon;
-            switch (type)
-            {
-                case "human":
-                    icon = _iconEntityTypeHuman
-                    break;
-                case "virtualmachine":
-                    icon = _iconEntityTypeVM
-                    break;
-                case "hypervisor":
-                    icon = _iconEntityTypeHypervisor
-                    break;
-            }
-
-            newItem = [CPDictionary dictionaryWithObjects:[name, jid, type, icon] forKeys:[@"name", @"jid", @"type", @"icon"]]
-            [_users addObject:newItem];
-
-            if (type == "human")
-                [_datasourceUsers addObject:newItem];
-        }
-
-        [tableUsers reloadData];
-    }
-    else
+    if ([aStanza type] != @"result")
     {
         [_delegate handleIqErrorFromStanza:aStanza];
     }

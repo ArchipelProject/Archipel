@@ -115,6 +115,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     if (!pushRegistred)
     {
         [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
+        [self registerSelector:@selector(_didReceiveUsersPush:) ofObject:usersController forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
         pushRegistred = YES;
     }
 
@@ -169,8 +170,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
         date    = [somePushInfo objectForKey:@"date"];
 
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-    [usersController reload];
-    [sharedGroupsController reload];
+
+    if (change != @"listfetched")
+    {
+        [usersController reload];
+        [sharedGroupsController reload];
+    }
 
     return YES;
 }

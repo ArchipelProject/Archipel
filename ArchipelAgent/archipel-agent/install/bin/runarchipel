@@ -61,8 +61,11 @@ def versions(option, opt, value, parser):
     format_version(("archipelagent", pkg_resources.get_distribution("archipel-agent").version))
     print "\n\033[32m* Installed plugins versions : \033[0m"
     for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
-        method  = version_method.load()
-        format_version(method())
+        try:
+            method  = version_method.load()
+            format_version(method())
+        except Exception as ex:
+            print "\033[31mERROR: unable to get the version of one plugin: %s\033[0m" % ex
     sys.exit(ARCHIPEL_INIT_SUCCESS)
 
 def test_libvirt():

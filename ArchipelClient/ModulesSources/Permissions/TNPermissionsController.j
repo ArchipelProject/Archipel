@@ -36,15 +36,16 @@
 
 
 
-var TNArchipelTypePermissions               = @"archipel:permissions",
-    TNArchipelTypePermissionsList           = @"list",
-    TNArchipelTypePermissionsGet            = @"get",
-    TNArchipelTypePermissionsSet            = @"set",
-    TNArchipelTypePermissionsGetOwn         = @"getown",
-    TNArchipelTypePermissionsSetOwn         = @"setown",
-    TNArchipelPushNotificationPermissions   = @"archipel:push:permissions",
-    TNArchipelTypeXMPPServerUsers           = @"archipel:xmppserver:users",
-    TNArchipelTypeXMPPServerUsersList       = @"list";
+var TNArchipelTypePermissions                   = @"archipel:permissions",
+    TNArchipelTypePermissionsList               = @"list",
+    TNArchipelTypePermissionsGet                = @"get",
+    TNArchipelTypePermissionsSet                = @"set",
+    TNArchipelTypePermissionsGetOwn             = @"getown",
+    TNArchipelTypePermissionsSetOwn             = @"setown",
+    TNArchipelPushNotificationPermissions       = @"archipel:push:permissions",
+    TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users",
+    TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
+    TNArchipelTypeXMPPServerUsersList           = @"list";
 
 /*! @defgroup  permissionsmodule Module Permissions
     @desc This module allow to manages entity permissions
@@ -167,7 +168,8 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
+    [self registerSelector:@selector(_didReceivePermissionsPush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
+    [self registerSelector:@selector(_didReceiveUsersPush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
 
     for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
     {
@@ -231,7 +233,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 /*! called when an Archipel push is received
     @param somePushInfo CPDictionary containing the push information
 */
-- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
+- (BOOL)_didReceivePermissionsPush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -241,6 +243,36 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
     [self changeCurrentUser:nil];
+
+    return YES;
+}
+
+/*! called when an Archipel push is received
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceiveUsersPush:(CPDictionary)somePushInfo
+{
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"],
+        stanza  = [somePushInfo objectForKey:@"rawStanza"];
+
+    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+
+    var users = [stanza childrenWithName:@"user"];
+    [_datasourceUsers removeAllObjects];
+    for (var i = 0; i < [users count]; i++)
+    {
+        var user    = [users objectAtIndex:i],
+            jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
+            type    = [user valueForAttribute:@"type"];
+
+        if (type == @"human" && ![jid bareEquals:[[TNStropheIMClient defaultClient] JID]])
+            [_datasourceUsers addXMPPUser:jid];
+    }
+    [_outlineViewUsers expandAll];
+    [_outlineViewUsers reloadData];
 
     return YES;
 }
@@ -555,23 +587,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 */
 - (void)_didGetXMPPUsers:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        var users = [aStanza childrenWithName:@"user"];
-
-        for (var i = 0; i < [users count]; i++)
-        {
-            var user    = [users objectAtIndex:i],
-                jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-                type    = [user valueForAttribute:@"type"];
-
-            if (type == @"human" && ![jid bareEquals:[[TNStropheIMClient defaultClient] JID]])
-                [_datasourceUsers addXMPPUser:jid];
-        }
-        [_outlineViewUsers expandAll];
-        [_outlineViewUsers reloadData]
-    }
-    else
+    if ([aStanza type] != @"result")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
