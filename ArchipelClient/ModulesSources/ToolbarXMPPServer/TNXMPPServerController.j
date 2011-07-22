@@ -39,6 +39,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 @implementation TNXMPPServerController : TNModule
 {
+    @outlet CPCheckBox                      checkBoxPreferencesUseSRG;
     @outlet CPPopUpButton                   buttonHypervisors;
     @outlet CPTabView                       tabViewMain;
     @outlet CPView                          viewBottom;
@@ -56,6 +57,15 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)awakeFromCib
 {
+
+    var bundle = [CPBundle bundleForClass:[self class]],
+        defaults = [CPUserDefaults standardUserDefaults];
+
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"UseEjabberdSharedRosterGroups"], @"UseEjabberdSharedRosterGroups"
+    ]];
+
     _defaultAvatar  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 
     var itemViewUsers   = [[CPTabViewItem alloc] init],
@@ -68,11 +78,15 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [itemViewGroups setView:[sharedGroupsController mainView]];
 
     [tabViewMain addTabViewItem:itemViewUsers];
-    [tabViewMain addTabViewItem:itemViewGroups];
+
+    if ([defaults integerForKey:@"UseEjabberdSharedRosterGroups"])
+    {
+        [tabViewMain addTabViewItem:itemViewGroups];
+        [sharedGroupsController setDelegate:self];
+        [sharedGroupsController setUsersController:usersController];
+    }
 
     [usersController setDelegate:self];
-    [sharedGroupsController setDelegate:self];
-    [sharedGroupsController setUsersController:usersController];
 
     pushRegistred = NO;
 
@@ -88,20 +102,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 #pragma mark -
 #pragma mark TNModule overrides
 
-/*! this message is called when module is loaded
-*/
-- (void)willLoad
-{
-    [super willLoad];
-}
-
-/*! this message is called when module is unloaded
-*/
-- (void)willUnload
-{
-    [super willUnload];
-   // message sent when view will be removed from superview;
-}
 
 /*! this message is called when module becomes visible
 */
@@ -122,8 +122,11 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
     [usersController reload];
 
-    [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [sharedGroupsController reload];
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+    {
+        [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+        [sharedGroupsController reload];
+    }
 
     return YES;
 }
@@ -132,8 +135,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)willHide
 {
-    [sharedGroupsController closeNewGroupWindow:nil];
-    [sharedGroupsController closeAddUserInGroupWindow:nil];
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+    {
+        [sharedGroupsController closeNewGroupWindow:nil];
+        [sharedGroupsController closeAddUserInGroupWindow:nil];
+    }
+
     [usersController closeRegisterUserWindow:nil];
 
     [super willHide];
@@ -144,9 +151,29 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)permissionsChanged
 {
-    [sharedGroupsController permissionsChanged];
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+        [sharedGroupsController permissionsChanged];
     [usersController permissionsChanged];
 }
+
+/*! called when user saves preferences
+*/
+- (void)savePreferences
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    [defaults setBool:([checkBoxPreferencesUseSRG state] == CPOnState) forKey:@"UseEjabberdSharedRosterGroups"];
+}
+
+/*! called when user gets preferences
+*/
+- (void)loadPreferences
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    [checkBoxPreferencesUseSRG setState:[defaults boolForKey:@"UseEjabberdSharedRosterGroups"] ? CPOnState : CPOffState];
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -174,7 +201,8 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     if (change != @"listfetched")
     {
         [usersController reload];
-        [sharedGroupsController reload];
+        if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+            [sharedGroupsController reload];
     }
 
     return YES;
@@ -237,7 +265,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     _entity = [[buttonHypervisors selectedItem] objectValue];
 
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+        [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
 
     [self permissionsChanged];
 }

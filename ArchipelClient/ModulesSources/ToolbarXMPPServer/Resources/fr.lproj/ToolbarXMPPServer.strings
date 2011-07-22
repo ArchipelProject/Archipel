@@ -155,3 +155,18 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "240"; */
 "240.title" = "Text Cell";
 
+/* Class = "NSTextFieldCell"; title = "Shared roster groups:"; ObjectID = "350"; */
+"350.title" = "Shared roster groups:";
+
+/* Class = "NSTextFieldCell"; title = "XMPP Server preferences"; ObjectID = "352"; */
+"352.title" = "XMPP Server preferences";
+
+/* Class = "NSTextFieldCell"; title = "You can configure the preferences for the XMPP admin module"; ObjectID = "353"; */
+"353.title" = "You can configure the preferences for the XMPP admin module";
+
+/* Class = "NSButtonCell"; title = "Enabled"; ObjectID = "355"; */
+"355.title" = "Enabled";
+
+/* Class = "NSTextFieldCell"; title = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode.\nAlso, note you need to reload the application after changing this."; ObjectID = "359"; */
+"359.title" = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode.\nAlso, note you need to reload the application after changing this.";
+
