@@ -384,7 +384,9 @@ class TNStorageManagement (TNArchipelPlugin):
             nodes = []
             goldens = os.listdir(self.golden_drives_dir)
             for golden in goldens:
-                if subprocess.Popen(["file", os.path.join(self.golden_drives_dir, golden)], stdout=subprocess.PIPE).communicate()[0].lower().find("format: qcow") > -1:
+                file_cmd_output = subprocess.Popen(["file", os.path.join(self.golden_drives_dir, golden)], stdout=subprocess.PIPE).communicate()[0].lower()
+                if file_cmd_output.find("format: qcow") > -1 \
+                or file_cmd_output.find("qemu qcow image") > -1:
                     node = xmpp.Node(tag="golden", attrs={"name": golden, "path": os.path.join(self.golden_drives_dir, golden)})
                     nodes.append(node)
             reply = iq.buildReply("result")
