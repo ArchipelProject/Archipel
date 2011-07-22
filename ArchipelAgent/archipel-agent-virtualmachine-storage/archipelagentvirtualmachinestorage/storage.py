@@ -168,7 +168,7 @@ class TNStorageManagement (TNArchipelPlugin):
             format      = query_node.getTag("archipel").getAttr("format")
             prealloc    = query_node.getTag("archipel").getAttr("preallocation")
             golden      = query_node.getTag("archipel").getAttr("golden")
-            disk_path   = self.entity.folder + "/" + disk_name + "." + format
+            disk_path   = os.join(self.entity.folder, "%s.%s" % (disk_name, format))
             if disk_unit == "M" and (float(disk_size) >= 1000000000):
                 raise Exception("too big", "You may be able to do it manually, but I won't try.")
             elif disk_unit == "G" and (float(disk_size) >= 10000):
@@ -181,7 +181,7 @@ class TNStorageManagement (TNArchipelPlugin):
                 ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, "-o", "preallocation=metadata", disk_path, "%s%s" % (disk_size, disk_unit)])
             elif golden and format == "qcow2":
                 self.entity.log.info("Creating a differencing QCOW2 file with backing file.")
-                if not os.path.exists("%s/%s" % (self.golden_drives_dir, golden)):
+                if not os.path.exists(os.path.join(self.golden_drives_dir, golden)):
                     raise Exception("The requested golden image %s has not been found in the golden folder. Cannot create drive")
                 else:
                     ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, "-b", "%s/%s" % (self.golden_drives_dir, golden), disk_path, "%s%s" % (disk_size, disk_unit)])
@@ -275,7 +275,7 @@ class TNStorageManagement (TNArchipelPlugin):
             query_node          = iq.getTag("query")
             disk_name           = query_node.getTag("archipel").getAttr("name")
             secure_disk_name    = disk_name.split("/")[-1]
-            secure_disk_path    = self.entity.folder + "/" + secure_disk_name
+            secure_disk_path    = os.path.join(self.entity.folder, secure_disk_name)
             old_status          = self.entity.xmppstatus
             old_show            = self.entity.xmppstatusshow
             self.entity.change_presence(presence_show="dnd", presence_status="Deleting a drive...")
@@ -313,10 +313,10 @@ class TNStorageManagement (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            disks = subprocess.Popen(["ls", self.entity.folder], stdout=subprocess.PIPE).communicate()[0].split()
+            disks = os.listdir(self.entity.folder)
             nodes = []
             for disk in disks:
-                file_cmd_output = subprocess.Popen(["file", "%s/%s" % (self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].lower()
+                file_cmd_output = subprocess.Popen(["file", "%s" % os.path.join(self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].lower()
                 if (file_cmd_output.find("format: qcow") > -1 \
                 or file_cmd_output.find("qemu qcow image") > -1 \
                 or file_cmd_output.find("boot sector") > -1 \
@@ -324,7 +324,7 @@ class TNStorageManagement (TNArchipelPlugin):
                 or file_cmd_output.find("data") > -1\
                 or file_cmd_output.find("user-mode linux cow file") > -1) \
                 and file_cmd_output.find("sqlite") == -1:
-                    diskPath = "%s/%s" % (self.entity.folder, disk)
+                    diskPath = os.path.join(self.entity.folder, disk)
                     diskSize = os.path.getsize(diskPath)
                     diskInfo = subprocess.Popen([self.qemu_img_bin, "info", diskPath], stdout=subprocess.PIPE).communicate()[0].split("\n")
                     currentAttributes = {
@@ -355,15 +355,15 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         try:
             nodes = []
-            isos = subprocess.Popen(["ls", self.entity.folder], stdout=subprocess.PIPE).communicate()[0].split()
+            isos = os.listdir(self.entity.folder)
             for iso in isos:
-                if subprocess.Popen(["file", "%s/%s" % (self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
-                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.entity.folder + "/" + iso})
+                if subprocess.Popen(["file", os.path.join(self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
+                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": os.path.join(self.entity.folder, iso)})
                     nodes.append(node)
-            sharedisos = subprocess.Popen(["ls", self.shared_isos_folder], stdout=subprocess.PIPE).communicate()[0].split()
+            sharedisos = os.listdir(self.shared_isos_folder)
             for iso in sharedisos:
-                if subprocess.Popen(["file", "%s/%s" % (self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
-                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso})
+                if subprocess.Popen(["file", os.path.join(self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
+                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": os.path.join(self.shared_isos_folder, iso)})
                     nodes.append(node)
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
@@ -382,10 +382,12 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         try:
             nodes = []
-            goldens = subprocess.Popen(["ls", self.golden_drives_dir], stdout=subprocess.PIPE).communicate()[0].split()
+            goldens = os.listdir(self.golden_drives_dir)
             for golden in goldens:
-                if subprocess.Popen(["file", "%s/%s" % (self.golden_drives_dir, golden)], stdout=subprocess.PIPE).communicate()[0].lower().find("format: qcow") > -1:
-                    node = xmpp.Node(tag="golden", attrs={"name": golden, "path": "%s/%s" % (self.golden_drives_dir, golden)})
+                file_cmd_output = subprocess.Popen(["file", os.path.join(self.golden_drives_dir, golden)], stdout=subprocess.PIPE).communicate()[0].lower()
+                if file_cmd_output.find("format: qcow") > -1 \
+                or file_cmd_output.find("qemu qcow image") > -1:
+                    node = xmpp.Node(tag="golden", attrs={"name": golden, "path": os.path.join(self.golden_drives_dir, golden)})
                     nodes.append(node)
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
