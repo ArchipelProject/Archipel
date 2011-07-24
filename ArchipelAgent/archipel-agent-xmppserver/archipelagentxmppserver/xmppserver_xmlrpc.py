@@ -367,7 +367,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 except:
                     pass
                 nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
-            reply.setQueryPayload(nodes)
+            self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
         return reply
