@@ -20,8 +20,6 @@
 	<string>Delete selected virtual drives</string>
 	<key>Delete to drive</key>
 	<string>Delete to drive</string>
-	<key>Disk</key>
-	<string>Disk</string>
 	<key>Disk has been converted</key>
 	<string>Disk has been converted</string>
 	<key>Disk has been created</key>

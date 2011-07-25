@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A511</string>
+		<string key="IBDocument.SystemVersion">11C26</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138</string>
+		<string key="IBDocument.AppKitVersion">1138.11</string>
 		<string key="IBDocument.HIToolboxVersion">566.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -452,7 +452,7 @@
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="427111437">
-							<int key="NSCellFlags">69336641</int>
+							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272631296</int>
 							<string key="NSContents">path</string>
 							<object class="NSFont" key="NSSupport">
@@ -574,7 +574,7 @@
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="120319023">
-							<int key="NSCellFlags">69336641</int>
+							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272631296</int>
 							<string key="NSContents">Drive name</string>
 							<object class="NSFont" key="NSSupport">
