@@ -105,7 +105,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesSaveToXMPPServer:) name:TNStrophePrivateStorageSetNotification object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToXMPPServer:) name:TNStrophePrivateStorageSetErrorNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToSetInXMPPServer:) name:TNStrophePrivateStorageSetErrorNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToGetInXMPPServer:) name:TNStrophePrivateStorageGetErrorNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(saveToFromXMPPServer:) name:TNPreferencesControllerSavePreferencesRequestNotification object:nil];
     [_mainWindow setDefaultButton:buttonSave];
 
@@ -118,7 +119,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     _excludedTokens = [CPDictionary dictionary];
     _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelBOSHJID",
                             @"TNArchipelBOSHPassword", @"TNArchipelBOSHService", @"TNArchipelBOSHRememberCredentials",
-                            @"TNArchipelTagsVisible", @"mainSplitViewPosition", @"TNArchipelModuleControllerOpenedTabRegistry"];
+                            @"TNArchipelTagsVisible", @"mainSplitViewPosition", @"TNArchipelModuleControllerOpenedTabRegistry",
+                            @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups"];
 }
 
 /*! initialize the XMPP storage
@@ -183,10 +185,10 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [self reinjectUnwantedTokens];
 }
 
-/*! trigger when storage is sucessfulll
+/*! trigger when setting storage is not sucessfull
     @param aNotification the notification
 */
-- (void)_didPreferencesFailToXMPPServer:(CPNotification)aNotification
+- (void)_didPreferencesFailToSetInXMPPServer:(CPNotification)aNotification
 {
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Preferences saved", @"Preferences saved")
                                                      message:CPLocalizedString(@"Cannot save your preferences to the XMPP server", @"Cannot save your preferences to the XMPP server")
@@ -194,6 +196,18 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     CPLog.error("Cannot save your preferences to the XMPP server:" + [[aNotification userInfo] stringValue]);
 
     [self reinjectUnwantedTokens];
+}
+
+/*! trigger when getting storage is not sucessfull;
+    @param aNotification the notification
+*/
+- (void)_didPreferencesFailToGetInXMPPServer:(CPNotification)aNotification
+{
+     var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Error while getting your preferences from the XMPP Server", @"Error while getting your preferences from the XMPP Server")
+                            informative:CPLocalizedString(@"For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them", @"For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them")
+                                 target:self
+                                actions:[[CPLocalizedString(@"Reset", @"Reset"), @selector(_performResetPreferencesAfterError:)], [CPLocalizedString(@"Nevermind", @"Nevermind"), nil]]];
+    [alert runModal];
 }
 
 /*! proxy for saveToFromXMPPServer
@@ -299,6 +313,14 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
         window.location.reload();
 }
 
+/*! called if user click on reset after an error
+    @param aSender the sender of the action
+*/
+- (IBAction)_performResetPreferencesAfterError:(id)aSender
+{
+    [self cleanXMPPStorage];
+}
+
 /*! clean the content of the XMPP storage
     @param aSender the sender of the action
 */
@@ -335,6 +357,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     {
         var key = [_excludedTokensNames objectAtIndex:i],
             value = [defaults objectForKey:key];
+
+        if (!value)
+            continue;
 
         [_excludedTokens setObject:value forKey:key];
         [defaults removeObjectForKey:key];
@@ -405,6 +430,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     if (anObject)
     {
+        CPLog.trace("PREFERENCES: Object from XMPP Storage is:" + anObject)
+
         [[CPUserDefaults standardUserDefaults]._domains setObject:anObject forKey:CPApplicationDomain];
         [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
         [[CPUserDefaults standardUserDefaults] synchronize];
@@ -444,7 +471,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
          var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
                                 informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")
                                      target:self
-                                    actions:[[CPBundleLocalizedString(@"OK", @"OK"), @selector(_performApplicationReload:)], [CPBundleLocalizedString(@"Later", @"Later"), nil]]];
+                                    actions:[[CPLocalizedString(@"OK", @"OK"), @selector(_performApplicationReload:)], [CPLocalizedString(@"Later", @"Later"), nil]]];
         [alert runModal];
     }
     _oldLocale = nil;
