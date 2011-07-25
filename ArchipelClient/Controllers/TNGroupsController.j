@@ -96,7 +96,7 @@
         key     = TNArchipelRememberOpenedGroup + [group name];
 
     [[[TNStropheIMClient defaultClient] roster] removeGroup:group];
-    [defaults removeObjectForKey:key];
+    [[defaults objectForKey:@"TNOutlineViewsExpandedGroups"] removeObjectForKey:key];
 
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
                                                      message:CPLocalizedString(@"The group has been removed", @"The group has been removed")];
