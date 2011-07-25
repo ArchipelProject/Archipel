@@ -168,7 +168,7 @@ class TNStorageManagement (TNArchipelPlugin):
             format      = query_node.getTag("archipel").getAttr("format")
             prealloc    = query_node.getTag("archipel").getAttr("preallocation")
             golden      = query_node.getTag("archipel").getAttr("golden")
-            disk_path   = os.join(self.entity.folder, "%s.%s" % (disk_name, format))
+            disk_path   = os.path.join(self.entity.folder, "%s.%s" % (disk_name, format))
             if disk_unit == "M" and (float(disk_size) >= 1000000000):
                 raise Exception("too big", "You may be able to do it manually, but I won't try.")
             elif disk_unit == "G" and (float(disk_size) >= 10000):
