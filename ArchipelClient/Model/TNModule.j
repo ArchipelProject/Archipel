@@ -34,6 +34,8 @@
 
 
 @import "../Controllers/TNPermissionsCenter.j"
+@import "../Controllers/TNPushCenter.j"
+
 
 var TNArchipelErrorPermission           = 0,
     TNArchipelErrorGeneral              = 1;
@@ -102,7 +104,6 @@ TNArchipelModuleStatusWaiting           = 2;
 
     BOOL                            _pubSubPermissionRegistred;
     BOOL                            _registredToPermissionCenter;
-    CPArray                         _pubsubRegistrar;
     CPArray                         _registredSelectors;
     CPImage                         _imageModuleError;
     CPImage                         _imageModuleReady;
@@ -118,7 +119,6 @@ TNArchipelModuleStatusWaiting           = 2;
 {
     _isActive               = NO;
     _isVisible              = NO;
-    _pubsubRegistrar        = [CPArray array];
     _registredSelectors     = [CPArray array];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
@@ -142,40 +142,6 @@ TNArchipelModuleStatusWaiting           = 2;
     var data = [CPKeyedArchiver archivedDataWithRootObject:aView];
 
     _viewPermissionsDenied = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-}
-
-
-#pragma mark -
-#pragma mark Events management
-
-/*! @ignore
-    this message is called when a matching pubsub event is received
-    @param aStanza the TNStropheStanza that contains the event
-    @return YES in order to continue to listen for events
-*/
-- (void)_onPubSubEvents:(TNStropheStanza)aStanza
-{
-    CPLog.trace("Raw (not filtered) pubsub event received from " + [aStanza from]);
-
-    var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
-        pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
-        pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"],
-        pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"],
-        infoDict    = [CPDictionary dictionaryWithObjectsAndKeys:   nodeOwner,  @"owner",
-                                                                    pushType,   @"type",
-                                                                    pushDate,   @"date",
-                                                                    pushChange, @"change",
-                                                                    aStanza, @"rawStanza"];
-
-    for (var i = 0; i < [_pubsubRegistrar count]; i++)
-    {
-        var item = [_pubsubRegistrar objectAtIndex:i];
-
-        if (pushType == [item objectForKey:@"type"])
-            [[item objectForKey:@"object"] performSelector:[item objectForKey:@"selector"] withObject:infoDict]
-    }
-
-    return YES;
 }
 
 /*! @ignore
@@ -207,17 +173,7 @@ TNArchipelModuleStatusWaiting           = 2;
 */
 - (void)registerSelector:(SEL)aSelector ofObject:(id)anObject forPushNotificationType:(CPString)aPushType
 {
-    if ([_entity isKindOfClass:TNStropheContact])
-    {
-        var registrarItem = [CPDictionary dictionary];
-
-        CPLog.info([self class] + @" is registring for push notification of type : " + aPushType);
-        [registrarItem setValue:aSelector forKey:@"selector"];
-        [registrarItem setValue:anObject forKey:@"object"];
-        [registrarItem setValue:aPushType forKey:@"type"];
-
-        [_pubsubRegistrar addObject:registrarItem];
-    }
+    [[TNPushCenter defaultCenter] addObserver:anObject selector:aSelector forPushNotificationType:aPushType];
 }
 
 /*! @ignore
@@ -465,10 +421,6 @@ TNArchipelModuleStatusWaiting           = 2;
 
     _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
     _isActive           = YES;
-
-    if (!_pubSubHandlerId)
-        _pubSubHandlerId = [TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]];
-
     [_menuItem setEnabled:YES];
 
 }
@@ -491,7 +443,10 @@ TNArchipelModuleStatusWaiting           = 2;
     // flush any outgoing stanza
     [[[TNStropheIMClient defaultClient] connection] flush];
 
-    [_pubsubRegistrar removeAllObjects];
+    // remove self as Push observer
+    [[TNPushCenter defaultCenter] removeObserver:self];
+
+    // flush registred selectors
     [_registredSelectors removeAllObjects];
 
     [_menuItem setEnabled:NO];

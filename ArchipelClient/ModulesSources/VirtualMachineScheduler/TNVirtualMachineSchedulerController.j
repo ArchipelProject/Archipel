@@ -153,8 +153,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     [self getJobs];
     return YES;
 }

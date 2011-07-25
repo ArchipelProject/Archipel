@@ -409,8 +409,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     [self checkIfRunning];
 
     return YES;

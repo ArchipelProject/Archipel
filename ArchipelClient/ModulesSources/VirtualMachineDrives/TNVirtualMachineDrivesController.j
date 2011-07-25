@@ -225,8 +225,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     if (type == TNArchipelPushNotificationDisk)
     {
         if (change == @"created")

@@ -740,8 +740,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     [self getXMLDesc];
 
     return YES;

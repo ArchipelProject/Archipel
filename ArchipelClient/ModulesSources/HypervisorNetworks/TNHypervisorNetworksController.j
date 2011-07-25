@@ -216,8 +216,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     [self getHypervisorNetworks];
     return YES;
 }

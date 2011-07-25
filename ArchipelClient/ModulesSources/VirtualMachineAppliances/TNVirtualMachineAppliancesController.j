@@ -212,8 +212,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     switch (change)
     {
         case @"packaging":

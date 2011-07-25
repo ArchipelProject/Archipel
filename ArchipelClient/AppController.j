@@ -57,6 +57,7 @@
 @import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
+@import "Controllers/TNPushCenter.j"
 @import "Controllers/TNTagsController.j"
 @import "Controllers/TNUpdateController.j"
 @import "Controllers/TNUserAvatarController.j"
@@ -755,6 +756,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
+    // initialize the singleton.
+    [TNPushCenter defaultCenter];
+
     _pubSubController = [TNPubSubController pubSubControllerWithConnection:[[TNStropheIMClient defaultClient] connection]];
 
     [preferencesController initXMPPStorage];
@@ -801,6 +805,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)XMPPDisconnecting:(CPNotification)aNotification
 {
+    [[TNPushCenter defaultCenter] flush];
     CPLog.info("disconnecting...");
 }
 

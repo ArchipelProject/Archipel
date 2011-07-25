@@ -240,8 +240,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-
     [self changeCurrentUser:nil];
 
     return YES;
@@ -257,8 +255,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"],
         stanza  = [somePushInfo objectForKey:@"rawStanza"];
-
-    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
     var users = [stanza childrenWithName:@"user"];
     [_datasourceUsers removeAllObjects];
