@@ -31,7 +31,7 @@
         <key>fr</key>
         <string>Serveur XMPP</string>
     </dict>
-    <key>UseEjabberdSharedRosterGroups</key>
+    <key>TNArchipelUseEjabberdSharedRosterGroups</key>
     <integer>0</integer>
     <key>ToolbarIcon</key>
     <string>icon.png</string>

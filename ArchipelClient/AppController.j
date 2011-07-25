@@ -266,7 +266,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
             [bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"], @"TNHideOfflineContacts",
             [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"], @"TNArchipelPropertyControllerEnabled"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"], @"TNArchipelPropertyControllerEnabled",
+            [CPDictionary dictionary], @"TNOutlineViewsExpandedGroups"
     ]];
 
     /* images */
@@ -1330,7 +1331,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:@"expanded" forKey:key];
+    [[defaults objectForKey:@"TNOutlineViewsExpandedGroups"] setObject:@"expanded" forKey:key];
 }
 
 /*! Delegate of TNOutlineView
@@ -1344,9 +1345,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:@"collapsed" forKey:key];
-
-    return YES;
+    [[defaults objectForKey:@"TNOutlineViewsExpandedGroups"] setObject:@"collapsed" forKey:key];
 }
 
 /*! called the roster outlineView to ask the dataView it should use for given item.

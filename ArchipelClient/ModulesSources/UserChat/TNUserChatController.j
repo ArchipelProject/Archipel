@@ -87,7 +87,8 @@
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore"
+            [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore",
+            [CPDictionary dictionary], @"TNUserChatMessageStore"
     ]];
 
     _detachedChats = [CPDictionary dictionary];
@@ -310,7 +311,7 @@
 
     CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
 
-    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
+    [[defaults objectForKey:@"TNUserChatMessageStore"] setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
 }
 
 /*! restore the chat
@@ -318,7 +319,7 @@
 - (void)restore
 {
     var defaults = [CPUserDefaults standardUserDefaults],
-        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
+        lastConversation = [[defaults objectForKey:@"TNUserChatMessageStore"] objectForKey:"communicationWith" + [_entity JID]];
 
     if (lastConversation)
         _messages = lastConversation;

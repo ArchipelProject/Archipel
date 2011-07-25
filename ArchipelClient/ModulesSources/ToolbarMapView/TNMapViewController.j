@@ -102,7 +102,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [textFieldDestinationNameLabel setTextColor:[CPColor colorWithHexString:@"00000"]];
     [textFieldDestinationName setTextColor:[CPColor colorWithHexString:@"00000"]];
 
-    if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
+    if (posy = [defaults integerForKey:@"TNArchipelMapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 
     [splitViewHorizontal setDelegate:self];
@@ -156,7 +156,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 
     var defaults = [CPUserDefaults standardUserDefaults];
-    if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
+    if (posy = [defaults integerForKey:@"TNArchipelMapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 
     return YES;
@@ -391,7 +391,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         splitView   = [aNotification object],
         newPos      = [splitView rectOfDividerAtIndex:0].origin.y;
 
-    [defaults setInteger:newPos forKey:@"mapViewSplitViewPosition"];
+    [defaults setInteger:newPos forKey:@"TNArchipelMapViewSplitViewPosition"];
 }
 
 

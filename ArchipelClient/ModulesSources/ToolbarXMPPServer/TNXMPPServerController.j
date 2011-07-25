@@ -63,7 +63,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"UseEjabberdSharedRosterGroups"], @"UseEjabberdSharedRosterGroups"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelUseEjabberdSharedRosterGroups"], @"TNArchipelUseEjabberdSharedRosterGroups"
     ]];
 
     _defaultAvatar  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
@@ -79,7 +79,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [tabViewMain addTabViewItem:itemViewUsers];
 
-    if ([defaults integerForKey:@"UseEjabberdSharedRosterGroups"])
+    if ([defaults integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
     {
         [tabViewMain addTabViewItem:itemViewGroups];
         [sharedGroupsController setDelegate:self];
@@ -122,7 +122,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
     [usersController reload];
 
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
     {
         [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
         [sharedGroupsController reload];
@@ -135,7 +135,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)willHide
 {
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
     {
         [sharedGroupsController closeNewGroupWindow:nil];
         [sharedGroupsController closeAddUserInGroupWindow:nil];
@@ -151,7 +151,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)permissionsChanged
 {
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
         [sharedGroupsController permissionsChanged];
     [usersController permissionsChanged];
 }
@@ -162,7 +162,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setBool:([checkBoxPreferencesUseSRG state] == CPOnState) forKey:@"UseEjabberdSharedRosterGroups"];
+    [defaults setBool:([checkBoxPreferencesUseSRG state] == CPOnState) forKey:@"TNArchipelUseEjabberdSharedRosterGroups"];
 }
 
 /*! called when user gets preferences
@@ -171,7 +171,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [checkBoxPreferencesUseSRG setState:[defaults boolForKey:@"UseEjabberdSharedRosterGroups"] ? CPOnState : CPOffState];
+    [checkBoxPreferencesUseSRG setState:[defaults boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] ? CPOnState : CPOffState];
 }
 
 
@@ -199,7 +199,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     if (change != @"listfetched")
     {
         [usersController reload];
-        if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+        if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
             [sharedGroupsController reload];
     }
 
@@ -264,7 +264,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
 
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"UseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
         [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
 
     [self permissionsChanged];
