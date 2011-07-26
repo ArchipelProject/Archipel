@@ -126,14 +126,14 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 {
     if (_credentialsHistory && [_credentialsHistory containsKey:[JID stringValue]])
     {
-        [password setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"password"]];
-        [boshService setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"service"]];
+        [password setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"password"] || @""];
+        [boshService setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"service"] || @""];
         [credentialRemember setOn:YES animated:YES sendAction:NO];
     }
     else
     {
-        [password setStringValue:nil];
-        [boshService setStringValue:nil];
+        [password setStringValue:@""];
+        [boshService setStringValue:@""];
         [credentialRemember setOn:NO animated:YES sendAction:NO];
     }
 }
@@ -155,7 +155,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     _credentialsHistory     = [defaults objectForKey:@"TNArchipelBOSHCredentialHistory"] || [CPDictionary dictionary];
 
     if (lastBoshService)
-        [boshService setStringValue:lastBoshService];
+        [boshService setStringValue:lastBoshService || @""];
 
     if (lastJID && lastJID != @"")
         [JID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]];
@@ -165,7 +165,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     if ([credentialRemember isOn])
     {
         _credentialRecovered = YES;
-        [password setStringValue:lastPassword];
+        [password setStringValue:lastPassword || @""];
         [self connect:nil];
     }
 }
@@ -249,7 +249,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     if (![connectionJID domain])
     {
-        [message setStringValue:@"Full JID required"];
+        [message setStringValue:CPLocalizedString(@"Full JID required", @"Full JID required")];
         return;
     }
 
@@ -307,7 +307,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
             [message setStringValue:CPLocalizedString(@"host-unreachable", @"host-unreachable")];
             break;
         default:
-            [message setStringValue:anError];
+            [message setStringValue:anError || @"Error is unknown because empty"];
     }
     [connectButton setEnabled:YES];
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];

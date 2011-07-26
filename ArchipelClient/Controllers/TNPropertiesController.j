@@ -351,12 +351,12 @@
             [buttonEventSubscription setToolTip:CPLocalizedString(@"You are not registred to the entity events.", @"You are not registred to the entity events.")];
         }
 
-        [labelVCardFN setStringValue:nil];
-        [labelVCardLocality setStringValue:nil];
-        [labelVCardCompany setStringValue:nil];
-        [labelVCardRole setStringValue:nil];
-        [labelVCardEmail setStringValue:nil]
-        [labelVCardWebiste setStringValue:nil];
+        [labelVCardFN setStringValue:@""];
+        [labelVCardLocality setStringValue:@""];
+        [labelVCardCompany setStringValue:@""];
+        [labelVCardRole setStringValue:@""];
+        [labelVCardEmail setStringValue:@""]
+        [labelVCardWebiste setStringValue:@""];
         [imageViewVCardPhoto setImage:nil];
 
         if ([_entity vCard])

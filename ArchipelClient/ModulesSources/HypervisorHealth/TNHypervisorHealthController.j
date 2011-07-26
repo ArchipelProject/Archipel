@@ -564,8 +564,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                 infoNode        = [aStanza firstChildWithName:@"uname"],
                 networkNodes    = [aStanza childrenWithName:@"network"];
 
-            [healthMemUsage setStringValue:freeMem + " MB"];
-            [healthMemSwapped setStringValue:swapped + " MB"];
+            [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(@" MB", @" MB")];
+            [healthMemSwapped setStringValue:swapped + CPBundleLocalizedString(@" MB", @" MB")];
 
             [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 

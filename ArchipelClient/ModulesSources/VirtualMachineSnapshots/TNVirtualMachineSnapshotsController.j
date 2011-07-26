@@ -452,8 +452,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [self sendStanza:stanza andRegisterSelector:@selector(_didTakeSnapshot:)];
 
     [popoverNewSnapshot close];
-    [fieldNewSnapshotName setStringValue:nil];
-    [fieldNewSnapshotDescription setStringValue:nil];
+    [fieldNewSnapshotName setStringValue:@""];
+    [fieldNewSnapshotDescription setStringValue:@""];
 }
 
 /*! compute virtual machine answer about taking a snapshot

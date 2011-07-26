@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// debug
+// uncomment this if you want to disable
+// the LPCrashReporter
+// LPCrashReporterDisable = function(){};
+// LPCrashReporterEnable = function(){};
+
 @import "Resources/lang/localization.js"
 
 @import <Foundation/Foundation.j>
@@ -427,7 +433,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
-    [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersionHuman"]];
+    [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersionHuman"] || @""];
 
 
     /* dataviews for roster */

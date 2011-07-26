@@ -1869,25 +1869,25 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([[_libvirtDomain memoryTuning] softLimit])
         [fieldMemoryTuneSoftLimit setIntValue:[[_libvirtDomain memoryTuning] softLimit] / 1024];
     else
-        [fieldMemoryTuneSoftLimit setStringValue:nil];
+        [fieldMemoryTuneSoftLimit setStringValue:@""];
     if ([[_libvirtDomain memoryTuning] hardLimit])
         [fieldMemoryTuneHardLimit setIntValue:[[_libvirtDomain memoryTuning] hardLimit] / 1024];
     else
-        [fieldMemoryTuneHardLimit setStringValue:nil];
+        [fieldMemoryTuneHardLimit setStringValue:@""];
     if ([[_libvirtDomain memoryTuning] minGuarantee])
         [fieldMemoryTuneGuarantee setIntValue:[[_libvirtDomain memoryTuning] minGuarantee] / 1024];
     else
-        [fieldMemoryTuneGuarantee setStringValue:nil];
+        [fieldMemoryTuneGuarantee setStringValue:@""];
     if ([[_libvirtDomain memoryTuning] swapHardLimit])
         [fieldMemoryTuneSwapHardLimit setIntValue:[[_libvirtDomain memoryTuning] swapHardLimit] / 1024];
     else
-        [fieldMemoryTuneSwapHardLimit setStringValue:nil];
+        [fieldMemoryTuneSwapHardLimit setStringValue:@""];
 
     // BLOCK IO TUNING
     if ([[_libvirtDomain blkiotune] weight])
         [fieldBlockIOTuningWeight setIntValue:[[_libvirtDomain blkiotune] weight]];
     else
-        [fieldBlockIOTuningWeight setStringValue:nil];
+        [fieldBlockIOTuningWeight setStringValue:@""];
 
     // MANUAL
     _stringXMLDesc  = [[aStanza firstChildWithName:@"domain"] stringValue];
