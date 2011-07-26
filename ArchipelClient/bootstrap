@@ -382,7 +382,7 @@ def main(interactive=True, properties=None):
 
         print MSG_ARCHIPEL_CLIENT_HEADER
 
-        test_user_root()
+        #test_user_root()
         git_init_submodules()
         print " "
 
