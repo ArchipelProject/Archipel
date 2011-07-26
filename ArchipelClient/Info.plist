@@ -82,10 +82,10 @@
         <key>minor</key>
         <integer>3</integer>
         <key>revision</key>
-        <integer>1</integer>
+        <integer>2</integer>
     </dict>
     <key>TNArchipelVersionHuman</key>
-    <string>Archipel Beta 3.1 (Mars)</string>
+    <string>Archipel Beta 3.2 (Mars)</string>
     <key>TNArchipelPropertyControllerEnabled</key>
     <integer>1</integer>
 </dict>
