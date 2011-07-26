@@ -374,7 +374,7 @@ def export_sdk(path):
 
 def getAllCibs():
     print "# get all cibs"
-    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e ModulesSources -e Modules")
+    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e ModulesSources")
     cibs = ""
     path = []
     for o in out.split('\n'):
@@ -394,24 +394,25 @@ def export_archipel(path, config):
     os.system("flatten %s -f %s %s" % (cibs[0], build_dir, temp_path))
     os.system("press -f %s %s" % (temp_path, final_path))
 
-    # print "# cleaning up CIBS files"
-    # os.system("find %s -name *.cib -exec rm -rf {} \;" % final_path)
-    # print "# cleaning up png files"
-    # os.system("find %s -name *.png -exec rm -rf {} \;" % final_path)
+    print "# cleaning up CIBS files"
+    os.system("find %s -name *.cib -exec rm -rf {} \;" % final_path)
+    print "# cleaning up png files"
+    os.system("find %s -name *.png -exec rm -rf {} \;" % final_path)
     print "# cleaning up IE specific files"
     os.system("find %s -name MHTML*.txt -exec rm -rf {} \;" % final_path)
     print "# cleaning up IE specific files"
     os.system("find %s -name MHTML*.txt -exec rm -rf {} \;" % final_path)
     print "# cleaning up CommonJS.environment files"
     os.system("find %s -name 'CommonJS.environment' -type dir -exec rm -rf {} \; > /dev/null 2>&1" % final_path)
-    # print "# Restore not shrinked images"
-    # os.system("cp ./Resources/Backgrounds/background-icon.png %s/Resources/Backgrounds" % final_path)
-    # os.system("cp ./Resources/Backgrounds/dark-bg-soft.png %s/Resources/Backgrounds" % final_path)
-    # os.system("cp ./Resources/Backgrounds/dark-bg.png %s/Resources/Backgrounds" % final_path)
-    # os.system("cp ./Resources/Backgrounds/modules-bg.png %s/Resources/Backgrounds" % final_path)
-    # os.system("cp ./Resources/Backgrounds/paper-bg-dark.png %s/Resources/Backgrounds" % final_path)
-    # os.system("cp ./Resources/Backgrounds/paper-bg.paper %s/Resources/Backgrounds" % final_path)
-    # os.system("cp ./Resources/lock.png %s/Resources/" % final_path)
+    print "# Restore not shrinked images"
+    os.system("cp ./Resources/Backgrounds/background-icon.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./Resources/Backgrounds/dark-bg-soft.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./Resources/Backgrounds/dark-bg.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./Resources/Backgrounds/modules-bg.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./Resources/Backgrounds/paper-bg-dark.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./Resources/Backgrounds/paper-bg.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./ModulesSources/VirtualMachineControls/Resources/shutdowned.png %s/Modules/VirtualMachineControls/Resources" % final_path)
+    os.system("cp ./Resources/lock.png %s/Resources/" % final_path)
     print "# Cleaning temp files"
     os.system("rm -rf %s" % temp_path)
 
