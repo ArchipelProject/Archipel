@@ -8,8 +8,6 @@
 	<string>Adjust the number of virtual CPUs of the VM (only when running)</string>
 	<key>Are you sure you want to migrate this virtual machine ?</key>
 	<string>Are you sure you want to migrate this virtual machine ?</string>
-	<key>Autostart</key>
-	<string>Autostart</string>
 	<key>Autostart has been set.</key>
 	<string>Autostart has been set.</string>
 	<key>Autostart has been unset.</key>
@@ -44,14 +42,10 @@
 	<string>Max number of virtual CPUs</string>
 	<key>Migrate</key>
 	<string>Migrate</string>
-	<key>Migration</key>
-	<string>Migration</string>
 	<key>Migration has started.</key>
 	<string>Migration has started.</string>
 	<key>No status</key>
 	<string>No status</string>
-	<key>OOM</key>
-	<string>OOM</string>
 	<key>OOM Killer can kill this virtual machine.</key>
 	<string>OOM Killer can kill this virtual machine.</string>
 	<key>OOM Killer cannot kill this virtual machine.</key>
@@ -86,8 +80,6 @@
 	<string>Unplug</string>
 	<key>Unplug Virtual Machine ?</key>
 	<string>Unplug Virtual Machine ?</string>
-	<key>Virtual Machine</key>
-	<string>Virtual Machine</string>
 	<key>Virtual machine has been destroyed.</key>
 	<string>Virtual machine has been destroyed.</string>
 	<key>Virtual machine is paused.</key>

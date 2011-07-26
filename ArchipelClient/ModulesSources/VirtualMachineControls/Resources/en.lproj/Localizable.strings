@@ -7,9 +7,6 @@
 /* Are you sure you want to migrate this virtual machine ? */
 "Are you sure you want to migrate this virtual machine ?" = "Are you sure you want to migrate this virtual machine ?";
 
-/* Autostart */
-"Autostart" = "Autostart";
-
 /* Autostart has been set. */
 "Autostart has been set." = "Autostart has been set.";
 
@@ -61,17 +58,11 @@
 /* Migrate */
 "Migrate" = "Migrate";
 
-/* Migration */
-"Migration" = "Migration";
-
 /* Migration has started. */
 "Migration has started." = "Migration has started.";
 
 /* No status */
 "No status" = "No status";
-
-/* OOM */
-"OOM" = "OOM";
 
 /* OOM Killer can kill this virtual machine. */
 "OOM Killer can kill this virtual machine." = "OOM Killer can kill this virtual machine.";
@@ -123,9 +114,6 @@
 
 /* Unplug Virtual Machine ? */
 "Unplug Virtual Machine ?" = "Unplug Virtual Machine ?";
-
-/* Virtual Machine */
-"Virtual Machine" = "Virtual Machine";
 
 /* Virtual machine has been destroyed. */
 "Virtual machine has been destroyed." = "Virtual machine has been destroyed.";
