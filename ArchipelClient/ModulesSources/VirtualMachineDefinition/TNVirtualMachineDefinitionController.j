@@ -1139,6 +1139,48 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setEnabled:shouldEnableGUI];
     [switchPAE setEnabled:shouldEnableGUI];
 
+    [buttonBoot setNeedsDisplay:YES];
+    [buttonClocks setNeedsDisplay:YES];
+    [buttonDefine setNeedsDisplay:YES];
+    [buttonDomainType setNeedsDisplay:YES];
+    [buttonGuests setNeedsDisplay:YES];
+    [buttonMachines setNeedsDisplay:YES];
+    [buttonOnCrash setNeedsDisplay:YES];
+    [buttonOnPowerOff setNeedsDisplay:YES];
+    [buttonOnReboot setNeedsDisplay:YES];
+    [buttonUndefine setNeedsDisplay:YES];
+    [buttonXMLEditor setNeedsDisplay:YES];
+    [buttonXMLEditorDefine setNeedsDisplay:YES];
+    [fieldBlockIOTuningWeight setNeedsDisplay:YES];
+    [fieldFilterNics setNeedsDisplay:YES];
+    [fieldMemory setNeedsDisplay:YES];
+    [fieldMemoryTuneGuarantee setNeedsDisplay:YES];
+    [fieldMemoryTuneHardLimit setNeedsDisplay:YES];
+    [fieldMemoryTuneSoftLimit setNeedsDisplay:YES];
+    [fieldMemoryTuneSwapHardLimit setNeedsDisplay:YES];
+    [fieldStringXMLDesc setNeedsDisplay:YES];
+    [stepperNumberCPUs setNeedsDisplay:YES];
+    [tableDrives setNeedsDisplay:YES];
+    [tableGraphicsDevices setNeedsDisplay:YES];
+    [tableInputDevices setNeedsDisplay:YES];
+    [tableInterfaces setNeedsDisplay:YES];
+    [_editButtonDrives setNeedsDisplay:YES];
+    [_editButtonGraphicDevice setNeedsDisplay:YES];
+    [_editButtonInputDevice setNeedsDisplay:YES];
+    [_editButtonNics setNeedsDisplay:YES];
+    [_minusButtonDrives setNeedsDisplay:YES];
+    [_minusButtonGraphicDevice setNeedsDisplay:YES];
+    [_minusButtonInputDevice setNeedsDisplay:YES];
+    [_minusButtonNics setNeedsDisplay:YES];
+    [_plusButtonDrives setNeedsDisplay:YES];
+    [_plusButtonGraphics setNeedsDisplay:YES];
+    [_plusButtonInputs setNeedsDisplay:YES];
+    [_plusButtonNics setNeedsDisplay:YES];
+    [switchACPI setNeedsDisplay:YES];
+    [switchAPIC setNeedsDisplay:YES];
+    [switchHugePages setNeedsDisplay:YES];
+    [switchPAE setNeedsDisplay:YES];
+
     if (shouldEnableGUI)
         [self buildGUIAccordingToCurrentGuest];
     [self handleDefinitionEdition:NO];
