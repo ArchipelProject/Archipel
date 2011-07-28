@@ -17,18 +17,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
-import sqlite3
-import sys
 from optparse import OptionParser
-import datetime
-import random
-import string
 import commands
+import datetime
+import os
+import random
+import random
+import sqlite3
+import string
+import sys
 
 def insert(dbfile, uuid, xmppserver, name, password):
     db = sqlite3.connect(dbfile)
     jid = "%s@%s" % (uuid, xmppserver)
+
+    if not password or password == "":
+        password = ''.join([random.choice(string.letters + string.digits) for i in range(32)])
 
     c = db.cursor()
     c.execute("INSERT INTO virtualmachines (jid, password, name, creation_date, comment) VALUES (?, ?, ?, ?, ?)", (jid, password, name, datetime.datetime.now(), "user-imported virtual machine"))
