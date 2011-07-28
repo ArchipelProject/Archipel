@@ -16,12 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// debug
-// uncomment this if you want to disable
-// the LPCrashReporter
-// LPCrashReporterDisable = function(){};
-// LPCrashReporterEnable = function(){};
-
 @import "Resources/lang/localization.js"
 
 @import <Foundation/Foundation.j>
@@ -223,6 +217,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)awakeFromCib
 {
+    [LPCrashReporter sharedErrorLogger];
     [theWindow setFullPlatformWindow:YES];
 
     TNUserAvatarSize = CPSizeMake(50.0, 50.0);

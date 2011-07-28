@@ -404,7 +404,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
                 + _useSSL + "(checkRate: " + [defaults integerForKey:@"NOVNCheckRate"]
                 + ", FBURate: " + [defaults integerForKey:@"NOVNCFBURate"]);
 
-    LPCrashReporterDisable();
     try
     {
         [_vncView load];
@@ -421,7 +420,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
                                 style:CPCriticalAlertStyle];
         CPLog.error("Websocket problem. unable to start noVNC subsystem.");
     }
-    LPCrashReporterEnable();
 }
 
 /*! create a zoom animation between two zoom factor

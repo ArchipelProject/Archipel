@@ -171,7 +171,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     CPLog.info("VNC: connecting to " + aHost + ":" + aPort + " using SSL:" + isEncrypted);
 
-    LPCrashReporterDisable();
     try
     {
         [_vncView load];
@@ -185,7 +184,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         CPLog.error("Websocket problem. unable to start noVNC subsystem.");
         [self close];
     }
-    LPCrashReporterEnable();
 }
 
 - (void)fitWindowToVNCView
