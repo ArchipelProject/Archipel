@@ -414,37 +414,41 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     var defaults = [CPUserDefaults standardUserDefaults],
         moduleIdentifier = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
         moduleCibName = [aBundle objectForInfoDictionaryKey:@"CibName"],
-        localizedCibName = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName;
+        localizedCibName = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName,
+        localizationStringsURL = [aBundle pathForResource:[defaults objectForKey:@"CPBundleLocale"] + ".lproj/Localizable.xstrings"],
+        englishStringsURL = [aBundle pathForResource:@"en.lproj/Localizable.xstrings"];
 
-    if (bundleLocale)
+
+    // we don't use CPURLConnection because what is important is the error code
+    // not the content that vary accross servers...
+    var req = new XMLHttpRequest();
+    req.open("GET", localizationStringsURL, false);
+    req.send(null);
+    if (req.status == 200)
     {
-        var request = [CPURLRequest requestWithURL:[aBundle pathForResource:[aBundle bundleLocale] + ".lproj/Localizable.xstrings"]],
-            response = [CPURLConnection sendSynchronousRequest:request returningResponse:nil];
+        CPLog.debug("MODULE LOADER: " + moduleIdentifier + " : Found the translation " + [defaults objectForKey:@"CPBundleLocale"]
+            + " strings information as expected at " + localizationStringsURL)
+        var plist = [CPPropertyListSerialization propertyListFromData:[CPData dataWithRawString:req.responseText] format:nil];
 
-        if (response && [response rawString] != @"")
-        {
-            var plist = [CPPropertyListSerialization propertyListFromData:response format:nil];
+        [aBundle setDictionary:plist forTable:@"Localizable"];
 
-            [aBundle setDictionary:plist forTable:@"Localizable"];
-
-            return [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
-        }
-        else
-        {
-            CPLog.warn("Unable to get default translation " + [defaults objectForKey:@"CPBundleLocale"] + " for module " + moduleIdentifier + ". Getting english");
-            var request = [CPURLRequest requestWithURL:@"en.lproj/Localizable.xstrings"],
-                response = [CPURLConnection sendSynchronousRequest:request returningResponse:response],
-                plist = [CPPropertyListSerialization propertyListFromData:response format:nil],
-                localizedCibName = @"en.lproj/" + moduleCibName;
-
-            [aBundle setDictionary:plist forTable:@"Localizable"];
-
-            return [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
-        }
+        return [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
     }
     else
     {
-        return [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+        CPLog.debug("MODULE LOADER: " + moduleIdentifier + " : Unable to  the translation " + [defaults objectForKey:@"CPBundleLocale"]
+            + ". Getting english at URL " + englishStringsURL)
+
+        var req = new XMLHttpRequest();
+        req.open("GET", englishStringsURL, false);
+        req.send(null);
+
+        var plist = [CPPropertyListSerialization propertyListFromData:[CPData dataWithRawString:req.responseText] format:nil],
+            localizedCibName = @"en.lproj/" + moduleCibName;
+
+        [aBundle setDictionary:plist forTable:@"Localizable"];
+
+        return [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
     }
 }
 
