@@ -46,28 +46,29 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 @implementation TNPreferencesController : CPObject
 {
-    @outlet CPButton        buttonCancel;
-    @outlet CPButton        buttonSave;
-    @outlet CPCheckBox      checkBoxUpdate;
-    @outlet CPCheckBox      checkBoxHideOfflineContacts;
-    @outlet CPPopUpButton   buttonDebugLevel;
-    @outlet CPPopUpButton   buttonLanguage;
-    @outlet CPTabView       tabViewMain;
-    @outlet CPTextField     fieldBOSHResource;
-    @outlet CPTextField     fieldModuleLoadingDelay;
-    @outlet CPView          viewContentWindowPreferences;
-    @outlet CPView          viewPreferencesGeneral;
-    @outlet TNSwitch        switchUseAnimations;
-    @outlet TNSwitch        switchUseXMPPMonitoring;
+    @outlet CPButton            buttonCancel;
+    @outlet CPButton            buttonSave;
+    @outlet CPCheckBox          checkBoxHideOfflineContacts;
+    @outlet CPCheckBox          checkBoxUpdate;
+    @outlet CPPopUpButton       buttonDebugLevel;
+    @outlet CPPopUpButton       buttonLanguage;
+    @outlet CPTabView           tabViewMain;
+    @outlet CPTextField         fieldBOSHResource;
+    @outlet CPTextField         fieldModuleLoadingDelay;
+    @outlet CPView              viewContentWindowPreferences;
+    @outlet CPView              viewPreferencesGeneral;
+    @outlet TNHintController    hintController;
+    @outlet TNSwitch            switchUseAnimations;
+    @outlet TNSwitch            switchUseXMPPMonitoring;
 
-    CPArray                 _excludedTokensNames;
-    CPDictionary            _excludedTokens             @accessors(getter=excludedTokens);
-    CPWindow                _mainWindow                 @accessors(getter=mainWindow);
-    id                      _appController              @accessors(property=appController);
+    CPArray                     _excludedTokensNames;
+    CPDictionary                _excludedTokens             @accessors(getter=excludedTokens);
+    CPWindow                    _mainWindow                 @accessors(getter=mainWindow);
+    id                          _appController              @accessors(property=appController);
 
-    CPArray                 _modules;
-    TNStrophePrivateStorage _xmppStorage;
-    CPString                _oldLocale;
+    CPArray                     _modules;
+    TNStrophePrivateStorage     _xmppStorage;
+    CPString                    _oldLocale;
 }
 
 
@@ -319,6 +320,15 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (IBAction)_performResetPreferencesAfterError:(id)aSender
 {
     [self cleanXMPPStorage];
+}
+
+/*! open the hint window
+    @param aSender the sender of the action
+*/
+- (IBAction)showHintWindow:(id)aSender
+{
+    [self hideWindow:aSender];
+    [hintController showWindow:aSender];
 }
 
 /*! clean the content of the XMPP storage

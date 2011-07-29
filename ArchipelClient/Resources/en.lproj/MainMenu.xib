@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A511</string>
+		<string key="IBDocument.SystemVersion">11C26</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138</string>
+		<string key="IBDocument.AppKitVersion">1138.11</string>
 		<string key="IBDocument.HIToolboxVersion">566.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4983,14 +4983,6 @@
 					<int key="connectionID">1330</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showWindow:</string>
-						<reference key="source" ref="523925574"/>
-						<reference key="destination" ref="583311556"/>
-					</object>
-					<int key="connectionID">1336</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">buttonDebugLevel</string>
 						<reference key="source" ref="342345970"/>
@@ -5437,6 +5429,22 @@
 						<reference key="destination" ref="552871700"/>
 					</object>
 					<int key="connectionID">1620</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showHintWindow:</string>
+						<reference key="source" ref="342345970"/>
+						<reference key="destination" ref="583311556"/>
+					</object>
+					<int key="connectionID">1621</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">hintController</string>
+						<reference key="source" ref="342345970"/>
+						<reference key="destination" ref="523925574"/>
+					</object>
+					<int key="connectionID">1622</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -9005,7 +9013,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1620</int>
+			<int key="maxID">1622</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10387,14 +10395,18 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>_performApplicationReload:</string>
+							<string>_performResetPreferencesAfterError:</string>
 							<string>hideWindow:</string>
 							<string>languageChanged:</string>
 							<string>resetPreferences:</string>
 							<string>savePreferences:</string>
+							<string>showHintWindow:</string>
 							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -10408,16 +10420,22 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>_performApplicationReload:</string>
+							<string>_performResetPreferencesAfterError:</string>
 							<string>hideWindow:</string>
 							<string>languageChanged:</string>
 							<string>resetPreferences:</string>
 							<string>savePreferences:</string>
+							<string>showHintWindow:</string>
 							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">_performApplicationReload:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">_performResetPreferencesAfterError:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -10434,6 +10452,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">savePreferences:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showHintWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -10454,6 +10476,7 @@
 							<string>checkBoxUpdate</string>
 							<string>fieldBOSHResource</string>
 							<string>fieldModuleLoadingDelay</string>
+							<string>hintController</string>
 							<string>switchUseAnimations</string>
 							<string>switchUseXMPPMonitoring</string>
 							<string>tabViewMain</string>
@@ -10470,6 +10493,7 @@
 							<string>CPCheckBox</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
+							<string>TNHintController</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>NSTabView</string>
@@ -10489,6 +10513,7 @@
 							<string>checkBoxUpdate</string>
 							<string>fieldBOSHResource</string>
 							<string>fieldModuleLoadingDelay</string>
+							<string>hintController</string>
 							<string>switchUseAnimations</string>
 							<string>switchUseXMPPMonitoring</string>
 							<string>tabViewMain</string>
@@ -10528,6 +10553,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldModuleLoadingDelay</string>
 								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">hintController</string>
+								<string key="candidateClassName">TNHintController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">switchUseAnimations</string>

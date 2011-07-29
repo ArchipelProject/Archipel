@@ -164,6 +164,9 @@
 /* Error */
 "Error" = "Error";
 
+/* Error while getting your preferences from the XMPP Server */
+"Error while getting your preferences from the XMPP Server" = "Error while getting your preferences from the XMPP Server";
+
 /* Expand all groups */
 "Expand all groups" = "Expand all groups";
 
@@ -172,6 +175,12 @@
 
 /* Filter contacts by name or tags */
 "Filter contacts by name or tags" = "Filter contacts by name or tags";
+
+/* For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them */
+"For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them" = "For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them";
+
+/* Full JID required */
+"Full JID required" = "Full JID required";
 
 /* GB */
 "GB" = "GB";
@@ -212,6 +221,9 @@
 /* KB */
 "KB" = "KB";
 
+/* Later */
+"Later" = "Later";
+
 /* Loaded  */
 "Loaded " = "Loaded ";
 
@@ -236,8 +248,14 @@
 /* Navigation */
 "Navigation" = "Navigation";
 
+/* Nevermind */
+"Nevermind" = "Nevermind";
+
 /* Notification */
 "Notifications" = "Notifications";
+
+/* OK */
+"OK" = "OK";
 
 /* Password error */
 "Password error" = "Password error";
@@ -277,6 +295,9 @@
 
 /* Report a bug */
 "Report a bug" = "Report a bug";
+
+/* Reset */
+"Reset" = "Reset";
 
 /* Resource */
 "Resource" = "Resource";

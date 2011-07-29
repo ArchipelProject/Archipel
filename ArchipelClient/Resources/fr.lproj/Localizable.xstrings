@@ -94,12 +94,18 @@
 	<string>Entrez vore nouveau mot de passe. Vous devrez utiliser ce mot de passe lors de la prochaine connexion</string>
 	<key>Error</key>
 	<string>Erreur</string>
+	<key>Error while getting your preferences from the XMPP Server</key>
+	<string>Error while getting your preferences from the XMPP Server</string>
 	<key>Expand all groups</key>
 	<string>Etendre tous les groupes</string>
 	<key>Expand group</key>
 	<string>Etendre le groupe</string>
 	<key>Filter contacts by name or tags</key>
 	<string>Filtrer par nom ou par étiquette</string>
+	<key>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</key>
+	<string>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</string>
+	<key>Full JID required</key>
+	<string>Full JID required</string>
 	<key>GB</key>
 	<string>Go</string>
 	<key>Go to website</key>
@@ -124,6 +130,8 @@
 	<string>le JID n'est pas valide</string>
 	<key>KB</key>
 	<string>KB</string>
+	<key>Later</key>
+	<string>Later</string>
 	<key>Loaded </key>
 	<string>Chargé </string>
 	<key>Locale change</key>
@@ -140,8 +148,12 @@
 	<string>Modules</string>
 	<key>Navigation</key>
 	<string>Navigation</string>
+	<key>Nevermind</key>
+	<string>Nevermind</string>
 	<key>Notifications</key>
 	<string>Notifications</string>
+	<key>OK</key>
+	<string>OK</string>
 	<key>Password error</key>
 	<string>Erreur de mot de passe</string>
 	<key>Paste</key>
@@ -168,6 +180,8 @@
 	<string>Renommer le groupe</string>
 	<key>Report a bug</key>
 	<string>Rapporter un bug</string>
+	<key>Reset</key>
+	<string>Reset</string>
 	<key>Resource</key>
 	<string>Resource</string>
 	<key>Retype the password</key>
