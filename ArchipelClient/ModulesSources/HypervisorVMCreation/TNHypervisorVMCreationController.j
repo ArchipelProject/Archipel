@@ -92,11 +92,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [fieldFilterVM setAction:@selector(filterObjects:)];
     [tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 
-    var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(openNewVirtualMachineWindow:) keyEquivalent:@""];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteVirtualMachine:) keyEquivalent:@""];
-    [tableVirtualMachines setMenu:menu];
-
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewVirtualMachineWindow:)];
@@ -189,6 +184,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete virtual machine", @"Delete virtual machine") action:@selector(deleteVirtualMachine:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clone this virtual machine", @"Clone this virtual machine") action:@selector(openCloneVirtualMachineWindow:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add a user subscription", @"Add a user subscription") action:@selector(openAddSubscriptionWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Remove a user subscription", @"Remove a user subscription") action:@selector(openRemoveSubscriptionWindow:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -335,16 +333,18 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openCloneVirtualMachineWindow:(id)aSender
 {
-    if (([tableVirtualMachines numberOfRows] == 0)
-        || ([tableVirtualMachines numberOfSelectedRows] <= 0)
-        || ([tableVirtualMachines numberOfSelectedRows] > 1))
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableVirtualMachines numberOfSelectedRows] != 1)
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select one (and only one) virtual machine", @"You must select one (and only one) virtual machine")];
          return;
     }
 
-    [VMCloneController openWindow:aSender];
+    [VMCloneController openWindow:_cloneButton];
 }
 
 /*! open the add subscription window
@@ -352,7 +352,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openNewVirtualMachineWindow:(id)aSender
 {
-    [VMAllocationController openWindow:aSender];
+    [self requestVisible];
+    if ([self isVisible])
+        [VMAllocationController openWindow:_plusButton];
 }
 
 /*! open the add subscription window
@@ -360,7 +362,18 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openAddSubscriptionWindow:(id)aSender
 {
-    [VMSubscriptionController openAddSubsctiptionWindow:aSender];
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableVirtualMachines numberOfSelectedRows] != 1)
+    {
+         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                           informative:CPBundleLocalizedString(@"You must select one (and only one) virtual machine", @"You must select one (and only one) virtual machine")];
+         return;
+    }
+
+    [VMSubscriptionController openAddSubsctiptionWindow:_addSubscriptionButton];
 }
 
 /*! open the add subscription window
@@ -368,7 +381,18 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openRemoveSubscriptionWindow:(id)aSender
 {
-    [VMSubscriptionController openRemoveSubscriptionWindow:aSender];
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableVirtualMachines numberOfSelectedRows] != 1)
+    {
+         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                           informative:CPBundleLocalizedString(@"You must select one (and only one) virtual machine", @"You must select one (and only one) virtual machine")];
+         return;
+    }
+
+    [VMSubscriptionController openRemoveSubscriptionWindow:_removeSubscriptionButton];
 }
 
 
