@@ -439,21 +439,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 
-    var menuNet = [[CPMenu alloc] init],
-        menuDrive = [[CPMenu alloc] init];
-
-    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Create new network interface", @"Create new network interface") action:@selector(addNetworkCard:) keyEquivalent:@""];
-    [menuNet addItem:[CPMenuItem separatorItem]];
-    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editInterface:) keyEquivalent:@""];
-    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteNetworkCard:) keyEquivalent:@""];
-    [tableInterfaces setMenu:menuNet];
-
-    [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Create new drive", @"Create new drive") action:@selector(addDrive:) keyEquivalent:@""];
-    [menuDrive addItem:[CPMenuItem separatorItem]];
-    [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editDrive:) keyEquivalent:@""];
-    [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteDrive:) keyEquivalent:@""];
-    [tableDrives setMenu:menuDrive];
-
     [driveController setTable:tableDrives];
     [interfaceController setTable:tableInterfaces];
     [inputDeviceController setTable:tableInputDevices];
@@ -671,12 +656,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)menuReady
 {
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Undefine", @"Undefine") action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add drive", @"Add drive") action:@selector(addDrive:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive") action:@selector(editDrive:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add network card", @"Add network card") action:@selector(addNetworkCard:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network card", @"Edit selected network card") action:@selector(editInterface:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
     [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
 }
@@ -1287,8 +1266,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [popoverXMLEditor close];
-    [popoverXMLEditor showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverXMLEditor showRelativeToRect:nil ofView:buttonXMLEditor preferredEdge:nil];
     [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
 }
 
@@ -1345,7 +1328,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newNic setMAC:[self generateMacAddr]];
     [newNic setSource:newNicSource];
     [interfaceController setNic:newNic];
-    [interfaceController openWindow:aSender];
+    [interfaceController openWindow:_plusButtonNics];
 
     [self makeDefinitionEdited:YES];
 }
@@ -1367,6 +1350,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var nicObject = [_nicsDatasource objectAtIndex:[tableInterfaces selectedRow]];
 
     [interfaceController setNic:nicObject];
+
+    if ([aSender isKindOfClass:CPMenuItem])
+        aSender = _editButtonNics;
+
     [interfaceController openWindow:aSender];
 }
 
@@ -1376,6 +1363,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)deleteNetworkCard:(id)aSender
 {
     if (![self currentEntityHasPermission:@"define"])
+        return;
+
+
+    if (![self isVisible])
         return;
 
     if ([tableInterfaces numberOfSelectedRows] <= 0)
@@ -1402,7 +1393,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-
     var newDrive = [[TNLibvirtDeviceDisk alloc] init],
         newDriveSource = [[TNLibvirtDeviceDiskSource alloc] init],
         newDriveTarget = [[TNLibvirtDeviceDiskTarget alloc] init],
@@ -1422,7 +1412,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newDrive setDriver:newDriveDriver];
     [driveController setDrive:newDrive];
 
-    [driveController openWindow:aSender];
+    [driveController openWindow:_plusButtonDrives];
     [self makeDefinitionEdited:YES];
 }
 
@@ -1443,6 +1433,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var driveObject = [_drivesDatasource objectAtIndex:[tableDrives selectedRow]];
 
     [driveController setDrive:driveObject];
+
+    if ([aSender isKindOfClass:CPMenuItem])
+        aSender = _minusButtonDrives;
+
     [driveController openWindow:aSender];
 }
 
