@@ -543,12 +543,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [navigationMenu addItem:[CPMenuItem separatorItem]];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand all groups", @"Expand all groups") action:@selector(expandAllGroups:) keyEquivalent:@""];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse all groups", @"Collapse all groups") action:@selector(collapseAllGroups:) keyEquivalent:@""];
-    [navigationMenu addItem:[CPMenuItem separatorItem]];
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
 
     // Modules
     _modulesMenu = [[CPMenu alloc] init];
     [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
+    [moduleItem setEnabled:NO];
 
     // help
     [helpMenu addItemWithTitle:CPLocalizedString(@"Archipel Help", @"Archipel Help") action:@selector(openWiki:) keyEquivalent:@""];
@@ -1508,6 +1508,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [rightView flip:nil];
     [updateController check];
     [self performModuleChange:nil];
+    [[[CPApp mainMenu] itemWithTitle:CPLocalizedString(@"Modules", @"Modules")] setEnabled:YES];
 }
 
 /*! delegate of StropheCappuccino that will be trigger on Raw input traffic
