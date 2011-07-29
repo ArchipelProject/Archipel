@@ -302,8 +302,8 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 
     if (([tableJobs numberOfRows] == 0) || ([tableJobs numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
-                         message:CPBundleLocalizedString(@"You must select a job", @"You must select a job")];
+         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                         informative:CPBundleLocalizedString(@"You must select a job", @"You must select a job")];
          return;
     }
 
