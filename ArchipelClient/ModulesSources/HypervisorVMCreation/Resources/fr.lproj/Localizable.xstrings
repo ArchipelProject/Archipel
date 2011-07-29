@@ -50,10 +50,6 @@
 	<string>Supprimer la souscription</string>
 	<key>Subscription have been removed</key>
 	<string>La souscription a été supprimée.</string>
-	<key>Subscription request</key>
-	<string>Requete de souscription</string>
-	<key>Virtual Machine</key>
-	<string>Machine Virtuelle</string>
 	<key>Virtual machine </key>
 	<string>Machine virtuelle </string>
 	<key>Virtual machine has been cloned</key>

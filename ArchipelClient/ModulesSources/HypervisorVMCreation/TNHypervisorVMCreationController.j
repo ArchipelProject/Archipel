@@ -32,8 +32,8 @@
 
 @import "TNVirtualMachineAllocationController.j";
 @import "TNVirtualMachineCloneController.j";
+@import "TNVirtualMachineDataView.j";
 @import "TNVirtualMachineSubscriptionController.j";
-
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
@@ -55,6 +55,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPView                                  viewTableContainer;
     @outlet TNVirtualMachineAllocationController    VMAllocationController;
     @outlet TNVirtualMachineCloneController         VMCloneController;
+    @outlet TNVirtualMachineDataView                dataViewVMPrototype;
     @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
 
     CPButton                                        _cloneButton;
@@ -79,13 +80,16 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachines setTarget:self];
-    [tableVirtualMachines setDoubleAction:@selector(didDoubleClick:)]
+    [tableVirtualMachines setDoubleAction:@selector(didDoubleClick:)];
+    [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
+    [tableVirtualMachines setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+    [tableVirtualMachines setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+
     [_virtualMachinesDatasource setTable:tableVirtualMachines];
     [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID"]];
 
     [fieldFilterVM setTarget:_virtualMachinesDatasource];
     [fieldFilterVM setAction:@selector(filterObjects:)];
-
     [tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 
     var menu = [[CPMenu alloc] init];

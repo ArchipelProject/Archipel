@@ -50,10 +50,6 @@
 	<string>Removing subscription</string>
 	<key>Subscription have been removed</key>
 	<string>Subscription have been removed</string>
-	<key>Subscription request</key>
-	<string>Subscription request</string>
-	<key>Virtual Machine</key>
-	<string>Virtual Machine</string>
 	<key>Virtual machine </key>
 	<string>Virtual machine </string>
 	<key>Virtual machine has been cloned</key>

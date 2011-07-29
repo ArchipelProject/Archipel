@@ -89,15 +89,51 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "108"; */
 "108.title" = "Annuler";
 
-/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "131"; */
-"131.headerCell.title" = "Nom";
+/* Class = "NSTableColumn"; headerCell.title = "Virtual Machines"; ObjectID = "130"; */
+"130.headerCell.title" = "Virtual Machines";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "132"; */
-"132.title" = "Text Cell";
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "267"; */
+"267.title" = "Text";
 
-/* Class = "NSTableColumn"; headerCell.title = "JID"; ObjectID = "134"; */
-"134.headerCell.title" = "JID";
+/* Class = "NSTextFieldCell"; title = "Virtual Machine Name"; ObjectID = "273"; */
+"273.title" = "Virtual Machine Name";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "135"; */
-"135.title" = "Text Cell";
+/* Class = "NSTextFieldCell"; title = "Nickname:"; ObjectID = "277"; */
+"277.title" = "Nickname:";
+
+/* Class = "NSTextFieldCell"; title = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f"; ObjectID = "282"; */
+"282.title" = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f";
+
+/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "283"; */
+"283.title" = "Nickname";
+
+/* Class = "NSTextFieldCell"; title = "hypervisor"; ObjectID = "288"; */
+"288.title" = "hypervisor";
+
+/* Class = "NSTextFieldCell"; title = "mydomain.com"; ObjectID = "289"; */
+"289.title" = "mydomain.com";
+
+/* Class = "NSTextFieldCell"; title = "Hypervisor:"; ObjectID = "290"; */
+"290.title" = "Hypervisor:";
+
+/* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "291"; */
+"291.title" = "Domain:";
+
+/* Class = "NSTextFieldCell"; title = "company"; ObjectID = "294"; */
+"294.title" = "company";
+
+/* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "295"; */
+"295.title" = "Company:";
+
+/* Class = "NSTextFieldCell"; title = "Running"; ObjectID = "327"; */
+"327.title" = "Running";
+
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "328"; */
+"328.title" = "Status";
+
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "329"; */
+"329.title" = "Status";
+
+/* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "330"; */
+"330.title" = "Locality:";
 

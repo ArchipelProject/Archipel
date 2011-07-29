@@ -70,12 +70,6 @@
 /* Subscription have been removed */
 "Subscription have been removed" = "La souscription a été supprimée.";
 
-/* Subscription request */
-"Subscription request" = "Requete de souscription";
-
-/* Virtual Machine */
-"Virtual Machine" = "Machine Virtuelle";
-
 /* Virtual machine  */
 "Virtual machine " = "Machine virtuelle ";
 
