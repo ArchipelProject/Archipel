@@ -166,7 +166,11 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 - (IBAction)openNewJobWindow:(id)aSender
 {
-    [schedulerController openWindow:aSender];
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    [schedulerController openWindow:_buttonSchedule];
 }
 
 
