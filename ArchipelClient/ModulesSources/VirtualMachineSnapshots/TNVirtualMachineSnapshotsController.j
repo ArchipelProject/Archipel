@@ -142,12 +142,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
 
-    var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new snapshot", @"Create new snapshot") action:@selector(openWindowNewSnapshot:) keyEquivalent:@""];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteSnapshot:) keyEquivalent:@""];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Restore", @"Restore") action:@selector(restoreSnapshot:) keyEquivalent:@""];
-    [_outlineViewSnapshots setMenu:menu];
-
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CPSizeMake(14, 14)]];
@@ -272,12 +266,16 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (IBAction)openWindowNewSnapshot:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [fieldNewSnapshotName setStringValue:@""];
     [fieldNewSnapshotDescription setStringValue:@""];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
 
     [popoverNewSnapshot close];
-    [popoverNewSnapshot showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverNewSnapshot showRelativeToRect:nil ofView:_plusButton preferredEdge:nil];
     [popoverNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [popoverNewSnapshot setDefaultButton:buttonSnapshotTake];
 }
@@ -304,6 +302,10 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (IBAction)deleteSnapshot:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [self deleteSnapshot];
 }
 

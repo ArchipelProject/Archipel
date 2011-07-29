@@ -98,11 +98,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [fieldFilter setTarget:_mediasDatasource];
     [fieldFilter setAction:@selector(filterObjects:)];
 
-    var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Rename", @"Rename") action:@selector(openEditWindow:) keyEquivalent:@""];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(removeDisk:) keyEquivalent:@""];
-    [tableMedias setMenu:menu];
-
     _plusButton  = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewDiskWindow:)];
@@ -267,7 +262,11 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 */
 - (IBAction)openNewDiskWindow:(id)aSender
 {
-    [newDriveController openWindow:aSender];
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    [newDriveController openWindow:_plusButton];
 }
 
 /*! opens the rename window
@@ -276,6 +275,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 - (IBAction)openEditWindow:(id)aSender
 {
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
+        return;
+
+    [self requestVisible];
+    if (![self isVisible])
         return;
 
     if (_isEntityOnline)
@@ -301,6 +304,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
             diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
 
         [editDriveController setCurrentEditedDisk:diskObject];
+
+        if ([aSender isKindOfClass:CPMenuItem])
+            aSender = _editButton;
+
         [editDriveController openWindow:aSender];
     }
 }
@@ -310,6 +317,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 */
 - (IBAction)removeDisk:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [self removeDisk];
 }
 
