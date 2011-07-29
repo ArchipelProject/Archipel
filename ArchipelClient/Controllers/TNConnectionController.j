@@ -132,8 +132,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     }
     else
     {
+        var JIDObject = [TNStropheJID stropheJIDWithString:[JID stringValue]];
         [password setStringValue:@""];
-        [boshService setStringValue:@""];
+        [boshService setStringValue:@"http://" + [JIDObject domain] + ":5280/http-bind"];
         [credentialRemember setOn:NO animated:YES sendAction:NO];
     }
 }
