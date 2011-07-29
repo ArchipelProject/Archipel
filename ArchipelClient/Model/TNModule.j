@@ -564,7 +564,8 @@ TNArchipelModuleStatusWaiting           = 2;
 */
 - (void)requestVisible
 {
-    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelModulesVisibilityRequestNotification object:self];
+    if (![self isVisible])
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelModulesVisibilityRequestNotification object:self];
 }
 
 #pragma mark -
