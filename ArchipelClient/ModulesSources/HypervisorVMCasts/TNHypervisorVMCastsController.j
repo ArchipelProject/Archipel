@@ -303,7 +303,11 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)openNewVMCastURLWindow:(id)aSender
 {
-    [VMCastRegistrationController openWindow:aSender]
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    [VMCastRegistrationController openWindow:_plusButton];
 }
 
 /*! called when filter checkbox change
@@ -325,6 +329,13 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)remove:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([_mainOutlineView numberOfSelectedRows] < 1)
+        return;
+
     [self remove];
 }
 
@@ -333,6 +344,16 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)removeAppliance:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([_mainOutlineView numberOfSelectedRows] < 1)
+        return;
+
+    if (![[_mainOutlineView itemAtRow:[_mainOutlineView selectedRow]] isKindOfClass:TNVMCast])
+        return;
+
     [self removeAppliance];
 }
 
@@ -341,6 +362,16 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)removeVMCast:(id)someUserInfo
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([_mainOutlineView numberOfSelectedRows] < 1)
+        return;
+
+    if (![[_mainOutlineView itemAtRow:[_mainOutlineView selectedRow]] isKindOfClass:TNVMCastSource])
+        return;
+
     [VMCastRegistrationController removeVMCast];
 }
 
@@ -349,6 +380,16 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)download:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([_mainOutlineView numberOfSelectedRows] < 1)
+        return;
+
+    if (![[_mainOutlineView itemAtRow:[_mainOutlineView selectedRow]] isKindOfClass:TNVMCast])
+        return;
+
     [self download];
 }
 
@@ -357,7 +398,11 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)showDownloadQueue:(id)aSender
 {
-    [downloadQueueController showWindow:aSender];
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    [downloadQueueController showWindow:_downloadQueueButton];
 }
 
 
