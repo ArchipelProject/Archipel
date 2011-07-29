@@ -55,7 +55,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     BOOL                    _credentialRecovered    @accessors(getter=areCredentialRecovered);
     TNStropheStanza         _userVCard              @accessors(property=userVCard);
 
-    BOOL                    _isConnecting;
     CPDictionary            _credentialsHistory;
 }
 
@@ -67,7 +66,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)awakeFromCib
 {
     _credentialRecovered = NO;
-    _isConnecting = NO;
 
     [mainWindow setShowsResizeIndicator:NO];
     [mainWindow setDefaultButton:connectButton];
@@ -134,7 +132,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     {
         var JIDObject = [TNStropheJID stropheJIDWithString:[JID stringValue]];
         [password setStringValue:@""];
-        [boshService setStringValue:@"http://" + [JIDObject domain] + ":5280/http-bind"];
+        if ([JIDObject domain])
+            [boshService setStringValue:@"http://" + [JIDObject domain] + @":5280/http-bind"];
+        else
+            [boshService setStringValue:@""];
         [credentialRemember setOn:NO animated:YES sendAction:NO];
     }
 }
@@ -175,9 +176,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)saveCredentialsInHistory
 {
-    if ([_credentialsHistory containsKey:[JID stringValue]])
-        return;
-
     var historyToken = [CPDictionary dictionaryWithObjectsAndKeys:[password stringValue], @"password",
                                                                   [boshService stringValue], @"service"];
 
@@ -219,9 +217,13 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (IBAction)connect:(id)sender
 {
-    if (_isConnecting)
+    var currentConnectionStatus = [[[TNStropheIMClient defaultClient] connection] currentStatus];
+
+    if (currentConnectionStatus
+        && currentConnectionStatus != Strophe.Status.DISCONNECTED
+        && currentConnectionStatus != Strophe.Status.CONNFAIL
+        && currentConnectionStatus != Strophe.Status.ERROR)
     {
-        _isConnecting = NO;
         [[TNStropheIMClient defaultClient] disconnect];
         return;
     }
@@ -247,7 +249,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     var connectionJID   = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
 
-
     if (![connectionJID domain])
     {
         [message setStringValue:CPLocalizedString(@"Full JID required", @"Full JID required")];
@@ -262,7 +263,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [stropheClient setDefaultClient];
 
     [[CPNotificationCenter defaultCenter] postNotificationName:TNConnectionControllerConnectionStarted object:self];
-    _isConnecting = YES;
     [stropheClient connect];
 }
 
@@ -287,12 +287,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
         [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
     }
-
-
-    CPLog.debug("credential remember set");
 }
-
-
 
 /*! delegate of TNStropheIMClient
     @param aStropheClient a TNStropheIMClient
@@ -300,8 +295,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)client:(TNStropheIMClient)aStropheClient errorCondition:(CPString)anError
 {
-    _isConnecting = NO;
-
     switch (anError)
     {
         case "host-unknown":
@@ -320,7 +313,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
-    _isConnecting = YES;
     [message setStringValue:CPLocalizedString(@"connecting", @"connecting")];
     [connectButton setTitle:CPLocalizedString(@"cancel", @"cancel")];
     [connectButton setNeedsLayout];
@@ -332,8 +324,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheConnected:(TNStropheIMClient)aStropheClient
 {
-    _isConnecting = NO;
-
     [message setStringValue:CPLocalizedString(@"connected", @"connected")];
     [spinning setHidden:YES];
 
@@ -348,8 +338,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheConnectFail:(TNStropheIMClient)aStropheClient
 {
-    _isConnecting = NO;
-
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
@@ -372,8 +360,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheAuthFail:(TNStropheIMClient)aStropheClient
 {
-    _isConnecting = NO;
-
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
@@ -387,8 +373,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheError:(TNStropheIMClient)aStropheClient
 {
-    _isConnecting = NO;
-
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
