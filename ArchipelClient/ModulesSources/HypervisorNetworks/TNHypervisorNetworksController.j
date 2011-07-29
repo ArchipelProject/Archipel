@@ -99,16 +99,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [fieldFilterNetworks setTarget:_datasourceNetworks];
     [fieldFilterNetworks setAction:@selector(filterObjects:)];
 
-    var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual network", @"Create new virtual network") action:@selector(addNetwork:) keyEquivalent:@""];
-    [menu addItem:[CPMenuItem separatorItem]];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editNetwork:) keyEquivalent:@""];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Activate", @"Activate") action:@selector(activateNetwork:) keyEquivalent:@""];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Deactivate", @"Deactivate") action:@selector(deactivateNetwork:) keyEquivalent:@""];
-    [menu addItem:[CPMenuItem separatorItem]];
-    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(delNetwork:) keyEquivalent:@""];
-    [tableViewNetworks setMenu:menu];
-
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(addNetwork:)];
@@ -342,6 +332,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)addNetwork:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     var uuid            = [CPString UUID],
         ip              = [self generateIPForNewNetwork],
         ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2",
@@ -363,7 +357,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
                                                      autostart:YES];
 
     [networkController setNetwork:newNetwork];
-    [networkController openWindow:aSender];
+    [networkController openWindow:_plusButton];
 }
 
 /*! delete a network
@@ -371,6 +365,13 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)delNetwork:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableViewNetworks numberOfSelectedRows] < 1)
+        return;
+
     var selectedIndexes = [tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes],
         alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete Network", @"Delete Network")
@@ -396,6 +397,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     if (![self currentEntityHasPermission:@"network_define"])
         return;
 
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     var selectedIndex   = [[tableViewNetworks selectedRowIndexes] firstIndex];
 
     if (selectedIndex != -1)
@@ -409,6 +414,9 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         }
 
         [networkController setNetwork:networkObject];
+
+        if ([aSender isKindOfClass:CPMenuItem])
+            aSender = _editButton;
         [networkController openWindow:aSender];
     }
 }
@@ -433,6 +441,13 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)activateNetwork:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableViewNetworks numberOfSelectedRows] < 1)
+        return;
+
     var selectedIndexes = [tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
 
@@ -444,6 +459,13 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (IBAction)deactivateNetwork:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableViewNetworks numberOfSelectedRows] < 1)
+        return;
+
     var selectedIndexes = [tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes],
         alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Deactivate Network", @"Deactivate Network")
