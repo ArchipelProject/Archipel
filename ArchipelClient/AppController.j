@@ -217,7 +217,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)awakeFromCib
 {
-    [LPCrashReporter sharedErrorLogger];
+    if (typeof(LPCrashReporter) != "undefined")
+        [LPCrashReporter sharedErrorLogger];
+
     [theWindow setFullPlatformWindow:YES];
 
     TNUserAvatarSize = CPSizeMake(50.0, 50.0);
@@ -1368,9 +1370,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
 {
-    for (var i = 0; i < [[moduleController loadedTabModules] count]; i++)
+    var tabsModules = [[moduleController loadedTabModules] allValues];
+
+    for (var i = 0; i < [tabsModules count]; i++)
     {
-        var module = [[moduleController loadedTabModules] objectAtIndex:i];
+        var module = [tabsModules objectAtIndex:i];
         if (module && ![module shouldHideAndSelectItem:anItem ofObject:anOutlineView])
             return NO;
     }

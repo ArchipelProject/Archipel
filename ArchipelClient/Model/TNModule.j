@@ -560,6 +560,12 @@ TNArchipelModuleStatusWaiting           = 2;
     }
 }
 
+/*! Send this message to make the module visible
+*/
+- (void)requestVisible
+{
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelModulesVisibilityRequestNotification object:self];
+}
 
 #pragma mark -
 #pragma mark Communication utilities

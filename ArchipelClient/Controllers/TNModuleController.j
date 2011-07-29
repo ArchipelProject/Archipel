@@ -59,6 +59,7 @@ TNArchipelModulesReadyNotification              = @"TNArchipelModulesReadyNotifi
 */
 TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNotification";
 
+TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityRequestNotification";
 
 /*! @ingroup archipelcore
 
@@ -87,8 +88,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     BOOL                            _allModulesReady                @accessors(getter=isAllModulesReady);
     BOOL                            _moduleLoadingStarted           @accessors(getter=isModuleLoadingStarted);
-    CPArray                         _loadedTabModules               @accessors(getter=loadedTabModules);
     CPColor                         _toolbarModuleBackgroundColor   @accessors(property=toolbarModuleBackgroundColor);
+    CPDictionary                    _loadedTabModules               @accessors(getter=loadedTabModules);
     CPDictionary                    _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
     CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
     CPString                        _modulesPath                    @accessors(property=modulesPath);
@@ -137,8 +138,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _loadedToolbarModulesScrollViews        = [CPDictionary dictionary];
         _modulesMenuItems                       = [CPDictionary dictionary];
         _loadedToolbarModules                   = [CPDictionary dictionary];
+        _loadedTabModules                       = [CPDictionary dictionary];
         _bundles                                = [CPArray array];
-        _loadedTabModules                       = [CPArray array];
         _numberOfModulesToLoad                  = 0;
         _numberOfModulesLoaded                  = 0;
         _numberOfActiveModules                  = 0;
@@ -178,6 +179,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     _moduleType             = aType;
 
     [center removeObserver:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didReceiveVisibilityRequest:)
+                                                 name:TNArchipelModulesVisibilityRequestNotification
+                                               object:nil];
+
 
     if (_moduleType != TNArchipelEntityTypeGeneral)
     {
@@ -319,7 +325,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     var modulesToLoad   = [CPArray array],
         sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"index" ascending:YES],
-        sortedValue     = [_loadedTabModules sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
+        sortedValue     = [[_loadedTabModules allValues] sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
 
     _numberOfActiveModules = 0;
 
@@ -506,7 +512,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [[_modulesMenuItems objectForKey:supportedTypes] addObject:moduleItem];
     }
 
-    [_loadedTabModules addObject:currentModuleController];
+    [_loadedTabModules setObject:currentModuleController forKey:moduleName];
 }
 
 /*! Insert a toolbar item module
@@ -669,6 +675,18 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         _allModulesReady = YES;
     }
+}
+
+/*! Triggered when TNArchipelModulesVisibilityRequestNotification is recieved
+*/
+- (void)_didReceiveVisibilityRequest:(CPNotification)aNotification
+{
+    var requester = [aNotification object],
+        module = [_loadedTabModules objectForKey:[requester name]];
+
+    for (var i = 0; i < [[_mainTabView tabViewItems] count]; i++)
+        if ([[[_mainTabView tabViewItems] objectAtIndex:i] identifier] == [requester name])
+            [_mainTabView selectTabViewItem:[[_mainTabView tabViewItems] objectAtIndex:i]];
 }
 
 
