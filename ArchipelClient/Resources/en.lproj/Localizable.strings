@@ -53,7 +53,7 @@
 "authenticating" = "authenticating";
 
 /* authentification-failed */
-"authentification-failed" = "authentification-failed";
+"authentification-failed" = "authentication-failed";
 
 /* Available */
 "Available" = "Available";

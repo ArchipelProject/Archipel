@@ -29,7 +29,7 @@
 "Add a group" = "Eine Gruppe hinzufügen";
 
 /* Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user. */
-"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user." = "Fügen Sie einen neuen Kontakt oder eine Gruppe hinzu. Kontakte können Hypervisor, eine virtuelle Maschine oder ein Benutzer sein.";
+"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user." = "Fügen Sie einen neuen Kontakt oder eine Gruppe hinzu. Kontakte können Hypervisor, virtuelle Maschinen oder Benutzer sein.";
 
 /* Add contact */
 "Add contact" = "Kontakt hinzufügen";
@@ -101,7 +101,7 @@
 "Connected as " = "Verbunden als ";
 
 /* connecting */
-"connecting" = "verbindend";
+"connecting" = "Verbinde...";
 
 /* connection-failed */
 "connection-failed" = "Verbindung fehlgeschlagen";
@@ -122,7 +122,7 @@
 "Copy" = "Kopieren";
 
 /* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "Schalten Sie das an damit Ihr Computer sich an die Verbindungsinformationen erinnnert und automatisch verbindet. Beachten Sie, dass alle Passwörter in Klartext im Browserspeicher gespeichert werden. Diese Daten sind sehr einfach zu finden. Aktivieren Sie diese Option also auf eigene Gefahr. Wollen Sie Ihre Verbindungsinformationen löschen, so versichern Sie sich das Sie die JID eingegeben haben und der Schalter nach unten zeigt.";
+"CREDENTIAL_REMEMBER_TOOLTIP" = "Einschalten damit sich Ihr Computer an die Verbindungsinformationen erinnnert und Sich automatisch verbindet. Beachten Sie, dass alle Passwörter im Klartext im Browserspeicher gespeichert werden. Diese Daten sind sehr einfach zu finden. Aktivieren Sie diese Option also auf eigene Gefahr. Wollen Sie Ihre Verbindungsinformationen löschen, so stellen sie sicher das Sie ihre JID eingegeben haben und der Schalter nach unten zeigt.";
 
 /* Cut */
 "Cut" = "Ausschneiden";
@@ -144,10 +144,10 @@
 "Delete group" = "Gruppe entfernen";
 
 /* disconnected */
-"disconnected" = "getrennt";
+"disconnected" = "Verbindung Getrennt";
 
 /* disconnecting */
-"disconnecting" = "trennen";
+"disconnecting" = "Trenne Verbindung";
 
 /* Display or hide the properties view */
 "Display or hide the properties view" = "Eigenschaften Ein- oder Ausblenden";
@@ -159,13 +159,13 @@
 "Edit" = "Bearbeiten";
 
 /* Enter the new password for your account. You will need to enter this password at the next connection */
-"Enter the new password for your account. You will need to enter this password at the next connection" = "Geben Sie das neue Passwort für das Konto einn. Sie müssen dieses Passwort bei der nächsten Verbindung eingeben.";
+"Enter the new password for your account. You will need to enter this password at the next connection" = "Geben Sie das neue Passwort für das Konto ein. Bitte verwenden sie ihr neues Passwort bei der nächsten Anmeldung.";
 
 /* Error */
 "Error" = "Fehler";
 
 /* Error while getting your preferences from the XMPP Server */
-"Error while getting your preferences from the XMPP Server" = "Error while getting your preferences from the XMPP Server";
+"Error while getting your preferences from the XMPP Server" = "Fehler beim Laden ihrer Einstellungen vom XMPP Server";
 
 /* Expand all groups */
 "Expand all groups" = "Alle Gruppen ausklappen";
@@ -177,7 +177,7 @@
 "Filter contacts by name or tags" = "Kontakte über Name oder Tags filtern";
 
 /* For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them */
-"For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them" = "For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them";
+"For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them" = "Aus unbekanntem Grund konnte Archipel ihre Daten nicht vom XMPP Server laden. Falls das Problem wiederholt auftritt können Sie ihre Daten zurücksetzen.";
 
 /* Full JID required */
 "Full JID required" = "Full JID required";
@@ -222,7 +222,7 @@
 "KB" = "KB";
 
 /* Later */
-"Later" = "Later";
+"Later" = "Später";
 
 /* Loaded  */
 "Loaded " = "Geladen ";
@@ -249,7 +249,7 @@
 "Navigation" = "Navigation";
 
 /* Nevermind */
-"Nevermind" = "Nevermind";
+"Nevermind" = "Unwichtig";
 
 /* Notification */
 "Notifications" = "Benachrichtigungen";
@@ -264,10 +264,10 @@
 "Paste" = "Einfügen";
 
 /* Please select a contact first. */
-"Please select a contact first." = "Please select a contact first.";
+"Please select a contact first." = "Bitte wählen sie zuerst einen Kontakt aus";
 
 /* Please select a group first. */
-"Please select a group first." = "Please select a group first.";
+"Please select a group first." = "Bitte wählen sie zuerst eine Gruppe aus";
 
 /* Preferences */
 "Preferences" = "Einstellungen";
@@ -303,16 +303,16 @@
 "Resource" = "Ressource";
 
 /* Retype the password */
-"Retype the password" = "Passwort nochmals angeben";
+"Retype the password" = "Passwort wiederholen";
 
 /* Search entity */
-"Search entity" = "Suche entität";
+"Search entity" = "Suche Entität";
 
 /* Select a contact */
-"Select a contact" = "Select a contact";
+"Select a contact" = "Kontakt auswählen";
 
 /* Select a group */
-"Select a group" = "Select a group";
+"Select a group" = "Gruppe auswählen";
 
 /* Select all */
 "Select all" = "Alles auswählen";
@@ -348,16 +348,16 @@
 "Tags" = "Tags";
 
 /* The current logged account */
-"The current logged account" = "Der aktuell angemeldete Account";
+"The current logged account" = "Aktuell angemeldeter Benutzer";
 
 /* The current status of the contact */
-"The current status of the contact" = "The current status of the contact";
+"The current status of the contact" = "Status des Kontaktes";
 
 /* The display name of the new contact */
-"The display name of the new contact" = "Der Anzeigename des neuen Kontakts";
+"The display name of the new contact" = "Der Anzeigename des neuen Kontaktes";
 
 /* The domain (XMPP server) of the contact */
-"The domain (XMPP server) of the contact" = "The domain (XMPP server) of the contact";
+"The domain (XMPP server) of the contact" = "Die Domäne (XMPP Server) des Kontaktes";
 
 /* The group has been removed */
 "The group has been removed" = "Die Gruppe wurde entfernt";
@@ -375,37 +375,37 @@
 "The password associated to your XMPP account" = "Das Passwort, welches zum XMPP Account gehört";
 
 /* The passwords you entered don't match. */
-"The passwords you entered don't match." = "Die Passwörter, welche Sie eingegeben haben, stimmen nicht überein.";
+"The passwords you entered don't match." = "Die Passwörter stimmen nicht überein.";
 
 /* The resource of the contact */
-"The resource of the contact" = "The resource of the contact";
+"The resource of the contact" = "The Ressource des Kontaktes";
 
 /* The resource to use */
 "The resource to use" = "Die zu verwendende Ressource";
 
 /* The service BOSH (XMPP over HTTP) to use */
-"The service BOSH (XMPP over HTTP) to use" = "Der zu verwendende BOSH (XMPP über HTTP)";
+"The service BOSH (XMPP over HTTP) to use" = "Der zu verwendende BOSH Server";
 
 /* The type of contact (hypervisor, virtual machine or user) */
-"The type of contact (hypervisor, virtual machine or user)" = "The type of contact (hypervisor, virtual machine or user)";
+"The type of contact (hypervisor, virtual machine or user)" = "Der Kontakt-Typ (Hypervisor, Virtuelle Maschine oder Benutzer)";
 
 /* The XMPP JID of the contact */
 "The XMPP JID of the contact" = "Die XMPP JID des Kontakts";
 
 /* This LED is ON when XMPP data are received */
-"This LED is ON when XMPP data are received" = "Diese LED ist an, wenn XMPP Daten empfangen werden";
+"This LED is ON when XMPP data are received" = "Diese LED ist an, wenn XMPP Daten empfängt.";
 
 /* This LED is ON when XMPP data are sent */
-"This LED is ON when XMPP data are sent" = "Diese LED ist an, wenn XMPP Daten gesendet werden";
+"This LED is ON when XMPP data are sent" = "Diese LED ist an, wenn XMPP Daten sendet.";
 
 /* Turn this ON to activate eye candy animation. Turn it off to gain performances */
-"Turn this ON to activate eye candy animation. Turn it off to gain performances" = "Schalten Sie das an um coole Animationen zu aktivieren. Schalten Sie das aus um Performance zu gewinnen.";
+"Turn this ON to activate eye candy animation. Turn it off to gain performances" = "Einschalten um Animationen zu aktivieren. Ausschalten um Performance zu gewinnen.";
 
 /* Turn this ON to activate XMPP monitoring. Turn it off to gain performances */
-"Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Schalten Sie das an um XMPP Überwachung zu aktivieren. Schalten Sie das aus um Performance zu gewinnen.";
+"Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Einschalten um XMPP Überwachung zu aktivieren. Ausschalten um Performance zu gewinnen.";
 
 /* Unable to update your password */
-"Unable to update your password" = "Ihr Passwort kann nicht geändert werden";
+"Unable to update your password" = "Ihr Passwort konnte nichtgeändert werden";
 
 /* Undo */
 "Undo" = "Rückgängig machen";
@@ -414,13 +414,13 @@
 "unknown-error" = "unbekannter Fehler";
 
 /* Update your current XMPP status */
-"Update your current XMPP status" = "Aktuallisieren Sie Ihren momentanen XMPP Status";
+"Update your current XMPP status" = "Aktualisieren Sie Ihren momentanen XMPP Status";
 
 /* User */
 "User" = "Benutzer";
 
 /* User supression */
-"User supression" = "Benutzer unterdrücken";
+"User supression" = "Benutzer blockieren";
 
 /* Virtual machine */
 "Virtual machine" = "Virtuelle Maschine";
@@ -450,13 +450,13 @@
 "You must enter a JID using the form user@domain." = "Sie müssen eine JID angeben, welcher der Form user@domain entspricht.";
 
 /* You need to reload the application to complete the locale change. */
-"You need to reload the application to complete the locale change." = "Sie müssen diese Anwendung neu laden um die Gebietsshemaänderung abzuschliessen.";
+"You need to reload the application to complete the locale change." = "Sie müssen diese Anwendung neu laden um die Gebietsschemaänderung abzuschliessen.";
 
 /* Your password has been successfully updated */
 "Your password has been successfully updated" = "Ihr Passwort wurde erfolgreich geändert";
 
 /* Your preferences have been saved to the XMPP server */
-"Your preferences have been saved to the XMPP server" = "Your preferences have been saved to the XMPP server";
+"Your preferences have been saved to the XMPP server" = "Ihre Einstellungen wurden auf dem XMPP Server gespeichert";
 
 /* Your status is now  */
 "Your status is now " = "Ihr Status ist nun ";

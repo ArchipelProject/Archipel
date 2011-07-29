@@ -60,10 +60,10 @@
 "927.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "Pick up the new avatar of the entity from the following list."; ObjectID = "929"; */
-"929.title" = "Wählen Sie einen neuen Avatar aus der folgenden Liste aus.";
+"929.title" = "Wählen Sie einen neues Bild aus der folgenden Liste aus.";
 
 /* Class = "NSTextFieldCell"; title = "Change avatar"; ObjectID = "930"; */
-"930.title" = "Avatar ändern";
+"930.title" = "Bild ändern";
 
 /* Class = "NSButtonCell"; title = "Choose"; ObjectID = "931"; */
 "931.title" = "Auswählen";
@@ -180,7 +180,7 @@
 "1051.title" = "Allgemeine Einstellungen";
 
 /* Class = "NSTextFieldCell"; title = "You can configure general preferences of Archipel. This is stored using local storage."; ObjectID = "1052"; */
-"1052.title" = "Sie können allgemeine Einstellungen konfigurieren. Diese werden im lokalen Speicher gespeichert.";
+"1052.title" = "Hier können Sie allgemeine Einstellungen konfigurieren. Diese werden im lokalen Speicher gespeichert.";
 
 /* Class = "NSTextFieldCell"; placeholderString = "0.15"; ObjectID = "1054"; */
 "1054.placeholderString" = "0.15";
@@ -201,7 +201,7 @@
 "1060.title" = "Verwende Animationen";
 
 /* Class = "NSTextFieldCell"; title = "This change need to reconnect to be considered by XMPP server."; ObjectID = "1063"; */
-"1063.title" = "Diese Änderung benötigt eine Neuverbindung um vom XMPP Server berücksichtigt zu werden.";
+"1063.title" = "Diese Änderung erfordert eine Neuverbindung um vom XMPP Server berücksichtigt zu werden.";
 
 /* Class = "NSTextFieldCell"; title = "Using animations can slow down the performances."; ObjectID = "1065"; */
 "1065.title" = "Das Verwenden von Animationen geht zu Lasten der Performance.";
@@ -228,10 +228,10 @@
 "1088.title" = "Sie scheinen nicht die minimal benötigten Rechte zu besitzen";
 
 /* Class = "NSTextFieldCell"; title = "to display this module. You can ask your administrator to"; ObjectID = "1090"; */
-"1090.title" = "um das Modul anzuzeigen. Fragen Sie Ihren Administrator";
+"1090.title" = "Um das Modul anzuzeigen. Fragen Sie Ihren Administrator";
 
 /* Class = "NSTextFieldCell"; title = "increase your permissions if you really need it."; ObjectID = "1092"; */
-"1092.title" = "Erhöhen Sie Ihre Rechte wenn Sie sie wirklich brauchen.";
+"1092.title" = "Erhöhen Sie Ihre Rechte nur wenn wirklich nötig";
 
 /* Class = "NSTextFieldCell"; title = "vCard"; ObjectID = "1108"; */
 "1108.title" = "vCard";
@@ -264,16 +264,16 @@
 "1124.title" = "webseite";
 
 /* Class = "NSTextFieldCell"; title = "EMail"; ObjectID = "1125"; */
-"1125.title" = "EMail";
+"1125.title" = "E-Mail";
 
 /* Class = "NSTextFieldCell"; title = "email"; ObjectID = "1126"; */
-"1126.title" = "email";
+"1126.title" = "e-mail";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Archipel!"; ObjectID = "1133"; */
 "1133.title" = "Willkommen bei Archipel!";
 
 /* Class = "NSTextFieldCell"; title = "Archipel is a new kind of orchestrator, where everything is about real time. It introduces some new concepts that are not common to the virtualization world. We would like to thank you for choosing Archipel and we hope that you will enjoy using it as much as we enjoy making it."; ObjectID = "1135"; */
-"1135.title" = "Archipel ist eine neue Art der Orchestrierung, bei der alles über Echtzeit läuft. Es führt einige neue Konzepte welche nicht alltäglich in der Welt der Virtualisierung sind ein. Wir danken Ihnen, dass Sie sich für Archipel entschieden haben und hoffen das Sie es so fest geniessen können wie wir Genuss hatten es zu machen.";
+"1135.title" = "Archipel ist eine neue Art der Maschinenverwaltung, bei der alles über Echtzeit läuft. Es führt einige neue Konzepte ein welche nicht alltäglich in der Welt der Virtualisierung sind. Wir danken Ihnen, dass Sie sich für Archipel entschieden haben und hoffen das es ihnen so viel Spaß bereitet wie wir Spaß hatten es zu entwickeln.";
 
 /* Class = "NSTextFieldCell"; title = "Loading modules"; ObjectID = "1139"; */
 "1139.title" = "Lade Module";
@@ -288,7 +288,7 @@
 "1294.title" = "Einen Kontakt hinzufügen";
 
 /* Class = "NSTextFieldCell"; title = "The next generation orchestrator"; ObjectID = "1312"; */
-"1312.title" = "The next generation orchestrator";
+"1312.title" = "Die Nächste Generation der Maschinenverwaltung";
 
 /* Class = "NSTextFieldCell"; title = "For now, your roster is empty. You should already have installed an Archipel Agent on your hypervisor and you can now add it as a \"friend\" just like you would do on standard messaging application. To do so, click on the \"+\" button at the bottom left of the interface and choose \"Add contact\" ."; ObjectID = "1316"; */
 "1316.title" = "Momentan ist Ihre Kontaktliste leer. Sie sollten bereits einen Archipel Agent auf Ihrem Hypervisor installiert haben und können ihn jetzt als \"Freund\" hinzufügen. Um dies zu machen, klicken sie auf den \"+\" Knopf unten links im Interface und wählen Sie dann im Menü die Option \"Kontakt hinzufügen\" aus.";
@@ -297,7 +297,7 @@
 "1317.title" = "Schnellstart";
 
 /* Class = "NSTextFieldCell"; title = "Now your first hypervisor is in your roster, you can start to play with. Select it, then go to the \"Virtual Machine\" tab and ask for a new virtual machine."; ObjectID = "1322"; */
-"1322.title" = "Nun ist der erste Hypervisor in Ihrer Benutzerliste. Sie können anfangen mit Ihm zu spielen. Wählen Sie Ihn aus und gehen Sie dann auf die Registerkarte \"Virtuelle Maschinen\" und fragen Sie um eine neue virtuelle Maschine.";
+"1322.title" = "Nun ist der erste Hypervisor in Ihrer Benutzerliste. Sie können anfangen mit Ihm zu spielen. Wählen Sie Ihn aus und gehen Sie dann auf die Registerkarte \"Virtuelle Maschinen\" und fragen Sie ihn nach einer neuen virtuelle Maschine.";
 
 /* Class = "NSTextFieldCell"; title = "And then ?"; ObjectID = "1323"; */
 "1323.title" = "Und dann ?";
@@ -387,16 +387,16 @@
 "1440.title" = "Benachrichtigungen";
 
 /* Class = "NSTextFieldCell"; title = "This table lists all the previous notification displayed during the current session."; ObjectID = "1442"; */
-"1442.title" = "Diese Tabelle listet alle vergangenen Benachrichtigungen der momentanen Sitzung auf.";
+"1442.title" = "Diese Tabelle listet alle Benachrichtigungen der momentanen Sitzung auf.";
 
 /* Class = "NSWindow"; title = "Avatar chooser"; ObjectID = "1445"; */
-"1445.title" = "Avatar wähler";
+"1445.title" = "Bild Auswahl";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "1452"; */
 "1452.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "You can modify your XMPP account properties."; ObjectID = "1454"; */
-"1454.title" = "Sie können die Einstellungen Ihres XMPP Konto verändern";
+"1454.title" = "Hier können sie die Einstellungen Ihres XMPP Konto verändern";
 
 /* Class = "NSTextFieldCell"; title = "Manage XMPP account"; ObjectID = "1458"; */
 "1458.title" = "XMPP Account verwalten";
@@ -423,10 +423,10 @@
 "1478.title" = "Mehr kommt später...";
 
 /* Class = "NSButtonCell"; title = "Hide offline users"; ObjectID = "1488"; */
-"1488.title" = "Hide offline users";
+"1488.title" = "Nicht angemeldete Benutzer verstecken";
 
 /* Class = "NSTextFieldCell"; title = "Offline users"; ObjectID = "1489"; */
-"1489.title" = "Offline users";
+"1489.title" = "Benutzer Offline";
 
 /* Class = "NSTextFieldCell"; title = "Node"; ObjectID = "1493"; */
 "1493.title" = "Node";
