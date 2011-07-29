@@ -42,6 +42,6 @@
     <key>TabIndex</key>
     <integer>20</integer>
     <key>UseModuleMenu</key>
-    <integer>1</integer>
+    <integer>0</integer>
 </dict>
 </plist>

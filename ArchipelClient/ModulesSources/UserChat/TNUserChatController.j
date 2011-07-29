@@ -216,11 +216,7 @@
 */
 - (void)menuReady
 {
-    var sendMenu    = [_menu addItemWithTitle:CPBundleLocalizedString(@"Send message", @"Send message") action:@selector(sendMessage:) keyEquivalent:@""],
-        clearMenu   = [_menu addItemWithTitle:CPBundleLocalizedString(@"Clear history", @"Clear history") action:@selector(clearHistory:) keyEquivalent:@""];
-
-    [sendMenu setTarget:self];
-    [clearMenu setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clear history", @"Clear history") action:@selector(clearHistory:) keyEquivalent:@""] setTarget:self];
 }
 
 

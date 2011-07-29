@@ -309,6 +309,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (IBAction)attach:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [self attach];
 }
 
@@ -317,6 +321,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (IBAction)detach:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [self detach];
 }
 
@@ -325,6 +333,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (IBAction)package:(id)aSender
 {
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
     [self package];
 }
 

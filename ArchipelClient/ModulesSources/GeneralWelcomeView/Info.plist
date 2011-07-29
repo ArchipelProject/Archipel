@@ -36,7 +36,7 @@
     <key>TabIndex</key>
     <integer>0</integer>
     <key>UseModuleMenu</key>
-    <integer>1</integer>
+    <integer>0</integer>
 
     <key>TNArchipelHelpWindowURL</key>
     <string>http://welcome.archipelproject.org/</string>
