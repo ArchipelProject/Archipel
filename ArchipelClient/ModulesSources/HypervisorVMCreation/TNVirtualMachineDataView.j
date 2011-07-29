@@ -100,6 +100,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
         [fieldLocality setStringValue:[[[aContact vCard] firstChildWithName:@"LOCALITY"] text]];
         [fieldCompany setStringValue:[[[aContact vCard] firstChildWithName:@"ORGNAME"] text]];
         [fieldNickName setStringValue:[aContact nickname]];
+        [fieldStatus setStringValue:[aContact XMPPStatus]];
         [imageAvatar setImage:[aContact avatar]];
     }
     else
