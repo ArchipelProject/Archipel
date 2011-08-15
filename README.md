@@ -53,8 +53,7 @@ If you find some errors, please feel free to correct them.
 
 # Thanks
 
-* Alexandre Fernadez (crashtext)    : main website hosting
-* 
+*  Alexandre Fernadez (crashtext)    : main website hosting
 
 
 # License
