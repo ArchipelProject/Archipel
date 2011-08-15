@@ -278,15 +278,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [viewAboutWindowLogoContainer setBackgroundColor:[CPColor blackColor]];
 
     /* main split views */
-    var posx;
-    if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
-    {
-        CPLog.trace("recovering with of main vertical CPSplitView from last state");
-        [splitViewMain setPosition:posx ofDividerAtIndex:0];
-        var bounds = [leftView bounds];
-        bounds.size.width = posx;
-        [leftView setFrame:bounds];
-    }
+    var posx = [defaults integerForKey:@"mainSplitViewPosition"] || 230;
+    [splitViewMain setPosition:posx ofDividerAtIndex:0];
+    var bounds = [leftView bounds];
+    bounds.size.width = posx;
+    [leftView setFrame:bounds];
+
     [splitViewMain setIsPaneSplitter:NO];
     [splitViewMain setDelegate:self];
 
