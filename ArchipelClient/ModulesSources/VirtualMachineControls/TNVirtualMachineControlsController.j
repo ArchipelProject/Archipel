@@ -1090,18 +1090,35 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)destroy
 {
-    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unplug Virtual Machine ?", @"Unplug Virtual Machine ?")
-                                informative:CPBundleLocalizedString(@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
-                                 target:self
-                                 actions:[[CPBundleLocalizedString(@"Unplug", @"Unplug"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];
+    if (![[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"])
+    {
+        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unplug Virtual Machine ?", @"Unplug Virtual Machine ?")
+                                    informative:CPBundleLocalizedString(@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
+                                     target:self
+                                     actions:[[CPBundleLocalizedString(@"Unplug", @"Unplug"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];
 
-    [alert runModal];
+        [alert setShowsSuppressionButton:YES];
+        [alert setUserInfo:alert];
+        [alert runModal];
+    }
+    else
+    {
+        [self performDestroy:nil];
+    }
 }
 
 /*! send destroy command
 */
 - (void)performDestroy:(id)someUserInfo
 {
+    // remove the cyclic reference
+    if (someUserInfo)
+    {
+        [someUserInfo setUserInfo:nil];
+        if ([[someUserInfo suppressionButton] state] == CPOnState)
+            [[CPUserDefaults standardUserDefaults] setBool:YES forKey:@"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
+    }
+
     var stanza  = [TNStropheStanza iqWithType:@"set"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
