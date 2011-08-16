@@ -1079,7 +1079,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     var item = [_rosterOutlineView itemAtRow:[index firstIndex]];
 
-    [_rosterOutlineView expandItem:item];
+    if ([item isKindOfClass:TNStropheGroup])
+        [_rosterOutlineView expandItem:item];
 }
 
 /*! Collapses the current group
