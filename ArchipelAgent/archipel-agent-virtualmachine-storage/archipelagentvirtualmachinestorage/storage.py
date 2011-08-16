@@ -20,6 +20,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import magic
 import os
 import subprocess
 import xmpp
@@ -108,6 +109,82 @@ class TNStorageManagement (TNArchipelPlugin):
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
+
+
+    ### Utilities
+
+    def _is_file_a_drive(self, path):
+        """
+        check if given drive is a valid virtual drive
+        @type path: string
+        @param path: the path of the file to check
+        """
+        return self._is_file_a_cow(path) \
+        or self._is_file_a_qcow(path) \
+        or self._is_file_a_qcow2(path) \
+        or self._is_file_a_raw(path) \
+        or self._is_file_a_vmdk(path) \
+        or self._is_file_an_iso(path)
+
+    def _is_file_a_cow(self, path):
+        """
+        check if given drive is a valid COW file
+        @type path: string
+        @param path: the path of the file to check
+        """
+        m = magic.Magic()
+        output = m.from_file(path).lower()
+        return "user-mode linux cow file" in output
+
+    def _is_file_a_qcow(self, path):
+        """
+        check if given drive is a valid QCOW file
+        @type path: string
+        @param path: the path of the file to check
+        """
+        m = magic.Magic()
+        output = m.from_file(path).lower()
+        return "format: qcow , version: 1" in output
+
+    def _is_file_a_qcow2(self, path):
+        """
+        check if given drive is a valid QCOW2 file
+        @type path: string
+        @param path: the path of the file to check
+        """
+        m = magic.Magic()
+        output = m.from_file(path).lower()
+        return "format: qcow , version: 2" in output
+
+    def _is_file_a_raw(self, path):
+        """
+        check if given drive is a valid RAW drive
+        @type path: string
+        @param path: the path of the file to check
+        """
+        m = magic.Magic()
+        output = m.from_file(path).lower()
+        return output == "data"
+
+    def _is_file_a_vmdk(self, path):
+        """
+        check if given drive is a valid VMDK
+        @type path: string
+        @param path: the path of the file to check
+        """
+        m = magic.Magic()
+        output = m.from_file(path).lower()
+        return "wmare" in output
+
+    def _is_file_an_iso(self, path):
+        """
+        check if given drive is a valid ISO
+        @type path: string
+        @param path: the path of the file to check
+        """
+        m = magic.Magic()
+        output = m.from_file(path).lower()
+        return "iso 9660" in output
 
 
     ### XMPP Processing
@@ -316,14 +393,7 @@ class TNStorageManagement (TNArchipelPlugin):
             disks = os.listdir(self.entity.folder)
             nodes = []
             for disk in disks:
-                file_cmd_output = subprocess.Popen(["file", "%s" % os.path.join(self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].lower()
-                if (file_cmd_output.find("format: qcow") > -1 \
-                or file_cmd_output.find("qemu qcow image") > -1 \
-                or file_cmd_output.find("boot sector") > -1 \
-                or file_cmd_output.find("vmware") > -1\
-                or file_cmd_output.find("data") > -1\
-                or file_cmd_output.find("user-mode linux cow file") > -1) \
-                and file_cmd_output.find("sqlite") == -1:
+                if self._is_file_a_drive(os.path.join(self.entity.folder, disk)):
                     diskPath = os.path.join(self.entity.folder, disk)
                     diskSize = os.path.getsize(diskPath)
                     diskInfo = subprocess.Popen([self.qemu_img_bin, "info", diskPath], stdout=subprocess.PIPE).communicate()[0].split("\n")
@@ -357,12 +427,12 @@ class TNStorageManagement (TNArchipelPlugin):
             nodes = []
             isos = os.listdir(self.entity.folder)
             for iso in isos:
-                if subprocess.Popen(["file", os.path.join(self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
+                if self._is_file_an_iso(os.path.join(self.entity.folder, iso)):
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": os.path.join(self.entity.folder, iso)})
                     nodes.append(node)
             sharedisos = os.listdir(self.shared_isos_folder)
             for iso in sharedisos:
-                if subprocess.Popen(["file", os.path.join(self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
+                if self._is_file_an_iso(os.path.join(self.shared_isos_folder, iso)):
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": os.path.join(self.shared_isos_folder, iso)})
                     nodes.append(node)
             reply = iq.buildReply("result")
@@ -384,9 +454,8 @@ class TNStorageManagement (TNArchipelPlugin):
             nodes = []
             goldens = os.listdir(self.golden_drives_dir)
             for golden in goldens:
-                file_cmd_output = subprocess.Popen(["file", os.path.join(self.golden_drives_dir, golden)], stdout=subprocess.PIPE).communicate()[0].lower()
-                if file_cmd_output.find("format: qcow") > -1 \
-                or file_cmd_output.find("qemu qcow image") > -1:
+                if self._is_file_a_qcow(os.path.join(self.golden_drives_dir, golden)) \
+                or self._is_file_a_qcow2(os.path.join(self.golden_drives_dir, golden)):
                     node = xmpp.Node(tag="golden", attrs={"name": golden, "path": os.path.join(self.golden_drives_dir, golden)})
                     nodes.append(node)
             reply = iq.buildReply("result")
