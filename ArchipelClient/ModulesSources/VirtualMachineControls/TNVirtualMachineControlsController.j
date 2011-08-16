@@ -1111,10 +1111,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)performDestroy:(id)someUserInfo
 {
-    // remove the cyclic reference
     if (someUserInfo)
     {
+        // remove the cyclic reference
         [someUserInfo setUserInfo:nil];
+
         if ([[someUserInfo suppressionButton] state] == CPOnState)
             [[CPUserDefaults standardUserDefaults] setBool:YES forKey:@"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
     }
