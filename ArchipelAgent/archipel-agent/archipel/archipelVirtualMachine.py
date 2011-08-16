@@ -254,7 +254,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("info", "Authorizes users to access virtual machine information", False)
         self.permission_center.create_permission("create", "Authorizes users to create (start) virtual machine", False)
-        self.permission_center.create_permission("shutdown", "Authorizes users to shutdown virtual machine", False)
+        self.permission_center.create_permission("shutdown", "Authorizes users to shut down virtual machine", False)
         self.permission_center.create_permission("destroy", "Authorizes users to destroy virtual machine", False)
         self.permission_center.create_permission("reboot", "Authorizes users to reboot virtual machine", False)
         self.permission_center.create_permission("suspend", "Authorizes users to suspend virtual machine ", False)
@@ -395,7 +395,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 self.perform_hooks("HOOK_VM_RESUME")
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED and not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
-                self.push_change("virtualmachine:control", "shutdowned")
+                self.push_change("virtualmachine:control", "shut down")
                 self.perform_hooks("HOOK_VM_STOP")
             elif event == libvirt.VIR_DOMAIN_CRASHED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_CRASHED)
@@ -580,7 +580,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
-        self.log.info("Virtual machine shutdowned.")
+        self.log.info("Virtual machine shut down.")
 
     def destroy(self):
         """
@@ -1024,7 +1024,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         try:
             self.shutdown()
-            return "I'm shutdowning."
+            return "I'm shutting down."
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
@@ -1207,7 +1207,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         try:
             i = self.info()
-            states = ("no state", "running", "blocked", "paused", "shutdowned", "shut off", "crashed")
+            states = ("no state", "running", "blocked", "paused", "shut down", "shut off", "crashed")
             state = states[i["state"]]
             mem = int(i["memory"]) / 1024
             time = int(i["cpuTime"]) / 1000000000
