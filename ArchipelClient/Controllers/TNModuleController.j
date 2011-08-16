@@ -210,7 +210,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
                 [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
-                [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
+                [_infoTextField setStringValue:@"Entity does not want to be disturbed"];
                 [_infoTextField setHidden:NO];
             }
             else
@@ -628,7 +628,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
         [self _removeAllTabsFromModulesTabView];
         _previousXMPPShow = TNStropheContactStatusDND;
-        [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
+        [_infoTextField setStringValue:@"Entity does not want to be disturbed"];
         [_infoTextField setHidden:NO];
     }
     else if ((_previousXMPPShow == TNStropheContactStatusOffline) || (_previousXMPPShow == TNStropheContactStatusDND))
