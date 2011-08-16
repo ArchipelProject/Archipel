@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C26</string>
+		<string key="IBDocument.SystemVersion">11C37</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138.11</string>
-		<string key="IBDocument.HIToolboxVersion">566.00</string>
+		<string key="IBDocument.AppKitVersion">1138.15</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
@@ -583,7 +583,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="447790938">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Nun ist der erste Hypervisor in Ihrer Benutzerliste. Sie können anfangen mit Ihm zu spielen. Wählen Sie Ihn aus und gehen Sie dann auf die Registerkarte "Virtuelle Maschinen" und fragen Sie um eine neue virtuelle Maschine.</string>
+							<string key="NSContents">Nun ist der erste Hypervisor in Ihrer Benutzerliste. Sie können anfangen mit Ihm zu spielen. Wählen Sie Ihn aus und gehen Sie dann auf die Registerkarte "Virtuelle Maschinen" und fragen Sie ihn nach einer neuen virtuelle Maschine.</string>
 							<object class="NSFont" key="NSSupport" id="647643796">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">11</double>
@@ -722,7 +722,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="624781105">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Archipel ist eine neue Art der Orchestrierung, bei der alles über Echtzeit läuft. Es führt einige neue Konzepte welche nicht alltäglich in der Welt der Virtualisierung sind ein. Wir danken Ihnen, dass Sie sich für Archipel entschieden haben und hoffen das Sie es so fest geniessen können wie wir Genuss hatten es zu machen.</string>
+							<string key="NSContents">Archipel ist eine neue Art der Maschinenverwaltung, bei der alles über Echtzeit läuft. Es führt einige neue Konzepte ein welche nicht alltäglich in der Welt der Virtualisierung sind. Wir danken Ihnen, dass Sie sich für Archipel entschieden haben und hoffen das es ihnen so viel Spaß bereitet wie wir Spaß hatten es zu entwickeln.</string>
 							<reference key="NSSupport" ref="647643796"/>
 							<reference key="NSControlView" ref="404933532"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -739,7 +739,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="935116494">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">The next generation orchestrator</string>
+							<string key="NSContents">Die Nächste Generation der Maschinenverwaltung</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="340149196"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1520,7 +1520,7 @@
 						<object class="NSButtonCell" key="NSCell" id="195755768">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Hide offline users</string>
+							<string key="NSContents">Nicht angemeldete Benutzer verstecken</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="716723755"/>
 							<int key="NSButtonFlags">1211912703</int>
@@ -1548,7 +1548,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="842647899">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Offline users</string>
+							<string key="NSContents">Benutzer Offline</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="957728669"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1735,7 +1735,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1037946653">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Diese Änderung benötigt eine Neuverbindung um vom XMPP Server berücksichtigt zu werden.</string>
+							<string key="NSContents">Diese Änderung erfordert eine Neuverbindung um vom XMPP Server berücksichtigt zu werden.</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="879337540"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1885,7 +1885,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="885183074">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Sie können allgemeine Einstellungen konfigurieren. Diese werden im lokalen Speicher gespeichert.</string>
+							<string key="NSContents">Hier können Sie allgemeine Einstellungen konfigurieren. Diese werden im lokalen Speicher gespeichert.</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="299208830"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2417,7 +2417,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="228987626">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">EMail</string>
+							<string key="NSContents">E-Mail</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="589968606"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2434,7 +2434,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="844252315">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">email</string>
+							<string key="NSContents">e-mail</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="163783634"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2942,7 +2942,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="118420135">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Avatar ändern</string>
+							<string key="NSContents">Bild ändern</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="1035415089"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2962,7 +2962,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="622903031">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Wählen Sie einen neuen Avatar aus der folgenden Liste aus.</string>
+							<string key="NSContents">Wählen Sie einen neues Bild aus der folgenden Liste aus.</string>
 							<object class="NSFont" key="NSSupport" id="600959748">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">12</double>
@@ -3161,7 +3161,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="992792919">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Erhöhen Sie Ihre Rechte wenn Sie sie wirklich brauchen.</string>
+							<string key="NSContents">Erhöhen Sie Ihre Rechte nur wenn wirklich nötig</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="414563903"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3178,7 +3178,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="519050733">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">um das Modul anzuzeigen. Fragen Sie Ihren Administrator</string>
+							<string key="NSContents">Um das Modul anzuzeigen. Fragen Sie Ihren Administrator</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="926338864"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3863,7 +3863,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="544401019">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">268436480</int>
-								<string key="NSContents">Diese Tabelle listet alle vergangenen Benachrichtigungen der momentanen Sitzung auf.</string>
+								<string key="NSContents">Diese Tabelle listet alle Benachrichtigungen der momentanen Sitzung auf.</string>
 								<reference key="NSSupport" ref="516354061"/>
 								<reference key="NSControlView" ref="89988712"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3886,7 +3886,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{646, 430}, {529, 282}}</string>
 				<int key="NSWTFlags">611844096</int>
-				<string key="NSWindowTitle">Avatar wähler</string>
+				<string key="NSWindowTitle">Bild Auswahl</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -3945,7 +3945,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="960374585">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">272629760</int>
-								<string key="NSContents">Sie können die Einstellungen Ihres XMPP Konto verändern</string>
+								<string key="NSContents">Hier können sie die Einstellungen Ihres XMPP Konto verändern</string>
 								<reference key="NSSupport" ref="600959748"/>
 								<reference key="NSControlView" ref="661838399"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>

@@ -23,7 +23,7 @@
 	<key>Add a group</key>
 	<string>Eine Gruppe hinzufügen</string>
 	<key>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</key>
-	<string>Fügen Sie einen neuen Kontakt oder eine Gruppe hinzu. Kontakte können Hypervisor, eine virtuelle Maschine oder ein Benutzer sein.</string>
+	<string>Fügen Sie einen neuen Kontakt oder eine Gruppe hinzu. Kontakte können Hypervisor, virtuelle Maschinen oder Benutzer sein.</string>
 	<key>Add contact</key>
 	<string>Kontakt hinzufügen</string>
 	<key>Add group</key>
@@ -45,7 +45,7 @@
 	<key>Busy</key>
 	<string>Beschäftigt</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
-	<string>Schalten Sie das an damit Ihr Computer sich an die Verbindungsinformationen erinnnert und automatisch verbindet. Beachten Sie, dass alle Passwörter in Klartext im Browserspeicher gespeichert werden. Diese Daten sind sehr einfach zu finden. Aktivieren Sie diese Option also auf eigene Gefahr. Wollen Sie Ihre Verbindungsinformationen löschen, so versichern Sie sich das Sie die JID eingegeben haben und der Schalter nach unten zeigt.</string>
+	<string>Einschalten damit sich Ihr Computer an die Verbindungsinformationen erinnnert und Sich automatisch verbindet. Beachten Sie, dass alle Passwörter im Klartext im Browserspeicher gespeichert werden. Diese Daten sind sehr einfach zu finden. Aktivieren Sie diese Option also auf eigene Gefahr. Wollen Sie Ihre Verbindungsinformationen löschen, so stellen sie sicher das Sie ihre JID eingegeben haben und der Schalter nach unten zeigt.</string>
 	<key>Cancel</key>
 	<string>Abbrechen</string>
 	<key>Cannot save your preferences to the XMPP server</key>
@@ -91,11 +91,11 @@
 	<key>Edit</key>
 	<string>Bearbeiten</string>
 	<key>Enter the new password for your account. You will need to enter this password at the next connection</key>
-	<string>Geben Sie das neue Passwort für das Konto einn. Sie müssen dieses Passwort bei der nächsten Verbindung eingeben.</string>
+	<string>Geben Sie das neue Passwort für das Konto ein. Bitte verwenden sie ihr neues Passwort bei der nächsten Anmeldung.</string>
 	<key>Error</key>
 	<string>Fehler</string>
 	<key>Error while getting your preferences from the XMPP Server</key>
-	<string>Error while getting your preferences from the XMPP Server</string>
+	<string>Fehler beim Laden ihrer Einstellungen vom XMPP Server</string>
 	<key>Expand all groups</key>
 	<string>Alle Gruppen ausklappen</string>
 	<key>Expand group</key>
@@ -103,7 +103,7 @@
 	<key>Filter contacts by name or tags</key>
 	<string>Kontakte über Name oder Tags filtern</string>
 	<key>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</key>
-	<string>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</string>
+	<string>Aus unbekanntem Grund konnte Archipel ihre Daten nicht vom XMPP Server laden. Falls das Problem wiederholt auftritt können Sie ihre Daten zurücksetzen.</string>
 	<key>Full JID required</key>
 	<string>Full JID required</string>
 	<key>GB</key>
@@ -131,7 +131,7 @@
 	<key>KB</key>
 	<string>KB</string>
 	<key>Later</key>
-	<string>Later</string>
+	<string>Später</string>
 	<key>Loaded </key>
 	<string>Geladen </string>
 	<key>Locale change</key>
@@ -149,7 +149,7 @@
 	<key>Navigation</key>
 	<string>Navigation</string>
 	<key>Nevermind</key>
-	<string>Nevermind</string>
+	<string>Unwichtig</string>
 	<key>Notifications</key>
 	<string>Benachrichtigungen</string>
 	<key>OK</key>
@@ -159,9 +159,9 @@
 	<key>Paste</key>
 	<string>Einfügen</string>
 	<key>Please select a contact first.</key>
-	<string>Please select a contact first.</string>
+	<string>Bitte wählen sie zuerst einen Kontakt aus</string>
 	<key>Please select a group first.</key>
-	<string>Please select a group first.</string>
+	<string>Bitte wählen sie zuerst eine Gruppe aus</string>
 	<key>Preferences</key>
 	<string>Einstellungen</string>
 	<key>Preferences saved</key>
@@ -185,13 +185,13 @@
 	<key>Resource</key>
 	<string>Ressource</string>
 	<key>Retype the password</key>
-	<string>Passwort nochmals angeben</string>
+	<string>Passwort wiederholen</string>
 	<key>Search entity</key>
-	<string>Suche entität</string>
+	<string>Suche Entität</string>
 	<key>Select a contact</key>
-	<string>Select a contact</string>
+	<string>Kontakt auswählen</string>
 	<key>Select a group</key>
-	<string>Select a group</string>
+	<string>Gruppe auswählen</string>
 	<key>Select all</key>
 	<string>Alles auswählen</string>
 	<key>Select next entity</key>
@@ -219,13 +219,13 @@
 	<key>The XMPP JID of the contact</key>
 	<string>Die XMPP JID des Kontakts</string>
 	<key>The current logged account</key>
-	<string>Der aktuell angemeldete Account</string>
+	<string>Aktuell angemeldeter Benutzer</string>
 	<key>The current status of the contact</key>
-	<string>The current status of the contact</string>
+	<string>Status des Kontaktes</string>
 	<key>The display name of the new contact</key>
-	<string>Der Anzeigename des neuen Kontakts</string>
+	<string>Der Anzeigename des neuen Kontaktes</string>
 	<key>The domain (XMPP server) of the contact</key>
-	<string>The domain (XMPP server) of the contact</string>
+	<string>Die Domäne (XMPP Server) des Kontaktes</string>
 	<key>The group has been removed</key>
 	<string>Die Gruppe wurde entfernt</string>
 	<key>The group must be empty</key>
@@ -235,33 +235,33 @@
 	<key>The password associated to your XMPP account</key>
 	<string>Das Passwort, welches zum XMPP Account gehört</string>
 	<key>The passwords you entered don't match.</key>
-	<string>Die Passwörter, welche Sie eingegeben haben, stimmen nicht überein.</string>
+	<string>Die Passwörter stimmen nicht überein.</string>
 	<key>The resource of the contact</key>
-	<string>The resource of the contact</string>
+	<string>The Ressource des Kontaktes</string>
 	<key>The resource to use</key>
 	<string>Die zu verwendende Ressource</string>
 	<key>The service BOSH (XMPP over HTTP) to use</key>
-	<string>Der zu verwendende BOSH (XMPP über HTTP)</string>
+	<string>Der zu verwendende BOSH Server</string>
 	<key>The type of contact (hypervisor, virtual machine or user)</key>
-	<string>The type of contact (hypervisor, virtual machine or user)</string>
+	<string>Der Kontakt-Typ (Hypervisor, Virtuelle Maschine oder Benutzer)</string>
 	<key>This LED is ON when XMPP data are received</key>
-	<string>Diese LED ist an, wenn XMPP Daten empfangen werden</string>
+	<string>Diese LED ist an, wenn XMPP Daten empfängt.</string>
 	<key>This LED is ON when XMPP data are sent</key>
-	<string>Diese LED ist an, wenn XMPP Daten gesendet werden</string>
+	<string>Diese LED ist an, wenn XMPP Daten sendet.</string>
 	<key>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</key>
-	<string>Schalten Sie das an um XMPP Überwachung zu aktivieren. Schalten Sie das aus um Performance zu gewinnen.</string>
+	<string>Einschalten um XMPP Überwachung zu aktivieren. Ausschalten um Performance zu gewinnen.</string>
 	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
-	<string>Schalten Sie das an um coole Animationen zu aktivieren. Schalten Sie das aus um Performance zu gewinnen.</string>
+	<string>Einschalten um Animationen zu aktivieren. Ausschalten um Performance zu gewinnen.</string>
 	<key>Unable to update your password</key>
-	<string>Ihr Passwort kann nicht geändert werden</string>
+	<string>Ihr Passwort konnte nichtgeändert werden</string>
 	<key>Undo</key>
 	<string>Rückgängig machen</string>
 	<key>Update your current XMPP status</key>
-	<string>Aktuallisieren Sie Ihren momentanen XMPP Status</string>
+	<string>Aktualisieren Sie Ihren momentanen XMPP Status</string>
 	<key>User</key>
 	<string>Benutzer</string>
 	<key>User supression</key>
-	<string>Benutzer unterdrücken</string>
+	<string>Benutzer blockieren</string>
 	<key>Virtual machine</key>
 	<string>Virtuelle Maschine</string>
 	<key>XMPP Account</key>
@@ -281,11 +281,11 @@
 	<key>You must enter a JID using the form user@domain.</key>
 	<string>Sie müssen eine JID angeben, welcher der Form user@domain entspricht.</string>
 	<key>You need to reload the application to complete the locale change.</key>
-	<string>Sie müssen diese Anwendung neu laden um die Gebietsshemaänderung abzuschliessen.</string>
+	<string>Sie müssen diese Anwendung neu laden um die Gebietsschemaänderung abzuschliessen.</string>
 	<key>Your password has been successfully updated</key>
 	<string>Ihr Passwort wurde erfolgreich geändert</string>
 	<key>Your preferences have been saved to the XMPP server</key>
-	<string>Your preferences have been saved to the XMPP server</string>
+	<string>Ihre Einstellungen wurden auf dem XMPP Server gespeichert</string>
 	<key>Your status is now </key>
 	<string>Ihr Status ist nun </string>
 	<key>authenticating</key>
@@ -299,13 +299,13 @@
 	<key>connected</key>
 	<string>Verbunden</string>
 	<key>connecting</key>
-	<string>verbindend</string>
+	<string>Verbinde...</string>
 	<key>connection-failed</key>
 	<string>Verbindung fehlgeschlagen</string>
 	<key>disconnected</key>
-	<string>getrennt</string>
+	<string>Verbindung Getrennt</string>
 	<key>disconnecting</key>
-	<string>trennen</string>
+	<string>Trenne Verbindung</string>
 	<key>host-unreachable</key>
 	<string>nicht erreichbar</string>
 	<key>unknown-error</key>

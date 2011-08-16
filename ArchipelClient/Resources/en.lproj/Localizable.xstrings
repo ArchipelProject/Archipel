@@ -291,7 +291,7 @@
 	<key>authenticating</key>
 	<string>authenticating</string>
 	<key>authentification-failed</key>
-	<string>authentification-failed</string>
+	<string>authentication-failed</string>
 	<key>cancel</key>
 	<string>cancel</string>
 	<key>connect</key>
