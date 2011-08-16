@@ -82,8 +82,8 @@ ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_RUNNING                      = "Running"
 ARCHIPEL_XMPP_SHOW_PAUSED                       = "Paused"
-ARCHIPEL_XMPP_SHOW_SHUTDOWNED                   = "Off"
-ARCHIPEL_XMPP_SHOW_SHUTDOWNING                  = "Shutdowning..."
+ARCHIPEL_XMPP_SHOW_SHUTDOWN                     = "Off"
+ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN                 = "Shutting down..."
 ARCHIPEL_XMPP_SHOW_BLOCKED                      = "Blocked"
 ARCHIPEL_XMPP_SHOW_SHUTOFF                      = "Shutted off"
 ARCHIPEL_XMPP_SHOW_ERROR                        = "Error"
@@ -326,9 +326,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF:
-                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
+                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
-                self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
+                self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN)
             self.perform_hooks("HOOK_VM_INITIALIZE")
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
@@ -394,8 +394,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 self.push_change("virtualmachine:control", "resumed")
                 self.perform_hooks("HOOK_VM_RESUME")
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED and not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
-                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
-                self.push_change("virtualmachine:control", "shut down")
+                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
+                self.push_change("virtualmachine:control", "shutdown")
                 self.perform_hooks("HOOK_VM_STOP")
             elif event == libvirt.VIR_DOMAIN_CRASHED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_CRASHED)
@@ -413,7 +413,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 self.description = None
                 self.remove_libvirt_handler()
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
-                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
+                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
                 self.push_change("virtualmachine:definition", "defined")
                 self.perform_hooks("HOOK_VM_DEFINE")
         except Exception as ex:
@@ -577,7 +577,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.lock()
         ret = self.domain.shutdown()
         if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
-            self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
+            self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN)
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
         self.log.info("Virtual machine shut down.")
@@ -1207,7 +1207,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         try:
             i = self.info()
-            states = ("no state", "running", "blocked", "paused", "shut down", "shut off", "crashed")
+            states = ("no state", "running", "blocked", "paused", "shutdown", "shut off", "crashed")
             state = states[i["state"]]
             mem = int(i["memory"]) / 1024
             time = int(i["cpuTime"]) / 1000000000
