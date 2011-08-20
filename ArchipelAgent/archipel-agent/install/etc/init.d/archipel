@@ -27,6 +27,13 @@
 ### END INIT INFO
 
 ARCHIPEL=`which runarchipel`
+if [ $? -eq 1 ]; then
+  ARCHIPEL=/usr/local/bin/runarchipel
+  if [ ! -e "$ARCHIPEL" ]; then
+    echo 'Archipel exe not found !'
+    exit 1
+  fi
+fi
 PROG=$(basename $ARCHIPEL)
 PROGNAME="Archipel"
 ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
