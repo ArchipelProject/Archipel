@@ -48,8 +48,7 @@ function gameOver(code)
     container.innerHTML = "<h2>Game Over</h2><br/>You're browser seems uncompatible with feature code <code>" +
         code + "</code><br/>You should use Chromium or Safari or any decent browser actually";
 
-    // yeah, yeah...
-    setTimeout(function(){[sound play]}, 200);
+    [sound play];
 }
 
 function main(args, namedArgs)
