@@ -209,7 +209,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
             }
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
-                [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
+                if ([_mainTabView selectedTabViewItem])
+                    [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
                 [_infoTextField setStringValue:@"Entity does not want to be disturbed"];
                 [_infoTextField setHidden:NO];
             }
