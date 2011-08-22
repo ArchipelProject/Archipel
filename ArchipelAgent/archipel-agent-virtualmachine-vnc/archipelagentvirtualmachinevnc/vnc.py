@@ -26,7 +26,7 @@ from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
 import archipel.archipelLibvirtEntity
 
-from archipelWebSocket import WebSocketProxy
+from websockify import WebSocketProxy
 
 
 ARCHIPEL_NS_VNC                 = "archipel:virtualmachine:vnc"

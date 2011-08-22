@@ -59,7 +59,8 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "archipel-agent"
+        "archipel-agent",
+        "numpy"
       ],
       entry_points=ENTRY_POINTS
       )
