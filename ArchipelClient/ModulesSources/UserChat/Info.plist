@@ -26,6 +26,8 @@
         <string>Chat</string>
         <key>fr</key>
         <string>Discussion</string>
+        <key>de</key>
+        <string>Chat</string>
     </dict>
     <key>SupportedEntityTypes</key>
     <array>

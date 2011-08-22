@@ -30,6 +30,8 @@
         <string>Map View</string>
         <key>fr</key>
         <string>Carte</string>
+        <key>de</key>
+        <string>Map View</string>
     </dict>
     <key>ToolbarIcon</key>
     <string>icon.png</string>

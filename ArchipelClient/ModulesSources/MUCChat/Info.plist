@@ -30,6 +30,8 @@
         <string>Conference</string>
         <key>fr</key>
         <string>Conférence</string>
+        <key>de</key>
+        <string>Conference</string>
     </dict>
     <key>TNArchipelMUCDefaultRoom</key>
     <string>archipel-general</string>

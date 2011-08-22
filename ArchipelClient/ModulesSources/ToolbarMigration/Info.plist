@@ -30,6 +30,8 @@
         <string>Migration</string>
         <key>fr</key>
         <string>Migration</string>
+        <key>de</key>
+        <string>Migration</string>
     </dict>
     <key>ToolbarIcon</key>
     <string>icon.png</string>

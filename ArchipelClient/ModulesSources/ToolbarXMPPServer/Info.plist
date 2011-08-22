@@ -30,6 +30,8 @@
         <string>XMPP Server</string>
         <key>fr</key>
         <string>Serveur XMPP</string>
+        <key>de</key>
+        <string>XMPP Server</string>
     </dict>
     <key>TNArchipelUseEjabberdSharedRosterGroups</key>
     <integer>0</integer>
