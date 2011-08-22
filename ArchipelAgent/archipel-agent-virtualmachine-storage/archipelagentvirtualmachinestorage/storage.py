@@ -144,7 +144,7 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         m = magic.Magic()
         output = m.from_file(path).lower()
-        return "format: qcow , version: 1" in output
+        return "format: qcow , version: 1" in output or "qemu qcow image (v1)" in output
 
     def _is_file_a_qcow2(self, path):
         """
@@ -154,7 +154,7 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         m = magic.Magic()
         output = m.from_file(path).lower()
-        return "format: qcow , version: 2" in output
+        return "format: qcow , version: 2" in output or "qemu qcow image (v2)" in output
 
     def _is_file_a_raw(self, path):
         """
@@ -174,7 +174,7 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         m = magic.Magic()
         output = m.from_file(path).lower()
-        return "wmare" in output
+        return "vmware" in output
 
     def _is_file_an_iso(self, path):
         """
