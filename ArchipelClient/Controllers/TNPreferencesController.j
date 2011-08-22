@@ -118,10 +118,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [buttonDebugLevel setToolTip:CPLocalizedString(@"Set the log level of the client. The more verbose, the less performance.", @"Set the log level of the client. The more verbose, the less performance.")]
 
     _excludedTokens = [CPDictionary dictionary];
+
+    // @TODO: this should not be added statically here. but by modules that implements theses keys.
     _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelBOSHJID",
                             @"TNArchipelBOSHPassword", @"TNArchipelBOSHService", @"TNArchipelBOSHRememberCredentials",
                             @"TNArchipelTagsVisible", @"mainSplitViewPosition", @"TNArchipelModuleControllerOpenedTabRegistry",
-                            @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups"];
+                            @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups", @"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
 }
 
 /*! initialize the XMPP storage
