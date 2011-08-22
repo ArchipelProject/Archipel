@@ -536,7 +536,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
 
     if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
-        moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
+        moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]] || [moduleLabel objectForKey:@"en"];
 
     if ([moduleToolTip isKindOfClass:CPDictionary] && bundleLocale)
         moduleToolTip = [moduleToolTip objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
