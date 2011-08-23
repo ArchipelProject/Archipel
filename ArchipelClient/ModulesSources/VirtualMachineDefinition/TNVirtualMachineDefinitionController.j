@@ -208,10 +208,23 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [tabViewParameters setContentBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
 
+    var scrollViewParametersStandard = [[TNUIKitScrollView alloc] initWithFrame:[tabViewParameters bounds]],
+        scrollViewParametersAdvanced = [[TNUIKitScrollView alloc] initWithFrame:[tabViewParameters bounds]];
+
+    [viewParametersStandard setAutoresizingMask:CPViewWidthSizable];
+    [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
+    [viewParametersStandard setFrameSize:CPSizeMake([scrollViewParametersStandard frameSize].width, [viewParametersStandard frameSize].height)];
+    [viewParametersAdvanced setFrameSize:CPSizeMake([scrollViewParametersAdvanced frameSize].width, [viewParametersAdvanced frameSize].height)];
+
+    [scrollViewParametersStandard setAutoresizingMask:CPViewWidthSizable];
+    [scrollViewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
+    [scrollViewParametersStandard setDocumentView:viewParametersStandard];
+    [scrollViewParametersAdvanced setDocumentView:viewParametersAdvanced];
+
     [tabViewItemStandard setLabel:CPLocalizedString(@"Basics", @"Basics")];
-    [tabViewItemStandard setView:viewParametersStandard];
+    [tabViewItemStandard setView:scrollViewParametersStandard];
     [tabViewItemAdvanced setLabel:CPLocalizedString(@"Advanced", @"Advanced")];
-    [tabViewItemAdvanced setView:viewParametersAdvanced];
+    [tabViewItemAdvanced setView:scrollViewParametersAdvanced];
     [tabViewItemDrives setLabel:CPBundleLocalizedString(@"Virtual Medias", @"Virtual Medias")];
     [tabViewItemDrives setView:viewDeviceVirtualDrives];
     [tabViewItemNics setLabel:CPBundleLocalizedString(@"Virtual Nics", @"Virtual Nics")];

@@ -6,36 +6,20 @@
 	<string>Add a virtual drive</string>
 	<key>Add a virtual network card</key>
 	<string>Add a virtual network card</string>
-	<key>Add drive</key>
-	<string>Add drive</string>
-	<key>Add network card</key>
-	<string>Add network card</string>
 	<key>All your changes will be definitly lost.</key>
 	<string>All your changes will be definitly lost.</string>
 	<key>Are you sure you want to undefine this virtual machine ?</key>
 	<string>Are you sure you want to undefine this virtual machine ?</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Capabilities</key>
-	<string>Capabilities</string>
-	<key>Create new drive</key>
-	<string>Create new drive</string>
-	<key>Create new network interface</key>
-	<string>Create new network interface</string>
 	<key>Definition edited</key>
 	<string>Definition edited</string>
-	<key>Delete</key>
-	<string>Delete</string>
 	<key>Delete selected drives</key>
 	<string>Delete selected drives</string>
 	<key>Discard</key>
 	<string>Discard</string>
-	<key>Edit</key>
-	<string>Edit</string>
 	<key>Edit selected drive</key>
 	<string>Edit selected drive</string>
-	<key>Edit selected network card</key>
-	<string>Edit selected network card</string>
 	<key>Edit selected virtual network card</key>
 	<string>Edit selected virtual network card</string>
 	<key>Enable or disable PAE</key>
@@ -132,8 +116,6 @@
 	<string>Virtual Medias</string>
 	<key>Virtual Nics</key>
 	<string>Virtual Nics</string>
-	<key>Virtual machine</key>
-	<string>Virtual machine</string>
 	<key>Virtual machine has been undefined</key>
 	<string>Virtual machine has been undefined</string>
 	<key>You have made some changes in the virtual machine definition. Would you like save these changes?</key>

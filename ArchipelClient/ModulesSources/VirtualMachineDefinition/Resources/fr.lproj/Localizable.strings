@@ -4,12 +4,6 @@
 /* Add a virtual network card */
 "Add a virtual network card" = "Add a virtual network card";
 
-/* Add drive */
-"Add drive" = "Add drive";
-
-/* Add network card */
-"Add network card" = "Add network card";
-
 /* All your changes will be definitly lost. */
 "All your changes will be definitly lost." = "All your changes will be definitly lost.";
 
@@ -19,20 +13,8 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Capabilities */
-"Capabilities" = "Capabilities";
-
-/* Create new drive */
-"Create new drive" = "Create new drive";
-
-/* Create new network interface */
-"Create new network interface" = "Create new network interface";
-
 /* Definition edited */
 "Definition edited" = "Definition edited";
-
-/* Delete */
-"Delete" = "Delete";
 
 /* Delete selected drives */
 "Delete selected drives" = "Delete selected drives";
@@ -40,14 +22,8 @@
 /* Discard */
 "Discard" = "Discard";
 
-/* Edit */
-"Edit" = "Edit";
-
 /* Edit selected drive */
 "Edit selected drive" = "Edit selected drive";
-
-/* Edit selected network card */
-"Edit selected network card" = "Edit selected network card";
 
 /* Edit selected virtual network card */
 "Edit selected virtual network card" = "Edit selected virtual network card";
@@ -186,9 +162,6 @@
 
 /* Validate */
 "Validate" = "Validate";
-
-/* Virtual machine */
-"Virtual machine" = "Virtual machine";
 
 /* Virtual machine has been undefined */
 "Virtual machine has been undefined" = "Virtual machine has been undefined";
