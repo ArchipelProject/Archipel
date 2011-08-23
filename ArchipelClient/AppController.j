@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "Resources/lang/localization.js"
-
 @import <Foundation/Foundation.j>
 
 @import <AppKit/AppKit.j>
