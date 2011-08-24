@@ -130,12 +130,14 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         state, capacity, allocation, available = pool.info()
         persistant = pool.isPersistent()
         autostart = pool.autostart()
+        volumeCount = pool.numOfVolumes()
         return {"state": state,
                 "capacity": capacity,
                 "allocation": allocation,
                 "available": available,
                 "persistant": persistant,
-                "autostart": autostart}
+                "autostart": autostart,
+                "volumecount": volumeCount}
 
     def pool_list_volumes(self, identifier):
         """
@@ -197,7 +199,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
 
     def pool_undefine(self, identifier, delete=True):
         """
-        undefine a new storage pool
+        Undefine a new storage pool
         @type xmldesc: xmpp.Node
         @param xmldesc: the XML description
         @rtype: int
@@ -213,6 +215,19 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
                 pass
         return pool.undefine()
 
+    def pool_setautostart(self, identifier, autostart):
+        """
+        Set if the pool is in autostart mode
+        @type identifier: string
+        @param identifier: UUID or name
+        @type autostart: Bool
+        @param autostart: define if pool should start with host
+        @rtype: int
+        @return: result of libvirt function
+        """
+        pool = self.pool_get(identifier)
+        return pool.setAutostart(autostart)
+
 
     ### XMPP Processing
 
@@ -227,6 +242,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             - pooldescription
             - pooldefine
             - poolundefine
+            - poolautostart
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
@@ -249,6 +265,8 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = self.iq_pooldefine(iq)
         elif action == "poolundefine":
             reply = self.iq_poolundefine(iq)
+        elif action == "poolsetautostart":
+            reply = self.iq_poolsetautostart(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -382,6 +400,27 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             else:
                 autodelete = False
             self.pool_undefine(identifier, delete=autodelete)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE)
+        return reply
+
+    def iq_poolsetautostart(self, iq):
+        """
+        Set the value of a pool's autostart
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
+            autostart = iq.getTag("query").getTag("archipel").getAttr("autostart").lower()
+            if autostart == "true":
+                autostart = True
+            else:
+                autostart = False
+            self.pool_setautostart(identifier, autostart)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE)
         return reply
