@@ -29,7 +29,9 @@ from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
 
 
-ARCHIPEL_NS_STORAGE                             = "archipel:storage"
+ARCHIPEL_NS_STORAGE_POOL                        = "archipel:storage:pool"
+ARCHIPEL_NS_STORAGE_VOLUME                      = "archipel:storage:volume"
+
 ARCHIPEL_ERROR_CODE_STORAGE_POOL_LIST           = -11001
 ARCHIPEL_ERROR_CODE_STORAGE_POOL_CREATE         = -11002
 ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESTROY        = -11003
@@ -38,6 +40,12 @@ ARCHIPEL_ERROR_CODE_STORAGE_POOL_DELETE         = -11005
 ARCHIPEL_ERROR_CODE_STORAGE_POOL_DEFINE         = -11006
 ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE       = -11007
 ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESCRIPTION    = -11008
+
+ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_DEFINE       = -11009
+ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_UNDEFINE     = -11010
+ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_DESCRIPTION  = -11011
+ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_INFO         = -11012
+
 
 
 class TNLibvirtStorageManagement (TNArchipelPlugin):
@@ -57,6 +65,20 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
 
+        # permissions
+        self.entity.permission_center.create_permission("storage_poollist", "Authorizes user to get list existing pools", False)
+        self.entity.permission_center.create_permission("storage_poolinfo", "Authorizes user to get information about pools", False)
+        self.entity.permission_center.create_permission("storage_poolcreate", "Authorizes user to create pools", False)
+        self.entity.permission_center.create_permission("storage_pooldescription", "Authorizes user to get XML description of pools", False)
+        self.entity.permission_center.create_permission("storage_pooldefine", "Authorizes user to define new pools", False)
+        self.entity.permission_center.create_permission("storage_poolundefine", "Authorizes user to undefine pools", False)
+        self.entity.permission_center.create_permission("storage_poolautostart", "Authorizes user to set pool's autostart", False)
+
+        self.entity.permission_center.create_permission("storage_volumeinfo", "Authorizes user to get volume information", False)
+        self.entity.permission_center.create_permission("storage_volumedefine", "Authorizes user to define new volumes", False)
+        self.entity.permission_center.create_permission("storage_volumedescription", "Authorizes user to get XML description of volumes", False)
+        self.entity.permission_center.create_permission("storage_volumeundefine", "Authorizes user to undefine volumes", False)
+
 
     ### Plugin interface
 
@@ -65,13 +87,15 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
-        self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_STORAGE)
+        self.entity.xmppclient.RegisterHandler('iq', self.process_iq_pool, ns=ARCHIPEL_NS_STORAGE_POOL)
+        self.entity.xmppclient.RegisterHandler('iq', self.process_iq_volume, ns=ARCHIPEL_NS_STORAGE_VOLUME)
 
     def unregister_handlers(self):
         """
         Unregister the handlers.
         """
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_STORAGE)
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_pool, ns=ARCHIPEL_NS_STORAGE_POOL)
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_volume, ns=ARCHIPEL_NS_STORAGE_VOLUME)
 
     @staticmethod
     def plugin_info():
@@ -91,7 +115,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
                     "configuration-tokens"      : plugin_configuration_tokens }
 
 
-    ### Libvirt
+    ### Libvirt Pools
 
     def pool_list(self):
         """
@@ -200,8 +224,8 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
     def pool_undefine(self, identifier, delete=True):
         """
         Undefine a new storage pool
-        @type xmldesc: xmpp.Node
-        @param xmldesc: the XML description
+        @type identifier: string
+        @param identifier: UUID or name
         @rtype: int
         @return: result of libvirt function
         """
@@ -229,11 +253,88 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         return pool.setAutostart(autostart)
 
 
-    ### XMPP Processing
+    ### Libvirt Volumes
 
-    def process_iq(self, conn, iq):
+    def volume_get(self, pool_identifier, identifier):
         """
-        Invoked when new ARCHIPEL_NS_STORAGE IQ is received.
+        Get the volume with given identifier in given storage pool
+        @type pool_identifier: string
+        @param pool_identifier: UUID or name of the pool
+        @type identifier: string
+        @param identifier: Name of the volume
+        @rtype: virStorageVol
+        @return: the volume
+        """
+        pool = self.pool_get(pool_identifier)
+        volume = pool.storageVolLookupByName(identifier)
+        return volume
+
+    def volume_info(self, pool_identifier, identifier):
+        """
+        Get the volume information
+        @type pool_identifier: string
+        @param pool_identifier: UUID or name of the pool
+        @type identifier: string
+        @param identifier: Name of the volume
+        @rtype: virStorageVol
+        @return: the volume
+        """
+        volume = self.volume_get(pool_identifier, identifier)
+        typ, capacity, allocation = volume.info()
+        path = volume.path()
+        name = volume.name()
+        key = volume.key()
+        return {"name": name,
+                "type": typ,
+                "capacity": capacity,
+                "allocation": allocation,
+                "path": path,
+                "key": key}
+
+    def volume_define(self, pool_identifier, xmldesc):
+        """
+        Define a new volume in given pool
+        @type pool_identifier: string
+        @param pool_identifier: UUID or name of the pool
+        @type xmldesc: xmpp.Node
+        @param xmldesc: the description of the volume to create
+        """
+        pool = self.pool_get(pool_identifier)
+        xmlString = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+        pool.createXML(xmlString, 0)
+
+    def volume_xmldesc(self, pool_identifier, identifier):
+        """
+        Return the XML description of the given pool
+        @type pool_identifier: string
+        @param pool_identifier: UUID or name of the pool
+        @type identifier: string
+        @param identifier: Name of the volume
+        @rtype: xmpp.Node
+        @return: the volume's description
+        """
+        volume = self.volume_get(pool_identifier, identifier)
+        return xmpp.simplexml.NodeBuilder(data=str(volume.XMLDesc(0))).getDom()
+
+    def volume_undefine(self, pool_identifier, identifier):
+        """
+        Undefine a storage volume
+        @type pool_identifier: string
+        @param pool_identifier: UUID or name of the pool
+        @type identifier: string
+        @param identifier: Name of volume
+        @rtype: int
+        @return: result of libvirt function
+        """
+        volume = self.volume_get(pool_identifier, identifier)
+        return volume.delete(0)
+
+
+    ### XMPP Pool Processing
+
+    def process_iq_pool(self, conn, iq):
+        """
+        Invoked when new ARCHIPEL_NS_STORAGE_POOL IQ is received.
         It understands IQ of type:
             - poollist
             - poolinfo
@@ -250,7 +351,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         """
         reply = None
         action = self.entity.check_acp(conn, iq)
-        # self.entity.check_perm(conn, iq, action, -1, prefix="storage_")
+        self.entity.check_perm(conn, iq, action, -1, prefix="storage_")
         if action == "poollist":
             reply = self.iq_poollist(iq)
         elif action == "poolinfo":
@@ -423,4 +524,110 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             self.pool_setautostart(identifier, autostart)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE)
+        return reply
+
+
+    ### XMPP Volume Processing
+
+    def process_iq_volume(self, conn, iq):
+        """
+        Invoked when new ARCHIPEL_NS_STORAGE_VOLUME IQ is received.
+        It understands IQ of type:
+            - volumeinfo
+            - volumedefine
+            - volumedescription
+            - volumeundefine
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        reply = None
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1, prefix="storage_")
+        if action == "volumeinfo":
+            reply = self.iq_volumeinfo(iq)
+        if action == "volumedefine":
+            reply = self.iq_volumedefine(iq)
+        if action == "volumedescription":
+            reply = self.iq_volumedescription(iq)
+        if action == "volumeundefine":
+            reply = self.iq_volumeundefine(iq)
+
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+
+    def iq_volumeinfo(self, iq):
+        """
+        return information about a volume
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            pool_identifier = iq.getTag("query").getTag("archipel").getAttr("pool")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
+            volumeInfo = self.volume_info(pool_identifier, identifier)
+            infoNode = xmpp.Node("info", attrs=volumeInfo)
+            reply.setQueryPayload([infoNode])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_INFO)
+        return reply
+
+
+    def iq_volumedefine(self, iq):
+        """
+        Define a new volume in a given pool
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            pool_identifier = iq.getTag("query").getTag("archipel").getAttr("pool")
+            xmldesc = iq.getTag("query").getTag("archipel").getTag("volume")
+            self.volume_define(pool_identifier, xmldesc)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_DEFINE)
+        return reply
+
+
+    def iq_volumeundefine(self, iq):
+        """
+        Undefine a volume from a given pool
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            pool_identifier = iq.getTag("query").getTag("archipel").getAttr("pool")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
+            self.volume_undefine(pool_identifier, identifier)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_UNDEFINE)
+        return reply
+
+    def iq_volumedescription(self, iq):
+        """
+        Return the XML description of a volume
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            pool_identifier = iq.getTag("query").getTag("archipel").getAttr("pool")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
+            description = self.volume_xmldesc(pool_identifier, identifier)
+            reply.setQueryPayload([description])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_DESCRIPTION)
         return reply
