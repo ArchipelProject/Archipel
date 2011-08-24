@@ -183,7 +183,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         @return: result of libvirt function
         """
         pool = self.pool_get(identifier)
-        return pool.create(0)
+        ret = pool.create(0)
+        self.entity.push_change("storage:pool", "created")
+        return ret
 
     def pool_destroy(self, identifier):
         """
@@ -194,7 +196,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         @return: result of libvirt function
         """
         pool = self.pool_get(identifier)
-        return pool.destroy()
+        ret = pool.destroy()
+        self.entity.push_change("storage:pool", "destroyed")
+        return ret
 
     def pool_xmldesc(self, identifier):
         """
@@ -219,6 +223,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         pool = self.entity.libvirt_connection.storagePoolDefineXML(xmlString, 0)
         if build:
             pool.build(0)
+        self.entity.push_change("storage:pool", "defined")
         return pool
 
     def pool_undefine(self, identifier, delete=True):
@@ -237,7 +242,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
                 pool.delete(0)
             except:
                 pass
-        return pool.undefine()
+        ret = pool.undefine()
+        self.entity.push_change("storage:pool", "undefined")
+        return ret
 
     def pool_setautostart(self, identifier, autostart):
         """
@@ -250,7 +257,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         @return: result of libvirt function
         """
         pool = self.pool_get(identifier)
-        return pool.setAutostart(autostart)
+        ret = pool.setAutostart(autostart)
+        self.entity.push_change("storage:pool", "autostart")
+        return ret
 
 
     ### Libvirt Volumes
@@ -301,7 +310,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         """
         pool = self.pool_get(pool_identifier)
         xmlString = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
-        pool.createXML(xmlString, 0)
+        volume = pool.createXML(xmlString, 0)
+        self.entity.push_change("storage:volume", "defined")
+        return volume
 
     def volume_xmldesc(self, pool_identifier, identifier):
         """
@@ -327,7 +338,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         @return: result of libvirt function
         """
         volume = self.volume_get(pool_identifier, identifier)
-        return volume.delete(0)
+        ret = volume.delete(0)
+        self.entity.push_change("storage:volume", "undefined")
+        return ret
 
 
     ### XMPP Pool Processing
@@ -426,6 +439,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = iq.buildReply("result")
             identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
             self.pool_create(identifier)
+            self.entity.shout("storagepool", "I just started the pool named %s as asked by %s" % (identifier, iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_CREATE)
         return reply
@@ -442,6 +456,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = iq.buildReply("result")
             identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
             self.pool_destroy(identifier)
+            self.entity.shout("storagepool", "I just destroyed the pool named %s as asked by %s" % (identifier, iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESTROY)
         return reply
@@ -479,7 +494,8 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
                 autobuild = True
             else:
                 autobuild = False
-            self.pool_define(xmldesc, build=autobuild)
+            pool = self.pool_define(xmldesc, build=autobuild)
+            self.entity.shout("storagepool", "I just defined a new pool named %s as asked by %s" % (pool.name(), iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_DEFINE)
         return reply
@@ -501,6 +517,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             else:
                 autodelete = False
             self.pool_undefine(identifier, delete=autodelete)
+            self.entity.shout("storagepool", "I just undefined the pool named %s as asked by %s" % (identifier, iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE)
         return reply
@@ -522,6 +539,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             else:
                 autostart = False
             self.pool_setautostart(identifier, autostart)
+            self.entity.shout("storagepool", "I just set the autostart to %s for the pool named %s as asked by %s" % (str(autostart), identifier, iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE)
         return reply
@@ -553,11 +571,9 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = self.iq_volumedescription(iq)
         if action == "volumeundefine":
             reply = self.iq_volumeundefine(iq)
-
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
 
     def iq_volumeinfo(self, iq):
         """
@@ -578,7 +594,6 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_INFO)
         return reply
 
-
     def iq_volumedefine(self, iq):
         """
         Define a new volume in a given pool
@@ -591,11 +606,11 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = iq.buildReply("result")
             pool_identifier = iq.getTag("query").getTag("archipel").getAttr("pool")
             xmldesc = iq.getTag("query").getTag("archipel").getTag("volume")
-            self.volume_define(pool_identifier, xmldesc)
+            volume = self.volume_define(pool_identifier, xmldesc)
+            self.entity.shout("storagevolume", "I just defined a new volume named %s as asked by %s" % (volume.name(), iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_DEFINE)
         return reply
-
 
     def iq_volumeundefine(self, iq):
         """
@@ -610,6 +625,7 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             pool_identifier = iq.getTag("query").getTag("archipel").getAttr("pool")
             identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
             self.volume_undefine(pool_identifier, identifier)
+            self.entity.shout("storagevolume", "I just undefined the volume named %s as asked by %s" % (identifier, iq.getFrom().getNode()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_VOLUME_UNDEFINE)
         return reply
