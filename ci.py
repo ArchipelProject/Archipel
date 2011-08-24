@@ -86,6 +86,7 @@ def buildArchipel(export_dir, build):
     if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=%s" % CONFIGURATION):
         os.system("echo \* unable to build ArchipelClient. end of line.")
         sys.exit(-9)
+    os.system("cp ./ArchipelClient/index-debug.html ./ArchipelClient/Build/%s/Archipel" % CONFIGURATION.capitalize())
     os.system("cd ./ArchipelClient/Build/%s/ && tar -czf %s/Archipel-nightly-%s-%s-client.tar.gz ./Archipel" % (CONFIGURATION.capitalize(), export_dir, builddate, rev))
     os.system("tar -czf %s/Archipel-nightly-%s-%s-agent.tar.gz ./ArchipelAgent" % (export_dir, builddate, rev))
     os.system("cd %s/.. && rm -f latest-archipel-agent.tar.gz" % (export_dir))
