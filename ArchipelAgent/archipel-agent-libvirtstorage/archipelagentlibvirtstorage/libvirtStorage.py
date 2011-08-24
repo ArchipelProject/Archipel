@@ -219,10 +219,27 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         @rtype: virStoragePool
         @return: the new storage pool
         """
+        is_update = False
+        existing_pool = None
+        old_autostart = False
+        try:
+            identifier = xmldesc.getTag("name").getData()
+            existing_pool = self.pool_get(identifier)
+            old_autostart = existing_pool.autostart()
+        except:
+            pass
+        if existing_pool:
+            if not existing_pool.isActive():
+                self.pool_undefine(identifier, delete=False)
+                is_update = True
+            else:
+                raise Exception("You cannot update an active pool. Please stop it first.")
         xmlString = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         pool = self.entity.libvirt_connection.storagePoolDefineXML(xmlString, 0)
         if build:
             pool.build(0)
+        if is_update:
+            pool.setAutostart(old_autostart)
         self.entity.push_change("storage:pool", "defined")
         return pool
 
