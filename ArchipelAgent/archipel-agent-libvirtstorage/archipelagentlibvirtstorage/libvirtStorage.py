@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# storage.py
+# libvirtStorage.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
-# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -30,12 +29,15 @@ from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
 
 
-ARCHIPEL_NS_STORAGE                         = "archipel:storage"
-ARCHIPEL_ERROR_CODE_STORAGE_POOL_LIST       = -11001
-ARCHIPEL_ERROR_CODE_STORAGE_POOL_CREATE     = -11002
-ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESTROY    = -11003
-ARCHIPEL_ERROR_CODE_STORAGE_POOL_INFO       = -11004
-ARCHIPEL_ERROR_CODE_STORAGE_POOL_DELETE     = -11005
+ARCHIPEL_NS_STORAGE                             = "archipel:storage"
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_LIST           = -11001
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_CREATE         = -11002
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESTROY        = -11003
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_INFO           = -11004
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_DELETE         = -11005
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_DEFINE         = -11006
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE       = -11007
+ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESCRIPTION    = -11008
 
 
 class TNLibvirtStorageManagement (TNArchipelPlugin):
@@ -126,7 +128,14 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         """
         pool = self.pool_get(identifier)
         state, capacity, allocation, available = pool.info()
-        return {"state": state, "capacity": capacity, "allocation": allocation, "available": available}
+        persistant = pool.isPersistent()
+        autostart = pool.autostart()
+        return {"state": state,
+                "capacity": capacity,
+                "allocation": allocation,
+                "available": available,
+                "persistant": persistant,
+                "autostart": autostart}
 
     def pool_list_volumes(self, identifier):
         """
@@ -172,19 +181,52 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
         pool = self.pool_get(identifier)
         return xmpp.simplexml.NodeBuilder(data=str(pool.XMLDesc(0))).getDom()
 
+    def pool_define(self, xmldesc, build=True):
+        """
+        Define a new stroage pool
+        @type xmldesc: xmpp.Node
+        @param xmldesc: the XML description
+        @rtype: virStoragePool
+        @return: the new storage pool
+        """
+        xmlString = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+        pool = self.entity.libvirt_connection.storagePoolDefineXML(xmlString, 0)
+        if build:
+            pool.build(0)
+        return pool
+
+    def pool_undefine(self, identifier, delete=True):
+        """
+        undefine a new storage pool
+        @type xmldesc: xmpp.Node
+        @param xmldesc: the XML description
+        @rtype: int
+        @return: result of libvirt function
+        """
+        pool = self.pool_get(identifier)
+        if pool.isActive():
+            self.pool_destroy(identifier)
+        if delete:
+            try:
+                pool.delete(0)
+            except:
+                pass
+        return pool.undefine()
+
+
     ### XMPP Processing
 
     def process_iq(self, conn, iq):
         """
         Invoked when new ARCHIPEL_NS_STORAGE IQ is received.
         It understands IQ of type:
-            - pooldefine
-            - pooldescription
-            - poolcreate
-            - pooldestroy
-            - pooldelete
             - poollist
             - poolinfo
+            - poolcreate
+            - pooldestroy
+            - pooldescription
+            - pooldefine
+            - poolundefine
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
@@ -203,7 +245,10 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             reply = self.iq_pooldestroy(iq)
         elif action == "pooldescription":
             reply = self.iq_pooldescription(iq)
-
+        elif action == "pooldefine":
+            reply = self.iq_pooldefine(iq)
+        elif action == "poolundefine":
+            reply = self.iq_poolundefine(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -296,5 +341,47 @@ class TNLibvirtStorageManagement (TNArchipelPlugin):
             description = self.pool_xmldesc(identifier)
             reply.setQueryPayload([description])
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESTROY)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_DESCRIPTION)
+        return reply
+
+    def iq_pooldefine(self, iq):
+        """
+        Define a new stroage pool
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            xmldesc = iq.getTag("query").getTag("archipel").getTag("pool")
+            autobuild = iq.getTag("query").getTag("archipel").getAttr("build").lower()
+            if autobuild == "true":
+                autobuild = True
+            else:
+                autobuild = False
+            self.pool_define(xmldesc, build=autobuild)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_DEFINE)
+        return reply
+
+    def iq_poolundefine(self, iq):
+        """
+        Undefine a new stroage pool
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
+            autodelete = iq.getTag("query").getTag("archipel").getAttr("delete").lower()
+            if autodelete == "true":
+                autodelete = True
+            else:
+                autodelete = False
+            self.pool_undefine(identifier, delete=autodelete)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_STORAGE_POOL_UNDEFINE)
         return reply
