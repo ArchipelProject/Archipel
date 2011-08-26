@@ -218,6 +218,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     if (typeof(LPCrashReporter) != "undefined")
         [LPCrashReporter sharedErrorLogger];
 
+    // initialize the singleton.
+    [TNPushCenter defaultCenter];
+
     [theWindow setFullPlatformWindow:YES];
 
     TNUserAvatarSize = CPSizeMake(50.0, 50.0);
@@ -755,9 +758,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
-    // initialize the singleton.
-    [TNPushCenter defaultCenter];
-
+    [[TNPushCenter defaultCenter] setConnection:[[TNStropheIMClient defaultClient] connection]];
     _pubSubController = [TNPubSubController pubSubControllerWithConnection:[[TNStropheIMClient defaultClient] connection]];
 
     [preferencesController initXMPPStorage];

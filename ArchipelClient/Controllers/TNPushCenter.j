@@ -29,7 +29,7 @@ var __defaultPushCenter;
 @implementation TNPushCenter : CPObject
 {
     TNPubSubNode        _pubSubNode @accessors(getter=pubSubNode);
-    TNStropheConnection _connection @accessors(property=connection);
+    TNStropheConnection _connection @accessors(getter=connection);
 
     CPArray             _pubsubRegistrar;
     id                  _pubSubHandlerId;
@@ -44,7 +44,7 @@ var __defaultPushCenter;
 + (TNPushCenter)defaultCenter
 {
     if (!__defaultPushCenter)
-        __defaultPushCenter = [[TNPushCenter alloc] initWithConnection:[[TNStropheIMClient defaultClient] connection]];
+        __defaultPushCenter = [[TNPushCenter alloc] init];
 
     return __defaultPushCenter;
 }
@@ -56,25 +56,35 @@ var __defaultPushCenter;
 /*! Initiliaze a TNPushCenter with given TNStropheConnection
     @param aConnection the TNStropheConnection to use.
 */
-- (TNPushCenter)initWithConnection:(TNStropheConnection)aConnection
+- (TNPushCenter)init
 {
     if (__defaultPushCenter)
         [CPException raise:@"Singleton error" reason:@"The default push center is already initialized"];
 
     if (self = [super init])
     {
-        _connection         = aConnection;
         _pubsubRegistrar    = [CPArray array];
-
-        if (_pubSubHandlerId)
-            [CPException raise:@"Singleton error" reason:@"It seems we alreay have a value for _pubSubHandlerId"];
-
-        _pubSubHandlerId    = [TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection];
-
-        CPLog.debug("PUSH CENTER: ControTNPushCenter initialized with connection (you should see this message only one time): " + _connection);
     }
 
     return self;
+}
+
+
+#pragma mark -
+#pragma mark Getters / Setters
+
+/*! Set the connection a register to Archipel pubsubevents.
+    It will eventually reset the old parameters if _connection
+    and _pubSubHandlerId already exist
+    @param aConnection TNStropheConnection to use
+*/
+- (void)setConnection:(TNStropheConnection)aConnection
+{
+    if (_pubSubHandlerId && _connection)
+        [_connection deleteRegisteredSelector:_pubSubHandlerId];
+
+    _connection = aConnection;
+    _pubSubHandlerId = [TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection];
 }
 
 
