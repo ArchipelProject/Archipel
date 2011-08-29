@@ -948,7 +948,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 uuid = item.getAttr("jid").split("@")[0]
                 if uuid in self.virtualmachines:
                     raise Exception("Virtual machine with UUID %s is already managed by Archipel" % uuid)
-                self.alloc(requester=iq.getFrom(), start=True, requested_uuid=uuid)
+                vm = self.libvirt_connection.lookupByUUIDString(uuid)
+                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid)
                 self.log.info("manage new virtual machine with UUID: %s" % uuid)
             self.push_change("hypervisor", "manage")
         except Exception as ex:
