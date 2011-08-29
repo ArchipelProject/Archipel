@@ -206,7 +206,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [tableVirtualMachines setDelegate:nil];
-    [tableVirtualMachines setDelegate:self]; // hum....
+    [tableVirtualMachines setDelegate:self];
+    [tableVirtualMachinesNotManaged setDelegate:nil];
+    [tableVirtualMachinesNotManaged setDelegate:self];
 
     [self populateVirtualMachinesTable];
 }
@@ -252,13 +254,16 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)permissionsChanged
 {
-    [self setControl:_manageButton enabledAccordingToPermission:@"manage"];
-    [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage"];
+    var tableManagedCondition = ([tableVirtualMachines numberOfSelectedRows] > 0),
+        tableNotManagedCondition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0);
+
+    [self setControl:_manageButton enabledAccordingToPermission:@"manage" specialCondition:tableNotManagedCondition];
+    [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage" specialCondition:tableManagedCondition];
     [self setControl:_plusButton enabledAccordingToPermission:@"alloc"];
-    [self setControl:_minusButton enabledAccordingToPermission:@"free"];
-    [self setControl:_cloneButton enabledAccordingToPermission:@"clone"];
-    [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add"];
-    [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove"];
+    [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:tableManagedCondition];
+    [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
+    [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:tableManagedCondition];
+    [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:tableManagedCondition];
 
     if (![self currentEntityHasPermission:@"alloc"])
         [VMAllocationController closeWindow:nil];
