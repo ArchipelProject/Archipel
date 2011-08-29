@@ -992,7 +992,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     var stanza  = [TNStropheStanza iqWithType:@"set"],
         selector;
 
-    if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
+    if ([_entity XMPPShow] == TNStropheContactStatusAway)
     {
         selector = @selector(_didResume:)
 
@@ -1001,7 +1001,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             "xmlns": TNArchipelTypeVirtualMachineControl,
             "action": TNArchipelTypeVirtualMachineControlResume}];
     }
-    else
+    else if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
         selector = @selector(_didPause:)
 
