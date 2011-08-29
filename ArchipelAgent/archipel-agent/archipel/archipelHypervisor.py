@@ -973,7 +973,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 if not uuid in self.virtualmachines:
                     raise Exception("Virtual machine with JID %s is not managed by Archipel" % jid)
                 vm = self.virtualmachines[uuid]
-                vm.terminate()
+                vm.terminate(clean_files=False)
                 self.log.info("Unregistering the VM from hypervisor's database.")
                 self.database.execute("delete from virtualmachines where jid=?", (jid.getStripped(),))
                 self.database.commit()

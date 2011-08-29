@@ -923,16 +923,19 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             shutil.copy("%s/%s" % (src_path, token), self.folder)
         self.define(newxml)
 
-    def terminate(self):
+    def terminate(self, clean_files=True):
         """
         This method is called by hypervisor when VM is freed.
         It will perform HOOK_VM_TERMINATE, close databases
         and remove own folder.
+        @type clean_files: boolean
+        @param clean_files: if True, remove the permission file and folder
         """
         self.perform_hooks("HOOK_VM_TERMINATE")
         self.permission_center.close_database()
-        os.unlink(self.permission_db_file)
-        self.remove_folder()
+        if clean_files:
+            os.unlink(self.permission_db_file)
+            self.remove_folder()
 
 
     ### XMPP Controls
