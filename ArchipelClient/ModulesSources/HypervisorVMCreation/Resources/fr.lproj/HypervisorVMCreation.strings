@@ -137,3 +137,15 @@
 /* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "330"; */
 "330.title" = "Locality:";
 
+/* Class = "NSTableColumn"; headerCell.title = "Other Virtual Machines"; ObjectID = "358"; */
+"358.headerCell.title" = "Other Virtual Machines";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "359"; */
+"359.title" = "Text";
+
+/* Class = "NSTextFieldCell"; title = "This the list of virtual machines managed by Archipel."; ObjectID = "370"; */
+"370.title" = "This the list of virtual machines managed by Archipel.";
+
+/* Class = "NSTextFieldCell"; title = "This the list of existing virtual machines not managed by Archipel."; ObjectID = "372"; */
+"372.title" = "This the list of existing virtual machines not managed by Archipel.";
+

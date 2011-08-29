@@ -37,6 +37,8 @@
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
+    TNArchipelTypeHypervisorControlManage       = @"manage",
+    TNArchipelTypeHypervisorControlUnmanage     = @"unmanage",
     TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 /*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
@@ -49,21 +51,31 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 @implementation TNHypervisorVMCreationController : TNModule
 {
     @outlet CPButtonBar                             buttonBarControl;
+    @outlet CPButtonBar                             buttonBarNotManagedVMControl;
     @outlet CPPopUpButton                           popupDeleteMachine;
     @outlet CPSearchField                           fieldFilterVM;
+    @outlet CPSearchField                           fieldFilterVMNotManaged;
     @outlet CPTableView                             tableVirtualMachines            @accessors(readonly);
+    @outlet CPTableView                             tableVirtualMachinesNotManaged;
+    @outlet CPTabView                               tabViewVMs;
+    @outlet CPView                                  viewItemManagedVMs;
+    @outlet CPView                                  viewItemNotManagedVMs;
     @outlet CPView                                  viewTableContainer;
+    @outlet CPView                                  viewTableContainerNotManaged;
     @outlet TNVirtualMachineAllocationController    VMAllocationController;
     @outlet TNVirtualMachineCloneController         VMCloneController;
     @outlet TNVirtualMachineDataView                dataViewVMPrototype;
     @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
 
+    CPButton                                        _addSubscriptionButton;
     CPButton                                        _cloneButton;
+    CPButton                                        _manageButton;
     CPButton                                        _minusButton;
     CPButton                                        _plusButton;
-    CPButton                                        _addSubscriptionButton;
     CPButton                                        _removeSubscriptionButton;
+    CPButton                                        _unmanageButton;
     TNTableViewDataSource                           _virtualMachinesDatasource;
+    TNTableViewDataSource                           _virtualMachinesNotManagedDatasource;
 }
 
 
@@ -75,12 +87,25 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainerNotManaged setBorderedWithHexColor:@"#C0C7D2"];
+
+    // tab view
+    var tabViewItemManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemManagedVM"],
+        tabViewItemNotManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemNotManagedVM"];
+
+    [tabViewItemManagedVM setLabel:CPLocalizedString(@"Archipel VMs", @"Archipel VMs")];
+    [tabViewItemNotManagedVM setLabel:CPLocalizedString(@"Others VMs", @"Others VMs")];
+    [tabViewItemManagedVM setView:viewItemManagedVMs];
+    [tabViewItemNotManagedVM setView:viewItemNotManagedVMs];
+
+    [tabViewVMs addTabViewItem:tabViewItemManagedVM];
+    [tabViewVMs addTabViewItem:tabViewItemNotManagedVM];
 
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachines setTarget:self];
-    [tableVirtualMachines setDoubleAction:@selector(didDoubleClick:)];
+    [tableVirtualMachines setDoubleAction:@selector(didManagedTableDoubleClick:)];
     [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
     [tableVirtualMachines setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableVirtualMachines setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
@@ -124,7 +149,39 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_addSubscriptionButton setEnabled:NO];
     [_removeSubscriptionButton setEnabled:NO];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton]];
+    _unmanageButton = [CPButtonBar minusButton];
+    [_unmanageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unmanage.png"] size:CPSizeMake(16, 16)]];
+    [_unmanageButton setTarget:self];
+    [_unmanageButton setAction:@selector(unmanageVirtualMachine:)];
+    [_unmanageButton setToolTip:CPLocalizedString("Unmanage the virtual machine", "Unmanage the virtual machine")];
+    [_unmanageButton setEnabled:NO];
+
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton]];
+
+    // Not managed VM Table View
+    _virtualMachinesNotManagedDatasource = [[TNTableViewDataSource alloc] init];
+    [tableVirtualMachinesNotManaged setDelegate:self];
+    [tableVirtualMachinesNotManaged setTarget:self];
+    [tableVirtualMachinesNotManaged setDoubleAction:@selector(didNotManagedTableDoubleClick:)];
+    [[tableVirtualMachinesNotManaged tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
+    [tableVirtualMachinesNotManaged setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+    [tableVirtualMachinesNotManaged setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+
+    [_virtualMachinesNotManagedDatasource setTable:tableVirtualMachinesNotManaged];
+    [_virtualMachinesNotManagedDatasource setSearchableKeyPaths:[@"JID"]];
+
+    [fieldFilterVMNotManaged setTarget:_virtualMachinesNotManagedDatasource];
+    [fieldFilterVMNotManaged setAction:@selector(filterObjects:)];
+    [tableVirtualMachinesNotManaged setDataSource:_virtualMachinesNotManagedDatasource];
+
+    _manageButton = [CPButtonBar plusButton];
+    [_manageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/manage.png"] size:CPSizeMake(16, 16)]];
+    [_manageButton setTarget:self];
+    [_manageButton setAction:@selector(manageVirtualMachine:)];
+    [_manageButton setEnabled:NO];
+    [_manageButton setToolTip:CPLocalizedString(@"Ask hypervisor to manage this virtual machine", @"Ask hypervisor to manage this virtual machine")];
+
+    [buttonBarNotManagedVMControl setButtons:[_manageButton]];
 
     [VMAllocationController setDelegate:self];
     [VMSubscriptionController setDelegate:self];
@@ -171,7 +228,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)willUnload
 {
     [_virtualMachinesDatasource removeAllObjects];
+    [_virtualMachinesNotManagedDatasource removeAllObjects];
     [tableVirtualMachines reloadData];
+    [tableVirtualMachinesNotManaged reloadData];
 
     [super willUnload];
 }
@@ -193,6 +252,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)permissionsChanged
 {
+    [self setControl:_manageButton enabledAccordingToPermission:@"manage"];
+    [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage"];
     [self setControl:_plusButton enabledAccordingToPermission:@"alloc"];
     [self setControl:_minusButton enabledAccordingToPermission:@"free"];
     [self setControl:_cloneButton enabledAccordingToPermission:@"clone"];
@@ -246,6 +307,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)_didChangeVMStatus:(CPNotification)aNotif
 {
     [tableVirtualMachines reloadData];
+    [tableVirtualMachinesNotManaged reloadData];
 }
 
 /*! update the GUI according to the selected entity in table
@@ -253,17 +315,28 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
-    [_minusButton setEnabled:NO];
-    [_cloneButton setEnabled:NO];
-    [_addSubscriptionButton setEnabled:NO];
-    [_removeSubscriptionButton setEnabled:NO];
+    switch ([aNotification object])
+    {
+        case tableVirtualMachines:
+            [_minusButton setEnabled:NO];
+            [_cloneButton setEnabled:NO];
+            [_unmanageButton setEnabled:NO];
+            [_addSubscriptionButton setEnabled:NO];
+            [_removeSubscriptionButton setEnabled:NO];
 
-    var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
+            var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
 
-    [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:condition];
-    [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:condition];
-    [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:condition];
-    [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:condition];
+            [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:condition];
+            [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:condition];
+            [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:condition];
+            [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:condition];
+            [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage" specialCondition:condition];
+
+        case tableVirtualMachinesNotManaged:
+            [_manageButton setEnabled:NO];
+            var condition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0);
+            [self setControl:_manageButton enabledAccordingToPermission:@"manage" specialCondition:condition];
+    }
 }
 
 
@@ -281,6 +354,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     else
     {
         [_virtualMachinesDatasource removeAllObjects];
+        [_virtualMachinesNotManagedDatasource removeAllObjects];
         for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
         {
             var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
@@ -294,6 +368,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             }
         }
         [tableVirtualMachines reloadData];
+        [tableVirtualMachinesNotManaged reloadData];
     }
 }
 
@@ -304,10 +379,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 /*! add double clicked vm to roster if not present or go to virtual machine
     @param sender the sender of the action
 */
-- (IBAction)didDoubleClick:(id)aSender
+- (IBAction)didManagedTableDoubleClick:(id)aSender
 {
-    var index   = [[tableVirtualMachines selectedRowIndexes] firstIndex],
-        vm      = [_virtualMachinesDatasource objectAtIndex:index];
+    var vm = [_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]];
 
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
     {
@@ -318,6 +392,74 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [alert setUserInfo:vm];
         [alert runModal];
     }
+}
+
+/*! add double clicked vm to roster if not present or go to virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)didNotManagedTableDoubleClick:(id)aSender
+{
+    [self manageVirtualMachine:aSender];
+}
+
+/*! ask the hypervisor to manage selected virtual machines
+    @param sender the sender of the action
+*/
+- (IBAction)manageVirtualMachine:(id)aSender
+{
+    if ([tableVirtualMachinesNotManaged numberOfSelectedRows] <= 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"You must select at least a virtual machine", @"You must select at least a virtual machine")];
+        return;
+    }
+
+    var titleMessage = CPLocalizedString("Manage virtual machine", "Manage virtual machine"),
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to manage this virtual machine?", @"Are you sure you want Archipel to manage this virtual machine?");
+
+    if ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 1)
+    {
+        titleMessage = CPLocalizedString("Manage virtual machines", "Manage virtual machines");
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to manage these virtual machines?", @"Are you sure you want Archipel to manage these virtual machines?");
+    }
+
+    var vms = [_virtualMachinesNotManagedDatasource objectsAtIndexes:[tableVirtualMachinesNotManaged selectedRowIndexes]],
+        alert = [TNAlert alertWithMessage:titleMessage
+                                informative:informativeMessage
+                                 target:self
+                                 actions:[[CPLocalizedString(@"Manage", @"Manage"), @selector(performManage:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+    [alert setUserInfo:vms];
+    [alert runModal];
+}
+
+/*! unmanage selected virtual machines
+    @param sender the sender of the action
+*/
+- (IBAction)unmanageVirtualMachine:(id)aSender
+{
+    if ([tableVirtualMachines numberOfSelectedRows] <= 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"You must select at least a virtual machine", @"You must select at least a virtual machine")];
+        return;
+    }
+
+    var titleMessage = CPLocalizedString("Manage virtual machine", "Manage virtual machine"),
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to manage this virtual machine?", @"Are you sure you want Archipel to manage this virtual machine?");
+
+    if ([tableVirtualMachines numberOfSelectedRows] > 1)
+    {
+        titleMessage = CPLocalizedString("Unmanage virtual machines", "Umnanage virtual machines");
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to unmanage these virtual machines?", @"Are you sure you want Archipel to unmanage these virtual machines?");
+    }
+
+    var vms = [_virtualMachinesDatasource objectsAtIndexes:[tableVirtualMachines selectedRowIndexes]],
+        alert = [TNAlert alertWithMessage:titleMessage
+                                informative:informativeMessage
+                                 target:self
+                                 actions:[[CPLocalizedString(@"Unmanage", @"Unmanage"), @selector(performUnmanage:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+    [alert setUserInfo:vms];
+    [alert runModal];
 }
 
 /*! delete selected virtual machines
@@ -411,6 +553,80 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:[vm JID]];
 }
 
+/*! ask hypervisor to manage virtual machines
+    @param someVirtualMachines CPArray of virtual machines
+*/
+- (void)performManage:(CPArray)someVirtualMachines
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorControlManage}];
+
+    for (var i = 0; i < [someVirtualMachines count]; i++)
+    {
+        var vm = [someVirtualMachines objectAtIndex:i];
+        [stanza addChildWithName:@"item" andAttributes:{"jid": [vm JID]}];
+        [stanza up];
+    }
+
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didPerformManage:) ofObject:self];
+}
+
+- (BOOL)_didPerformManage:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [self setModuleStatus:TNArchipelModuleStatusReady];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+        [self setModuleStatus:TNArchipelModuleStatusError];
+    }
+
+    return NO;
+}
+
+/*! ask hypervisor to unmanage virtual machines
+    @param someVirtualMachines CPArray of virtual machines
+*/
+- (void)performUnmanage:(CPArray)someVirtualMachines
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorControlUnmanage}];
+
+    for (var i = 0; i < [someVirtualMachines count]; i++)
+    {
+        var vm = [someVirtualMachines objectAtIndex:i];
+        [stanza addChildWithName:@"item" andAttributes:{"jid": [vm JID]}];
+        [stanza up];
+    }
+
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didPerformUnmanage:) ofObject:self];
+}
+
+- (BOOL)_didPerformUnmanage:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [self setModuleStatus:TNArchipelModuleStatusReady];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+        [self setModuleStatus:TNArchipelModuleStatusError];
+    }
+
+    return NO;
+}
+
 /*! get the hypervisor roster content
 */
 - (void)getHypervisorRoster
@@ -436,29 +652,44 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             center      = [CPNotificationCenter defaultCenter];
 
         [_virtualMachinesDatasource removeAllObjects];
+        [_virtualMachinesNotManagedDatasource removeAllObjects];
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
-                entry   = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
+            var JID = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]];
 
-            if (entry)
+            // @TODO: do not check for nil value later
+            // but for the moment, keep compatibility with older version of Agent
+            if (![[queryItems objectAtIndex:i] valueForAttribute:@"managed"] || [[queryItems objectAtIndex:i] valueForAttribute:@"managed"] == "True")
             {
-               if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
-               {
-                   [_virtualMachinesDatasource addObject:entry];
-                   [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
-               }
+                var entry   = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
+
+                if (entry)
+                {
+                   if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
+                   {
+                       [_virtualMachinesDatasource addObject:entry];
+                       [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
+                   }
+                }
+                else
+                {
+                    var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil];
+                    [contact setNickname:@"This machine is not in your roster. Double click to add it."];
+                    [_virtualMachinesDatasource addObject:contact];
+                }
             }
             else
             {
                 var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil];
-                [contact setNickname:[JID node]];
-                [_virtualMachinesDatasource addObject:contact];
+                [contact setNickname:@"This virtual machine is not managed by Archipel. Double click on it to manage."];
+
+                [_virtualMachinesNotManagedDatasource addObject:contact];
             }
         }
 
         [tableVirtualMachines reloadData];
+        [tableVirtualMachinesNotManaged reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else

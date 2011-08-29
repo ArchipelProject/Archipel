@@ -6,6 +6,8 @@
 	<string> has been created</string>
 	<key> to your roster</key>
 	<string> to your roster</string>
+	<key>Add a user subscription</key>
+	<string>Add a user subscription</string>
 	<key>Add contact</key>
 	<string>Add contact</string>
 	<key>Added new subscription to virtual machine</key>
@@ -46,6 +48,8 @@
 	<string>Error</string>
 	<key>Remove</key>
 	<string>Remove</string>
+	<key>Remove a user subscription</key>
+	<string>Remove a user subscription</string>
 	<key>Removing subscription</key>
 	<string>Removing subscription</string>
 	<key>Subscription have been removed</key>

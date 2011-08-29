@@ -4,6 +4,9 @@
 /*  to your roster */
 " to your roster" = " to your roster";
 
+/* Add a user subscription */
+"Add a user subscription" = "Add a user subscription";
+
 /* Add contact */
 "Add contact" = "Add contact";
 
@@ -63,6 +66,9 @@
 
 /* Remove */
 "Remove" = "Remove";
+
+/* Remove a user subscription */
+"Remove a user subscription" = "Remove a user subscription";
 
 /* Removing subscription */
 "Removing subscription" = "Removing subscription";

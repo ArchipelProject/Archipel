@@ -56,6 +56,8 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI      = -9006
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION  = -9007
 ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION   = -9008
 ARCHIPEL_ERROR_CODE_HYPERVISOR_CAPABILITIES     = -9009
+ARCHIPEL_ERROR_CODE_HYPERVISOR_MANAGE           = -9010
+ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE         = -9011
 
 # Namespace
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
@@ -271,6 +273,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.permission_center.create_permission("ip", "Authorizes users to get hypervisor's IP address", False)
         self.permission_center.create_permission("uri", "Authorizes users to get the hypervisor's libvirt URI", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False)
+        self.permission_center.create_permission("manage", "Authorizes users make Archipel able to manage external virtual machines", False)
+        self.permission_center.create_permission("unmanage", "Authorizes users to make Archipel able to unmanage virtual machines", False)
 
     def manage_persistance(self):
         """
@@ -397,6 +401,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         It understands IQ of type:
             - alloc
             - free
+            - rostervm
+            - clone
+            - ip
+            - uri
+            - capabilities
+            - manage
+            - unmanage
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -425,6 +436,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = self.iq_libvirt_uri(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
+        elif action == "manage":
+            reply = self.iq_manage(iq)
+        elif action == "unmanage":
+            reply = self.iq_unmanage(iq)
 
         if reply:
             conn.send(reply)
@@ -433,7 +448,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ###  Hypervisor controls
 
-    def alloc(self, requester=None, requested_name=None, start=True):
+    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None):
         """
         Alloc a new XMPP entity.
         @type requester: xmpp.JID
@@ -442,10 +457,15 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param requested_name: the requested name for the VM if None, will be generated
         @type start: Boolean
         @param start: if True, start the vm immediatly
+        @type requested_uuid: string
+        @param requested_uuid: if set, the UUID to use as libvirt UUID and JID's node
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
-        vmuuid = str(moduuid.uuid1())
+        if requested_uuid:
+            vmuuid = requested_uuid
+        else:
+            vmuuid = str(moduuid.uuid1())
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         vm_jid = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
         disallow_spaces_in_name = (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name"))
@@ -786,10 +806,27 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         try:
             reply = iq.buildReply("result")
             nodes = []
+            managed_vm_uuids = []
+            not_managed_vm_uuids = []
             for uuid, vm in self.virtualmachines.iteritems():
-                n = xmpp.Node("item")
+                n = xmpp.Node("item", attrs={"managed": "True"})
                 n.addData(vm.jid.getStripped())
+                managed_vm_uuids.append(vm.jid.getNode())
                 nodes.append(n)
+            allDomainIDs = self.libvirt_connection.listDomainsID()
+            for name in allDomainIDs:
+                uuid = self.libvirt_connection.lookupByID(name).UUIDString()
+                if not uuid in managed_vm_uuids:
+                    n = xmpp.Node("item", attrs={"managed": "False"})
+                    n.addData("%s@%s" % (uuid, self.jid.getDomain()))
+                    nodes.append(n)
+            allDomainNames = self.libvirt_connection.listDefinedDomains()
+            for name in allDomainNames:
+                uuid = self.libvirt_connection.lookupByName(name).UUIDString()
+                if not uuid in managed_vm_uuids:
+                    n = xmpp.Node("item", attrs={"managed": "False"})
+                    n.addData("%s@%s" % (uuid, self.jid.getDomain()))
+                    nodes.append(n)
             reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
@@ -895,3 +932,56 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             return str(self.capabilities)
         except Exception as ex:
             return build_error_message(self, ex, msg)
+
+    def iq_manage(self, iq):
+        """
+        Manage an existing libvirt virtual machine
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            reply = iq.buildReply("result")
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            for item in items:
+                uuid = item.getAttr("jid").split("@")[0]
+                if uuid in self.virtualmachines:
+                    raise Exception("Virtual machine with UUID %s is already managed by Archipel" % uuid)
+                self.alloc(requester=iq.getFrom(), start=True, requested_uuid=uuid)
+                self.log.info("manage new virtual machine with UUID: %s" % uuid)
+            self.push_change("hypervisor", "manage")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_MANAGE)
+        return reply
+
+    def iq_unmanage(self, iq):
+        """
+        Unanage an managed virtual machine
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            reply = iq.buildReply("result")
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            for item in items:
+                jid = xmpp.JID(item.getAttr("jid"))
+                uuid = jid.getNode()
+                if not uuid in self.virtualmachines:
+                    raise Exception("Virtual machine with JID %s is not managed by Archipel" % jid)
+                vm = self.virtualmachines[uuid]
+                vm.terminate()
+                self.log.info("Unregistering the VM from hypervisor's database.")
+                self.database.execute("delete from virtualmachines where jid=?", (jid.getStripped(),))
+                self.database.commit()
+                del self.virtualmachines[uuid]
+                self.log.info("Starting the vm removing procedure.")
+                vm.inband_unregistration()
+                self.log.info("unmanage virtual machine with UUID: %s" % uuid)
+            self.push_change("hypervisor", "unmanage")
+            self.update_presence()
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE)
+        return reply
