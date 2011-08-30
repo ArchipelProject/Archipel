@@ -20,6 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import base64
+import hashlib
 import glob
 import os
 import xmpp
@@ -131,8 +132,9 @@ class TNAvatarControllableEntity (object):
             for img in glob.glob(os.path.join(path, "*.%s" % ctype)):
                 f = open(img, 'r')
                 data = base64.b64encode(f.read())
+                image_hash = hashlib.md5(data).hexdigest()
                 f.close()
-                node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1], "content-type": "image/%s" % ctype})
+                node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1], "content-type": "image/%s" % ctype, "hash": image_hash})
                 node_img.setData(data)
         return resp
 

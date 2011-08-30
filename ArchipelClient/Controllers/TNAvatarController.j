@@ -48,9 +48,12 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     @outlet CPImageView         imageSpinner;
     @outlet CPPopover           mainPopover;
 
-    TNStropheContact            _entity                 @accessors(property=entity);
+    TNStropheContact            _entity                 @accessors(getter=entity);
 
-    BOOL                        isReady;
+    BOOL                        _shouldRefresh;
+    CPArray                     _currentAvatars;
+    CPDictionary                _avatarRegistry;
+    CPDictionary                _rawAvatarDataCache;
 }
 
 
@@ -63,6 +66,13 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
     var itemPrototype   = [[CPCollectionViewItem alloc] init],
         avatarView      = [[TNAvatarView alloc] initWithFrame:CPRectMakeZero()];
+
+    [imageSpinner setHidden:YES];
+
+    _avatarRegistry = [CPDictionary dictionary];
+    _rawAvatarDataCache = [CPDictionary dictionary];
+    _shouldRefresh  = YES;
+    _currentAvatars = [CPArray array];
 
     // fix
     collectionViewAvatars._minItemSize = TNArchipelAvatarManagerThumbSize;
@@ -79,6 +89,64 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 
+
+#pragma mark -
+#pragma mark Getters / Setters
+
+- (void)setEntity:(TNStropheContact)anEntity
+{
+    _entity = anEntity;
+
+    if (![_avatarRegistry containsKey:_entity])
+    {
+        [_avatarRegistry setObject:[CPArray array] forKey:_entity];
+        _shouldRefresh = YES;
+    }
+}
+
+
+#pragma mark -
+#pragma mark Utilities
+
+- (void)populateCollectionView
+{
+    [collectionViewAvatars setContent:[]];
+    [collectionViewAvatars reloadContent];
+
+    [collectionViewAvatars setContent:[_avatarRegistry objectForKey:_entity]];
+    [collectionViewAvatars reloadContent];
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+/*! Open the main window
+    @param aSender the sender of the action
+*/
+- (IBAction)showWindow:(id)aSender
+{
+    [[TNPermissionsCenter defaultCenter] setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatars"] forEntity:_entity specialCondition:YES];
+
+    if ([[TNPermissionsCenter defaultCenter] hasPermission:@"getavatars" forEntity:_entity])
+    {
+        if (_shouldRefresh)
+            [self getAvailableAvatars];
+        else
+            [self populateCollectionView];
+
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+        [mainPopover setDefaultButton:buttonChange];
+    }
+}
+
+/*! Close the window
+*/
+- (IBAction)closeWindow:(id)aSender
+{
+    [mainPopover close];
+
+}
 
 #pragma mark -
 #pragma mark XMPP System
@@ -105,31 +173,40 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 {
     if ([aStanza type] == @"result")
     {
-        var avatars = [aStanza childrenWithName:@"avatar"],
-            images  = [CPArray array];
+        var avatars = [aStanza childrenWithName:@"avatar"];
 
-        [collectionViewAvatars setContent:[]];
-        [collectionViewAvatars reloadContent];
+        [[_avatarRegistry objectForKey:_entity] removeAllObjects];
 
         for (var i = 0; i < [avatars count]; i++)
         {
-            var avatar  = [avatars objectAtIndex:i],
-                file    = [avatar valueForAttribute:@"name"],
-                ctype   = [avatar valueForAttribute:@"content-type"],
-                data    = [avatar text],
-                img     = [[TNAvatarImage alloc] init];
+            var avatar      = [avatars objectAtIndex:i],
+                file        = [avatar valueForAttribute:@"name"],
+                ctype       = [avatar valueForAttribute:@"content-type"],
+                cacheKey    = [avatar valueForAttribute:@"hash"] || data, // @TODO: remove the || data later
+                data        = [avatar text],
+                img         = [[TNAvatarImage alloc] init];
 
-            [img setBase64EncodedData:data];
-            [img setContentType:ctype];
-            [img setSize:TNArchipelAvatarManagerThumbSize];
-            [img setAvatarFilename:file];
-            [img load];
-            [images addObject:img];
+            if ([_rawAvatarDataCache containsKey:cacheKey])
+            {
+                img = [_rawAvatarDataCache objectForKey:cacheKey];
+                CPLog.trace("Image with cache key " + cacheKey + "'s data are already cached. using it");
+            }
+            else
+            {
+                [img setBase64EncodedData:data];
+                [img setContentType:ctype];
+                [img setSize:TNArchipelAvatarManagerThumbSize];
+                [img setAvatarFilename:file];
+                [img load];
+                [_rawAvatarDataCache setObject:img forKey:cacheKey];
+            }
+            [[_avatarRegistry objectForKey:_entity] addObject:img];
         }
-        [collectionViewAvatars setContent:images];
-        [collectionViewAvatars reloadContent];
     }
     [imageSpinner setHidden:YES];
+
+    _shouldRefresh = NO;
+    [self populateCollectionView];
 }
 
 /*! Send to the entity the avatar it should use
@@ -161,32 +238,6 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
         CPLog.info("Avatar changed for entity " + [_entity JID]);
         [mainPopover close];
     }
-}
-
-
-#pragma mark -
-#pragma mark Actions
-
-/*! Open the main window
-    @param sender the sender of the action
-*/
-- (IBAction)showWindow:(id)aSender
-{
-    [[TNPermissionsCenter defaultCenter] setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatars"] forEntity:_entity specialCondition:YES];
-
-    if ([[TNPermissionsCenter defaultCenter] hasPermission:@"getavatars" forEntity:_entity])
-    {
-        [self getAvailableAvatars];
-        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
-        [mainPopover setDefaultButton:buttonChange];
-    }
-}
-
-/*! Close the window
-*/
-- (IBAction)closeWindow:(id)aSender
-{
-    [mainPopover close];
 }
 
 
