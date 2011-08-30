@@ -102,7 +102,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldOOMAdjust;
     @outlet CPTextField             fieldOOMScore;
-    @outlet CPTextField             fieldPreferencesMaxCPUs;
     @outlet CPTextField             fieldPreferencesScreenshotRefresh;
     @outlet CPView                  viewTableHypervisorsContainer;
     @outlet TNSwitch                switchAutoStart;
@@ -243,7 +242,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [fieldOOMScore setToolTip:CPBundleLocalizedString(@"Current OOM score for the virtual machine", @"Current OOM score for the virtual machine")];
     [fieldOOMAdjust setToolTip:CPBundleLocalizedString(@"Current OOM adjust value of the virtual machine", @"Current OOM adjust value of the virtual machine")];
     [buttonKill setToolTip:CPBundleLocalizedString(@"Will definitly delete the virtual machine, and all it's informations", @"Will definitly delete the virtual machine, and all it's informations")];
-    [fieldPreferencesMaxCPUs setToolTip:CPBundleLocalizedString(@"Max number of virtual CPUs", @"Max number of virtual CPUs")];
     [fieldPreferencesScreenshotRefresh setToolTip:CPLocalizedString(@"Set the delay between two virtual machine screenshots", @"Set the delay between two virtual machine screenshots")];
 }
 
@@ -343,7 +341,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setInteger:[fieldPreferencesMaxCPUs intValue] forKey:@"TNArchipelControlsMaxVCPUs"];
     [defaults setInteger:[fieldPreferencesScreenshotRefresh intValue] forKey:@"TNArchipelControlsScreenshotRefresh"];
 }
 
@@ -353,7 +350,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [fieldPreferencesMaxCPUs setIntValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [fieldPreferencesScreenshotRefresh setIntValue:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]];
 }
 
