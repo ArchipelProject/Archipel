@@ -786,6 +786,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         ret = self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
         if not self.domain:
             self.connect_domain()
+            # in that case no event handler will be triggered as we are
+            # not connected to the domain, so force push
+            self.push_change("virtualmachine:definition", "defined")
         self.definition = xmldesc
         if ret and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_DEFINED, 0, None)
