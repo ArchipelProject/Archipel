@@ -27,7 +27,6 @@
 @import "CPOutlineView+Extend.j"
 @import "CPPlatformWindow+Title.j"
 @import "CPPopover+TNAttachedWindowAPI.j"
-@import "CPSearchField+CancelButton.j"
 @import "CPSegmentedControl+SegmentView.j"
 @import "CPString+FormatByteSize.j"
 @import "CPString+UUIDRFC4122.j"
