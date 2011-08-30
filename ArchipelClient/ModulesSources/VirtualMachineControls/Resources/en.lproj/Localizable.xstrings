@@ -38,8 +38,6 @@
 	<string>Kill</string>
 	<key>Kill virtual machine?</key>
 	<string>Kill virtual machine?</string>
-	<key>Max number of virtual CPUs</key>
-	<string>Max number of virtual CPUs</string>
 	<key>Migrate</key>
 	<string>Migrate</string>
 	<key>Migration has started.</key>

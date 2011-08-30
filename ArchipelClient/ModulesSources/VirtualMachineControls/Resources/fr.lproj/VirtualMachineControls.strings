@@ -68,12 +68,6 @@
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for virtual machine controls module."; ObjectID = "97"; */
 "97.title" = "You can configure preferences for virtual machine controls module.";
 
-/* Class = "NSTextFieldCell"; placeholderString = "Maximum virtual CPUs"; ObjectID = "98"; */
-"98.placeholderString" = "Maximum virtual CPUs";
-
-/* Class = "NSTextFieldCell"; title = "Max number of CPUs:"; ObjectID = "101"; */
-"101.title" = "Max number of CPUs:";
-
 /* Class = "NSTextFieldCell"; title = "Virtual machine is not defined."; ObjectID = "133"; */
 "133.title" = "Virtual machine is not defined.";
 

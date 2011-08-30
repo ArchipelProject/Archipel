@@ -52,9 +52,6 @@
 /* Kill virtual machine? */
 "Kill virtual machine?" = "Kill virtual machine?";
 
-/* Max number of virtual CPUs */
-"Max number of virtual CPUs" = "Max number of virtual CPUs";
-
 /* Migrate */
 "Migrate" = "Migrate";
 
