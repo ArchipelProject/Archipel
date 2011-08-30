@@ -38,7 +38,7 @@
     <key>TabIndex</key>
     <integer>0</integer>
     <key>TNArchipelControlsMaxVCPUs</key>
-    <integer>4</integer>
+    <integer>255</integer>
     <key>TNArchipelControlsScreenshotRefresh</key>
     <integer>10</integer>
     <key>UseModuleMenu</key>
