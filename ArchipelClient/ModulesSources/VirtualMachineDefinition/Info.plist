@@ -68,6 +68,8 @@
     <string></string>
     <key>TNDescDefaultNumberCPU</key>
     <string>1</string>
+    <key>TNDescMaxNumberCPU</key>
+    <string>255</string>
     <key>TNDescDefaultOnCrash</key>
     <string>restart</string>
     <key>TNDescDefaultOnPowerOff</key>

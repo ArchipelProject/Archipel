@@ -259,7 +259,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultDomainType"], @"TNDescDefaultDomainType",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultGuest"], @"TNDescDefaultGuest",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultMachine"], @"TNDescDefaultMachine",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultDriveCacheMode"], @"TNDescDefaultDriveCacheMode"
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultDriveCacheMode"], @"TNDescDefaultDriveCacheMode",
+            [bundle objectForInfoDictionaryKey:@"TNDescMaxNumberCPU"], @"TNDescMaxNumberCPU"
     ]];
 
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
@@ -432,7 +433,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonBoot addItemsWithTitles:TNLibvirtDomainOSBoots];
     [buttonPreferencesBoot addItemsWithTitles:TNLibvirtDomainOSBoots];
 
-    [buttonPreferencesNumberOfCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
+    var ncpus = [];
+    for (var i = 1; i <= [defaults integerForKey:@"TNDescMaxNumberCPU"]; i++)
+        [ncpus addObject:@"" + i]
+
+    [buttonPreferencesNumberOfCPUs addItemsWithTitles:ncpus];
 
     [buttonPreferencesVNCKeyMap addItemsWithTitles:TNLibvirtDeviceGraphicVNCKeymaps];
 
@@ -465,7 +470,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
 
     //CPUStepper
-    [stepperNumberCPUs setMaxValue:4];
+    [stepperNumberCPUs setMaxValue:[defaults integerForKey:@"TNDescMaxNumberCPU"]];
     [stepperNumberCPUs setMinValue:1];
     [stepperNumberCPUs setDoubleValue:1];
     [stepperNumberCPUs setValueWraps:NO];
