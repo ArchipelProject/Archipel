@@ -24,11 +24,6 @@
 */
 @implementation CPPlatformWindow (title)
 
-- (void)setTitle:(CPString)aTitle
-{
-    _DOMWindow.document.title = aTitle;
-}
-
 - (id)DOMWindow
 {
     return _DOMWindow;
