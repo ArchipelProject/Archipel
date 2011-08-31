@@ -232,6 +232,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTargetBusXEN:
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesXEN];
             break;
+        case TNLibvirtDeviceDiskTargetBusVIRTIO:
+            [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesVIRTIO];
+            break;
         default:
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevices];
     }
