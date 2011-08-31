@@ -20,9 +20,9 @@
 
 
 /*! @ingroup categories
-    Category that enable the set the title of a physical window
+    Category that enable the get the _DOMWindow element
 */
-@implementation CPPlatformWindow (title)
+@implementation CPPlatformWindow (DOMWindowAccessible)
 
 - (id)DOMWindow
 {
