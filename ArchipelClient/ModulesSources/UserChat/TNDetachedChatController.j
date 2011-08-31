@@ -104,7 +104,6 @@ else
             _platformWindow = [[CPPlatformWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame];
             [_window setPlatformWindow:_platformWindow];
             [_platformWindow orderFront:nil];
-            [_platformWindow setTitle:[_window title]];
             _platformWindow._DOMWindow.onbeforeunload = function(){
                 [self clearChar];
                 [_delegate detachedChatClosedForJID:[_entity JID]]
@@ -160,8 +159,6 @@ else
 - (void)_didUpdateNickname:(CPNotification)aNotification
 {
     [_window setTitle:@"Archipel - Chat with " + [_entity nickname] || [[_entity JID] bare]];
-    if ([CPPlatform isBrowser])
-        [_platformWindow setTitle:[_window title]];
 }
 
 

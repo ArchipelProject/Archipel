@@ -107,7 +107,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 - (void)_entityNicknameUpdated:(CPNotification)aNotification
 {
     [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
-    [[self platformWindow] setTitle:[self title]];
 }
 
 
@@ -131,7 +130,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityNicknameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
-    [[self platformWindow] setTitle:[self title]];
 
     var domWindow = [[self platformWindow] DOMWindow],
         unloadFunction = function(){
