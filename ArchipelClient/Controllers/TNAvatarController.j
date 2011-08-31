@@ -135,6 +135,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
         else
             [self populateCollectionView];
 
+        [mainPopover close];
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
         [mainPopover setDefaultButton:buttonChange];
     }
