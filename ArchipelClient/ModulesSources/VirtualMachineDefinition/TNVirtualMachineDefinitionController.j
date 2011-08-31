@@ -1783,8 +1783,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         }
 
         var defaultGuest = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultGuest"];
-        if (defaultGuest)
+        if (defaultGuest && [buttonGuests itemWithTitle:defaultGuest])
             [buttonGuests selectItemWithTitle:defaultGuest];
+        else
+            [buttonGuests selectItemAtIndex:0];
 
         CPLog.trace(_libvirtCapabilities);
         [self getXMLDesc];
