@@ -206,10 +206,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     [self setFrameSize:vncSize];
     [[self platformWindow] setContentRect:newRect];
-
-    // seems needed with Safari/WebKit nightlies
-    if ([CPPlatform isBrowser] && (navigator.vendor.indexOf("Apple Computer, Inc.") != -1))
-        [[self platformWindow] updateNativeContentRect];
 }
 
 
