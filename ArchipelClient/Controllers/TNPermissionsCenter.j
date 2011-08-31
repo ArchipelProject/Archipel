@@ -18,6 +18,9 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../Resources/admin-accounts.js"
+
+
 var TNArchipelPushNotificationPermissions   = @"archipel:push:permissions",
     TNArchipelTypePermissions               = @"archipel:permissions",
     TNArchipelTypePermissionsGetOwn         = @"getown";
@@ -63,6 +66,9 @@ var __defaultPermissionCenter;
         _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
         _adminAccountValidationMode         = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelCheckNodeAdminAccount"];
         _adminAccounts                      = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
+
+        // add the admin accounts from the admin-account.js
+        _adminAccounts = [_adminAccounts arrayByAddingObjectsFromArray:ARCHIPEL_ADMIN_ACCOUNTS_ARRAY];
 
         [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
     }
