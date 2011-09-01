@@ -65,6 +65,10 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.register_hook("HOOK_XMPP_DISCONNECT", method=self.stop_novnc_proxy)
         self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.awake_from_initialization)
 
+        self.websocket_verbose = False
+        if self.configuration.has_option("VNC", "vnc_enable_websocket_debug"):
+            self.websocket_verbose = self.configuration.getboolean("VNC", "vnc_enable_websocket_debug")
+
 
     ### Plugin interface
 
@@ -141,9 +145,10 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.log.info("Virtual machine vnc proxy is using certificate %s" % str(cert))
         onlyssl = self.configuration.getboolean("VNC", "vnc_only_ssl")
         self.entity.log.info("Virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
+
         self.novnc_proxy = WebSocketProxy(target_host="127.0.0.1", target_port=current_vnc_port,
                                             listen_host="0.0.0.0", listen_port=novnc_proxy_port, cert=cert, ssl_only=onlyssl,
-                                            wrap_cmd=None, wrap_mode="exit")
+                                            wrap_cmd=None, wrap_mode="exit", verbose=self.websocket_verbose)
         self.novnc_proxy.start()
         self.entity.push_change("virtualmachine:vnc", "websocketvncstart")
 
