@@ -190,7 +190,7 @@ Sec-WebSocket-Accept: %s\r
         payload_len = len(buf)
         if payload_len <= 125:
             header = struct.pack('>BB', b1, payload_len)
-        elif payload_len > 125 and payload_len <= 65536:
+        elif payload_len > 125 and payload_len < 65536:
             header = struct.pack('>BBH', b1, 126, payload_len)
         elif payload_len >= 65536:
             header = struct.pack('>BBQ', b1, 127, payload_len)
@@ -579,10 +579,10 @@ Sec-WebSocket-Accept: %s\r
             if sys.hexversion < 0x2060000 or not numpy:
                 raise self.EClose("Python >= 2.6 and numpy module is required for HyBi-07 or greater")
 
-            # HyBi-07 report version 7
-            # HyBi-08 - HyBi-10 report version 8
-            if ver in ['7', '8']:
-                self.version = "hybi-0" + ver
+            # HyBi-08 - HyBi-12 report version 8
+            # HyBi-13 reports version 13
+            if ver in ['7', '8', '13']:
+                self.version = "hybi-%02d" % int(ver)
             else:
                 raise self.EClose('Unsupported protocol version %s' % ver)
 
