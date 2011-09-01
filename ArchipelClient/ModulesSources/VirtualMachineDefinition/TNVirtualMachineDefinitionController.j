@@ -1822,20 +1822,34 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([aStanza type] == @"error")
     {
-        if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] != "not-defined")
-            [self handleIqErrorFromStanza:aStanza];
+        [self handleIqErrorFromStanza:aStanza];
+        return;
+    }
 
+    if ([aStanza firstChildWithName:@"not-defined"])
+    {
         _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
         [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
         [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphic alloc] init]];
 
+        // simulate controls changes
         [self didChangeGuest:buttonGuests];
+        [self didChangeVCPU:stepperNumberCPUs];
         [self didChangeAPIC:switchAPIC];
         [self didChangeACPI:switchACPI];
         [self didChangePAE:switchPAE];
         [self didChangeHugePages:switchHugePages];
+        [self didChangeClock:buttonClocks];
+        [self didChangeOnCrash:buttonOnCrash];
+        [self didChangeOnReboot:buttonOnReboot];
+        [self didChangeOnPowerOff:buttonOnPowerOff];
+        [self didChangeMemoryTuneHardLimit:fieldMemoryTuneHardLimit];
+        [self didChangeMemoryTuneSoftLimit:fieldMemoryTuneSoftLimit];
+        [self didChangeMemoryTuneGuarantee:fieldMemoryTuneGuarantee];
+        [self didChangeBlockIOTuningWeight:fieldBlockIOTuningWeight];
+        [self didChangeBoot:buttonBoot];
 
         [_inputDevicesDatasource setContent:[[_libvirtDomain devices] inputs]];
         [tableInputDevices reloadData];
@@ -1852,7 +1866,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self buildGUIAccordingToCurrentGuest];
         _definitionRecovered = YES;
         [self handleDefinitionEdition:NO];
-
         return;
     }
 
