@@ -164,7 +164,7 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         m = magic.Magic()
         output = m.from_file(path).lower()
-        return output == "data"
+        return output == "data" or "x86 boot sector" in output
 
     def _is_file_a_vmdk(self, path):
         """
