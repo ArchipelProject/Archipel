@@ -1236,7 +1236,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         reply = iq.buildReply("result")
         try:
             if not self.domain:
-                raise Exception("not-defined")
+                reply.setQueryPayload([xmpp.Node("not-defined")]);
+                return reply
             xmldescnode = self.xmldesc()
             reply.setQueryPayload([xmldescnode])
         except libvirt.libvirtError as ex:
