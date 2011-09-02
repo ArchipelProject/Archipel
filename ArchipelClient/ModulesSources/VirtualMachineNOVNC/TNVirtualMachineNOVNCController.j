@@ -214,8 +214,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (void)willHide
 {
     [imageViewSecureConnection setHidden:YES];
-    if ([windowPassword isVisible])
-        [windowPassword close];
+    [windowPassword close];
 
     [_vncView setHidden:YES];
     if ([self isConnected])
