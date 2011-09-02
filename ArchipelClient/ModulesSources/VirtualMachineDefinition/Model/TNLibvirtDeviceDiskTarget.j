@@ -25,38 +25,50 @@ TNLibvirtDeviceDiskTargetDeviceHda      = @"hda";
 TNLibvirtDeviceDiskTargetDeviceHdb      = @"hdb";
 TNLibvirtDeviceDiskTargetDeviceHdc      = @"hdc";
 TNLibvirtDeviceDiskTargetDeviceHdd      = @"hdd";
+TNLibvirtDeviceDiskTargetDeviceHde      = @"hde";
 TNLibvirtDeviceDiskTargetDeviceSda      = @"sda";
 TNLibvirtDeviceDiskTargetDeviceSdb      = @"sdb";
 TNLibvirtDeviceDiskTargetDeviceSdc      = @"sdc";
 TNLibvirtDeviceDiskTargetDeviceSdd      = @"sdd";
+TNLibvirtDeviceDiskTargetDeviceSde      = @"sde";
 TNLibvirtDeviceDiskTargetDeviceXVDA     = @"xvda";
 TNLibvirtDeviceDiskTargetDeviceXVDB     = @"xvdb";
 TNLibvirtDeviceDiskTargetDeviceXVDC     = @"xvdc";
 TNLibvirtDeviceDiskTargetDeviceXVDD     = @"xvdd";
+TNLibvirtDeviceDiskTargetDeviceXVDE     = @"xvde";
 TNLibvirtDeviceDiskTargetDeviceVDA      = @"vda";
 TNLibvirtDeviceDiskTargetDeviceVDB      = @"vdb";
 TNLibvirtDeviceDiskTargetDeviceVDC      = @"vdc";
 TNLibvirtDeviceDiskTargetDeviceVDD      = @"vdd";
+TNLibvirtDeviceDiskTargetDeviceVDE      = @"vde";
 TNLibvirtDeviceDiskTargetDevices        = [ TNLibvirtDeviceDiskTargetDeviceHda, TNLibvirtDeviceDiskTargetDeviceHdb,
                                             TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd,
+                                            TNLibvirtDeviceDiskTargetDeviceHde,
                                             TNLibvirtDeviceDiskTargetDeviceSda, TNLibvirtDeviceDiskTargetDeviceSdb,
                                             TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd,
+                                            TNLibvirtDeviceDiskTargetDeviceSde,
                                             TNLibvirtDeviceDiskTargetDeviceXVDA, TNLibvirtDeviceDiskTargetDeviceXVDB,
                                             TNLibvirtDeviceDiskTargetDeviceXVDC, TNLibvirtDeviceDiskTargetDeviceXVDD,
+                                            TNLibvirtDeviceDiskTargetDeviceXVDE,
                                             TNLibvirtDeviceDiskTargetDeviceVDA, TNLibvirtDeviceDiskTargetDeviceVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceVDC, TNLibvirtDeviceDiskTargetDeviceVDD];
+                                            TNLibvirtDeviceDiskTargetDeviceVDC, TNLibvirtDeviceDiskTargetDeviceVDD,
+                                            TNLibvirtDeviceDiskTargetDeviceVDE];
 
 TNLibvirtDeviceDiskTargetDevicesIDE     = [ TNLibvirtDeviceDiskTargetDeviceHda, TNLibvirtDeviceDiskTargetDeviceHdb,
-                                            TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd];
+                                            TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd,
+                                            TNLibvirtDeviceDiskTargetDeviceHde];
 
 TNLibvirtDeviceDiskTargetDevicesSCSI    = [ TNLibvirtDeviceDiskTargetDeviceSda, TNLibvirtDeviceDiskTargetDeviceSdb,
-                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd];
+                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd,
+                                            TNLibvirtDeviceDiskTargetDeviceSde];
 
 TNLibvirtDeviceDiskTargetDevicesXEN     = [ TNLibvirtDeviceDiskTargetDeviceXVDA, TNLibvirtDeviceDiskTargetDeviceXVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceXVDC, TNLibvirtDeviceDiskTargetDeviceXVDD];
+                                            TNLibvirtDeviceDiskTargetDeviceXVDC, TNLibvirtDeviceDiskTargetDeviceXVDD,
+                                            TNLibvirtDeviceDiskTargetDeviceXVDE];
 
 TNLibvirtDeviceDiskTargetDevicesVIRTIO  = [ TNLibvirtDeviceDiskTargetDeviceVDA, TNLibvirtDeviceDiskTargetDeviceVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceVDC, TNLibvirtDeviceDiskTargetDeviceVDD];
+                                            TNLibvirtDeviceDiskTargetDeviceVDC, TNLibvirtDeviceDiskTargetDeviceVDD,
+                                            TNLibvirtDeviceDiskTargetDeviceVDE];
 
 
 TNLibvirtDeviceDiskTargetBusIDE         = @"ide";
