@@ -208,7 +208,7 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
     switch ([anEvent keyCode])
     {
         case CPEscapeKeyCode:
-            [_searchField _searchFieldCancel:self];
+            [[_searchField cancelButton] performClick:self];
             break;
 
         case CPReturnKeyCode:
