@@ -120,44 +120,69 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         date    = [somePushInfo objectForKey:@"date"],
         stanza  = [somePushInfo objectForKey:@"rawStanza"];
 
-    if (change == @"listfetched")
+    switch (change)
     {
-        var users = [stanza childrenWithName:@"user"];
+        case @"listfetched":
+            var users = [stanza childrenWithName:@"user"];
 
-        [_datasourceUsers removeAllObjects];
-        [_users removeAllObjects];
+            [_datasourceUsers removeAllObjects];
+            [_users removeAllObjects];
 
-        for (var i = 0; i < [users count]; i++)
-        {
-            var user        = [users objectAtIndex:i],
-                jid         = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-                usertype    = [user valueForAttribute:@"type"],
-                name        = [jid node],
-                contact     = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
-                newItem;
-
-            if (contact)
-                name = [contact nickname];
-
-            var icon = _iconEntityTypeHuman;
-            switch (usertype)
+            for (var i = 0; i < [users count]; i++)
             {
-                case "virtualmachine":
-                    icon = _iconEntityTypeVM;
-                    break;
-                case "hypervisor":
-                    icon = _iconEntityTypeHypervisor;
-                    break;
+                var user        = [users objectAtIndex:i],
+                    jid         = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
+                    usertype    = [user valueForAttribute:@"type"],
+                    name        = [jid node],
+                    contact     = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
+                    newItem;
+
+                if (contact)
+                    name = [contact nickname];
+
+                var icon = _iconEntityTypeHuman;
+                switch (usertype)
+                {
+                    case "virtualmachine":
+                        icon = _iconEntityTypeVM;
+                        break;
+                    case "hypervisor":
+                        icon = _iconEntityTypeHypervisor;
+                        break;
+                }
+
+                newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon] forKeys:[@"name", @"jid", @"type", @"icon"]]
+                [_users addObject:newItem];
+
+                if (usertype == "human")
+                    [_datasourceUsers addObject:newItem];
             }
 
-            newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon] forKeys:[@"name", @"jid", @"type", @"icon"]]
-            [_users addObject:newItem];
+            [tableUsers reloadData];
+            break;
 
-            if (usertype == "human")
-                [_datasourceUsers addObject:newItem];
-        }
+        case @"registerationerror":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Registration error", @"Registration error")
+                                                             message:CPLocalizedString(@"Agent was unable to register the user.", @"Agent was unable to register the user.")
+                                                                icon:TNGrowlIconError];
+            break;
 
-        [tableUsers reloadData];
+        case @"registered":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Regisration complete", @"Regisration complete")
+                                                             message:CPLocalizedString(@"New user has been sucessfully registred", @"New user has been sucessfully registred")];
+            break;
+
+        case @"unregistered":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Unegisration complete", @"Unegisration complete")
+                                                             message:CPLocalizedString(@"User has been sucessfully unregistred", @"User has been sucessfully unregistred")];
+
+            break;
+
+        case @"unregisterationerror":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Unregistration error", @"Unregistration error")
+                                                             message:CPLocalizedString(@"Agent was unable to unregister the user.", @"Agent was unable to unregister the user.")
+                                                                icon:TNGrowlIconError];
+            break;
     }
 
 
