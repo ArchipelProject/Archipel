@@ -2000,8 +2000,22 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)defineXMLString
 {
-    var desc        = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0],
-        stanza      = [TNStropheStanza iqWithType:@"get"],
+    var desc;
+    try
+    {
+        desc = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0];
+        if (!desc || isdef(desc) == "undefined")
+            [CPException raise:CPInternalInconsistencyException reason:@"Not valid XML"];
+    }
+    catch (e)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")
+                          style:CPCriticalAlertStyle];
+        [popoverXMLEditor close];
+        return;
+    }
+    var stanza      = [TNStropheStanza iqWithType:@"get"],
         descNode    = [TNXMLNode nodeWithXMLNode:desc];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
