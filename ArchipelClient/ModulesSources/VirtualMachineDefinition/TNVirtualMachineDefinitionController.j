@@ -1104,7 +1104,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnPowerOff setEnabled:shouldEnableGUI];
     [buttonOnReboot setEnabled:shouldEnableGUI];
     [buttonUndefine setEnabled:shouldEnableGUI];
-    [buttonXMLEditor setEnabled:shouldEnableGUI];
     [buttonXMLEditorDefine setEnabled:shouldEnableGUI];
     [fieldBlockIOTuningWeight setEnabled:shouldEnableGUI];
     [fieldFilterNics setEnabled:shouldEnableGUI];
@@ -1146,7 +1145,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnPowerOff setNeedsDisplay:YES];
     [buttonOnReboot setNeedsDisplay:YES];
     [buttonUndefine setNeedsDisplay:YES];
-    [buttonXMLEditor setNeedsDisplay:YES];
     [buttonXMLEditorDefine setNeedsDisplay:YES];
     [fieldBlockIOTuningWeight setNeedsDisplay:YES];
     [fieldFilterNics setNeedsDisplay:YES];
