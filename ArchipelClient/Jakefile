@@ -146,6 +146,7 @@ task ("documentation", function()
             rm_rf($DOCUMENTATION_BUILD);
             // mv("debug.txt", FILE.join("Documentation", "debug.txt"));
             mv("Documentation", $DOCUMENTATION_BUILD);
+            cp(FILE.join(documentationDir, "doxygen.css"), FILE.join($DOCUMENTATION_BUILD, "html", "doxygen.css"));
         }
 
         OS.system(["ruby", FILE.join(documentationDir, "cleanup_headers")]);
