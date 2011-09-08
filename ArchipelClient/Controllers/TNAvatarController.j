@@ -130,6 +130,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
     if ([[TNPermissionsCenter defaultCenter] hasPermission:@"getavatars" forEntity:_entity])
     {
+        [buttonChange setEnabled:NO];
         if (_shouldRefresh)
             [self getAvailableAvatars];
         else
@@ -245,9 +246,21 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 #pragma mark -
 #pragma mark Delegates
 
+/*! delegate of CPCollectionView
+*/
 - (void)collectionView:(CPCollectionView)collectionView didDoubleClickOnItemAtIndex:(int)index
 {
     [self setAvatar:nil];
+}
+
+/*! delegate of CPCollectionView
+*/
+- (void)collectionViewDidChangeSelection:(CPCollectionView)collectionView
+{
+    if ([[collectionViewAvatars selectionIndexes] count] > 0)
+        [buttonChange setEnabled:YES];
+    else
+        [buttonChange setEnabled:NO];
 }
 
 /*! delegate of TNPermissionsCenter
