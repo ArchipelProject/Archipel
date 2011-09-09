@@ -53,7 +53,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     TNArchipelTypeVirtualMachineOOM                 = @"archipel:vm:oom",
     TNArchipelTypeVirtualMachineControlInfo         = @"info",
     TNArchipelTypeVirtualMachineControlCreate       = @"create",
-    TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown",
+    TNArchipelTypeVirtualMachineControlShutDown     = @"shutdown",
     TNArchipelTypeVirtualMachineControlDestroy      = @"destroy",
     TNArchipelTypeVirtualMachineControlFree         = @"free",
     TNArchipelTypeVirtualMachineControlReboot       = @"reboot",
@@ -119,7 +119,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     CPImage                         _imageReboot;
     CPImage                         _imageRebootDisabled;
     CPImage                         _imageResume;
-    CPImage                         _imageScreenShutdowned;
+    CPImage                         _imageScreenShutDown;
     CPImage                         _imageStop;
     CPImage                         _imageStopDisabled;
     CPImage                         _imageStopSelected;
@@ -227,7 +227,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [switchPreventOOMKiller setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine process will never been destroyed by OOM killer", @"If ON, the virtual machine process will never been destroyed by OOM killer")];
 
     // screenshot image
-    _imageScreenShutdowned = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdowned.png"] size:CGSizeMake(216, 162)];
+    _imageScreenShutDown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdown.png"] size:CGSizeMake(216, 162)];
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
     [buttonScreenshot setToolTip:CPLocalizedString(@"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot", @"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot")];
@@ -296,7 +296,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _screenshotTimer = nil;
     [self checkIfRunning];
 
-    [buttonScreenshot setImage:_imageScreenShutdowned];
+    [buttonScreenshot setImage:_imageScreenShutDown];
     [tableHypervisors setDelegate:nil];
     [tableHypervisors setDelegate:self];
 
@@ -320,7 +320,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (_screenshotTimer)
         [_screenshotTimer invalidate];
     _screenshotTimer = nil;
-    [buttonScreenshot setImage:_imageScreenShutdowned];
+    [buttonScreenshot setImage:_imageScreenShutDown];
     [super willHide];
 }
 
@@ -329,7 +329,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 - (void)menuReady
 {
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Start", @"Start") action:@selector(play:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shutdown", @"Shutdown") action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shut down", @"Shut down") action:@selector(stop:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Pause / Resume", @"Pause / Resume") action:@selector(pause:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reboot", @"Reboot") action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Destroy", @"Destroy") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
@@ -505,12 +505,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             humanState = CPBundleLocalizedString(@"Paused", @"Paused");
             break;
         case VIR_DOMAIN_SHUTDOWN:
-            [self enableButtonsForShutdowned]
-            humanState = CPBundleLocalizedString(@"Shutdown", @"Shutdown");
+            [self enableButtonsForShutDown]
+            humanState = CPBundleLocalizedString(@"Off", @"Off");
             break;
         case VIR_DOMAIN_SHUTOFF:
-            [self enableButtonsForShutdowned]
-            humanState = CPBundleLocalizedString(@"Shutdown", @"Shutdown");
+            [self enableButtonsForShutDown]
+            humanState = CPBundleLocalizedString(@"Off", @"Off");
             break;
         case VIR_DOMAIN_CRASHED:
             humanState = CPBundleLocalizedString(@"Crashed", @"Crashed");
@@ -570,9 +570,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
 
-/*! enable buttons necessary when virtual machine is shutdowned
+/*! enable buttons necessary when virtual machine is shut down
 */
-- (void)enableButtonsForShutdowned
+- (void)enableButtonsForShutDown
 {
     [buttonBarTransport setSelectedSegment:TNArchipelTransportBarStop];
 
@@ -892,7 +892,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         if (!dataNode)
         {
-            [buttonScreenshot setImage:_imageScreenShutdowned];
+            [buttonScreenshot setImage:_imageScreenShutDown];
             return NO;
         }
 
@@ -1059,7 +1059,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlShutdown}];
+        "action": TNArchipelTypeVirtualMachineControlShutDown}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didStop:)];
 }
@@ -1139,7 +1139,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [buttonScreenshot setImage:_imageScreenShutdowned];
+        [buttonScreenshot setImage:_imageScreenShutDown];
         if (_screenshotTimer)
         {
             [_screenshotTimer invalidate];

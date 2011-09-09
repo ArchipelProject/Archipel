@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A511</string>
+		<string key="IBDocument.SystemVersion">11C48</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138</string>
-		<string key="IBDocument.HIToolboxVersion">566.00</string>
+		<string key="IBDocument.AppKitVersion">1138.18</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">1617</string>
@@ -389,7 +389,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="83304334">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">138412032</int>
-							<string key="NSContents">Virtual machine is shutdowned.</string>
+							<string key="NSContents">Virtual machine is shut down.</string>
 							<object class="NSFont" key="NSSupport" id="776184401">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>

@@ -48,6 +48,8 @@
 	<string>OOM Killer can kill this virtual machine.</string>
 	<key>OOM Killer cannot kill this virtual machine.</key>
 	<string>OOM Killer cannot kill this virtual machine.</string>
+	<key>Off</key>
+	<string>Off</string>
 	<key>Pause</key>
 	<string>Pause</string>
 	<key>Pause / Resume</key>
@@ -64,8 +66,8 @@
 	<string>Resume</string>
 	<key>Running</key>
 	<string>Running</string>
-	<key>Shutdown</key>
-	<string>Shutdown</string>
+	<key>Shut down</key>
+	<string>Shut down</string>
 	<key>Start</key>
 	<string>Start</string>
 	<key>Stop</key>

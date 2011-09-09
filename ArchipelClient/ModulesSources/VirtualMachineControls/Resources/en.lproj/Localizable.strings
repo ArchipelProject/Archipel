@@ -61,6 +61,9 @@
 /* No status */
 "No status" = "No status";
 
+/* Off */
+"Off" = "Off";
+
 /* OOM Killer can kill this virtual machine. */
 "OOM Killer can kill this virtual machine." = "OOM Killer can kill this virtual machine.";
 
@@ -91,8 +94,8 @@
 /* Running */
 "Running" = "Running";
 
-/* Shutdown */
-"Shutdown" = "Shutdown";
+/* Shut down */
+"Shut down" = "Shut down";
 
 /* Start */
 "Start" = "Start";
