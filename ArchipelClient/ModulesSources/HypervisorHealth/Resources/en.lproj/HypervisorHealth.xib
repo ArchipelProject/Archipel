@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A511</string>
+		<string key="IBDocument.SystemVersion">11C55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138</string>
-		<string key="IBDocument.HIToolboxVersion">566.00</string>
+		<string key="IBDocument.AppKitVersion">1138.20</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">1617</string>
@@ -80,7 +80,7 @@
 					<object class="NSCustomView" id="33902163">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{-2, 0}, {937, 399}}</string>
+						<string key="NSFrame">{{-2, 0}, {937, 385}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<string key="NSClassName">NSTabView</string>
 					</object>
@@ -155,6 +155,77 @@
 							<string key="NSContents">...</string>
 							<reference key="NSSupport" ref="208984078"/>
 							<reference key="NSControlView" ref="105163561"/>
+							<reference key="NSBackgroundColor" ref="301951145"/>
+							<reference key="NSTextColor" ref="506221711"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="186421370">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{361, 402}, {70, 17}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="345612548">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">272631808</int>
+							<string key="NSContents">...</string>
+							<reference key="NSSupport" ref="208984078"/>
+							<reference key="NSControlView" ref="186421370"/>
+							<reference key="NSBackgroundColor" ref="301951145"/>
+							<reference key="NSTextColor" ref="506221711"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="701758779">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{147, 402}, {70, 17}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="427429672"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="55290705">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">272631808</int>
+							<string key="NSContents">...</string>
+							<reference key="NSSupport" ref="208984078"/>
+							<reference key="NSControlView" ref="701758779"/>
+							<reference key="NSBackgroundColor" ref="301951145"/>
+							<reference key="NSTextColor" ref="506221711"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="427429672">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{219, 402}, {140, 17}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="186421370"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="582262101">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">71305216</int>
+							<string key="NSContents">Driver version:</string>
+							<object class="NSFont" key="NSSupport" id="986880543">
+								<string key="NSName">LucidaGrande-Bold</string>
+								<double key="NSSize">13</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="427429672"/>
+							<reference key="NSBackgroundColor" ref="301951145"/>
+							<reference key="NSTextColor" ref="506221711"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="433683398">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{17, 402}, {128, 17}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="701758779"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="580127032">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">71305216</int>
+							<string key="NSContents">Libvirt version:</string>
+							<reference key="NSSupport" ref="986880543"/>
+							<reference key="NSControlView" ref="433683398"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
 							<reference key="NSTextColor" ref="506221711"/>
 						</object>
@@ -238,11 +309,7 @@
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">71305216</int>
 							<string key="NSContents">Uptime:</string>
-							<object class="NSFont" key="NSSupport" id="986880543">
-								<string key="NSName">LucidaGrande-Bold</string>
-								<double key="NSSize">13</double>
-								<int key="NSfFlags">16</int>
-							</object>
+							<reference key="NSSupport" ref="986880543"/>
 							<reference key="NSControlView" ref="426637324"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
 							<reference key="NSTextColor" ref="506221711"/>
@@ -1578,6 +1645,22 @@
 					</object>
 					<int key="connectionID">179</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">healthLibvirtVersion</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="701758779"/>
+					</object>
+					<int key="connectionID">188</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">healthLibvirtDriverVersion</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="186421370"/>
+					</object>
+					<int key="connectionID">189</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1628,6 +1711,10 @@
 							<reference ref="746834259"/>
 							<reference ref="426637324"/>
 							<reference ref="1070054357"/>
+							<reference ref="433683398"/>
+							<reference ref="427429672"/>
+							<reference ref="701758779"/>
+							<reference ref="186421370"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Main Module View</string>
@@ -2497,6 +2584,62 @@
 						<reference key="object" ref="354820856"/>
 						<reference key="parent" ref="157857637"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">180</int>
+						<reference key="object" ref="433683398"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="580127032"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">181</int>
+						<reference key="object" ref="427429672"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="582262101"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">182</int>
+						<reference key="object" ref="701758779"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="55290705"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">183</int>
+						<reference key="object" ref="186421370"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="345612548"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">184</int>
+						<reference key="object" ref="345612548"/>
+						<reference key="parent" ref="186421370"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">185</int>
+						<reference key="object" ref="55290705"/>
+						<reference key="parent" ref="701758779"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">186</int>
+						<reference key="object" ref="582262101"/>
+						<reference key="parent" ref="427429672"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">187</int>
+						<reference key="object" ref="580127032"/>
+						<reference key="parent" ref="433683398"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2551,6 +2694,14 @@
 					<string>160.IBPluginDependency</string>
 					<string>161.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
+					<string>180.IBPluginDependency</string>
+					<string>181.IBPluginDependency</string>
+					<string>182.IBPluginDependency</string>
+					<string>183.IBPluginDependency</string>
+					<string>184.IBPluginDependency</string>
+					<string>185.IBPluginDependency</string>
+					<string>186.IBPluginDependency</string>
+					<string>187.IBPluginDependency</string>
 					<string>20.IBPluginDependency</string>
 					<string>21.IBPluginDependency</string>
 					<string>22.IBPluginDependency</string>
@@ -2750,6 +2901,14 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -2764,7 +2923,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">179</int>
+			<int key="maxID">189</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2805,6 +2964,8 @@
 							<string>healthCPUUsage</string>
 							<string>healthDiskUsage</string>
 							<string>healthInfo</string>
+							<string>healthLibvirtDriverVersion</string>
+							<string>healthLibvirtVersion</string>
 							<string>healthLoad</string>
 							<string>healthMemSwapped</string>
 							<string>healthMemUsage</string>
@@ -2820,18 +2981,12 @@
 							<string>switchPreferencesShowColunmMethod</string>
 							<string>tabViewInfos</string>
 							<string>viewCharts</string>
-							<string>viewGraphCPU</string>
 							<string>viewGraphCPUContainer</string>
 							<string>viewGraphDiskContainer</string>
-							<string>viewGraphLoad</string>
 							<string>viewGraphLoadContainer</string>
-							<string>viewGraphMemory</string>
 							<string>viewGraphMemoryContainer</string>
-							<string>viewGraphNetwork</string>
 							<string>viewGraphNetworkContainer</string>
 							<string>viewLogs</string>
-							<string>viewLogsTableContainer</string>
-							<string>viewPartitionTableContainer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2852,6 +3007,8 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
 							<string>NSImageView</string>
 							<string>NSImageView</string>
 							<string>NSImageView</string>
@@ -2862,12 +3019,6 @@
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>NSTabView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -2894,6 +3045,8 @@
 							<string>healthCPUUsage</string>
 							<string>healthDiskUsage</string>
 							<string>healthInfo</string>
+							<string>healthLibvirtDriverVersion</string>
+							<string>healthLibvirtVersion</string>
 							<string>healthLoad</string>
 							<string>healthMemSwapped</string>
 							<string>healthMemUsage</string>
@@ -2909,18 +3062,12 @@
 							<string>switchPreferencesShowColunmMethod</string>
 							<string>tabViewInfos</string>
 							<string>viewCharts</string>
-							<string>viewGraphCPU</string>
 							<string>viewGraphCPUContainer</string>
 							<string>viewGraphDiskContainer</string>
-							<string>viewGraphLoad</string>
 							<string>viewGraphLoadContainer</string>
-							<string>viewGraphMemory</string>
 							<string>viewGraphMemoryContainer</string>
-							<string>viewGraphNetwork</string>
 							<string>viewGraphNetworkContainer</string>
 							<string>viewLogs</string>
-							<string>viewLogsTableContainer</string>
-							<string>viewPartitionTableContainer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2974,6 +3121,14 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">healthInfo</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">healthLibvirtDriverVersion</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">healthLibvirtVersion</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -3037,10 +3192,6 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewGraphCPU</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">viewGraphCPUContainer</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
@@ -3049,23 +3200,11 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewGraphLoad</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">viewGraphLoadContainer</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewGraphMemory</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">viewGraphMemoryContainer</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewGraphNetwork</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -3074,14 +3213,6 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewLogs</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewLogsTableContainer</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewPartitionTableContainer</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 						</object>

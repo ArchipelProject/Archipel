@@ -119,3 +119,15 @@
 /* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
 "150.title" = "Auto refresh stats:";
 
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "184"; */
+"184.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "185"; */
+"185.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "Driver version:"; ObjectID = "186"; */
+"186.title" = "Driver version:";
+
+/* Class = "NSTextFieldCell"; title = "Libvirt version:"; ObjectID = "187"; */
+"187.title" = "Libvirt version:";
+

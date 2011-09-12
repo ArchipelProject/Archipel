@@ -65,6 +65,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPTextField         healthCPUUsage;
     @outlet CPTextField         healthDiskUsage;
     @outlet CPTextField         healthInfo;
+    @outlet CPTextField         healthLibvirtDriverVersion;
+    @outlet CPTextField         healthLibvirtVersion;
     @outlet CPTextField         healthLoad;
     @outlet CPTextField         healthMemSwapped;
     @outlet CPTextField         healthMemUsage;
@@ -568,17 +570,19 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
             [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(@" MB", @" MB")];
             [healthMemSwapped setStringValue:swapped + CPBundleLocalizedString(@" MB", @" MB")];
-
             [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
-
             [healthLoad setStringValue:loadFive];
-
             [healthUptime setStringValue:[uptimeNode valueForAttribute:@"up"]];
-
             [healthCPUUsage setStringValue:cpuFree + @"%"];
-
             [healthInfo setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
-
+            [healthLibvirtVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s",
+                                                        [libvirtNode valueForAttribute:@"major"],
+                                                        [libvirtNode valueForAttribute:@"minor"],
+                                                        [libvirtNode valueForAttribute:@"release"]]];
+            [healthLibvirtDriverVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s",
+                                                        [driverNode valueForAttribute:@"major"],
+                                                        [driverNode valueForAttribute:@"minor"],
+                                                        [driverNode valueForAttribute:@"release"]]];
             [_cpuDatasource pushData:cpuFree inSet:0];
             [_memoryDatasource pushData:memUsed inSet:0];
             [_loadDatasource pushData:loadOne inSet:0];
