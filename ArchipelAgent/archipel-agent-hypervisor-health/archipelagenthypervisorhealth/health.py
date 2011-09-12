@@ -21,6 +21,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import commands
+import libvirt
 import xmpp
 import json
 
@@ -116,8 +117,9 @@ class TNHypervisorHealth (TNArchipelPlugin):
         """
         This method is invoked when a ARCHIPEL_NS_HYPERVISOR_HEALTH IQ is received.
         It understands IQ of type:
-            - alloc
-            - free
+            - history
+            - info
+            - logs
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -222,6 +224,16 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     nodes.append(uname_node)
                 except Exception as ex:
                     raise Exception("Unable to append uname node.", ex)
+                try:
+                    libvirtversion_node = xmpp.Node("libvirt", attrs=self.entity.libvirt_version())
+                    nodes.append(libvirtversion_node)
+                except Exception as ex:
+                    raise Exception("Unable to append libvirtversion_node node.", ex)
+                try:
+                    driverversion_node = xmpp.Node("driver", attrs=self.entity.driver_version())
+                    nodes.append(driverversion_node)
+                except Exception as ex:
+                    raise Exception("Unable to append driverversion_node node.", ex)
                 reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)

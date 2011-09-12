@@ -56,6 +56,8 @@ class TNArchipelLibvirtEntity (object):
         """
         Initialize the TNArchipelLibvirtEntity.
         """
+        self._libvirt_version = None
+        self._driver_version = None
         self.configuration = configuration
         self.local_libvirt_uri = self.configuration.get("GLOBAL", "libvirt_uri")
         self.libvirt_connection = None
@@ -112,3 +114,25 @@ class TNArchipelLibvirtEntity (object):
         @return: True of False
         """
         return self.current_hypervisor() in names
+
+    def libvirt_version(self):
+        """
+        Return the version of the libvirt
+        """
+        if not self._libvirt_version:
+            libvirtnumber = libvirt.getVersion()
+            self._libvirt_version = { "major": libvirtnumber / 1000000,
+                                     "minor": libvirtnumber / 1000,
+                                     "release": libvirtnumber % 1000}
+        return self._libvirt_version
+
+    def driver_version(self):
+        """
+        Return the version of the libvirt driver
+        """
+        if not self._driver_version:
+            drivernumber = self.libvirt_connection.getVersion()
+            self._driver_version = { "major": drivernumber / 1000000,
+                                     "minor": drivernumber / 1000,
+                                     "release": drivernumber % 1000}
+        return self._driver_version
