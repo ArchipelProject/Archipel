@@ -562,6 +562,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                 cpuNode         = [aStanza firstChildWithName:@"cpu"],
                 cpuFree         = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
                 infoNode        = [aStanza firstChildWithName:@"uname"],
+                libvirtNode     = [aStanza firstChildWithName:@"libvirt"],
+                driverNode      = [aStanza firstChildWithName:@"driver"],
                 networkNodes    = [aStanza childrenWithName:@"network"];
 
             [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(@" MB", @" MB")];
