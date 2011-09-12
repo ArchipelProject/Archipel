@@ -27,13 +27,15 @@ TNLibvirtDeviceGraphicTypeRDP           = @"rdp";
 TNLibvirtDeviceGraphicTypeSPICE         = @"spice";
 TNLibvirtDeviceGraphicTypeDESKTOP       = @"desktop";
 
-TNLibvirtDeviceGraphicVNCKeymapFR      = @"fr";
-TNLibvirtDeviceGraphicVNCKeymapEN_US   = @"en-us";
-TNLibvirtDeviceGraphicVNCKeymapDeutch  = @"de";
+TNLibvirtDeviceGraphicVNCKeymapFR       = @"fr";
+TNLibvirtDeviceGraphicVNCKeymapEN_US    = @"en-us";
+TNLibvirtDeviceGraphicVNCKeymapDeutch   = @"de";
+TNLibvirtDeviceGraphicVNCKeymapSpanish  = @"es";
 
-TNLibvirtDeviceGraphicVNCKeymaps       = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
+TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
                                             TNLibvirtDeviceGraphicVNCKeymapFR,
-                                            TNLibvirtDeviceGraphicVNCKeymapDeutch];
+                                            TNLibvirtDeviceGraphicVNCKeymapDeutch,
+                                            TNLibvirtDeviceGraphicVNCKeymapSpanish];
 
 
 /*! @ingroup virtualmachinedefinition
