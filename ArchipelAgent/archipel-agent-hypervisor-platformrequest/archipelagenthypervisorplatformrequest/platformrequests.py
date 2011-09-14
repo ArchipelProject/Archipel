@@ -152,7 +152,11 @@ class TNPlatformRequests (TNArchipelPlugin):
         """
         items = event.getTag("event").getTag("items").getTags("item")
         for item in items:
-            item_publisher = xmpp.JID(item.getAttr("publisher"))
+            try:
+                item_publisher = xmpp.JID(item.getAttr("publisher"))
+            except Exception as ex:
+                self.entity.log.error("The pubsub node has not 'publisher' tag. This is a bug in ejabberd, not the fault of Archipel. You can find a patch here for ejabberd here https://support.process-one.net/browse/EJAB-1347")
+                continue
             if not item_publisher.getStripped() == self.entity.jid.getStripped():
                 try:
                     self.entity.log.info("PLATFORMREQ: received a platform-wide virtual machine request from %s" % item_publisher)
