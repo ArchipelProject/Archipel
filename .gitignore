@@ -12,3 +12,4 @@
 *ArchipelAgent/**/*.egg-info/**
 *ArchipelClient/.xCodeSupport
 *.pyc
+*ArchipelClient/Archipel.sublime-workspace

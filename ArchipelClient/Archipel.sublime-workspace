@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"sub",
+				"subscription"
+			],
+			[
+				"_en",
+				"_entity"
+			],
+			[
+				"an",
+				"anEntity"
+			],
+			[
+				"valu",
+				"valueForAttribute"
+			],
+			[
+				"heal",
+				"healthLibvirtVersion"
+			],
+			[
 				"libvirt_c",
 				"libvirt_connection"
 			],
@@ -99,6 +119,30 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Libraries/StropheCappuccino/TNStropheContact.j",
+			"settings":
+			{
+				"buffer_size": 21923,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Controllers/TNPropertiesController.j",
+			"settings":
+			{
+				"buffer_size": 19279,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Libraries/StropheCappuccino/TNStropheRoster.j",
+			"settings":
+			{
+				"buffer_size": 25193,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -144,6 +188,13 @@
 	},
 	"file_history":
 	[
+		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Controllers/TNContactsController.j",
+		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/ModulesSources/HypervisorHealth/TNHypervisorHealthController.j",
+		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/ModulesSources/VirtualMachineDefinition/Model/TNLibvirtDeviceGraphic.j",
+		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Model/TNModule.j",
+		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Default/Global.sublime-settings",
+		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Archipel.sublime-project",
+		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Default/Base File.sublime-settings",
 		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelAgent/archipel-agent-hypervisor-health/archipelagenthypervisorhealth/health.py",
 		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelAgent/archipel-agent/archipel/archipelLibvirtEntity.py",
 		"/Users/Tonio/Desktop/apari",
@@ -161,11 +212,9 @@
 		"/Users/Tonio/Library/Cappuccino/Documentation/html/navtree.css",
 		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
 		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
-		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Default/Global.sublime-settings",
 		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/localize",
 		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/bootstrap",
 		"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Info.plist",
-		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Default/Base File.sublime-settings",
 		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/User/Base File.sublime-settings",
 		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Archipel/Keymaps/Default (OSX).sublime-keymap",
 		"/Users/Tonio/Library/Application Support/Sublime Text 2/Packages/Package Control/Package Control.sublime-settings",
@@ -189,6 +238,7 @@
 		],
 		"location_history":
 		[
+			"<open folders>",
 			"/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient",
 			"<all>"
 		]
@@ -198,6 +248,15 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"console.",
+			"console.l",
+			"_didReceivePresence",
+			"ask",
+			"_subscription",
+			"setSubscription",
+			"healthInfo",
+			"_pubSubPermissionRegistred",
+			"VirtualMachines",
 			"self.entity",
 			"libvirt",
 			"def info",
@@ -305,8 +364,93 @@
 	"groups":
 	[
 		{
+			"selected": 2,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Libraries/StropheCappuccino/TNStropheContact.j",
+					"settings":
+					{
+						"buffer_size": 21923,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5998,
+								6005
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Cappuccino-Sublime/Objective-J.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 10351,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Controllers/TNPropertiesController.j",
+					"settings":
+					{
+						"buffer_size": 19279,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19239,
+								19239
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Cappuccino-Sublime/Objective-J.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 7525,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient/Libraries/StropheCappuccino/TNStropheRoster.j",
+					"settings":
+					{
+						"buffer_size": 25193,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14286,
+								14286
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Cappuccino-Sublime/Objective-J.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 7011,
+						"zoom_level": 1
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
