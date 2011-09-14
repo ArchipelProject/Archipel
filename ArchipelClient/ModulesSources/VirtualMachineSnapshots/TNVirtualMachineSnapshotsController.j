@@ -137,8 +137,10 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_datasourceSnapshots setChildCompKeyPath:@"name"];
     [_datasourceSnapshots setSearchableKeyPaths:[@"name", @"description", @"creationTime"]];
 
-    [fieldFilter setTarget:_datasourceSnapshots];
-    [fieldFilter setAction:@selector(filterObjects:)];
+    // @TODO: this doesn't work because the datasourve sucks.
+    // while waiting for me to fix it, let's just deactivate this
+    //[fieldFilter setTarget:_datasourceSnapshots];
+    //[fieldFilter setAction:@selector(filterObjects:)];
 
     [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
 
