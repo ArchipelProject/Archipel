@@ -9,7 +9,7 @@
 "21.title" = "Migration groupée";
 
 /* Class = "NSTextFieldCell"; title = "Choose the destination hypervisor for all selected virtual machines"; ObjectID = "23"; */
-"23.title" = "Choisissez l'hyperviseur de destination pour la machine virtuelle séléctionnée.";
+"23.title" = "Choisissez l'hyperviseur de destination pour la machine virtuelle sélectionnée.";
 
 /* Class = "NSButtonCell"; title = "Migrate"; ObjectID = "29"; */
 "29.title" = "Migrer";

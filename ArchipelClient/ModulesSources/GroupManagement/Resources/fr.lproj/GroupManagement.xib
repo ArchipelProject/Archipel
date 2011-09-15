@@ -496,7 +496,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="789388762">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Choisissez l'hyperviseur de destination pour la machine virtuelle séléctionnée.</string>
+							<string key="NSContents">Choisissez l'hyperviseur de destination pour la machine virtuelle sélectionnée.</string>
 							<reference key="NSSupport" ref="604623667"/>
 							<reference key="NSControlView" ref="901298923"/>
 							<reference key="NSBackgroundColor" ref="778408564"/>

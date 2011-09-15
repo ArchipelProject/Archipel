@@ -28,7 +28,7 @@
         <key>en</key>
         <string>Destroy the current selected virtual machine</string>
         <key>fr</key>
-        <string>Détruit la machine virtuelle séléctionnée</string>
+        <string>Détruit la machine virtuelle sélectionnée</string>
     </dict>
     <key>AlternativePluginDisplayName</key>
     <string></string>

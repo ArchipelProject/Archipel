@@ -128,7 +128,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     }
 
     var msg     = CPBundleLocalizedString(@"Destroying some Virtual Machines", @"Destroying some Virtual Machines"),
-        title   = CPBundleLocalizedString(@"Are you sure you want to completely remove theses virtual machines ?", @"Are you sure you want to completely remove theses virtual machines ?");
+        title   = CPBundleLocalizedString(@"Are you sure you want to completely remove these virtual machines ?", @"Are you sure you want to completely remove these virtual machines ?");
 
     if ([[tableVirtualMachines selectedRowIndexes] count] < 2)
     {

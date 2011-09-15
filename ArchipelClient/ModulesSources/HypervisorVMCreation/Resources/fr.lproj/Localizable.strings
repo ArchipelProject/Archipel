@@ -16,17 +16,17 @@
 /* Adding contact */
 "Adding contact" = "Ajout du contact";
 
-/* Are you sure you want to completely remove theses virtual machines ? */
-"Are you sure you want to completely remove theses virtual machines ?" = "Etes-vous sûr de vouloir supprimer les machines virtuelles séléctionnées ?";
+/* Are you sure you want to completely remove these virtual machines ? */
+"Are you sure you want to completely remove these virtual machines ?" = "Etes-vous sûr de vouloir supprimer les machines virtuelles sélectionnées ?";
 
 /* Are you sure you want to completely remove this virtual machine ? */
-"Are you sure you want to completely remove this virtual machine ?" = "Etes-vous sûr de vouloir supprimer la machine virtuelle séléctionnée ?";
+"Are you sure you want to completely remove this virtual machine ?" = "Etes-vous sûr de vouloir supprimer la machine virtuelle sélectionnée ?";
 
 /* Are you sure you want to remove the subscription for this user ? */
 "Are you sure you want to remove the subscription for this user ?" = "Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?";
 
 /* Ask hypervisor to completely destroy all selected virtual machine */
-"Ask hypervisor to completely destroy all selected virtual machine" = "Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles séléctionnées.";
+"Ask hypervisor to completely destroy all selected virtual machine" = "Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles sélectionnées.";
 
 /* Ask hypervisor to create a new virtual machine */
 "Ask hypervisor to create a new virtual machine" = "Demande à l'hypervisor de créer une nouvelle machine virtuelle.";

@@ -14,14 +14,14 @@
 	<string>Souscription ajoutée</string>
 	<key>Adding contact</key>
 	<string>Ajout du contact</string>
-	<key>Are you sure you want to completely remove theses virtual machines ?</key>
-	<string>Etes-vous sûr de vouloir supprimer les machines virtuelles séléctionnées ?</string>
+	<key>Are you sure you want to completely remove these virtual machines ?</key>
+	<string>Etes-vous sûr de vouloir supprimer les machines virtuelles sélectionnées ?</string>
 	<key>Are you sure you want to completely remove this virtual machine ?</key>
-	<string>Etes-vous sûr de vouloir supprimer la machine virtuelle séléctionnée ?</string>
+	<string>Etes-vous sûr de vouloir supprimer la machine virtuelle sélectionnée ?</string>
 	<key>Are you sure you want to remove the subscription for this user ?</key>
 	<string>Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?</string>
 	<key>Ask hypervisor to completely destroy all selected virtual machine</key>
-	<string>Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles séléctionnées.</string>
+	<string>Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles sélectionnées.</string>
 	<key>Ask hypervisor to create a new virtual machine</key>
 	<string>Demande à l'hypervisor de créer une nouvelle machine virtuelle.</string>
 	<key>Ask the virtual machine to add in its contact a user</key>

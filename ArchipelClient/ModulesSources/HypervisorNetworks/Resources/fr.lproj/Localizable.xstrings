@@ -7,7 +7,7 @@
 	<key>Activate or deactivate Spanning Tree Protocol for the bridge</key>
 	<string>Activer ou désactiver Spanning Tree Protocol</string>
 	<key>Activate selected networks</key>
-	<string>Activer les réseaux séléctionnés</string>
+	<string>Activer les réseaux sélectionnés</string>
 	<key>Activate this network</key>
 	<string>Activer ce réseau</string>
 	<key>Add new host reservation</key>
