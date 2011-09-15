@@ -36,8 +36,6 @@
 	<string>Start all selected virtual machines</string>
 	<key>Start selected virtual machines</key>
 	<string>Start selected virtual machines</string>
-	<key>Virtual Machine</key>
-	<string>Virtual Machine</string>
 	<key>Virtual machine </key>
 	<string>Virtual machine </string>
 </dict>

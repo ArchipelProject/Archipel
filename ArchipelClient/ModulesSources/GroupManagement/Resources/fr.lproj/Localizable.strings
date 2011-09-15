@@ -49,9 +49,6 @@
 /* Start selected virtual machines */
 "Start selected virtual machines" = "Démarrer toutes les VMs sélectionnées";
 
-/* Virtual Machine */
-"Virtual Machine" = "Machine Virtuelle";
-
 /* Virtual machine  */
 "Virtual machine " = "Machine Virtuelle ";
 

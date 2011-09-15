@@ -36,8 +36,6 @@
 	<string>Démarrer la VM sélectionnée</string>
 	<key>Start selected virtual machines</key>
 	<string>Démarrer toutes les VMs sélectionnées</string>
-	<key>Virtual Machine</key>
-	<string>Machine Virtuelle</string>
 	<key>Virtual machine </key>
 	<string>Machine Virtuelle </string>
 </dict>
