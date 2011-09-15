@@ -2002,7 +2002,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     try
     {
         desc = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0];
-        if (!desc || isdef(desc) == "undefined")
+        if (!desc || typeof(desc) == "undefined")
             [CPException raise:CPInternalInconsistencyException reason:@"Not valid XML"];
     }
     catch (e)
