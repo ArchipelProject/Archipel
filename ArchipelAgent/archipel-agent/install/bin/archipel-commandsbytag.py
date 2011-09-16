@@ -1,0 +1,161 @@
+# -*- coding: utf-8 -*-
+#
+# archipel-commandsbytag.py
+#
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from optparse import OptionParser
+import pubsub
+import xmpp
+
+def xmpp_connect(jid, password, auth=True):
+    """
+    create a new XMPP connection
+    @type jid: xmpp.JID
+    @param jid: the JID to use to connect
+    @type password: string
+    @param password: the password associated to the JID
+    @type auth: Boolean
+    @param auth: if True, authentify after connection (Default True)
+    @rtype: xmpp.Client
+    @return: the ready to use xmpp client
+    """
+    xmppclient = xmpp.Client(jid.getDomain(), debug=[])
+    if not xmppclient.connect():
+        print_error("Cannot connect to the XMPP server")
+        return
+    if auth:
+        if xmppclient.auth(jid.getNode(), password, "configurator") == None:
+            print_error("Bad authentication")
+            return
+    xmppclient.send(xmpp.Presence(priority=999))
+    return xmppclient
+
+def send_control_command_message(xmppclient, jid, action):
+    """
+    send a ACP of kind archipel:vm:control to given jid
+    @type xmppclient: xmpp.Client
+    @param xmppclient: the xmppclient to use
+    @type jid: xmpp.JID or string
+    @param jid: the JID to send the message
+    @type action: string
+    @param action: the chat command to send
+    """
+    archipelCommand = xmpp.Node("archipel", attrs={"action": action})
+    msg = xmpp.Message(to=jid, body=action, typ="chat")
+    xmppclient.send(msg)
+
+def process_message(conn, msg):
+    """
+    Called when chat message is received.
+    @type conn: xmpp.Client
+    @param conn: the XMPP connection
+    @type msg: xmpp.Message
+    @param msg: the message
+    """
+    global NUMBER_OF_RESPONSES
+    NUMBER_OF_RESPONSES = NUMBER_OF_RESPONSES+1
+    print msg.getTag("body").getData()
+
+
+def get_all_entity_with_tag(xmppclient, pubsubserver, tags):
+    """
+    return an array of all entity JID tagged with at least one tag
+    given in tags list
+    @type xmppclient: xmpp.Client
+    @param xmppclient: the xmppclient to use
+    @type pubsubserver: string
+    @param pubsubserver: the pubsubserver to use
+    @type tags: array
+    @param tags: array of matching tags
+    """
+    ret = []
+    nodeName = "/archipel/tags"
+    pubSubTags = pubsub.TNPubSubNode(xmppclient, pubsubserver, nodeName)
+    if not pubSubTags.retrieve_items(wait=True):
+        raise Exception('Tag Node', 'unable to access the pubsub /archipel/tags on server %s' % pubsubserver)
+    for archipel_tag in pubSubTags.get_items():
+        entity = archipel_tag.getTag("tag").getAttr("jid")
+        current_tags = archipel_tag.getTag("tag").getAttr("tags").split(";;")
+        if len(set(tags).intersection(set(current_tags))) > 0:
+            if not entity in ret:
+                ret.append(entity)
+    return ret
+
+
+if __name__ == "__main__":
+    NUMBER_OF_EXPECTED_RESPONSES = 0
+    NUMBER_OF_RESPONSES = 0
+
+    parser = OptionParser()
+    parser.add_option("-j", "--jid",
+                        dest="jid",
+                        help="set the JID to use",
+                        metavar="JID")
+    parser.add_option("-p", "--password",
+                        dest="password",
+                        help="set the password associated to the JID",
+                        metavar="PASSWORD")
+    parser.add_option("-P", "--pubsubserver",
+                        dest="pubsubserver",
+                        help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
+                        metavar="PUBSUBSERVER",
+                        default=None)
+    parser.add_option("-t", "--tags",
+                        dest="tags",
+                        help="The macthing tags, separated by coma (--tags=tag2,tag2)",
+                        metavar="ACTION",
+                        default=True)
+    parser.add_option("-a", "--action",
+                        dest="action",
+                        help="Choose the action (same as chat commands)",
+                        metavar="ACTION",
+                        default=True)
+
+    options, args = parser.parse_args()
+
+    if not options.jid or not options.password or not options.tags or not options.action:
+        parser.error("you must enter a JID and a PASSWORD some TAGS and an ACTION. see --help for help")
+
+    userJID     = xmpp.JID(options.jid)
+    xmppclient  = xmpp_connect(userJID, options.password)
+
+    if not xmppclient:
+        raise Exception("Unable to connect")
+
+    xmppclient.RegisterHandler('message', process_message, typ="chat")
+
+    pubsubserver = options.pubsubserver
+    if pubsubserver:
+        pubsubserver = "pubsub.%s" % userJID.getDomain()
+
+    entities = get_all_entity_with_tag(xmppclient, pubsubserver, options.tags.split(","))
+    NUMBER_OF_EXPECTED_RESPONSES = len(entities)
+
+    for entity in entities:
+        send_control_command_message(xmppclient, "%s" % entity, options.action)
+
+    while 1:
+        try:
+            xmppclient.Process()
+            if NUMBER_OF_EXPECTED_RESPONSES == NUMBER_OF_RESPONSES:
+                break;
+        except Exception, ex:
+            print ex
+            break
