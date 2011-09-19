@@ -1176,8 +1176,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setNeedsDisplay:YES];
     [switchPAE setNeedsDisplay:YES];
 
-    if (shouldEnableGUI)
-        [self buildGUIAccordingToCurrentGuest];
+    // if (shouldEnableGUI)
+    //     [self buildGUIAccordingToCurrentGuest];
     [self handleDefinitionEdition:NO];
 
     [labelVirtualMachineIsRunning setHidden:shouldEnableGUI];
@@ -1507,6 +1507,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)didChangeDomainType:(id)aSender
 {
     [_libvirtDomain setType:[aSender title]];
+    [[_libvirtDomain devices] setEmulator:nil];
     [self updateMachinesAccordingToDomainType];
     [self makeDefinitionEdited:aSender];
 }
@@ -1876,7 +1877,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
 
     // button Machine
-    [self updateMachinesAccordingToDomainType];
+    //[self updateMachinesAccordingToDomainType];
     [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
 
     // Memory
