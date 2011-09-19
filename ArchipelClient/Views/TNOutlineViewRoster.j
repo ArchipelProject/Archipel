@@ -68,6 +68,7 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];
         [self setTarget:self];
+        [self setAllowsMultipleSelection:YES];
     }
 
     return self;

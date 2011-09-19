@@ -190,19 +190,20 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPMenu                                      _mainMenu;
     CPMenu                                      _modulesMenu;
     CPPlatformWindow                            _platformHelpWindow;
-    TNUIKitScrollView                           _outlineScrollView;
     CPTextField                                 _rightViewTextField;
     CPTimer                                     _ledInTimer;
     CPTimer                                     _ledOutTimer;
     CPTimer                                     _moduleLoadingDelay;
     CPWindow                                    _helpWindow;
     int                                         _tempNumberOfReadyModules;
-    TNTabView                                   _moduleTabView;
     TNOutlineViewRoster                         _rosterOutlineView;
     TNPubSubController                          _pubSubController;
     TNRosterDataViewContact                     _rosterDataViewForContacts;
     TNRosterDataViewGroup                       _rosterDataViewForGroups;
+    TNStropheGroup                              _stropheGroupSelection;
+    TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
+    TNUIKitScrollView                           _outlineScrollView;
     TNViewHypervisorControl                     _currentRightViewContent;
 }
 
@@ -224,6 +225,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [theWindow setFullPlatformWindow:YES];
 
     TNUserAvatarSize = CPSizeMake(50.0, 50.0);
+
+    _stropheGroupSelection = [TNStropheGroup stropheGroupWithName:CPLocalizedString(@"Current Selection", @"Current Selection")];
 
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
@@ -1384,9 +1387,29 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        item        = [_rosterOutlineView itemAtRow:[_rosterOutlineView selectedRow]],
-        loadDelay   = [defaults floatForKey:@"TNArchipelModuleLoadingDelay"];
+    var loadDelay   = [[CPUserDefaults standardUserDefaults] floatForKey:@"TNArchipelModuleLoadingDelay"];
+
+    [_stropheGroupSelection flush];
+
+    if ([_rosterOutlineView numberOfSelectedRows] > 1)
+    {
+        var item = _stropheGroupSelection,
+            selectedRowIndexes = [_rosterOutlineView selectedRowIndexes];
+
+        while ([selectedRowIndexes count] > 0)
+        {
+            var itemAtRow = [_rosterOutlineView itemAtRow:[selectedRowIndexes firstIndex]];
+            if ([itemAtRow isKindOfClass:TNStropheContact])
+                [[item contacts] addObject:itemAtRow];
+            else
+                [item addSubGroup:itemAtRow];
+            [selectedRowIndexes removeIndex:[selectedRowIndexes firstIndex]];
+        }
+    }
+    else
+    {
+        item = [_rosterOutlineView itemAtRow:[_rosterOutlineView selectedRow]];
+    }
 
     if (_moduleLoadingDelay)
     {
