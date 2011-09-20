@@ -226,8 +226,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     TNUserAvatarSize = CPSizeMake(50.0, 50.0);
 
-    _stropheGroupSelection = [TNStropheGroup stropheGroupWithName:CPLocalizedString(@"Current Selection", @"Current Selection")];
-
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
         center      = [CPNotificationCenter defaultCenter];
@@ -1387,24 +1385,28 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    var loadDelay   = [[CPUserDefaults standardUserDefaults] floatForKey:@"TNArchipelModuleLoadingDelay"];
-
-    [_stropheGroupSelection flush];
+    var loadDelay = [[CPUserDefaults standardUserDefaults] floatForKey:@"TNArchipelModuleLoadingDelay"],
+        item;
 
     if ([_rosterOutlineView numberOfSelectedRows] > 1)
     {
-        var item = _stropheGroupSelection,
-            selectedRowIndexes = [_rosterOutlineView selectedRowIndexes];
+        if (_stropheGroupSelection)
+            [_stropheGroupSelection flush];
+
+        var selectedRowIndexes = [_rosterOutlineView selectedRowIndexes];
+
+        _stropheGroupSelection = [TNStropheGroup stropheGroupWithName:CPLocalizedString(@"Current Selection", @"Current Selection")];
 
         while ([selectedRowIndexes count] > 0)
         {
             var itemAtRow = [_rosterOutlineView itemAtRow:[selectedRowIndexes firstIndex]];
             if ([itemAtRow isKindOfClass:TNStropheContact])
-                [[item contacts] addObject:itemAtRow];
+                [[_stropheGroupSelection contacts] addObject:itemAtRow];
             else
-                [item addSubGroup:itemAtRow];
+                [_stropheGroupSelection addSubGroup:itemAtRow];
             [selectedRowIndexes removeIndex:[selectedRowIndexes firstIndex]];
         }
+        item = _stropheGroupSelection;
     }
     else
     {
