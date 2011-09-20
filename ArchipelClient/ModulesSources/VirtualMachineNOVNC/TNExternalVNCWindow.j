@@ -193,8 +193,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 {
     var vncSize         = aSize,
         newRect         = [[self platformWindow] contentRect],
-        widthOffset     = 6,
-        heightOffset    = 6 + 59;
+        widthOffset     = 0,
+        heightOffset    = 0 + 59;
 
     vncSize.width   *= _currentZoom;
     vncSize.height  *= _currentZoom;
