@@ -130,7 +130,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     }
     else
     {
-        var JIDObject = [TNStropheJID stropheJIDWithString:[JID stringValue]];
+        var JIDObject;
+        try { JIDObject = [TNStropheJID stropheJIDWithString:[JID stringValue]];} catch(e) {return;}
+
         [password setStringValue:@""];
         if ([JIDObject domain])
             [boshService setStringValue:@"http://" + [JIDObject domain] + @":5280/http-bind"];
@@ -160,7 +162,11 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         [boshService setStringValue:lastBoshService || @""];
 
     if (lastJID && lastJID != @"")
-        [JID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]];
+    {
+        var JIDObject;
+        try { JIDObject = [TNStropheJID stropheJIDWithString:lastJID] } catch(e){};
+        [JID setStringValue:[JIDObject bare]];
+    }
 
     [self _didJIDChange:nil];
 
@@ -247,7 +253,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
 
-    var connectionJID   = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
+    var connectionJID;
+
+    try { connectionJID = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]]; } catch (e) {}
 
     if (![connectionJID domain])
     {
