@@ -165,7 +165,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNContactsController                contactsController;
     @outlet TNFlipView                          rightView;
     @outlet TNFlipView                          leftView;
-
     @outlet TNGroupsController                  groupsController;
     @outlet TNHintController                    hintController;
     @outlet TNModuleController                  moduleController;
