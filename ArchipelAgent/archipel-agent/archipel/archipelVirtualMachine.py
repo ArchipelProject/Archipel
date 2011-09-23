@@ -629,6 +629,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: string
         @return: base64 encoded PNG data
         """
+        if self.configuration.has_option("VIRTUALMACHINE", "disable_screenshot"):
+            if self.configuration.getboolean("VIRTUALMACHINE", "disable_screenshot"):
+                return (None, (0, 0))
         state = self.domain.info()[0]
         if hasattr(self.domain, "screenshot") and (state == libvirt.VIR_DOMAIN_PAUSED or state == libvirt.VIR_DOMAIN_RUNNING):
             try:
