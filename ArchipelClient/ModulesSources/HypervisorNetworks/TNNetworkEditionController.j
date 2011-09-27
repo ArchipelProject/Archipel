@@ -30,8 +30,7 @@
 
 @import <TNKit/TNTableViewDataSource.j>
 
-@import "TNDHCPEntryObject.j";
-@import "TNHypervisorNetworkObject.j";
+@import "Model/TNLibvirtNet.j"
 
 
 
@@ -64,7 +63,7 @@
 
     CPArray                     _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
     id                          _delegate                   @accessors(property=delegate);
-    TNHypervisorNetwork         _network                    @accessors(property=network);
+    TNLibvirtNetwork            _network                    @accessors(property=network);
 
     CPButton                    _minusButtonDHCPHosts;
     CPButton                    _minusButtonDHCPRanges;
@@ -107,7 +106,7 @@
     [viewTableHostsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     [buttonForwardMode removeAllItems];
-    [buttonForwardMode addItemsWithTitles:[@"isolated", @"route", @"nat"]];
+    [buttonForwardMode addItemsWithTitles:TNLibvirtNetworkForwardModes];
     [buttonForwardMode setToolTip:CPBundleLocalizedString(@"Choose the forward mode for this virtual network", @"Choose the forward mode for this virtual network")];
     [buttonForwardMode setTarget:self];
     [buttonForwardMode setAction:@selector(forwardModeChanged:)];
@@ -167,13 +166,13 @@
 - (void)update
 {
     [buttonForwardDevice removeAllItems];
-    [fieldNetworkName setStringValue:[_network networkName]];
-    [fieldBridgeName setStringValue:[_network bridgeName]];
-    [fieldBridgeDelay setStringValue:([_network bridgeDelay] == @"") ? [_network bridgeDelay] : @"0"];
-    [fieldBridgeIP setStringValue:[_network bridgeIP]];
-    [fieldBridgeNetmask setStringValue:[_network bridgeNetmask]];
+    [fieldNetworkName setStringValue:[_network name]];
+    [fieldBridgeName setStringValue:[[_network bridge] name] || @""];
+    [fieldBridgeDelay setStringValue:[[_network bridge] delay] || @""];
+    [fieldBridgeIP setStringValue:[[_network IP] address] || @""];
+    [fieldBridgeNetmask setStringValue:[[_network IP] netmask] || @""];
 
-    if (![_network bridgeForwardMode])
+    if (![[_network forward] mode])
     {
         [buttonForwardDevice setEnabled:NO];
         [buttonForwardMode selectItemWithTitle:@"isolated"];
@@ -182,16 +181,16 @@
     {
         [buttonForwardDevice setEnabled:YES];
         [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
-        [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
-        [buttonForwardMode selectItemWithTitle:[_network bridgeForwardMode]];
+        [buttonForwardDevice selectItemWithTitle:[[_network forward] dev]];
+        [buttonForwardMode selectItemWithTitle:[[_network forward] mode]];
     }
 
-    [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
-    [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
+    [checkBoxSTPEnabled setState:([[_network bridge] isSTPEnabled]) ? CPOnState : CPOffState];
+    [checkBoxDHCPEnabled setState:([[_network IP] DHCP]) ? CPOnState : CPOffState];
     [checkBoxAutostart setState:([_network isAutostart]) ? CPOnState : CPOffState];
 
-    [_datasourceDHCPRanges setContent:[_network DHCPEntriesRanges]];
-    [_datasourceDHCPHosts setContent:[_network DHCPEntriesHosts]];
+    [_datasourceDHCPRanges setContent:[[[_network IP] DHCP] ranges]];
+    [_datasourceDHCPHosts setContent:[[[_network IP] DHCP] hosts]];
 
     [tableViewRanges reloadData];
     [tableViewHosts reloadData];
@@ -206,41 +205,72 @@
 */
 - (IBAction)save:(id)sender
 {
-    [_network setNetworkName:[fieldNetworkName stringValue]];
-    [_network setBridgeName:[fieldBridgeName stringValue]];
-    [_network setBridgeDelay:[fieldBridgeDelay stringValue]];
+    [_network setName:[fieldNetworkName stringValue]];
+    [[_network bridge] setName:[fieldBridgeName stringValue]];
+    [[_network bridge] setDelay:[fieldBridgeDelay stringValue]];
 
     if ([buttonForwardMode title] != @"isolated")
     {
-        [_network setBridgeForwardMode:[buttonForwardMode title]];
-        [_network setBridgeForwardDevice:[buttonForwardDevice title]];
+        if (![_network forward])
+            [_network setForward:[[TNLibvirtNetworkForward alloc] init]];
+
+        [[_network forward] setMode:[buttonForwardMode title]];
+
+        // @ TODO : this is just a test
+        [[_network forward] setDev:[buttonForwardDevice title]];
+        // [[[_network forward] interfaces] addObject:[TNLibvirtNetworkForwardInterface defaultNetworkForwardInterfaceWithDev:[buttonForwardDevice title]]];
     }
     else
     {
-        [_network setBridgeForwardMode:nil];
-        [_network setBridgeForwardDevice:nil];
+        if ([_network forward])
+            [_network setForward:nil];
     }
 
-    [_network setBridgeIP:[fieldBridgeIP stringValue]];
-    [_network setBridgeNetmask:[fieldBridgeNetmask stringValue]];
-    [_network setDHCPEntriesRanges:[_datasourceDHCPRanges content]];
-    [_network setDHCPEntriesHosts:[_datasourceDHCPHosts content]];
-    [_network setSTPEnabled:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
-    [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
-    [_network setAutostart:([checkBoxAutostart state] == CPOnState) ? YES : NO];
+    if ([fieldBridgeIP stringValue] != @"")
+    {
+        if (![_network IP])
+            [_network setIP:[[TNLibvirtNetworkIP alloc] init]];
 
+        [[_network IP] setAddress:[fieldBridgeIP stringValue]];
+        [[_network IP] setNetmask:[fieldBridgeNetmask stringValue]];
+    }
+    else
+        [_network setIP:nil];
+
+    if ([checkBoxSTPEnabled state] == CPOnState)
+    {
+        if (![_network bridge])
+            [_network setBridge:[[TNLibvirtNetworkBridge alloc] init]]
+        [[_network bridge] setEnableSTP:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
+    }
+
+    if ([checkBoxDHCPEnabled state] == CPOffState)
+    {
+        [[_network IP] setDHCP:nil];
+    }
+
+    [_network setAutostart:([checkBoxAutostart state] == CPOnState) ? YES : NO];
     [_delegate defineNetwork:_network];
     [mainPopover close];
 }
 
-/*! add a new DCHP range
+/*! add a new DHCP range
     @param sender the sender of the action
 */
 - (IBAction)addDHCPRange:(id)sender
 {
-    var newRange = [TNDHCPEntry DHCPRangeWithStartAddress:@"0.0.0.0"  endAddress:@"0.0.0.0"];
+    var newRange = [TNLibvirtNetworkIPDHCPRange defaultNetworkIPDHCPRangeWithStart:@"0.0.0.0"  end:@"0.0.0.0"];
 
     [checkBoxDHCPEnabled setState:CPOnState];
+    if (![_network IP])
+        [_network setIP:[[TNLibvirtNetworkIP alloc] init]];
+    if (![[_network IP] DHCP])
+    {
+        [[_network IP] setDHCP:[[TNLibvirtNetworkIPDHCP alloc] init]];
+        [_datasourceDHCPHosts setContent:[[[_network IP] DHCP] hosts]];
+        [_datasourceDHCPRanges setContent:[[[_network IP] DHCP] ranges]];
+    }
+
     [_datasourceDHCPRanges addObject:newRange];
     [tableViewRanges reloadData];
 }
@@ -265,9 +295,20 @@
 */
 - (IBAction)addDHCPHost:(id)sender
 {
-    var newHost = [TNDHCPEntry DHCPHostWithMac:@"00:00:00:00:00:00"  name:CPBundleLocalizedString("domain.com", "domain.com") ip:@"0.0.0.0"];
+    var newHost = [TNLibvirtNetworkIPDHCPHost defaultNetworkDHCPHostWithName:CPBundleLocalizedString("domain.com", "domain.com")
+                                                                         MAC:@"00:00:00:00:00:00"
+                                                                          IP:@"0.0.0.0"]
 
     [checkBoxDHCPEnabled setState:CPOnState];
+    if (![_network IP])
+        [_network setIP:[[TNLibvirtNetworkIP alloc] init]];
+    if (![[_network IP] DHCP])
+    {
+        [[_network IP] setDHCP:[[TNLibvirtNetworkIPDHCP alloc] init]];
+        [_datasourceDHCPHosts setContent:[[[_network IP] DHCP] hosts]];
+        [_datasourceDHCPRanges setContent:[[[_network IP] DHCP] ranges]];
+    }
+
     [_datasourceDHCPHosts addObject:newHost];
     [tableViewHosts reloadData];
 }
@@ -322,20 +363,22 @@
 */
 - (IBAction)forwardModeChanged:(id)sender
 {
-    if ([buttonForwardMode title] == @"isolated")
+    switch ([buttonForwardMode title])
     {
-        [buttonForwardDevice removeAllItems];
-        [buttonForwardDevice setEnabled:NO];
-    }
-    else
-    {
-        [buttonForwardDevice removeAllItems];
-        [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
-        [buttonForwardDevice setEnabled:YES];
-        if ([[buttonForwardDevice itemTitles] containsObject:[_network bridgeForwardDevice]])
-            [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
-        else
-            [buttonForwardDevice selectItemAtIndex:0];
+        case @"isolated":
+            [buttonForwardDevice removeAllItems];
+            [buttonForwardDevice setEnabled:NO];
+            break;
+
+        default:
+            [buttonForwardDevice removeAllItems];
+            [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
+            [buttonForwardDevice setEnabled:YES];
+            if ([[buttonForwardDevice itemTitles] containsObject:[[_network forward] dev]])
+                [buttonForwardDevice selectItemWithTitle:[[_network forward] dev]];
+            else
+                [buttonForwardDevice selectItemAtIndex:0];
+
     }
 }
 

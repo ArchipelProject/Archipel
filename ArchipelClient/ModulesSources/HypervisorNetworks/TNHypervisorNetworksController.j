@@ -33,8 +33,9 @@
 @import "TNDHCPEntryObject.j"
 @import "TNHypervisorNetworkObject.j"
 @import "TNNetworkEditionController.j"
-@import "TNNetworkDataView.j";
+@import "TNNetworkDataView.j"
 
+@import "Model/TNLibvirtNet.j"
 
 var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
@@ -224,9 +225,9 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     if ([tableViewNetworks numberOfSelectedRows] == 0)
         return;
 
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
+    var networkObject = [_datasourceNetworks objectAtIndex:selectedIndex];
 
-    if ([networkObject isNetworkEnabled])
+    if ([networkObject isActive])
     {
         [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
     }
@@ -243,74 +244,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
 #pragma mark -
 #pragma mark Utilities
-
-/*! Generate a stanza containing libvirt valid network description
-    @param anUid the ID to use for the stanza
-    @return ready to send generate stanza
-*/
-- (TNStropheStanza)generateXMLNetworkStanzaWithUniqueID:(id)anUid network:(TNHypervisorNetwork)aNetwork
-{
-    var stanza = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkDefine,
-        "autostart": [aNetwork isAutostart] ? @"1" : @"0"}];
-
-    [stanza addChildWithName:@"network"];
-
-    [stanza addChildWithName:@"name"];
-    [stanza addTextNode:[aNetwork networkName]];
-    [stanza up];
-
-    [stanza addChildWithName:@"uuid"];
-    [stanza addTextNode:[aNetwork UUID]];
-    [stanza up];
-
-    if ([aNetwork bridgeForwardMode])
-    {
-        [stanza addChildWithName:@"forward" andAttributes:{"mode": [aNetwork bridgeForwardMode], "dev": [aNetwork bridgeForwardDevice]}];
-        [stanza up];
-    }
-
-    [stanza addChildWithName:@"bridge" andAttributes:{"name": [aNetwork bridgeName], "stp": ([aNetwork isSTPEnabled]) ? "on" :"off", "delay": [aNetwork bridgeDelay]}];
-    [stanza up];
-
-    if ([aNetwork bridgeIP] != @"" && [aNetwork bridgeNetmask] != @"")
-        [stanza addChildWithName:@"ip" andAttributes:{"address": [aNetwork bridgeIP], "netmask": [aNetwork bridgeNetmask]}];
-
-    var dhcp = [aNetwork isDHCPEnabled];
-    if (dhcp)
-    {
-        [stanza addChildWithName:@"dhcp"];
-
-        var DHCPRangeEntries = [aNetwork DHCPEntriesRanges];
-
-        for (var i = 0; i < [DHCPRangeEntries count]; i++)
-        {
-            var DHCPEntry = [DHCPRangeEntries objectAtIndex:i];
-
-            [stanza addChildWithName:@"range" andAttributes:{"start" : [DHCPEntry start], "end": [DHCPEntry end]}];
-            [stanza up];
-        }
-
-        var DHCPHostsEntries = [aNetwork DHCPEntriesHosts];
-
-        for (var i = 0; i < [DHCPHostsEntries count]; i++)
-        {
-            var DHCPEntry = [DHCPHostsEntries objectAtIndex:i];
-
-            [stanza addChildWithName:@"host" andAttributes:{"mac" : [DHCPEntry mac], "name": [DHCPEntry name], "ip": [DHCPEntry IP]}];
-            [stanza up];
-        }
-
-        [stanza up];
-    }
-
-    [stanza up];
-
-    return stanza;
-}
 
 /*! generate a random MAC Address
     @return CPString containing a random mac address
@@ -341,20 +274,23 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2",
         ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
         baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
-        newNetwork      = [TNHypervisorNetwork networkWithName:uuid
-                                                          UUID:uuid
-                                                    bridgeName:@"br" + Math.round((Math.random() * 42000))
-                                                   bridgeDelay:@"0"
-                                             bridgeForwardMode:@"nat"
-                                           bridgeForwardDevice:@"eth0"
-                                                      bridgeIP:ip
-                                                 bridgeNetmask:@"255.255.0.0"
-                                             DHCPEntriesRanges:[baseDHCPEntry]
-                                              DHCPEntriesHosts:[CPArray array]
-                                                networkEnabled:NO
-                                                    STPEnabled:NO
-                                                   DHCPEnabled:YES
-                                                     autostart:YES];
+        newNetwork      = [TNLibvirtNetwork defaultNetworkWithName:uuid UUID:uuid];
+
+
+        // newNetwork      = [TNHypervisorNetwork networkWithName:uuid
+        //                                                   UUID:uuid
+        //                                             bridgeName:@"br" + Math.round((Math.random() * 42000))
+        //                                            bridgeDelay:@"0"
+        //                                      bridgeForwardMode:@"nat"
+        //                                    bridgeForwardDevice:@"eth0"
+        //                                               bridgeIP:ip
+        //                                          bridgeNetmask:@"255.255.0.0"
+        //                                      DHCPEntriesRanges:[baseDHCPEntry]
+        //                                       DHCPEntriesHosts:[CPArray array]
+        //                                         networkEnabled:NO
+        //                                             STPEnabled:NO
+        //                                            DHCPEnabled:YES
+        //                                              autostart:YES];
 
     [networkController setNetwork:newNetwork];
     [networkController openWindow:_plusButton];
@@ -407,7 +343,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     {
         var networkObject = [_datasourceNetworks objectAtIndex:selectedIndex];
 
-        if ([networkObject isNetworkEnabled])
+        if ([networkObject isActive])
         {
             [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't edit a running network", @"You can't edit a running network")];
             return;
@@ -518,65 +454,14 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
         for (var i = 0; i < [allNetworks count]; i++)
         {
-            var network                 = [allNetworks objectAtIndex:i],
-                autostart               = ([network valueForAttribute:@"autostart"] == @"1") ? YES : NO,
-                name                    = [[network firstChildWithName:@"name"] text],
-                uuid                    = [[network firstChildWithName:@"uuid"] text],
-                bridge                  = [network firstChildWithName:@"bridge"],
-                bridgeName              = [bridge valueForAttribute:@"name"],
-                bridgeSTP               = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO,
-                bridgeDelay             = [bridge valueForAttribute:@"forwardDelay"],
-                forward                 = [network firstChildWithName:@"forward"],
-                forwardMode             = [forward valueForAttribute:@"mode"],
-                forwardDev              = [forward valueForAttribute:@"dev"],
-                ip                      = [network firstChildWithName:@"ip"],
-                bridgeIP                = [ip valueForAttribute:@"address"],
-                bridgeNetmask           = [ip valueForAttribute:@"netmask"],
-                dhcp                    = [ip firstChildWithName:@"dhcp"],
-                DHCPEnabled             = (dhcp) ? YES : NO,
-                DHCPRangeEntries        = [dhcp childrenWithName:@"range"],
-                DHCPHostEntries         = [dhcp childrenWithName:@"host"],
-                networkActive           = [activeNetworks containsObject:network],
-                DHCPRangeEntriesArray   = [CPArray array],
-                DHCPHostEntriesArray    = [CPArray array];
+            var networkNode      = [allNetworks objectAtIndex:i],
+                autostart        = ([networkNode valueForAttribute:@"autostart"] == @"1") ? YES : NO,
+                active           = [activeNetworks containsObject:networkNode],
+                network          = [[TNLibvirtNetwork alloc] initWithXMLNode:networkNode];
 
-            for (var j = 0; DHCPEnabled && j < [DHCPRangeEntries count]; j++)
-            {
-                var DHCPEntry           = [DHCPRangeEntries objectAtIndex:j],
-                    randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"],
-                    rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"],
-                    DHCPEntryObject     = [TNDHCPEntry DHCPRangeWithStartAddress:randgeStartAddr endAddress:rangeEndAddr];
-
-                [DHCPRangeEntriesArray addObject:DHCPEntryObject];
-            }
-
-            for (var j = 0; DHCPEnabled && j < [DHCPHostEntries count]; j++)
-            {
-                var DHCPEntry       = [DHCPHostEntries objectAtIndex:j],
-                    hostsMac        = [DHCPEntry valueForAttribute:@"mac"],
-                    hostName        = [DHCPEntry valueForAttribute:@"name"],
-                    hostIP          = [DHCPEntry valueForAttribute:@"ip"],
-                    DHCPEntryObject = [TNDHCPEntry DHCPHostWithMac:hostsMac name:hostName ip:hostIP];
-
-                [DHCPHostEntriesArray addObject:DHCPEntryObject];
-            }
-
-            var newNetwork  = [TNHypervisorNetwork networkWithName:name
-                                                    UUID:uuid
-                                              bridgeName:bridgeName
-                                             bridgeDelay:bridgeDelay
-                                       bridgeForwardMode:forwardMode
-                                     bridgeForwardDevice:forwardDev
-                                                bridgeIP:bridgeIP
-                                           bridgeNetmask:bridgeNetmask
-                                       DHCPEntriesRanges:DHCPRangeEntriesArray
-                                        DHCPEntriesHosts:DHCPHostEntriesArray
-                                          networkEnabled:networkActive
-                                              STPEnabled:bridgeSTP
-                                             DHCPEnabled:DHCPEnabled
-                                               autostart:autostart];
-
-            [_datasourceNetworks addObject:newNetwork];
+            [network setAutostart:autostart];
+            [network setActive:active];
+            [_datasourceNetworks addObject:network];
         }
 
         [tableViewNetworks reloadData];
@@ -636,7 +521,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)defineNetwork:(TNHypervisorNetwork)aNetwork
 {
-    if ([aNetwork isNetworkEnabled])
+    if ([aNetwork isActive])
     {
         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
         return
@@ -660,12 +545,18 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (BOOL)_didNetworkUndefinBeforeDefining:(TNStropheStanza)aStanza
 {
-    var uid             = [[[TNStropheIMClient defaultClient] connection] getUniqueId],
-        defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid network:_networkHolder];
+    var stanza = [TNStropheStanza iqWithAttributes:{"type": "set"}];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNetworkDefine,
+        "autostart": [_networkHolder isAutostart] ? @"1" : @"0"}];
+
+    [stanza addNode:[_networkHolder XMLNode]];
 
     _networkHolder = nil;
 
-    [self sendStanza:defineStanza andRegisterSelector:@selector(_didDefineNetwork:) withSpecificID:uid];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didDefineNetwork:)];
 
     return NO;
 }
@@ -694,7 +585,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         var networkObject   = [someNetworks objectAtIndex:i],
             stanza          = [TNStropheStanza iqWithType:@"set"];
 
-        if (![networkObject isNetworkEnabled])
+        if (![networkObject isActive])
         {
             [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
             [stanza addChildWithName:@"archipel" andAttributes:{
@@ -718,7 +609,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         var networkObject   = [someNetworks objectAtIndex:i],
             stanza          = [TNStropheStanza iqWithType:@"set"];
 
-        if ([networkObject isNetworkEnabled])
+        if ([networkObject isActive])
         {
             [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
             [stanza addChildWithName:@"archipel" andAttributes:{
@@ -755,7 +646,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     {
         var networkObject   = [someNetworks objectAtIndex:i];
 
-        if ([networkObject isNetworkEnabled])
+        if ([networkObject isActive])
         {
             [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
             return;
