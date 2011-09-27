@@ -25,6 +25,9 @@
 
 @import <TNKit/TNTableViewDataSource.j>
 
+var _imageNetworkActive,
+    _imageNetworkUnactive;
+
 /*! @ingroup hypervisornetworks
     This class represent a network DataView
 */
@@ -59,6 +62,14 @@
     TNTableViewDataSource       _datasourceRanges;
 }
 
++ (void)initialize
+{
+    var bundle              = [CPBundle bundleForClass:TNNetworkDataView];
+    _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
+    _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
+}
+
+
 - (void)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
@@ -82,25 +93,26 @@
     _datasourceRanges       = [[TNTableViewDataSource alloc] init];
     _datasourceHosts        = [[TNTableViewDataSource alloc] init];
 
-    [imageStatus setImage:[aNetwork icon]];
-    [fieldName setStringValue:[aNetwork networkName]];
-    [fieldBridgeName setStringValue:[aNetwork bridgeName]];
-    [fieldBridgeForwardDevice setStringValue:[aNetwork bridgeForwardDevice]];
-    [fieldBridgeForwardMode setStringValue:([aNetwork bridgeForwardMode] != @"") ? [aNetwork bridgeForwardMode] : @"Nothing"];
-    [fieldBridgeIP setStringValue:[aNetwork bridgeIP]];
-    [fieldBridgeNetmask setStringValue:[aNetwork bridgeNetmask]];
-    [fieldBridgeSTP setStringValue:[aNetwork isSTPEnabled] ? @"Yes" : @"No"];
-    [fieldBridgeDelay setStringValue:[aNetwork bridgeDelay]];
+    [imageStatus setImage:[aNetwork isActive] ? _imageNetworkActive : _imageNetworkUnactive];
+
+    [fieldName setStringValue:[aNetwork name]];
+    [fieldBridgeName setStringValue:[[aNetwork bridge] name]];
+    [fieldBridgeForwardDevice setStringValue:[[aNetwork forward] dev]];
+    [fieldBridgeForwardMode setStringValue:([[aNetwork forward] mode] != @"") ? [[aNetwork forward] mode] : @"Nothing"];
+    [fieldBridgeIP setStringValue:[[aNetwork IP] address]];
+    [fieldBridgeNetmask setStringValue:[[aNetwork IP] netmask]];
+    [fieldBridgeSTP setStringValue:[[aNetwork bridge] isSTPEnabled] ? @"Yes" : @"No"];
+    [fieldBridgeDelay setStringValue:[[aNetwork bridge] delay]];
     [fieldAutostart setStringValue:([aNetwork isAutostart]) ? @"On" : @"Off"];
 
     [tableDHCPRanges setDataSource:_datasourceRanges];
     [_datasourceRanges setTable:tableDHCPRanges];
-    [_datasourceRanges setContent:[aNetwork DHCPEntriesRanges]];
+    [_datasourceRanges setContent:[[[aNetwork IP] DHCP] ranges]];
     [tableDHCPRanges reloadData];
 
     [tableDHCPHosts setDataSource:_datasourceHosts];
     [_datasourceHosts setTable:tableDHCPHosts];
-    [_datasourceHosts setContent:[aNetwork DHCPEntriesHosts]];
+    [_datasourceHosts setContent:[[[aNetwork IP] DHCP] hosts]];
     [tableDHCPHosts reloadData];
 }
 
