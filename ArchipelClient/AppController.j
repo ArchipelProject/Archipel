@@ -1400,9 +1400,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         {
             var itemAtRow = [_rosterOutlineView itemAtRow:[selectedRowIndexes firstIndex]];
             if ([itemAtRow isKindOfClass:TNStropheContact])
-                [[_stropheGroupSelection contacts] addObject:itemAtRow];
+            {
+                if (![[_stropheGroupSelection contacts] containsObject:itemAtRow])
+                    [[_stropheGroupSelection contacts] addObject:itemAtRow];
+            }
             else
-                [_stropheGroupSelection addSubGroup:itemAtRow];
+            {
+                var contacts = [[[TNStropheIMClient defaultClient] roster] getAllContactsTreeFromGroup:itemAtRow];
+                for (var i = 0; i < [contacts count]; i++)
+                    if (![[_stropheGroupSelection contacts] containsObject:[contacts objectAtIndex:i]])
+                        [[_stropheGroupSelection contacts] addObject:[contacts objectAtIndex:i]];
+            }
             [selectedRowIndexes removeIndex:[selectedRowIndexes firstIndex]];
         }
         item = _stropheGroupSelection;
