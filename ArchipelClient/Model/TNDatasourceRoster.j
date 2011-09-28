@@ -101,9 +101,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         var itemType = [[aVCard firstChildWithName:@"ROLE"] text];
 
-        if ((itemType == TNArchipelEntityTypeVirtualMachine)
-            || (itemType == TNArchipelEntityTypeHypervisor)
-            || (itemType == TNArchipelEntityTypeGroup))
+        if ([TNArchipelEntityTypes containsKey:itemType])
             return itemType;
         else
             return TNArchipelEntityTypeUser;
@@ -112,7 +110,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return TNArchipelEntityTypeUser;
 }
 
-
+/*! A Shorthand to fetch the description of a registered entity type
+       @param anEntity CPString The name of the entity to get the description for.
+       @return CPString Returns the localized description of the entity.
+*/
+-(CPString)entityDescriptionFor:(CPString)anEntity
+{
+       return [TNArchipelEntityTypes objectForKey:anEntity];
+}
 
 #pragma mark -
 #pragma mark Notification handlers

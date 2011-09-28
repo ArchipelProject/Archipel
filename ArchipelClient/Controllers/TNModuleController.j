@@ -472,6 +472,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"],
         mandatoryPermissions        = [aBundle objectForInfoDictionaryKey:@"MandatoryPermissions"],
         bundleLocale                = [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"],
+        entityDefinition            = [aBundle objectForInfoDictionaryKey:@"RegisterEntityType"],
         moduleItem                  = [[CPMenuItem alloc] init],
         moduleRootMenu              = [[CPMenu alloc] init],
         frame                       = [_mainModuleView bounds],
@@ -482,6 +483,25 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
         if (!moduleLabel)
             moduleLabel = [[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"] objectForKey:@"en"];
+    }
+
+    // Register custom entity types if told so by the module
+    if (entityDefinition)
+    {
+        var entityType = [entityDefinition objectForKey:@"Type"],
+            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"];
+    
+        if (!entityDescriptionGroup)
+            entityDescription = entityType;
+        else
+        {  
+            entityDescription = [entityDescriptionGroup objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
+            if (!entityDescription)
+                entityDescription = [entityDescriptionGroup objectForKey:@"en"];
+        }
+
+        // Register the entity types in the global variable
+        [TNArchipelEntityTypes setObject:entityDescription forKey:entityType];
     }
 
     [currentModuleController initializeModule];

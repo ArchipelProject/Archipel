@@ -101,6 +101,12 @@ TNArchipelEntityTypeUser            = @"user";
 */
 TNArchipelEntityTypeGroup           = @"group";
 
+/*! @global
+    @group TNArchipelEntityType
+    This is the dictionary that holds the registered
+    XMPP entity types and their description.
+*/
+TNArchipelEntityTypes               = nil;
 
 
 /*! @global
@@ -450,6 +456,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.info(@"current version is " + currentVersion);
     [updateController setCurrentVersion:currentVersion]
     [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
+
+    /* Initialize the Entity Types global variable */
+    TNArchipelEntityTypes = [[CPDictionary alloc] init];
+    [TNArchipelEntityTypes setObject:CPLocalizedString(@"Virtual machine", @"Virtual machine")
+                              forKey:TNArchipelEntityTypeVirtualMachine];
+    [TNArchipelEntityTypes setObject:CPLocalizedString(@"Hypervisor", @"Hypervisor")
+                              forKey:TNArchipelEntityTypeHypervisor];
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
