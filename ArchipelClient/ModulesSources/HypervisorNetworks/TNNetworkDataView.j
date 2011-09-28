@@ -61,7 +61,7 @@ var _imageNetworkActive,
     @outlet CPTextField         labelInLimit;
     @outlet CPTextField         labelOutLimit;
 
-    TNHypervisorNetwork         _network;
+    TNLibvirtNetwork            _network;
     TNTableViewDataSource       _datasourceHosts;
     TNTableViewDataSource       _datasourceRanges;
 }

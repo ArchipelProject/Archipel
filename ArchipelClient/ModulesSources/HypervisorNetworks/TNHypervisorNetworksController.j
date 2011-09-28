@@ -32,7 +32,6 @@
 @import <TNKit/TNUIKitScrollView.j>
 
 @import "TNDHCPEntryObject.j"
-@import "TNHypervisorNetworkObject.j"
 @import "TNNetworkEditionController.j"
 @import "TNNetworkDataView.j"
 
@@ -73,7 +72,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     CPButton                            _minusButton;
     CPButton                            _plusButton;
     CPButton                            _editXMLButton;
-    TNHypervisorNetwork                 _networkHolder;
+    TNLibvirtNetwork                    _networkHolder;
     TNTableViewDataSource               _datasourceNetworks;
     CPDictionary                        _networksRAW;
 
@@ -315,22 +314,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
         baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
         newNetwork      = [TNLibvirtNetwork defaultNetworkWithName:uuid UUID:uuid];
-
-
-        // newNetwork      = [TNHypervisorNetwork networkWithName:uuid
-        //                                                   UUID:uuid
-        //                                             bridgeName:@"br" + Math.round((Math.random() * 42000))
-        //                                            bridgeDelay:@"0"
-        //                                      bridgeForwardMode:@"nat"
-        //                                    bridgeForwardDevice:@"eth0"
-        //                                               bridgeIP:ip
-        //                                          bridgeNetmask:@"255.255.0.0"
-        //                                      DHCPEntriesRanges:[baseDHCPEntry]
-        //                                       DHCPEntriesHosts:[CPArray array]
-        //                                         networkEnabled:NO
-        //                                             STPEnabled:NO
-        //                                            DHCPEnabled:YES
-        //                                              autostart:YES];
 
     [networkController setNetwork:newNetwork];
     [networkController openWindow:_plusButton];
@@ -619,7 +602,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 /*! define the given network
     @param aNetwork the network to define
 */
-- (void)defineNetwork:(TNHypervisorNetwork)aNetwork
+- (void)defineNetwork:(TNLibvirtNetwork)aNetwork
 {
     if ([aNetwork isActive])
     {
@@ -675,7 +658,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 }
 
 /*! activate given networks
-    @param someNetworks CPArray of TNHypervisorNetwork
+    @param someNetworks CPArray of TNLibvirtNetwork
 */
 - (void)activateNetworks:(CPArray)someNetworks
 {
@@ -699,7 +682,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 }
 
 /*! deactivate given networks
-    @param someNetworks CPArray of TNHypervisorNetwork
+    @param someNetworks CPArray of TNLibvirtNetwork
 */
 - (void)deactivateNetworks:(CPArray)someNetworks
 {
@@ -737,7 +720,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 }
 
 /*! delete given networks
-    @param someNetworks CPArray of TNHypervisorNetwork
+    @param someNetworks CPArray of TNLibvirtNetwork
 */
 - (void)deleteNetworks:(CPArray)someNetworks
 {
