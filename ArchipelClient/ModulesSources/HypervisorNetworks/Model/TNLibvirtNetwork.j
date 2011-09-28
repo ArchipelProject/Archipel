@@ -19,6 +19,7 @@
 
 @import "TNLibvirtNetworkBase.j"
 @import "TNLibvirtNetworkBridge.j"
+@import "TNLibvirtNetworkDomain.j"
 @import "TNLibvirtNetworkForward.j"
 @import "TNLibvirtNetworkIP.j"
 
@@ -29,13 +30,15 @@
 {
     CPString                        _name               @accessors(property=name);
     CPString                        _UUID               @accessors(property=UUID);
+    TNLibvirtNetworkBandwidth       _bandwidth          @accessors(property=bandwidth);
     TNLibvirtNetworkBridge          _bridge             @accessors(property=bridge);
+    TNLibvirtNetworkDomain          _domain             @accessors(property=domain);
     TNLibvirtNetworkForward         _forward            @accessors(property=forward);
     TNLibvirtNetworkIP              _IP                 @accessors(property=IP);
 
     // extended attributes
-    BOOL                            _autostart          @accessors(getter=isAutostart, setter=setAutostart:);
     BOOL                            _active             @accessors(property=isActive, setter=setActive:);
+    BOOL                            _autostart          @accessors(getter=isAutostart, setter=setAutostart:);
 }
 
 
@@ -75,7 +78,10 @@
             _forward = [[TNLibvirtNetworkForward alloc] initWithXMLNode:[aNode firstChildWithName:@"forward"]];
         if ([aNode firstChildWithName:@"ip"])
             _IP = [[TNLibvirtNetworkIP alloc] initWithXMLNode:[aNode firstChildWithName:@"ip"]];
-
+        if ([aNode firstChildWithName:@"domain"])
+            _domain = [[TNLibvirtNetworkDomain alloc] initWithXMLNode:[aNode firstChildWithName:@"domain"]];
+        if ([aNode firstChildWithName:@"bandwidth"])
+            _bandwidth = [[TNLibvirtNetworkBandwidth alloc] initWithXMLNode:[aNode firstChildWithName:@"bandwidth"]];
     }
 
     return self;
@@ -126,6 +132,18 @@
     if (_IP)
     {
         [node addNode:[_IP XMLNode]];
+        [node up];
+    }
+
+    if (_domain)
+    {
+        [node addNode:[_domain XMLNode]];
+        [node up];
+    }
+
+    if (_bandwidth)
+    {
+        [node addNode:[_bandwidth XMLNode]];
         [node up];
     }
 

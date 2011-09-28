@@ -25,9 +25,9 @@
 */
 @implementation TNLibvirtNetworkBridge : TNLibvirtNetworkBase
 {
-    CPString        _name           @accessors(property=name);
     BOOL            _stp            @accessors(getter=isSTPEnabled, setter=setEnableSTP:);
     CPString        _delay          @accessors(property=delay);
+    CPString        _name           @accessors(property=name);
 }
 
 
@@ -51,7 +51,7 @@
 {
     if (self = [super init])
     {
-        _stp = NO;
+        _stp = YES;
         _delay = @"0";
     }
 

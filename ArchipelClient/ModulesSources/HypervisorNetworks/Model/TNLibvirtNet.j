@@ -17,6 +17,9 @@
  */
 
 @import "TNLibvirtNetwork.j"
+@import "TNLibvirtNetworkBandwidth.j"
+@import "TNLibvirtNetworkBandwidthInbound.j"
+@import "TNLibvirtNetworkBandwidthOutbound.j"
 @import "TNLibvirtNetworkBase.j"
 @import "TNLibvirtNetworkBridge.j"
 @import "TNLibvirtNetworkDomain.j"

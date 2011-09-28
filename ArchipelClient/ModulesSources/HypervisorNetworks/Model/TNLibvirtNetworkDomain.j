@@ -73,9 +73,7 @@
     var node = [TNXMLNode nodeWithName:@"domain"];
 
     if (_name)
-    {
         [node setValue:_name forAttribute:@"name"];
-    }
 
     return node;
 }

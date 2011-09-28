@@ -28,9 +28,9 @@
 @implementation TNLibvirtNetworkIP : TNLibvirtNetworkBase
 {
     CPString                        _address        @accessors(property=address);
+    CPString                        _family         @accessors(property=family);
     CPString                        _netmask        @accessors(property=netmask);
     CPString                        _prefix         @accessors(property=prefix);
-    CPString                        _family         @accessors(property=family);
 
     TNLibvirtNetworkIPDHCP          _DHCP           @accessors(property=DHCP);
     TNLibvirtNetworkIPTFTP          _TFTP           @accessors(property=TFTP);

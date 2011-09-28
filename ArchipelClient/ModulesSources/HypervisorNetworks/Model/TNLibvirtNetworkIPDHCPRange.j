@@ -24,8 +24,8 @@
 */
 @implementation TNLibvirtNetworkIPDHCPRange : TNLibvirtNetworkBase
 {
-    CPString        _start      @accessors(property=start);
     CPString        _end        @accessors(property=end);
+    CPString        _start      @accessors(property=start);
 }
 
 

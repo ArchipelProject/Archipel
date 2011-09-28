@@ -25,9 +25,9 @@
 */
 @implementation TNLibvirtNetworkIPDHCPHost : TNLibvirtNetworkBase
 {
-    CPString        _MAC        @accessors(property=mac);
-    CPString        _name       @accessors(property=name);
     CPString        _IP         @accessors(property=IP);
+    CPString        _mac        @accessors(property=mac);
+    CPString        _name       @accessors(property=name);
 }
 
 
@@ -60,7 +60,7 @@
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid host"];
 
         _name   = [aNode valueForAttribute:@"name"];
-        _MAC    = [aNode valueForAttribute:@"mac"];
+        _mac    = [aNode valueForAttribute:@"mac"];
         _IP     = [aNode valueForAttribute:@"ip"];
     }
 
@@ -78,7 +78,7 @@
 {
     if (!_IP)
         [CPException raise:@"Missing IP" reason:@"IP is required"];
-    if (!_MAC)
+    if (!_mac)
         [CPException raise:@"Missing mac" reason:@"Mac is required"];
     if (!_name)
         [CPException raise:@"Missing name" reason:@"name is required"];
@@ -87,8 +87,8 @@
 
     if (_name)
         [node setValue:_name forAttribute:@"name"];
-    if (_MAC)
-        [node setValue:_MAC forAttribute:@"mac"];
+    if (_mac)
+        [node setValue:_mac forAttribute:@"mac"];
     if (_IP)
         [node setValue:_IP forAttribute:@"ip"];
 

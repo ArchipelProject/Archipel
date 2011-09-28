@@ -26,8 +26,8 @@
 */
 @implementation TNLibvirtNetworkIPDHCP : TNLibvirtNetworkBase
 {
-    CPArray     _ranges         @accessors(property=ranges);
     CPArray     _hosts          @accessors(property=hosts);
+    CPArray     _ranges         @accessors(property=ranges);
 }
 
 #pragma mark -

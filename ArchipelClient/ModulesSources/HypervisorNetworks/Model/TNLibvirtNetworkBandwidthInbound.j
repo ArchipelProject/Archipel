@@ -25,8 +25,8 @@
 @implementation TNLibvirtNetworkBandwidthInbound : TNLibvirtNetworkBase
 {
     CPString        _average    @accessors(property=average);
-    CPString        _peak       @accessors(property=peak);
     CPString        _burst      @accessors(property=burst);
+    CPString        _peak       @accessors(property=peak);
 }
 
 

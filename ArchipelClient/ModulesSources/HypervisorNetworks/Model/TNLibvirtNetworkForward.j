@@ -19,8 +19,20 @@
 @import "TNLibvirtNetworkBase.j"
 @import "TNLibvirtNetworkForwardInterface.j"
 
+TNLibvirtNetworkForwardModeNAT          = @"nat";
+TNLibvirtNetworkForwardModeRoute        = @"route";
+TNLibvirtNetworkForwardModeBridge       = @"bridge";
+TNLibvirtNetworkForwardModePrivate      = @"private";
+TNLibvirtNetworkForwardModeVEPA         = @"vepa";
+TNLibvirtNetworkForwardModePrivate      = @"private";
+TNLibvirtNetworkForwardModePassthrough  = @"passthrough";
+TNLibvirtNetworkForwardModeIsolated     = @"isolated";
 
-TNLibvirtNetworkForwardModes = [@"nat", @"route", @"bridge", @"private", @"vepa", @"passthrough", @"isolated"];
+TNLibvirtNetworkForwardModes            = [ TNLibvirtNetworkForwardModeBridge,
+                                            TNLibvirtNetworkForwardModePrivate,
+                                            TNLibvirtNetworkForwardModeNAT,
+                                            TNLibvirtNetworkForwardModeRoute,
+                                            TNLibvirtNetworkForwardModeIsolated];
 
 
 /*! @ingroup hypervisornetworks
@@ -28,9 +40,9 @@ TNLibvirtNetworkForwardModes = [@"nat", @"route", @"bridge", @"private", @"vepa"
 */
 @implementation TNLibvirtNetworkForward : TNLibvirtNetworkBase
 {
-    CPString    _mode           @accessors(property=mode);
-    CPString    _dev            @accessors(property=dev);
     CPArray     _interfaces     @accessors(property=interfaces);
+    CPString    _dev            @accessors(property=dev);
+    CPString    _mode           @accessors(property=mode);
 }
 
 #pragma mark -

@@ -20,13 +20,13 @@
 
 
 /*! @ingroup hypervisornetworks
-    Model for network bandwidth inbound
+    Model for network bandwidth outbound
 */
 @implementation TNLibvirtNetworkBandwidthOutbound : TNLibvirtNetworkBase
 {
     CPString        _average    @accessors(property=average);
-    CPString        _peak       @accessors(property=peak);
     CPString        _burst      @accessors(property=burst);
+    CPString        _peak       @accessors(property=peak);
 }
 
 
