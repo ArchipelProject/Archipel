@@ -315,21 +315,20 @@
         [entryStatus setStringValue:[_entity XMPPStatus]];
         [entryNode setStringValue:[[_entity JID] node]];
 
-        switch ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]])
+        // Query the custom entity types registered by the modules
+        var entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]],
+            entityDescription = [[[TNStropheIMClient defaultClient] roster] entityDescriptionFor:entityType];
+        if (!entityDescription)
         {
-            case TNArchipelEntityTypeVirtualMachine:
-                [entryType setStringValue:CPLocalizedString(@"Virtual machine", @"Virtual machine")];
-                [buttonEventSubscription setHidden:NO];
-                break;
-
-            case TNArchipelEntityTypeHypervisor:
-                [entryType setStringValue:CPLocalizedString(@"Hypervisor", @"Hypervisor")];
-                [buttonEventSubscription setHidden:NO];
-                break;
-
-            default:
-                [entryType setStringValue:CPLocalizedString(@"User", @"User")];
-                [buttonEventSubscription setHidden:YES];
+            // Not found? Use default...
+            [entryType setStringValue:CPLocalizedString(@"User", @"User")];
+            [buttonEventSubscription setHidden:YES];
+        }
+        else
+        {
+            // Found? Use localized string specified from the registered entityType
+            [entryType setStringValue:entityDescription];
+            [buttonEventSubscription setHidden:NO];
         }
 
         if ([_entity avatar])
