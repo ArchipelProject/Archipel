@@ -71,7 +71,7 @@ def process_message(conn, msg):
     """
     global NUMBER_OF_RESPONSES
     NUMBER_OF_RESPONSES = NUMBER_OF_RESPONSES+1
-    print "From %s : %s" % ( msg.getFrom(),msg.getTag("body").getData())
+    print "From %s : %s" % ( msg.getFrom(), msg.getTag("body").getData())
 
 
 def get_all_entity_with_tag(xmppclient, pubsubserver, tags):
