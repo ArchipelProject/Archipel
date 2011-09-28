@@ -1,6 +1,3 @@
-/* Activate */
-"Activate" = "Activate";
-
 /* Activate or deactivate Spanning Tree Protocol for the bridge */
 "Activate or deactivate Spanning Tree Protocol for the bridge" = "Activer ou désactiver Spanning Tree Protocol";
 
@@ -73,9 +70,6 @@
 /* domain.com */
 "domain.com" = "domaine.com";
 
-/* Edit */
-"Edit" = "Editer";
-
 /* Edit selected network */
 "Edit selected network" = "Editer le réseau sélectionné";
 
@@ -93,9 +87,6 @@
 
 /* Error */
 "Error" = "Erreur";
-
-/* Network */
-"Network" = "Réseau";
 
 /* Network has been defined */
 "Network has been defined" = "Le réseau a été défini";

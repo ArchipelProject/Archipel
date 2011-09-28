@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Activate</key>
-	<string>Activate</string>
 	<key>Activate or deactivate Spanning Tree Protocol for the bridge</key>
 	<string>Activer ou désactiver Spanning Tree Protocol</string>
 	<key>Activate selected networks</key>
@@ -50,8 +48,6 @@
 	<string>Supprimer le réseau sélectionné</string>
 	<key>Delete selected networks</key>
 	<string>Supprimer les réseaux sélectionnés</string>
-	<key>Edit</key>
-	<string>Editer</string>
 	<key>Edit selected network</key>
 	<string>Editer le réseau sélectionné</string>
 	<key>Enable DHCP for this virtual network</key>
@@ -64,8 +60,6 @@
 	<string>Entrer la valeur du délai</string>
 	<key>Error</key>
 	<string>Erreur</string>
-	<key>Network</key>
-	<string>Réseau</string>
 	<key>Network has been defined</key>
 	<string>Le réseau a été défini</string>
 	<key>Network has been removed</key>

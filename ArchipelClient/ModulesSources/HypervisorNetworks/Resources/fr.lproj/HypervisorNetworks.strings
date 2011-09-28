@@ -47,17 +47,8 @@
 /* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "45"; */
 "45.title" = "Item 2";
 
-/* Class = "NSTextFieldCell"; title = "Forward mode:"; ObjectID = "47"; */
-"47.title" = "Mode de renvoi:";
-
 /* Class = "NSTextFieldCell"; title = "Activate STP:"; ObjectID = "55"; */
 "55.title" = "Activer STP:";
-
-/* Class = "NSBox"; title = "Box"; ObjectID = "58"; */
-"58.title" = "Box";
-
-/* Class = "NSTextFieldCell"; title = "Addressing"; ObjectID = "60"; */
-"60.title" = "Addressage";
 
 /* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
 "62.title" = "Addresse du pont:";
@@ -71,9 +62,6 @@
 /* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
 "68.title" = "Masque:";
 
-/* Class = "NSButtonCell"; title = "DHCP enabled"; ObjectID = "70"; */
-"70.title" = "DHCP activé";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "72"; */
 "72.title" = "Box";
 
@@ -82,12 +70,6 @@
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "76"; */
 "76.title" = "Annuler";
-
-/* Class = "NSTextFieldCell"; title = "You can create auto IP assignation ranges."; ObjectID = "79"; */
-"79.title" = "Vous pouvez créer des assignation automatique d'IP.";
-
-/* Class = "NSTextFieldCell"; title = "You can create host address reservation."; ObjectID = "89"; */
-"89.title" = "Vous pouvez créer des résérvation de nom d'hôte.";
 
 /* Class = "NSTextFieldCell"; title = "Network name"; ObjectID = "206"; */
 "206.title" = "Nom du réseau";
@@ -214,4 +196,100 @@
 
 /* Class = "NSTextFieldCell"; title = "On | Off"; ObjectID = "433"; */
 "433.title" = "On | Off";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "436"; */
+"436.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "437"; */
+"437.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Bridge configuration"; ObjectID = "454"; */
+"454.title" = "Bridge configuration";
+
+/* Class = "NSTextFieldCell"; title = "IP configuration"; ObjectID = "456"; */
+"456.title" = "IP configuration";
+
+/* Class = "NSTextFieldCell"; title = "General informations"; ObjectID = "458"; */
+"458.title" = "General informations";
+
+/* Class = "NSTextFieldCell"; title = "DHCP Configuration"; ObjectID = "460"; */
+"460.title" = "DHCP Configuration";
+
+/* Class = "NSTextFieldCell"; title = "Enable DCHP:"; ObjectID = "462"; */
+"462.title" = "Enable DCHP:";
+
+/* Class = "NSTextFieldCell"; title = "Quality of service"; ObjectID = "464"; */
+"464.title" = "Quality of service";
+
+/* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "578"; */
+"578.title" = "Burst";
+
+/* Class = "NSTextFieldCell"; title = "Peak"; ObjectID = "579"; */
+"579.title" = "Peak";
+
+/* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "580"; */
+"580.title" = "Average";
+
+/* Class = "NSTextFieldCell"; title = "Outbound:"; ObjectID = "581"; */
+"581.title" = "Outbound:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "582"; */
+"582.placeholderString" = "100";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1500"; ObjectID = "583"; */
+"583.placeholderString" = "1500";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1000"; ObjectID = "584"; */
+"584.placeholderString" = "1000";
+
+/* Class = "NSTextFieldCell"; title = "Message"; ObjectID = "602"; */
+"602.title" = "Message";
+
+/* Class = "NSTextFieldCell"; title = "In limit:"; ObjectID = "615"; */
+"615.title" = "In limit:";
+
+/* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "616"; */
+"616.title" = "1000/1000/1000";
+
+/* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "617"; */
+"617.title" = "1000/1000/1000";
+
+/* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "618"; */
+"618.title" = "Out limit:";
+
+/* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "633"; */
+"633.title" = "Burst";
+
+/* Class = "NSTextFieldCell"; title = "Peak"; ObjectID = "634"; */
+"634.title" = "Peak";
+
+/* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "635"; */
+"635.title" = "Average";
+
+/* Class = "NSTextFieldCell"; title = "Inbound:"; ObjectID = "636"; */
+"636.title" = "Inbound:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "637"; */
+"637.placeholderString" = "100";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1500"; ObjectID = "638"; */
+"638.placeholderString" = "1500";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1000"; ObjectID = "639"; */
+"639.placeholderString" = "1000";
+
+/* Class = "NSTextFieldCell"; title = "Network XML"; ObjectID = "652"; */
+"652.title" = "Network XML";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "654"; */
+"654.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "657"; */
+"657.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Define"; ObjectID = "658"; */
+"658.title" = "Define";
+
+/* Class = "NSTextFieldCell"; title = "Manual edition of a network can be dangerous. Use with caution."; ObjectID = "672"; */
+"672.title" = "Manual edition of a network can be dangerous. Use with caution.";
 
