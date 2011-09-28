@@ -95,7 +95,7 @@ var TNInterfaceDeviceDataViewIconNetwork,
     [fieldType setStringValue:[_currentInterface type]];
     [fieldModel setStringValue:[_currentInterface model]];
     [fieldSource setStringValue:[[_currentInterface source] sourceObject]];
-    [fieldFilter setStringValue:[[_currentInterface filterref] name]];
+    [fieldFilter setStringValue:[[_currentInterface filterref] name] || @"None"];
 }
 
 
