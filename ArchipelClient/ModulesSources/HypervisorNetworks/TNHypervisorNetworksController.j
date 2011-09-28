@@ -26,6 +26,7 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 
+@import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNUIKitScrollView.j>
@@ -56,20 +57,25 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 @implementation TNHypervisorNetworksController : TNModule
 {
+    @outlet CPButton                    buttonDefineXMLString;
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPTableView                 tableViewNetworks;
     @outlet CPView                      viewTableContainer;
+    @outlet LPMultiLineTextField        fieldXMLString;
     @outlet TNNetworkDataView           networkDataViewPrototype;
     @outlet TNNetworkEditionController  networkController;
+    @outlet CPPopover                   popoverXMLString;
 
     CPButton                            _activateButton;
     CPButton                            _deactivateButton;
     CPButton                            _editButton;
     CPButton                            _minusButton;
     CPButton                            _plusButton;
+    CPButton                            _editXMLButton;
     TNHypervisorNetwork                 _networkHolder;
     TNTableViewDataSource               _datasourceNetworks;
+    CPDictionary                        _networksRAW;
 
 }
 
@@ -80,6 +86,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)awakeFromCib
 {
+    _networksRAW = [CPDictionary dictionary];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     /* VM table view */
@@ -128,12 +136,22 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [_editButton setAction:@selector(editNetwork:)];
     [_editButton setToolTip:CPBundleLocalizedString(@"Open configuration panel for selected network", @"Open configuration panel for selected network")];
 
+    _editXMLButton = [CPButtonBar plusButton];
+    [_editXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
+    [_editXMLButton setTarget:self];
+    [_editXMLButton setAction:@selector(openXMLEditor:)];
+    [_editXMLButton setToolTip:CPLocalizedString(@"Open the manual XML editor", @"Open the manual XML editor")];
+
     [_minusButton setEnabled:NO];
     [_activateButton setEnabled:NO];
     [_deactivateButton setEnabled:NO];
     [_editButton setEnabled:NO];
+    [_editXMLButton setEnabled:NO];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton, _activateButton, _deactivateButton]];
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton, _activateButton, _deactivateButton, _editXMLButton]];
+
+    [fieldXMLString setTextColor:[CPColor blackColor]];
+    [fieldXMLString setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
 }
 
 
@@ -164,8 +182,18 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (void)willHide
 {
     [networkController closeWindow:nil];
+    [popoverXMLString close];
 
     [super willHide];
+}
+
+/*! Called when the module unload
+*/
+- (void)willUnload
+{
+    [_networksRAW removeAllObjects];
+
+    [super willUnload];
 }
 
 /*! called when MainMenu is ready
@@ -189,6 +217,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
     [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
     [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
+    [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
 
     [self _didTableSelectionChange:nil];
 }
@@ -221,6 +250,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [_editButton setEnabled:NO];
     [_activateButton setEnabled:NO];
     [_deactivateButton setEnabled:NO];
+    [_editXMLButton setEnabled:NO];
 
     if ([tableViewNetworks numberOfSelectedRows] == 0)
         return;
@@ -236,6 +266,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine"];
         [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
         [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
+        if ([tableViewNetworks numberOfSelectedRows] == 1)
+            [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
     }
 
     return YES;
@@ -353,6 +385,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
         if ([aSender isKindOfClass:CPMenuItem])
             aSender = _editButton;
+        [popoverXMLString close];
         [networkController openWindow:aSender];
     }
 }
@@ -420,6 +453,57 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 }
 
 
+/*! open the XML editor
+    @param aSender the sender of the action
+*/
+- (IBAction)openXMLEditor:(id)aSender
+{
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableViewNetworks numberOfSelectedRows] != 1)
+        return;
+
+    var network = [_datasourceNetworks objectAtIndex:[tableViewNetworks selectedRow]],
+        XMLString = [_networksRAW objectForKey:[network UUID]];
+
+    XMLString  = XMLString.replace("\n  \n", "\n");
+    XMLString  = XMLString.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
+    [fieldXMLString setStringValue:XMLString];
+    [networkController closeWindow:nil];
+    [popoverXMLString close];
+    [popoverXMLString showRelativeToRect:nil ofView:_editXMLButton preferredEdge:nil]
+    [popoverXMLString setDefaultButton:buttonDefineXMLString];
+}
+
+/*! Save the current XML string description
+    @param aSender the sender of the action
+*/
+- (IBAction)defineXMLString:(id)aSender
+{
+    var desc;
+    try
+    {
+        desc = (new DOMParser()).parseFromString(unescape(""+[fieldXMLString stringValue]+""), "text/xml").getElementsByTagName("network")[0];
+        if (!desc || typeof(desc) == "undefined")
+            [CPException raise:CPInternalInconsistencyException reason:@"Not valid XML"];
+    }
+    catch (e)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")
+                          style:CPCriticalAlertStyle];
+        [popoverXMLString close];
+        return;
+    }
+
+    var network = [[TNLibvirtNetwork alloc] initWithXMLNode:[TNXMLNode nodeWithXMLNode:desc]];
+    [self defineNetwork:network];
+    [popoverXMLString close];
+}
+
+
 #pragma mark -
 #pragma mark XMPP Controls
 
@@ -451,6 +535,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         [allNetworks addObjectsFromArray:unactiveNetworks];
 
         [_datasourceNetworks removeAllObjects];
+        [_networksRAW removeAllObjects];
 
         for (var i = 0; i < [allNetworks count]; i++)
         {
@@ -462,6 +547,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
             [network setAutostart:autostart];
             [network setActive:active];
             [_datasourceNetworks addObject:network];
+            [_networksRAW setObject:[networkNode stringValue].replace(" autostart='0'","").replace(" autostart='1'","")
+                             forKey:[network UUID]];
         }
 
         [tableViewNetworks reloadData];
@@ -515,7 +602,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     }
 }
 
-
 /*! define the given network
     @param aNetwork the network to define
 */
@@ -523,7 +609,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 {
     if ([aNetwork isActive])
     {
-        [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
         return
     }
 
@@ -536,7 +622,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     _networkHolder = aNetwork;
     [self sendStanza:stanza andRegisterSelector:@selector(_didNetworkUndefinBeforeDefining:)];
-
 }
 
 /*! if hypervisor sucessfullty deactivate the network. it will then define it
@@ -648,7 +733,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
         if ([networkObject isActive])
         {
-            [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
+            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
             return;
         }
 

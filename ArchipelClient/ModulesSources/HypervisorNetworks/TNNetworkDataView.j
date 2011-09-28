@@ -36,6 +36,7 @@ var _imageNetworkActive,
     @outlet CPImageView         imageStatus;
     @outlet CPTableView         tableDHCPHosts;
     @outlet CPTableView         tableDHCPRanges;
+    @outlet CPTextField         fieldAutostart;
     @outlet CPTextField         fieldBridgeDelay;
     @outlet CPTextField         fieldBridgeForwardDevice;
     @outlet CPTextField         fieldBridgeForwardMode;
@@ -43,8 +44,10 @@ var _imageNetworkActive,
     @outlet CPTextField         fieldBridgeName;
     @outlet CPTextField         fieldBridgeNetmask;
     @outlet CPTextField         fieldBridgeSTP;
+    @outlet CPTextField         fieldInLimit;
     @outlet CPTextField         fieldName;
-    @outlet CPTextField         fieldAutostart;
+    @outlet CPTextField         fieldOutLimit;
+    @outlet CPTextField         labelAutostart;
     @outlet CPTextField         labelBridgeDelay;
     @outlet CPTextField         labelBridgeForwardDevice;
     @outlet CPTextField         labelBridgeForwardMode;
@@ -55,12 +58,14 @@ var _imageNetworkActive,
     @outlet CPTextField         labelBridgeSTP;
     @outlet CPTextField         labelDHCPHosts;
     @outlet CPTextField         labelDHCPRanges;
-    @outlet CPTextField         labelAutostart;
+    @outlet CPTextField         labelInLimit;
+    @outlet CPTextField         labelOutLimit;
 
     TNHypervisorNetwork         _network;
     TNTableViewDataSource       _datasourceHosts;
     TNTableViewDataSource       _datasourceRanges;
 }
+
 
 + (void)initialize
 {
@@ -68,7 +73,6 @@ var _imageNetworkActive,
     _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
     _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
 }
-
 
 - (void)initWithFrame:(CPRect)aFrame
 {
@@ -80,6 +84,7 @@ var _imageNetworkActive,
 
     return self;
 }
+
 
 #pragma mark -
 #pragma mark Overrides
@@ -94,25 +99,47 @@ var _imageNetworkActive,
     _datasourceHosts        = [[TNTableViewDataSource alloc] init];
 
     [imageStatus setImage:[aNetwork isActive] ? _imageNetworkActive : _imageNetworkUnactive];
-
     [fieldName setStringValue:[aNetwork name]];
-    [fieldBridgeName setStringValue:[[aNetwork bridge] name]];
+    [fieldBridgeName setStringValue:[[aNetwork bridge] name] || @"No bridge"];
     [fieldBridgeForwardDevice setStringValue:[[aNetwork forward] dev]];
     [fieldBridgeForwardMode setStringValue:([[aNetwork forward] mode] != @"") ? [[aNetwork forward] mode] : @"Nothing"];
-    [fieldBridgeIP setStringValue:[[aNetwork IP] address]];
-    [fieldBridgeNetmask setStringValue:[[aNetwork IP] netmask]];
+    [fieldBridgeIP setStringValue:[[aNetwork IP] address] || @"No IP"];
+    [fieldBridgeNetmask setStringValue:[[aNetwork IP] netmask] || @"No Netmask"];
     [fieldBridgeSTP setStringValue:[[aNetwork bridge] isSTPEnabled] ? @"Yes" : @"No"];
     [fieldBridgeDelay setStringValue:[[aNetwork bridge] delay]];
     [fieldAutostart setStringValue:([aNetwork isAutostart]) ? @"On" : @"Off"];
 
-    [tableDHCPRanges setDataSource:_datasourceRanges];
+    [fieldInLimit setHidden:YES];
+    [labelInLimit setHidden:YES];
+    if ([[aNetwork bandwidth] inbound])
+    {
+        var average = [[[aNetwork bandwidth] inbound] average] || @"None",
+            peak = [[[aNetwork bandwidth] inbound] peak] || @"None",
+            burst = [[[aNetwork bandwidth] inbound] burst] || @"None";
+        [fieldInLimit setStringValue:[CPString stringWithFormat:@"%s/%s/%s", average, peak, burst]];
+        [fieldInLimit setHidden:NO];
+        [labelInLimit setHidden:NO];
+    }
+
+    [fieldOutLimit setHidden:YES];
+    [labelOutLimit setHidden:YES];
+    if ([[aNetwork bandwidth] outbound])
+    {
+        var average = [[[aNetwork bandwidth] outbound] average] || @"None",
+            peak = [[[aNetwork bandwidth] outbound] peak] || @"None",
+            burst = [[[aNetwork bandwidth] outbound] burst] || @"None";
+        [fieldOutLimit setStringValue:[CPString stringWithFormat:@"%s/%s/%s", average, peak, burst]];
+        [fieldOutLimit setHidden:NO];
+        [labelOutLimit setHidden:NO];
+    }
     [_datasourceRanges setTable:tableDHCPRanges];
     [_datasourceRanges setContent:[[[aNetwork IP] DHCP] ranges]];
+    [tableDHCPRanges setDataSource:_datasourceRanges];
     [tableDHCPRanges reloadData];
 
-    [tableDHCPHosts setDataSource:_datasourceHosts];
     [_datasourceHosts setTable:tableDHCPHosts];
     [_datasourceHosts setContent:[[[aNetwork IP] DHCP] hosts]];
+    [tableDHCPHosts setDataSource:_datasourceHosts];
     [tableDHCPHosts reloadData];
 }
 
@@ -140,6 +167,8 @@ var _imageNetworkActive,
         fieldBridgeSTP = [aCoder decodeObjectForKey:@"fieldBridgeSTP"];
         fieldBridgeDelay = [aCoder decodeObjectForKey:@"fieldBridgeDelay"];
         fieldAutostart = [aCoder decodeObjectForKey:@"fieldAutostart"];
+        fieldInLimit = [aCoder decodeObjectForKey:@"fieldInLimit"];
+        fieldOutLimit = [aCoder decodeObjectForKey:@"fieldOutLimit"];
         labelBridgeDelay = [aCoder decodeObjectForKey:@"labelBridgeDelay"];
         labelBridgeForwardDevice = [aCoder decodeObjectForKey:@"labelBridgeForwardDevice"];
         labelBridgeForwardMode = [aCoder decodeObjectForKey:@"labelBridgeForwardMode"];
@@ -151,6 +180,8 @@ var _imageNetworkActive,
         labelDHCPRanges = [aCoder decodeObjectForKey:@"labelDHCPRanges"];
         labelDHCPHosts = [aCoder decodeObjectForKey:@"labelDHCPHosts"];
         labelAutostart = [aCoder decodeObjectForKey:@"labelAutostart"];
+        labelInLimit = [aCoder decodeObjectForKey:@"labelInLimit"];
+        labelOutLimit = [aCoder decodeObjectForKey:@"labelOutLimit"];
     }
 
     return self;
@@ -174,6 +205,8 @@ var _imageNetworkActive,
     [aCoder encodeObject:fieldBridgeSTP forKey:@"fieldBridgeSTP"];
     [aCoder encodeObject:fieldBridgeDelay forKey:@"fieldBridgeDelay"];
     [aCoder encodeObject:fieldAutostart forKey:@"fieldAutostart"];
+    [aCoder encodeObject:fieldInLimit forKey:@"fieldInLimit"];
+    [aCoder encodeObject:fieldOutLimit forKey:@"fieldOutLimit"];
     [aCoder encodeObject:labelBridgeDelay forKey:@"labelBridgeDelay"];
     [aCoder encodeObject:labelBridgeForwardDevice forKey:@"labelBridgeForwardDevice"];
     [aCoder encodeObject:labelBridgeForwardMode forKey:@"labelBridgeForwardMode"];
@@ -185,6 +218,9 @@ var _imageNetworkActive,
     [aCoder encodeObject:labelDHCPRanges forKey:@"labelDHCPRanges"];
     [aCoder encodeObject:labelDHCPHosts forKey:@"labelDHCPHosts"];
     [aCoder encodeObject:labelAutostart forKey:@"labelAutostart"];
+    [aCoder encodeObject:labelInLimit forKey:@"labelInLimit"];
+    [aCoder encodeObject:labelOutLimit forKey:@"labelOutLimit"];
+
 }
 
 @end
