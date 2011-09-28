@@ -217,7 +217,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
     [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
     [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
-    [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
+    [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define"];
 
     [self _didTableSelectionChange:nil];
 }
@@ -246,10 +246,13 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 {
     var selectedIndex   = [[tableViewNetworks selectedRowIndexes] firstIndex];
 
+    [popoverXMLString close];
+
     [_minusButton setEnabled:NO];
     [_editButton setEnabled:NO];
     [_activateButton setEnabled:NO];
     [_deactivateButton setEnabled:NO];
+    [buttonDefineXMLString setEnabled:NO];
     [_editXMLButton setEnabled:NO];
 
     if ([tableViewNetworks numberOfSelectedRows] == 0)
@@ -260,6 +263,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     if ([networkObject isActive])
     {
         [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
+        if ([tableViewNetworks numberOfSelectedRows] == 1)
+            [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
     }
     else
     {
@@ -267,7 +272,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
         [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
         if ([tableViewNetworks numberOfSelectedRows] == 1)
+        {
+            [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define"];
             [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
+        }
     }
 
     return YES;
@@ -467,6 +475,12 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     var network = [_datasourceNetworks objectAtIndex:[tableViewNetworks selectedRow]],
         XMLString = [_networksRAW objectForKey:[network UUID]];
+
+
+    if ([network isActive])
+        [fieldXMLString setEnabled:NO];
+    else
+        [fieldXMLString setEnabled:YES];
 
     XMLString  = XMLString.replace("\n  \n", "\n");
     XMLString  = XMLString.replace(" xmlns='http://www.gajim.org/xmlns/undeclared'", "");
