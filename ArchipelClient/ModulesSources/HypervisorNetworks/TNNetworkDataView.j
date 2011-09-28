@@ -106,7 +106,7 @@ var _imageNetworkActive,
     [fieldBridgeIP setStringValue:[[aNetwork IP] address] || @"No IP"];
     [fieldBridgeNetmask setStringValue:[[aNetwork IP] netmask] || @"No Netmask"];
     [fieldBridgeSTP setStringValue:[[aNetwork bridge] isSTPEnabled] ? @"Yes" : @"No"];
-    [fieldBridgeDelay setStringValue:[[aNetwork bridge] delay]];
+    [fieldBridgeDelay setStringValue:[[aNetwork bridge] delay] || @"None"];
     [fieldAutostart setStringValue:([aNetwork isAutostart]) ? @"On" : @"Off"];
 
     [fieldInLimit setHidden:YES];

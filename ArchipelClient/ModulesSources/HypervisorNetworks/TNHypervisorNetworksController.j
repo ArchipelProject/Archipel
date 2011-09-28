@@ -469,7 +469,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         XMLString = [_networksRAW objectForKey:[network UUID]];
 
     XMLString  = XMLString.replace("\n  \n", "\n");
-    XMLString  = XMLString.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
+    XMLString  = XMLString.replace(" xmlns='http://www.gajim.org/xmlns/undeclared'", "");
     [fieldXMLString setStringValue:XMLString];
     [networkController closeWindow:nil];
     [popoverXMLString close];
