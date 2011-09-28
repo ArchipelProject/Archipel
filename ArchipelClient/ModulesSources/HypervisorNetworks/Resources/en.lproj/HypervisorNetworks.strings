@@ -8,13 +8,13 @@
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
 "19.title" = "Name:";
 
-/* Class = "NSTextFieldCell"; title = "Network"; ObjectID = "21"; */
+/* Class = "NSTextFieldCell"; title = "Network basics"; ObjectID = "21"; */
 "21.title" = "Network basics";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Name of the network"; ObjectID = "23"; */
 "23.placeholderString" = "Name of the network";
 
-/* Class = "NSTextFieldCell"; placeholderString = "Bridge name"; ObjectID = "26"; */
+/* Class = "NSTextFieldCell"; placeholderString = "Name of the network bridge"; ObjectID = "26"; */
 "26.placeholderString" = "Name of the network bridge";
 
 /* Class = "NSTextFieldCell"; title = "Bridge name:"; ObjectID = "27"; */
@@ -50,7 +50,7 @@
 /* Class = "NSTextFieldCell"; title = "Activate STP:"; ObjectID = "55"; */
 "55.title" = "Activate STP:";
 
-/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "62"; */
+/* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
 "62.title" = "Bridge address:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "127.0.0.1"; ObjectID = "64"; */
@@ -188,7 +188,7 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "351"; */
 "351.title" = "Text Cell";
 
-/* Class = "NSTextFieldCell"; title = "Auto start"; ObjectID = "428"; */
+/* Class = "NSTextFieldCell"; title = "Auto start:"; ObjectID = "428"; */
 "428.title" = "Auto start:";
 
 /* Class = "NSTextFieldCell"; title = "Autostart:"; ObjectID = "432"; */
