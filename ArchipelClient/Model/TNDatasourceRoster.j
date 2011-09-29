@@ -111,8 +111,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 /*! A Shorthand to fetch the description of a registered entity type
-       @param anEntity CPString The name of the entity to get the description for.
-       @return CPString Returns the localized description of the entity.
+    @param anEntity CPString The name of the entity to get the description for.
+    @return CPString Returns the localized description of the entity.
 */
 -(CPString)entityDescriptionFor:(CPString)anEntity
 {
