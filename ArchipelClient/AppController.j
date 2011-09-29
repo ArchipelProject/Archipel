@@ -458,7 +458,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
 
     /* Initialize the Entity Types global variable */
-    TNArchipelEntityTypes = [[CPDictionary alloc] init];
+    TNArchipelEntityTypes = [CPDictionary dictionary];
     [TNArchipelEntityTypes setObject:CPLocalizedString(@"Virtual machine", @"Virtual machine")
                               forKey:TNArchipelEntityTypeVirtualMachine];
     [TNArchipelEntityTypes setObject:CPLocalizedString(@"Hypervisor", @"Hypervisor")
