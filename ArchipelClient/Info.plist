@@ -80,12 +80,12 @@
         <key>major</key>
         <integer>0</integer>
         <key>minor</key>
-        <integer>3</integer>
+        <integer>4</integer>
         <key>revision</key>
-        <integer>2</integer>
+        <integer>0</integer>
     </dict>
     <key>TNArchipelVersionHuman</key>
-    <string>Archipel Beta 3.2 (Mars)</string>
+    <string>Archipel Beta 4.0 (Vespa)</string>
     <key>TNArchipelPropertyControllerEnabled</key>
     <integer>1</integer>
 </dict>

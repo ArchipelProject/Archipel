@@ -1,31 +1,32 @@
-# 
+#
 # setup.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 from setuptools import setup, find_packages
 
-VERSION             = '0.3.2'
+VERSION             = '0.4.0'
+
 DESCRIPTION="""\
 ** Archipel Agent **
 
 Copyright (c) 2011 Antoine Mercadal
 
-This package contains the agent you need to install on your hypervisor 
-in order to use them with Archipel. You need a running XMPP agent in 
+This package contains the agent you need to install on your hypervisor
+in order to use them with Archipel. You need a running XMPP agent in
 order to use Archipel and a recent version of Libvirt.
 
 For more information, please go to http://archipelproject.org
