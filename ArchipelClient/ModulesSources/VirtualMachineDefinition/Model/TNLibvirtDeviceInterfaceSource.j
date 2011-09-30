@@ -21,6 +21,16 @@
 
 @import "TNLibvirtBase.j";
 
+TNLibvirtDeviceInterfaceSourceModeVEPA          = @"vepa";
+TNLibvirtDeviceInterfaceSourceModeBridge        = @"bridge";
+TNLibvirtDeviceInterfaceSourceModePrivate       = @"private";
+TNLibvirtDeviceInterfaceSourceModePassthrough   = @"passthrough";
+
+TNLibvirtDeviceInterfaceSourceModes             = [ TNLibvirtDeviceInterfaceSourceModeVEPA,
+                                                    TNLibvirtDeviceInterfaceSourceModeBridge,
+                                                    TNLibvirtDeviceInterfaceSourceModePrivate,
+                                                    TNLibvirtDeviceInterfaceSourceModePassthrough];
+
 
 /*! @ingroup virtualmachinedefinition
     Model for interface source

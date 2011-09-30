@@ -45,9 +45,11 @@ TNLibvirtDeviceInterfaceModels          = [ TNLibvirtDeviceInterfaceModelNE2KISA
 TNLibvirtDeviceInterfaceTypeNetwork     = @"network";
 TNLibvirtDeviceInterfaceTypeBridge      = @"bridge";
 TNLibvirtDeviceInterfaceTypeUser        = @"user";
+TNLibvirtDeviceInterfaceTypeDirect      = @"direct";
 TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
                                             TNLibvirtDeviceInterfaceTypeBridge,
-                                            TNLibvirtDeviceInterfaceTypeUser];
+                                            TNLibvirtDeviceInterfaceTypeUser,
+                                            TNLibvirtDeviceInterfaceTypeDirect];
 
 /*! @ingroup virtualmachinedefinition
     Model for inteface
