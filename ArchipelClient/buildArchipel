@@ -33,7 +33,7 @@ def main():
         opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughels", [   "project", "all", "modules=", "allmodules", "native=", "clean",
                                                                     "config=", "build", "installmodules", "uninstallmodules",
                                                                     "generateplist", "help", "example", "ignoremodules=",
-                                                                    "sdk=", "export=", "localize", "samples"])
+                                                                    "sdk=", "export=", "localize", "samples", "list-modules"])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -120,6 +120,9 @@ def main():
 
         if o in ("-e", "--example"):
             example();
+
+        if o in ("--list-modules"):
+            listmodules();
 
     # append any chosen modules to the build path
     opt_build_paths.extend(opt_modules_paths);
@@ -320,6 +323,7 @@ Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
         -p | --project           : build only Archipel without any modules;
         -m | --allmodules        : build only all modules;
         --modules=<list>         : build a given list of module. <list> is "moduleA,moduleC" whith no space.
+        --list-modules           : list the available modules
 
     OPTIONS are the following:
         -I | --installmodules    : copy all the already builded modules according to TARGET to the destination dir.
@@ -417,6 +421,21 @@ def export_archipel(path, config):
     os.system("cp ./Resources/lock.png %s/Resources/" % final_path)
     print "# Cleaning temp files"
     os.system("rm -rf %s" % temp_path)
+
+def listmodules():
+    print """\
+List of available modules:
+    """
+    for modulename in os.listdir("ModulesSources"):
+        if os.path.isdir(os.path.join("ModulesSources", modulename)):
+            jakefile = open("ModulesSources/"+modulename+"/Jakefile")
+            summary = ""
+            for line in jakefile:
+                if (line.find("SUMMARY") == 0):
+                    tokens = line.split("=", 1)
+                    summary = tokens[1]
+            print "%s : %s" % (modulename, summary)
+    sys.exit(0);
 
 
 
