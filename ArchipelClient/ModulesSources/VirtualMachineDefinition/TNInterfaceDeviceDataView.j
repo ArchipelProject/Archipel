@@ -83,6 +83,7 @@ var TNInterfaceDeviceDataViewIconNetwork,
             break;
         case TNLibvirtDeviceInterfaceTypeUser:
             [imageIcon setImage:TNInterfaceDeviceDataViewIconUser];
+            break;
         case TNLibvirtDeviceInterfaceTypeDirect:
             [imageIcon setImage:TNInterfaceDeviceDataViewIconDirect];
             break;
