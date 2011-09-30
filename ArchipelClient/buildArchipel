@@ -423,18 +423,21 @@ def export_archipel(path, config):
     os.system("rm -rf %s" % temp_path)
 
 def listmodules():
-    print """\
-List of available modules:
-    """
+    print "List of available modules:"
+    n = 0
     for modulename in os.listdir("ModulesSources"):
+        n = n+1
         if os.path.isdir(os.path.join("ModulesSources", modulename)):
             jakefile = open("ModulesSources/"+modulename+"/Jakefile")
             summary = ""
             for line in jakefile:
+
                 if (line.find("SUMMARY") == 0):
                     tokens = line.split("=", 1)
-                    summary = tokens[1]
-            print "%s : %s" % (modulename, summary)
+                    summary = tokens[1].replace("\n", "").replace(";", "").replace("\"", "")
+            print " \033[32m+ %s\033[0m :%s" % (modulename, summary)
+            jakefile.close()
+    print "\nTotal of modules: %d" % n
     sys.exit(0);
 
 
