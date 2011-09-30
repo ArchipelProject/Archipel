@@ -27,6 +27,7 @@
 var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
     TNArchipelTypeHypervisorNetworkGetNames     = @"getnames",
     TNArchipelTypeHypervisorNetworkBridges      = @"bridges",
+    TNArchipelTypeHypervisorNetworkNICs         = @"getnics",
     TNArchipelTypeHypervisorNetworkGetNWFilters = @"getnwfilters";
 
 /*! @ingroup virtualmachinedefinition
@@ -171,16 +172,25 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
             [[_nic source] setNetwork:[buttonSource title]];
             [[_nic source] setBridge:nil];
             [[_nic source] setDevice:nil];
+            [[_nic source] setMode:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeBridge:
             [[_nic source] setNetwork:nil];
             [[_nic source] setBridge:[buttonSource title]];
             [[_nic source] setDevice:nil];
+            [[_nic source] setMode:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeUser:
             [[_nic source] setNetwork:nil];
             [[_nic source] setBridge:nil];
             [[_nic source] setDevice:nil];
+            [[_nic source] setMode:nil];
+            break;
+        case TNLibvirtDeviceInterfaceTypeDirect:
+            [[_nic source] setNetwork:nil];
+            [[_nic source] setBridge:nil];
+            [[_nic source] setDevice:[buttonSource title]];
+            [[_nic source] setMode:TNLibvirtDeviceInterfaceSourceModeBridge];
             break;
     }
 
@@ -215,10 +225,10 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     switch (nicType)
     {
         case TNLibvirtDeviceInterfaceTypeNetwork:
+            [buttonSource removeAllItems];
             if ([_delegate currentEntityHasPermission:@"network_getnames"])
             {
                 [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_getnames"];
-                [buttonSource removeAllItems];
                 [self getHypervisorNetworks];
             }
             else
@@ -234,6 +244,17 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
             }
             else
                 [buttonSource setEnabled:NO]
+            break;
+
+        case TNLibvirtDeviceInterfaceTypeDirect:
+            [buttonSource removeAllItems];
+            if ([_delegate currentEntityHasPermission:@"network_getnics"])
+            {
+                [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_getnics"];
+                [self getNics];
+            }
+            else
+                [buttonSource setEnabled:NO];
             break;
 
         case TNLibvirtDeviceInterfaceTypeUser:
@@ -359,6 +380,46 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     return NO;
 }
+
+/*! ask hypervisor for its bridges
+*/
+- (void)getNics
+{
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNetworkNICs}];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveNics:) ofObject:self];
+}
+
+/*! compute hypervisor bridges
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveNics:(id)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var hypervisorNics = [aStanza childrenWithName:@"nic"];
+
+        [buttonSource removeAllItems];
+        for (var i = 0; i < [hypervisorNics count]; i++)
+        {
+            var hypervisorNic = [[hypervisorNics objectAtIndex:i] valueForAttribute:@"name"];
+
+            [buttonSource addItemWithTitle:hypervisorNic];
+        }
+        [buttonSource selectItemWithTitle:[[_nic source] device]];
+
+        if (![buttonSource selectedItem])
+            [buttonSource selectItemAtIndex:0];
+    }
+    else
+        [_delegate handleIqErrorFromStanza:aStanza];
+
+    return NO;
+}
+
 
 /*! get existing nics on the hypervisor
 */

@@ -26,7 +26,8 @@
 
 var TNInterfaceDeviceDataViewIconNetwork,
     TNInterfaceDeviceDataViewIconUser,
-    TNInterfaceDeviceDataViewIconBridge;
+    TNInterfaceDeviceDataViewIconBridge,
+    TNInterfaceDeviceDataViewIconDirect;
 
 
 @implementation TNInterfaceDeviceDataView : TNBasicDataView
@@ -49,21 +50,16 @@ var TNInterfaceDeviceDataViewIconNetwork,
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize the data view
+/*! initialize the graphics
 */
-- (void)initWithFrame:(CPRect)aFrame
++ (void)initialize
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        if (!TNInterfaceDeviceDataViewIconNetwork)
-        {
-            TNInterfaceDeviceDataViewIconNetwork = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"nic_network.png"]];
-            TNInterfaceDeviceDataViewIconUser = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"nic_user.png"]];
-            TNInterfaceDeviceDataViewIconBridge = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"nic_bridge.png"]];
-        }
-    }
+    var bundle = [CPBundle bundleForClass:TNInterfaceDeviceDataView];
 
-    return self;
+    TNInterfaceDeviceDataViewIconNetwork = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_network.png"]];
+    TNInterfaceDeviceDataViewIconUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_user.png"]];
+    TNInterfaceDeviceDataViewIconBridge = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_bridge.png"]];
+    TNInterfaceDeviceDataViewIconDirect = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_direct.png"]];
 }
 
 
@@ -87,8 +83,9 @@ var TNInterfaceDeviceDataViewIconNetwork,
             break;
         case TNLibvirtDeviceInterfaceTypeUser:
             [imageIcon setImage:TNInterfaceDeviceDataViewIconUser];
+        case TNLibvirtDeviceInterfaceTypeDirect:
+            [imageIcon setImage:TNInterfaceDeviceDataViewIconDirect];
             break;
-
     }
 
     [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString]];
