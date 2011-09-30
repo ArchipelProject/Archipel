@@ -1226,6 +1226,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)deleteInputDevice:(id)aSender
 {
+    if ([tableInputDevices numberOfSelectedRows] <= 0)
+        return;
+
     [_inputDevicesDatasource removeObjectAtIndex:[tableInputDevices selectedRow]];
     [tableInputDevices reloadData];
     [self makeDefinitionEdited:YES];
@@ -1271,6 +1274,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)deleteGraphicDevice:(id)aSender
 {
+    if ([tableGraphicsDevices numberOfSelectedRows] <= 0)
+        return;
+
     [_graphicDevicesDatasource removeObjectAtIndex:[tableGraphicsDevices selectedRow]];
     [tableGraphicsDevices reloadData];
     [self makeDefinitionEdited:YES];
