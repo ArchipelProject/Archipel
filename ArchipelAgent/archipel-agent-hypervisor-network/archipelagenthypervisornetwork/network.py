@@ -308,6 +308,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         It understands IQ of type:
             - bridges
             - getnames
+            - getnics
             - getnwfilters
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -321,6 +322,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             reply = self.iq_get_names(iq)
         elif action == "bridges":
             reply = self.iq_bridges(iq)
+        elif action == "getnics":
+            reply = self.iq_get_nics(iq)
         elif action == "getnwfilters":
             reply = self.iq_get_nwfilters(iq)
         if reply:
