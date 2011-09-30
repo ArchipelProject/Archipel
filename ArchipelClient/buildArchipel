@@ -374,7 +374,7 @@ def export_sdk(path):
 
 def getAllCibs():
     print "# get all cibs"
-    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e ModulesSources")
+    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e ModulesSources -e Modules")
     cibs = ""
     path = []
     for o in out.split('\n'):
@@ -389,13 +389,15 @@ def export_archipel(path, config):
     final_path = "%s/Archipel-%s-b%s" % (path, config.capitalize(), GLOBAL_BUILD_NUMBER)
 
     build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config.capitalize()).replace("/*", "");
-    cibs = getAllCibs()
+    cibs = [""] # getAllCibs()
 
     os.system("flatten %s -f %s %s" % (cibs[0], build_dir, temp_path))
     os.system("press -f %s %s" % (temp_path, final_path))
 
-    print "# cleaning up CIBS files"
-    os.system("find %s -name *.cib -exec rm -rf {} \;" % final_path)
+    # print "# cleaning up CIBS files"
+    # os.system("find %s -name *.cib -exec rm -rf {} \;" % final_path)
+    print "# cleaning up XIBS files"
+    os.system("find %s -name *.xib -exec rm -rf {} \;" % final_path)
     print "# cleaning up png files"
     os.system("find %s -name *.png -exec rm -rf {} \;" % final_path)
     print "# cleaning up IE specific files"
