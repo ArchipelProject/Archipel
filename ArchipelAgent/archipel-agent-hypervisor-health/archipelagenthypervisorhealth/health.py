@@ -56,7 +56,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
         log_file                = self.configuration.get("LOGGING", "logging_file_path")
         self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)
         self.logfile = log_file
-        self.collector.start()
+
         # permissions
         self.entity.permission_center.create_permission("health_history", "Authorizes user to get the health history", False)
         self.entity.permission_center.create_permission("health_info", "Authorizes user to get entity information", False)
@@ -74,6 +74,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
                                 "description": "Get my last logs information" }
                             ]
         self.entity.add_message_registrar_items(registrar_items)
+
+        self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.start_collector)
 
 
     ### Plugin interface
@@ -109,6 +111,21 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
+
+
+    ### HOOK
+
+    def start_collector(self, origin=None, user_info=None, parameters=None):
+        """
+        Start the collector
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtime argument
+        """
+        self.collector.start()
 
 
     ### XMPP Processing

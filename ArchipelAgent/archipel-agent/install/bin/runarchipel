@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import os, sys
 from optparse import OptionParser
 import xmpp
@@ -106,6 +105,8 @@ def main():
     try:
         hyp.loop()
     except Exception as ex:
+        if hyp.xmppclient.isConnected():
+            hyp.xmppclient.disconnect()
         print "\033[31mRUNARCHIPEL: Exception has stopped the hypervisor main loop: %s\033[0m" % str(ex)
         sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
 
@@ -124,6 +125,10 @@ if __name__ == "__main__":
                         action="callback",
                         help="display the version of all components",
                         callback=versions)
+    parser.add_option("-n", "--nofork",
+                        action="store_true",
+                        dest="nofork",
+                        help="do not fork. For testing purpose")
 
     options, args = parser.parse_args()
     try:
@@ -132,9 +137,20 @@ if __name__ == "__main__":
         print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % options.config
         sys.exit(ARCHIPEL_INIT_ERROR_NO_CONFIG)
 
-    try:
-        pid = os.fork()
-        if pid == 0: main()
-        else: sys.exit(ARCHIPEL_INIT_SUCCESS)
-    except OSError as e:
-        sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+    if not options.nofork:
+        try:
+            pid = os.fork()
+            if pid > 0: sys.exit(0)
+        except OSError as e:
+            sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+        os.chdir("/")
+        os.setsid()
+        os.umask(0)
+        try:
+            pid = os.fork()
+            if pid > 0: sys.exit(0)
+        except OSError, e:
+            sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+
+    # start the daemon main loop
+    main()

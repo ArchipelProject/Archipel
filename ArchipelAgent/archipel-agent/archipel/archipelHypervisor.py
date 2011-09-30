@@ -180,12 +180,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.log.warning("Your hypervisor doesn't support libvirt eventing. Using fake event loop.")
         self.capabilities = self.get_capabilities()
 
-        # persistance
-        self.manage_persistance()
-
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook)
 
     def update_presence(self, origin=None, user_info=None, parameters=None):
         """
@@ -200,6 +198,18 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         count   = len(self.virtualmachines)
         status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
         self.change_presence(self.xmppstatusshow, status)
+
+    def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
+        """
+        Wake up virtual machines
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtime arguments
+        """
+        self.manage_persistance()
 
     def register_handlers(self):
         """

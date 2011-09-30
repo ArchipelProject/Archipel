@@ -122,7 +122,7 @@ class TNArchipelEntity (object):
         self.pubSubNodeLog          = None
         self.entity_type            = "not-defined"
         self.permission_center      = None
-        self.plugins                = [];
+        self.plugins                = []
         self.is_unregistering       = False
 
         if isinstance(self, TNHookableEntity):
@@ -189,12 +189,12 @@ class TNArchipelEntity (object):
                         if not self.configuration.has_section(plugin_info["configuration-section"]):
                             excluded_plugins.append(plugin_info["identifier"])
                             self.log.error("PLUGIN: plugin %s needs configuration section with name [%s]" % (plugin_info["identifier"], plugin_info["configuration-section"]))
-                            sys.exit(-1)
+                            self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                         for needed_token in plugin_info["configuration-tokens"]:
                             if not self.configuration.has_option(plugin_info["configuration-section"], needed_token):
                                 excluded_plugins.append(plugin_info["identifier"])
                                 self.log.error("PLUGIN: plugin %s needs configuration option with name %s" % (plugin_info["identifier"], needed_token))
-                                sys.exit(-1)
+                                self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                     self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
                     self.plugins.append(plugin)
             except Exception as ex:
@@ -310,7 +310,7 @@ class TNArchipelEntity (object):
                 self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                 return False
             else:
-                sys.exit(-1)
+                self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.log.info("Successfully connected to XMPP with JID %s" % str(self.jid))
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
@@ -321,14 +321,16 @@ class TNArchipelEntity (object):
         Authentify the client to the XMPP server.
         """
         self.log.info("Trying to authentify the client with username %s and resource %s" % (self.jid.getNode(), self.resource))
-        if self.xmppclient.auth(self.jid.getNode(), self.password, self.resource) == None:
+        result = self.xmppclient.auth(self.jid.getNode(), self.password, self.resource)
+        if result == None:
             self.isAuth = False
-            if (self.auto_register):
+            if self.auto_register:
                 self.log.info("Starting registration, according to propertie auto_register.")
                 self.inband_registration()
                 return
-            self.log.error("Bad authentication. Exiting.")
-            sys.exit(0)
+            self.log.error("Bad authentication or unable to register account. Exiting.")
+            self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
+            raise Exception("Unable to authenticate register. exiting")
         self.log.info("Successfully authenticated.")
         self.isAuth = True
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
@@ -796,6 +798,7 @@ class TNArchipelEntity (object):
         """
         if not self.auto_register:
             return
+
         self.log.info("Trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
         payload_username = xmpp.Node(tag="username")
@@ -805,10 +808,12 @@ class TNArchipelEntity (object):
         iq.setQueryNS("jabber:iq:register")
         iq.setQueryPayload([payload_username, payload_password])
         self.log.info("Registration information sent. Wait for response...")
-        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
+        resp_iq = self.xmppclient.SendAndWaitForResponse(iq, timeout=5)
         if resp_iq.getType() == "error":
             self.log.error("Unable to register: %s" % str(resp_iq))
-            sys.exit(-1)
+            self.log.error("Unable to perform inband registration. Have you activated this in your ejabberd server configuration?")
+            self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
+            raise Exception("Unable to perform inband registration")
         elif resp_iq.getType() == "result":
             self.log.info("Registration complete.")
             self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART

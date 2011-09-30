@@ -181,7 +181,6 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
                                                         self.configuration.get("VMCASTING", "own_vmcast_path"))
         self.parse_own_repo(loop=False)
         self.parse_timer = Thread(target=self.parse_own_repo)
-        self.parse_timer.start()
         self.database_connection = sqlite3.connect(self.database_path, check_same_thread = False)
         self.cursor = self.database_connection.cursor()
         self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
@@ -196,6 +195,23 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         self.entity.permission_center.create_permission("vmcasting_getappliances", "Authorizes user to get all availables appliances", False)
         self.entity.permission_center.create_permission("vmcasting_deleteappliance", "Authorizes user to delete an installed appliance", False)
         self.entity.permission_center.create_permission("vmcasting_getinstalledappliances", "Authorizes user to get all installed appliances", False)
+        # Hook registration
+        self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.repo_parse_hook)
+
+
+    ### Hook
+
+    def repo_parse_hook(self, origin=None, user_info=None, parameters=None):
+        """
+        Start the parser on connection
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtime arguments
+        """
+        self.parse_timer.start()
 
 
     ### Plugin interface
