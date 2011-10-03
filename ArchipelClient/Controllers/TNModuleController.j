@@ -92,6 +92,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     CPDictionary                    _loadedTabModules               @accessors(getter=loadedTabModules);
     CPDictionary                    _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
     CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
+    CPMenu                          _rosterContactsMenu             @accessors(property=rosterContactsMenu);
+    CPMenu                          _rosterGroupsMenu               @accessors(property=rosterGroupsMenu);
     CPString                        _modulesPath                    @accessors(property=modulesPath);
     CPString                        _moduleType                     @accessors(property=moduleType);
     CPTextField                     _infoTextField                  @accessors(property=infoTextField);
@@ -490,11 +492,11 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     {
         var entityType = [entityDefinition objectForKey:@"Type"],
             entityDescriptionGroup = [entityDefinition objectForKey:@"Description"];
-    
+
         if (!entityDescriptionGroup)
             entityDescription = entityType;
         else
-        {  
+        {
             entityDescription = [entityDescriptionGroup objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
             if (!entityDescription)
                 entityDescription = [entityDescriptionGroup objectForKey:@"en"];
@@ -521,6 +523,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         [_modulesMenu setAutoenablesItems:NO];
         [moduleItem setTarget:currentModuleController];
         [_modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
+        [currentModuleController setRosterGroupsMenu:_rosterGroupsMenu];
+        [currentModuleController setRosterContactsMenu:_rosterContactsMenu];
         [currentModuleController setMenuItem:moduleItem];
         [currentModuleController setMenu:moduleRootMenu];
         [currentModuleController menuReady];

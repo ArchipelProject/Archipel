@@ -194,6 +194,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPImage                                     _imageLedOutData;
     CPMenu                                      _mainMenu;
     CPMenu                                      _modulesMenu;
+    CPMenu                                      _rosterMenuForContacts;
+    CPMenu                                      _rosterMenuForGroups;
     CPPlatformWindow                            _platformHelpWindow;
     CPTextField                                 _rightViewTextField;
     CPTimer                                     _ledInTimer;
@@ -401,6 +403,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [self makeToolbar];
     [self makeAvatarChooser];
     [self makeMainMenu];
+    [self makeRosterMenu];
     [self makeButtonBar];
     [self makeCopyright];
 
@@ -416,6 +419,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
     [moduleController setModulesMenu:_modulesMenu];
+    [moduleController setRosterGroupsMenu:_rosterMenuForGroups];
+    [moduleController setRosterContactsMenu:_rosterMenuForContacts];
     [moduleController setToolbarModuleBackgroundColor:commonImageModuleBackground];
     [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
@@ -575,6 +580,15 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [CPMenu setMenuBarVisible:NO];
 
     CPLog.trace(@"Main menu created");
+}
+
+- (void)makeRosterMenu
+{
+    _rosterMenuForContacts = [[CPMenu alloc] init];
+    [_rosterMenuForContacts addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@""];
+
+    _rosterMenuForGroups = [[CPMenu alloc] init];
+    [_rosterMenuForGroups addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@""];
 }
 
 /*! initialize the toolbar with default items
@@ -1478,6 +1492,19 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     // post a system wide notification about the changes
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:item];
+}
+
+/*! Delegate of CPOutlineView
+*/
+- (CPMenu)outlineView:(CPOutlineView)anOutlineView menuForTableColumn:(CPTableColumn)aTableColumn item:(int)anItem
+{
+    if (anOutlineView != _rosterOutlineView)
+        return;
+
+    if ([anItem isKindOfClass:TNStropheContact])
+        return _rosterMenuForContacts;
+    else if ([anItem isKindOfClass:TNStropheGroup])
+        return _rosterMenuForGroups;
 }
 
 /*! Delegate of splitViewMain. This will save the positionning of splitview in CPUserDefaults
