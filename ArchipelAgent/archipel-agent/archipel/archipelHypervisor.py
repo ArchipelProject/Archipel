@@ -825,8 +825,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 nodes.append(n)
             allDomainIDs = self.libvirt_connection.listDomainsID()
             for name in allDomainIDs:
-                uuid = self.libvirt_connection.lookupByID(name).UUIDString()
-                if not uuid in managed_vm_uuids:
+                dom = self.libvirt_connection.lookupByID(name)
+                uuid = dom.UUIDString()
+                persistant = dom.isPersistent()
+                if persistant and not uuid in managed_vm_uuids:
                     n = xmpp.Node("item", attrs={"managed": "False"})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
