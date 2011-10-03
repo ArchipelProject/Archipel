@@ -1501,6 +1501,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     if (anOutlineView != _rosterOutlineView)
         return;
 
+    if ([anOutlineView numberOfSelectedRows] != 1)
+        return;
+
+    var itemRow = [_rosterOutlineView rowForItem:anItem];
+    if ([_rosterOutlineView selectedRow] != itemRow)
+        [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
+
     if ([anItem isKindOfClass:TNStropheContact])
         return _rosterMenuForContacts;
     else if ([anItem isKindOfClass:TNStropheGroup])
