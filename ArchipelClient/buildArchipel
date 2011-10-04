@@ -30,7 +30,7 @@ os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughels", [   "project", "all", "modules=", "allmodules", "native=", "clean",
+        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughelsL", [   "project", "all", "modules=", "allmodules", "native=", "clean",
                                                                     "config=", "build", "installmodules", "uninstallmodules",
                                                                     "generateplist", "help", "example", "ignoremodules=",
                                                                     "sdk=", "export=", "localize", "samples", "list-modules"])
@@ -121,7 +121,7 @@ def main():
         if o in ("-e", "--example"):
             example();
 
-        if o in ("--list-modules"):
+        if o in ("-L", "--list-modules"):
             listmodules();
 
     # append any chosen modules to the build path
