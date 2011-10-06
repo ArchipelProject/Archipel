@@ -28,27 +28,31 @@
 */
 + (CPString)formatByteSize:(float)aSize
 {
-    var usedKind = CPLocalizedString(@"GB", @"GB"),
+    var usedKind = CPLocalizedString(@"TB", @"TB"),
         originSize = parseFloat(aSize);
 
     aSize = parseFloat(aSize);
-    aSize = Math.round((aSize / 1073741824) * 100)  / 100;
+    aSize = Math.round((aSize / 1099511627776) * 100)  / 100;
     if (aSize < 0.5)
     {
-        aSize = Math.round((originSize / 1048576) * 100)  / 100;
-        usedKind = CPLocalizedString(@"MB", @"MB");
+        aSize = Math.round((originSize / 1073741824) * 100)  / 100;
+        usedKind = CPLocalizedString(@"GB", @"GB");
         if (aSize < 0.5)
         {
-            aSize = Math.round((originSize / 1024) * 100)  / 100;
-            usedKind = CPLocalizedString(@"KB", @"KB");
+            aSize = Math.round((originSize / 1048576) * 100)  / 100;
+            usedKind = CPLocalizedString(@"MB", @"MB");
             if (aSize < 0.5)
             {
-                aSize = originSize;
-                usedKind = CPLocalizedString(@"B", @"B");
+                aSize = Math.round((originSize / 1024) * 100)  / 100;
+                usedKind = CPLocalizedString(@"KB", @"KB");
+                if (aSize < 0.5)
+                {
+                    aSize = originSize;
+                    usedKind = CPLocalizedString(@"B", @"B");
+                }
             }
         }
     }
-
     return @"" + aSize + @" " + usedKind;
 }
 
