@@ -26,7 +26,6 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 /*! @global
     @group TNArchipelModuleType
@@ -389,7 +388,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 {
     var frame           = [_mainModuleView bounds],
         newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]],
-        scrollView      = [[TNUIKitScrollView alloc] initWithFrame:frame];
+        scrollView      = [[CPScrollView alloc] initWithFrame:frame];
 
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [scrollView setAutohidesScrollers:YES];

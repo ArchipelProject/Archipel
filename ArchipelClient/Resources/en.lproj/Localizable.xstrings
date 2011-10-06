@@ -72,6 +72,8 @@
 	<string>Contents</string>
 	<key>Copy</key>
 	<string>Copy</string>
+	<key>Current Selection</key>
+	<string>Current Selection</string>
 	<key>Cut</key>
 	<string>Cut</string>
 	<key>Decline</key>

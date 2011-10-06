@@ -29,7 +29,6 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
@@ -57,7 +56,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 {
     @outlet CPButtonBar                     buttonBarControl;
     @outlet CPCheckBox                      checkBoxOnlyInstalled;
-    @outlet TNUIKitScrollView               mainScrollView;
+    @outlet CPScrollView                    mainScrollView;
     @outlet CPSearchField                   fieldFilter;
     @outlet CPView                          viewTableContainer;
     @outlet TNVMCastRegistrationController  VMCastRegistrationController;

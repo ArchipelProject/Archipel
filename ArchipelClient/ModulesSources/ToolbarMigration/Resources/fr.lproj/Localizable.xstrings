@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Migration</key>
-	<string>Migration</string>
 	<key>Migration has started. It can take a while</key>
 	<string>Migration has started. It can take a while</string>
 </dict>

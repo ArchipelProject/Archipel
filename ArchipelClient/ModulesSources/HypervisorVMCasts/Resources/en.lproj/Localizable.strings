@@ -1,5 +1,11 @@
-/* Appliance */
-"Appliance" = "Appliance";
+/* Appliance download complete */
+"Appliance download complete" = "Appliance download complete";
+
+/* Appliance download error */
+"Appliance download error" = "Appliance download error";
+
+/* Appliance download started */
+"Appliance download started" = "Appliance download started";
 
 /* Appliance has been uninstalled */
 "Appliance has been uninstalled" = "Appliance has been uninstalled";
@@ -34,20 +40,11 @@
 /* Download */
 "Download" = "Download";
 
-/* Download complete */
-"Download complete" = "Download complete";
-
-/* Download error */
-"Download error" = "Download error";
-
 /* Download queue for  */
 "Download queue for " = "Download queue for ";
 
 /* Download selected appliance */
 "Download selected appliance" = "Download selected appliance";
-
-/* Download started */
-"Download started" = "Download started";
 
 /* If checked, it will only displayed installed appliances */
 "If checked, it will only displayed installed appliances" = "If checked, it will only displayed installed appliances";
@@ -84,9 +81,6 @@
 
 /* Unregister from selected VMCast */
 "Unregister from selected VMCast" = "Unregister from selected VMCast";
-
-/* VMCast */
-"VMCast" = "VMCast";
 
 /* VMcast has been registred */
 "VMcast has been registred" = "VMcast has been registred";

@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A511</string>
+		<string key="IBDocument.SystemVersion">11C71</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138</string>
-		<string key="IBDocument.HIToolboxVersion">566.00</string>
+		<string key="IBDocument.AppKitVersion">1138.23</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">1617</string>
@@ -100,7 +100,7 @@
 								<string key="NSFrameSize">{130, 321}</string>
 								<reference key="NSSuperview" ref="1022451958"/>
 								<reference key="NSNextKeyView" ref="886251599"/>
-								<string key="NSClassName">TNUIKitScrollView</string>
+								<string key="NSClassName">NSScrollView</string>
 							</object>
 							<object class="NSCustomView" id="886251599">
 								<reference key="NSNextResponder" ref="1022451958"/>
@@ -893,7 +893,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {513, 5}}</string>
 						<reference key="NSSuperview" ref="965184083"/>
-						<reference key="NSNextKeyView" ref="904518639"/>
+						<reference key="NSNextKeyView" ref="821866017"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67239424</int>
@@ -985,6 +985,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{14, 12}, {118, 32}}</string>
 						<reference key="NSSuperview" ref="965184083"/>
+						<reference key="NSNextKeyView" ref="904518639"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="583752363">
 							<int key="NSCellFlags">-2080244224</int>
@@ -2437,7 +2438,7 @@
 							<string>NSTextField</string>
 							<string>TNRolesController</string>
 							<string>TNUIKitScrollView</string>
-							<string>TNUIKitScrollView</string>
+							<string>NSScrollView</string>
 							<string>NSSplitView</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
@@ -2483,7 +2484,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewUsers</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
+								<string key="candidateClassName">NSScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">splitView</string>

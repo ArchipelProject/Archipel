@@ -25,7 +25,6 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "MapKit/MKMapView.j";
 @import "TNDragDropTableViewDataSource.j";

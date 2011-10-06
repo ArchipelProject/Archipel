@@ -25,7 +25,6 @@
 
 @import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 
 /*! @ingroup groupmanagement

@@ -7,9 +7,6 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Create new snapshot */
-"Create new snapshot" = "Create new snapshot";
-
 /* Creation date */
 "Creation date" = "Creation date";
 
@@ -25,9 +22,6 @@
 /* Description */
 "Description" = "Description";
 
-/* Restore */
-"Restore" = "Restore";
-
 /* Revert */
 "Revert" = "Revert";
 
@@ -39,9 +33,6 @@
 
 /* Revert virtual machine to the state stored in selected snapshot */
 "Revert virtual machine to the state stored in selected snapshot" = "Revert virtual machine to the state stored in selected snapshot";
-
-/* Snapshot */
-"Snapshot" = "Snapshot";
 
 /* Snapshot deleted */
 "Snapshot deleted" = "Snapshot deleted";

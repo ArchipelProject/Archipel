@@ -39,7 +39,6 @@
 @import <LPKit/LPCrashReporter.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
-@import <TNKit/TNUIKitScrollView.j>
 @import <TNKit/TNFlipView.j>
 @import <TNKit/TNTabView.j>
 @import <VNCCappuccino/VNCCappuccino.j>
@@ -197,6 +196,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPMenu                                      _rosterMenuForContacts;
     CPMenu                                      _rosterMenuForGroups;
     CPPlatformWindow                            _platformHelpWindow;
+    CPScrollView                                _outlineScrollView;
     CPTextField                                 _rightViewTextField;
     CPTimer                                     _ledInTimer;
     CPTimer                                     _ledOutTimer;
@@ -210,7 +210,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNStropheGroup                              _stropheGroupSelection;
     TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
-    TNUIKitScrollView                           _outlineScrollView;
     TNViewHypervisorControl                     _currentRightViewContent;
 }
 
@@ -328,7 +327,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
-    _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
+    _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
     var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];

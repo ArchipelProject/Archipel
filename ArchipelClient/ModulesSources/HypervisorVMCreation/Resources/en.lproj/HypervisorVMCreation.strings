@@ -2,7 +2,7 @@
 /* Class = "NSTextFieldCell"; title = "Virtual Machines"; ObjectID = "3"; */
 "3.title" = "Virtual Machines";
 
-/* Class = "NSTextFieldCell"; title = "You can manage the hypervisor's virtual machines."; ObjectID = "5"; */
+/* Class = "NSTextFieldCell"; title = "You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container."; ObjectID = "5"; */
 "5.title" = "You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container.";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "17"; */
@@ -89,7 +89,7 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "108"; */
 "108.title" = "Cancel";
 
-/* Class = "NSTableColumn"; headerCell.title = "Archipel Virtual Machines"; ObjectID = "130"; */
+/* Class = "NSTableColumn"; headerCell.title = "Virtual Machines"; ObjectID = "130"; */
 "130.headerCell.title" = "Virtual Machines";
 
 /* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "267"; */

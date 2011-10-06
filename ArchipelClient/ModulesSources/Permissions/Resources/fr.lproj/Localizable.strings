@@ -4,21 +4,6 @@
 /* Permission for selected user has been saved. */
 "Permission for selected user has been saved." = "Permission for selected user has been saved.";
 
-/* Permissions saved */
-"Permissions saved" = "Permissions saved";
-
-/* Role delete error */
-"Role delete error" = "Role delete error";
-
-/* Role deleted */
-"Role deleted" = "Role deleted";
-
-/* Role save error */
-"Role save error" = "Role save error";
-
-/* Role saved */
-"Role saved" = "Role saved";
-
 /* Save the current set of permissions */
 "Save the current set of permissions" = "Save the current set of permissions";
 

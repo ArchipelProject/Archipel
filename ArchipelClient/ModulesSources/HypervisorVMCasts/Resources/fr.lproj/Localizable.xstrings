@@ -2,8 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Appliance</key>
-	<string>Appliance</string>
+	<key>Appliance download complete</key>
+	<string>Appliance download complete</string>
+	<key>Appliance download error</key>
+	<string>Appliance download error</string>
+	<key>Appliance download started</key>
+	<string>Appliance download started</string>
 	<key>Appliance has been uninstalled</key>
 	<string>L'appliance a été désinstallée</string>
 	<key>Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.</key>
@@ -26,16 +30,10 @@
 	<string>Supprimer l'appliance sélectionnée du répértoire de l'hyperviseur.</string>
 	<key>Download</key>
 	<string>Télécharger</string>
-	<key>Download complete</key>
-	<string>Téléchargement complet</string>
-	<key>Download error</key>
-	<string>Erreur de téléchargement</string>
 	<key>Download queue for </key>
 	<string>Téléchargements pour </string>
 	<key>Download selected appliance</key>
 	<string>Télécharge l'appliance sélectionnée.</string>
-	<key>Download started</key>
-	<string>Le téléchargement a démarré</string>
 	<key>If checked, it will only displayed installed appliances</key>
 	<string>Afficher uniquement les appliances téléchargées si cette case est cochée.</string>
 	<key>Register to a new VMCast feed</key>
@@ -60,8 +58,6 @@
 	<string>Se désabonner d'un flux VMCast.</string>
 	<key>Unregister from selected VMCast</key>
 	<string>Se désabonner du flux VMCast sélectionné.</string>
-	<key>VMCast</key>
-	<string>VMCast</string>
 	<key>VMCasts</key>
 	<string>VMCasts</string>
 	<key>VMcast has been registred</key>

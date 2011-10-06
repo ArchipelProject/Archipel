@@ -26,7 +26,6 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNMessageBoard.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNDetachedChatController.j"
 
@@ -47,7 +46,7 @@
     @outlet CPTextField         fieldMessage;
     @outlet CPTextField         fieldPreferencesMaxChatMessage;
     @outlet CPView              viewControls;
-    @outlet TNUIKitScrollView   messagesScrollView;
+    @outlet CPScrollView        messagesScrollView;
 
     CPArray                     _messages;
     CPDictionary                _detachedChats;

@@ -29,7 +29,6 @@
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNDHCPEntryObject.j"
 @import "TNNetworkEditionController.j"

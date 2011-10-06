@@ -20,8 +20,6 @@
 	<string>Remove selected scheduled action</string>
 	<key>Schedule new action</key>
 	<string>Schedule new action</string>
-	<key>Scheduler</key>
-	<string>Scheduler</string>
 	<key>Unique</key>
 	<string>Unique</string>
 	<key>Unschedule</key>

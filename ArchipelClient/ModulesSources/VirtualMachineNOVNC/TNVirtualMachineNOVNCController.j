@@ -25,7 +25,6 @@
 @import <AppKit/CPWindow.j>
 
 @import <LPKit/LPMultiLineTextField.j>
-@import <TNKit/TNUIKitScrollView.j>
 @import <VNCCappuccino/TNVNCView.j>
 
 @import "TNExternalVNCWindow.j";
@@ -67,7 +66,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPWindow                windowPassword;
     @outlet LPMultiLineTextField    fieldPasteBoard;
     @outlet TNSwitch                switchPreferencesPreferSSL;
-    @outlet TNUIKitScrollView       mainScrollView;
+    @outlet CPScrollView            mainScrollView;
 
     BOOL                            _useSSL;
     BOOL                            _vncOnlySSL;

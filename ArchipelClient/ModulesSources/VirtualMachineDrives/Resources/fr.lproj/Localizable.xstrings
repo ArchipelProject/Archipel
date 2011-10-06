@@ -40,8 +40,6 @@
 	<string>If checked, the drive will not be in sparse mode</string>
 	<key>MB</key>
 	<string>MB</string>
-	<key>Rename</key>
-	<string>Rename</string>
 	<key>Set the format of the new virtual drive</key>
 	<string>Set the format of the new virtual drive</string>
 	<key>Set the name of the new virtual drive</key>

@@ -26,7 +26,6 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNMessageBoard.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 
 if ([CPPlatform isBrowser])
@@ -51,7 +50,7 @@ else
     CPTextField         _fieldMessage;
     CPWindow            _window;
     TNMessageBoard      _messageBoard;
-    TNUIKitScrollView   _scrollView;
+    CPScrollView        _scrollView;
 }
 
 #pragma mark -
@@ -74,7 +73,7 @@ else
         [[_window contentView] setAutoresizingMask:nil];
         [_window setDelegate:self];
 
-        _scrollView = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
+        _scrollView = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
         [_scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [_scrollView setBackgroundColor:[CPColor whiteColor]];
         [_scrollView setAutohidesScrollers:YES];

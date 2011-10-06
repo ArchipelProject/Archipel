@@ -72,6 +72,8 @@
 	<string>Inhalt</string>
 	<key>Copy</key>
 	<string>Kopieren</string>
+	<key>Current Selection</key>
+	<string>Current Selection</string>
 	<key>Cut</key>
 	<string>Ausschneiden</string>
 	<key>Decline</key>

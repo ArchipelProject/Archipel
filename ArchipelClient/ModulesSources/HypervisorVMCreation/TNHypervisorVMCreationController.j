@@ -28,7 +28,6 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNVirtualMachineAllocationController.j";
 @import "TNVirtualMachineCloneController.j";

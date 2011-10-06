@@ -24,7 +24,6 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",

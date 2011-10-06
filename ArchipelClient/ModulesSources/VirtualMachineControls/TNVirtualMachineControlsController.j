@@ -32,7 +32,6 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
-@import <TNKit/TNUIKitScrollView.j>
 @import <StropheCappuccino/TNBase64Image.j>
 
 @import "TNExtendedContactObject.j"

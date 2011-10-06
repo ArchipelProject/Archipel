@@ -40,8 +40,8 @@
 */
 @implementation TNMUCChatController : TNModule
 {
-    @outlet TNUIKitScrollView   scrollViewMessageContainer;
-    @outlet TNUIKitScrollView   scrollViewPeople;
+    @outlet CPScrollView        scrollViewMessageContainer;
+    @outlet CPScrollView        scrollViewPeople;
     @outlet CPTextField         fieldPreferencesDefaultRoom;
     @outlet CPTextField         fieldPreferencesDefaultService;
     @outlet CPTextField         textFieldMessage;

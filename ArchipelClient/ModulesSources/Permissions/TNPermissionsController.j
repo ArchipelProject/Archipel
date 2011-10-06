@@ -29,7 +29,6 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNRolesController.j"
 @import "TNXMPPUserDatasource.j"
@@ -57,6 +56,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 @implementation TNPermissionsController : TNModule
 {
     @outlet CPButtonBar             buttonBarControl;
+    @outlet CPScrollView            scrollViewUsers;
     @outlet CPSearchField           filterField;
     @outlet CPSplitView             splitView;
     @outlet CPTableView             tablePermissions;
@@ -64,7 +64,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     @outlet CPView                  viewTableContainer;
     @outlet CPView                  viewUsersLeft;
     @outlet TNRolesController       rolesController;
-    @outlet TNUIKitScrollView       scrollViewUsers;
 
     TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
 

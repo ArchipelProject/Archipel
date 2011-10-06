@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C48</string>
+		<string key="IBDocument.SystemVersion">11C71</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138.18</string>
+		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -317,6 +317,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{179, 186}, {230, 43}}</string>
 						<reference key="NSSuperview" ref="927006720"/>
+						<reference key="NSNextKeyView" ref="798677276"/>
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="559035539">
@@ -342,8 +343,8 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 45}, {549, 378}}</string>
 						<reference key="NSSuperview" ref="927006720"/>
-						<reference key="NSNextKeyView" ref="798677276"/>
-						<string key="NSClassName">TNUIKitScrollView</string>
+						<reference key="NSNextKeyView" ref="30832331"/>
+						<string key="NSClassName">NSScrollView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{589, 443}</string>
@@ -674,7 +675,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {585, 5}}</string>
 						<reference key="NSSuperview" ref="670153015"/>
-						<reference key="NSNextKeyView" ref="80558798"/>
+						<reference key="NSNextKeyView" ref="745808752"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67239424</int>
@@ -719,6 +720,7 @@
 						<int key="NSvFlags">289</int>
 						<string key="NSFrame">{{335, 12}, {118, 32}}</string>
 						<reference key="NSSuperview" ref="670153015"/>
+						<reference key="NSNextKeyView" ref="80558798"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="486659397">
 							<int key="NSCellFlags">-2080244224</int>
@@ -755,6 +757,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{585, 357}</string>
+				<reference key="NSNextKeyView" ref="960358207"/>
 			</object>
 			<object class="NSCustomView" id="692868867">
 				<nil key="NSNextResponder"/>
@@ -2310,7 +2313,7 @@
 							<string>NSTextField</string>
 							<string>NSImageView</string>
 							<string>NSTextField</string>
-							<string>TNUIKitScrollView</string>
+							<string>NSScrollView</string>
 							<string>NSPopover</string>
 							<string>NSSlider</string>
 							<string>TNSwitch</string>
@@ -2410,7 +2413,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainScrollView</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
+								<string key="candidateClassName">NSScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">popoverPasteBoard</string>

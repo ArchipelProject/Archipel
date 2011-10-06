@@ -8,8 +8,6 @@
 	<string>Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Create new snapshot</key>
-	<string>Create new snapshot</string>
 	<key>Creation date</key>
 	<string>Creation date</string>
 	<key>Delete</key>
@@ -20,8 +18,6 @@
 	<string>Delete to snapshot</string>
 	<key>Description</key>
 	<string>Description</string>
-	<key>Restore</key>
-	<string>Restore</string>
 	<key>Revert</key>
 	<string>Revert</string>
 	<key>Revert to selected drive</key>
@@ -30,8 +26,6 @@
 	<string>Revert to snapshot</string>
 	<key>Revert virtual machine to the state stored in selected snapshot</key>
 	<string>Revert virtual machine to the state stored in selected snapshot</string>
-	<key>Snapshot</key>
-	<string>Snapshot</string>
 	<key>Snapshot deleted</key>
 	<string>Snapshot deleted</string>
 	<key>Snapshot sucessfully reverted</key>

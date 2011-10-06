@@ -6,16 +6,6 @@
 	<string>Delete the selected role</string>
 	<key>Permission for selected user has been saved.</key>
 	<string>Permission for selected user has been saved.</string>
-	<key>Permissions saved</key>
-	<string>Permissions saved</string>
-	<key>Role delete error</key>
-	<string>Role delete error</string>
-	<key>Role deleted</key>
-	<string>Role deleted</string>
-	<key>Role save error</key>
-	<string>Role save error</string>
-	<key>Role saved</key>
-	<string>Role saved</string>
 	<key>Save the current set of permissions</key>
 	<string>Save the current set of permissions</string>
 	<key>Save the current set of permissions as a role</key>

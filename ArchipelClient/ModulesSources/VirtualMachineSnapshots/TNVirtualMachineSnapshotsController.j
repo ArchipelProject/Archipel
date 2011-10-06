@@ -27,7 +27,6 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNSnapshot.j";
 @import "TNSnapshotsDatasource.j";
@@ -54,13 +53,14 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     @outlet CPButton                    buttonSnapshotTake;
     @outlet CPButtonBar                 buttonBarControl;
+    @outlet CPPopover                   popoverNewSnapshot;
+    @outlet CPScrollView                scrollViewSnapshots;
     @outlet CPSearchField               fieldFilter;
     @outlet CPTextField                 fieldInfo;
     @outlet CPTextField                 fieldNewSnapshotName;
-    @outlet CPPopover                   popoverNewSnapshot;
     @outlet CPView                      viewTableContainer;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
-    @outlet TNUIKitScrollView           scrollViewSnapshots;
+
 
     CPButton                            _minusButton;
     CPButton                            _plusButton;

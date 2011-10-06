@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A511</string>
+		<string key="IBDocument.SystemVersion">11C71</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
-		<string key="IBDocument.AppKitVersion">1138</string>
-		<string key="IBDocument.HIToolboxVersion">566.00</string>
+		<string key="IBDocument.AppKitVersion">1138.23</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">1617</string>
@@ -138,7 +138,7 @@
 								<string key="NSFrame">{{0, 26}, {687, 367}}</string>
 								<reference key="NSSuperview" ref="215021165"/>
 								<reference key="NSNextKeyView" ref="342279016"/>
-								<string key="NSClassName">TNUIKitScrollView</string>
+								<string key="NSClassName">NSScrollView</string>
 							</object>
 						</object>
 						<string key="NSFrame">{{20, 20}, {685, 393}}</string>
@@ -1695,7 +1695,7 @@
 							<string>TNDownloadQueueController</string>
 							<string>NSSearchField</string>
 							<string>NSTextField</string>
-							<string>TNUIKitScrollView</string>
+							<string>NSScrollView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 							<string>NSWindow</string>
@@ -1749,7 +1749,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainScrollView</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
+								<string key="candidateClassName">NSScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

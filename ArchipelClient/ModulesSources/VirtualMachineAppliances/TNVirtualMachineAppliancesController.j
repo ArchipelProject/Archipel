@@ -30,7 +30,6 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNInstalledAppliancesObject.j";
 

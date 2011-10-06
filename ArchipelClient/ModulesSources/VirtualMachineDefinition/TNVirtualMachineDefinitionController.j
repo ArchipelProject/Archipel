@@ -34,7 +34,6 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
-@import <TNKit/TNUIKitScrollView.j>
 @import <TNKit/TNSwipeView.j>
 
 @import "Model/TNLibvirt.j"
@@ -85,8 +84,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPButton                    buttonXMLEditorDefine;
     @outlet CPButtonBar                 buttonBarControlDrives;
     @outlet CPButtonBar                 buttonBarControlNics;
-    @outlet CPButtonBar                 buttonBarInputDevices;
     @outlet CPButtonBar                 buttonBarGraphicDevices;
+    @outlet CPButtonBar                 buttonBarInputDevices;
     @outlet CPPopover                   popoverXMLEditor;
     @outlet CPPopUpButton               buttonBoot;
     @outlet CPPopUpButton               buttonGuests;
@@ -100,11 +99,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPPopUpButton               buttonPreferencesOnPowerOff;
     @outlet CPPopUpButton               buttonPreferencesOnReboot;
     @outlet CPPopUpButton               buttonPreferencesVNCKeyMap;
+    @outlet CPScrollView                scrollViewContentView;
     @outlet CPSearchField               fieldFilterDrives;
     @outlet CPSearchField               fieldFilterNics;
     @outlet CPTableView                 tableDrives;
-    @outlet CPTableView                 tableInputDevices;
     @outlet CPTableView                 tableGraphicsDevices;
+    @outlet CPTableView                 tableInputDevices;
     @outlet CPTableView                 tableInterfaces;
     @outlet CPTextField                 fieldBlockIOTuningWeight;
     @outlet CPTextField                 fieldMemory;
@@ -121,6 +121,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewDeviceVirtualDrives;
     @outlet CPView                      viewDeviceVirtualNics;
     @outlet CPView                      viewDrivesContainer;
+    @outlet CPView                      viewGraphicDevicesContainer;
     @outlet CPView                      viewInputDevicesContainer;
     @outlet CPView                      viewMainContent;
     @outlet CPView                      viewNicsContainer;
@@ -128,16 +129,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewParametersEffectBottom;
     @outlet CPView                      viewParametersEffectTop;
     @outlet CPView                      viewParametersStandard;
-    @outlet CPView                      viewGraphicDevicesContainer;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
     @outlet TNDriveController           driveController;
+    @outlet TNDriveDeviceDataView       dataViewDrivesPrototype;
+    @outlet TNGraphicDeviceController   graphicDeviceController;
+    @outlet TNGraphicDeviceDataView     dataViewGraphicDevicePrototype;
     @outlet TNInputDeviceController     inputDeviceController;
     @outlet TNInputDeviceDataView       dataViewInputDevicePrototype;
-    @outlet TNGraphicDeviceDataView     dataViewGraphicDevicePrototype;
-    @outlet TNDriveDeviceDataView       dataViewDrivesPrototype;
-    @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
     @outlet TNInterfaceController       interfaceController;
-    @outlet TNGraphicDeviceController   graphicDeviceController;
+    @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
     @outlet TNSwitch                    switchACPI;
     @outlet TNSwitch                    switchAPIC;
     @outlet TNSwitch                    switchHugePages;
@@ -146,7 +146,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNSwitch                    switchPreferencesHugePages;
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;
-    @outlet TNUIKitScrollView           scrollViewContentView;
+
 
     BOOL                                _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                                _definitionRecovered;
@@ -208,8 +208,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [tabViewParameters setContentBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
 
-    var scrollViewParametersStandard = [[TNUIKitScrollView alloc] initWithFrame:[tabViewParameters bounds]],
-        scrollViewParametersAdvanced = [[TNUIKitScrollView alloc] initWithFrame:[tabViewParameters bounds]];
+    var scrollViewParametersStandard = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]],
+        scrollViewParametersAdvanced = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]];
 
     [viewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];

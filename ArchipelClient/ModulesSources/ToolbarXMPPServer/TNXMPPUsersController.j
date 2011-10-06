@@ -53,7 +53,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @outlet CPTextField         fieldNewUserUsername;
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
-    @outlet TNUIKitScrollView   scrollViewUsers;
 
     CPArray                     _users                          @accessors(getter=users);
     id                          _delegate                       @accessors(property=delegate);

@@ -27,7 +27,6 @@
 
 @import <LPKit/LPChartView.j>
 @import <TNKit/TNTableViewDataSource.j>
-@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNCellPartitionView.j"
 @import "TNDatasourceChartView.j"
@@ -55,6 +54,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPImageView         imageDiskLoading;
     @outlet CPImageView         imageLoadLoading;
     @outlet CPImageView         imageMemoryLoading;
+    @outlet CPScrollView        scrollViewLogsTable;
+    @outlet CPScrollView        scrollViewPartitionTable;
     @outlet CPSearchField       filterLogField;
     @outlet CPTabView           tabViewInfos;
     @outlet CPTextField         fieldHalfMemory;
@@ -77,16 +78,14 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPView              viewGraphLoadContainer;
     @outlet CPView              viewGraphMemoryContainer;
     @outlet CPView              viewGraphNetworkContainer;
+    @outlet CPView              viewLogs;
     @outlet LPChartView         chartViewCPU;
     @outlet LPChartView         chartViewLoad;
     @outlet LPChartView         chartViewMemory;
     @outlet LPChartView         chartViewNetwork;
-    @outlet CPView              viewLogs;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
     @outlet TNSwitch            switchPreferencesShowColunmFile;
     @outlet TNSwitch            switchPreferencesShowColunmMethod;
-    @outlet TNUIKitScrollView   scrollViewLogsTable;
-    @outlet TNUIKitScrollView   scrollViewPartitionTable;
 
     CPTableView                 _tableLogs;
     CPTableView                 _tablePartitions;
@@ -178,7 +177,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
         tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"],
-        scrollViewChart = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
+        scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:CPBundleLocalizedString(@"Charts", @"Charts")];
     [tabViewItemCharts setView:scrollViewChart];

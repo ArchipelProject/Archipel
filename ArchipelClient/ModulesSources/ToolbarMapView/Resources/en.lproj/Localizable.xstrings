@@ -10,8 +10,6 @@
 	<string>Define path</string>
 	<key>Destination</key>
 	<string>Destination</string>
-	<key>Migration</key>
-	<string>Migration</string>
 	<key>Migration has started. It can take a while</key>
 	<string>Migration has started. It can take a while</string>
 	<key>Origin</key>

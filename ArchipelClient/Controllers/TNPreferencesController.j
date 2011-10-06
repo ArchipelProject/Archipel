@@ -83,7 +83,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [_mainWindow setContentView:viewContentWindowPreferences];
 
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
-        scrollViewContainer = [[TNUIKitScrollView alloc] initWithFrame:[tabViewMain bounds]],
+        scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
         moduleViewFrame = [viewPreferencesGeneral frame];
 
     moduleViewFrame.size.width = [scrollViewContainer contentSize].width;
@@ -160,7 +160,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
         if ([module viewPreferences] !== nil)
         {
             var tabViewModuleItem = [[CPTabViewItem alloc] initWithIdentifier:[module name]],
-                scrollViewContainer = [[TNUIKitScrollView alloc] initWithFrame:[tabViewMain bounds]],
+                scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
                 moduleViewFrame = [[module viewPreferences] frame];
 
             moduleViewFrame.size.width = [scrollViewContainer contentSize].width;
