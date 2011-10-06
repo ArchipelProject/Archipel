@@ -142,7 +142,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNSwitch                    switchAPIC;
     @outlet TNSwitch                    switchHugePages;
     @outlet TNSwitch                    switchPAE;
-    @outlet TNSwitch                    switchPreferencesEnableVNC;
     @outlet TNSwitch                    switchPreferencesHugePages;
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;

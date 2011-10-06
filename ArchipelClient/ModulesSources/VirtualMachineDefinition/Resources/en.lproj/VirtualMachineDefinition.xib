@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
+		<string key="IBDocument.SystemVersion">11C73</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
@@ -251,8 +251,8 @@
 								</object>
 							</object>
 							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">2</int>
-								<bytes key="NSRGB">MC45NjQ3MDU5NDQxIDAuNjY2NjY2Njg2NSAwLjI2Mjc0NTExMjIAA</bytes>
+								<int key="NSColorSpace">1</int>
+								<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
 							</object>
 						</object>
 					</object>
@@ -6302,7 +6302,7 @@
 					<object class="NSTextField" id="609423175">
 						<reference key="NSNextResponder" ref="151298211"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{62, 157}, {82, 17}}</string>
+						<string key="NSFrame">{{17, 157}, {127, 17}}</string>
 						<reference key="NSSuperview" ref="151298211"/>
 						<reference key="NSNextKeyView" ref="645818021"/>
 						<bool key="NSEnabled">YES</bool>
@@ -6387,7 +6387,7 @@
 					<object class="NSTextField" id="38692368">
 						<reference key="NSNextResponder" ref="151298211"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{62, 77}, {82, 17}}</string>
+						<string key="NSFrame">{{17, 77}, {127, 17}}</string>
 						<reference key="NSSuperview" ref="151298211"/>
 						<reference key="NSNextKeyView" ref="425724000"/>
 						<bool key="NSEnabled">YES</bool>
@@ -6441,7 +6441,7 @@
 					<object class="NSTextField" id="210741058">
 						<reference key="NSNextResponder" ref="151298211"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{62, 104}, {82, 17}}</string>
+						<string key="NSFrame">{{17, 104}, {127, 17}}</string>
 						<reference key="NSSuperview" ref="151298211"/>
 						<reference key="NSNextKeyView" ref="556787766"/>
 						<bool key="NSEnabled">YES</bool>
@@ -6458,7 +6458,7 @@
 					<object class="NSTextField" id="419863807">
 						<reference key="NSNextResponder" ref="151298211"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{62, 132}, {82, 17}}</string>
+						<string key="NSFrame">{{17, 132}, {127, 17}}</string>
 						<reference key="NSSuperview" ref="151298211"/>
 						<reference key="NSNextKeyView" ref="559380890"/>
 						<bool key="NSEnabled">YES</bool>
@@ -8301,6 +8301,14 @@
 						<reference key="destination" ref="825556690"/>
 					</object>
 					<int key="connectionID">1443</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">graphicTypeChange:</string>
+						<reference key="source" ref="131725398"/>
+						<reference key="destination" ref="645818021"/>
+					</object>
+					<int key="connectionID">1444</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -14125,7 +14133,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1443</int>
+			<int key="maxID">1444</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -14164,16 +14172,12 @@
 							<string>busTypeChanged:</string>
 							<string>closeWindow:</string>
 							<string>driveTypeDidChange:</string>
-							<string>hideWindow:</string>
 							<string>openWindow:</string>
 							<string>performDeviceTypeChanged:</string>
 							<string>save:</string>
-							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -14189,11 +14193,9 @@
 							<string>busTypeChanged:</string>
 							<string>closeWindow:</string>
 							<string>driveTypeDidChange:</string>
-							<string>hideWindow:</string>
 							<string>openWindow:</string>
 							<string>performDeviceTypeChanged:</string>
 							<string>save:</string>
-							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -14210,10 +14212,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">hideWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">openWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -14223,10 +14221,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">save:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>
@@ -14244,7 +14238,6 @@
 							<string>buttonType</string>
 							<string>fieldDevicePath</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -14257,7 +14250,6 @@
 							<string>NSPopUpButton</string>
 							<string>NSTextField</string>
 							<string>NSPopover</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -14273,7 +14265,6 @@
 							<string>buttonType</string>
 							<string>fieldDevicePath</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -14312,10 +14303,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainPopover</string>
 								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mainWindow</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>
@@ -14435,25 +14422,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TNFlipView</string>
-					<string key="superclassName">NSView</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">flip:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">flip:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">flip:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNFlipView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNGraphicDeviceController</string>
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -14461,11 +14429,13 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>closeWindow:</string>
+							<string>graphicTypeChange:</string>
 							<string>openWindow:</string>
 							<string>save:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -14476,6 +14446,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>closeWindow:</string>
+							<string>graphicTypeChange:</string>
 							<string>openWindow:</string>
 							<string>save:</string>
 						</object>
@@ -14483,6 +14454,10 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">graphicTypeChange:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -15093,148 +15068,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TNNetworkController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hideWindow:</string>
-							<string>performNicTypeChanged:</string>
-							<string>save:</string>
-							<string>showWindow:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hideWindow:</string>
-							<string>performNicTypeChanged:</string>
-							<string>save:</string>
-							<string>showWindow:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">hideWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">performNicTypeChanged:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">save:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBarNetworkParameters</string>
-							<string>buttonModel</string>
-							<string>buttonNetworkFilter</string>
-							<string>buttonOK</string>
-							<string>buttonSource</string>
-							<string>buttonType</string>
-							<string>fieldMac</string>
-							<string>mainWindow</string>
-							<string>tableViewNetworkFilterParameters</string>
-							<string>viewNWFilterParametersContainer</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>CPButtonBar</string>
-							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSTextField</string>
-							<string>NSWindow</string>
-							<string>NSTableView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBarNetworkParameters</string>
-							<string>buttonModel</string>
-							<string>buttonNetworkFilter</string>
-							<string>buttonOK</string>
-							<string>buttonSource</string>
-							<string>buttonType</string>
-							<string>fieldMac</string>
-							<string>mainWindow</string>
-							<string>tableViewNetworkFilterParameters</string>
-							<string>viewNWFilterParametersContainer</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonBarNetworkParameters</string>
-								<string key="candidateClassName">CPButtonBar</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonModel</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonNetworkFilter</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonOK</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonSource</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonType</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldMac</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mainWindow</string>
-								<string key="candidateClassName">NSWindow</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tableViewNetworkFilterParameters</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewNWFilterParametersContainer</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNNetworkController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNSwitch</string>
 					<string key="superclassName">LPSwitch</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -15306,8 +15139,6 @@
 							<string>didChangeDomainType:</string>
 							<string>didChangeGuest:</string>
 							<string>didChangeHugePages:</string>
-							<string>didChangeInputBus:</string>
-							<string>didChangeInputType:</string>
 							<string>didChangeMachine:</string>
 							<string>didChangeMemory:</string>
 							<string>didChangeMemoryTuneGuarantee:</string>
@@ -15319,11 +15150,6 @@
 							<string>didChangeOnReboot:</string>
 							<string>didChangePAE:</string>
 							<string>didChangeVCPU:</string>
-							<string>didChangeVNCEnabled:</string>
-							<string>didChangeVNCKeymap:</string>
-							<string>didChangeVNCListen:</string>
-							<string>didChangeVNCPassword:</string>
-							<string>didChangeVNCPort:</string>
 							<string>editDrive:</string>
 							<string>editGraphicDevice:</string>
 							<string>editInputDevice:</string>
@@ -15334,13 +15160,6 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -15403,8 +15222,6 @@
 							<string>didChangeDomainType:</string>
 							<string>didChangeGuest:</string>
 							<string>didChangeHugePages:</string>
-							<string>didChangeInputBus:</string>
-							<string>didChangeInputType:</string>
 							<string>didChangeMachine:</string>
 							<string>didChangeMemory:</string>
 							<string>didChangeMemoryTuneGuarantee:</string>
@@ -15416,11 +15233,6 @@
 							<string>didChangeOnReboot:</string>
 							<string>didChangePAE:</string>
 							<string>didChangeVCPU:</string>
-							<string>didChangeVNCEnabled:</string>
-							<string>didChangeVNCKeymap:</string>
-							<string>didChangeVNCListen:</string>
-							<string>didChangeVNCPassword:</string>
-							<string>didChangeVNCPort:</string>
 							<string>editDrive:</string>
 							<string>editGraphicDevice:</string>
 							<string>editInputDevice:</string>
@@ -15508,14 +15320,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">didChangeInputBus:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">didChangeInputType:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">didChangeMachine:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -15560,26 +15364,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">didChangeVNCEnabled:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">didChangeVNCKeymap:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">didChangeVNCListen:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">didChangeVNCPassword:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">didChangeVNCPort:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">editDrive:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -15621,11 +15405,7 @@
 							<string>buttonClocks</string>
 							<string>buttonDefine</string>
 							<string>buttonDomainType</string>
-							<string>buttonFlipViewShowBack</string>
-							<string>buttonFlipViewShowFront</string>
 							<string>buttonGuests</string>
-							<string>buttonInputBus</string>
-							<string>buttonInputType</string>
 							<string>buttonMachines</string>
 							<string>buttonOnCrash</string>
 							<string>buttonOnPowerOff</string>
@@ -15640,7 +15420,6 @@
 							<string>buttonPreferencesOnReboot</string>
 							<string>buttonPreferencesVNCKeyMap</string>
 							<string>buttonUndefine</string>
-							<string>buttonVNCKeymap</string>
 							<string>buttonXMLEditor</string>
 							<string>buttonXMLEditorDefine</string>
 							<string>dataViewDrivesPrototype</string>
@@ -15661,28 +15440,19 @@
 							<string>fieldPreferencesMachine</string>
 							<string>fieldPreferencesMemory</string>
 							<string>fieldStringXMLDesc</string>
-							<string>fieldVNCListen</string>
-							<string>fieldVNCPassword</string>
-							<string>fieldVNCPort</string>
-							<string>flipViewParameters</string>
 							<string>graphicDeviceController</string>
 							<string>inputDeviceController</string>
 							<string>interfaceController</string>
 							<string>labelVirtualMachineIsRunning</string>
-							<string>networkController</string>
 							<string>popoverXMLEditor</string>
 							<string>scrollViewContentView</string>
-							<string>scrollViewForDrives</string>
-							<string>scrollViewForNics</string>
 							<string>stepperNumberCPUs</string>
 							<string>switchACPI</string>
 							<string>switchAPIC</string>
-							<string>switchEnableVNC</string>
 							<string>switchHugePages</string>
 							<string>switchPAE</string>
 							<string>switchPreferencesEnableVNC</string>
 							<string>switchPreferencesHugePages</string>
-							<string>tabViewDevices</string>
 							<string>tabViewParameters</string>
 							<string>tableDrives</string>
 							<string>tableGraphicsDevices</string>
@@ -15697,12 +15467,9 @@
 							<string>viewMainContent</string>
 							<string>viewNicsContainer</string>
 							<string>viewParametersAdvanced</string>
-							<string>viewParametersBack</string>
 							<string>viewParametersEffectBottom</string>
 							<string>viewParametersEffectTop</string>
-							<string>viewParametersFront</string>
 							<string>viewParametersStandard</string>
-							<string>windowXMLEditor</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -15714,10 +15481,6 @@
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
@@ -15733,7 +15496,6 @@
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
-							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>TNDriveDeviceDataView</string>
@@ -15754,19 +15516,12 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>LPMultiLineTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>TNFlipView</string>
 							<string>TNGraphicDeviceController</string>
 							<string>TNInputDeviceController</string>
 							<string>TNInterfaceController</string>
 							<string>NSTextField</string>
-							<string>TNNetworkController</string>
 							<string>NSPopover</string>
-							<string>TNUIKitScrollView</string>
-							<string>TNUIKitScrollView</string>
-							<string>TNUIKitScrollView</string>
+							<string>NSScrollView</string>
 							<string>TNTextFieldStepper</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
@@ -15774,8 +15529,6 @@
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
-							<string>TNSwitch</string>
-							<string>NSTabView</string>
 							<string>TNTabView</string>
 							<string>NSTableView</string>
 							<string>NSTableView</string>
@@ -15793,9 +15546,6 @@
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -15810,11 +15560,7 @@
 							<string>buttonClocks</string>
 							<string>buttonDefine</string>
 							<string>buttonDomainType</string>
-							<string>buttonFlipViewShowBack</string>
-							<string>buttonFlipViewShowFront</string>
 							<string>buttonGuests</string>
-							<string>buttonInputBus</string>
-							<string>buttonInputType</string>
 							<string>buttonMachines</string>
 							<string>buttonOnCrash</string>
 							<string>buttonOnPowerOff</string>
@@ -15829,7 +15575,6 @@
 							<string>buttonPreferencesOnReboot</string>
 							<string>buttonPreferencesVNCKeyMap</string>
 							<string>buttonUndefine</string>
-							<string>buttonVNCKeymap</string>
 							<string>buttonXMLEditor</string>
 							<string>buttonXMLEditorDefine</string>
 							<string>dataViewDrivesPrototype</string>
@@ -15850,28 +15595,19 @@
 							<string>fieldPreferencesMachine</string>
 							<string>fieldPreferencesMemory</string>
 							<string>fieldStringXMLDesc</string>
-							<string>fieldVNCListen</string>
-							<string>fieldVNCPassword</string>
-							<string>fieldVNCPort</string>
-							<string>flipViewParameters</string>
 							<string>graphicDeviceController</string>
 							<string>inputDeviceController</string>
 							<string>interfaceController</string>
 							<string>labelVirtualMachineIsRunning</string>
-							<string>networkController</string>
 							<string>popoverXMLEditor</string>
 							<string>scrollViewContentView</string>
-							<string>scrollViewForDrives</string>
-							<string>scrollViewForNics</string>
 							<string>stepperNumberCPUs</string>
 							<string>switchACPI</string>
 							<string>switchAPIC</string>
-							<string>switchEnableVNC</string>
 							<string>switchHugePages</string>
 							<string>switchPAE</string>
 							<string>switchPreferencesEnableVNC</string>
 							<string>switchPreferencesHugePages</string>
-							<string>tabViewDevices</string>
 							<string>tabViewParameters</string>
 							<string>tableDrives</string>
 							<string>tableGraphicsDevices</string>
@@ -15886,12 +15622,9 @@
 							<string>viewMainContent</string>
 							<string>viewNicsContainer</string>
 							<string>viewParametersAdvanced</string>
-							<string>viewParametersBack</string>
 							<string>viewParametersEffectBottom</string>
 							<string>viewParametersEffectTop</string>
-							<string>viewParametersFront</string>
 							<string>viewParametersStandard</string>
-							<string>windowXMLEditor</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -15928,23 +15661,7 @@
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">buttonFlipViewShowBack</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonFlipViewShowFront</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">buttonGuests</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonInputBus</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonInputType</string>
 								<string key="candidateClassName">NSPopUpButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -16002,10 +15719,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonUndefine</string>
 								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonVNCKeymap</string>
-								<string key="candidateClassName">NSPopUpButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonXMLEditor</string>
@@ -16088,22 +15801,6 @@
 								<string key="candidateClassName">LPMultiLineTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">fieldVNCListen</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldVNCPassword</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldVNCPort</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">flipViewParameters</string>
-								<string key="candidateClassName">TNFlipView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">graphicDeviceController</string>
 								<string key="candidateClassName">TNGraphicDeviceController</string>
 							</object>
@@ -16120,24 +15817,12 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">networkController</string>
-								<string key="candidateClassName">TNNetworkController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">popoverXMLEditor</string>
 								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewContentView</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewForDrives</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewForNics</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
+								<string key="candidateClassName">NSScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">stepperNumberCPUs</string>
@@ -16149,10 +15834,6 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">switchAPIC</string>
-								<string key="candidateClassName">TNSwitch</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">switchEnableVNC</string>
 								<string key="candidateClassName">TNSwitch</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -16170,10 +15851,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">switchPreferencesHugePages</string>
 								<string key="candidateClassName">TNSwitch</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tabViewDevices</string>
-								<string key="candidateClassName">NSTabView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tabViewParameters</string>
@@ -16232,10 +15909,6 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewParametersBack</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">viewParametersEffectBottom</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
@@ -16244,16 +15917,8 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewParametersFront</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">viewParametersStandard</string>
 								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowXMLEditor</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>

@@ -57,7 +57,7 @@
     [buttonKeymap setToolTip:CPLocalizedString(@"Select the keymap to use", @"Select the keymap to use")];
 
     [buttonType removeAllItems];
-    [buttonType addItemsWithTitles:[TNLibvirtDeviceGraphicTypeVNC, TNLibvirtDeviceGraphicTypeRDP]];
+    [buttonType addItemsWithTitles:[TNLibvirtDeviceGraphicTypeVNC, TNLibvirtDeviceGraphicTypeRDP, TNLibvirtDeviceGraphicTypeSPICE]];
     [buttonType setToolTip:CPLocalizedString(@"Set the graphic type", @"Set the graphic type")];
 
     [fieldPassword setToolTip:CPBundleLocalizedString(@"Set the VNC password (no password if blank)", @"Set the VNC password (no password if blank)")];
@@ -79,6 +79,8 @@
     [fieldPassword setStringValue:[_graphicDevice password]];
     [fieldListenAddress setStringValue:([_graphicDevice listen] && [_graphicDevice listen] != @"") ? [_graphicDevice listen] : @""];
     [fieldListenPort setStringValue:([_graphicDevice port] && [_graphicDevice port] != @"-1") ? [_graphicDevice port] : @""];
+
+    [self graphicTypeChange:nil];
 }
 
 
@@ -126,6 +128,26 @@
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
 
     [mainPopover setDefaultButton:buttonOK];
+}
+
+/*! Called to update the GUI when graphic type change
+    @param aSender the sender of the action
+*/
+- (IBAction)graphicTypeChange:(id)aSender
+{
+    switch ([buttonType title])
+    {
+        case TNLibvirtDeviceGraphicTypeVNC:
+
+            [fieldPassword setEnabled:YES];
+            [fieldListenAddress setEnabled:YES];
+            break;
+        default:
+            [fieldPassword setStringValue:@""];
+            [fieldListenAddress setStringValue:@""];
+            [fieldPassword setEnabled:NO];
+            [fieldListenAddress setEnabled:NO];
+    }
 }
 
 /*! hide the main window

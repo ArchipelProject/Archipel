@@ -21,7 +21,8 @@
 @import "Model/TNLibvirtDeviceGraphic.j"
 
 var TNGraphicDeviceDataViewIconVNC,
-    TNGraphicDeviceDataViewIconRDP;
+    TNGraphicDeviceDataViewIconRDP,
+    TNGraphicDeviceDataViewIconSPICE;
 
 @implementation TNGraphicDeviceDataView : TNBasicDataView
 {
@@ -50,6 +51,7 @@ var TNGraphicDeviceDataViewIconVNC,
         {
             TNGraphicDeviceDataViewIconVNC = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-vnc.png"] size:CPSizeMake(26.0, 26.0)];
             TNGraphicDeviceDataViewIconRDP = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-rdp.png"] size:CPSizeMake(26.0, 26.0)];
+            TNGraphicDeviceDataViewIconSPICE = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-spice.png"] size:CPSizeMake(26.0, 26.0)];
         }
     }
 
@@ -80,6 +82,9 @@ var TNGraphicDeviceDataViewIconVNC,
             break;
         case TNLibvirtDeviceGraphicTypeRDP:
             [imageIcon setImage:TNGraphicDeviceDataViewIconRDP];
+            break;
+        case TNLibvirtDeviceGraphicTypeSPICE:
+            [imageIcon setImage:TNGraphicDeviceDataViewIconSPICE];
             break;
     }
 
