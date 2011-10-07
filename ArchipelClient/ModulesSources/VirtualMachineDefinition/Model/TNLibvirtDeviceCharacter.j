@@ -29,7 +29,7 @@ TNLibvirtDeviceCharacterTypeSPICEVMC    = @"spicevmc";
 
 
 /*! @ingroup virtualmachinedefinition
-    Model for device consoles
+    Model for character devices
 */
 @implementation TNLibvirtDeviceCharacter : TNLibvirtBase
 {

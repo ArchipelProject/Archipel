@@ -25,7 +25,7 @@ TNLibvirtDeviceCharacterSourceModeBind  = @"bind";
 
 
 /*! @ingroup virtualmachinedefinition
-    Model for device console sources
+    Model for character device source
 */
 @implementation TNLibvirtDeviceCharacterSource : TNLibvirtBase
 {

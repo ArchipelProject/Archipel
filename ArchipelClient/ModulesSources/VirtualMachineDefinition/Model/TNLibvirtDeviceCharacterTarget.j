@@ -26,7 +26,7 @@ TNLibvirtDeviceConsoleTargetTypeVIRTIO   = @"virtio";
 
 
 /*! @ingroup virtualmachinedefinition
-    Model for device console targets
+    Model for character device target
 */
 @implementation TNLibvirtDeviceCharacterTarget : TNLibvirtBase
 {
