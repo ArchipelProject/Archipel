@@ -20,6 +20,11 @@
 @import <StropheCappuccino/TNXMLNode.j>
 
 @import "TNLibvirtBase.j";
+@import "TNLibvirtDeviceCharacter.j"
+@import "TNLibvirtDeviceDisk.j"
+@import "TNLibvirtDeviceGraphic.j"
+@import "TNLibvirtDeviceInput.j"
+@import "TNLibvirtDeviceInterface.j"
 
 
 /*! @ingroup virtualmachinedefinition
@@ -31,6 +36,7 @@
     CPArray     _graphics       @accessors(property=graphics);
     CPArray     _inputs         @accessors(property=inputs);
     CPArray     _interfaces     @accessors(property=interfaces);
+    CPArray     _characters     @accessors(property=characters);
     CPString    _emulator       @accessors(property=emulator);
 }
 
@@ -46,6 +52,7 @@
         _graphics   = [CPArray array];
         _inputs     = [CPArray array];
         _interfaces = [CPArray array];
+        _characters = [CPArray array];
     }
 
     return self;
@@ -66,6 +73,7 @@
         _graphics   = [CPArray array];
         _inputs     = [CPArray array];
         _interfaces = [CPArray array];
+        _characters = [CPArray array];
 
         var diskNodes = [aNode ownChildrenWithName:@"disk"];
         for (var i = 0; i < [diskNodes count]; i++)
@@ -82,6 +90,22 @@
         var inputNodes = [aNode ownChildrenWithName:@"input"];
         for (var i = 0; i < [inputNodes count]; i++)
             [_inputs addObject:[[TNLibvirtDeviceInput alloc] initWithXMLNode:[inputNodes objectAtIndex:i]]];
+
+        var consoleNodes = [aNode ownChildrenWithName:@"console"];
+        for (var i = 0; i < [consoleNodes count]; i++)
+            [_characters addObject:[[TNLibvirtDeviceCharacter alloc] initWithXMLNode:[consoleNodes objectAtIndex:i]]];
+
+        var serialNodes = [aNode ownChildrenWithName:@"serial"];
+        for (var i = 0; i < [serialNodes count]; i++)
+            [_characters addObject:[[TNLibvirtDeviceCharacter alloc] initWithXMLNode:[serialNodes objectAtIndex:i]]];
+
+        var channelNodes = [aNode ownChildrenWithName:@"channel"];
+        for (var i = 0; i < [channelNodes count]; i++)
+            [_characters addObject:[[TNLibvirtDeviceCharacter alloc] initWithXMLNode:[channelNodes objectAtIndex:i]]];
+
+        var parallelNodes = [aNode ownChildrenWithName:@"parallel"];
+        for (var i = 0; i < [parallelNodes count]; i++)
+            [_characters addObject:[[TNLibvirtDeviceCharacter alloc] initWithXMLNode:[parallelNodes objectAtIndex:i]]];
     }
 
     return self;
@@ -126,6 +150,12 @@
     for (var i = 0; i < [_inputs count]; i++)
     {
         [node addNode:[[_inputs objectAtIndex:i] XMLNode]];
+        [node up];
+    }
+
+    for (var i = 0; i < [_characters count]; i++)
+    {
+        [node addNode:[[_characters objectAtIndex:i] XMLNode]];
         [node up];
     }
 

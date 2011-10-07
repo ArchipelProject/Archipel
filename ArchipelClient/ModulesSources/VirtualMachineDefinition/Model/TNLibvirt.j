@@ -18,6 +18,9 @@
 
 
 @import "TNLibvirtBase.j"
+@import "TNLibvirtDeviceCharacter.j"
+@import "TNLibvirtDeviceCharacterSource.j"
+@import "TNLibvirtDeviceCharacterTarget.j"
 @import "TNLibvirtDeviceDisk.j"
 @import "TNLibvirtDeviceDiskDriver.j"
 @import "TNLibvirtDeviceDiskSource.j"
