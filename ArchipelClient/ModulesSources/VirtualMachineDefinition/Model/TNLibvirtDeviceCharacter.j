@@ -20,12 +20,21 @@
 @import <StropheCappuccino/TNXMLNode.j>
 
 @import "TNLibvirtBase.j"
+@import "TNLibvirtDeviceCharacterProtocol.j"
 @import "TNLibvirtDeviceCharacterSource.j"
 @import "TNLibvirtDeviceCharacterTarget.j"
 
+TNLibvirtDeviceCharacterTypeFILE        = @"file";
+TNLibvirtDeviceCharacterTypeNULL        = @"null";
 TNLibvirtDeviceCharacterTypePTY         = @"pty";
-TNLibvirtDeviceCharacterTypeUNIX        = @"unix";
 TNLibvirtDeviceCharacterTypeSPICEVMC    = @"spicevmc";
+TNLibvirtDeviceCharacterTypeSTDIO       = @"stdio";
+TNLibvirtDeviceCharacterTypeUNIX        = @"unix";
+TNLibvirtDeviceCharacterTypeVC          = @"vc";
+TNLibvirtDeviceCharacterTypeDEV         = @"dev";
+TNLibvirtDeviceCharacterTypePIPE        = @"pipe";
+TNLibvirtDeviceCharacterTypeTCP         = @"tcp";
+TNLibvirtDeviceCharacterTypeUDP         = @"udp";
 
 
 /*! @ingroup virtualmachinedefinition
@@ -33,11 +42,12 @@ TNLibvirtDeviceCharacterTypeSPICEVMC    = @"spicevmc";
 */
 @implementation TNLibvirtDeviceCharacter : TNLibvirtBase
 {
-    CPString                        _kind       @accessors(property=kind);
+    CPString                            _kind       @accessors(property=kind);
 
-    CPString                        _type       @accessors(property=type);
-    TNLibvirtDeviceCharacterSource  _source     @accessors(property=source);
-    TNLibvirtDeviceCharacterTarget  _target     @accessors(property=target);
+    CPString                            _type       @accessors(property=type);
+    TNLibvirtDeviceCharacterSource      _source     @accessors(property=source);
+    TNLibvirtDeviceCharacterTarget      _target     @accessors(property=target);
+    TNLibvirtDeviceCharacterProtocol    _protocol   @accessors(property=protocol);
 }
 
 
@@ -71,6 +81,9 @@ TNLibvirtDeviceCharacterTypeSPICEVMC    = @"spicevmc";
             _source = [[TNLibvirtDeviceCharacterSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         if ([aNode containsChildrenWithName:@"target"])
             _target = [[TNLibvirtDeviceCharacterTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
+        if ([aNode containsChildrenWithName:@"protocol"])
+            _protocol = [[TNLibvirtDeviceCharacterProtocol alloc] initWithXMLNode:[aNode firstChildWithName:@"protocol"]];
+
     }
 
     return self;

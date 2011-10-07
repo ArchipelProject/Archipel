@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import "TNLibvirtBase.j"
 @import "TNLibvirtDeviceCharacter.j"
+@import "TNLibvirtDeviceCharacterProtocol.j"
 @import "TNLibvirtDeviceCharacterSource.j"
 @import "TNLibvirtDeviceCharacterTarget.j"
 @import "TNLibvirtDeviceDisk.j"

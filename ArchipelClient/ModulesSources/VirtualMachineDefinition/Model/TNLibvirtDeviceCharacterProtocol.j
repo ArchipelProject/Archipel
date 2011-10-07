@@ -1,5 +1,5 @@
 /*
- * TNLibvirtDeviceCharacterSource.j
+ * TNLibvirtDeviceCharacterProtocol.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -21,19 +21,18 @@
 
 @import "TNLibvirtBase.j"
 
-TNLibvirtDeviceCharacterSourceModeBind      = @"bind";
-TNLibvirtDeviceCharacterSourceModeConnect   = @"connect";
+TNLibvirtDeviceCharacterProtocol   = @"virtio";
 
+TNLibvirtDeviceCharacterProtocolTypeRAW     = @"raw";
+TNLibvirtDeviceCharacterProtocolTypeTELNET  = @"telnet";
+TNLibvirtDeviceCharacterProtocolTypeTLS     = @"tls";
 
 /*! @ingroup virtualmachinedefinition
-    Model for character device source
+    Model for character device protocol
 */
-@implementation TNLibvirtDeviceCharacterSource : TNLibvirtBase
+@implementation TNLibvirtDeviceCharacterProtocol : TNLibvirtBase
 {
-    CPString    _path       @accessors(property=path);
-    CPString    _mode       @accessors(property=mode);
-    CPString    _host       @accessors(property=host);
-    CPString    _service    @accessors(property=service);
+    CPString    _type   @accessors(property=type);
 }
 
 
@@ -47,13 +46,10 @@ TNLibvirtDeviceCharacterSourceModeConnect   = @"connect";
 {
     if (self = [super initWithXMLNode:aNode])
     {
-        if ([aNode name] != @"source")
-            [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid character device source"];
+        if ([aNode name] != @"protocol")
+            [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid character device protocol"];
 
-        _path       = [aNode valueForAttribute:@"path"];
-        _mode       = [aNode valueForAttribute:@"mode"];
-        _host       = [aNode valueForAttribute:@"host"];
-        _service    = [aNode valueForAttribute:@"service"];
+        _type = [aNode valueForAttribute:@"type"];
     }
 
     return self;
@@ -68,16 +64,13 @@ TNLibvirtDeviceCharacterSourceModeConnect   = @"connect";
 */
 - (TNXMLNode)XMLNode
 {
-    var node = [TNXMLNode nodeWithName:@"source"];
+    if (!_type)
+        [CPException raise:@"Missing character device protocol type" reason:@"character device protocol type is required"];
 
-    if (_path)
-        [node setValue:_path forAttribute:@"path"];
-    if (_mode)
-        [node setValue:_mode forAttribute:@"mode"];
-    if (_host)
-        [node setValue:_host forAttribute:@"host"];
-    if (_service)
-        [node setValue:_service forAttribute:@"service"];
+    var node = [TNXMLNode nodeWithName:@"target"];
+
+    if (_type)
+        [node setValue:_type forAttribute:@"type"];
 
     return node;
 }

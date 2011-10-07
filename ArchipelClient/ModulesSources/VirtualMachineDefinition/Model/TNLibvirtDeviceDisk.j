@@ -40,11 +40,14 @@ TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
 */
 @implementation TNLibvirtDeviceDisk : TNLibvirtBase
 {
-    CPString                    _device     @accessors(property=device);
-    CPString                    _type       @accessors(property=type);
-    TNLibvirtDeviceDiskSource   _source     @accessors(property=source);
-    TNLibvirtDeviceDiskTarget   _target     @accessors(property=target);
-    TNLibvirtDeviceDiskDriver   _driver     @accessors(property=driver);
+    BOOL                            _readonly   @accessors(getter=isReadOnly, setter=setReadOnly:);
+    BOOL                            _shareable  @accessors(getter=isShareable, setter=setShareable:);
+    BOOL                            _transient  @accessors(getter=isTransient, setter=setTransient:);
+    CPString                        _device     @accessors(property=device);
+    CPString                        _type       @accessors(property=type);
+    TNLibvirtDeviceDiskSource       _source     @accessors(property=source);
+    TNLibvirtDeviceDiskTarget       _target     @accessors(property=target);
+    TNLibvirtDeviceDiskDriver       _driver     @accessors(property=driver);
 }
 
 
@@ -60,6 +63,7 @@ TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
         _source     = [[TNLibvirtDeviceDiskSource alloc] init];
         _target     = [[TNLibvirtDeviceDiskTarget alloc] init];
         _driver     = [[TNLibvirtDeviceDiskDriver alloc] init];
+        _transient  = NO;
     }
 
     return self;
@@ -81,6 +85,9 @@ TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
         _source = [[TNLibvirtDeviceDiskSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         _target = [[TNLibvirtDeviceDiskTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
         _driver = [[TNLibvirtDeviceDiskDriver alloc] initWithXMLNode:[aNode firstChildWithName:@"driver"]];
+        _transient = [aNode containsChildrenWithName:@"transient"];
+        _shareable = [aNode containsChildrenWithName:@"shareable"];
+        _readonly = [aNode containsChildrenWithName:@"readonly"];
     }
 
     return self;
@@ -123,6 +130,23 @@ TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
         [node up];
     }
 
+    if (_transient)
+    {
+        [node addChildWithName:@"transient"];
+        [node up];
+    }
+
+    if (_shareable)
+    {
+        [node addChildWithName:@"shareable"];
+        [node up];
+    }
+
+    if (_readonly)
+    {
+        [node addChildWithName:@"readonly"];
+        [node up];
+    }
 
     return node;
 }
