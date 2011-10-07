@@ -33,17 +33,24 @@ var TNDriveDeviceDataViewIconQCOW2,
 @implementation TNDriveDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView     imageIcon;
-    @outlet CPTextField     fieldPath;
-    @outlet CPTextField     fieldType;
-    @outlet CPTextField     fieldDevice;
-    @outlet CPTextField     fieldTarget;
     @outlet CPTextField     fieldCache;
+    @outlet CPTextField     fieldDevice;
     @outlet CPTextField     fieldFormat;
-    @outlet CPTextField     labelType;
-    @outlet CPTextField     labelDevice;
-    @outlet CPTextField     labelTarget;
+    @outlet CPTextField     fieldPath;
+    @outlet CPTextField     fieldReadOnly;
+    @outlet CPTextField     fieldShareable;
+    @outlet CPTextField     fieldTarget;
+    @outlet CPTextField     fieldTransient;
+    @outlet CPTextField     fieldType;
+
     @outlet CPTextField     labelCache;
+    @outlet CPTextField     labelDevice;
     @outlet CPTextField     labelFormat;
+    @outlet CPTextField     labelReadOnly;
+    @outlet CPTextField     labelShareable;
+    @outlet CPTextField     labelTarget;
+    @outlet CPTextField     labelTransient;
+    @outlet CPTextField     labelType;
 
     TNLibvirtDeviceDisk     _currentDisk;
 }
@@ -54,22 +61,14 @@ var TNDriveDeviceDataViewIconQCOW2,
 
 /*! initialize the data view
 */
-- (void)initWithFrame:(CPRect)aFrame
++ (void)initialize
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        if (!TNDriveDeviceDataViewIconQCOW2)
-        {
-            TNDriveDeviceDataViewIconQCOW2 = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_qcow2.png"]];
-            TNDriveDeviceDataViewIconQCOW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_qcow.png"]];
-            TNDriveDeviceDataViewIconCOW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_cow.png"]];
-            TNDriveDeviceDataViewIconVMDK = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_vmdk.png"]];
-            TNDriveDeviceDataViewIconRAW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_raw.png"]];
-            TNDriveDeviceDataViewIconCDROM = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"drive_cdrom.png"]];
-        }
-    }
-
-    return self;
+    TNDriveDeviceDataViewIconQCOW2 = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow2.png"]];
+    TNDriveDeviceDataViewIconQCOW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow.png"]];
+    TNDriveDeviceDataViewIconCOW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cow.png"]];
+    TNDriveDeviceDataViewIconVMDK = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_vmdk.png"]];
+    TNDriveDeviceDataViewIconRAW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_raw.png"]];
+    TNDriveDeviceDataViewIconCDROM = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cdrom.png"]];
 }
 
 
@@ -115,6 +114,9 @@ var TNDriveDeviceDataViewIconQCOW2,
     [fieldTarget setStringValue:[[_currentDisk target] bus] + @":" + [[_currentDisk target] device]];
     [fieldCache setStringValue:[[_currentDisk driver] cache]];
     [fieldFormat setStringValue:[[_currentDisk driver] type]];
+    [fieldTransient setStringValue:[_currentDisk isTransient] ? @"Yes" : @"No"];
+    [fieldShareable setStringValue:[_currentDisk isShareable] ? @"Yes" : @"No"];
+    [fieldReadOnly setStringValue:[_currentDisk isReadOnly] ? @"Yes" : @"No"];
 }
 
 
@@ -130,18 +132,24 @@ var TNDriveDeviceDataViewIconQCOW2,
 
     if (self)
     {
-        imageIcon = [aCoder decodeObjectForKey:@"imageIcon"];
-        fieldPath = [aCoder decodeObjectForKey:@"fieldPath"];
-        fieldType = [aCoder decodeObjectForKey:@"fieldType"];
-        fieldDevice = [aCoder decodeObjectForKey:@"fieldDevice"];
-        fieldTarget = [aCoder decodeObjectForKey:@"fieldTarget"];
         fieldCache = [aCoder decodeObjectForKey:@"fieldCache"];
+        fieldDevice = [aCoder decodeObjectForKey:@"fieldDevice"];
         fieldFormat = [aCoder decodeObjectForKey:@"fieldFormat"];
-        labelType = [aCoder decodeObjectForKey:@"labelType"];
-        labelDevice = [aCoder decodeObjectForKey:@"labelDevice"];
-        labelTarget = [aCoder decodeObjectForKey:@"labelTarget"];
+        fieldPath = [aCoder decodeObjectForKey:@"fieldPath"];
+        fieldReadOnly = [aCoder decodeObjectForKey:@"fieldReadOnly"];
+        fieldShareable = [aCoder decodeObjectForKey:@"fieldShareable"];
+        fieldTarget = [aCoder decodeObjectForKey:@"fieldTarget"];
+        fieldTransient = [aCoder decodeObjectForKey:@"fieldTransient"];
+        fieldType = [aCoder decodeObjectForKey:@"fieldType"];
+        imageIcon = [aCoder decodeObjectForKey:@"imageIcon"];
         labelCache = [aCoder decodeObjectForKey:@"labelCache"];
+        labelDevice = [aCoder decodeObjectForKey:@"labelDevice"];
         labelFormat = [aCoder decodeObjectForKey:@"labelFormat"];
+        labelReadOnly = [aCoder decodeObjectForKey:@"labelReadOnly"];
+        labelShareable = [aCoder decodeObjectForKey:@"labelShareable"];
+        labelTarget = [aCoder decodeObjectForKey:@"labelTarget"];
+        labelTransient = [aCoder decodeObjectForKey:@"labelTransient"];
+        labelType = [aCoder decodeObjectForKey:@"labelType"];
     }
 
     return self;
@@ -155,18 +163,23 @@ var TNDriveDeviceDataViewIconQCOW2,
 
     [aCoder encodeObject:imageIcon forKey:@"imageIcon"];
 
-    [aCoder encodeObject:fieldPath forKey:@"fieldPath"];
-    [aCoder encodeObject:fieldType forKey:@"fieldType"];
-    [aCoder encodeObject:fieldDevice forKey:@"fieldDevice"];
-    [aCoder encodeObject:fieldTarget forKey:@"fieldTarget"];
     [aCoder encodeObject:fieldCache forKey:@"fieldCache"];
+    [aCoder encodeObject:fieldDevice forKey:@"fieldDevice"];
     [aCoder encodeObject:fieldFormat forKey:@"fieldFormat"];
-    [aCoder encodeObject:labelType forKey:@"labelType"];
-    [aCoder encodeObject:labelDevice forKey:@"labelDevice"];
-    [aCoder encodeObject:labelTarget forKey:@"labelTarget"];
+    [aCoder encodeObject:fieldPath forKey:@"fieldPath"];
+    [aCoder encodeObject:fieldReadOnly forKey:@"fieldReadOnly"];
+    [aCoder encodeObject:fieldShareable forKey:@"fieldShareable"];
+    [aCoder encodeObject:fieldTarget forKey:@"fieldTarget"];
+    [aCoder encodeObject:fieldTransient forKey:@"fieldTransient"];
+    [aCoder encodeObject:fieldType forKey:@"fieldType"];
     [aCoder encodeObject:labelCache forKey:@"labelCache"];
+    [aCoder encodeObject:labelDevice forKey:@"labelDevice"];
     [aCoder encodeObject:labelFormat forKey:@"labelFormat"];
-
+    [aCoder encodeObject:labelReadOnly forKey:@"labelReadOnly"];
+    [aCoder encodeObject:labelShareable forKey:@"labelShareable"];
+    [aCoder encodeObject:labelTarget forKey:@"labelTarget"];
+    [aCoder encodeObject:labelTransient forKey:@"labelTransient"];
+    [aCoder encodeObject:labelType forKey:@"labelType"];
 }
 
 @end

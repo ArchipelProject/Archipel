@@ -893,3 +893,33 @@
 /* Class = "NSTextFieldCell"; title = "To edit definition, stop the virtual machine"; ObjectID = "1442"; */
 "1442.title" = "To edit definition, stop the virtual machine";
 
+/* Class = "NSButtonCell"; title = "Transient"; ObjectID = "1446"; */
+"1446.title" = "Transient";
+
+/* Class = "NSButtonCell"; title = "Read only"; ObjectID = "1448"; */
+"1448.title" = "Read only";
+
+/* Class = "NSButtonCell"; title = "Shareable"; ObjectID = "1450"; */
+"1450.title" = "Shareable";
+
+/* Class = "NSTextFieldCell"; title = "Behaviors:"; ObjectID = "1452"; */
+"1452.title" = "Behaviors:";
+
+/* Class = "NSTextFieldCell"; title = "Yes"; ObjectID = "1479"; */
+"1479.title" = "Yes";
+
+/* Class = "NSTextFieldCell"; title = "Yes"; ObjectID = "1480"; */
+"1480.title" = "Yes";
+
+/* Class = "NSTextFieldCell"; title = "Yes"; ObjectID = "1481"; */
+"1481.title" = "Yes";
+
+/* Class = "NSTextFieldCell"; title = "Shareable:"; ObjectID = "1482"; */
+"1482.title" = "Shareable:";
+
+/* Class = "NSTextFieldCell"; title = "Read Only:"; ObjectID = "1483"; */
+"1483.title" = "Read Only:";
+
+/* Class = "NSTextFieldCell"; title = "Transient:"; ObjectID = "1484"; */
+"1484.title" = "Transient:";
+

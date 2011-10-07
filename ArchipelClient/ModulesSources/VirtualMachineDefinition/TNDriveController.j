@@ -33,6 +33,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 @implementation TNDriveController : CPObject
 {
     @outlet CPButton        buttonOK;
+    @outlet CPCheckBox      checkBoxReadOnly;
+    @outlet CPCheckBox      checkBoxShareable;
+    @outlet CPCheckBox      checkBoxTransient;
     @outlet CPPopover       mainPopover;
     @outlet CPPopUpButton   buttonDevice;
     @outlet CPPopUpButton   buttonDriverCache;
@@ -73,6 +76,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonSourcePath setToolTip:CPBundleLocalizedString(@"Set the source to use for the drive", @"Set the source to use for the drive")];
     [buttonTargetDevice setToolTip:CPBundleLocalizedString(@"Set the target to use for the drive", @"Set the target to use for the drive")];
     [buttonDriverCache setToolTip:CPBundleLocalizedString(@"Set the cache mode the drive", @"Set the cache mode the drive")];
+    [checkBoxTransient setToolTip:CPLocalizedString(@"If checked, all modifications to the drive will be lost when VM is shut down", @"If checked, all modifications to the drive will be lost when VM is shut down")];
+    [checkBoxShareable setToolTip:CPLocalizedString(@"If checked, drive can be shared bewteen VMs", @"If checked, drive can be shared bewteen VMs")];
+    [checkBoxReadOnly setToolTip:CPLocalizedString(@"If checked, drive is mounted as read only", @"If checked, drive is mounted as read only")];
 }
 
 
@@ -115,6 +121,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonTargetBus selectItemWithTitle:[[_drive target] bus]];
     [self busTypeChanged:buttonTargetBus];
     [self driveTypeDidChange:nil];
+    [checkBoxTransient setState:([_drive isTransient]) ? CPOnState : CPOffState];
+    [checkBoxShareable setState:([_drive isShareable]) ? CPOnState : CPOffState];
+    [checkBoxReadOnly setState:([_drive isReadOnly]) ? CPOnState : CPOffState];
 }
 
 
@@ -154,6 +163,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
     [[_drive target] setBus:[buttonTargetBus title]];
     [[_drive target] setDevice:[buttonTargetDevice title]];
+
+    [_drive setTransient:[checkBoxTransient state] == CPOnState ? YES : NO]
+    [_drive setShareable:[checkBoxShareable state] == CPOnState ? YES : NO]
+    [_drive setReadOnly:[checkBoxReadOnly state] == CPOnState ? YES : NO];
 
     if (![[_table dataSource] containsObject:_drive])
         [[_table dataSource] addObject:_drive];
