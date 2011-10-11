@@ -24,40 +24,64 @@
 @import "TNLibvirtDeviceCharacterSource.j"
 @import "TNLibvirtDeviceCharacterTarget.j"
 
-TNLibvirtDeviceCharacterKindConsole     = @"console";
-TNLibvirtDeviceCharacterKindSerial      = @"serial";
-TNLibvirtDeviceCharacterKindChannel     = @"channel";
-TNLibvirtDeviceCharacterKindParallel    = @"parallel";
+TNLibvirtDeviceCharacterKindConsole         = @"console";
+TNLibvirtDeviceCharacterKindSerial          = @"serial";
+TNLibvirtDeviceCharacterKindChannel         = @"channel";
+TNLibvirtDeviceCharacterKindParallel        = @"parallel";
 
-TNLibvirtDeviceCharacterKinds           = [ TNLibvirtDeviceCharacterKindConsole,
-                                            TNLibvirtDeviceCharacterKindSerial,
-                                            TNLibvirtDeviceCharacterKindChannel,
-                                            TNLibvirtDeviceCharacterKindParallel];
+TNLibvirtDeviceCharacterKinds               = [ //TNLibvirtDeviceCharacterKindConsole, // disabled for now.
+                                                TNLibvirtDeviceCharacterKindSerial,
+                                                TNLibvirtDeviceCharacterKindChannel,
+                                                TNLibvirtDeviceCharacterKindParallel];
 
-TNLibvirtDeviceCharacterTypeDEV         = @"dev";
-TNLibvirtDeviceCharacterTypeFILE        = @"file";
-TNLibvirtDeviceCharacterTypeNULL        = @"null";
-TNLibvirtDeviceCharacterTypePIPE        = @"pipe";
-TNLibvirtDeviceCharacterTypePTY         = @"pty";
-TNLibvirtDeviceCharacterTypeSPICEVMC    = @"spicevmc";
-TNLibvirtDeviceCharacterTypeSTDIO       = @"stdio";
-TNLibvirtDeviceCharacterTypeTCP         = @"tcp";
-TNLibvirtDeviceCharacterTypeUDP         = @"udp";
-TNLibvirtDeviceCharacterTypeUNIX        = @"unix";
-TNLibvirtDeviceCharacterTypeVC          = @"vc";
+TNLibvirtDeviceCharacterTypeDEV             = @"dev";
+TNLibvirtDeviceCharacterTypeFILE            = @"file";
+TNLibvirtDeviceCharacterTypeNULL            = @"null";
+TNLibvirtDeviceCharacterTypePIPE            = @"pipe";
+TNLibvirtDeviceCharacterTypePTY             = @"pty";
+TNLibvirtDeviceCharacterTypeSPICEVMC        = @"spicevmc";
+TNLibvirtDeviceCharacterTypeSTDIO           = @"stdio";
+TNLibvirtDeviceCharacterTypeTCP             = @"tcp";
+TNLibvirtDeviceCharacterTypeUDP             = @"udp";
+TNLibvirtDeviceCharacterTypeUNIX            = @"unix";
+TNLibvirtDeviceCharacterTypeVC              = @"vc";
 
 
-TNLibvirtDeviceCharacterTypes           = [ TNLibvirtDeviceCharacterTypeDEV,
-                                            TNLibvirtDeviceCharacterTypeFILE,
-                                            TNLibvirtDeviceCharacterTypeNULL,
-                                            TNLibvirtDeviceCharacterTypePIPE,
-                                            TNLibvirtDeviceCharacterTypePTY,
-                                            TNLibvirtDeviceCharacterTypeSPICEVMC,
-                                            TNLibvirtDeviceCharacterTypeSTDIO,
-                                            TNLibvirtDeviceCharacterTypeTCP,
-                                            TNLibvirtDeviceCharacterTypeUDP,
-                                            TNLibvirtDeviceCharacterTypeUNIX,
-                                            TNLibvirtDeviceCharacterTypeVC];
+TNLibvirtDeviceCharacterTypes               = [ TNLibvirtDeviceCharacterTypeDEV,
+                                                TNLibvirtDeviceCharacterTypeFILE,
+                                                TNLibvirtDeviceCharacterTypeNULL,
+                                                TNLibvirtDeviceCharacterTypePIPE,
+                                                TNLibvirtDeviceCharacterTypePTY,
+                                                TNLibvirtDeviceCharacterTypeSPICEVMC,
+                                                TNLibvirtDeviceCharacterTypeSTDIO,
+                                                TNLibvirtDeviceCharacterTypeTCP,
+                                                TNLibvirtDeviceCharacterTypeUDP,
+                                                TNLibvirtDeviceCharacterTypeUNIX,
+                                                TNLibvirtDeviceCharacterTypeVC];
+
+
+TNLibvirtDeviceCharacterTypesForConsole     = [ TNLibvirtDeviceCharacterTypePTY,
+                                                TNLibvirtDeviceCharacterTypeSTDIO,
+                                                TNLibvirtDeviceCharacterTypeTCP,
+                                                TNLibvirtDeviceCharacterTypeUDP];
+
+TNLibvirtDeviceCharacterTypesForSerial      = [ TNLibvirtDeviceCharacterTypePTY,
+                                                TNLibvirtDeviceCharacterTypeFILE,
+                                                TNLibvirtDeviceCharacterTypeVC,
+                                                TNLibvirtDeviceCharacterTypeNULL,
+                                                TNLibvirtDeviceCharacterTypeDEV,
+                                                TNLibvirtDeviceCharacterTypePIPE,
+                                                TNLibvirtDeviceCharacterTypeTCP,
+                                                TNLibvirtDeviceCharacterTypeUDP,
+                                                TNLibvirtDeviceCharacterTypeUNIX];
+
+
+TNLibvirtDeviceCharacterTypesForParallel    = [ TNLibvirtDeviceCharacterTypePTY];
+
+TNLibvirtDeviceCharacterTypesForChannel     = [ TNLibvirtDeviceCharacterTypePTY,
+                                                TNLibvirtDeviceCharacterTypeUNIX,
+                                                TNLibvirtDeviceCharacterTypeSPICEVMC];
+
 
 /*! @ingroup virtualmachinedefinition
     Model for character devices
@@ -140,6 +164,12 @@ TNLibvirtDeviceCharacterTypes           = [ TNLibvirtDeviceCharacterTypeDEV,
     if (_target)
     {
         [node addNode:[_target XMLNode]];
+        [node up];
+    }
+
+    if (_protocol)
+    {
+        [node addNode:[_protocol XMLNode]];
         [node up];
     }
 

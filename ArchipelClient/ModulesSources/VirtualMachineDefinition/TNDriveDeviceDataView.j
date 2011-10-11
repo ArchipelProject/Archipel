@@ -30,6 +30,9 @@ var TNDriveDeviceDataViewIconQCOW2,
     TNDriveDeviceDataViewIconRAW,
     TNDriveDeviceDataViewIconCDROM;
 
+/*! @ingroup virtualmachinedefinition
+    This is a representation of a data view for displaying a drive device
+*/
 @implementation TNDriveDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView     imageIcon;

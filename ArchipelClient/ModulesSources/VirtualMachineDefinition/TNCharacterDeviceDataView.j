@@ -25,6 +25,9 @@ var TNCharacterDeviceDataViewIconCONSOLE,
     TNCharacterDeviceDataViewIconCHANNEL,
     TNCharacterDeviceDataViewIconPARALLEL;
 
+/*! @ingroup virtualmachinedefinition
+    This is a representation of a character device in the table
+*/
 @implementation TNCharacterDeviceDataView : TNBasicDataView
 {
     @outlet     CPImageView     imageIcon;
@@ -44,6 +47,7 @@ var TNCharacterDeviceDataViewIconCONSOLE,
     @outlet     CPTextField     labelTarget;
     @outlet     CPTextField     labelProtocol;
 
+    @outlet     CPTextField     labelTitle;
     @outlet     CPTextField     labelProtocolType;
     @outlet     CPTextField     labelSourceHost;
     @outlet     CPTextField     labelSourceMode;
@@ -103,6 +107,10 @@ var TNCharacterDeviceDataViewIconCONSOLE,
             break;
     }
 
+    [labelTitle setStringValue:[CPString stringWithFormat:CPLocalizedString(@"%s %s device", @"%s %s device"),
+                                                            [[_currentCharacterDevice type] uppercaseString],
+                                                            [[_currentCharacterDevice kind] lowercaseString]]];
+
     [fieldType setStringValue:[[_currentCharacterDevice type] uppercaseString]];
 
     [fieldSourceHost setStringValue:[[_currentCharacterDevice source] host] || @"None"];
@@ -134,6 +142,7 @@ var TNCharacterDeviceDataViewIconCONSOLE,
         labelProtocol       = [aCoder decodeObjectForKey:@"labelProtocol"];
         labelSource         = [aCoder decodeObjectForKey:@"labelSource"];
         labelTarget         = [aCoder decodeObjectForKey:@"labelTarget"];
+        labelTitle          = [aCoder decodeObjectForKey:@"labelTitle"];
 
         fieldProtocolType   = [aCoder decodeObjectForKey:@"fieldProtocolType"];
         fieldSourceHost     = [aCoder decodeObjectForKey:@"fieldSourceHost"];
@@ -170,6 +179,7 @@ var TNCharacterDeviceDataViewIconCONSOLE,
     [aCoder encodeObject:labelProtocol forKey:@"labelProtocol"];
     [aCoder encodeObject:labelSource forKey:@"labelSource"];
     [aCoder encodeObject:labelTarget forKey:@"labelTarget"];
+    [aCoder encodeObject:labelTitle forKey:@"labelTitle"];
 
     [aCoder encodeObject:fieldProtocolType forKey:@"fieldProtocolType"];
     [aCoder encodeObject:fieldSourceHost forKey:@"fieldSourceHost"];

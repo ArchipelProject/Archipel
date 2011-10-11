@@ -24,6 +24,10 @@ var TNGraphicDeviceDataViewIconVNC,
     TNGraphicDeviceDataViewIconRDP,
     TNGraphicDeviceDataViewIconSPICE;
 
+
+/*! @ingroup virtualmachinedefinition
+    This is a representation of a data view for displaying a graphic device
+*/
 @implementation TNGraphicDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView     imageIcon;

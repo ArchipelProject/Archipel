@@ -23,6 +23,10 @@
 var TNInputDeviceDataViewIconTablet,
     TNInputDeviceDataViewIconMouse;
 
+
+/*! @ingroup virtualmachinedefinition
+    This is a representation of a data view for displaying a input device
+*/
 @implementation TNInputDeviceDataView : TNBasicDataView
 {
     @outlet CPTextField     fieldType;

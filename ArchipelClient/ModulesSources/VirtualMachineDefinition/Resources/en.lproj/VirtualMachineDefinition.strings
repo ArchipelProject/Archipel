@@ -269,12 +269,6 @@
 /* Class = "NSButtonCell"; title = "Validate"; ObjectID = "386"; */
 "386.title" = "Validate";
 
-/* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "485"; */
-"485.title" = "Virtual machine is running.";
-
-/* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to edit its definition."; ObjectID = "487"; */
-"487.title" = "You need to stop the virtual machine to be able to edit its definition.";
-
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "502"; */
 "502.title" = "OtherViews";
 
@@ -632,9 +626,6 @@
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
 
-/* Class = "NSTextFieldCell"; title = "Advanced stuff will be added here"; ObjectID = "844"; */
-"844.title" = "Advanced stuff will be added here";
-
 /* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "872"; */
 "872.placeholderString" = "1024";
 
@@ -922,4 +913,226 @@
 
 /* Class = "NSTextFieldCell"; title = "Transient:"; ObjectID = "1484"; */
 "1484.title" = "Transient:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Character devices"; ObjectID = "1502"; */
+"1502.headerCell.title" = "Character devices";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1503"; */
+"1503.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Source"; ObjectID = "1513"; */
+"1513.title" = "Source";
+
+/* Class = "NSTextFieldCell"; title = "Path:"; ObjectID = "1515"; */
+"1515.title" = "Path:";
+
+/* Class = "NSTextFieldCell"; title = "Mode:"; ObjectID = "1516"; */
+"1516.title" = "Mode:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1539"; */
+"1539.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "1540"; */
+"1540.title" = "OK";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1541"; */
+"1541.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Character device"; ObjectID = "1554"; */
+"1554.title" = "Character device";
+
+/* Class = "NSTextFieldCell"; title = "You can plug virtual character devices."; ObjectID = "1568"; */
+"1568.title" = "You can plug virtual character devices.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual character devices"; ObjectID = "1569"; */
+"1569.title" = "Virtual character devices";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1584"; */
+"1584.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1585"; */
+"1585.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1586"; */
+"1586.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1587"; */
+"1587.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Kind :"; ObjectID = "1589"; */
+"1589.title" = "Kind :";
+
+/* Class = "NSTextFieldCell"; title = "Type :"; ObjectID = "1592"; */
+"1592.title" = "Type :";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1594"; */
+"1594.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1595"; */
+"1595.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1596"; */
+"1596.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1597"; */
+"1597.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Source"; ObjectID = "1601"; */
+"1601.title" = "Source";
+
+/* Class = "NSTextFieldCell"; placeholderString = "0.0.0.0"; ObjectID = "1603"; */
+"1603.placeholderString" = "0.0.0.0";
+
+/* Class = "NSTextFieldCell"; title = "Mode:"; ObjectID = "1606"; */
+"1606.title" = "Mode:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1608"; */
+"1608.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1609"; */
+"1609.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1610"; */
+"1610.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1611"; */
+"1611.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Host:"; ObjectID = "1613"; */
+"1613.title" = "Host:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "4242"; ObjectID = "1616"; */
+"1616.placeholderString" = "4242";
+
+/* Class = "NSTextFieldCell"; title = "Service:"; ObjectID = "1617"; */
+"1617.title" = "Service:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "/dev/pts/42"; ObjectID = "1620"; */
+"1620.placeholderString" = "/dev/pts/42";
+
+/* Class = "NSTextFieldCell"; title = "Path:"; ObjectID = "1621"; */
+"1621.title" = "Path:";
+
+/* Class = "NSTextFieldCell"; title = "Target"; ObjectID = "1623"; */
+"1623.title" = "Target";
+
+/* Class = "NSTextFieldCell"; placeholderString = "my device"; ObjectID = "1632"; */
+"1632.placeholderString" = "my device";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "1633"; */
+"1633.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "1634"; */
+"1634.placeholderString" = "auto";
+
+/* Class = "NSTextFieldCell"; title = "Port:"; ObjectID = "1635"; */
+"1635.title" = "Port:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "0.0.0.0"; ObjectID = "1636"; */
+"1636.placeholderString" = "0.0.0.0";
+
+/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "1637"; */
+"1637.title" = "Address:";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1638"; */
+"1638.title" = "Type:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1640"; */
+"1640.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1641"; */
+"1641.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1642"; */
+"1642.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1643"; */
+"1643.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Protocol"; ObjectID = "1645"; */
+"1645.title" = "Protocol";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1648"; */
+"1648.title" = "Type:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1650"; */
+"1650.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1651"; */
+"1651.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1652"; */
+"1652.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1653"; */
+"1653.title" = "Item 1";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1665"; */
+"1665.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1666"; */
+"1666.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1667"; */
+"1667.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "The mode"; ObjectID = "1672"; */
+"1672.title" = "The mode";
+
+/* Class = "NSTextFieldCell"; title = "/dev/pts/42"; ObjectID = "1673"; */
+"1673.title" = "/dev/pts/42";
+
+/* Class = "NSTextFieldCell"; title = "xxx.xxx.xxx.xxx"; ObjectID = "1678"; */
+"1678.title" = "xxx.xxx.xxx.xxx";
+
+/* Class = "NSTextFieldCell"; title = "4242"; ObjectID = "1679"; */
+"1679.title" = "4242";
+
+/* Class = "NSTextFieldCell"; title = "Service:"; ObjectID = "1681"; */
+"1681.title" = "Service:";
+
+/* Class = "NSTextFieldCell"; title = "Host:"; ObjectID = "1683"; */
+"1683.title" = "Host:";
+
+/* Class = "NSTextFieldCell"; title = "xxx.xxx.xxx.xxx"; ObjectID = "1693"; */
+"1693.title" = "xxx.xxx.xxx.xxx";
+
+/* Class = "NSTextFieldCell"; title = "4242"; ObjectID = "1694"; */
+"1694.title" = "4242";
+
+/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "1695"; */
+"1695.title" = "Address:";
+
+/* Class = "NSTextFieldCell"; title = "Port:"; ObjectID = "1696"; */
+"1696.title" = "Port:";
+
+/* Class = "NSTextFieldCell"; title = "The type"; ObjectID = "1697"; */
+"1697.title" = "The type";
+
+/* Class = "NSTextFieldCell"; title = "My Device"; ObjectID = "1698"; */
+"1698.title" = "My Device";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1699"; */
+"1699.title" = "Type:";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "1700"; */
+"1700.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "Target"; ObjectID = "1701"; */
+"1701.title" = "Target";
+
+/* Class = "NSTextFieldCell"; title = "TYPE"; ObjectID = "1723"; */
+"1723.title" = "TYPE";
+
+/* Class = "NSTextFieldCell"; title = "The type"; ObjectID = "1728"; */
+"1728.title" = "The type";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1729"; */
+"1729.title" = "Type:";
+
+/* Class = "NSTextFieldCell"; title = "Protocol"; ObjectID = "1730"; */
+"1730.title" = "Protocol";
+
+/* Class = "NSTextFieldCell"; title = "TCP console device"; ObjectID = "1745"; */
+"1745.title" = "TCP console device";
 

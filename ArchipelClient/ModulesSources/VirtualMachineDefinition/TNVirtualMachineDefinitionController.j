@@ -156,7 +156,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;
 
-
     BOOL                                _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                                _definitionRecovered;
     CPButton                            _editButtonCharacterDevice;
@@ -176,6 +175,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPButton                            _plusButtonNics;
     CPImage                             _imageDefining;
     CPImage                             _imageEdited;
+    CPPredicate                         _consoleFilterPredicate;
     CPString                            _stringXMLDesc;
     TNTableViewDataSource               _characterDevicesDatasource;
     TNTableViewDataSource               _drivesDatasource;
@@ -431,12 +431,16 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
 
     // Character devices
+    _consoleFilterPredicate = [CPPredicate predicateWithFormat:@"not kind like %@", TNLibvirtDeviceCharacterKindConsole];
     _characterDevicesDatasource = [[TNTableViewDataSource alloc] init];
+    [_characterDevicesDatasource setDisplayFilter:_consoleFilterPredicate];
+
     [[tableCharacterDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewCharacterDevicePrototype duplicate]];
     [tableCharacterDevices setTarget:self];
     [tableCharacterDevices setDoubleAction:@selector(editCharacterDevice:)];
     [tableCharacterDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableCharacterDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+
 
     [_characterDevicesDatasource setTable:tableCharacterDevices];
     [tableCharacterDevices setDataSource:_characterDevicesDatasource];
@@ -1326,6 +1330,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     var characterDevice = [[TNLibvirtDeviceCharacter alloc] init];
 
+    [characterDevice setKind:TNLibvirtDeviceCharacterKindSerial];
+
     if (![_libvirtDomain devices])
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
@@ -2028,7 +2034,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_characterDevicesDatasource setContent:[[_libvirtDomain devices] characters]];
     [tableCharacterDevices reloadData];
 
-
     // MEMORY TUNING
     if ([[_libvirtDomain memoryTuning] softLimit])
         [fieldMemoryTuneSoftLimit setIntValue:[[_libvirtDomain memoryTuning] softLimit] / 1024];
@@ -2083,6 +2088,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+
+    // dirty way to avoid having zombie consoles.
+    // As we don't support adding console, we'll see a better
+    // way later.
+    [[[_libvirtDomain devices] characters] filterUsingPredicate:_consoleFilterPredicate];
 
     CPLog.info("XML Definition is : " + [[_libvirtDomain XMLNode] stringValue]);
     [stanza addNode:[_libvirtDomain XMLNode]];

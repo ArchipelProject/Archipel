@@ -28,7 +28,7 @@
 
 
 /*! @ingroup virtualmachinedefinition
-    this is the virtual graphic editor
+    this is the virtual character device editor
 */
 @implementation TNCharacterDeviceController : CPObject
 {
@@ -45,7 +45,6 @@
     @outlet CPTextField         fieldTargetAddress;
     @outlet CPTextField         fieldTargetName;
     @outlet CPTextField         fieldTargetPort;
-
 
     CPTableView                 _table              @accessors(property=table);
     id                          _delegate           @accessors(property=delegate);
@@ -96,10 +95,12 @@
 - (void)update
 {
     [buttonKind selectItemWithTitle:[_characterDevice kind]];
-    [buttonType selectItemWithTitle:[_characterDevice type]];
+    [self didDeviceKindChange:nil];
+    // rest is computed trought the did*change chain.
+
     [buttonSourceMode selectItemWithTitle:[[_characterDevice source] mode] || TNLibvirtDeviceCharacterSourceModeNone];
     [buttonTargetType selectItemWithTitle:[[_characterDevice target] type] || TNLibvirtDeviceConsoleTargetTypeNone];
-    [buttonProtocolType selectItemWithTitle:[[_characterDevice protocol] type] || TNLibvirtDeviceCharacterProtocolTypeNONE];
+    [buttonProtocolType selectItemWithTitle:[[_characterDevice protocol] type] || TNLibvirtDeviceCharacterProtocolTypeRAW];
 
     [fieldSourceHost setStringValue:[[_characterDevice source] host] || @""];
     [fieldSourcePath setStringValue:[[_characterDevice source] path] || @""];
@@ -129,7 +130,6 @@
     [[_characterDevice source] setService:([fieldSourceService stringValue] != @"") ? [fieldSourceService stringValue] : nil];
     [[_characterDevice source] setPath:([fieldSourcePath stringValue] != @"") ? [fieldSourcePath stringValue] : nil];
 
-
     if (![_characterDevice target])
         [_characterDevice setTarget:[[TNLibvirtDeviceCharacterTarget alloc] init]];
 
@@ -137,7 +137,6 @@
     [[_characterDevice target] setAddress:([fieldTargetAddress stringValue] != @"") ? [fieldTargetAddress stringValue] : nil];
     [[_characterDevice target] setPort:([fieldTargetPort stringValue] != @"") ? [fieldTargetPort stringValue] : nil];
     [[_characterDevice target] setName:([fieldTargetName stringValue] != @"") ? [fieldTargetName stringValue] : nil];
-
 
     if (![_characterDevice protocol])
         [_characterDevice setProtocol:[[TNLibvirtDeviceCharacterProtocol alloc] init]];
@@ -150,8 +149,8 @@
     [_delegate handleDefinitionEdition:YES];
     [_table reloadData];
     [mainPopover close];
+    CPLog.debug("Generated character device XML is: " + [_characterDevice description]);
 }
-
 
 /*! show the main window
     @param aSender the sender of the action
@@ -175,9 +174,7 @@
     [mainPopover setDefaultButton:buttonOK];
 }
 
-
-
-/*! hide the main window
+/*! Hide the main window
     @param aSender the sender of the action
 */
 - (IBAction)closeWindow:(id)aSender
@@ -185,6 +182,97 @@
     [mainPopover close];
 }
 
+/*! Update the UI for selected device kind
+    @param aSender the sender of the action
+*/
+- (IBAction)didDeviceKindChange:(id)aSender
+{
+    [buttonType removeAllItems];
+
+    switch ([buttonKind title])
+    {
+        case TNLibvirtDeviceCharacterKindConsole:
+            [buttonType addItemsWithTitles:TNLibvirtDeviceCharacterTypesForConsole];
+            break;
+
+        case TNLibvirtDeviceCharacterKindSerial:
+            [buttonType addItemsWithTitles:TNLibvirtDeviceCharacterTypesForSerial];
+            break;
+
+        case TNLibvirtDeviceCharacterKindChannel:
+            [buttonType addItemsWithTitles:TNLibvirtDeviceCharacterTypesForChannel];
+            break;
+
+        case TNLibvirtDeviceCharacterKindParallel:
+            [buttonType addItemsWithTitles:TNLibvirtDeviceCharacterTypesForParallel];
+            break;
+    }
+
+    if ([buttonType itemWithTitle:[_characterDevice type]])
+        [buttonType selectItemWithTitle:[_characterDevice type]];
+    else
+        [buttonType selectItemAtIndex:0];
+
+    [self didDeviceTypeChange:nil];
+}
+
+/*! Update the UI for selected device type
+    @param aSender the sender of the action
+*/
+- (IBAction)didDeviceTypeChange:(id)aSender
+{
+    switch ([buttonType title])
+    {
+        case TNLibvirtDeviceCharacterTypeUNIX:
+        case TNLibvirtDeviceCharacterTypePTY:
+        case TNLibvirtDeviceCharacterTypeFILE:
+        case TNLibvirtDeviceCharacterTypeDEV:
+        case TNLibvirtDeviceCharacterTypePIPE:
+            [fieldSourcePath setEnabled:YES];
+            [fieldSourceHost setEnabled:NO];
+            [fieldSourceService setEnabled:NO];
+            break;
+
+        case TNLibvirtDeviceCharacterTypeNULL:
+            [fieldSourcePath setEnabled:NO];
+            [fieldSourceHost setEnabled:NO];
+            [fieldSourceService setEnabled:NO];
+            break;
+
+        case TNLibvirtDeviceCharacterTypeUDP:
+        case TNLibvirtDeviceCharacterTypeTCP:
+            [fieldSourcePath setEnabled:NO];
+            [fieldSourceHost setEnabled:YES];
+            [fieldSourceService setEnabled:YES];
+            break;
+
+        default:
+            [fieldSourcePath setEnabled:YES];
+            [fieldSourceHost setEnabled:YES];
+            [fieldSourceService setEnabled:YES];
+            break;
+    }
+}
+
+/*! Update the UI for the selected source mode
+    @param aSender the sender of the action
+*/
+- (IBAction)didSourceModeChange:(id)aSender
+{
+    switch ([buttonSourceMode title])
+    {
+    }
+}
+
+/*! Update the UI for selected target type
+    @param aSender the sender of the action
+*/
+- (IBAction)didTargetTypeChange:(id)aSender
+{
+    switch ([buttonTargetType title])
+    {
+    }
+}
 
 @end
 
