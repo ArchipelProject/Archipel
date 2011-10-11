@@ -37,15 +37,18 @@
 @import <TNKit/TNSwipeView.j>
 
 @import "Model/TNLibvirt.j"
+@import "TNCharacterDeviceController.j"
+@import "TNCharacterDeviceDataView.j"
 @import "TNDriveController.j"
 @import "TNDriveDeviceDataView.j"
 @import "TNGraphicDeviceController.j"
 @import "TNGraphicDeviceDataView.j"
 @import "TNInputDeviceController.j"
 @import "TNInputDeviceDataView.j"
-@import "TNInterfaceDeviceDataView.j"
 @import "TNInterfaceController.j"
+@import "TNInterfaceDeviceDataView.j"
 @import "TNVirtualMachineGuestItem.j"
+
 
 var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinitionUpdatedNotification",
     TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control",
@@ -82,6 +85,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPButton                    buttonUndefine;
     @outlet CPButton                    buttonXMLEditor;
     @outlet CPButton                    buttonXMLEditorDefine;
+    @outlet CPButtonBar                 buttonBarCharacterDevices;
     @outlet CPButtonBar                 buttonBarControlDrives;
     @outlet CPButtonBar                 buttonBarControlNics;
     @outlet CPButtonBar                 buttonBarGraphicDevices;
@@ -102,6 +106,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPScrollView                scrollViewContentView;
     @outlet CPSearchField               fieldFilterDrives;
     @outlet CPSearchField               fieldFilterNics;
+    @outlet CPSearchField               fieldFilterCharacters;
+    @outlet CPTableView                 tableCharacterDevices;
     @outlet CPTableView                 tableDrives;
     @outlet CPTableView                 tableGraphicsDevices;
     @outlet CPTableView                 tableInputDevices;
@@ -118,18 +124,22 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldPreferencesMemory;
     @outlet CPTextField                 labelVirtualMachineIsRunning;
     @outlet CPView                      viewBottomControl;
-    @outlet CPView                      viewDeviceVirtualDrives;
-    @outlet CPView                      viewDeviceVirtualNics;
+    @outlet CPView                      viewCharacterDevicesContainer;
     @outlet CPView                      viewDrivesContainer;
     @outlet CPView                      viewGraphicDevicesContainer;
     @outlet CPView                      viewInputDevicesContainer;
     @outlet CPView                      viewMainContent;
     @outlet CPView                      viewNicsContainer;
+    @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersAdvanced;
+    @outlet CPView                      viewParametersCharacterDevices;
+    @outlet CPView                      viewParametersDrives;
     @outlet CPView                      viewParametersEffectBottom;
     @outlet CPView                      viewParametersEffectTop;
     @outlet CPView                      viewParametersStandard;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
+    @outlet TNCharacterDeviceController characterDeviceController;
+    @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
     @outlet TNDriveController           driveController;
     @outlet TNDriveDeviceDataView       dataViewDrivesPrototype;
     @outlet TNGraphicDeviceController   graphicDeviceController;
@@ -149,14 +159,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     BOOL                                _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                                _definitionRecovered;
+    CPButton                            _editButtonCharacterDevice;
     CPButton                            _editButtonDrives;
     CPButton                            _editButtonGraphicDevice;
     CPButton                            _editButtonInputDevice;
     CPButton                            _editButtonNics;
+    CPButton                            _minusButtonCharacterDevice;
     CPButton                            _minusButtonDrives;
     CPButton                            _minusButtonGraphicDevice;
     CPButton                            _minusButtonInputDevice;
     CPButton                            _minusButtonNics;
+    CPButton                            _plusButtonCharacter;
     CPButton                            _plusButtonDrives;
     CPButton                            _plusButtonGraphics;
     CPButton                            _plusButtonInputs;
@@ -164,6 +177,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPImage                             _imageDefining;
     CPImage                             _imageEdited;
     CPString                            _stringXMLDesc;
+    TNTableViewDataSource               _characterDevicesDatasource;
     TNTableViewDataSource               _drivesDatasource;
     TNTableViewDataSource               _graphicDevicesDatasource;
     TNTableViewDataSource               _inputDevicesDatasource;
@@ -203,7 +217,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         tabViewItemStandard = [[CPTabViewItem alloc] initWithIdentifier:@"standard"],
         tabViewItemAdvanced = [[CPTabViewItem alloc] initWithIdentifier:@"advanced"],
         tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
-        tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"];
+        tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"],
+        tabViewItemCharacter = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemCharacters"];
 
     [tabViewParameters setContentBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
 
@@ -225,14 +240,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tabViewItemAdvanced setLabel:CPLocalizedString(@"Advanced", @"Advanced")];
     [tabViewItemAdvanced setView:scrollViewParametersAdvanced];
     [tabViewItemDrives setLabel:CPBundleLocalizedString(@"Virtual Medias", @"Virtual Medias")];
-    [tabViewItemDrives setView:viewDeviceVirtualDrives];
+    [tabViewItemDrives setView:viewParametersDrives];
     [tabViewItemNics setLabel:CPBundleLocalizedString(@"Virtual Nics", @"Virtual Nics")];
-    [tabViewItemNics setView:viewDeviceVirtualNics];
+    [tabViewItemNics setView:viewParametersNICs];
+    [tabViewItemCharacter setLabel:CPBundleLocalizedString(@"Char Devices", @"Char Devices")];
+    [tabViewItemCharacter setView:viewParametersCharacterDevices];
+
 
     [tabViewParameters addTabViewItem:tabViewItemStandard];
     [tabViewParameters addTabViewItem:tabViewItemAdvanced];
     [tabViewParameters addTabViewItem:tabViewItemDrives];
     [tabViewParameters addTabViewItem:tabViewItemNics];
+    [tabViewParameters addTabViewItem:tabViewItemCharacter];
     [tabViewParameters setDelegate:self];
 
     var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CPSizeMake(1.0, 10.0)],
@@ -303,7 +322,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_editButtonDrives setToolTip:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")];
 
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
-
+    [driveController setTable:tableDrives];
 
     // NICs
     _nicsDatasource = [[TNTableViewDataSource alloc] init];
@@ -342,7 +361,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected virtual network card", @"Edit selected virtual network card")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
-
+    [interfaceController setTable:tableInterfaces];
 
     // Input Devices
     _inputDevicesDatasource = [[TNTableViewDataSource alloc] init];
@@ -375,6 +394,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonBarInputDevices setButtons:[_plusButtonInputs, _minusButtonInputDevice, _editButtonInputDevice]];
 
     [inputDeviceController setDelegate:self];
+    [inputDeviceController setTable:tableInputDevices];
 
 
     // Graphic Devices
@@ -406,8 +426,47 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_editButtonGraphicDevice setToolTip:CPLocalizedString(@"Edit the current selected graphic device", @"Edit the current selected graphic device")];
 
     [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, _minusButtonGraphicDevice, _editButtonGraphicDevice]];
-
     [graphicDeviceController setDelegate:self];
+    [graphicDeviceController setTable:tableGraphicsDevices];
+
+
+    // Character devices
+    _characterDevicesDatasource = [[TNTableViewDataSource alloc] init];
+    [[tableCharacterDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewCharacterDevicePrototype duplicate]];
+    [tableCharacterDevices setTarget:self];
+    [tableCharacterDevices setDoubleAction:@selector(editCharacterDevice:)];
+    [tableCharacterDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+    [tableCharacterDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+
+    [_characterDevicesDatasource setTable:tableCharacterDevices];
+    [tableCharacterDevices setDataSource:_characterDevicesDatasource];
+    [viewCharacterDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+
+    [fieldFilterCharacters setTarget:_characterDevicesDatasource];
+    [fieldFilterCharacters setAction:@selector(filterObjects:)];
+
+    _plusButtonCharacter = [CPButtonBar plusButton];
+    [_plusButtonCharacter setTarget:self];
+    [_plusButtonCharacter setAction:@selector(addCharacterDevice:)];
+    [_plusButtonCharacter setToolTip:CPLocalizedString(@"Add a new character device", @"Add a new character device")];
+
+    _minusButtonCharacterDevice = [CPButtonBar minusButton];
+    [_minusButtonCharacterDevice setTarget:self];
+    [_minusButtonCharacterDevice setAction:@selector(deleteCharacterDevice:)];
+    [_minusButtonCharacterDevice setToolTip:CPLocalizedString(@"Remove the selected character device", @"Remove the character graphic device")];
+
+    _editButtonCharacterDevice = [CPButtonBar plusButton];
+    [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonCharacterDevice setTarget:self];
+    [_editButtonCharacterDevice setAction:@selector(editCharacterDevice:)];
+    [_editButtonCharacterDevice setToolTip:CPLocalizedString(@"Edit the current selected character device", @"Edit the current selected character device")];
+
+    [buttonBarCharacterDevices setButtons:[_plusButtonCharacter, _minusButtonCharacterDevice, _editButtonCharacterDevice]];
+
+    [characterDeviceController setDelegate:self];
+    [characterDeviceController setTable:tableCharacterDevices];
+
+
 
     // others..
     [buttonBoot removeAllItems];
@@ -455,11 +514,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonPreferencesInput addItemsWithTitles:TNLibvirtDeviceInputTypes];
 
     [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
-
-    [driveController setTable:tableDrives];
-    [interfaceController setTable:tableInterfaces];
-    [inputDeviceController setTable:tableInputDevices];
-    [graphicDeviceController setTable:tableGraphicsDevices];
 
     // switch
     [switchPAE setOn:NO animated:YES sendAction:NO];
@@ -512,8 +566,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [viewParametersStandard applyShadow];
     [viewParametersAdvanced applyShadow];
-    [viewParametersAdvanced applyShadow];
-    [viewDeviceVirtualNics applyShadow];
+    [viewParametersDrives applyShadow];
+    [viewParametersNICs applyShadow];
+    [viewParametersCharacterDevices applyShadow];
 
     [labelVirtualMachineIsRunning setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
     [labelVirtualMachineIsRunning setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
@@ -1265,6 +1320,52 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self makeDefinitionEdited:YES];
 }
 
+/*! add character device
+    @param aSender the sender of the action
+*/
+- (IBAction)addCharacterDevice:(id)aSender
+{
+    var characterDevice = [[TNLibvirtDeviceCharacter alloc] init];
+
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    [characterDeviceController setCharacterDevice:characterDevice];
+    [characterDeviceController openWindow:aSender];
+}
+
+/*! edit the selected character device
+    @param aSender the sender of the action
+*/
+- (IBAction)editCharacterDevice:(id)aSender
+{
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
+    if ([tableCharacterDevices numberOfSelectedRows] <= 0)
+    {
+         [self addCharacterDevice:_plusButtonCharacter];
+         return;
+    }
+
+    var characterDevice = [_characterDevicesDatasource objectAtIndex:[tableCharacterDevices selectedRow]];
+
+    [characterDeviceController setCharacterDevice:characterDevice];
+    [characterDeviceController openWindow:aSender];
+}
+
+/*! remove the selected character device
+    @param aSender the sender of the action
+*/
+- (IBAction)deleteCharacterDevice:(id)aSender
+{
+    if ([tableCharacterDevices numberOfSelectedRows] <= 0)
+        return;
+
+    [_characterDevicesDatasource removeObjectAtIndex:[tableCharacterDevices selectedRow]];
+    [tableCharacterDevices reloadData];
+    [self makeDefinitionEdited:YES];
+}
 
 /*! open the manual XML editor
     @param sender the sender of the action
@@ -1867,7 +1968,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
 
     // button Machine
-    //[self updateMachinesAccordingToDomainType];
     [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
 
     // Memory
