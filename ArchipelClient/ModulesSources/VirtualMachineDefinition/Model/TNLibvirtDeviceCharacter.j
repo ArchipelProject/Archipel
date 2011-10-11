@@ -24,18 +24,40 @@
 @import "TNLibvirtDeviceCharacterSource.j"
 @import "TNLibvirtDeviceCharacterTarget.j"
 
+TNLibvirtDeviceCharacterKindConsole     = @"console";
+TNLibvirtDeviceCharacterKindSerial      = @"serial";
+TNLibvirtDeviceCharacterKindChannel     = @"channel";
+TNLibvirtDeviceCharacterKindParallel    = @"parallel";
+
+TNLibvirtDeviceCharacterKinds           = [ TNLibvirtDeviceCharacterKindConsole,
+                                            TNLibvirtDeviceCharacterKindSerial,
+                                            TNLibvirtDeviceCharacterKindChannel,
+                                            TNLibvirtDeviceCharacterKindParallel];
+
+TNLibvirtDeviceCharacterTypeDEV         = @"dev";
 TNLibvirtDeviceCharacterTypeFILE        = @"file";
 TNLibvirtDeviceCharacterTypeNULL        = @"null";
+TNLibvirtDeviceCharacterTypePIPE        = @"pipe";
 TNLibvirtDeviceCharacterTypePTY         = @"pty";
 TNLibvirtDeviceCharacterTypeSPICEVMC    = @"spicevmc";
 TNLibvirtDeviceCharacterTypeSTDIO       = @"stdio";
-TNLibvirtDeviceCharacterTypeUNIX        = @"unix";
-TNLibvirtDeviceCharacterTypeVC          = @"vc";
-TNLibvirtDeviceCharacterTypeDEV         = @"dev";
-TNLibvirtDeviceCharacterTypePIPE        = @"pipe";
 TNLibvirtDeviceCharacterTypeTCP         = @"tcp";
 TNLibvirtDeviceCharacterTypeUDP         = @"udp";
+TNLibvirtDeviceCharacterTypeUNIX        = @"unix";
+TNLibvirtDeviceCharacterTypeVC          = @"vc";
 
+
+TNLibvirtDeviceCharacterTypes           = [ TNLibvirtDeviceCharacterTypeDEV,
+                                            TNLibvirtDeviceCharacterTypeFILE,
+                                            TNLibvirtDeviceCharacterTypeNULL,
+                                            TNLibvirtDeviceCharacterTypePIPE,
+                                            TNLibvirtDeviceCharacterTypePTY,
+                                            TNLibvirtDeviceCharacterTypeSPICEVMC,
+                                            TNLibvirtDeviceCharacterTypeSTDIO,
+                                            TNLibvirtDeviceCharacterTypeTCP,
+                                            TNLibvirtDeviceCharacterTypeUDP,
+                                            TNLibvirtDeviceCharacterTypeUNIX,
+                                            TNLibvirtDeviceCharacterTypeVC];
 
 /*! @ingroup virtualmachinedefinition
     Model for character devices
@@ -71,7 +93,10 @@ TNLibvirtDeviceCharacterTypeUDP         = @"udp";
 {
     if (self = [super initWithXMLNode:aNode])
     {
-        if ([aNode name] != @"console" && [aNode name] != @"serial" && [aNode name] != @"channel" && [aNode name] != @"parallel")
+        if ([aNode name] != TNLibvirtDeviceCharacterKindConsole
+            && [aNode name] != TNLibvirtDeviceCharacterKindSerial
+            && [aNode name] != TNLibvirtDeviceCharacterKindChannel
+            && [aNode name] != TNLibvirtDeviceCharacterKindParallel)
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid character device"];
 
         _kind = [aNode name];

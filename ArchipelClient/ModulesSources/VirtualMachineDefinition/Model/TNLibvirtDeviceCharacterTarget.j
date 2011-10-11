@@ -22,8 +22,11 @@
 @import "TNLibvirtBase.j"
 
 
-TNLibvirtDeviceConsoleTargetTypeVIRTIO   = @"virtio";
+TNLibvirtDeviceConsoleTargetTypeNone        = @"none";
+TNLibvirtDeviceConsoleTargetTypeVIRTIO      = @"virtio";
 
+TNLibvirtDeviceConsoleTargetTypes       = [ TNLibvirtDeviceConsoleTargetTypeNone,
+                                            TNLibvirtDeviceConsoleTargetTypeVIRTIO];
 
 /*! @ingroup virtualmachinedefinition
     Model for character device target
@@ -68,12 +71,9 @@ TNLibvirtDeviceConsoleTargetTypeVIRTIO   = @"virtio";
 */
 - (TNXMLNode)XMLNode
 {
-    if (!_port)
-        [CPException raise:@"Missing character device target port" reason:@"character device target port is required"];
-
     var node = [TNXMLNode nodeWithName:@"target"];
 
-    if (_type)
+    if (_type && _type != TNLibvirtDeviceConsoleTargetTypeNone)
         [node setValue:_type forAttribute:@"type"];
     if (_address)
         [node setValue:_address forAttribute:@"address"];

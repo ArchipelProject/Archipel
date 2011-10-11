@@ -32,12 +32,24 @@
 */
 @implementation TNCharacterDeviceController : CPObject
 {
+    @outlet CPPopUpButton       buttonKind;
+    @outlet CPPopUpButton       buttonProtocolType;
+    @outlet CPPopUpButton       buttonSourceMode;
+    @outlet CPPopUpButton       buttonTargetType;
+    @outlet CPPopUpButton       buttonType;
     @outlet CPButton            buttonOK;
     @outlet CPPopover           mainPopover;
+    @outlet CPTextField         fieldSourceHost;
+    @outlet CPTextField         fieldSourcePath;
+    @outlet CPTextField         fieldSourceService;
+    @outlet CPTextField         fieldTargetAddress;
+    @outlet CPTextField         fieldTargetName;
+    @outlet CPTextField         fieldTargetPort;
 
-    CPTableView                 _table          @accessors(property=table);
-    id                          _delegate       @accessors(property=delegate);
-    TNLibvirtDeviceCharacter    _graphicDevice  @accessors(property=characterDevice);
+
+    CPTableView                 _table              @accessors(property=table);
+    id                          _delegate           @accessors(property=delegate);
+    TNLibvirtDeviceCharacter    _characterDevice    @accessors(property=characterDevice);
 }
 
 #pragma mark -
@@ -47,19 +59,32 @@
 */
 - (void)awakeFromCib
 {
-    // [fieldPassword setSecure:YES];
-    //
-    // [buttonKeymap removeAllItems];
-    // [buttonKeymap addItemsWithTitles:TNLibvirtDeviceGraphicVNCKeymaps];
-    // [buttonKeymap setToolTip:CPLocalizedString(@"Select the keymap to use", @"Select the keymap to use")];
-    //
-    // [buttonType removeAllItems];
-    // [buttonType addItemsWithTitles:[TNLibvirtDeviceGraphicTypeVNC, TNLibvirtDeviceGraphicTypeRDP, TNLibvirtDeviceGraphicTypeSPICE]];
-    // [buttonType setToolTip:CPLocalizedString(@"Set the graphic type", @"Set the graphic type")];
-    //
-    // [fieldPassword setToolTip:CPBundleLocalizedString(@"Set the VNC password (no password if blank)", @"Set the VNC password (no password if blank)")];
-    // [fieldListenAddress setToolTip:CPLocalizedString(@"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)", @"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)")];
-    // [fieldListenPort setToolTip:CPLocalizedString(@"Set the real VNC server listen port. leave it to blank for autoport", @"Set the real VNC server listen port. leave it to blank for autoport")];
+    [buttonKind removeAllItems];
+    [buttonKind addItemsWithTitles:TNLibvirtDeviceCharacterKinds];
+    [buttonKind setToolTip:CPLocalizedString(@"Choose the kind of the character device", @"Choose the kind of the character device")];
+
+    [buttonType removeAllItems];
+    [buttonType addItemsWithTitles:TNLibvirtDeviceCharacterTypes];
+    [buttonType setToolTip:CPLocalizedString(@"Choose the type of the character device", @"Choose the type of the character device")];
+
+    [buttonSourceMode removeAllItems];
+    [buttonSourceMode addItemsWithTitles:TNLibvirtDeviceCharacterSourceModes];
+    [buttonSourceMode setToolTip:CPLocalizedString(@"Choose the mode of the source", @"Choose the mode of the source")];
+
+    [buttonTargetType removeAllItems];
+    [buttonTargetType addItemsWithTitles:TNLibvirtDeviceConsoleTargetTypes];
+    [buttonTargetType setToolTip:CPLocalizedString(@"Choose the target type", @"Choose the target type")];
+
+    [buttonProtocolType removeAllItems];
+    [buttonProtocolType addItemsWithTitles:TNLibvirtDeviceCharacterProtocolTypes];
+    [buttonProtocolType setToolTip:CPLocalizedString(@"Choose the protocol type", @"Choose the protocol type")];
+
+    [fieldSourceHost setToolTip:CPLocalizedString(@"Set the source host", @"Set the source host")];
+    [fieldSourcePath setToolTip:CPLocalizedString(@"Set the source path", @"Set the source path")];
+    [fieldSourceService setToolTip:CPLocalizedString(@"Set the source service", @"Set the source service")];
+    [fieldTargetAddress setToolTip:CPLocalizedString(@"Set the target address", @"Set the target address")];
+    [fieldTargetName setToolTip:CPLocalizedString(@"Set the target name", @"Set the target name")];
+    [fieldTargetPort setToolTip:CPLocalizedString(@"Set the target port", @"Set the target port")];
 }
 
 
@@ -70,13 +95,18 @@
 */
 - (void)update
 {
-    // [buttonKeymap selectItemWithTitle:[_graphicDevice keymap]];
-    // [buttonType selectItemWithTitle:[_graphicDevice type]];
-    // [fieldPassword setStringValue:[_graphicDevice password]];
-    // [fieldListenAddress setStringValue:([_graphicDevice listen] && [_graphicDevice listen] != @"") ? [_graphicDevice listen] : @""];
-    // [fieldListenPort setStringValue:([_graphicDevice port] && [_graphicDevice port] != @"-1") ? [_graphicDevice port] : @""];
-    //
-    // [self graphicTypeChange:nil];
+    [buttonKind selectItemWithTitle:[_characterDevice kind]];
+    [buttonType selectItemWithTitle:[_characterDevice type]];
+    [buttonSourceMode selectItemWithTitle:[[_characterDevice source] mode] || TNLibvirtDeviceCharacterSourceModeNone];
+    [buttonTargetType selectItemWithTitle:[[_characterDevice target] type] || TNLibvirtDeviceConsoleTargetTypeNone];
+    [buttonProtocolType selectItemWithTitle:[[_characterDevice protocol] type] || TNLibvirtDeviceCharacterProtocolTypeNONE];
+
+    [fieldSourceHost setStringValue:[[_characterDevice source] host] || @""];
+    [fieldSourcePath setStringValue:[[_characterDevice source] path] || @""];
+    [fieldSourceService setStringValue:[[_characterDevice source] service] || @""];
+    [fieldTargetAddress setStringValue:[[_characterDevice target] address] || @""];
+    [fieldTargetName setStringValue:[[_characterDevice target] name] || @""];
+    [fieldTargetPort setStringValue:[[_characterDevice target] port] || @""];
 }
 
 
@@ -88,15 +118,34 @@
 */
 - (IBAction)save:(id)aSender
 {
-    // [_graphicDevice setType:[buttonType title]];
-    // [_graphicDevice setKeymap:[buttonKeymap title]];
-    // [_graphicDevice setListen:[fieldListenAddress stringValue]];
-    // [_graphicDevice setPort:[fieldListenPort stringValue]];
-    // [_graphicDevice setPassword:[fieldPassword stringValue]];
-    // [_graphicDevice setAutoPort:([fieldListenPort stringValue] == @"")];
+    [_characterDevice setKind:[buttonKind title]];
+    [_characterDevice setType:[buttonType title]];
 
-    if (![[_table dataSource] containsObject:_graphicDevice])
-        [[_table dataSource] addObject:_graphicDevice];
+    if (![_characterDevice source])
+        [_characterDevice setSource:[[TNLibvirtDeviceCharacterSource alloc] init]];
+
+    [[_characterDevice source] setMode:[buttonSourceMode title]];
+    [[_characterDevice source] setHost:([fieldSourceHost stringValue] != @"") ? [fieldSourceHost stringValue] : nil];
+    [[_characterDevice source] setService:([fieldSourceService stringValue] != @"") ? [fieldSourceService stringValue] : nil];
+    [[_characterDevice source] setPath:([fieldSourcePath stringValue] != @"") ? [fieldSourcePath stringValue] : nil];
+
+
+    if (![_characterDevice target])
+        [_characterDevice setTarget:[[TNLibvirtDeviceCharacterTarget alloc] init]];
+
+    [[_characterDevice target] setType:[buttonTargetType title]];
+    [[_characterDevice target] setAddress:([fieldTargetAddress stringValue] != @"") ? [fieldTargetAddress stringValue] : nil];
+    [[_characterDevice target] setPort:([fieldTargetPort stringValue] != @"") ? [fieldTargetPort stringValue] : nil];
+    [[_characterDevice target] setName:([fieldTargetName stringValue] != @"") ? [fieldTargetName stringValue] : nil];
+
+
+    if (![_characterDevice protocol])
+        [_characterDevice setProtocol:[[TNLibvirtDeviceCharacterProtocol alloc] init]];
+
+    [[_characterDevice protocol] setType:[buttonProtocolType title]];
+
+    if (![[_table dataSource] containsObject:_characterDevice])
+        [[_table dataSource] addObject:_characterDevice];
 
     [_delegate handleDefinitionEdition:YES];
     [_table reloadData];

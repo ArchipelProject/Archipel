@@ -467,7 +467,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [characterDeviceController setTable:tableCharacterDevices];
 
 
-
     // others..
     [buttonBoot removeAllItems];
     [buttonDomainType removeAllItems];
@@ -1952,6 +1951,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_nicsDatasource setContent:[[_libvirtDomain devices] interfaces]];
         [tableInterfaces reloadData];
 
+        [_characterDevicesDatasource setContent:[[_libvirtDomain devices] characters]];
+        [tableCharacterDevices reloadData];
+
         [self buildGUIAccordingToCurrentGuest];
         _definitionRecovered = YES;
 
@@ -2021,6 +2023,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     // GRAPHIC DEVICES
     [_graphicDevicesDatasource setContent:[[_libvirtDomain devices] graphics]];
     [tableGraphicsDevices reloadData];
+
+    // CHARACTERS DEVICES
+    [_characterDevicesDatasource setContent:[[_libvirtDomain devices] characters]];
+    [tableCharacterDevices reloadData];
 
 
     // MEMORY TUNING

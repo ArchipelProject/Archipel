@@ -20,12 +20,40 @@
 
 @import "Model/TNLibvirtDeviceCharacter.j"
 
-var TNGraphicDeviceDataViewIconVNC,
-    TNGraphicDeviceDataViewIconRDP,
-    TNGraphicDeviceDataViewIconSPICE;
+var TNCharacterDeviceDataViewIconCONSOLE,
+    TNCharacterDeviceDataViewIconSERIAL,
+    TNCharacterDeviceDataViewIconCHANNEL,
+    TNCharacterDeviceDataViewIconPARALLEL;
 
 @implementation TNCharacterDeviceDataView : TNBasicDataView
 {
+    @outlet     CPImageView     imageIcon;
+
+    @outlet     CPTextField     fieldProtocolType;
+    @outlet     CPTextField     fieldSourceHost;
+    @outlet     CPTextField     fieldSourceMode;
+    @outlet     CPTextField     fieldSourcePath;
+    @outlet     CPTextField     fieldSourceService;
+    @outlet     CPTextField     fieldTargetAddress;
+    @outlet     CPTextField     fieldTargetName;
+    @outlet     CPTextField     fieldTargetPort;
+    @outlet     CPTextField     fieldTargetType;
+    @outlet     CPTextField     fieldType;
+
+    @outlet     CPTextField     labelSource;
+    @outlet     CPTextField     labelTarget;
+    @outlet     CPTextField     labelProtocol;
+
+    @outlet     CPTextField     labelProtocolType;
+    @outlet     CPTextField     labelSourceHost;
+    @outlet     CPTextField     labelSourceMode;
+    @outlet     CPTextField     labelSourcePath;
+    @outlet     CPTextField     labelSourceService;
+    @outlet     CPTextField     labelTargetAddress;
+    @outlet     CPTextField     labelTargetName;
+    @outlet     CPTextField     labelTargetPort;
+    @outlet     CPTextField     labelTargetType;
+
     TNLibvirtDeviceCharacter    _currentCharacterDevice;
 }
 
@@ -35,7 +63,12 @@ var TNGraphicDeviceDataViewIconVNC,
 
 + (void)initialize
 {
-    // pass
+    var bundle = [CPBundle bundleForClass:TNCharacterDeviceDataView];
+
+    TNCharacterDeviceDataViewIconCONSOLE    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_console.png"]];
+    TNCharacterDeviceDataViewIconSERIAL     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_serial.png"]];
+    TNCharacterDeviceDataViewIconCHANNEL    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_channel.png"]];
+    TNCharacterDeviceDataViewIconPARALLEL   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_parallel.png"]];
 }
 
 #pragma mark -
@@ -47,6 +80,42 @@ var TNGraphicDeviceDataViewIconVNC,
 - (void)setObjectValue:(TNLibvirtDeviceCharacter)aCharacterDevice
 {
     _currentCharacterDevice = aCharacterDevice;
+
+    [fieldType removeFromSuperview];
+    [self addSubview:fieldType];
+
+    switch ([_currentCharacterDevice kind])
+    {
+        case TNLibvirtDeviceCharacterKindConsole:
+            [imageIcon setImage:TNCharacterDeviceDataViewIconCONSOLE];
+            break;
+
+        case TNLibvirtDeviceCharacterKindSerial:
+            [imageIcon setImage:TNCharacterDeviceDataViewIconSERIAL];
+            break;
+
+        case TNLibvirtDeviceCharacterKindChannel:
+            [imageIcon setImage:TNCharacterDeviceDataViewIconCHANNEL];
+            break;
+
+        case TNLibvirtDeviceCharacterKindParallel:
+            [imageIcon setImage:TNCharacterDeviceDataViewIconPARALLEL];
+            break;
+    }
+
+    [fieldType setStringValue:[[_currentCharacterDevice type] uppercaseString]];
+
+    [fieldSourceHost setStringValue:[[_currentCharacterDevice source] host] || @"None"];
+    [fieldSourceMode setStringValue:[[_currentCharacterDevice source] mode] || @"None"];
+    [fieldSourcePath setStringValue:[[_currentCharacterDevice source] path] || @"None"];
+    [fieldSourceService setStringValue:[[_currentCharacterDevice source] service] || @"None"];
+
+    [fieldTargetAddress setStringValue:[[_currentCharacterDevice target] address] || @"None"];
+    [fieldTargetName setStringValue:[[_currentCharacterDevice target] name] || @"None"];
+    [fieldTargetPort setStringValue:[[_currentCharacterDevice target] port] || @"None"];
+    [fieldTargetType setStringValue:[[_currentCharacterDevice target] type] || @"None"];
+
+    [fieldProtocolType setStringValue:[[_currentCharacterDevice protocol] type] || @"None"];
 }
 
 
@@ -61,7 +130,31 @@ var TNGraphicDeviceDataViewIconVNC,
 
     if (self)
     {
-        // imageIcon = [aCoder decodeObjectForKey:@"imageIcon"];
+        imageIcon           = [aCoder decodeObjectForKey:@"imageIcon"];
+        labelProtocol       = [aCoder decodeObjectForKey:@"labelProtocol"];
+        labelSource         = [aCoder decodeObjectForKey:@"labelSource"];
+        labelTarget         = [aCoder decodeObjectForKey:@"labelTarget"];
+
+        fieldProtocolType   = [aCoder decodeObjectForKey:@"fieldProtocolType"];
+        fieldSourceHost     = [aCoder decodeObjectForKey:@"fieldSourceHost"];
+        fieldSourceMode     = [aCoder decodeObjectForKey:@"fieldSourceMode"];
+        fieldSourcePath     = [aCoder decodeObjectForKey:@"fieldSourcePath"];
+        fieldSourceService  = [aCoder decodeObjectForKey:@"fieldSourceService"];
+        fieldTargetAddress  = [aCoder decodeObjectForKey:@"fieldTargetAddress"];
+        fieldTargetName     = [aCoder decodeObjectForKey:@"fieldTargetName"];
+        fieldTargetPort     = [aCoder decodeObjectForKey:@"fieldTargetPort"];
+        fieldTargetType     = [aCoder decodeObjectForKey:@"fieldTargetType"];
+        fieldType           = [aCoder decodeObjectForKey:@"fieldType"];
+
+        labelProtocolType   = [aCoder decodeObjectForKey:@"labelProtocolType"];
+        labelSourceHost     = [aCoder decodeObjectForKey:@"labelSourceHost"];
+        labelSourceMode     = [aCoder decodeObjectForKey:@"labelSourceMode"];
+        labelSourcePath     = [aCoder decodeObjectForKey:@"labelSourcePath"];
+        labelSourceService  = [aCoder decodeObjectForKey:@"labelSourceService"];
+        labelTargetAddress  = [aCoder decodeObjectForKey:@"labelTargetAddress"];
+        labelTargetName     = [aCoder decodeObjectForKey:@"labelTargetName"];
+        labelTargetPort     = [aCoder decodeObjectForKey:@"labelTargetPort"];
+        labelTargetType     = [aCoder decodeObjectForKey:@"labelTargetType"];
     }
 
     return self;
@@ -73,7 +166,31 @@ var TNGraphicDeviceDataViewIconVNC,
 {
     [super encodeWithCoder:aCoder];
 
-    // [aCoder encodeObject:fieldKeymap forKey:@"fieldKeymap"];
+    [aCoder encodeObject:imageIcon forKey:@"imageIcon"];
+    [aCoder encodeObject:labelProtocol forKey:@"labelProtocol"];
+    [aCoder encodeObject:labelSource forKey:@"labelSource"];
+    [aCoder encodeObject:labelTarget forKey:@"labelTarget"];
+
+    [aCoder encodeObject:fieldProtocolType forKey:@"fieldProtocolType"];
+    [aCoder encodeObject:fieldSourceHost forKey:@"fieldSourceHost"];
+    [aCoder encodeObject:fieldSourceMode forKey:@"fieldSourceMode"];
+    [aCoder encodeObject:fieldSourcePath forKey:@"fieldSourcePath"];
+    [aCoder encodeObject:fieldSourceService forKey:@"fieldSourceService"];
+    [aCoder encodeObject:fieldTargetAddress forKey:@"fieldTargetAddress"];
+    [aCoder encodeObject:fieldTargetName forKey:@"fieldTargetName"];
+    [aCoder encodeObject:fieldTargetPort forKey:@"fieldTargetPort"];
+    [aCoder encodeObject:fieldTargetType forKey:@"fieldTargetType"];
+    [aCoder encodeObject:fieldType forKey:@"fieldType"];
+
+    [aCoder encodeObject:labelProtocolType forKey:@"labelProtocolType"];
+    [aCoder encodeObject:labelSourceHost forKey:@"labelSourceHost"];
+    [aCoder encodeObject:labelSourceMode forKey:@"labelSourceMode"];
+    [aCoder encodeObject:labelSourcePath forKey:@"labelSourcePath"];
+    [aCoder encodeObject:labelSourceService forKey:@"labelSourceService"];
+    [aCoder encodeObject:labelTargetAddress forKey:@"labelTargetAddress"];
+    [aCoder encodeObject:labelTargetName forKey:@"labelTargetName"];
+    [aCoder encodeObject:labelTargetPort forKey:@"labelTargetPort"];
+    [aCoder encodeObject:labelTargetType forKey:@"labelTargetType"];
 }
 
 @end

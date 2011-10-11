@@ -38,20 +38,10 @@ var TNInputDeviceDataViewIconTablet,
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize the data view
-*/
-- (void)initWithFrame:(CPRect)aFrame
++ (void)initialize
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        if (!TNInputDeviceDataViewIconTablet)
-        {
-            TNInputDeviceDataViewIconTablet = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-tablet.png"] size:CPSizeMake(26.0, 26.0)];
-            TNInputDeviceDataViewIconMouse = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-mouse.png"] size:CPSizeMake(26.0, 26.0)];
-        }
-    }
-
-    return self;
+    TNInputDeviceDataViewIconTablet = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNInputDeviceDataView] pathForResource:@"icon-tablet.png"] size:CPSizeMake(26.0, 26.0)];
+    TNInputDeviceDataViewIconMouse = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNInputDeviceDataView] pathForResource:@"icon-mouse.png"] size:CPSizeMake(26.0, 26.0)];
 }
 
 
