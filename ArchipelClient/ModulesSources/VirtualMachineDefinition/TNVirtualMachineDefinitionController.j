@@ -804,31 +804,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             return;
 
         _definitionEdited = YES;
-        [self markGUIAsEdited];
+        [buttonDefine setThemeState:CPThemeStateDefault];
+        [buttonDefine setEnabled:YES];
+        [buttonDefine setImage:_imageEdited];
     }
     else
     {
         _definitionEdited = NO;
-        [self markGUIAsNotEdited];
+        [buttonDefine setImage:nil];
+        [buttonDefine setEnabled:NO];
+        [buttonDefine unsetThemeState:CPThemeStateDefault];
     }
-}
-
-/*! set the GUI in the mode "something has been edited"
-*/
-- (void)markGUIAsEdited
-{
-    [buttonDefine setEnabled:YES];
-    [buttonDefine setThemeState:CPThemeStateDefault];
-    [buttonDefine setImage:_imageEdited];
-}
-
-/*! set the GUI in the mode "nothing has been edited"
-*/
-- (void)markGUIAsNotEdited
-{
-    [buttonDefine setImage:nil];
-    [buttonDefine setEnabled:NO];
-    [buttonDefine unsetThemeState:CPThemeStateDefault];
 }
 
 /*! generate a random Mac address.
@@ -899,7 +885,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if (XMPPShow != TNStropheContactStatusBusy)
     {
-        //[self showMaskView:YES];
         [self enableGUI:NO];
 
         [driveController closeWindow:nil];
@@ -913,7 +898,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
     else
     {
-        // [self showMaskView:NO];
         [self enableGUI:YES];
     }
 }
@@ -1765,7 +1749,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
                                                              message:CPBundleLocalizedString(@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.", @"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.")
                                                                 icon:TNGrowlIconError];
-            //[self showMaskView:YES];
             [self enableGUI:NO];
         }
 
@@ -1839,6 +1822,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphic alloc] init]];
 
         // simulate controls changes
+        [self didChangeMemory:fieldMemory];
         [self didChangeGuest:buttonGuests];
         [self didChangeVCPU:stepperNumberCPUs];
         [self didChangeAPIC:switchAPIC];
@@ -1869,7 +1853,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
         [self buildGUIAccordingToCurrentGuest];
         _definitionRecovered = YES;
-        [self handleDefinitionEdition:NO];
+
+        [self handleDefinitionEdition:([fieldMemory stringValue] != @"")];
         return;
     }
 
