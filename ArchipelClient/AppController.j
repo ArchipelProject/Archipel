@@ -201,6 +201,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPTimer                                     _ledInTimer;
     CPTimer                                     _ledOutTimer;
     CPTimer                                     _moduleLoadingDelay;
+    CPView                                      _viewGradientAnimation;
     CPWindow                                    _helpWindow;
     int                                         _tempNumberOfReadyModules;
     TNOutlineViewRoster                         _rosterOutlineView;
@@ -355,11 +356,19 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* loading view */
     var archipelBundleIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pluginIconArchipel.png"]];
 
+    _viewGradientAnimation = [[CPView alloc] initWithFrame:[viewLoading frame]];
+
+    [_viewGradientAnimation setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    _viewGradientAnimation._DOMElement.style.WebkitTransition = "0.4s";
+    _viewGradientAnimation._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
+    [viewLoading addSubview:_viewGradientAnimation positioned:CPWindowBelow relativeTo:nil];
+
     [imageViewBundleLoading setImage:archipelBundleIcon];
     [viewLoading setFrame:[rightView bounds]];
     [viewLoading setBackgroundColor:[CPColor colorWithPatternImage:commonImageDarkBackground]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setFrontView:viewLoading];
+
     [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
     [progressIndicatorModulesLoading setMinValue:0.0];
     [progressIndicatorModulesLoading setMaxValue:1.0];
@@ -1568,8 +1577,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [[viewLoading viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
 
     [_rosterOutlineView setAlphaValue:Math.pow(percent, 3)];
+    _viewGradientAnimation._DOMElement.style.opacity = (1 - percent) + 0.3;
     if (percent == 1)
+    {
         _rosterOutlineView._DOMElement.style.WebkitTransition = "";
+        _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
+    }
+
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
