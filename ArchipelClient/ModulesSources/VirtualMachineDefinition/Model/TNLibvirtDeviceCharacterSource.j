@@ -21,9 +21,13 @@
 
 @import "TNLibvirtBase.j"
 
+TNLibvirtDeviceCharacterSourceModeNone      = @"none";
 TNLibvirtDeviceCharacterSourceModeBind      = @"bind";
 TNLibvirtDeviceCharacterSourceModeConnect   = @"connect";
 
+TNLibvirtDeviceCharacterSourceModes         = [ TNLibvirtDeviceCharacterSourceModeNone,
+                                                TNLibvirtDeviceCharacterSourceModeBind,
+                                                TNLibvirtDeviceCharacterSourceModeConnect];
 
 /*! @ingroup virtualmachinedefinition
     Model for character device source
@@ -72,7 +76,7 @@ TNLibvirtDeviceCharacterSourceModeConnect   = @"connect";
 
     if (_path)
         [node setValue:_path forAttribute:@"path"];
-    if (_mode)
+    if (_mode && _mode != TNLibvirtDeviceCharacterSourceModeNone)
         [node setValue:_mode forAttribute:@"mode"];
     if (_host)
         [node setValue:_host forAttribute:@"host"];

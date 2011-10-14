@@ -24,6 +24,10 @@ var TNGraphicDeviceDataViewIconVNC,
     TNGraphicDeviceDataViewIconRDP,
     TNGraphicDeviceDataViewIconSPICE;
 
+
+/*! @ingroup virtualmachinedefinition
+    This is a representation of a data view for displaying a graphic device
+*/
 @implementation TNGraphicDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView     imageIcon;
@@ -41,21 +45,11 @@ var TNGraphicDeviceDataViewIconVNC,
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize the data view
-*/
-- (void)initWithFrame:(CPRect)aFrame
++ (void)initialize
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        if (!TNGraphicDeviceDataViewIconVNC)
-        {
-            TNGraphicDeviceDataViewIconVNC = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-vnc.png"] size:CPSizeMake(26.0, 26.0)];
-            TNGraphicDeviceDataViewIconRDP = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-rdp.png"] size:CPSizeMake(26.0, 26.0)];
-            TNGraphicDeviceDataViewIconSPICE = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"icon-spice.png"] size:CPSizeMake(26.0, 26.0)];
-        }
-    }
-
-    return self;
+    TNGraphicDeviceDataViewIconVNC = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-vnc.png"] size:CPSizeMake(26.0, 26.0)];
+    TNGraphicDeviceDataViewIconRDP = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-rdp.png"] size:CPSizeMake(26.0, 26.0)];
+    TNGraphicDeviceDataViewIconSPICE = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-spice.png"] size:CPSizeMake(26.0, 26.0)];
 }
 
 

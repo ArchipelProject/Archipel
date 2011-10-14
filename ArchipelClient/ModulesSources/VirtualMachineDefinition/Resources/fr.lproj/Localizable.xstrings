@@ -12,6 +12,8 @@
 	<string>Are you sure you want to undefine this virtual machine ?</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
+	<key>Char Devices</key>
+	<string>Char Devices</string>
 	<key>Definition edited</key>
 	<string>Definition edited</string>
 	<key>Delete selected drives</key>

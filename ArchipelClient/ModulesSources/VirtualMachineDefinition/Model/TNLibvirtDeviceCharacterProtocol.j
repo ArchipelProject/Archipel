@@ -21,11 +21,17 @@
 
 @import "TNLibvirtBase.j"
 
-TNLibvirtDeviceCharacterProtocol   = @"virtio";
-
+TNLibvirtDeviceCharacterProtocolTypeVIRTIO  = @"virtio";
 TNLibvirtDeviceCharacterProtocolTypeRAW     = @"raw";
 TNLibvirtDeviceCharacterProtocolTypeTELNET  = @"telnet";
 TNLibvirtDeviceCharacterProtocolTypeTLS     = @"tls";
+
+TNLibvirtDeviceCharacterProtocolTypes       = [ TNLibvirtDeviceCharacterProtocolTypeVIRTIO,
+                                                TNLibvirtDeviceCharacterProtocolTypeRAW,
+                                                TNLibvirtDeviceCharacterProtocolTypeTELNET,
+                                                TNLibvirtDeviceCharacterProtocolTypeTLS];
+
+
 
 /*! @ingroup virtualmachinedefinition
     Model for character device protocol
@@ -67,7 +73,7 @@ TNLibvirtDeviceCharacterProtocolTypeTLS     = @"tls";
     if (!_type)
         [CPException raise:@"Missing character device protocol type" reason:@"character device protocol type is required"];
 
-    var node = [TNXMLNode nodeWithName:@"target"];
+    var node = [TNXMLNode nodeWithName:@"protocol"];
 
     if (_type)
         [node setValue:_type forAttribute:@"type"];

@@ -30,6 +30,9 @@ var TNInterfaceDeviceDataViewIconNetwork,
     TNInterfaceDeviceDataViewIconDirect;
 
 
+/*! @ingroup virtualmachinedefinition
+    This is a representation of a data view for displaying a interface device
+*/
 @implementation TNInterfaceDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView         imageIcon;
