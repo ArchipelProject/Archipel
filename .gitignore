@@ -13,3 +13,4 @@
 *ArchipelClient/.xCodeSupport
 *.pyc
 *ArchipelClient/Archipel.sublime-workspace
+*ArchipelClient/Resources/archipel-commit.js
