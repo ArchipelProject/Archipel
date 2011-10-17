@@ -148,14 +148,15 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 @implementation AppController : CPObject
 {
     @outlet CPButtonBar                         buttonBarLeft;
+    @outlet CPImageView                         imageViewBundleLoading;
     @outlet CPImageView                         imageViewLogoAbout;
     @outlet CPImageView                         ledIn;
     @outlet CPImageView                         ledOut;
-    @outlet CPImageView                         imageViewBundleLoading;
     @outlet CPProgressIndicator                 progressIndicatorModulesLoading;
     @outlet CPSplitView                         splitViewHorizontalRoster;
     @outlet CPSplitView                         splitViewMain;
     @outlet CPSplitView                         splitViewTagsContents;
+    @outlet CPTextField                         fieldVersion;
     @outlet CPTextField                         labelCurrentUser;
     @outlet CPTextField                         textFieldAboutVersion;
     @outlet CPView                              filterView;
@@ -168,8 +169,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNAvatarController                  avatarController;
     @outlet TNConnectionController              connectionController;
     @outlet TNContactsController                contactsController;
-    @outlet TNFlipView                          rightView;
     @outlet TNFlipView                          leftView;
+    @outlet TNFlipView                          rightView;
     @outlet TNGroupsController                  groupsController;
     @outlet TNHintController                    hintController;
     @outlet TNModuleController                  moduleController;
@@ -211,6 +212,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNStropheGroup                              _stropheGroupSelection;
     TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
+    TNVersion                                   _currentVersion;
     TNViewHypervisorControl                     _currentRightViewContent;
 }
 
@@ -266,7 +268,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* register defaults defaults */
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelVersionHuman"], @"TNArchipelVersionHuman",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
             [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
             [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
@@ -407,13 +408,33 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
 
 
+    /* Version checking */
+    var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
+        minor = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"minor"],
+        revision = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"revision"],
+        codeName = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"codeName"];
+
+    _currentVersion = [TNVersion versionWithMajor:major minor:minor revision:revision codeName:codeName];
+
+    if (typeof(LPCrashReporter) != "undefined")
+        [[LPCrashReporter sharedErrorLogger] setVersion:[_currentVersion description]];
+    CPLog.info(@"current version is " + _currentVersion);
+    [updateController setCurrentVersion:_currentVersion]
+    [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
+
+    /* about window */
+    [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
+    [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
+    [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
+    [textFieldAboutVersion setStringValue:_currentVersion];
+
+
     /* makers */
     [self makeToolbar];
     [self makeAvatarChooser];
     [self makeMainMenu];
     [self makeRosterMenu];
     [self makeButtonBar];
-    [self makeCopyright];
 
 
     /* module controller */
@@ -434,7 +455,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
 
-    /* connection label */
+    /* status bar */
+    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/statusbar-bg.png"]]]];
+
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"353535"]];
@@ -442,12 +465,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
 
-
-    /* about window */
-    [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
-    [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
-    [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
-    [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersionHuman"] || @""];
+    [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
+    [fieldVersion setStringValue:@""];
+    [fieldVersion setTextColor:[CPColor colorWithHexString:@"353535"]];
+    [fieldVersion setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [fieldVersion setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
+    [fieldVersion setSelectable:YES];
+    [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
 
 
     /* dataviews for roster */
@@ -459,16 +483,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [connectionController showWindow:nil];
     [connectionController initCredentials];
 
-
-    /* Version checking */
-    var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
-        minor = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"minor"],
-        revision = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"revision"],
-        currentVersion = [TNVersion versionWithMajor:major minor:minor revision:revision];
-
-    CPLog.info(@"current version is " + currentVersion);
-    [updateController setCurrentVersion:currentVersion]
-    [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
 
     /* Initialize the Entity Types global variable */
     TNArchipelEntityTypes = [CPDictionary dictionary];
@@ -747,29 +761,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [buttonBarLeft setButtons:buttons];
 }
 
-/*! initialize the copyrigth part
-*/
-- (void)makeCopyright
-{
-    var defaults = [CPUserDefaults standardUserDefaults],
-        bundle  = [CPBundle mainBundle],
-        copy = document.createElement("div");
-
-    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/statusbar-bg.png"]]]];
-
-    copy.id = "copyright_label";
-    copy.style.position = "absolute";
-    copy.style.fontSize = "9px";
-    copy.style.color = "#353535";
-    copy.style.width = "700px";
-    copy.style.bottom = "8px";
-    copy.style.left = "50%";
-    copy.style.textAlign = "center";
-    copy.style.marginLeft = "-350px";
-    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersionHuman"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
-    document.body.appendChild(copy);
-}
-
 
 #pragma mark -
 #pragma mark Notifications handlers
@@ -808,7 +799,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [CPMenu setMenuBarVisible:YES];
     [connectionController hideWindow:nil];
     [theWindow makeKeyAndOrderFront:nil];
-    document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
     [[[TNStropheIMClient defaultClient] roster] setFilterField:filterField];
@@ -855,7 +845,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [connectionController showWindow:nil];
     [labelCurrentUser setStringValue:@""];
     [CPMenu setMenuBarVisible:NO];
-    document.getElementById("copyright_label").style.textShadow = @"";
 }
 
 /*! Notification responder for TNStropheRosterRetrievedNotification
