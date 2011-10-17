@@ -83,9 +83,9 @@
         <integer>4</integer>
         <key>revision</key>
         <integer>0</integer>
+        <key>codeName</key>
+        <string>Vesta</string>
     </dict>
-    <key>TNArchipelVersionHuman</key>
-    <string>Archipel Beta 4.0 (Vesta)</string>
     <key>TNArchipelPropertyControllerEnabled</key>
     <integer>1</integer>
 </dict>
