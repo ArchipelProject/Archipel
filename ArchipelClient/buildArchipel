@@ -133,6 +133,7 @@ def main():
             print "Error: no targets specified. Use --help for usage"
             sys.exit(-1)
 
+    set_commit()
     # clean if asked
     if opt_should_clean:
         clean(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
@@ -161,6 +162,13 @@ def main():
     if opt_export_archipel_path:
         export_archipel(opt_export_archipel_path, opt_build_config);
 
+
+
+def set_commit():
+    rev = commands.getoutput("git rev-parse --short HEAD");
+    f = open("Resources/archipel-commit.js", "w+")
+    f.write("ARCHIPEL_CURRENT_COMMIT = \"%s\";" % rev)
+    f.close()
 
 
 def clean(paths, config, ignorepaths):
