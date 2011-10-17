@@ -227,6 +227,9 @@
 */
 - (IBAction)deleteSelectedRole:(id)aSender
 {
+    if ([tableRoles numberOfSelectedRows] == 0)
+        return;
+
     var index = [[tableRoles selectedRowIndexes] firstIndex],
         role = [[_datasourceRoles objectAtIndex:index] valueForKey:@"role"];
 
