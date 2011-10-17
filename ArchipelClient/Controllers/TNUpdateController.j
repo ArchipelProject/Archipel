@@ -168,9 +168,10 @@
     var major           = [[_plist objectForKey:@"version"] objectForKey:@"major"],
         minor           = [[_plist objectForKey:@"version"] objectForKey:@"minor"],
         revision        = [[_plist objectForKey:@"version"] objectForKey:@"revision"],
+        codeName        = [[_plist objectForKey:@"version"] objectForKey:@"codeName"] || @"",
         ignoredVersions  = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelIgnoredVersions"];
 
-    _version     = [TNVersion versionWithMajor:major minor:minor revision:revision];
+    _version     = [TNVersion versionWithMajor:major minor:minor revision:revision codeName:@""];
     _date        = [_plist objectForKey:@"date"];
     _changes     = [_plist objectForKey:@"changes"];
     _URLDownload = [CPURL URLWithString:[_plist objectForKey:@"url"]];
