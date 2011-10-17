@@ -1583,7 +1583,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         _rosterOutlineView._DOMElement.style.WebkitTransition = "";
         _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
     }
-
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
