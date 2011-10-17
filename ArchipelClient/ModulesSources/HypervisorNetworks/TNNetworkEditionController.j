@@ -339,16 +339,21 @@
     {
         if (![_network IP])
             [_network setIP:[[TNLibvirtNetworkIP alloc] init]];
+
         [[_network IP] setAddress:[fieldBridgeIP stringValue]];
         [[_network IP] setNetmask:[fieldBridgeNetmask stringValue]];
     }
+    else
+        [_network setIP:nil];
 
     if ([fieldBridgeName stringValue] != @"")
     {
         if (![_network bridge])
-            [_network setBridge:[[TNLibvirtNetworkBridge alloc] init]]
+            [_network setBridge:[[TNLibvirtNetworkBridge alloc] init]];
         [[_network bridge] setName:[fieldBridgeName stringValue]];
     }
+    else
+        [_network setBridge:nil];
 
     if ([checkBoxSTPEnabled state] == CPOnState)
     {
@@ -447,7 +452,7 @@
 {
     var newHost = [TNLibvirtNetworkIPDHCPHost defaultNetworkDHCPHostWithName:CPBundleLocalizedString("domain.com", "domain.com")
                                                                          MAC:@"00:00:00:00:00:00"
-                                                                          IP:@"0.0.0.0"]
+                                                                          IP:@"0.0.0.0"];
 
     [_datasourceDHCPHosts addObject:newHost];
     [tableViewHosts reloadData];

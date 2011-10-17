@@ -30,7 +30,6 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
-@import "TNDHCPEntryObject.j"
 @import "TNNetworkEditionController.j"
 @import "TNNetworkDataView.j"
 
@@ -309,10 +308,11 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     var uuid            = [CPString UUID],
         ip              = [self generateIPForNewNetwork],
-        ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2",
-        ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
-        baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
         newNetwork      = [TNLibvirtNetwork defaultNetworkWithName:uuid UUID:uuid];
+
+    [newNetwork setIP:[[TNLibvirtNetworkIP alloc] init]];
+    [[newNetwork IP] setAddress:ip];
+    [[newNetwork IP] setNetmask:@"255.255.0.0"];
 
     [networkController setNetwork:newNetwork];
     [networkController openWindow:_plusButton];
