@@ -16,14 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "../Resources/archipel-commit.js"
+
 /*! @ingroup archipelcore
     this class represent a version and provide some utilities to compare them
 */
 @implementation TNVersion :CPObject
 {
-    int _major      @accessors(property=major);
-    int _minor      @accessors(property=minor);
-    int _revision   @accessors(property=revision);
+    CPString    _codeName   @accessors(property=codeName);
+    CPString    _commit     @accessors(property=commit);
+    int         _major      @accessors(property=major);
+    int         _minor      @accessors(property=minor);
+    int         _revision   @accessors(property=revision);
 }
 
 #pragma mark -
@@ -35,12 +39,14 @@
     @param aRevision the value of the revision
     @return a new TNVersion
 */
-+ (TNVersion)versionWithMajor:(int)aMajor minor:(int)aMinor revision:(int)aRevision
++ (TNVersion)versionWithMajor:(int)aMajor minor:(int)aMinor revision:(int)aRevision codeName:(CPString)aCodeName
 {
     var version = [[TNVersion alloc] init];
     [version setMajor:aMajor];
     [version setMinor:aMinor];
     [version setRevision:aRevision];
+    [version setCodeName:aCodeName];
+    [version setCommit:ARCHIPEL_CURRENT_COMMIT || @"Dev"];
 
     return version;
 }
@@ -103,7 +109,7 @@
 */
 - (CPString)description
 {
-    return _major + @"." + _minor + @"." + _revision;
+    return [CPString stringWithFormat:@"%d.%d.%d-%s (%s)", _major, _minor, _revision, _commit, _codeName];
 }
 
 @end
@@ -120,6 +126,8 @@
         _major = [aCoder decodeObjectForKey:@"_major"];
         _minor = [aCoder decodeObjectForKey:@"_minor"];
         _revision = [aCoder decodeObjectForKey:@"_revision"];
+        _commit = [aCoder decodeObjectForKey:@"_commit"];
+        _codeName = [aCoder decodeObjectForKey:@"_codeName"];
     }
 
     return self;
@@ -132,6 +140,8 @@
     [aCoder encodeObject:_major forKey:@"_major"];
     [aCoder encodeObject:_minor forKey:@"_minor"];
     [aCoder encodeObject:_revision forKey:@"_revision"];
+    [aCoder encodeObject:_commit forKey:@"_commit"];
+    [aCoder encodeObject:_codeName forKey:@"_codeName"];
 }
 
 @end
