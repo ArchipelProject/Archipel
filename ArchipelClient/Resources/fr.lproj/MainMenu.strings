@@ -434,3 +434,6 @@
 /* Class = "NSTextFieldCell"; title = "node"; ObjectID = "1494"; */
 "1494.title" = "noeud";
 
+/* Class = "NSTextFieldCell"; title = "Version - Copyright"; ObjectID = "1624"; */
+"1624.title" = "Version - Copyright";
+

@@ -67,11 +67,11 @@
 /* Busy */
 "Busy" = "Beschäftigt";
 
-/* Cancel */
-"Cancel" = "Abbrechen";
-
 /* cancel */
 "cancel" = "Abbrechen";
+
+/* Cancel */
+"Cancel" = "Abbrechen";
 
 /* Cannot save your preferences to the XMPP server */
 "Cannot save your preferences to the XMPP server" = "Ihre Einstellungen konnten auf dem XMPP Server nicht gespeichert werden";
@@ -349,6 +349,9 @@
 
 /* Tags */
 "Tags" = "Tags";
+
+/* TB */
+"TB" = "TB";
 
 /* The current logged account */
 "The current logged account" = "Aktuell angemeldeter Benutzer";

@@ -214,6 +214,8 @@
 	<string>Status</string>
 	<key>Subscription request</key>
 	<string>Kontaktanfrage</string>
+	<key>TB</key>
+	<string>TB</string>
 	<key>Tags</key>
 	<string>Tags</string>
 	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
