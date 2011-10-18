@@ -122,7 +122,7 @@
 "Copy" = "Copy";
 
 /* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "CREDENTIAL_REMEMBER_TOOLTIP";
+"CREDENTIAL_REMEMBER_TOOLTIP" = "Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.";
 
 /* Current Selection */
 "Current Selection" = "Current Selection";
