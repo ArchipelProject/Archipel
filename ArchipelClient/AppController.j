@@ -1087,7 +1087,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)focusFilter:(id)sender
 {
-    [filterField mouseDown:nil];
+    [theWindow makeFirstResponder:filterField];
 }
 
 /*! Expands the current group
