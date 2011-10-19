@@ -37,6 +37,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 @implementation TNExternalVNCWindow : CPWindow
 {
+    BOOL                _hasBeenConnected;
     CPImageView         _imageViewVirtualMachineAvatar;
     double              _currentZoom;
     TNStropheContact    _entity;
@@ -57,6 +58,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     if (self = [super initWithContentRect:aRect styleMask:aStyleMask])
     {
         _currentZoom = 1.0;
+        _hasBeenConnected = NO;
 
         _mainToolbar = [[TNToolbar alloc] init];
         [self setToolbar:_mainToolbar];
@@ -193,8 +195,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 {
     var vncSize         = aSize,
         newRect         = [[self platformWindow] contentRect],
-        widthOffset     = 0,
-        heightOffset    = 0 + 59;
+        widthOffset     = 6,
+        heightOffset    = 6 + 59;
 
     vncSize.width   *= _currentZoom;
     vncSize.height  *= _currentZoom;
@@ -279,9 +281,19 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
             break;
 
         case TNVNCCappuccinoStateNormal:
+            _hasBeenConnected = YES;
             [self fitWindowToVNCView];
             [_vncView focus];
+            [self orderFront:nil];
+            [[self platformWindow] orderFront:nil];
             break;
+
+        case TNVNCCappuccinoStateDisconnected:
+            if (_hasBeenConnected)
+            {
+                [self close];
+                [[self platformWindow] orderOut:nil];
+            }
     }
 }
 
