@@ -827,7 +827,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         user_info is a dict that contains following keys:
             - definition : the xml object containing the libvirt definition
             - path : the vm path to clone (will clone * in it)
-            - baseuuid : the base uuid of cloned vm, in order to replace it
+            - parentvm : the parentvm object
         @type origin: TNArchipelEntity
         @param origin: the origin of the hook
         @type user_info: object
@@ -837,8 +837,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         xml = user_info["definition"]
         path = user_info["path"]
-        parentuuid = user_info["parentuuid"]
-        parentname = user_info["parentname"]
+        parentvm = user_info["parentvm"]
+        parentuuid = parentvm.uuid
+        parentname = parentvm.name
         xmlstring = str(xml)
         xmlstring = xmlstring.replace(parentuuid, self.uuid)
         xmlstring = xmlstring.replace(parentname, self.name)
@@ -853,8 +854,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.log.debug("New XML description is now %s" % str(newxml))
         self.log.info("Starting to clone virtual machine %s from %s" % (self.uuid, parentuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
+        parentvm.change_presence(presence_show="dnd", presence_status="Cloning to %s" % parentname)
         self.log.info("Starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
-        thread.start_new_thread(self.perform_threaded_cloning, (path, newxml))
+        thread.start_new_thread(self.perform_threaded_cloning, (path, newxml, parentvm))
 
     def migrate_step1(self, destination_jid):
         """
@@ -916,18 +918,21 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
     ### Other stuffs
 
-    def perform_threaded_cloning(self, src_path, newxml):
+    def perform_threaded_cloning(self, src_path, newxml, parentvm):
         """
         Perform threaded copy of the virtual machine and then define it.
         @type src_path: string
         @param src_path: the path of the folder of the origin VM
         @type newxml: xmpp.Node
         @param newxml: the origin XML description
+        @type parentvm: TNArchipelVirtualMachine 
+        @param newxml: the origin vm machine object
         """
         for token in os.listdir(src_path):
             self.log.debug("CLONING: copying item %s/%s to %s" % (src_path, token, self.folder))
             shutil.copy("%s/%s" % (src_path, token), self.folder)
         self.define(newxml)
+        parentvm.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
 
     def terminate(self, clean_files=True):
         """
