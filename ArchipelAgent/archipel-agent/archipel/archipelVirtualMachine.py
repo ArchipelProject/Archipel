@@ -827,7 +827,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         user_info is a dict that contains following keys:
             - definition : the xml object containing the libvirt definition
             - path : the vm path to clone (will clone * in it)
-            - parentvm : the parentvm object
+            - parentvm : the origin virtual machine object
         @type origin: TNArchipelEntity
         @param origin: the origin of the hook
         @type user_info: object
@@ -926,7 +926,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @type newxml: xmpp.Node
         @param newxml: the origin XML description
         @type parentvm: TNArchipelVirtualMachine 
-        @param newxml: the origin vm machine object
+        @param parentvm: the parent virtual machine object
         """
         for token in os.listdir(src_path):
             self.log.debug("CLONING: copying item %s/%s to %s" % (src_path, token, self.folder))
