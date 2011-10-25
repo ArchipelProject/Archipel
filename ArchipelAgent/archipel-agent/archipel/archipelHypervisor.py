@@ -619,7 +619,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         newvm = newvm_thread.get_instance()
         newvm.register_hook("HOOK_VM_INITIALIZE",
                             method=newvm.clone,
-                            user_info={"definition": xmldesc, "path": xmppvm.folder, "parentuuid": uuid, "parentname": self.name},
+                            user_info={"definition": xmldesc, "path": xmppvm.folder, "parentvm": xmppvm},
                             oneshot=True)
         newvm_thread.start()
         self.perform_hooks("HOOK_HYPERVISOR_CLONE", newvm)
