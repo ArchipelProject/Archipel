@@ -20,6 +20,10 @@
 
 @import "../Resources/admin-accounts.js"
 
+TNPermissionsValidationModeBare             = 0;
+TNPermissionsValidationModeNode             = 1;
+
+TNPermissionsAdminListUpdatedNotification   = @"TNPermissionsAdminListUpdatedNotification";
 
 var TNArchipelPushNotificationPermissions   = @"archipel:push:permissions",
     TNArchipelTypePermissions               = @"archipel:permissions",
@@ -34,13 +38,13 @@ var __defaultPermissionCenter;
 
 @implementation TNPermissionsCenter : CPObject
 {
-    CPDictionary            _cachedPermissions      @accessors(getter=permissions);
+    CPDictionary            _adminAccounts              @accessors(getter=adminAccounts);
+    CPDictionary            _cachedPermissions          @accessors(getter=permissions);
+    int                     _adminAccountValidationMode @accessors(getter=validationMode);
 
-    CPArray                 _adminAccounts;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
-    int                     _adminAccountValidationMode;
     TNPubSubNode            _pubsubAdminAccounts;
 }
 
@@ -83,8 +87,21 @@ var __defaultPermissionCenter;
 */
 - (void)resetAdminAccounts
 {
-    _adminAccounts = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
-    _adminAccounts = [_adminAccounts arrayByAddingObjectsFromArray:ARCHIPEL_ADMIN_ACCOUNTS_ARRAY];
+    _adminAccounts = [CPDictionary dictionary];
+
+    var defaultStaticAccounts = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
+
+    for (var i = 0; i < [defaultStaticAccounts count]; i++)
+    {
+        var item = [defaultStaticAccounts objectAtIndex:i];
+        [_adminAccounts setObject:item forKey:"STATIC_" + item];
+    }
+
+    for (var i = 0; i < [ARCHIPEL_ADMIN_ACCOUNTS_ARRAY count]; i++)
+    {
+        var item = [ARCHIPEL_ADMIN_ACCOUNTS_ARRAY objectAtIndex:i];
+        [_adminAccounts setObject:item forKey:"STATIC_" + item];
+    }
 }
 
 /*! Add a delegate that will be notified when permission cache will be updated
@@ -144,8 +161,10 @@ var __defaultPermissionCenter;
         if (![anEntity isKindOfClass:TNStropheContact])
             return NO;
 
-        if (((_adminAccountValidationMode === 1) && ([_adminAccounts containsObject:[[[TNStropheIMClient defaultClient] JID] node]]))
-            || ((_adminAccountValidationMode === 0) && ([_adminAccounts containsObject:[[[TNStropheIMClient defaultClient] JID] bare]])))
+        if (((_adminAccountValidationMode === TNPermissionsValidationModeNode)
+                && ([[_adminAccounts allValues] containsObject:[[[TNStropheIMClient defaultClient] JID] node]]))
+            || ((_adminAccountValidationMode === TNPermissionsValidationModeBare)
+                && ([[_adminAccounts allValues] containsObject:[[[TNStropheIMClient defaultClient] JID] bare]])))
             return YES;
 
         if ([[_cachedPermissions objectForKey:anEntity] containsObject:@"all"])
@@ -408,6 +427,36 @@ var __defaultPermissionCenter;
     }
 }
 
+- (void)addAdminAccount:(TNStropheJID)aJID
+{
+    var JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node],
+        keys = [_adminAccounts allKeysForObject:JIDTranslation];
+
+    if ([[_adminAccounts allKeysForObject:JIDTranslation] count] > 0)
+        return;
+
+    var newAccount = [TNXMLNode nodeWithName:@"admin"];
+    [newAccount setValue:[aJID node] forAttribute:@"node"];
+    [newAccount setValue:[aJID domain] forAttribute:@"domain"];
+
+    [_pubsubAdminAccounts publishItem:newAccount];
+    [_pubsubAdminAccounts changeAffiliation:TNPubSubNodeAffiliationOwner forJID:aJID];
+}
+
+- (void)removeAdminAccount:(TNStropheJID)aJID
+{
+    var ref,
+        JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node];
+
+    var keys = [_adminAccounts allKeysForObject:JIDTranslation];
+
+    for (var i = 0; i < [keys count]; i++)
+    {
+        var ref = [keys objectAtIndex:i];
+        [_pubsubAdminAccounts retractItemWithID:ref];
+    }
+    [_pubsubAdminAccounts changeAffiliation:TNPubSubNodeAffiliationNone forJID:aJID];
+}
 
 #pragma mark -
 #pragma mark Delegates
@@ -428,12 +477,14 @@ var __defaultPermissionCenter;
             itemId = [item valueForAttribute:@"id"],
             adminAccount = [[item firstChildWithName:@"admin"] valueForAttribute:@"node"];
 
-        if (_adminAccountValidationMode === 0)
+        if (_adminAccountValidationMode === TNPermissionsValidationModeBare)
             adminAccount = [CPString stringWithFormat:@"%s@%s", [[item firstChildWithName:@"admin"] valueForAttribute:@"node"],
                                                                 [[item firstChildWithName:@"admin"] valueForAttribute:@"domain"]];
 
-        [_adminAccounts addObject:adminAccount];
+        [_adminAccounts setObject:adminAccount forKey:itemId];
     }
+
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNPermissionsAdminListUpdatedNotification object:self];
 }
 
 /*! TNPubSubNode delegate
@@ -463,10 +514,49 @@ var __defaultPermissionCenter;
     if (![aStanza containsChildrenWithName:@"headers"])
         return;
 
-    // @TODO: I have to admit I was lazy here. The correct way
-    // would have been to get the diff, and update the array
-    // but hey, I'm quite tired
     [_pubsubAdminAccounts retrieveItems];
+}
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode publishedItem:(TNStropheStanza)aStanza
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Admin rights", @"Admin rights")
+                                                         message:CPLocalizedString(@"User admin rights successfully granted", @"User admin rights successfully granted")];
+
+    }
+    else
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Admin rights", @"Admin rights")
+                                                         message:CPLocalizedString(@"Unable to grant admin rights to users. See log", @"Unable to grant admin rights to users. See log")
+                                                            icon:TNGrowlIconError];
+        CPLog.error("Unable to grant admin rights to users");
+        CPLog.error(aStanza);
+    }
+}
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode retractedItem:(TNStropheStanza)aStanza
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Admin rights", @"Admin rights")
+                                                         message:CPLocalizedString(@"User admin rights successfuly revoked", @"User admin rights successfuly revoked")];
+
+    }
+    else
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Admin rights", @"Admin rights")
+                                                         message:CPLocalizedString(@"Unable to revoke admin rights to users. See log", @"Unable to revoke admin rights to users. See log")
+                                                            icon:TNGrowlIconError];
+        CPLog.error("Unable to grant admin rights to users");
+        CPLog.error(aStanza);
+    }
 }
 
 @end
