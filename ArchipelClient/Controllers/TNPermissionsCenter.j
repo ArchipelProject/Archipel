@@ -75,15 +75,17 @@ var __defaultPermissionCenter;
     return self;
 }
 
+
+#pragma mark -
+#pragma mark Controls
+
+/*! Reset the content of admin accounts according to the Info.plist and the live array
+*/
 - (void)resetAdminAccounts
 {
     _adminAccounts = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
     _adminAccounts = [_adminAccounts arrayByAddingObjectsFromArray:ARCHIPEL_ADMIN_ACCOUNTS_ARRAY];
 }
-
-
-#pragma mark -
-#pragma mark Controls
 
 /*! Add a delegate that will be notified when permission cache will be updated
     @param anObject the object you want to add as delegate
@@ -410,6 +412,8 @@ var __defaultPermissionCenter;
 #pragma mark -
 #pragma mark Delegates
 
+/*! TNPubSubNode delegate
+*/
 - (void)pubSubNode:(TNPubSubNode)aPubSubNode retrievedItems:(BOOL)didRetrieveItems
 {
     if (aPubSubNode !== _pubsubAdminAccounts)
@@ -432,6 +436,8 @@ var __defaultPermissionCenter;
     }
 }
 
+/*! TNPubSubNode delegate
+*/
 - (void)pubSubNode:(TNPubSubNode)aPubSubNode retrievedSubscriptions:(BOOL)areSubscriptionsRetrieved
 {
     if (aPubSubNode !== _pubsubAdminAccounts)
@@ -447,7 +453,8 @@ var __defaultPermissionCenter;
         CPLog.info("cannot retrieve subscriptions for node " + [aPubSubNode name]);
 }
 
-
+/*! TNPubSubNode delegate
+*/
 - (void)pubSubNode:(TNPubSubNode)aPubSubNode receivedEvent:(TNStropheStanza)aStanza
 {
     if (aPubSubNode !== _pubsubAdminAccounts)
