@@ -130,6 +130,7 @@ var __defaultPermissionCenter;
     [_pubsubAdminAccounts setDelegate:self];
     [_pubsubAdminAccounts retrieveItems];
     [_pubsubAdminAccounts recoverSubscriptions];
+    [_pubsubAdminAccounts retrieveAffiliations];
 }
 
 /*! start to listen change for user
@@ -192,6 +193,22 @@ var __defaultPermissionCenter;
 - (BOOL)containsCachedPermissionsForEntity:(TNStropheContact)anEntity
 {
     return [_cachedPermissions containsKey:anEntity];
+}
+
+/*! Check if given JID should be considered as an admin
+    @param aJID the JID to check
+*/
+- (BOOL)isJIDInAdminList:(TNStropheJID)aJID
+{
+    var JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node];
+    return ([[_adminAccounts allKeysForObject:JIDTranslation] count] > 0);
+}
+
+/*! Check if current connection's JID should be considered as an admin
+*/
+- (BOOL)isCurrentUserInAdminList
+{
+    return [self isJIDInAdminList:[[TNStropheIMClient defaultClient] JID]];
 }
 
 
@@ -429,10 +446,7 @@ var __defaultPermissionCenter;
 
 - (void)addAdminAccount:(TNStropheJID)aJID
 {
-    var JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node],
-        keys = [_adminAccounts allKeysForObject:JIDTranslation];
-
-    if ([[_adminAccounts allKeysForObject:JIDTranslation] count] > 0)
+    if ([self isJIDInAdminList:aJID])
         return;
 
     var newAccount = [TNXMLNode nodeWithName:@"admin"];
@@ -538,6 +552,8 @@ var __defaultPermissionCenter;
     }
 }
 
+/*! TNPubSubNode delegate
+*/
 - (void)pubSubNode:(TNPubSubNode)aPubSubNode retractedItem:(TNStropheStanza)aStanza
 {
     if (aPubSubNode !== _pubsubAdminAccounts)
@@ -557,6 +573,30 @@ var __defaultPermissionCenter;
         CPLog.error("Unable to grant admin rights to users");
         CPLog.error(aStanza);
     }
+}
+
+/*! TNPubSubNode delegate
+*/
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode retrievedAffiliations:(TNStropheStanza)aStanza
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+    if ([aStanza type] == @"result")
+        CPLog.warn(@"affiliations successfully retrieved: " + [aPubSubNode affiliations]);
+    else
+        CPLog.error(@"Cannot retrieve affiliations: " + aStanza);
+}
+
+/*! TNPubSubNode delegate
+*/
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode changedAffiliations:(TNStropheStanza)aStanza
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+    if ([aStanza type] == @"result")
+        CPLog.warn(@"successfully change affiliations: " + [aPubSubNode affiliations]);
+    else
+        CPLog.error(@"Cannot change affiliations: " + aStanza);
 }
 
 @end
