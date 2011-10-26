@@ -35,6 +35,7 @@ from pkg_resources import iter_entry_points
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import TNArchipelLogger, build_error_iq
@@ -120,10 +121,13 @@ class TNArchipelEntity (object):
         self.log                    = TNArchipelLogger(self)
         self.pubSubNodeEvent        = None
         self.pubSubNodeLog          = None
+        self.pubSubNodeAdmins       = None
         self.entity_type            = "not-defined"
-        self.permission_center      = None
         self.plugins                = []
         self.is_unregistering       = False
+        self.permission_db_file     = "permissions.sqlite3"
+        self.permission_admin_names = dict(map(lambda x: ("STATIC_%s" % x, x), self.configuration.get("GLOBAL", "archipel_root_admins").split()))
+        self.permission_center      = TNArchipelPermissionCenter(root_admins=self.permission_admin_names)
 
         if isinstance(self, TNHookableEntity):
             TNHookableEntity.__init__(self, self.log)
@@ -395,6 +399,22 @@ class TNArchipelEntity (object):
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         }, wait=True)
 
+        # Recovering eventual admin account pubsub node
+        ## get the admins in pubsub
+        adminNodeName = "/archipel/adminaccounts"
+        self.pubSubNodeAdmins = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, adminNodeName)
+        if self.pubSubNodeAdmins.recover(wait=True):
+            admins = self.pubSubNodeAdmins.get_items()
+            for admin in admins:
+                admin_node = admin.getTag("admin")
+                admin_id = admin.getAttr("id")
+                addition_admin_account = "%s@%s" % (admin_node.getAttr("node"), admin_node.getAttr("domain"))
+                self.permission_center.add_admin(admin_id, addition_admin_account)
+            self.pubSubNodeAdmins.subscribe(self.jid, self.on_new_admin_account_publication)
+        else:
+            self.log.warning("Unable to find pubsub node %s for getting additional admin accounts. Using only static ones")
+        self.log.debug("Here is the final admin list: %s" % self.permission_center.admins())
+
     def remove_pubsubs(self):
         """
         Delete own entity pubsubs.
@@ -403,6 +423,26 @@ class TNArchipelEntity (object):
         self.pubSubNodeLog.delete(wait=True)
         self.log.info("Removing pubsub node for events.")
         self.pubSubNodeEvent.delete(wait=True)
+
+    def on_new_admin_account_publication(self, event):
+        """
+        Called when a new admin accounts as been added to the pubsub
+        @type event: xmpp.Node
+        @param event: the pubsub event node
+        """
+        items = event.getTag("event").getTag("items").getTags("item")
+        for item in items:
+            admin_id = item.getAttr("id")
+            admin_account = "%s@%s" % (item.getTag("admin").getAttr("node"), item.getTag("admin").getAttr("domain"))
+            self.permission_center.add_admin(admin_id, admin_account)
+            self.log.info("Adding %s (%s) as admin account" % (admin_account, admin_id))
+
+        retracts = event.getTag("event").getTag("items").getTags("retract")
+        for retract in retracts:
+            admin_id = retract.getAttr("id")
+            self.permission_center.del_admin(admin_id)
+            self.log.info("Removing %s from admin account list" % admin_id)
+        self.log.debug("Here is the final admin list: %s" % self.permission_center.admins())
 
 
     ### Basic handlers
