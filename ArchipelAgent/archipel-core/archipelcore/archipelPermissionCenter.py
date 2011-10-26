@@ -65,7 +65,7 @@ class TNArchipelPermission (Base):
 
 class TNArchipelPermissionCenter:
 
-    def __init__(self, database_file, root_admins):
+    def __init__(self, database_file=None, root_admins={}):
         """
         Initialize the permission center.
         @type database_file: string
@@ -74,7 +74,21 @@ class TNArchipelPermissionCenter:
         @param root_admins: the root users JID
         """
         self.root_admins = root_admins
-        connection_string = 'sqlite:///%s' % database_file
+        self.database_file = database_file
+        self.engine = None
+        self.metadata = None
+        self.session = None
+
+    def start(self, database_file=None, root_admins={}):
+        """
+        Start the connection and be ready to use permissions
+        """
+        if database_file:
+            self.database_file = database_file
+        if len(root_admins) > 0:
+            self.root_admins = root_admins
+
+        connection_string = 'sqlite:///%s' % self.database_file
         self.engine = create_engine(connection_string)
         self.metadata = Base.metadata
         self.metadata.create_all(self.engine)
@@ -88,6 +102,33 @@ class TNArchipelPermissionCenter:
         """
         return self.session()
 
+    def add_admin(self, key, new_account):
+        """
+        Add a new admin account in the list
+        @type key: string
+        @param key: unique id
+        @type new_account: String
+        @param new_account: the JID of the new admin account
+        """
+        if not new_account in self.root_admins.values():
+            self.root_admins[key] = new_account
+
+    def del_admin(self, key):
+        """
+        Remove the admin account associated to the key
+        @type ket: string
+        @param ket: the key
+        """
+        if key in self.root_admins:
+            del self.root_admins[key]
+
+    def admins(self):
+        """
+        Returns the list of admins accounts
+        @rtype: List
+        @return: list of admin accounts
+        """
+        return self.root_admins
 
     ### Permission management
 
@@ -317,7 +358,7 @@ class TNArchipelPermissionCenter:
         @return: True in case of success
         """
         permObject = self.get_permission(permission_name)
-        if user_name in self.root_admins:
+        if user_name in self.root_admins.values():
             return True
         if self.user_has_permission(user_name, "all"):
             return True
