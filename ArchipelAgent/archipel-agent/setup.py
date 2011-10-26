@@ -93,6 +93,7 @@ setup(name='archipel-agent',
         'install/bin/archipel-initinstall',
         'install/bin/archipel-testxmppserver',
         'install/bin/archipel-commandsbytag',
+        'install/bin/archipel-adminaccounts',
         'install/bin/runarchipel'
         ],
       data_files=[
