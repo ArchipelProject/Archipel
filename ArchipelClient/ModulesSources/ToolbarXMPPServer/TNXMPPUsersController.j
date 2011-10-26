@@ -36,7 +36,9 @@
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
     TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",
-    TNArchipelTypeXMPPServerUsersList               = @"list";
+    TNArchipelTypeXMPPServerUsersList               = @"list",
+    TNArchipelXMPPUserAdminImage,
+    TNArchipelXMPPUserNormalImage;
 
 /*! @ingroup toolbarxmppserver
     XMPP user controller implementation
@@ -61,9 +63,12 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     CPButton                    _addButton;
     CPButton                    _deleteButton;
+    CPButton                    _grantAdminButton;
+    CPButton                    _revokeAdminButton;
     CPImage                     _iconEntityTypeHuman;
     CPImage                     _iconEntityTypeHypervisor;
     CPImage                     _iconEntityTypeVM;
+    CPImage                     _iconUserAdmin;
 }
 
 #pragma mark -
@@ -79,6 +84,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     _iconEntityTypeHuman        = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CPSizeMake(16, 16)];
     _iconEntityTypeVM           = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CPSizeMake(16, 16)];
     _iconEntityTypeHypervisor   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CPSizeMake(16, 16)];
+    _iconUserAdmin              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-admin.png"] size:CPSizeMake(16, 16)];
 
     // table users
     _datasourceUsers = [[TNTableViewDataSource alloc] init];
@@ -98,13 +104,36 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_deleteButton setAction:@selector(unregisterUser:)];
     [_deleteButton setToolTip:CPBundleLocalizedString(@"Delete selected user accounts", @"Delete selected user accounts")];
 
-    [buttonBarControl setButtons:[_addButton, _deleteButton]];
+    _grantAdminButton = [CPButtonBar plusButton];
+    [_grantAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/star.png"] size:CPSizeMake(16, 16)]];
+    [_grantAdminButton setTarget:self];
+    [_grantAdminButton setAction:@selector(grantAdmin:)];
+    [_grantAdminButton setToolTip:CPLocalizedString(@"Make selected user an administrator", @"Make selected user an administrator")];
+
+    _revokeAdminButton = [CPButtonBar minusButton];
+    [_revokeAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unstar.png"] size:CPSizeMake(16, 16)]];
+    [_revokeAdminButton setTarget:self];
+    [_revokeAdminButton setAction:@selector(revokeAdmin:)];
+    [_revokeAdminButton setToolTip:CPLocalizedString(@"Revoke admin rights", @"Revoke admin rights")];
+
+    [buttonBarControl setButtons:[_addButton, _deleteButton, _grantAdminButton, _revokeAdminButton]];
 
     [filterField setTarget:_datasourceUsers];
     [filterField setAction:@selector(filterObjects:)];
 
     [fieldNewUserPassword setSecure:YES];
     [fieldNewUserPasswordConfirm setSecure:YES];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didAdminAccountsListUpdate:) name:TNPermissionsAdminListUpdatedNotification object:nil];
+}
+
+/*! Called when the list of Admin accounts has been updated.
+    It will refresh the user list
+*/
+- (void)_didAdminAccountsListUpdate:(CPNotification)aNotification
+{
+    if ([[TNStropheIMClient defaultClient] JID])
+    [self reload];
 }
 
 
@@ -122,18 +151,21 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     switch (change)
     {
         case @"listfetched":
-            var users = [stanza childrenWithName:@"user"];
+            var users = [stanza childrenWithName:@"user"],
+                validationMode  = [[TNPermissionsCenter defaultCenter] validationMode];
 
             [_datasourceUsers removeAllObjects];
             [_users removeAllObjects];
 
             for (var i = 0; i < [users count]; i++)
             {
-                var user        = [users objectAtIndex:i],
-                    jid         = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-                    usertype    = [user valueForAttribute:@"type"],
-                    name        = [jid node],
-                    contact     = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
+                var user            = [users objectAtIndex:i],
+                    jid             = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
+                    usertype        = [user valueForAttribute:@"type"],
+                    name            = [jid node],
+                    contact         = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
+                    userAdminIcon   = nil,
+                    comparisonToken = (validationMode == TNPermissionsValidationModeBare) ? [jid bare] : [jid node],
                     newItem;
 
                 if (contact)
@@ -150,7 +182,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
                         break;
                 }
 
-                newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon] forKeys:[@"name", @"jid", @"type", @"icon"]]
+                if ([[[[TNPermissionsCenter defaultCenter] adminAccounts] allValues] containsObject:comparisonToken])
+                    userAdminIcon = _iconUserAdmin;
+
+                newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon, userAdminIcon] forKeys:[@"name", @"jid", @"type", @"icon", @"admin"]]
                 [_users addObject:newItem];
 
                 if (usertype == "human")
@@ -289,6 +324,42 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     [thealert setUserInfo:usernames];
     [thealert runModal];
+}
+
+/*! Grant selected users admin rights
+    @param aSender the sender of the action
+*/
+- (IBAction)grantAdmin:(id)aSender
+{
+    var indexes     = [tableUsers selectedRowIndexes],
+        users       = [_datasourceUsers objectsAtIndexes:indexes];
+
+    for (var i = 0; i < [users count]; i ++)
+    {
+        var user = [users objectAtIndex:i];
+        [[TNPermissionsCenter defaultCenter] addAdminAccount:[user objectForKey:@"jid"]];
+    }
+}
+
+/*! revoke selected users admin rights
+    @param aSender the sender of the action
+*/
+- (IBAction)revokeAdmin:(id)aSender
+{
+    var indexes     = [tableUsers selectedRowIndexes],
+        users       = [_datasourceUsers objectsAtIndexes:indexes];
+
+    for (var i = 0; i < [users count]; i ++)
+    {
+        var user = [users objectAtIndex:i];
+        if (![[user objectForKey:@"jid"] bareEquals:[[TNStropheIMClient defaultClient] JID]])
+            [[TNPermissionsCenter defaultCenter] removeAdminAccount:[user objectForKey:@"jid"]];
+        else
+        {
+            [TNAlert showAlertWithMessage:CPLocalizedString(@"Admin rights", @"Admin rights")
+                              informative:CPLocalizedString(@"You can't revoke yourself your admin rights. No resignation allowed buddy!", @"You can't revoke yourself your admin rights. No resignation allowed buddy!")];
+        }
+    }
 }
 
 
