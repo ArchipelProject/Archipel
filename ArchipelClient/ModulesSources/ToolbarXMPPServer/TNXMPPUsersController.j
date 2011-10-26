@@ -165,7 +165,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
                     name            = [jid node],
                     contact         = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
                     userAdminIcon   = nil,
-                    comparisonToken = (validationMode == TNPermissionsValidationModeBare) ? [jid bare] : [jid node],
                     newItem;
 
                 if (contact)
@@ -182,7 +181,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
                         break;
                 }
 
-                if ([[[[TNPermissionsCenter defaultCenter] adminAccounts] allValues] containsObject:comparisonToken])
+                if ([[TNPermissionsCenter defaultCenter] isJIDInAdminList:jid])
                     userAdminIcon = _iconUserAdmin;
 
                 newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon, userAdminIcon] forKeys:[@"name", @"jid", @"type", @"icon", @"admin"]]
@@ -242,6 +241,11 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)reload
 {
+    // this will check against a non existing permissions
+    // As these controls are only for admins, we don't really care about the permission
+    [_delegate setControl:_revokeAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
+    [_delegate setControl:_grantAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
+
     [self getXMPPUsers];
 }
 
