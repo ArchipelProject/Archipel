@@ -37,7 +37,6 @@ from threading import Thread
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
-from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
 
@@ -134,6 +133,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None
 
+        # start the permission center
+        self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
+        self.permission_center.start(database_file=self.permission_db_file)
+        self.init_permissions()
+
         # libvirt connection
         self.connect_libvirt()
 
@@ -143,12 +147,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 if self.configuration.has_option("VCARD", key):
                     self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key)
         self.vcard_infos["TITLE"] = "Hypervisor (%s)" % self.current_hypervisor()
-
-        # permissions
-        permission_db_file              = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
-        permission_admin_names          = self.configuration.get("GLOBAL", "archipel_root_admins").split()
-        self.permission_center          = TNArchipelPermissionCenter(permission_db_file, permission_admin_names)
-        self.init_permissions()
 
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
         self.generated_names = names_file.readlines()

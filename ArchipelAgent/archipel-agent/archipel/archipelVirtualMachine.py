@@ -46,7 +46,6 @@ from threading import Timer
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
-from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
@@ -126,7 +125,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
         self.connect_libvirt()
 
-        self.vcard_infos                = {}
+        self.vcard_infos = {}
         if (self.configuration.has_section("VCARD")):
             for key in ("orgname", "userid", "locality", "url"):
                 if self.configuration.has_option("VCARD", key):
@@ -136,14 +135,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         # create VM folders if not exists
         if not os.path.isdir(self.folder):
             os.makedirs(self.folder)
-
-        # permissions
         if not os.path.isdir(self.permfolder):
             os.makedirs(self.permfolder)
 
+        # start the permission center
         self.permission_db_file = "%s/%s" % (self.permfolder, self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path"))
-        permission_admin_names  = self.configuration.get("GLOBAL", "archipel_root_admins").split()
-        self.permission_center  = TNArchipelPermissionCenter(self.permission_db_file, permission_admin_names)
+        self.permission_center.start(database_file=self.permission_db_file)
         self.init_permissions()
 
         # hooks
@@ -925,7 +922,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @param src_path: the path of the folder of the origin VM
         @type newxml: xmpp.Node
         @param newxml: the origin XML description
-        @type parentvm: TNArchipelVirtualMachine 
+        @type parentvm: TNArchipelVirtualMachine
         @param parentvm: the parent virtual machine object
         """
         for token in os.listdir(src_path):
