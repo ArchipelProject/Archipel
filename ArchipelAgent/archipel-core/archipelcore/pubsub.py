@@ -245,7 +245,7 @@ class TNPubSubNode:
         """
         return self.content
 
-    def add_item(self, itemcontentnode, callback=None):
+    def add_item(self, itemcontentnode, callback=None, wait=False):
         """
         Add a leaf item xmpp.node to the node and will trigger callback if any
         on server answer.
@@ -261,7 +261,12 @@ class TNPubSubNode:
         publish     = pubsub.addChild("publish", attrs={"node": self.nodename})
         item        = publish.addChild("item")
         item.addChild(node=itemcontentnode)
-        self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback, "item": item})
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return self.did_publish_item(None, resp, callback, item)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback, "item": item})
+            return True
 
     def did_publish_item(self, conn, response, callback, item):
         """
@@ -271,11 +276,16 @@ class TNPubSubNode:
         if response.getType() == "result":
             item.setAttr("id", response.getTag("pubsub").getTag("publish").getTag("item").getAttr("id"))
             self.content.append(item)
+            ret = True
+        else:
+            log.error("PUBSUB: cannot publish item: %s" % response)
+            ret = False
         if callback:
-            callback(response)
+            return callback(response)
+        return ret
 
 
-    def remove_item(self, item_id, callback=None, user_info=None):
+    def remove_item(self, item_id, callback=None, user_info=None, wait=False):
         """
         Remove an item according to its ID.
         @type item_id: string
@@ -293,15 +303,25 @@ class TNPubSubNode:
             if item.getAttr("id") == item_id:
                 self.content.remove(item)
                 break
-        self.xmppclient.SendAndCallForResponse(iq, func=self.did_remove_item, args={"callback": callback, "user_info": user_info})
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return self.did_remove_item(None, resp, callback, user_info)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=self.did_remove_item, args={"callback": callback, "user_info": user_info})
 
     def did_remove_item(self, conn, response, callback, user_info):
         """
         Triggered on response.
         """
-        log.debug("PUBSUB: retract done. Answer is: %s" % str(response))
+        if response.getType() == "result":
+            log.debug("PUBSUB: retract done. Answer is: %s" % str(response))
+            ret = True
+        else:
+            log.error("PUBSUB: cannot retract item: %s" % response)
+            ret = False
         if callback:
-            callback(response, user_info)
+            return callback(response, user_info)
+        return ret
 
     def subscribe(self, jid, event_callback):
         """
