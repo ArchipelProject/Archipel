@@ -814,7 +814,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView setDataSource:[[TNStropheIMClient defaultClient] roster]];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
     [_rosterOutlineView deselectAll];
-    [[TNPermissionsCenter defaultCenter] watchPubSub];
+    [[TNPermissionsCenter defaultCenter] watchPubSubs];
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:TNArchipelTagViewHeight ofDividerAtIndex:0];

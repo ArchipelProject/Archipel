@@ -36,11 +36,12 @@ var __defaultPermissionCenter;
 {
     CPDictionary            _cachedPermissions      @accessors(getter=permissions);
 
+    CPArray                 _adminAccounts;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
-    CPString                _adminAccounts;
     int                     _adminAccountValidationMode;
+    TNPubSubNode            _pubsubAdminAccounts;
 }
 
 + (TNPermissionsCenter)defaultCenter
@@ -65,15 +66,19 @@ var __defaultPermissionCenter;
         _disableBadgesRegistry              = [CPDictionary dictionary];
         _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
         _adminAccountValidationMode         = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelCheckNodeAdminAccount"];
-        _adminAccounts                      = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
 
-        // add the admin accounts from the admin-account.js
-        _adminAccounts = [_adminAccounts arrayByAddingObjectsFromArray:ARCHIPEL_ADMIN_ACCOUNTS_ARRAY];
+        [self resetAdminAccounts];
 
         [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
     }
 
     return self;
+}
+
+- (void)resetAdminAccounts
+{
+    _adminAccounts = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
+    _adminAccounts = [_adminAccounts arrayByAddingObjectsFromArray:ARCHIPEL_ADMIN_ACCOUNTS_ARRAY];
 }
 
 
@@ -98,9 +103,14 @@ var __defaultPermissionCenter;
 
 /*! start to listen permissions pubsub
 */
-- (void)watchPubSub
+- (void)watchPubSubs
 {
     [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]];
+
+    _pubsubAdminAccounts = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/adminaccounts" connection:[[TNStropheIMClient defaultClient] connection] pubSubServer:nil];
+    [_pubsubAdminAccounts setDelegate:self];
+    [_pubsubAdminAccounts retrieveItems];
+    [_pubsubAdminAccounts recoverSubscriptions];
 }
 
 /*! start to listen change for user
@@ -195,7 +205,7 @@ var __defaultPermissionCenter;
     var sender  = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
         user    = [TNStropheJID stropheJIDWithString:[[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"]];
 
-    if (![[[TNStropheIMClient defaultClient] JID] bareEquals:user])
+    if (![[[TNStropheIMClient defaultClient] JID] bareEquals:user] && user != "admins")
         return YES;
 
     var anEntity = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
@@ -397,5 +407,59 @@ var __defaultPermissionCenter;
 }
 
 
+#pragma mark -
+#pragma mark Delegates
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode retrievedItems:(BOOL)didRetrieveItems
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+
+    [self resetAdminAccounts];
+
+    var contents = [_pubsubAdminAccounts content];
+    for (var i = 0; i < [contents count]; i++)
+    {
+        var item = [contents objectAtIndex:i],
+            itemId = [item valueForAttribute:@"id"],
+            adminAccount = [[item firstChildWithName:@"admin"] valueForAttribute:@"node"];
+
+        if (_adminAccountValidationMode === 0)
+            adminAccount = [CPString stringWithFormat:@"%s@%s", [[item firstChildWithName:@"admin"] valueForAttribute:@"node"],
+                                                                [[item firstChildWithName:@"admin"] valueForAttribute:@"domain"]];
+
+        [_adminAccounts addObject:adminAccount];
+    }
+}
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode retrievedSubscriptions:(BOOL)areSubscriptionsRetrieved
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+
+    if (areSubscriptionsRetrieved)
+    {
+        CPLog.info("sucessfully subscriptions retreived for node " + [aPubSubNode name]);
+        if ([aPubSubNode numberOfSubscriptions] == 0)
+            [aPubSubNode subscribe];
+    }
+    else
+        CPLog.info("cannot retrieve subscriptions for node " + [aPubSubNode name]);
+}
+
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubNode receivedEvent:(TNStropheStanza)aStanza
+{
+    if (aPubSubNode !== _pubsubAdminAccounts)
+        return;
+
+    if (![aStanza containsChildrenWithName:@"headers"])
+        return;
+
+    // @TODO: I have to admit I was lazy here. The correct way
+    // would have been to get the diff, and update the array
+    // but hey, I'm quite tired
+    [_pubsubAdminAccounts retrieveItems];
+}
 
 @end
