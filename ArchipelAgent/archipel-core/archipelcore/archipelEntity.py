@@ -147,6 +147,7 @@ class TNArchipelEntity (object):
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
+            self.create_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")
 
             ## recover/create pubsub after connection
             self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.recover_pubsubs)
@@ -203,6 +204,7 @@ class TNArchipelEntity (object):
                     self.plugins.append(plugin)
             except Exception as ex:
                 self.log.error("PLUGIN: unable to load plugin %s: %s" % (str(factory_method), str(ex)))
+        self.perform_hooks("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")
 
     def get_plugin(self, identifier):
         """
