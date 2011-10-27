@@ -88,6 +88,18 @@
     [eventNode unsubscribe];
 }
 
+- (void)_onRegisteredIncomingPresenceChange:(CPNotification)aNotification
+{
+     var newNotification = [CPNotification notificationWithName:nil object:nil userInfo:[aNotification object]];
+
+     if ([[aNotification object] XMPPShow] != TNStropheContactStatusOffline)
+     {
+         [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:[aNotification object]];
+         [self _performPushRosterAdded:newNotification];
+         CPLog.info("Contact " + [aNotification object] + "finally become online. Registring to its event pubsub");
+     }
+}
+
 - (void)_performPushRosterAdded:(CPNotification)aNotification
 {
     var contact = [aNotification userInfo],
@@ -95,7 +107,17 @@
 
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:JID];
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:JID];
-    [self subscribeToPubSubNodeOfContactWithJID:JID];
+
+    if ([contact XMPPShow] != TNStropheContactStatusOffline)
+        [self subscribeToPubSubNodeOfContactWithJID:JID];
+    else
+    {
+        // if the contact is offline for some reason,
+        // then we simply wait for it to connect in order to
+        // register to its pubsubs
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_onRegisteredIncomingPresenceChange:) name:TNStropheContactPresenceUpdatedNotification object:contact];
+        CPLog.info("Contact " + contact + " is not online. waiting for it to register to the event pubsub");
+    }
 }
 
 - (void)_performPushRosterRemoved:(CPNotification)aNotification
@@ -104,6 +126,7 @@
 
     [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
 }
+
 
 #pragma mark -
 #pragma mark Actions
