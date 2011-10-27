@@ -161,6 +161,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE")
         self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE")
         self.create_hook("HOOK_HYPERVISOR_CLONE")
+        self.create_hook("HOOK_HYPERVISOR_VM_WOKE_UP")
 
         # vocabulary
         self.init_vocabulary()
@@ -303,6 +304,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vm_thread = self.create_threaded_vm(jid, password, name)
             self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
             vm_thread.start()
+            self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())
 
     def create_threaded_vm(self, jid, password, name):
         """
