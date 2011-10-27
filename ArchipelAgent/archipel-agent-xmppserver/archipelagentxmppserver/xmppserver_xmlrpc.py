@@ -45,15 +45,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.xmlrpc_password    = self.configuration.get("XMPPSERVER", "xmlrpc_password")
         self.xmlrpc_call        = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
         self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
-
         self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
-
-        if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
-            if configuration.has_option("XMPPSERVER", "auto_group_name"):
-                self.auto_group_name = configuration.get("XMPPSERVER", "auto_group_name")
-            else:
-                self.auto_group_name = "Platform"
-
 
     ## TNXMPPServerControllerBase implementation
 
@@ -174,7 +166,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         """
         server = self.entity.jid.getDomain()
         for user in users:
-            userJID = xmpp.JID(user.getAttr("jid"))
+            userJID = xmpp.JID(user)
             answer = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot add user to shared roster group. %s" % str(answer))
@@ -191,7 +183,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         """
         server = self.entity.jid.getDomain()
         for user in users:
-            userJID = xmpp.JID(user.getAttr("jid"))
+            userJID = xmpp.JID(user)
             answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot remove user from shared roster group. %s" % str(answer))

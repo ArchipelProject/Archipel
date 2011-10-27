@@ -219,20 +219,27 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
 
     ### Overrides
 
+    def handle_autogroup_on_alloc(self, origin, user_info, newvm):
+        """
+        Not supported in XMPP API
+        """
+        pass
+
+    def create_autogroup_if_needed(self, origin, user_info, parameters):
+        """
+        Not supported in XMPP API
+        """
+        pass
+
+    def handle_autogroup_on_vm_wake_up(self, origin, user_info, vm):
+        """
+        Not supported in XMPP API
+        """
+        pass
+
     def iq_users_list(self, iq):
         """
         We overrides this method here because in XMPP
         we fetch the list of users using a asynchrnoous way
-
-        List all registered users.
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready to send IQ containing the result of the action
         """
-        try:
-            reply = iq.buildReply("result")
-            self.users_list()
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
-        return reply
+        pass
