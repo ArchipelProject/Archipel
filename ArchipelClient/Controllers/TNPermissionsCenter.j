@@ -582,7 +582,7 @@ var __defaultPermissionCenter;
     if (aPubSubNode !== _pubsubAdminAccounts)
         return;
     if ([aStanza type] == @"result")
-        CPLog.warn(@"affiliations successfully retrieved: " + [aPubSubNode affiliations]);
+        CPLog.info(@"affiliations successfully retrieved: " + [aPubSubNode affiliations]);
     else
         CPLog.error(@"Cannot retrieve affiliations: " + aStanza);
 }
@@ -594,7 +594,7 @@ var __defaultPermissionCenter;
     if (aPubSubNode !== _pubsubAdminAccounts)
         return;
     if ([aStanza type] == @"result")
-        CPLog.warn(@"successfully change affiliations: " + [aPubSubNode affiliations]);
+        CPLog.info(@"successfully change affiliations: " + [aPubSubNode affiliations]);
     else
         CPLog.error(@"Cannot change affiliations: " + aStanza);
 }
