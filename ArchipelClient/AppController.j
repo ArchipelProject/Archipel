@@ -565,20 +565,15 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [contactsMenu addItemWithTitle:CPLocalizedString(@"Rename contact", @"Rename contact") action:@selector(renameContact:) keyEquivalent:@"R"];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
 
-    // Status
-    [statusMenu addItemWithTitle:CPLocalizedString(@"Set status available", @"Set status available") action:nil keyEquivalent:@"1"];
-    [statusMenu addItemWithTitle:CPLocalizedString(@"Set status away", @"Set status away") action:nil keyEquivalent:@"2"];
-    [statusMenu addItemWithTitle:CPLocalizedString(@"Set status busy", @"Set status busy") action:nil keyEquivalent:@"3"];
-    [statusMenu addItem:[CPMenuItem separatorItem]];
-    [statusMenu addItemWithTitle:CPLocalizedString(@"Set custom status", @"Set custom status") action:nil keyEquivalent:@""];
-    [_mainMenu setSubmenu:statusMenu forItem:statusItem];
-
     // navigation
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Hide main menu", @"Hide main menu") action:@selector(switchMainMenu:) keyEquivalent:@"U"];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Search entity", @"Search entity") action:@selector(focusFilter:) keyEquivalent:@"F"];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select next entity", @"Select next entity") action:@selector(selectNextEntity:) keyEquivalent:nil];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous entity", @"Select previous entity") action:@selector(selectPreviousEntity:) keyEquivalent:nil];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select next entity", @"Select next entity") action:@selector(selectNextEntity:) keyEquivalent:CPDownArrowFunctionKey];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous entity", @"Select previous entity") action:@selector(selectPreviousEntity:) keyEquivalent:CPUpArrowFunctionKey];
+    [navigationMenu addItem:[CPMenuItem separatorItem]];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select next module", @"Select next module") action:@selector(selectNextModule:) keyEquivalent:CPRightArrowFunctionKey] setKeyEquivalentModifierMask:CPCommandKeyMask | CPAlternateKeyMask];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous module", @"Select previous module") action:@selector(selectPreviousModule:) keyEquivalent:CPLeftArrowFunctionKey] setKeyEquivalentModifierMask:CPCommandKeyMask | CPAlternateKeyMask];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand group", @"Expand group") action:@selector(expandGroup:) keyEquivalent:@"["];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse group", @"Expand group") action:@selector(collapseGroup:) keyEquivalent:@"]"];
@@ -1122,6 +1117,22 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
 
+}
+
+/*! Select the next module
+    @param aSender the sender of the action
+*/
+- (IBAction)selectNextModule:(id)aSender
+{
+    [_rosterOutlineView moveRight];
+}
+
+/*! Select the previous module
+    @param aSender the sender of the action
+*/
+- (IBAction)selectPreviousModule:(id)aSender
+{
+    [_rosterOutlineView moveLeft];
 }
 
 /*! Make the property view rename field active
