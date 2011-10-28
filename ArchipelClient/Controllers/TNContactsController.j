@@ -49,6 +49,7 @@
 {
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didRecieveContactVCard:) name:TNStropheContactVCardReceivedNotification object:nil];
 
     [newContactName setToolTip:CPLocalizedString(@"The display name of the new contact", @"The display name of the new contact")];
     [newContactJID setToolTip:CPLocalizedString(@"The XMPP JID of the contact", @"The XMPP JID of the contact")];
@@ -75,6 +76,61 @@
         [_pubsubController unsubscribeFromNodeWithName:nodeName server:server]
 }
 
+- (void)addContact
+{
+    var JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
+        name    = [newContactName stringValue];
+
+    if (![JID node] || ![JID domain] || [JID resource])
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"JID is not valid", @"JID is not valid")
+                          informative:CPLocalizedString(@"You must enter a JID using the form user@domain.", @"You must enter a JID using the form user@domain.")
+                                style:CPCriticalAlertStyle];
+        return;
+    }
+    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithPath:nil];
+
+    [mainPopover close];
+
+    CPLog.info(@"added contact " + JID);
+
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Contact", @"Contact")
+                                                     message:CPLocalizedString(@"Contact ", @"Contact ") + JID + CPLocalizedString(@" has been added",  @" has been added")];
+
+}
+
+/*! delete a contact
+    @param aContact the contact to delete
+*/
+- (void)deleteContact:(TNStropheContact)aContact
+{
+    if (![aContact isKindOfClass:TNStropheContact])
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"User supression", @"User supression")
+                                                         message:CPLocalizedString(@"You must choose a contact", @"You must choose a contact")
+                                                            icon:TNGrowlIconError];
+        return;
+    }
+
+    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete contact", @"Delete contact")
+                                informative:CPLocalizedString(@"Are you sure you want to delete this contact?", @"Are you sure you want to delete this contact?")
+                                 target:self
+                                 actions:[[CPLocalizedString("Delete", "Delete"), @selector(performDeleteContact:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
+
+    [alert setHelpTarget:self action:@selector(showHelpForDelete:)];
+    [alert setUserInfo:aContact];
+    [alert runModal];
+}
+
+/*! ask contact for subscription
+    @param aJID the target JID
+*/
+- (void)askSubscription:(id)aJID
+{
+    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:aJID];
+    [[[TNStropheIMClient defaultClient] roster] authorizeJID:aJID];
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -88,43 +144,31 @@
     [eventNode unsubscribe];
 }
 
-- (void)_onRegisteredIncomingPresenceChange:(CPNotification)aNotification
+- (void)_didRecieveContactVCard:(CPNotification)aNotification
 {
-     var newNotification = [CPNotification notificationWithName:nil object:nil userInfo:[aNotification object]];
+    var contact = [aNotification object];
 
-     if ([[aNotification object] XMPPShow] != TNStropheContactStatusOffline)
-     {
-         [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:[aNotification object]];
-         [self _performPushRosterAdded:newNotification];
-         CPLog.info("Contact " + [aNotification object] + "finally become online. Registring to its event pubsub");
-     }
+    console.warn("NEW VCARD! try to subscribe!");
+
+    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] != TNArchipelEntityTypeUser)
+    {
+        console.warn("Receiving a vCard from an Archipel entity. try to register to pubsub if needed");
+        [self subscribeToPubSubNodeOfContactWithJID:[contact JID]];
+    }
 }
 
 - (void)_performPushRosterAdded:(CPNotification)aNotification
 {
-    var contact = [aNotification userInfo],
-        JID     = [contact JID];
+    var theJID = [aNotification userInfo];
 
-    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:JID];
-    [[[TNStropheIMClient defaultClient] roster] authorizeJID:JID];
-
-    if ([contact XMPPShow] != TNStropheContactStatusOffline)
-        [self subscribeToPubSubNodeOfContactWithJID:JID];
-    else
-    {
-        // if the contact is offline for some reason,
-        // then we simply wait for it to connect in order to
-        // register to its pubsubs
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_onRegisteredIncomingPresenceChange:) name:TNStropheContactPresenceUpdatedNotification object:contact];
-        CPLog.info("Contact " + contact + " is not online. waiting for it to register to the event pubsub");
-    }
+    [self askSubscription:theJID];
 }
 
 - (void)_performPushRosterRemoved:(CPNotification)aNotification
 {
-    var contact = [aNotification userInfo];
+    var theJID = [aNotification userInfo];
 
-    [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
+    [self unsubscribeToPubSubNodeOfContactWithJID:theJID];
 }
 
 
@@ -157,47 +201,7 @@
 */
 - (IBAction)addContact:(id)aSender
 {
-    var JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
-        name    = [newContactName stringValue];
-
-    if (![JID node] || ![JID domain] || [JID resource])
-    {
-        [TNAlert showAlertWithMessage:CPLocalizedString(@"JID is not valid", @"JID is not valid")
-                          informative:CPLocalizedString(@"You must enter a JID using the form user@domain.", @"You must enter a JID using the form user@domain.")
-                                style:CPCriticalAlertStyle];
-        return;
-    }
-    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithPath:nil];
-
-    [mainPopover close];
-
-    CPLog.info(@"added contact " + JID);
-
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Contact", @"Contact")
-                                                     message:CPLocalizedString(@"Contact ", @"Contact ") + JID + CPLocalizedString(@" has been added",  @" has been added")];
-}
-
-/*! will ask for deleting the selected contact
-    @param aSender the sender of the action
-*/
-- (void)deleteContact:(TNStropheContact)aContact
-{
-    if (![aContact isKindOfClass:TNStropheContact])
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"User supression", @"User supression")
-                                                         message:CPLocalizedString(@"You must choose a contact", @"You must choose a contact")
-                                                            icon:TNGrowlIconError];
-        return;
-    }
-
-    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete contact", @"Delete contact")
-                                informative:CPLocalizedString(@"Are you sure you want to delete this contact?", @"Are you sure you want to delete this contact?")
-                                 target:self
-                                 actions:[[CPLocalizedString("Delete", "Delete"), @selector(performDeleteContact:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
-
-    [alert setHelpTarget:self action:@selector(showHelpForDelete:)];
-    [alert setUserInfo:aContact];
-    [alert runModal];
+    [self addContact];
 }
 
 /*! Action for the deleteContact:'s confirmation TNAlert.
@@ -266,7 +270,6 @@
 */
 - (void)performAuthorize:(TNStropheStanza)aRequestStanza
 {
-    [self subscribeToPubSubNodeOfContactWithJID:[aRequestStanza from]];
     [[[TNStropheIMClient defaultClient] roster] answerAuthorizationRequest:aRequestStanza answer:YES];
 }
 

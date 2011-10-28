@@ -556,6 +556,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     {
         [contactsMenu addItemWithTitle:CPLocalizedString(@"Add contact", @"Add contact") action:@selector(addContact:) keyEquivalent:@""];
         [contactsMenu addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contacts") action:@selector(deleteContact:) keyEquivalent:@""];
+        [contactsMenu addItemWithTitle:CPLocalizedString(@"Ask subscribtion again", @"Ask subscribtion again") action:@selector(askSubscription:) keyEquivalent:@""];
         [contactsMenu addItem:[CPMenuItem separatorItem]];
     }
 
@@ -609,6 +610,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     _rosterMenuForContacts = [[CPMenu alloc] init];
     [_rosterMenuForContacts addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@""];
+    [_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Ask subscribtion again", @"Ask subscribtion again") action:@selector(askSubscription:) keyEquivalent:@""];
 
     _rosterMenuForGroups = [[CPMenu alloc] init];
     [_rosterMenuForGroups addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@""];
@@ -992,9 +994,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 }
 
 /*! will log out from Archipel
-    @param the sender of the action
+    @param the aSender of the action
 */
-- (IBAction)logout:(id)sender
+- (IBAction)logout:(id)aSender
 {
     var defaults = [CPUserDefaults standardUserDefaults];
     CPLog.info(@"starting to disconnect");
@@ -1002,22 +1004,33 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 }
 
 /*! will opens the add contact window
-    @param the sender of the action
+    @param the aSender of the action
 */
-- (IBAction)addContact:(id)sender
+- (IBAction)addContact:(id)aSender
 {
     [contactsController showWindow:_plusButton];
 }
 
 /*! will ask for deleting the selected contact
-    @param the sender of the action
+    @param the aSender of the action
 */
-- (IBAction)deleteContact:(id)sender
+- (IBAction)deleteContact:(id)aSender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
         contact = [_rosterOutlineView itemAtRow:index];
 
     [contactsController deleteContact:contact];
+}
+
+/*! will ask contact subscription request
+    @param the aSender of the action
+*/
+- (IBAction)askSubscription:(id)aSender
+{
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        contact = [_rosterOutlineView itemAtRow:index];
+
+    [contactsController askSubscription:contact];
 }
 
 /*! Opens the add group window
