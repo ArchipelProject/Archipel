@@ -53,20 +53,10 @@ var TNVirtualMachineDataViewAvatarUnknown;
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize the data view
-*/
-- (void)initWithFrame:(CPRect)aFrame
++ (void)initialize
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        if (!TNVirtualMachineDataViewAvatarUnknown)
-        {
-            var bundle = [CPBundle mainBundle];
-            TNVirtualMachineDataViewAvatarUnknown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
-        }
-    }
-
-    return self;
+    var bundle = [CPBundle mainBundle];
+    TNVirtualMachineDataViewAvatarUnknown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
 }
 
 - (void)shouldHideLabels:(BOOL)shouldHide

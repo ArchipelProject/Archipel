@@ -25,6 +25,11 @@
 @import <StropheCappuccino/TNStropheContact.j>
 @import <TNKit/TNAttachedWindow.j>
 
+
+var TNRosterDataViewContactImageUnknownUser,
+    TNRosterDataViewContactImageSelectedCartoucheColor,
+    TNRosterDataViewContactImageNormalCartoucheColor;
+
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
 */
@@ -37,9 +42,6 @@
     CPTextField         _status         @accessors(property=status);
 
     CPButton            _buttonAction;
-    CPImage             _unknownUserImage;
-    CPImage             _normalStateCartoucheColor;
-    CPImage             _selectedStateCartoucheColor;
     CPString            _entityType;
     BOOL                _shouldDisplayAvatar;
     TNStropheContact    _contact;
@@ -49,6 +51,14 @@
 
 #pragma mark -
 #pragma mark Initialization
+
++ (void)initialize
+{
+    var bundle  = [CPBundle mainBundle];
+    TNRosterDataViewContactImageUnknownUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    TNRosterDataViewContactImageNormalCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
+    TNRosterDataViewContactImageSelectedCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
+}
 
 /*! initialize the class
     @return a initialized instance of TNRosterDataViewContact
@@ -72,9 +82,6 @@
         _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 1, aFrame.size.width - (54 + contactPlacementOffset), 15)];
         _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(35 + contactPlacementOffset, 16, aFrame.size.width - (39 + contactPlacementOffset), 15)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(CPRectGetMaxX(aFrame) - 25, 10, 23, 14)];
-        _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
-        _normalStateCartoucheColor      = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
-        _selectedStateCartoucheColor    = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
 
         if (_shouldDisplayAvatar)
         {
@@ -82,15 +89,15 @@
             [_avatar setFrameSize:contactImageSizeAvatar];
         }
 
-        [_events setBackgroundColor:_normalStateCartoucheColor];
+        [_events setBackgroundColor:TNRosterDataViewContactImageNormalCartoucheColor];
         [_events setAlignment:CPCenterTextAlignment];
         [_events setAutoresizingMask:CPViewMinXMargin];
         [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
         [_events setFont:[CPFont systemFontOfSize:11]];
         [_events setTextColor:[CPColor whiteColor]];
         [_events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_events setValue:_normalStateCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
-        [_events setValue:_selectedStateCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
+        [_events setValue:TNRosterDataViewContactImageNormalCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
+        [_events setValue:TNRosterDataViewContactImageSelectedCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
         [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"content-inset"];
         [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
         [_events setHidden:YES];
@@ -173,7 +180,7 @@
         if ([aContact avatar])
             [_avatar setImage:[aContact avatar]];
         else
-            [_avatar setImage:_unknownUserImage];
+            [_avatar setImage:TNRosterDataViewContactImageUnknownUser];
     }
 
     if ([aContact numberOfEvents] > 0)
@@ -259,12 +266,8 @@
 
     if (self)
     {
-        _normalStateCartoucheColor = [aCoder decodeObjectForKey:@"_normalStateCartoucheColor"];
-        _selectedStateCartoucheColor = [aCoder decodeObjectForKey:@"_selectedStateCartoucheColor"];
-
         _shouldDisplayAvatar    = [aCoder decodeObjectForKey:@"_shouldDisplayAvatar"];
         _contact                = [aCoder decodeObjectForKey:@"_contact"];
-        _unknownUserImage       = [aCoder decodeObjectForKey:@"_unknownUserImage"];
         _name                   = [aCoder decodeObjectForKey:@"_name"];
         _status                 = [aCoder decodeObjectForKey:@"_status"];
         _statusIcon             = [aCoder decodeObjectForKey:@"_statusIcon"];
@@ -284,15 +287,11 @@
 
     [aCoder encodeObject:_shouldDisplayAvatar forKey:@"_shouldDisplayAvatar"];
     [aCoder encodeObject:_contact forKey:@"_contact"];
-    [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:_name forKey:@"_name"];
     [aCoder encodeObject:_status forKey:@"_status"];
     [aCoder encodeObject:_statusIcon forKey:@"_statusIcon"];
     [aCoder encodeObject:_events forKey:@"_events"];
     [aCoder encodeObject:_avatar forKey:@"_avatar"];
-    [aCoder encodeObject:_normalStateCartoucheColor forKey:@"_normalStateCartoucheColor"];
-    [aCoder encodeObject:_selectedStateCartoucheColor forKey:@"_selectedStateCartoucheColor"];
-    // [aCoder encodeObject:_buttonAction forKey:@"_buttonAction"];
 }
 
 @end

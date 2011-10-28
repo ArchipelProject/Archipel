@@ -24,6 +24,11 @@ TNArchipelApplianceStatusInstalled  = @"installed";
 TNArchipelApplianceStatusInstalling = @"installing";
 TNArchipelApplianceStatusNone       = @"none";
 
+var TNInstalledApplianceIconUsed,
+    TNInstalledApplianceIconInstalling,
+    TNInstalledApplianceIconNone;
+
+
 /*! @ingroup virtualmachinepackaging
     represent an installed appliance
 */
@@ -34,16 +39,21 @@ TNArchipelApplianceStatusNone       = @"none";
     CPString    _path           @accessors(property=path);
     CPString    _status         @accessors(setter=setStatus:, getter=statusString);
     CPString    _UUID           @accessors(property=UUID);
-
-    CPImage     _installingIcon;
-    CPImage     _noneIcon;
-    CPImage     _usedIcon;
 }
 
 #pragma mark -
 #pragma mark  Initialization
 
-/*! initializes and return a TNInstalledAppliance with given values
++ (void)initialize
+{
+    var bundle = [CPBundle mainBundle];
+    TNInstalledApplianceIconUsed       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
+    TNInstalledApplianceIconInstalling = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)];
+    TNInstalledApplianceIconNone       = nil;
+
+}
+
+/*! initialize and return a TNInstalledAppliance with given values
     @param aName the name of the appliance
     @param anUUID the UUID of the appliance
     @param aPath the path of the appliance
@@ -63,21 +73,6 @@ TNArchipelApplianceStatusNone       = @"none";
     return appliance;
 }
 
-/*! initialize an instance of TNInstalledAppliance
-*/
-- (id)init
-{
-    if (self = [super init])
-    {
-        var bundle      = [CPBundle mainBundle];
-        _usedIcon       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
-        _installingIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)];
-        _noneIcon       = nil;
-    }
-
-    return self
-}
-
 
 #pragma mark -
 #pragma mark Accessors
@@ -85,11 +80,11 @@ TNArchipelApplianceStatusNone       = @"none";
 - (CPImage)status
 {
     if (_status == TNArchipelApplianceStatusInstalled)
-        return _usedIcon;
+        return TNInstalledApplianceIconUsed;
     else if (_status == TNArchipelApplianceStatusInstalling)
-        return _installingIcon;
+        return TNInstalledApplianceIconInstalling;
     else
-        return _noneIcon;
+        return TNInstalledApplianceIconNone;
 }
 
 - (CPString)description

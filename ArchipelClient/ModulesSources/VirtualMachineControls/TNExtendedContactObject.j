@@ -22,6 +22,7 @@
 @import <AppKit/CPImage.j>
 
 
+var TNExtendedContactImageSelected;
 
 // TODO: this class is useless
 
@@ -33,13 +34,16 @@
     CPString    _nickname   @accessors(property=nickname);
     CPString    _fullJID    @accessors(property=fullJID);
     BOOL        _selected   @accessors(setter=setSelected:);
-
-    CPImage     _imageSelected;
 }
 
 
 #pragma mark -
 #pragma mark Initialization
+
++ (void)initialize
+{
+    TNExtendedContactImageSelected = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
+}
 
 /*! intialize a TNExtendedContact with given values
     @param aNickname contact nickname
@@ -53,7 +57,6 @@
         _nickname       = aNickname;
         _fullJID        = aFullJID;
         _selected       = NO;
-        _imageSelected  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
     }
 
     return self;
@@ -67,7 +70,7 @@
 {
     if (_selected)
     {
-        return _imageSelected;
+        return TNExtendedContactImageSelected;
     }
     return nil;
 }

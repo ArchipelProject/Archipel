@@ -49,24 +49,14 @@ var TNDriveDataViewIconQCOW2,
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize the data view
-*/
-- (void)initWithFrame:(CPRect)aFrame
++ (void)initialize
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        if (!TNDriveDataViewIconQCOW2)
-        {
-            var bundle = [CPBundle bundleForClass:[self class]];
-            TNDriveDataViewIconQCOW2    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_qcow2.png"]];
-            TNDriveDataViewIconQCOW     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_qcow.png"]];
-            TNDriveDataViewIconCOW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_cow.png"]];
-            TNDriveDataViewIconVMDK     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_vmdk.png"]];
-            TNDriveDataViewIconRAW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_raw.png"]];
-        }
-    }
-
-    return self;
+    var bundle = [CPBundle bundleForClass:[self class]];
+    TNDriveDataViewIconQCOW2    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_qcow2.png"]];
+    TNDriveDataViewIconQCOW     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_qcow.png"]];
+    TNDriveDataViewIconCOW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_cow.png"]];
+    TNDriveDataViewIconVMDK     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_vmdk.png"]];
+    TNDriveDataViewIconRAW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_raw.png"]];
 }
 
 

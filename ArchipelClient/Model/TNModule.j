@@ -45,6 +45,12 @@ TNArchipelModuleStatusError             = 1;
 TNArchipelModuleStatusReady             = 3;
 TNArchipelModuleStatusWaiting           = 2;
 
+var TNModuleStatusImageReady,
+    TNModuleStatusImageWaiting,
+    TNModuleStatusImageError;
+
+
+
 /*! @ingroup archipelcore
     This is the root class of every module.
     All modules must inherit from TNModule.
@@ -107,15 +113,21 @@ TNArchipelModuleStatusWaiting           = 2;
     BOOL                            _pubSubPermissionRegistred;
     BOOL                            _registredToPermissionCenter;
     CPArray                         _registredSelectors;
-    CPImage                         _imageModuleError;
-    CPImage                         _imageModuleReady;
-    CPImage                         _imageModuleWaiting;
     id                              _pubSubHandlerId;
 }
 
 
 #pragma mark -
 #pragma mark Initialization
+
++ (void)initialize
+{
+    var mainBundle = [CPBundle mainBundle];
+
+    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/ready.png"] size:CPSizeMake(16.0, 16.0)];
+    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/waiting.png"] size:CPSizeMake(16.0, 16.0)];
+    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/error.png"] size:CPSizeMake(16.0, 16.0)];
+}
 
 - (BOOL)initializeModule
 {
@@ -124,12 +136,6 @@ TNArchipelModuleStatusWaiting           = 2;
     _registredSelectors     = [CPArray array];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
-
-    var mainBundle = [CPBundle mainBundle];
-
-    _imageModuleReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/ready.png"] size:CPSizeMake(16.0, 16.0)];
-    _imageModuleWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/waiting.png"] size:CPSizeMake(16.0, 16.0)];
-    _imageModuleError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/error.png"] size:CPSizeMake(16.0, 16.0)];
 }
 
 
@@ -551,13 +557,13 @@ TNArchipelModuleStatusWaiting           = 2;
     switch (aStatus)
     {
         case TNArchipelModuleStatusReady:
-            [imageViewModuleReady setImage:_imageModuleReady];
+            [imageViewModuleReady setImage:TNModuleStatusImageReady];
             break;
         case TNArchipelModuleStatusWaiting:
-            [imageViewModuleReady setImage:_imageModuleWaiting];
+            [imageViewModuleReady setImage:TNModuleStatusImageWaiting];
             break;
         case TNArchipelModuleStatusError:
-            [imageViewModuleReady setImage:_imageModuleError];
+            [imageViewModuleReady setImage:TNModuleStatusImageError];
             break;
     }
 }

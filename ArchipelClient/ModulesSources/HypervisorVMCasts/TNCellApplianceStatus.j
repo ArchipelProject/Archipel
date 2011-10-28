@@ -23,22 +23,33 @@
 @import <AppKit/CPTextField.j>
 
 
+var TNCellApplianceStatusIconInstalled,
+    TNCellApplianceStatusIconInstalling,
+    TNCellApplianceStatusIconNotInstalled,
+    TNCellApplianceStatusIconError;
 
 /*! @ingroup hypervisorvmcasts
     View that that represent the datacell for column status
 */
 @implementation TNCellApplianceStatus : CPView
 {
-    CPImage         _iconError;
-    CPImage         _iconInstalled;
-    CPImage         _iconInstalling;
-    CPImage         _iconNotInstalled;
     CPImageView     _imageStatus;
     CPTextField     _fieldStatus;
 }
 
 #pragma mark -
 #pragma mark Initialization
+
++ (void)initialize
+{
+    var bundle  = [CPBundle bundleForClass:TNCellApplianceStatus];
+
+    TNCellApplianceStatusIconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"]];
+    TNCellApplianceStatusIconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]];
+    TNCellApplianceStatusIconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"notinstalled.png"]];
+    TNCellApplianceStatusIconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"error.png"]];
+}
+
 
 /*! initialize the view
 */
@@ -54,12 +65,6 @@
 
         [_fieldStatus setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [_fieldStatus setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
-
-        var bundle          = [CPBundle bundleForClass:[self class]];
-        _iconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"]];
-        _iconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]];
-        _iconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"notinstalled.png"]];
-        _iconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"error.png"]];
     }
 
     return self;
@@ -74,13 +79,13 @@
     [_fieldStatus sizeToFit];
 
     if (aStatus == TNArchipelApplianceInstalled)
-        [_imageStatus setImage:_iconInstalled];
+        [_imageStatus setImage:TNCellApplianceStatusIconInstalled]
     else if (aStatus == TNArchipelApplianceInstalling)
-        [_imageStatus setImage:_iconInstalling];
+        [_imageStatus setImage:TNCellApplianceStatusIconInstalling];
     else if (aStatus == TNArchipelApplianceInstallationError)
-        [_imageStatus setImage:_iconError];
+        [_imageStatus setImage:TNCellApplianceStatusIconError];
     else if (aStatus == TNArchipelApplianceNotInstalled)
-        [_imageStatus setImage:_iconNotInstalled];
+        [_imageStatus setImage:TNCellApplianceStatusIconNotInstalled];
     else
         [_imageStatus setImage:nil];
 }
@@ -113,12 +118,8 @@
 {
     if (self = [super initWithCoder:aCoder])
     {
-        _fieldStatus        = [aCoder decodeObjectForKey:@"_fieldStatus"];
-        _imageStatus        = [aCoder decodeObjectForKey:@"_imageStatus"];
-        _iconNotInstalled   = [aCoder decodeObjectForKey:@"_iconNotInstalled"];
-        _iconInstalled      = [aCoder decodeObjectForKey:@"_iconInstalled"];
-        _iconInstalling     = [aCoder decodeObjectForKey:@"_iconInstalling"];
-        _iconError          = [aCoder decodeObjectForKey:@"_iconError"];
+        _fieldStatus = [aCoder decodeObjectForKey:@"_fieldStatus"];
+        _imageStatus = [aCoder decodeObjectForKey:@"_imageStatus"];
     }
 
     return self;
@@ -130,10 +131,6 @@
 
     [aCoder encodeObject:_fieldStatus forKey:@"_fieldStatus"];
     [aCoder encodeObject:_imageStatus forKey:@"_imageStatus"];
-    [aCoder encodeObject:_iconNotInstalled forKey:@"_iconNotInstalled"];
-    [aCoder encodeObject:_iconInstalled forKey:@"_iconInstalled"];
-    [aCoder encodeObject:_iconInstalling forKey:@"_iconInstalling"];
-    [aCoder encodeObject:_iconError forKey:@"_iconError"];
 }
 
 @end

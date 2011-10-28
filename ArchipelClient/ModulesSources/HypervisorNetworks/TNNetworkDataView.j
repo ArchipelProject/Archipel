@@ -25,8 +25,8 @@
 
 @import <TNKit/TNTableViewDataSource.j>
 
-var _imageNetworkActive,
-    _imageNetworkUnactive;
+var TNNetworkDataViewStatusImageActive,
+    TNNetworkDataViewStatusImageUnactive;
 
 /*! @ingroup hypervisornetworks
     This class represent a network DataView
@@ -67,11 +67,14 @@ var _imageNetworkActive,
 }
 
 
+#pragma mark -
+#pragma mark Initialization
+
 + (void)initialize
 {
-    var bundle              = [CPBundle bundleForClass:TNNetworkDataView];
-    _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
-    _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
+    var bundle  = [CPBundle bundleForClass:TNNetworkDataView];
+    TNNetworkDataViewStatusImageActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
+    TNNetworkDataViewStatusImageUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
 }
 
 - (void)initWithFrame:(CPRect)aFrame
@@ -98,7 +101,7 @@ var _imageNetworkActive,
     _datasourceRanges       = [[TNTableViewDataSource alloc] init];
     _datasourceHosts        = [[TNTableViewDataSource alloc] init];
 
-    [imageStatus setImage:[aNetwork isActive] ? _imageNetworkActive : _imageNetworkUnactive];
+    [imageStatus setImage:[aNetwork isActive] ? TNNetworkDataViewStatusImageActive : TNNetworkDataViewStatusImageUnactive];
     [fieldName setStringValue:[aNetwork name]];
     [fieldBridgeName setStringValue:[[aNetwork bridge] name] || @"No bridge"];
     [fieldBridgeForwardDevice setStringValue:[[aNetwork forward] dev]];
