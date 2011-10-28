@@ -28,6 +28,8 @@
 	<string>Add contact</string>
 	<key>Add group</key>
 	<string>Add group</string>
+	<key>Admin rights</key>
+	<string>Admin rights</string>
 	<key>Archipel</key>
 	<string>Archipel</string>
 	<key>Archipel Help</key>
@@ -45,7 +47,7 @@
 	<key>Busy</key>
 	<string>Busy</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
-	<string>CREDENTIAL_REMEMBER_TOOLTIP</string>
+	<string>Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Cannot save your preferences to the XMPP server</key>
@@ -256,6 +258,10 @@
 	<string>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</string>
 	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
 	<string>Turn this ON to activate eye candy animation. Turn it off to gain performances</string>
+	<key>Unable to grant admin rights to users. See log</key>
+	<string>Unable to grant admin rights to users. See log</string>
+	<key>Unable to revoke admin rights to users. See log</key>
+	<string>Unable to revoke admin rights to users. See log</string>
 	<key>Unable to update your password</key>
 	<string>Unable to update your password</string>
 	<key>Undo</key>
@@ -264,6 +270,10 @@
 	<string>Update your current XMPP status</string>
 	<key>User</key>
 	<string>User</string>
+	<key>User admin rights successfully granted</key>
+	<string>User admin rights successfully granted</string>
+	<key>User admin rights successfuly revoked</key>
+	<string>User admin rights successfuly revoked</string>
 	<key>User supression</key>
 	<string>User supression</string>
 	<key>Virtual machine</key>

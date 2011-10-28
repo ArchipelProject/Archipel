@@ -88,5 +88,7 @@
     </dict>
     <key>TNArchipelPropertyControllerEnabled</key>
     <integer>1</integer>
+    <key>TNArchipelScrollersStyle</key>
+    <string>Overlay</string>
 </dict>
 </plist>

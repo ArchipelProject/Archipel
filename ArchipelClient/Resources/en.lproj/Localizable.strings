@@ -37,6 +37,9 @@
 /* Add group */
 "Add group" = "Add group";
 
+/* Admin rights */
+"Admin rights" = "Admin rights";
+
 /* Archipel */
 "Archipel" = "Archipel";
 
@@ -410,6 +413,12 @@
 /* Turn this ON to activate XMPP monitoring. Turn it off to gain performances */
 "Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Turn this ON to activate XMPP monitoring. Turn it off to gain performances";
 
+/* Unable to grant admin rights to users. See log */
+"Unable to grant admin rights to users. See log" = "Unable to grant admin rights to users. See log";
+
+/* Unable to revoke admin rights to users. See log */
+"Unable to revoke admin rights to users. See log" = "Unable to revoke admin rights to users. See log";
+
 /* Unable to update your password */
 "Unable to update your password" = "Unable to update your password";
 
@@ -424,6 +433,12 @@
 
 /* User */
 "User" = "User";
+
+/* User admin rights successfully granted */
+"User admin rights successfully granted" = "User admin rights successfully granted";
+
+/* User admin rights successfuly revoked */
+"User admin rights successfuly revoked" = "User admin rights successfuly revoked";
 
 /* User supression */
 "User supression" = "User supression";

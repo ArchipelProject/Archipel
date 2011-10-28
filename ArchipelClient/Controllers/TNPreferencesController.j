@@ -52,6 +52,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPCheckBox          checkBoxUpdate;
     @outlet CPPopUpButton       buttonDebugLevel;
     @outlet CPPopUpButton       buttonLanguage;
+    @outlet CPPopUpButton       buttonScrollersStyle;
     @outlet CPTabView           tabViewMain;
     @outlet CPTextField         fieldBOSHResource;
     @outlet CPTextField         fieldModuleLoadingDelay;
@@ -243,6 +244,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [buttonLanguage selectItemWithTitle:[defaults objectForKey:@"CPBundleLocale"]];
+    [buttonScrollersStyle selectItemWithTitle:[defaults objectForKey:@"TNArchipelScrollersStyle"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
     [switchUseXMPPMonitoring setOn:[defaults boolForKey:@"TNArchipelMonitorStanza"] animated:YES sendAction:NO];
     [checkBoxUpdate setState:([defaults boolForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
@@ -282,6 +284,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
     [defaults setObject:[buttonLanguage title] forKey:@"CPBundleLocale"];
+    [defaults setObject:[buttonScrollersStyle title] forKey:@"TNArchipelScrollersStyle"];
     [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
     [defaults setBool:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
     [defaults setBool:([checkBoxHideOfflineContacts state] == CPOnState) forKey:@"TNHideOfflineContacts"];
@@ -295,6 +298,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     CPLogRegister(CPLogConsole, [buttonDebugLevel title]);
 
     [_appController monitorXMPP:[switchUseXMPPMonitoring isOn]];
+    [_appController updateOverallScrollersStyle];
 
     for (var i = 0; i < [_modules count]; i++)
     {

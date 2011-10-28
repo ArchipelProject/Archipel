@@ -28,6 +28,8 @@
 	<string>Kontakt hinzufügen</string>
 	<key>Add group</key>
 	<string>Gruppe hinzufügen</string>
+	<key>Admin rights</key>
+	<string>Admin rights</string>
 	<key>Archipel</key>
 	<string>Archipel</string>
 	<key>Archipel Help</key>
@@ -256,6 +258,10 @@
 	<string>Einschalten um XMPP Überwachung zu aktivieren. Ausschalten um Performance zu gewinnen.</string>
 	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
 	<string>Einschalten um Animationen zu aktivieren. Ausschalten um Performance zu gewinnen.</string>
+	<key>Unable to grant admin rights to users. See log</key>
+	<string>Unable to grant admin rights to users. See log</string>
+	<key>Unable to revoke admin rights to users. See log</key>
+	<string>Unable to revoke admin rights to users. See log</string>
 	<key>Unable to update your password</key>
 	<string>Ihr Passwort konnte nichtgeändert werden</string>
 	<key>Undo</key>
@@ -264,6 +270,10 @@
 	<string>Aktualisieren Sie Ihren momentanen XMPP Status</string>
 	<key>User</key>
 	<string>Benutzer</string>
+	<key>User admin rights successfully granted</key>
+	<string>User admin rights successfully granted</string>
+	<key>User admin rights successfuly revoked</key>
+	<string>User admin rights successfuly revoked</string>
 	<key>User supression</key>
 	<string>Benutzer blockieren</string>
 	<key>Virtual machine</key>

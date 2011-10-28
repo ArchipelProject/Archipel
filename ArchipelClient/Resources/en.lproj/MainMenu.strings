@@ -437,3 +437,15 @@
 /* Class = "NSTextFieldCell"; title = "Version - Copyright"; ObjectID = "1624"; */
 "1624.title" = "Version - Copyright";
 
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1629"; */
+"1629.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Overlay"; ObjectID = "1631"; */
+"1631.title" = "Overlay";
+
+/* Class = "NSMenuItem"; title = "Legacy"; ObjectID = "1632"; */
+"1632.title" = "Legacy";
+
+/* Class = "NSTextFieldCell"; title = "Scrollers"; ObjectID = "1633"; */
+"1633.title" = "Scrollers";
+

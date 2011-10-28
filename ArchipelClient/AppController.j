@@ -280,6 +280,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"], @"TNHideOfflineContacts",
             [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale",
             [bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"], @"TNArchipelPropertyControllerEnabled",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelScrollersStyle"], @"TNArchipelScrollersStyle",
             [CPDictionary dictionary], @"TNOutlineViewsExpandedGroups"
     ]];
 
@@ -799,6 +800,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [CPMenu setMenuBarVisible:YES];
     [connectionController hideWindow:nil];
     [theWindow makeKeyAndOrderFront:nil];
+    [self updateOverallScrollersStyle];
 
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
     [[[TNStropheIMClient defaultClient] roster] setFilterField:filterField];
@@ -929,9 +931,23 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     }
 }
 
+/*! Display the hint window
+*/
 - (void)displayFirstConnectionInterface
 {
     [hintController showWindow:nil];
+}
+
+/*! Update the scroller style according to the defaults
+*/
+- (void)updateOverallScrollersStyle
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    if ([[defaults objectForKey:@"TNArchipelScrollersStyle"] lowercaseString] == @"legacy")
+        [CPScrollView setGlobalScrollerStyle:CPScrollerStyleLegacy];
+    else
+        [CPScrollView setGlobalScrollerStyle:CPScrollerStyleOverlay];
 }
 
 
