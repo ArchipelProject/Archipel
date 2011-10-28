@@ -244,11 +244,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* notifications */
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
-    [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
+    [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnectedNotification object:nil];
     CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
-    [center addObserver:self selector:@selector(XMPPDisconnecting:) name:TNStropheConnectionStatusDisconnecting object:nil];
-    CPLog.trace(@"registering for notification TNStropheConnectionStatusDisconnected");
-    [center addObserver:self selector:@selector(XMPPDisconnected:) name:TNStropheConnectionStatusDisconnected object:nil];
+    [center addObserver:self selector:@selector(XMPPDisconnecting:) name:TNStropheConnectionStatusDisconnectingNotification object:nil];
+    CPLog.trace(@"registering for notification TNStropheConnectionStatusDisconnectedNotification");
+    [center addObserver:self selector:@selector(XMPPDisconnected:) name:TNStropheConnectionStatusDisconnectedNotification object:nil];
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");

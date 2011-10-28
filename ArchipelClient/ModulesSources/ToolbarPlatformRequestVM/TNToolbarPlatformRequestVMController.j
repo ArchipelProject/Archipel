@@ -52,7 +52,7 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
 {
     [super willLoad];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didStropheConnected:) name:TNStropheConnectionStatusConnected object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didStropheConnected:) name:TNStropheConnectionStatusConnectedNotification object:nil];
 }
 
 

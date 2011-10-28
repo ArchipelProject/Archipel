@@ -109,8 +109,8 @@
 
     _numberOfNotices = 0;
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheConnected:) name:TNStropheConnectionStatusConnected object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheWillDisconnect:) name:TNStropheConnectionStatusWillDisconnect object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheConnected:) name:TNStropheConnectionStatusConnectedNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheWillDisconnect:) name:TNStropheConnectionStatusWillDisconnectNotification object:nil];
 
     var defaults = [CPUserDefaults standardUserDefaults];
 

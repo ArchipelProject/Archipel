@@ -131,8 +131,8 @@
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didReceiveMessageComposing:) name:TNStropheContactMessageComposing object:_entity];
-    [center addObserver:self selector:@selector(_didReceiveMessagePause:) name:TNStropheContactMessagePaused object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveMessageComposing:) name:TNStropheContactMessageComposingNotification object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveMessagePause:) name:TNStropheContactMessagePausedNotification object:_entity];
 
     var frame = [[messagesScrollView documentView] bounds];
 
@@ -248,7 +248,7 @@
     }
 }
 
-/*! performed when TNStropheContactMessageComposing is received from current entity.
+/*! performed when TNStropheContactMessageComposingNotification is received from current entity.
     @param aNotification the notification containing the contact that send the notification
 */
 - (void)_didReceiveMessageComposing:(CPNotification)aNotification
@@ -256,7 +256,7 @@
     [imageSpinnerWriting setHidden:NO];
 }
 
-/*! performed when TNStropheContactMessagePaused is received from current entity.
+/*! performed when TNStropheContactMessagePausedNotification is received from current entity.
     @param aNotification the notification containing the contact that send the notification
 */
 - (void)_didReceiveMessagePause:(CPNotification)aNotification

@@ -48,8 +48,8 @@
 {
     [mainWindow setDefaultButton:defaultButton];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(passwordDidChange:) name:TNStropheClientPasswordChanged object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(passwordChangeError:) name:TNStropheClientPasswordChangeError object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(passwordDidChange:) name:TNStropheClientPasswordChangedNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(passwordChangeError:) name:TNStropheClientPasswordChangeErrorNotification object:nil];
 
     [fieldNewPassword setSecure:YES];
     [fieldNewPassword setNeedsLayout];
@@ -64,7 +64,7 @@
 #pragma mark -
 #pragma mark Notification handlers
 
-/*! called when TNStropheClientPasswordChanged is received
+/*! called when TNStropheClientPasswordChangedNotification is received
     @param aNotification the notificaion
 */
 - (void)passwordDidChange:(CPNotification)aNotification
@@ -73,7 +73,7 @@
                                                      message:CPLocalizedString(@"Your password has been successfully updated", @"Your password has been successfully updated")];
 }
 
-/*! called when TNStropheClientPasswordChangeError is received
+/*! called when TNStropheClientPasswordChangeErrorNotification is received
     @param aNotification the notificaion
 */
 - (void)passwordChangeError:(CPNotification)aNotification

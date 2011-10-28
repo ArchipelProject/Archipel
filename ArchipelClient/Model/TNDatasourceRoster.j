@@ -75,15 +75,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         [center addObserver:self selector:@selector(didTagsNodeReady:) name:TNTagsControllerNodeReadyNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterContactRemovedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactPresenceUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterGroupAddedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactVCardReceivedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheGroupRenamedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedGroupNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterGroupRenamedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterGroupRemovedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterPushNotification object:nil];
     }
 
@@ -114,7 +113,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     @param anEntity CPString The name of the entity to get the description for.
     @return CPString Returns the localized description of the entity.
 */
--(CPString)entityDescriptionFor:(CPString)anEntity
+- (CPString)entityDescriptionFor:(CPString)anEntity
 {
        return [TNArchipelEntityTypes objectForKey:anEntity];
 }

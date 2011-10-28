@@ -25,7 +25,6 @@
 @import <AppKit/CPView.j>
 
 @import <StropheCappuccino/TNStropheContact.j>
-@import <StropheCappuccino/TNStropheGlobals.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNTableViewDataSource.j>

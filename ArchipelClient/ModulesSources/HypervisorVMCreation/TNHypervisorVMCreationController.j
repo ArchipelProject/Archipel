@@ -200,7 +200,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_reload:) name:TNStropheRosterAddedContactNotification object:nil];
     [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
