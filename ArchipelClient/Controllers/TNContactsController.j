@@ -148,11 +148,9 @@
 {
     var contact = [aNotification object];
 
-    console.warn("NEW VCARD! try to subscribe!");
-
     if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] != TNArchipelEntityTypeUser)
     {
-        console.warn("Receiving a vCard from an Archipel entity. try to register to pubsub if needed");
+        CPLog.info("Receiving a vCard from an Archipel entity. try to register to pubsub if needed");
         [self subscribeToPubSubNodeOfContactWithJID:[contact JID]];
     }
 }
