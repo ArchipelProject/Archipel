@@ -104,7 +104,7 @@
 												<object class="NSCustomView" id="349920649">
 													<reference key="NSNextResponder" ref="514451280"/>
 													<int key="NSvFlags">256</int>
-													<string key="NSFrameSize">{201, 313}</string>
+													<string key="NSFrameSize">{201, 312}</string>
 													<reference key="NSSuperview" ref="514451280"/>
 													<reference key="NSNextKeyView" ref="277425941"/>
 													<string key="NSClassName">TNFlipView</string>
@@ -112,13 +112,13 @@
 												<object class="NSCustomView" id="277425941">
 													<reference key="NSNextResponder" ref="514451280"/>
 													<int key="NSvFlags">256</int>
-													<string key="NSFrame">{{0, 314}, {201, 129}}</string>
+													<string key="NSFrame">{{0, 313}, {201, 128}}</string>
 													<reference key="NSSuperview" ref="514451280"/>
 													<reference key="NSNextKeyView" ref="976636273"/>
 													<string key="NSClassName">TNSwipeView</string>
 												</object>
 											</object>
-											<string key="NSFrame">{{0, 26}, {201, 443}}</string>
+											<string key="NSFrame">{{0, 26}, {201, 441}}</string>
 											<reference key="NSSuperview" ref="1029982473"/>
 											<reference key="NSNextKeyView" ref="349920649"/>
 											<int key="NSDividerStyle">2</int>
@@ -9226,6 +9226,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addContact:</string>
 							<string>addGroup:</string>
+							<string>askSubscription:</string>
 							<string>chooseFolder:</string>
 							<string>clearErrors:</string>
 							<string>collapseAllGroups:</string>
@@ -9261,6 +9262,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -9303,6 +9305,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addContact:</string>
 							<string>addGroup:</string>
+							<string>askSubscription:</string>
 							<string>chooseFolder:</string>
 							<string>clearErrors:</string>
 							<string>collapseAllGroups:</string>
@@ -9344,6 +9347,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">addGroup:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">askSubscription:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

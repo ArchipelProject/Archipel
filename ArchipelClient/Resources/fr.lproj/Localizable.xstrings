@@ -38,6 +38,8 @@
 	<string>Etes-vous sûr de vouloir supprimer ce contact ?</string>
 	<key>Are you sure you want to delete this group?</key>
 	<string>Etes-vous sûr de vouloir supprimer ce groupe ?</string>
+	<key>Ask subscribtion again</key>
+	<string>Ask subscribtion again</string>
 	<key>Available</key>
 	<string>Disponible</string>
 	<key>Away</key>

@@ -52,6 +52,9 @@
 /* Are you sure you want to delete this group? */
 "Are you sure you want to delete this group?" = "Etes-vous sûr de vouloir supprimer ce groupe ?";
 
+/* Ask subscribtion again */
+"Ask subscribtion again" = "Ask subscribtion again";
+
 /* authenticating */
 "authenticating" = "Authentification";
 
