@@ -544,7 +544,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
         [groupsMenu addItemWithTitle:CPLocalizedString(@"Add group", @"Add group") action:@selector(addGroup:) keyEquivalent:@"G"];
-        [groupsMenu addItemWithTitle:CPLocalizedString(@"Delete group", @"Delete group") action:@selector(deleteGroup:) keyEquivalent:@"D"];
+        [groupsMenu addItemWithTitle:CPLocalizedString(@"Delete group", @"Delete group") action:@selector(deleteEntities:) keyEquivalent:@"D"];
         [groupsMenu addItem:[CPMenuItem separatorItem]];
     }
 
@@ -555,7 +555,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
         [contactsMenu addItemWithTitle:CPLocalizedString(@"Add contact", @"Add contact") action:@selector(addContact:) keyEquivalent:@""];
-        [contactsMenu addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contacts") action:@selector(deleteContact:) keyEquivalent:@""];
+        [contactsMenu addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contacts") action:@selector(deleteEntities:) keyEquivalent:@""];
         [contactsMenu addItemWithTitle:CPLocalizedString(@"Ask subscribtion again", @"Ask subscribtion again") action:@selector(askSubscription:) keyEquivalent:@""];
         [contactsMenu addItem:[CPMenuItem separatorItem]];
     }
@@ -609,11 +609,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)makeRosterMenu
 {
     _rosterMenuForContacts = [[CPMenu alloc] init];
-    [_rosterMenuForContacts addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@""];
+    [_rosterMenuForContacts addItemWithTitle:@"Delete contact" action:@selector(deleteEntities:) keyEquivalent:@""];
     [_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Ask subscribtion again", @"Ask subscribtion again") action:@selector(askSubscription:) keyEquivalent:@""];
 
     _rosterMenuForGroups = [[CPMenu alloc] init];
-    [_rosterMenuForGroups addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@""];
+    [_rosterMenuForGroups addItemWithTitle:@"Delete group" action:@selector(deleteEntities:) keyEquivalent:@""];
 }
 
 /*! initialize the toolbar with default items
@@ -744,7 +744,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
-    [minusButton setAction:@selector(toogleRemoveEntity:)];
+    [minusButton setAction:@selector(deleteEntities:)];
     [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
 
     [_hideButton setTarget:self];
@@ -959,15 +959,50 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 /*! will remove the selected roster item according to its type
     @param the sender of the action
 */
-- (IBAction)toogleRemoveEntity:(id)sender
+- (IBAction)deleteEntities:(id)sender
 {
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        item    = [_rosterOutlineView itemAtRow:index];
+    if ([_rosterOutlineView numberOfSelectedRows] == 0)
+        return;
 
-    if ([item isKindOfClass:TNStropheContact])
-        [self deleteContact:sender];
-    else if ([item isKindOfClass:TNStropheGroup])
-        [self deleteGroup:sender];
+    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete items", @"Delete items")
+                                informative:CPLocalizedString(@"Are you sure you want to delete selected items?", @"Are you sure you want to delete selected items?")
+                                 target:self
+                                 actions:[[CPLocalizedString("Delete", "Delete"), @selector(_performDeleteEntity)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
+
+    [alert setHelpTarget:self action:@selector(showHelpForDelete:)];
+    [alert runModal];
+}
+
+/*! @ignore
+*/
+- (IBAction)_performDeleteEntity
+{
+    var indexes = [_rosterOutlineView selectedRowIndexes],
+        contactToRemove = [CPArray array],
+        groupsToRemove = [CPArray array];
+
+    while ([indexes count] > 0)
+    {
+        var item = [_rosterOutlineView itemAtRow:[indexes firstIndex]];
+
+        switch ([item class])
+        {
+            case TNStropheContact:
+                [contactToRemove addObject:item];
+                break;
+
+            case TNStropheGroup:
+                [groupsToRemove addObject:item];
+                break;
+        }
+
+        [indexes removeIndex:[indexes firstIndex]];
+    }
+
+    for (var i = 0; i < [contactToRemove count]; i++)
+        [contactsController deleteContact:[contactToRemove objectAtIndex:i]];
+    for (var i = 0; i < [groupsToRemove count]; i++)
+        [groupsController deleteGroup:[groupsToRemove objectAtIndex:i]];
 }
 
 /*! will hide or show the properties views
@@ -1011,24 +1046,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [contactsController showWindow:_plusButton];
 }
 
-/*! will ask for deleting the selected contact
-    @param the aSender of the action
-*/
-- (IBAction)deleteContact:(id)aSender
-{
-    if ([_rosterOutlineView numberOfSelectedRows] == 0)
-        return;
-
-    var indexes = [_rosterOutlineView selectedRowIndexes];
-
-    while ([indexes count] > 0)
-    {
-        var contact = [_rosterOutlineView itemAtRow:[indexes firstIndex]];
-        [contactsController deleteContact:contact];
-        [indexes removeIndex:[indexes firstIndex]];
-    }
-}
-
 /*! will ask contact subscription request
     @param the aSender of the action
 */
@@ -1053,17 +1070,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (IBAction)addGroup:(id)sender
 {
     [groupsController showWindow:_plusButton];
-}
-
-/*! will ask for deleting the selected group
-    @param the sender of the action
-*/
-- (IBAction)deleteGroup:(id)sender
-{
-    var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        group       = [_rosterOutlineView itemAtRow:index];
-
-    [groupsController deleteGroup:group];
 }
 
 /*! Will select the next entity in Roster

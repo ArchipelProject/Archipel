@@ -104,22 +104,14 @@
 */
 - (void)deleteContact:(TNStropheContact)aContact
 {
-    if (![aContact isKindOfClass:TNStropheContact])
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"User supression", @"User supression")
-                                                         message:CPLocalizedString(@"You must choose a contact", @"You must choose a contact")
-                                                            icon:TNGrowlIconError];
-        return;
-    }
+    [self unsubscribeToPubSubNodeOfContactWithJID:[aContact JID]];
+    [[TNPermissionsCenter defaultCenter] uncachePermissionsForEntity:aContact];
 
-    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete contact", @"Delete contact")
-                                informative:CPLocalizedString(@"Are you sure you want to delete this contact?", @"Are you sure you want to delete this contact?")
-                                 target:self
-                                 actions:[[CPLocalizedString("Delete", "Delete"), @selector(performDeleteContact:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
+    [[[TNStropheIMClient defaultClient] roster] removeContact:aContact];
 
-    [alert setHelpTarget:self action:@selector(showHelpForDelete:)];
-    [alert setUserInfo:aContact];
-    [alert runModal];
+    CPLog.info(@"contact " + [aContact JID] + "removed");
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Contact", @"Contact")
+                                                     message:CPLocalizedString(@"Contact ", @"Contact ") + [aContact JID] + CPLocalizedString(@" has been removed", @" has been removed")];
 }
 
 /*! ask contact for subscription
@@ -200,24 +192,6 @@
 - (IBAction)addContact:(id)aSender
 {
     [self addContact];
-}
-
-/*! Action for the deleteContact:'s confirmation TNAlert.
-    It will delete the contact
-    @param aSender the sender of the action
-*/
-- (void)performDeleteContact:(id)userInfo
-{
-    var contact = userInfo;
-
-    [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
-    [[TNPermissionsCenter defaultCenter] uncachePermissionsForEntity:contact];
-
-    [[[TNStropheIMClient defaultClient] roster] removeContact:contact];
-
-    CPLog.info(@"contact " + [contact JID] + "removed");
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Contact", @"Contact")
-                                                     message:CPLocalizedString(@"Contact ", @"Contact ") + [contact JID] + CPLocalizedString(@" has been removed", @" has been removed")];
 }
 
 /*! action sent by alert to show help for subscription

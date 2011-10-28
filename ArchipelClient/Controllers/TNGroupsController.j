@@ -59,17 +59,6 @@
 */
 - (void)deleteGroup:(TNStropheGroup)aGroup
 {
-    var defaults = [CPUserDefaults standardUserDefaults],
-        alert;
-
-    if (![aGroup isKindOfClass:TNStropheGroup])
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
-                                                         message:CPLocalizedString(@"You must choose a group", @"You must choose a group")
-                                                            icon:TNGrowlIconError];
-        return;
-    }
-
     if ([[aGroup content] count] != 0)
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
@@ -77,30 +66,16 @@
         return;
     }
 
-    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete group", @"Delete group")
-                              informative:CPLocalizedString(@"Are you sure you want to delete this group?", @"Are you sure you want to delete this group?")
-                                   target:self
-                                  actions:[[CPLocalizedString("Delete", "Delete"), @selector(performDeleteGroup:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
-    [alert setUserInfo:aGroup];
-    [alert runModal];
-}
+    var defaults = [CPUserDefaults standardUserDefaults],
+        key     = TNArchipelRememberOpenedGroup + [aGroup name];
 
-/*! Action for the deleteGroup:'s confirmation TNAlert.
-    It will delete the group
-    @param the sender of the action
-*/
-- (void)performDeleteGroup:(id)userInfo
-{
-    var group   = userInfo,
-        defaults = [CPUserDefaults standardUserDefaults],
-        key     = TNArchipelRememberOpenedGroup + [group name];
-
-    [[[TNStropheIMClient defaultClient] roster] removeGroup:group];
+    [[[TNStropheIMClient defaultClient] roster] removeGroup:aGroup];
     [[defaults objectForKey:@"TNOutlineViewsExpandedGroups"] removeObjectForKey:key];
 
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
                                                      message:CPLocalizedString(@"The group has been removed", @"The group has been removed")];
 }
+
 
 
 #pragma mark -
