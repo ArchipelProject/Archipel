@@ -43,7 +43,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPSearchField               _filterField            @accessors(property=filterField);
     CPString                    _filter                 @accessors(property=filter);
 
-    BOOL                        _shouldDragDuplicate;
     CPDictionary                _tagsRegistry;
     CPArray                     _draggedItems;
     TNPubSubNode                _pubsubTagsNode;
@@ -67,7 +66,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
     if (self = [super initWithConnection:aConnection])
     {
         _filter                     = nil;
-        _shouldDragDuplicate        = NO;
         _hideOfflineContacts        = NO;
 
         // register for notifications that should trigger outlineview reload
@@ -332,12 +330,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
         if ([[theItems objectAtIndex:i] class] != baseClass)
             return NO;
 
-    if ([[CPApp currentEvent] modifierFlags] & CPAlternateKeyMask)
-    {
-        _shouldDragDuplicate = YES;
-        [[CPCursor dragCopyCursor] set];
-    }
-
     [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
     [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
 
@@ -364,55 +356,23 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 /*! CPOutlineView Datasource
 */
-- (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
+- (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)targetItem childIndex:(int)theIndex
 {
     for (var i = 0; i < [_draggedItems count]; i++)
     {
         var draggedItem = [_draggedItems objectAtIndex:i];
 
-        if (([draggedItem isKindOfClass:TNStropheGroup]) && ([theItem isKindOfClass:TNStropheGroup]) && (theItem  != draggedItem))
+        if (targetItem === draggedItem)
+            continue;
+
+        switch ([draggedItem class])
         {
-            var center          = [CPNotificationCenter defaultCenter],
-                contactsToMove  = [[draggedItem contacts] copy];
-
-            if ([draggedItem parentGroup])
-                [[draggedItem parentGroup] removeSubGroup:draggedItem];
-            else
-                [_content removeObject:draggedItem];
-
-            [theItem addSubGroup:draggedItem];
-            [self sendRosterSet:[self getAllContactsTreeFromGroup:draggedItem]];
-
-            _shouldDragDuplicate = NO;
-        }
-        else if (([draggedItem isKindOfClass:TNStropheContact]) && ([theItem isKindOfClass:TNStropheGroup]))
-        {
-            if (_shouldDragDuplicate)
-                [self addContact:draggedItem inGroup:theItem push:YES];
-            else
-                [self setGroups:[CPArray arrayWithObject:theItem] ofContact:draggedItem];
-            _shouldDragDuplicate = NO;
-            [[CPCursor arrowCursor] set];
-        }
-        else
-        {
-            if ([_content containsObject:draggedItem])
-                continue;
-
-            if ([draggedItem isKindOfClass:TNStropheGroup])
-            {
-                var affectedContacts = [self getAllContactsTreeFromGroup:draggedItem];
-
-                if ([draggedItem parentGroup])
-                    [[draggedItem parentGroup] removeSubGroup:draggedItem];
-
-                [_content addObject:draggedItem];
-                [self sendRosterSet:affectedContacts];
-            }
-            else
-            {
-                [self setGroups:[CPArray array] ofContact:draggedItem];
-            }
+            case TNStropheGroup:
+                [self moveGroup:draggedItem intoGroup:targetItem];
+                break;
+            case TNStropheContact:
+                [self setGroups:(targetItem) ?  [CPArray arrayWithObject:targetItem] : nil  ofContact:draggedItem];
+                break;
         }
     }
 
