@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1617</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -37,11 +37,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1759,11 +1756,99 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="514791403"/>
-						<reference key="destination" ref="466085976"/>
+						<string key="label">tableVirtualMachines</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="264777804"/>
 					</object>
-					<int key="connectionID">81</int>
+					<int key="connectionID">137</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">VMAllocationController</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="967153238"/>
+					</object>
+					<int key="connectionID">241</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">VMSubscriptionController</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="472236016"/>
+					</object>
+					<int key="connectionID">242</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">VMCloneController</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="345098180"/>
+					</object>
+					<int key="connectionID">243</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">dataViewVMPrototype</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="938073405"/>
+					</object>
+					<int key="connectionID">271</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tabViewVMs</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="238093440"/>
+					</object>
+					<int key="connectionID">348</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewItemManagedVMs</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="375487350"/>
+					</object>
+					<int key="connectionID">349</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewItemNotManagedVMs</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="737667036"/>
+					</object>
+					<int key="connectionID">360</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonBarNotManagedVMControl</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="734035171"/>
+					</object>
+					<int key="connectionID">362</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldFilterVMNotManaged</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="696597941"/>
+					</object>
+					<int key="connectionID">366</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewTableContainerNotManaged</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="276125466"/>
+					</object>
+					<int key="connectionID">367</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tableVirtualMachinesNotManaged</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="633248367"/>
+					</object>
+					<int key="connectionID">368</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1784,10 +1869,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
-						<reference key="source" ref="320820871"/>
-						<reference key="destination" ref="735135430"/>
+						<reference key="source" ref="514791403"/>
+						<reference key="destination" ref="466085976"/>
 					</object>
-					<int key="connectionID">85</int>
+					<int key="connectionID">81</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1808,6 +1893,14 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
+						<reference key="source" ref="320820871"/>
+						<reference key="destination" ref="735135430"/>
+					</object>
+					<int key="connectionID">85</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
 						<reference key="source" ref="1031643846"/>
 						<reference key="destination" ref="434914358"/>
 					</object>
@@ -1816,18 +1909,18 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
-						<reference key="source" ref="434914358"/>
-						<reference key="destination" ref="227086769"/>
-					</object>
-					<int key="connectionID">90</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
 						<reference key="source" ref="227086769"/>
 						<reference key="destination" ref="1031643846"/>
 					</object>
 					<int key="connectionID">91</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="434914358"/>
+						<reference key="destination" ref="227086769"/>
+					</object>
+					<int key="connectionID">90</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1852,14 +1945,6 @@
 						<reference key="destination" ref="87663397"/>
 					</object>
 					<int key="connectionID">113</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableVirtualMachines</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="264777804"/>
-					</object>
-					<int key="connectionID">137</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1892,6 +1977,14 @@
 						<reference key="destination" ref="227086769"/>
 					</object>
 					<int key="connectionID">163</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="967153238"/>
+						<reference key="destination" ref="479237082"/>
+					</object>
+					<int key="connectionID">256</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1959,6 +2052,22 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverAddSubscription</string>
+						<reference key="source" ref="472236016"/>
+						<reference key="destination" ref="902220156"/>
+					</object>
+					<int key="connectionID">258</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverRemoveSubscription</string>
+						<reference key="source" ref="472236016"/>
+						<reference key="destination" ref="484054286"/>
+					</object>
+					<int key="connectionID">260</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldCloneVirtualMachineName</string>
 						<reference key="source" ref="345098180"/>
 						<reference key="destination" ref="67898124"/>
@@ -1991,59 +2100,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">VMAllocationController</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="967153238"/>
-					</object>
-					<int key="connectionID">241</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">VMSubscriptionController</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="472236016"/>
-					</object>
-					<int key="connectionID">242</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">VMCloneController</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="345098180"/>
-					</object>
-					<int key="connectionID">243</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="479237082"/>
-						<reference key="destination" ref="155932339"/>
-					</object>
-					<int key="connectionID">246</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="902220156"/>
-						<reference key="destination" ref="341818103"/>
-					</object>
-					<int key="connectionID">252</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="484054286"/>
-						<reference key="destination" ref="145368754"/>
-					</object>
-					<int key="connectionID">255</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">mainPopover</string>
-						<reference key="source" ref="967153238"/>
-						<reference key="destination" ref="479237082"/>
+						<reference key="source" ref="345098180"/>
+						<reference key="destination" ref="987502127"/>
 					</object>
-					<int key="connectionID">256</int>
+					<int key="connectionID">265</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2055,11 +2116,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">popoverAddSubscription</string>
-						<reference key="source" ref="472236016"/>
-						<reference key="destination" ref="902220156"/>
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="479237082"/>
+						<reference key="destination" ref="155932339"/>
 					</object>
-					<int key="connectionID">258</int>
+					<int key="connectionID">246</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2071,11 +2132,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">popoverRemoveSubscription</string>
-						<reference key="source" ref="472236016"/>
-						<reference key="destination" ref="484054286"/>
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="902220156"/>
+						<reference key="destination" ref="341818103"/>
 					</object>
-					<int key="connectionID">260</int>
+					<int key="connectionID">252</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2088,18 +2149,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">contentViewController</string>
-						<reference key="source" ref="987502127"/>
-						<reference key="destination" ref="861428048"/>
+						<reference key="source" ref="484054286"/>
+						<reference key="destination" ref="145368754"/>
 					</object>
-					<int key="connectionID">264</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainPopover</string>
-						<reference key="source" ref="345098180"/>
-						<reference key="destination" ref="987502127"/>
-					</object>
-					<int key="connectionID">265</int>
+					<int key="connectionID">255</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2111,11 +2164,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">dataViewVMPrototype</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="938073405"/>
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="987502127"/>
+						<reference key="destination" ref="861428048"/>
 					</object>
-					<int key="connectionID">271</int>
+					<int key="connectionID">264</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2245,85 +2298,15 @@
 					</object>
 					<int key="connectionID">344</int>
 				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tabViewVMs</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="238093440"/>
-					</object>
-					<int key="connectionID">348</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewItemManagedVMs</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="375487350"/>
-					</object>
-					<int key="connectionID">349</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewItemNotManagedVMs</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="737667036"/>
-					</object>
-					<int key="connectionID">360</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableVirtualNotManagedMachines</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="633248367"/>
-					</object>
-					<int key="connectionID">361</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonBarNotManagedVMControl</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="734035171"/>
-					</object>
-					<int key="connectionID">362</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewTableNotManagedContainer</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="276125466"/>
-					</object>
-					<int key="connectionID">363</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldFilterVMNotManaged</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="696597941"/>
-					</object>
-					<int key="connectionID">366</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewTableContainerNotManaged</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="276125466"/>
-					</object>
-					<int key="connectionID">367</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableVirtualMachinesNotManaged</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="633248367"/>
-					</object>
-					<int key="connectionID">368</int>
-				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -3667,12 +3650,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addSubscription:</string>
-							<string>addVirtualMachine:</string>
-							<string>alloc:</string>
-							<string>cloneVirtualMachine:</string>
 							<string>deleteVirtualMachine:</string>
-							<string>didDoubleClick:</string>
 							<string>didManagedTableDoubleClick:</string>
 							<string>didNotManagedTableDoubleClick:</string>
 							<string>manageVirtualMachine:</string>
@@ -3680,17 +3658,10 @@
 							<string>openCloneVirtualMachineWindow:</string>
 							<string>openNewVirtualMachineWindow:</string>
 							<string>openRemoveSubscriptionWindow:</string>
-							<string>removeSubscription:</string>
 							<string>unmanageVirtualMachine:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3706,12 +3677,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addSubscription:</string>
-							<string>addVirtualMachine:</string>
-							<string>alloc:</string>
-							<string>cloneVirtualMachine:</string>
 							<string>deleteVirtualMachine:</string>
-							<string>didDoubleClick:</string>
 							<string>didManagedTableDoubleClick:</string>
 							<string>didNotManagedTableDoubleClick:</string>
 							<string>manageVirtualMachine:</string>
@@ -3719,33 +3685,12 @@
 							<string>openCloneVirtualMachineWindow:</string>
 							<string>openNewVirtualMachineWindow:</string>
 							<string>openRemoveSubscriptionWindow:</string>
-							<string>removeSubscription:</string>
 							<string>unmanageVirtualMachine:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
-								<string key="name">addSubscription:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">addVirtualMachine:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">alloc:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">cloneVirtualMachine:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">deleteVirtualMachine:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">didDoubleClick:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -3777,10 +3722,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">removeSubscription:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">unmanageVirtualMachine:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -3793,21 +3734,12 @@
 							<string>VMAllocationController</string>
 							<string>VMCloneController</string>
 							<string>VMSubscriptionController</string>
-							<string>buttonAddSubscription</string>
-							<string>buttonAlloc</string>
 							<string>buttonBarControl</string>
 							<string>buttonBarNotManagedVMControl</string>
-							<string>buttonClone</string>
-							<string>buttonRemoveSubscription</string>
 							<string>dataViewVMPrototype</string>
-							<string>fieldCloneVirtualMachineName</string>
 							<string>fieldFilterVM</string>
 							<string>fieldFilterVMNotManaged</string>
-							<string>fieldNewSubscriptionTarget</string>
-							<string>fieldNewVMRequestedName</string>
-							<string>fieldRemoveSubscriptionTarget</string>
 							<string>popupDeleteMachine</string>
-							<string>scrollViewListVM</string>
 							<string>tabViewVMs</string>
 							<string>tableVirtualMachines</string>
 							<string>tableVirtualMachinesNotManaged</string>
@@ -3815,31 +3747,18 @@
 							<string>viewItemNotManagedVMs</string>
 							<string>viewTableContainer</string>
 							<string>viewTableContainerNotManaged</string>
-							<string>windowCloneVirtualMachine</string>
-							<string>windowNewSubscription</string>
-							<string>windowNewVirtualMachine</string>
-							<string>windowRemoveSubscription</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>TNVirtualMachineAllocationController</string>
 							<string>TNVirtualMachineCloneController</string>
 							<string>TNVirtualMachineSubscriptionController</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>CPButtonBar</string>
 							<string>CPButtonBar</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
 							<string>TNVirtualMachineDataView</string>
-							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSSearchField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
 							<string>NSPopUpButton</string>
-							<string>TNUIKitScrollView</string>
 							<string>NSTabView</string>
 							<string>NSTableView</string>
 							<string>NSTableView</string>
@@ -3847,10 +3766,6 @@
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
-							<string>NSWindow</string>
-							<string>NSWindow</string>
-							<string>NSWindow</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -3860,21 +3775,12 @@
 							<string>VMAllocationController</string>
 							<string>VMCloneController</string>
 							<string>VMSubscriptionController</string>
-							<string>buttonAddSubscription</string>
-							<string>buttonAlloc</string>
 							<string>buttonBarControl</string>
 							<string>buttonBarNotManagedVMControl</string>
-							<string>buttonClone</string>
-							<string>buttonRemoveSubscription</string>
 							<string>dataViewVMPrototype</string>
-							<string>fieldCloneVirtualMachineName</string>
 							<string>fieldFilterVM</string>
 							<string>fieldFilterVMNotManaged</string>
-							<string>fieldNewSubscriptionTarget</string>
-							<string>fieldNewVMRequestedName</string>
-							<string>fieldRemoveSubscriptionTarget</string>
 							<string>popupDeleteMachine</string>
-							<string>scrollViewListVM</string>
 							<string>tabViewVMs</string>
 							<string>tableVirtualMachines</string>
 							<string>tableVirtualMachinesNotManaged</string>
@@ -3882,10 +3788,6 @@
 							<string>viewItemNotManagedVMs</string>
 							<string>viewTableContainer</string>
 							<string>viewTableContainerNotManaged</string>
-							<string>windowCloneVirtualMachine</string>
-							<string>windowNewSubscription</string>
-							<string>windowNewVirtualMachine</string>
-							<string>windowRemoveSubscription</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3902,14 +3804,6 @@
 								<string key="candidateClassName">TNVirtualMachineSubscriptionController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">buttonAddSubscription</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonAlloc</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarControl</string>
 								<string key="candidateClassName">CPButtonBar</string>
 							</object>
@@ -3918,20 +3812,8 @@
 								<string key="candidateClassName">CPButtonBar</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">buttonClone</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonRemoveSubscription</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">dataViewVMPrototype</string>
 								<string key="candidateClassName">TNVirtualMachineDataView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldCloneVirtualMachineName</string>
-								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldFilterVM</string>
@@ -3942,24 +3824,8 @@
 								<string key="candidateClassName">NSSearchField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">fieldNewSubscriptionTarget</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldNewVMRequestedName</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldRemoveSubscriptionTarget</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">popupDeleteMachine</string>
 								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewListVM</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tabViewVMs</string>
@@ -3988,22 +3854,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainerNotManaged</string>
 								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowCloneVirtualMachine</string>
-								<string key="candidateClassName">NSWindow</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowNewSubscription</string>
-								<string key="candidateClassName">NSWindow</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowNewVirtualMachine</string>
-								<string key="candidateClassName">NSWindow</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowRemoveSubscription</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>
@@ -4118,14 +3968,12 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonAlloc</string>
 							<string>fieldNewVMRequestedName</string>
-							<string>mainContentView</string>
 							<string>mainPopover</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
 							<string>NSTextField</string>
-							<string>NSView</string>
 							<string>NSPopover</string>
 						</object>
 					</object>
@@ -4135,7 +3983,6 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonAlloc</string>
 							<string>fieldNewVMRequestedName</string>
-							<string>mainContentView</string>
 							<string>mainPopover</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -4147,10 +3994,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldNewVMRequestedName</string>
 								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mainContentView</string>
-								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainPopover</string>
