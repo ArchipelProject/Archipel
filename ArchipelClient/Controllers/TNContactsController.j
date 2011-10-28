@@ -49,6 +49,7 @@
 {
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterUpdated:) name:TNStropheRosterPushUpdatedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didRecieveContactVCard:) name:TNStropheContactVCardReceivedNotification object:nil];
 
     [newContactName setToolTip:CPLocalizedString(@"The display name of the new contact", @"The display name of the new contact")];
@@ -60,6 +61,10 @@
 
 - (void)subscribeToPubSubNodeOfContactWithJID:(TNStropheJID)aJID
 {
+    var roster = [[TNStropheIMClient defaultClient] roster];
+    if ([roster analyseVCard:[[roster contactWithJID:aJID] vCard]] == TNArchipelEntityTypeUser)
+        return;
+
     var nodeName = @"/archipel/" + [aJID bare] + @"/events",
         server = [TNStropheJID stropheJIDWithString:@"pubsub." + [aJID domain]];
 
@@ -69,6 +74,10 @@
 
 - (void)unsubscribeToPubSubNodeOfContactWithJID:(TNStropheJID)aJID
 {
+    var roster = [[TNStropheIMClient defaultClient] roster];
+    if ([roster analyseVCard:[[roster contactWithJID:aJID] vCard]] == TNArchipelEntityTypeUser)
+        return;
+
     var nodeName = "/archipel/" + [aJID bare] + "/events",
         server = [TNStropheJID stropheJIDWithString:@"pubsub." + [aJID domain]];
 
@@ -149,11 +158,7 @@
 {
     var contact = [aNotification object];
 
-    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] != TNArchipelEntityTypeUser)
-    {
-        CPLog.info("Receiving a vCard from an Archipel entity. try to register to pubsub if needed");
-        [self subscribeToPubSubNodeOfContactWithJID:[contact JID]];
-    }
+    [self subscribeToPubSubNodeOfContactWithJID:[contact JID]];
 }
 
 - (void)_performPushRosterAdded:(CPNotification)aNotification
@@ -168,6 +173,13 @@
     var theJID = [aNotification userInfo];
 
     [self unsubscribeToPubSubNodeOfContactWithJID:theJID];
+}
+
+- (void)_performPushRosterUpdated:(CPNotification)aNotification
+{
+    var theJID = [aNotification userInfo];
+
+    [self subscribeToPubSubNodeOfContactWithJID:theJID];
 }
 
 
