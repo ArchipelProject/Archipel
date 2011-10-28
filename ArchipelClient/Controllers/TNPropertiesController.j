@@ -428,12 +428,13 @@
 */
 - (IBAction)manageContactSubscription:(id)aSender
 {
-    if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
-        [contactsController unsubscribeToPubSubNodeOfContactWithJID:[_entity JID]];
-    else
-        [contactsController subscribeToPubSubNodeOfContactWithJID:[_entity JID]];
-
-    [self reload];
+    // this should be completely useless now.
+    // if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
+    //     [contactsController unsubscribeToPubSubNodeOfContactWithJID:[_entity JID]];
+    // else
+    //     [contactsController subscribeToPubSubNodeOfContactWithJID:[_entity JID]];
+    //
+    // [self reload];
 }
 
 
