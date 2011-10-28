@@ -1016,10 +1016,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)deleteContact:(id)aSender
 {
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        contact = [_rosterOutlineView itemAtRow:index];
+    if ([_rosterOutlineView numberOfSelectedRows] == 0)
+        return;
 
-    [contactsController deleteContact:contact];
+    var indexes = [_rosterOutlineView selectedRowIndexes];
+
+    while ([indexes count] > 0)
+    {
+        var contact = [_rosterOutlineView itemAtRow:[indexes firstIndex]];
+        [contactsController deleteContact:contact];
+        [indexes removeIndex:[indexes firstIndex]];
+    }
 }
 
 /*! will ask contact subscription request
@@ -1027,10 +1034,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)askSubscription:(id)aSender
 {
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        contact = [_rosterOutlineView itemAtRow:index];
+    if ([_rosterOutlineView numberOfSelectedRows] == 0)
+        return;
 
-    [contactsController askSubscription:contact];
+    var indexes = [_rosterOutlineView selectedRowIndexes];
+
+    while ([indexes count] > 0)
+    {
+        var contact = [_rosterOutlineView itemAtRow:[indexes firstIndex]];
+        [contactsController askSubscription:[contact JID]];
+        [indexes removeIndex:[indexes firstIndex]];
+    }
 }
 
 /*! Opens the add group window
