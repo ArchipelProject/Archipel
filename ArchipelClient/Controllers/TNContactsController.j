@@ -123,6 +123,15 @@
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:aJID];
 }
 
+/*! remove subscription
+    @param aJID the target JID
+*/
+- (void)removeSubscription:(id)aJID
+{
+    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:aJID];
+    [[[TNStropheIMClient defaultClient] roster] unauthorizeJID:aJID];
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
