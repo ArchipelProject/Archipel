@@ -414,7 +414,7 @@ class TNArchipelEntity (object):
                 self.permission_center.add_admin(admin_id, addition_admin_account)
             self.pubSubNodeAdmins.subscribe(self.jid, self.on_new_admin_account_publication)
         else:
-            self.log.warning("Unable to find pubsub node %s for getting additional admin accounts. Using only static ones")
+            self.log.warning("Unable to find pubsub node %s for getting additional admin accounts. Using only static ones" % adminNodeName)
         self.log.debug("Here is the final admin list: %s" % self.permission_center.admins())
 
     def remove_pubsubs(self):
