@@ -34,6 +34,7 @@ import xmpp
 from pkg_resources import iter_entry_points
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
+from archipelcore.archipelFileTransferCapableEntity import TNFileTransferCapableEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
@@ -137,6 +138,8 @@ class TNArchipelEntity (object):
             TNTaggableEntity.__init__(self, self.pubsubserver, self.jid, self.xmppclient, self.permission_center, self.log)
         if isinstance(self, TNRosterQueryableEntity):
             TNRosterQueryableEntity.__init__(self, configuration, self.permission_center, self.xmppclient, self.log)
+        if isinstance(self, TNFileTransferCapableEntity):
+            TNFileTransferCapableEntity.__init__(self, self.jid, self.xmppclient, self.permission_center, self.log)
 
         if self.name == "auto":
             self.name = self.resource
@@ -265,6 +268,9 @@ class TNArchipelEntity (object):
             TNTaggableEntity.init_permissions(self)
         if isinstance(self, TNAvatarControllableEntity):
             TNAvatarControllableEntity.init_permissions(self)
+        if isinstance(self, TNFileTransferCapableEntity):
+            TNFileTransferCapableEntity.init_permissions(self)
+
         self.permission_center.create_permission("all", "All permissions are granted", False)
         self.permission_center.create_permission("presence", "Authorizes users to request presences", False)
         self.permission_center.create_permission("message", "Authorizes users to send messages", False)
@@ -462,6 +468,8 @@ class TNArchipelEntity (object):
             TNAvatarControllableEntity.register_handlers(self)
         if isinstance(self, TNRosterQueryableEntity):
             TNRosterQueryableEntity.register_handlers(self)
+        if isinstance(self, TNFileTransferCapableEntity):
+            TNFileTransferCapableEntity.register_handlers(self)
         self.xmppclient.RegisterHandler('presence', self.process_presence)
         self.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
@@ -481,6 +489,8 @@ class TNArchipelEntity (object):
             TNAvatarControllableEntity.unregister_handlers(self)
         if isinstance(self, TNRosterQueryableEntity):
             TNRosterQueryableEntity.unregister_handlers(self)
+        if isinstance(self, TNFileTransferCapableEntity):
+            TNFileTransferCapableEntity.unregister_handlers(self)
         self.xmppclient.UnregisterHandler('presence', self.process_presence)
         self.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.UnregisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
