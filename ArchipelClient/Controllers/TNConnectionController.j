@@ -24,8 +24,8 @@
 
 @import <StropheCappuccino/TNStropheStanza.j>
 
-@import "../Model/EKShakeAnimation.j"
 @import "../Model/TNDatasourceRoster.j"
+@import "../Utils/EKShakeAnimation.j"
 @import "../Views/TNModalWindow.j"
 @import "../Views/TNSwitch.j"
 
