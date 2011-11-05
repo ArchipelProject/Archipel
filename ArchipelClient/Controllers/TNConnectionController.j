@@ -24,10 +24,10 @@
 
 @import <StropheCappuccino/TNStropheStanza.j>
 
+@import "../Model/EKShakeAnimation.j"
 @import "../Model/TNDatasourceRoster.j"
 @import "../Views/TNModalWindow.j"
 @import "../Views/TNSwitch.j"
-
 
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
@@ -373,6 +373,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
     [message setStringValue:CPLocalizedString(@"authentification-failed", @"authentification-failed")];
 
+    [[EKShakeAnimation alloc] initWithView:mainWindow._windowView];
     CPLog.info(@"XMPP auth failed");
 }
 
