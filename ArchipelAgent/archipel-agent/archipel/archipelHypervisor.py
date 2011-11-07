@@ -384,7 +384,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 self.log.info("MIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmjid)
-                self.free_for_migration(xmpp.JID(vmjid))
+                self.soft_free(xmpp.JID(vmjid))
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmjid)
             except Exception as ex:
                 self.log.error("MIGRATION: Can't free softly this virtual machine: %s" % str(ex))
@@ -397,7 +397,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
                 vmname  = desc.getTag(name="name").getCDATA()
                 self.log.info("MIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
-                self.alloc_for_migration(xmpp.JID(vmjid), vmname, vmpass)
+                self.soft_alloc(xmpp.JID(vmjid), vmname, vmpass)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid)
             except Exception as ex:
                 self.log.warning("MIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
@@ -517,7 +517,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             return vm_thread
 
-    def alloc_for_migration(self, jid, name, password):
+    def soft_alloc(self, jid, name, password, start=True):
         """
         Perform light allocation (no registration, no subscription).
         @type jid: xmpp.JID
@@ -533,7 +533,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
         vm_thread = self.create_threaded_vm(jid, password, name)
         vm = vm_thread.get_instance()
-        vm_thread.start()
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
         self.database.commit()
@@ -541,7 +540,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         self.update_presence()
         self.log.info("Migrated XMPP VM is ready.")
-        return vm
+        if start:
+            vm_thread.start()
+            return vm
+        else:
+            return vm_thread
 
     def free(self, jid):
         """
@@ -575,7 +578,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.push_change("hypervisor", "free")
         self.update_presence()
 
-    def free_for_migration(self, jid):
+    def soft_free(self, jid):
         """
         Perform light free (no removing of account, no unsubscription).
         @type jid: xmpp.JID
@@ -690,7 +693,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
-    def iq_alloc_for_migration(self, iq):
+    def iq_soft_alloc(self, iq):
         """
         Perform light allocation for handler migrating vm.
         @type iq: xmpp.Protocol.Iq
@@ -704,7 +707,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             name = iq.getTag("query").getTag("archipel").getAttr("name")
             password = iq.getTag("query").getTag("archipel").getAttr("password")
 
-            self.alloc_for_migration(vmjid, name, password)
+            self.soft_alloc(vmjid, name, password)
 
             self.push_change("hypervisor", "migrate")
             self.shout("virtualmachine", "The virtual machine %s has been migrated from hypervisor %s" % (vmjid, iq.getFrom()))
@@ -753,14 +756,14 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
-    def iq_free_for_migration(self, iq):
+    def iq_soft_free(self, iq):
         """
         Perform light free for virtual machine migration.
         """
         try:
             reply = iq.buildReply("result")
             vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
-            self.free_for_migration(vmjid)
+            self.soft_free(vmjid)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION)
         return reply

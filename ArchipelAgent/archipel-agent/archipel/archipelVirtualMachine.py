@@ -451,6 +451,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         self.add_jid(xmpp.JID(user_info.getStripped()))
 
+    def define_hook(self, origin=None, user_info=None, arguments=None):
+        """
+        Hook for defining on hook
+        """
+        self.define(user_info)
+
 
     ### Process IQ
 
@@ -757,7 +763,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         self.domain.setAutostart(flag)
 
-    def xmldesc(self):
+    def xmldesc(self, mask_description=True):
         """
         Get the XML description of the domain.
         @rtype: xmpp.Node
@@ -765,7 +771,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         xmldesc = self.domain.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
         descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-        if descnode.getTag("description"):
+        if mask_description and descnode.getTag("description"):
             descnode.delChild("description")
         return descnode
 
