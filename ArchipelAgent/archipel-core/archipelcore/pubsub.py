@@ -245,6 +245,17 @@ class TNPubSubNode:
         """
         return self.content
 
+    def get_item(self, item_id):
+        """
+        Return the item with the given item id
+        @type item_id: string
+        @param item_id: the pubsub node id
+        """
+        for n in self.content:
+            if n.getAttr("id").lower() == item_id.lower():
+                return n
+        return None
+
     def add_item(self, itemcontentnode, callback=None, wait=False):
         """
         Add a leaf item xmpp.node to the node and will trigger callback if any
