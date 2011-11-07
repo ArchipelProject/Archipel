@@ -124,6 +124,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
+        self.log.info("starting archipel-agent")
         archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
 
         self.virtualmachines            = {}
