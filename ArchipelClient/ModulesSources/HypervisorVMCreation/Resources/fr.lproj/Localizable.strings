@@ -82,8 +82,14 @@
 /* Virtual machine has been cloned */
 "Virtual machine has been cloned" = "La machine virtuelle a été clonée.";
 
+/* Virtual machine has been parked */
+"Virtual machine has been parked" = "Virtual machine has been parked";
+
 /* Virtual machine has been removed */
 "Virtual machine has been removed" = "La machine virtuelle a été supprimée.";
+
+/* Virtual machine has been unparked */
+"Virtual machine has been unparked" = "Virtual machine has been unparked";
 
 /* Would you like to add  */
 "Would you like to add " = "Voulez-vous ajouter ";

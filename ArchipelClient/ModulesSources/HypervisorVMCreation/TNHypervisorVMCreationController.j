@@ -29,16 +29,19 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
-@import "TNVirtualMachineAllocationController.j";
-@import "TNVirtualMachineCloneController.j";
-@import "TNVirtualMachineDataView.j";
-@import "TNVirtualMachineSubscriptionController.j";
+@import "TNVirtualMachineAllocationController.j"
+@import "TNVirtualMachineCloneController.j"
+@import "TNVirtualMachineDataView.j"
+@import "TNVirtualMachineManageController.j"
+@import "TNVirtualMachineParkedDataView.j"
+@import "TNVirtualMachineParkingController.j"
+@import "TNVirtualMachineSubscriptionController.j"
+
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
-    TNArchipelTypeHypervisorControlManage       = @"manage",
-    TNArchipelTypeHypervisorControlUnmanage     = @"unmanage",
-    TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
+    TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor",
+    TNArchipelPushNotificationHypervisorPark    = @"archipel:push:vmparking";
 
 /*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
     @desc This module allow to create and delete virtual machines
@@ -51,30 +54,43 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     @outlet CPButtonBar                             buttonBarControl;
     @outlet CPButtonBar                             buttonBarNotManagedVMControl;
+    @outlet CPButtonBar                             buttonBarParkedVMControl;
     @outlet CPPopUpButton                           popupDeleteMachine;
     @outlet CPSearchField                           fieldFilterVM;
     @outlet CPSearchField                           fieldFilterVMNotManaged;
+    @outlet CPSearchField                           fieldFilterVMParked;
     @outlet CPTableView                             tableVirtualMachines            @accessors(readonly);
     @outlet CPTableView                             tableVirtualMachinesNotManaged;
+    @outlet CPTableView                             tableVirtualMachinesParked      @accessors(readonly);
     @outlet CPTabView                               tabViewVMs;
     @outlet CPView                                  viewItemManagedVMs;
     @outlet CPView                                  viewItemNotManagedVMs;
+    @outlet CPView                                  viewItemParkedVMs;
     @outlet CPView                                  viewTableContainer;
     @outlet CPView                                  viewTableContainerNotManaged;
+    @outlet CPView                                  viewTableContainerParked;
     @outlet TNVirtualMachineAllocationController    VMAllocationController;
     @outlet TNVirtualMachineCloneController         VMCloneController;
     @outlet TNVirtualMachineDataView                dataViewVMPrototype;
+    @outlet TNVirtualMachineManageController        VMManagerController;
+    @outlet TNVirtualMachineParkedDataView          dataViewParkedVMPrototype;
+    @outlet TNVirtualMachineParkingController       VMParkingController;
+    @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
     @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
 
     CPButton                                        _addSubscriptionButton;
     CPButton                                        _cloneButton;
+    CPButton                                        _editParkedXMLButton;
     CPButton                                        _manageButton;
     CPButton                                        _minusButton;
+    CPButton                                        _parkButton;
     CPButton                                        _plusButton;
     CPButton                                        _removeSubscriptionButton;
     CPButton                                        _unmanageButton;
+    CPButton                                        _unparkButton;
     TNTableViewDataSource                           _virtualMachinesDatasource;
     TNTableViewDataSource                           _virtualMachinesNotManagedDatasource;
+    TNTableViewDataSource                           _virtualMachinesParkedDatasource;
 }
 
 
@@ -87,18 +103,25 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     [viewTableContainerNotManaged setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainerParked setBorderedWithHexColor:@"#C0C7D2"];
 
     // tab view
     var tabViewItemManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemManagedVM"],
-        tabViewItemNotManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemNotManagedVM"];
+        tabViewItemNotManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemNotManagedVM"],
+        tabViewItemParkedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemParkedVM"];
 
     [tabViewItemManagedVM setLabel:CPLocalizedString(@"Archipel VMs", @"Archipel VMs")];
-    [tabViewItemNotManagedVM setLabel:CPLocalizedString(@"Others VMs", @"Others VMs")];
     [tabViewItemManagedVM setView:viewItemManagedVMs];
+
+    [tabViewItemNotManagedVM setLabel:CPLocalizedString(@"Others VMs", @"Others VMs")];
     [tabViewItemNotManagedVM setView:viewItemNotManagedVMs];
+
+    [tabViewItemParkedVM setLabel:CPLocalizedString(@"Parked VMs", @"Parked VMs")];
+    [tabViewItemParkedVM setView:viewItemParkedVMs];
 
     [tabViewVMs addTabViewItem:tabViewItemManagedVM];
     [tabViewVMs addTabViewItem:tabViewItemNotManagedVM];
+    [tabViewVMs addTabViewItem:tabViewItemParkedVM];
 
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
@@ -155,7 +178,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_unmanageButton setToolTip:CPLocalizedString("Unmanage the virtual machine", "Unmanage the virtual machine")];
     [_unmanageButton setEnabled:NO];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton]];
+    _parkButton = [CPButtonBar plusButton];
+    [_parkButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"park.png"] size:CPSizeMake(16, 16)]];
+    [_parkButton setTarget:self];
+    [_parkButton setAction:@selector(parkVirtualMachines:)];
+    [_parkButton setEnabled:NO];
+    [_parkButton setToolTip:CPLocalizedString(@"Ask hypervisor to park this virtual machine", @"Ask hypervisor to park this virtual machine")];
+
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton, _parkButton]];
 
     // Not managed VM Table View
     _virtualMachinesNotManagedDatasource = [[TNTableViewDataSource alloc] init];
@@ -182,9 +212,46 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     [buttonBarNotManagedVMControl setButtons:[_manageButton]];
 
+
+    // Parked VM Table View
+    _virtualMachinesParkedDatasource = [[TNTableViewDataSource alloc] init];
+    [tableVirtualMachinesParked setDelegate:self];
+    [tableVirtualMachinesParked setTarget:self];
+    [tableVirtualMachinesParked setDoubleAction:@selector(openParkedXMLEditor:)];
+    [[tableVirtualMachinesParked tableColumnWithIdentifier:@"self"] setDataView:[dataViewParkedVMPrototype duplicate]];
+    [tableVirtualMachinesParked setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+    [tableVirtualMachinesParked setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+
+    [_virtualMachinesParkedDatasource setTable:tableVirtualMachinesParked];
+    [_virtualMachinesParkedDatasource setSearchableKeyPaths:[@"JID"]];
+
+    [fieldFilterVMParked setTarget:_virtualMachinesParkedDatasource];
+    [fieldFilterVMParked setAction:@selector(filterObjects:)];
+    [tableVirtualMachinesParked setDataSource:_virtualMachinesParkedDatasource];
+
+
+    _unparkButton = [CPButtonBar plusButton];
+    [_unparkButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"unpark.png"] size:CPSizeMake(16, 16)]];
+    [_unparkButton setTarget:self];
+    [_unparkButton setAction:@selector(unparkVirtualMachines:)];
+    [_unparkButton setEnabled:NO];
+    [_unparkButton setToolTip:CPLocalizedString(@"Unpark selected virtual machines on this hypervisor", @"Unpark selected virtual machines on this hypervisor")];
+
+    _editParkedXMLButton = [CPButtonBar plusButton];
+    [_editParkedXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
+    [_editParkedXMLButton setTarget:self];
+    [_editParkedXMLButton setAction:@selector(openParkedXMLEditor:)];
+    [_editParkedXMLButton setEnabled:NO];
+    [_editParkedXMLButton setToolTip:CPLocalizedString(@"Edit the XML of the parked virtual machine", @"Edit the XML of the parked virtual machine")];
+
+    [buttonBarParkedVMControl setButtons:[_unparkButton, _editParkedXMLButton]];
+
+
     [VMAllocationController setDelegate:self];
     [VMSubscriptionController setDelegate:self];
     [VMCloneController setDelegate:self];
+    [VMManagerController setDelegate:self];
+    [VMParkingController setDelegate:self];
 }
 
 
@@ -198,6 +265,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [super willLoad];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
@@ -207,6 +275,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachinesNotManaged setDelegate:nil];
     [tableVirtualMachinesNotManaged setDelegate:self];
+    [tableVirtualMachinesParked setDelegate:nil];
+    [tableVirtualMachinesParked setDelegate:self];
 
     [self populateVirtualMachinesTable];
 }
@@ -253,10 +323,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)permissionsChanged
 {
     var tableManagedCondition = ([tableVirtualMachines numberOfSelectedRows] > 0),
-        tableNotManagedCondition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0);
+        tableNotManagedCondition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0),
+        tableParkedCondition = ([tableVirtualMachinesParked numberOfSelectedRows] > 0);
 
     [self setControl:_manageButton enabledAccordingToPermission:@"manage" specialCondition:tableNotManagedCondition];
     [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage" specialCondition:tableManagedCondition];
+    [self setControl:_parkButton enabledAccordingToPermission:@"vmparking_park" specialCondition:tableManagedCondition];
+    [self setControl:_unparkButton enabledAccordingToPermission:@"vmparking_unpark" specialCondition:tableParkedCondition];
+    [self setControl:_editParkedXMLButton enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:tableParkedCondition];
     [self setControl:_plusButton enabledAccordingToPermission:@"alloc"];
     [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:tableManagedCondition];
     [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
@@ -272,7 +346,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     if (![self currentEntityHasPermission:@"subscription_remove"])
         [VMSubscriptionController closeRemoveSubscriptionWindow:nil];
 
-    [self tableViewSelectionDidChange:nil];
+    [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableVirtualMachinesParked]];
+    [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableVirtualMachines]];
+    [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableVirtualMachinesNotManaged]];
 
     [self populateVirtualMachinesTable];
 }
@@ -324,21 +400,28 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             [_minusButton setEnabled:NO];
             [_cloneButton setEnabled:NO];
             [_unmanageButton setEnabled:NO];
+            [_parkButton setEnabled:NO];
             [_addSubscriptionButton setEnabled:NO];
             [_removeSubscriptionButton setEnabled:NO];
-
             var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
-
             [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:condition];
             [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:condition];
             [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:condition];
             [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:condition];
             [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage" specialCondition:condition];
+            [self setControl:_parkButton enabledAccordingToPermission:@"vmparking_park" specialCondition:condition];
 
         case tableVirtualMachinesNotManaged:
             [_manageButton setEnabled:NO];
             var condition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0);
             [self setControl:_manageButton enabledAccordingToPermission:@"manage" specialCondition:condition];
+
+        case tableVirtualMachinesParked:
+            [_unparkButton setEnabled:NO];
+            [_editParkedXMLButton setEnabled:NO];
+            var condition = ([tableVirtualMachinesParked numberOfSelectedRows] > 0);
+            [self setControl:_unparkButton enabledAccordingToPermission:@"vmparking_unpark" specialCondition:condition];
+            [self setControl:_editParkedXMLButton enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:condition];
     }
 }
 
@@ -373,6 +456,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
     }
+
+    if ([self currentEntityHasPermission:@"vmparking_list"])
+        [VMParkingController listParkedVirtualMachines];
 }
 
 
@@ -405,6 +491,86 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self manageVirtualMachine:aSender];
 }
 
+/*! Ask the hypervisor to park selected virtual machines
+    @param aSender the sender of the action
+*/
+- (IBAction)parkVirtualMachines:(id)aSender
+{
+    if ([tableVirtualMachines numberOfSelectedRows] <= 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"You must select at least a virtual machine", @"You must select at least a virtual machine")];
+        return;
+    }
+
+    var titleMessage = CPLocalizedString("Park virtual machine", "Park virtual machine"),
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to park this virtual machine?", @"Are you sure you want Archipel to park this virtual machine?");
+
+    if ([tableVirtualMachines numberOfSelectedRows] > 1)
+    {
+        titleMessage = CPLocalizedString("Park virtual machines", "Park virtual machines");
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to park these virtual machines?", @"Are you sure you want Archipel to park these virtual machines?");
+    }
+
+    var vms = [_virtualMachinesDatasource objectsAtIndexes:[tableVirtualMachines selectedRowIndexes]],
+        alert = [TNAlert alertWithMessage:titleMessage
+                                informative:informativeMessage
+                                 target:VMParkingController
+                                 actions:[[CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+    [alert setUserInfo:vms];
+    [alert runModal];
+}
+
+/*! Asthe hypervisor to unparke selected virtual machines
+    @param aSender the sender of the action
+*/
+- (IBAction)unparkVirtualMachines:(id)aSender
+{
+    if ([tableVirtualMachinesParked numberOfSelectedRows] <= 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"You must select at least a virtual machine", @"You must select at least a virtual machine")];
+        return;
+    }
+
+    var titleMessage = CPLocalizedString("Unpark virtual machine", "Unpark virtual machine"),
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to unpark this virtual machine?", @"Are you sure you want Archipel to unpark this virtual machine?");
+
+    if ([tableVirtualMachinesParked numberOfSelectedRows] > 1)
+    {
+        titleMessage = CPLocalizedString("Unpark virtual machines", "Unpark virtual machines");
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to unpark these virtual machines?", @"Are you sure you want Archipel to unpark these virtual machines?");
+    }
+
+    var vms = [_virtualMachinesParkedDatasource objectsAtIndexes:[tableVirtualMachinesParked selectedRowIndexes]],
+        alert = [TNAlert alertWithMessage:titleMessage
+                                informative:informativeMessage
+                                 target:VMParkingController
+                                 actions:[[CPLocalizedString(@"Unpark", @"Unpark"), @selector(unparkVirtualMachines:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+    [alert setUserInfo:vms];
+    [alert runModal];
+}
+
+/*! Open the XML editor
+    @param aSender the sender of the action
+*/
+- (IBAction)openParkedXMLEditor:(id)aSender
+{
+    [self requestVisible];
+    if (![self isVisible])
+        return;
+
+    if ([tableVirtualMachinesParked numberOfSelectedRows] != 1)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"You must select a virtual machine", @"You must select a virtual machine")];
+        return;
+    }
+
+    [VMParkingController setCurrentItem:[_virtualMachinesParkedDatasource objectAtIndex:[tableVirtualMachinesParked selectedRow]]];
+    [VMParkingController openWindow:aSender];
+}
+
 /*! ask the hypervisor to manage selected virtual machines
     @param sender the sender of the action
 */
@@ -429,7 +595,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     var vms = [_virtualMachinesNotManagedDatasource objectsAtIndexes:[tableVirtualMachinesNotManaged selectedRowIndexes]],
         alert = [TNAlert alertWithMessage:titleMessage
                                 informative:informativeMessage
-                                 target:self
+                                 target:VMManagerController
                                  actions:[[CPLocalizedString(@"Manage", @"Manage"), @selector(performManage:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert setUserInfo:vms];
     [alert runModal];
@@ -459,7 +625,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     var vms = [_virtualMachinesDatasource objectsAtIndexes:[tableVirtualMachines selectedRowIndexes]],
         alert = [TNAlert alertWithMessage:titleMessage
                                 informative:informativeMessage
-                                 target:self
+                                 target:VMManagerController
                                  actions:[[CPLocalizedString(@"Unmanage", @"Unmanage"), @selector(performUnmanage:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert setUserInfo:vms];
     [alert runModal];
@@ -554,80 +720,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[[vm JID] bare] inGroupWithPath:nil];
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[vm JID]];
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:[vm JID]];
-}
-
-/*! ask hypervisor to manage virtual machines
-    @param someVirtualMachines CPArray of virtual machines
-*/
-- (void)performManage:(CPArray)someVirtualMachines
-{
-    var stanza = [TNStropheStanza iqWithType:@"set"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorControlManage}];
-
-    for (var i = 0; i < [someVirtualMachines count]; i++)
-    {
-        var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"jid": [vm JID]}];
-        [stanza up];
-    }
-
-    [self setModuleStatus:TNArchipelModuleStatusWaiting];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didPerformManage:) ofObject:self];
-}
-
-- (BOOL)_didPerformManage:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [self setModuleStatus:TNArchipelModuleStatusReady];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-        [self setModuleStatus:TNArchipelModuleStatusError];
-    }
-
-    return NO;
-}
-
-/*! ask hypervisor to unmanage virtual machines
-    @param someVirtualMachines CPArray of virtual machines
-*/
-- (void)performUnmanage:(CPArray)someVirtualMachines
-{
-    var stanza = [TNStropheStanza iqWithType:@"set"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorControlUnmanage}];
-
-    for (var i = 0; i < [someVirtualMachines count]; i++)
-    {
-        var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"jid": [vm JID]}];
-        [stanza up];
-    }
-
-    [self setModuleStatus:TNArchipelModuleStatusWaiting];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didPerformUnmanage:) ofObject:self];
-}
-
-- (BOOL)_didPerformUnmanage:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [self setModuleStatus:TNArchipelModuleStatusReady];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-        [self setModuleStatus:TNArchipelModuleStatusError];
-    }
-
-    return NO;
 }
 
 /*! get the hypervisor roster content

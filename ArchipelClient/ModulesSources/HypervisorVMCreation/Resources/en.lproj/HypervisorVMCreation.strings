@@ -149,3 +149,42 @@
 /* Class = "NSTextFieldCell"; title = "This the list of existing virtual machines not managed by Archipel."; ObjectID = "372"; */
 "372.title" = "This the list of existing virtual machines not managed by Archipel.";
 
+/* Class = "NSTableColumn"; headerCell.title = "Parked Virtual Machines"; ObjectID = "385"; */
+"385.headerCell.title" = "Parked Virtual Machines";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "386"; */
+"386.title" = "Text";
+
+/* Class = "NSTextFieldCell"; title = "This is the list of parked virtual machines"; ObjectID = "388"; */
+"388.title" = "This is the list of parked virtual machines";
+
+/* Class = "NSTextFieldCell"; title = "Virtual Machine Name"; ObjectID = "415"; */
+"415.title" = "Virtual Machine Name";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine UUID"; ObjectID = "428"; */
+"428.title" = "Virtual machine UUID";
+
+/* Class = "NSTextFieldCell"; title = "parker"; ObjectID = "454"; */
+"454.title" = "parker";
+
+/* Class = "NSTextFieldCell"; title = "date"; ObjectID = "455"; */
+"455.title" = "date";
+
+/* Class = "NSTextFieldCell"; title = "Parker:"; ObjectID = "456"; */
+"456.title" = "Parker:";
+
+/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "457"; */
+"457.title" = "Date:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "470"; */
+"470.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Edit XML"; ObjectID = "474"; */
+"474.title" = "Edit XML";
+
+/* Class = "NSButtonCell"; title = "Update"; ObjectID = "477"; */
+"477.title" = "Update";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "478"; */
+"478.title" = "Cancel";
+

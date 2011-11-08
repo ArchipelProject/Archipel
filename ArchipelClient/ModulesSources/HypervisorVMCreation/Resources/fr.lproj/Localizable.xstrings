@@ -58,8 +58,12 @@
 	<string>Machine virtuelle </string>
 	<key>Virtual machine has been cloned</key>
 	<string>La machine virtuelle a été clonée.</string>
+	<key>Virtual machine has been parked</key>
+	<string>Virtual machine has been parked</string>
 	<key>Virtual machine has been removed</key>
 	<string>La machine virtuelle a été supprimée.</string>
+	<key>Virtual machine has been unparked</key>
+	<string>Virtual machine has been unparked</string>
 	<key>Would you like to add </key>
 	<string>Voulez-vous ajouter </string>
 	<key>You must select a virtual machine</key>
