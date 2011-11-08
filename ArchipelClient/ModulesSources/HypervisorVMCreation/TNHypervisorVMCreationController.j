@@ -84,6 +84,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     CPButton                                        _manageButton;
     CPButton                                        _minusButton;
     CPButton                                        _parkButton;
+    CPButton                                        _parkDeleteButton;
     CPButton                                        _plusButton;
     CPButton                                        _removeSubscriptionButton;
     CPButton                                        _unmanageButton;
@@ -244,7 +245,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_editParkedXMLButton setEnabled:NO];
     [_editParkedXMLButton setToolTip:CPLocalizedString(@"Edit the XML of the parked virtual machine", @"Edit the XML of the parked virtual machine")];
 
-    [buttonBarParkedVMControl setButtons:[_unparkButton, _editParkedXMLButton]];
+    _parkDeleteButton = [CPButtonBar minusButton];
+    [_parkDeleteButton setTarget:self];
+    [_parkDeleteButton setAction:@selector(deleteParkedVirtualMachines:)];
+    [_parkDeleteButton setEnabled:NO];
+    [_parkDeleteButton setToolTip:CPLocalizedString(@"Delete parked virtual machines", @"Delete parked virtual machines")];
+
+    [buttonBarParkedVMControl setButtons:[_unparkButton, _editParkedXMLButton, _parkDeleteButton]];
 
 
     [VMAllocationController setDelegate:self];
@@ -331,6 +338,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self setControl:_parkButton enabledAccordingToPermission:@"vmparking_park" specialCondition:tableManagedCondition];
     [self setControl:_unparkButton enabledAccordingToPermission:@"vmparking_unpark" specialCondition:tableParkedCondition];
     [self setControl:_editParkedXMLButton enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:tableParkedCondition];
+    [self setControl:_parkDeleteButton enabledAccordingToPermission:@"vmparking_delete" specialCondition:tableParkedCondition];
     [self setControl:_plusButton enabledAccordingToPermission:@"alloc"];
     [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:tableManagedCondition];
     [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
@@ -364,9 +372,61 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
         change  = [somePushInfo objectForKey:@"change"],
-        date    = [somePushInfo objectForKey:@"date"];
+        date    = [somePushInfo objectForKey:@"date"],
+        stanza  = [somePushInfo objectForKey:@"rawStanza"];
 
-    [self populateVirtualMachinesTable];
+    if (type == TNArchipelPushNotificationHypervisor)
+    {
+        [self populateVirtualMachinesTable];
+        return YES;
+    }
+
+    var growl = [TNGrowlCenter defaultCenter];
+    switch (change)
+    {
+        case "cannot-park":
+            [growl pushNotificationWithTitle:@"Parking error" message:@"Unable to park" icon:TNGrowlIconError];
+            CPLog.error(stanza)
+            break;
+
+        case "cannot-unpark":
+            [growl pushNotificationWithTitle:@"Parking error" message:@"Unable to unpark" icon:TNGrowlIconError];
+            CPLog.error(stanza)
+            break;
+
+        case "cannot-delete":
+            [growl pushNotificationWithTitle:@"Parking error" message:@"Unable to delete" icon:TNGrowlIconError];
+            CPLog.error(stanza)
+            break;
+
+        case "cannot-update":
+            [growl pushNotificationWithTitle:@"Parking error" message:@"Unable to update" icon:TNGrowlIconError];
+            CPLog.error(stanza)
+            break;
+
+        case "parked":
+            [growl pushNotificationWithTitle:@"Parking success" message:@"Parked successfully"];
+            [self populateVirtualMachinesTable];
+            break;
+
+        case "unparked":
+            [growl pushNotificationWithTitle:@"Parking success" message:@"Unparked successfully"];
+            [self populateVirtualMachinesTable];
+            break;
+
+        case "deleted":
+            [growl pushNotificationWithTitle:@"Parking success" message:@"Deleted successfully"];
+            [self populateVirtualMachinesTable];
+            break;
+
+        case "updated":
+            [growl pushNotificationWithTitle:@"Parking success" message:@"Updated successfully"];
+            [self populateVirtualMachinesTable];
+            break;
+
+        default:
+            [self populateVirtualMachinesTable];
+    }
 
     return YES;
 }
@@ -419,9 +479,11 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         case tableVirtualMachinesParked:
             [_unparkButton setEnabled:NO];
             [_editParkedXMLButton setEnabled:NO];
+            [_parkDeleteButton setEnabled:NO];
             var condition = ([tableVirtualMachinesParked numberOfSelectedRows] > 0);
             [self setControl:_unparkButton enabledAccordingToPermission:@"vmparking_unpark" specialCondition:condition];
             [self setControl:_editParkedXMLButton enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:condition];
+            [self setControl:_parkDeleteButton enabledAccordingToPermission:@"vmparking_delete" specialCondition:condition];
     }
 }
 
@@ -569,6 +631,33 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     [VMParkingController setCurrentItem:[_virtualMachinesParkedDatasource objectAtIndex:[tableVirtualMachinesParked selectedRow]]];
     [VMParkingController openWindow:aSender];
+}
+
+- (IBAction)deleteParkedVirtualMachines:(id)aSender
+{
+    if ([tableVirtualMachinesParked numberOfSelectedRows] <= 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"You must select at least a virtual machine", @"You must select at least a virtual machine")];
+        return;
+    }
+
+    var titleMessage = CPLocalizedString("Delete parked virtual machine", "Delete parked virtual machine"),
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to delete this parked virtual machine? This will remove everything related to it, including drives", @"Are you sure you want Archipel to delete this parked virtual machine? This will remove everything related to it, including drives");
+
+    if ([tableVirtualMachinesParked numberOfSelectedRows] > 1)
+    {
+        titleMessage = CPLocalizedString("Delete parked virtual machines", "Delete parked virtual machines");
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to delete these parked virtual machines? This will remove everything related to them, including drives", @"Are you sure you want Archipel to delete these parked virtual machines? This will remove everything related to them, including drives");
+    }
+
+    var vms = [_virtualMachinesParkedDatasource objectsAtIndexes:[tableVirtualMachinesParked selectedRowIndexes]],
+        alert = [TNAlert alertWithMessage:titleMessage
+                                informative:informativeMessage
+                                 target:VMParkingController
+                                 actions:[[CPLocalizedString(@"Delete", @"Delete"), @selector(deleteParkedVirtualMachines:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+    [alert setUserInfo:vms];
+    [alert runModal];
 }
 
 /*! ask the hypervisor to manage selected virtual machines

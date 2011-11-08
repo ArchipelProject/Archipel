@@ -223,14 +223,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 */
 - (BOOL)_didParkVirtualMachine:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info(@"sucessfully parked virtual machines");
-
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
-                                                         message:CPBundleLocalizedString(@"Virtual machine has been parked", @"Virtual machine has been parked")];
-    }
-    else
+    if ([aStanza type] != @"result")
     {
         [_delegate handleIqErrorFromStanza:aStanza];
     }
@@ -265,14 +258,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 */
 - (BOOL)_didUnparkVirtualMachine:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info(@"sucessfully unparked virtual machines");
-
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
-                                                         message:CPBundleLocalizedString(@"Virtual machine has been unparked", @"Virtual machine has been unparked")];
-    }
-    else
+    if ([aStanza type] != @"result")
     {
         [_delegate handleIqErrorFromStanza:aStanza];
     }
@@ -304,14 +290,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 */
 - (BOOL)_didUpdateCurrentItemXML:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info(@"sucessfully updated virtual machine description");
-
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
-                                                         message:CPLocalizedString(@"XML definition of the vm has been updated", @"XML definition of the vm has been updated")];
-    }
-    else
+    if ([aStanza type] != @"result")
     {
         [_delegate handleIqErrorFromStanza:aStanza];
     }
@@ -319,6 +298,41 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     return NO;
 }
 
+/*! Delete some parked VMs
+    @param someVirtualMachines CPArray containing parked virtual machines to delete
+*/
+- (void)deleteParkedVirtualMachines:(CPArray)someVirtualMachines
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorParking}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorParkingDelete}];
+
+    for (var i = 0; i < [someVirtualMachines count]; i++)
+    {
+        var vm = [someVirtualMachines objectAtIndex:i];
+        [stanza addChildWithName:@"item" andAttributes:{"ticket": [vm parkingID]}];
+        [stanza up];
+    }
+
+    [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
+    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didDeleteParkedVirtualMachines:) ofObject:self];
+
+}
+
+/*! compute the answer of the hypervisor about deleting parked virtual machines
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (BOOL)_didDeleteParkedVirtualMachines:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] != @"result")
+    {
+        [_delegate handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
 
 @end
 
