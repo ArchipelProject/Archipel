@@ -30,8 +30,9 @@ ARCHIPEL_ERROR_CODE_VMPARK_LIST         = -11001
 ARCHIPEL_ERROR_CODE_VMPARK_PARK         = -11002
 ARCHIPEL_ERROR_CODE_VMPARK_UNPARK       = -11003
 ARCHIPEL_ERROR_CODE_VMPARK_DELETE       = -11004
+ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML    = -11004
 
-ARCHIPEL_NS_VMPARKING = "archipel:vmparking"
+ARCHIPEL_NS_VMPARKING = "archipel:hypervisor:vmparking"
 
 
 class TNVMParking (TNArchipelPlugin):
@@ -54,6 +55,8 @@ class TNVMParking (TNArchipelPlugin):
         self.entity.permission_center.create_permission("vmparking_park", "Authorizes user to park a virtual machines", False)
         self.entity.permission_center.create_permission("vmparking_unpark", "Authorizes user to unpark a virtual machines", False)
         self.entity.permission_center.create_permission("vmparking_delete", "Authorizes user to delete parked virtual machines", False)
+        self.entity.permission_center.create_permission("vmparking_updatexml", "Authorizes user to delete parked virtual machines", False)
+
         # register to the node vmrequest
         self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vmparking_node)
 
@@ -152,11 +155,15 @@ class TNVMParking (TNArchipelPlugin):
         nodes = self.pubsub_vmparking.get_items()
         ret = []
         for node in nodes:
+            domain = xmpp.Node(node=node.getTag("virtualmachine").getTag("domain"))
             ret.append({"info":
                             {"itemid": node.getAttr("id"),
                             "parker": node.getTag("virtualmachine").getAttr("parker"),
                             "date": node.getTag("virtualmachine").getAttr("date")},
-                        "domain": node.getTag("virtualmachine").getTag("domain")})
+                        "domain": domain})
+        def sorting(a, b):
+            return cmp(a["domain"].getTag("name").getData(), b["domain"].getTag("name").getData())
+        ret.sort(sorting)
         return ret
 
     def park(self, uuid, parker_jid):
@@ -195,6 +202,8 @@ class TNVMParking (TNArchipelPlugin):
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
         domain = vm_item.getTag("virtualmachine").getTag("domain")
+        ret = str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
+        domain = xmpp.simplexml.NodeBuilder(data=ret).getDom()
         vmjid = domain.getTag("description").getData().split("::::")[0]
         vmpass = domain.getTag("description").getData().split("::::")[1]
         vmname = domain.getTag("name").getData()
@@ -235,9 +244,13 @@ class TNVMParking (TNArchipelPlugin):
             raise Exception("UUID of new description must be the same (was %s, is %s)" % (previous_uuid, new_uuid))
         if not previous_name.lower() == new_name.lower():
             raise Exception("Name of new description must be the same (was %s, is %s)" % (previous_name, new_name))
-
+        if not new_name or new_name == "":
+            raise Exception("Missing name information")
+        if not new_uuid or new_uuid == "":
+            raise Exception("Missing UUID information")
         if domain.getTag('description'):
             domain.delChild("description")
+
         domain.addChild(node=old_domain.getTag("description"))
 
         self.delete(ticket)
@@ -294,6 +307,8 @@ class TNVMParking (TNArchipelPlugin):
             nodes = []
             for parked_vm in parked_vms:
                 vm_node = xmpp.Node("virtualmachine", attrs=parked_vm["info"])
+                if parked_vm["domain"].getTag('description'):
+                    parked_vm["domain"].delChild("description")
                 vm_node.addChild(node=parked_vm["domain"])
                 nodes.append(vm_node)
             reply.setQueryPayload(nodes)
@@ -310,8 +325,10 @@ class TNVMParking (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            vm_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-            self.park(vm_uuid, iq.getFrom())
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            for item in items:
+                vm_uuid = item.getAttr("uuid")
+                self.park(vm_uuid, iq.getFrom())
             reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_PARK)
@@ -327,8 +344,10 @@ class TNVMParking (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            ticket = iq.getTag("query").getTag("archipel").getAttr("ticket")
-            self.unpark(ticket)
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            for item in items:
+                ticket = item.getAttr("ticket")
+                self.unpark(ticket)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UNPARK)
         return reply
@@ -363,5 +382,5 @@ class TNVMParking (TNArchipelPlugin):
             domain = iq.getTag("query").getTag("archipel").getTag("domain")
             self.updatexml(ticket, domain)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_DELETE)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML)
         return reply
