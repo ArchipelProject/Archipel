@@ -19,8 +19,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import xmpp
 import datetime
+import os
+import shutil
+import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.pubsub import TNPubSubNode
@@ -122,7 +124,6 @@ class TNVMParking (TNArchipelPlugin):
         @param event: the push event
         """
         self.entity.log.debug("VMPARKING: received pubsub event")
-        self.entity.push_change("vmparking", "modified")
 
 
     ### Processing function
@@ -185,11 +186,16 @@ class TNVMParking (TNArchipelPlugin):
         domain = vm.xmldesc(mask_description=False)
         vm_jid = xmpp.JID(domain.getTag("description").getData().split("::::")[0])
 
-        self.entity.soft_free(vm_jid)
+        def publish_success(resp):
+            if resp.getType() == "result":
+                self.entity.soft_free(vm_jid)
+                self.entity.push_change("vmparking", "parked")
+            else:
+                self.entity.push_change("vmparking", "cannot-park", content_node=resp)
 
         vmparkednode = xmpp.Node(tag="virtualmachine", attrs={"parker": parker_jid.getStripped(), "date": datetime.datetime.now()})
         vmparkednode.addChild(node=domain)
-        self.pubsub_vmparking.add_item(vmparkednode)
+        self.pubsub_vmparking.add_item(vmparkednode, callback=publish_success)
         self.entity.log.info("VMPARKING: virtual machine %s as been parked" % uuid)
 
     def unpark(self, ticket):
@@ -201,17 +207,23 @@ class TNVMParking (TNArchipelPlugin):
         vm_item = self.pubsub_vmparking.get_item(ticket)
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
-        domain = vm_item.getTag("virtualmachine").getTag("domain")
-        ret = str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
-        domain = xmpp.simplexml.NodeBuilder(data=ret).getDom()
-        vmjid = domain.getTag("description").getData().split("::::")[0]
-        vmpass = domain.getTag("description").getData().split("::::")[1]
-        vmname = domain.getTag("name").getData()
-        vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False)
-        vm = vm_thread.get_instance()
-        vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
-        vm_thread.start()
-        self.pubsub_vmparking.remove_item(ticket)
+
+        def retract_success(resp, user_info):
+            if resp.getType() == "result":
+                domain = vm_item.getTag("virtualmachine").getTag("domain")
+                ret = str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
+                domain = xmpp.simplexml.NodeBuilder(data=ret).getDom()
+                vmjid = domain.getTag("description").getData().split("::::")[0]
+                vmpass = domain.getTag("description").getData().split("::::")[1]
+                vmname = domain.getTag("name").getData()
+                vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False)
+                vm = vm_thread.get_instance()
+                vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
+                vm_thread.start()
+                self.entity.push_change("vmparking", "unparked")
+            else:
+                self.entity.push_change("vmparking", "cannot-unpark", content_node=resp)
+        self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
 
     def delete(self, ticket):
         """
@@ -222,7 +234,18 @@ class TNVMParking (TNArchipelPlugin):
         vm_item = self.pubsub_vmparking.get_item(ticket)
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
-        self.pubsub_vmparking.remove_item(ticket)
+
+        def retract_success(resp, user_info):
+            if resp.getType() == "result":
+                vmjid = vm_item.getTag("virtualmachine").getTag("domain").getTag("description").getData().split("::::")[0]
+                vmfolder = "%s/%s" % (self.configuration.get("VIRTUALMACHINE", "vm_base_path"), vmjid.split("@")[0])
+                if os.path.exists(vmfolder):
+                    shutil.rmtree(vmfolder)
+                self.entity.get_plugin("xmppserver").users_unregister([vmjid])
+                self.entity.push_change("vmparking", "deleted")
+            else:
+                self.entity.push_change("vmparking", "cannot-delete", content_node=resp)
+        self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
 
     def updatexml(self, ticket, domain):
         """
@@ -235,11 +258,13 @@ class TNVMParking (TNArchipelPlugin):
         vm_item = self.pubsub_vmparking.get_item(ticket)
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
+
         old_domain = vm_item.getTag("virtualmachine").getTag("domain")
         previous_uuid = old_domain.getTag("uuid").getData()
         previous_name = old_domain.getTag("name").getData()
         new_uuid = domain.getTag("uuid").getData()
         new_name = domain.getTag("name").getData()
+
         if not previous_uuid.lower() == new_uuid.lower():
             raise Exception("UUID of new description must be the same (was %s, is %s)" % (previous_uuid, new_uuid))
         if not previous_name.lower() == new_name.lower():
@@ -248,16 +273,23 @@ class TNVMParking (TNArchipelPlugin):
             raise Exception("Missing name information")
         if not new_uuid or new_uuid == "":
             raise Exception("Missing UUID information")
+
         if domain.getTag('description'):
             domain.delChild("description")
-
         domain.addChild(node=old_domain.getTag("description"))
-
-        self.delete(ticket)
         vm_item.getTag("virtualmachine").delChild("domain")
         vm_item.getTag("virtualmachine").addChild(node=domain)
-        self.pubsub_vmparking.add_item(vm_item.getTag("virtualmachine"))
-        self.entity.log.info("VMPARKING: virtual machine %s as been updated" % new_uuid)
+
+        def publish_success(resp):
+            if resp.getType() == "result":
+                self.entity.push_change("vmparking", "updated")
+                self.pubsub_vmparking.remove_item(ticket)
+                self.entity.log.info("VMPARKING: virtual machine %s as been updated" % new_uuid)
+            else:
+                self.entity.push_change("vmparking", "cannot-update", content_node=resp)
+                self.entity.log.error("VMPARKING: unable to update item for virtual machine %s: %s" % (new_uuid, resp))
+        self.pubsub_vmparking.add_item(vm_item.getTag("virtualmachine"), callback=publish_success)
+
 
 
     ### XMPP Management
@@ -362,8 +394,10 @@ class TNVMParking (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            ticket = iq.getTag("query").getTag("archipel").getAttr("ticket")
-            self.delete(ticket)
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            for item in items:
+                ticket = item.getAttr("ticket")
+                self.delete(ticket)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_DELETE)
         return reply
