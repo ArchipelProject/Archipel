@@ -842,7 +842,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                     n = xmpp.Node("item", attrs={"managed": "False"})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
-            reply.setQueryPayload(nodes)
+            reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
         return reply
