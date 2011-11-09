@@ -375,6 +375,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     if (_VMLibvirtStatus)
         [self layoutButtons:_VMLibvirtStatus];
+
+    [self checkIfRunning];
 }
 
 

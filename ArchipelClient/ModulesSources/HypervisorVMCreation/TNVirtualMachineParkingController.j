@@ -157,7 +157,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
         "action": TNArchipelTypeHypervisorParkingList}];
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didReceiveList:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didReceiveList:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about its parking VMs list
@@ -215,7 +215,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didParkVirtualMachine:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didParkVirtualMachine:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about its parking VMs
@@ -250,7 +250,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didUnparkVirtualMachine:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didUnparkVirtualMachine:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about uparking virtual machines
@@ -282,7 +282,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     _currentItem = nil;
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didUpdateCurrentItemXML:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didUpdateCurrentItemXML:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about updating xml description
@@ -317,7 +317,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didDeleteParkedVirtualMachines:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didDeleteParkedVirtualMachines:) ofObject:self];
 
 }
 

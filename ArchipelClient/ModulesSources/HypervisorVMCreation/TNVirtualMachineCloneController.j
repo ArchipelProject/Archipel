@@ -102,7 +102,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             "jid": [[vm JID] bare]}];
     }
 
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didCloneVirtualMachine:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didCloneVirtualMachine:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about its cloning a VM

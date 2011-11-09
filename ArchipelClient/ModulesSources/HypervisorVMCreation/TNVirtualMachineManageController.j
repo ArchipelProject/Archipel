@@ -70,7 +70,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didPerformManage:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didPerformManage:) ofObject:self];
 }
 
 - (BOOL)_didPerformManage:(TNStropheStanza)aStanza
@@ -107,7 +107,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didPerformUnmanage:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didPerformUnmanage:) ofObject:self];
 }
 
 - (BOOL)_didPerformUnmanage:(TNStropheStanza)aStanza

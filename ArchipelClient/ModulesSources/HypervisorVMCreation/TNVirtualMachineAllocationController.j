@@ -90,7 +90,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         "action": TNArchipelTypeHypervisorControlAlloc,
         "name": [fieldNewVMRequestedName stringValue]}];
 
-    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didAllocVirtualMachine:) ofObject:self];
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didAllocVirtualMachine:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about its allocing a VM
@@ -170,7 +170,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         if ([[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
             [[[TNStropheIMClient defaultClient] roster] removeContact:vm];
 
-        [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didDeleteVirtualMachine:) ofObject:self];
+        [_delegate sendStanza:stanza andRegisterSelector:@selector(_didDeleteVirtualMachine:) ofObject:self];
     }
 }
 

@@ -271,11 +271,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     [super willLoad];
 
-    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
+    // [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(populateVirtualMachinesTable:) name:TNStropheRosterPushNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [tableVirtualMachines setDelegate:nil];
@@ -375,12 +376,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         date    = [somePushInfo objectForKey:@"date"],
         stanza  = [somePushInfo objectForKey:@"rawStanza"];
 
-    if (type == TNArchipelPushNotificationHypervisor)
-    {
-        [self populateVirtualMachinesTable];
-        return YES;
-    }
-
     var growl = [TNGrowlCenter defaultCenter];
     switch (change)
     {
@@ -438,6 +433,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if ([_entity XMPPShow] != TNStropheContactStatusOffline)
         [self populateVirtualMachinesTable];
+}
+
+/*! reload the content of the table when a roster push is received
+    @param aNotification the notification
+*/
+- (void)populateVirtualMachinesTable:(CPNotification)aNotification
+{
+    [self populateVirtualMachinesTable];
 }
 
 /*! reoload the table when a VM change it's status
@@ -822,7 +825,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
     [self setModuleStatus:TNArchipelModuleStatusWaiting];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorRoster:) ofObject:self];
+    [self sendUniqueStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorRoster:)];
 }
 
 /*! compute the answer of the hypervisor about its roster
@@ -881,7 +884,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [self handleIqErrorFromStanza:aStanza];
         [self setModuleStatus:TNArchipelModuleStatusError];
     }
-
     return NO;
 }
 
