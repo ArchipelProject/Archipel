@@ -34,12 +34,10 @@
 	<string>Archipel</string>
 	<key>Archipel Help</key>
 	<string>Archipel Help</string>
-	<key>Are you sure you want to delete this contact?</key>
-	<string>Are you sure you want to delete this contact?</string>
-	<key>Are you sure you want to delete this group?</key>
-	<string>Are you sure you want to delete this group?</string>
-	<key>Ask subscribtion again</key>
-	<string>Ask subscribtion again</string>
+	<key>Are you sure you want to delete selected items?</key>
+	<string>Are you sure you want to delete selected items?</string>
+	<key>Ask subscribtion</key>
+	<string>Ask subscribtion</string>
 	<key>Available</key>
 	<string>Available</string>
 	<key>Away</key>
@@ -90,6 +88,8 @@
 	<string>Delete contact</string>
 	<key>Delete group</key>
 	<string>Delete group</string>
+	<key>Delete items</key>
+	<string>Delete items</string>
 	<key>Display or hide the properties view</key>
 	<string>Display or hide the properties view</string>
 	<key>Do not disturb</key>
@@ -178,6 +178,8 @@
 	<string>Redo</string>
 	<key>Release note</key>
 	<string>Release note</string>
+	<key>Remove subscribtion</key>
+	<string>Remove subscribtion</string>
 	<key>Remove the selected contact. It will only remove it from your roster.</key>
 	<string>Remove the selected contact. It will only remove it from your roster.</string>
 	<key>Rename contact</key>
@@ -202,16 +204,12 @@
 	<string>Select all</string>
 	<key>Select next entity</key>
 	<string>Select next entity</string>
+	<key>Select next module</key>
+	<string>Select next module</string>
 	<key>Select previous entity</key>
 	<string>Select previous entity</string>
-	<key>Set custom status</key>
-	<string>Set custom status</string>
-	<key>Set status available</key>
-	<string>Set status available</string>
-	<key>Set status away</key>
-	<string>Set status away</string>
-	<key>Set status busy</key>
-	<string>Set status busy</string>
+	<key>Select previous module</key>
+	<string>Select previous module</string>
 	<key>Set the log level of the client. The more verbose, the less performance.</key>
 	<string>Set the log level of the client. The more verbose, the less performance.</string>
 	<key>Status</key>
@@ -256,6 +254,8 @@
 	<string>This LED is ON when XMPP data are received</string>
 	<key>This LED is ON when XMPP data are sent</key>
 	<string>This LED is ON when XMPP data are sent</string>
+	<key>Toggle tag view</key>
+	<string>Toggle tag view</string>
 	<key>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</key>
 	<string>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</string>
 	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
@@ -276,8 +276,6 @@
 	<string>User admin rights successfully granted</string>
 	<key>User admin rights successfuly revoked</key>
 	<string>User admin rights successfuly revoked</string>
-	<key>User supression</key>
-	<string>User supression</string>
 	<key>Virtual machine</key>
 	<string>Virtual machine</string>
 	<key>XMPP Account</key>
@@ -290,10 +288,6 @@
 	<string>You can't assign tags here</string>
 	<key>You have to enter a valid group name.</key>
 	<string>You have to enter a valid group name.</string>
-	<key>You must choose a contact</key>
-	<string>You must choose a contact</string>
-	<key>You must choose a group</key>
-	<string>You must choose a group</string>
 	<key>You must enter a JID using the form user@domain.</key>
 	<string>You must enter a JID using the form user@domain.</string>
 	<key>You need to reload the application to complete the locale change.</key>

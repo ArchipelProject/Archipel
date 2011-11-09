@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1617</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -37,11 +37,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1253,7 +1250,9 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -2320,11 +2319,9 @@
 							<string>fieldInfoState</string>
 							<string>fieldOOMAdjust</string>
 							<string>fieldOOMScore</string>
-							<string>fieldPreferencesMaxCPUs</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
 							<string>filterHypervisors</string>
 							<string>imageState</string>
-							<string>scrollViewTableHypervisors</string>
 							<string>sliderMemory</string>
 							<string>stepperCPU</string>
 							<string>switchAutoStart</string>
@@ -2344,10 +2341,8 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
-							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSImageView</string>
-							<string>TNUIKitScrollView</string>
 							<string>NSSlider</string>
 							<string>TNTextFieldStepper</string>
 							<string>TNSwitch</string>
@@ -2369,11 +2364,9 @@
 							<string>fieldInfoState</string>
 							<string>fieldOOMAdjust</string>
 							<string>fieldOOMScore</string>
-							<string>fieldPreferencesMaxCPUs</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
 							<string>filterHypervisors</string>
 							<string>imageState</string>
-							<string>scrollViewTableHypervisors</string>
 							<string>sliderMemory</string>
 							<string>stepperCPU</string>
 							<string>switchAutoStart</string>
@@ -2420,10 +2413,6 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">fieldPreferencesMaxCPUs</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">fieldPreferencesScreenshotRefresh</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
@@ -2434,10 +2423,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">imageState</string>
 								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewTableHypervisors</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">sliderMemory</string>

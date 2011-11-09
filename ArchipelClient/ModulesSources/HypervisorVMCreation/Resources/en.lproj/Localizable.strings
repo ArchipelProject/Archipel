@@ -82,14 +82,8 @@
 /* Virtual machine has been cloned */
 "Virtual machine has been cloned" = "Virtual machine has been cloned";
 
-/* Virtual machine has been parked */
-"Virtual machine has been parked" = "Virtual machine has been parked";
-
 /* Virtual machine has been removed */
 "Virtual machine has been removed" = "Virtual machine has been removed";
-
-/* Virtual machine has been unparked */
-"Virtual machine has been unparked" = "Virtual machine has been unparked";
 
 /* Would you like to add  */
 "Would you like to add " = "Would you like to add ";

@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1617</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -41,11 +41,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1218,20 +1215,28 @@
 					<int key="connectionID">196</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="399064852"/>
-						<reference key="destination" ref="266563233"/>
-					</object>
-					<int key="connectionID">205</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">tableJobs</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="809789922"/>
 					</object>
 					<int key="connectionID">218</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">schedulerController</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="953738438"/>
+					</object>
+					<int key="connectionID">277</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="399064852"/>
+						<reference key="destination" ref="266563233"/>
+					</object>
+					<int key="connectionID">205</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1475,22 +1480,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">schedulerController</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="953738438"/>
-					</object>
-					<int key="connectionID">277</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="966211884"/>
-						<reference key="destination" ref="228378207"/>
-					</object>
-					<int key="connectionID">280</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">mainPopover</string>
 						<reference key="source" ref="953738438"/>
 						<reference key="destination" ref="966211884"/>
@@ -1505,13 +1494,23 @@
 					</object>
 					<int key="connectionID">282</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="966211884"/>
+						<reference key="destination" ref="228378207"/>
+					</object>
+					<int key="connectionID">280</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -2777,49 +2776,14 @@
 					<string key="className">TNVirtualMachineScheduler</string>
 					<string key="superclassName">TNModule</string>
 					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>checkboxClicked:</string>
-							<string>openNewJobWindow:</string>
-							<string>schedule:</string>
-							<string>unschedule:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
+						<string key="NS.key.0">openNewJobWindow:</string>
+						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>checkboxClicked:</string>
-							<string>openNewJobWindow:</string>
-							<string>schedule:</string>
-							<string>unschedule:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">checkboxClicked:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">openNewJobWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">schedule:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">unschedule:</string>
-								<string key="candidateClassName">id</string>
-							</object>
+						<string key="NS.key.0">openNewJobWindow:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">openNewJobWindow:</string>
+							<string key="candidateClassName">id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
@@ -2827,66 +2791,18 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarJobs</string>
-							<string>buttonNewJobAction</string>
-							<string>buttonNewJobOK</string>
-							<string>calendarViewNewJob</string>
-							<string>checkBoxEveryDay</string>
-							<string>checkBoxEveryHour</string>
-							<string>checkBoxEveryMinute</string>
-							<string>checkBoxEveryMonth</string>
-							<string>checkBoxEverySecond</string>
-							<string>checkBoxEveryYear</string>
-							<string>fieldNewJobComment</string>
 							<string>filterFieldJobs</string>
 							<string>schedulerController</string>
-							<string>scrollViewTableJobs</string>
-							<string>stepperHour</string>
-							<string>stepperMinute</string>
-							<string>stepperNewRecurrentJobDay</string>
-							<string>stepperNewRecurrentJobHour</string>
-							<string>stepperNewRecurrentJobMinute</string>
-							<string>stepperNewRecurrentJobMonth</string>
-							<string>stepperNewRecurrentJobSecond</string>
-							<string>stepperNewRecurrentJobYear</string>
-							<string>stepperSecond</string>
-							<string>tabViewJobSchedule</string>
 							<string>tableJobs</string>
-							<string>viewNewJobOneShot</string>
-							<string>viewNewJobRecurent</string>
 							<string>viewTableContainer</string>
-							<string>windowNewJob</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPButtonBar</string>
-							<string>NSPopUpButton</string>
-							<string>NSButton</string>
-							<string>TNCalendarView</string>
-							<string>CPCheckBox</string>
-							<string>CPCheckBox</string>
-							<string>CPCheckBox</string>
-							<string>CPCheckBox</string>
-							<string>CPCheckBox</string>
-							<string>CPCheckBox</string>
-							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>TNSchedulerController</string>
-							<string>TNUIKitScrollView</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNTextFieldStepper</string>
-							<string>NSTabView</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -2894,80 +2810,16 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarJobs</string>
-							<string>buttonNewJobAction</string>
-							<string>buttonNewJobOK</string>
-							<string>calendarViewNewJob</string>
-							<string>checkBoxEveryDay</string>
-							<string>checkBoxEveryHour</string>
-							<string>checkBoxEveryMinute</string>
-							<string>checkBoxEveryMonth</string>
-							<string>checkBoxEverySecond</string>
-							<string>checkBoxEveryYear</string>
-							<string>fieldNewJobComment</string>
 							<string>filterFieldJobs</string>
 							<string>schedulerController</string>
-							<string>scrollViewTableJobs</string>
-							<string>stepperHour</string>
-							<string>stepperMinute</string>
-							<string>stepperNewRecurrentJobDay</string>
-							<string>stepperNewRecurrentJobHour</string>
-							<string>stepperNewRecurrentJobMinute</string>
-							<string>stepperNewRecurrentJobMonth</string>
-							<string>stepperNewRecurrentJobSecond</string>
-							<string>stepperNewRecurrentJobYear</string>
-							<string>stepperSecond</string>
-							<string>tabViewJobSchedule</string>
 							<string>tableJobs</string>
-							<string>viewNewJobOneShot</string>
-							<string>viewNewJobRecurent</string>
 							<string>viewTableContainer</string>
-							<string>windowNewJob</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarJobs</string>
 								<string key="candidateClassName">CPButtonBar</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonNewJobAction</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonNewJobOK</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">calendarViewNewJob</string>
-								<string key="candidateClassName">TNCalendarView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxEveryDay</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxEveryHour</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxEveryMinute</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxEveryMonth</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxEverySecond</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxEveryYear</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldNewJobComment</string>
-								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">filterFieldJobs</string>
@@ -2978,68 +2830,12 @@
 								<string key="candidateClassName">TNSchedulerController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewTableJobs</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperHour</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperMinute</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperNewRecurrentJobDay</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperNewRecurrentJobHour</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperNewRecurrentJobMinute</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperNewRecurrentJobMonth</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperNewRecurrentJobSecond</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperNewRecurrentJobYear</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperSecond</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tabViewJobSchedule</string>
-								<string key="candidateClassName">NSTabView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">tableJobs</string>
 								<string key="candidateClassName">NSTableView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewJobOneShot</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewNewJobRecurent</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>
 								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowNewJob</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>

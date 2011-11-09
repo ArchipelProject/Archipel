@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1617</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -40,11 +40,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1455,6 +1452,54 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewMask</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="53253902"/>
+					</object>
+					<int key="connectionID">109</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">imageViewModuleReady</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="907867315"/>
+					</object>
+					<int key="connectionID">112</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">dataViewDrivePrototype</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="481583244"/>
+					</object>
+					<int key="connectionID">251</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tableMedias</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="454242853"/>
+					</object>
+					<int key="connectionID">265</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="657339050"/>
+						<reference key="destination" ref="551032222"/>
+					</object>
+					<int key="connectionID">116</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="551032222"/>
+						<reference key="destination" ref="657339050"/>
+					</object>
+					<int key="connectionID">117</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">buttonNewDiskFormat</string>
 						<reference key="source" ref="923147024"/>
 						<reference key="destination" ref="978636359"/>
@@ -1511,86 +1556,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonConvert</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="301338893"/>
-					</object>
-					<int key="connectionID">98</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonEditDiskFormat</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="587710888"/>
-					</object>
-					<int key="connectionID">99</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldEditDiskName</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="940346522"/>
-					</object>
-					<int key="connectionID">100</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">convert:</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="301338893"/>
-					</object>
-					<int key="connectionID">102</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">rename:</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="723233098"/>
-					</object>
-					<int key="connectionID">103</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewMask</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="53253902"/>
-					</object>
-					<int key="connectionID">109</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">imageViewModuleReady</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="907867315"/>
-					</object>
-					<int key="connectionID">112</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="657339050"/>
-						<reference key="destination" ref="551032222"/>
-					</object>
-					<int key="connectionID">116</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="551032222"/>
-						<reference key="destination" ref="657339050"/>
-					</object>
-					<int key="connectionID">117</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonOK</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="723233098"/>
-					</object>
-					<int key="connectionID">120</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">buttonOK</string>
 						<reference key="source" ref="923147024"/>
 						<reference key="destination" ref="86912642"/>
@@ -1631,11 +1596,91 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">dataViewDrivePrototype</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="481583244"/>
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="923147024"/>
+						<reference key="destination" ref="222290834"/>
 					</object>
-					<int key="connectionID">251</int>
+					<int key="connectionID">362</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">closeWindow:</string>
+						<reference key="source" ref="923147024"/>
+						<reference key="destination" ref="112572689"/>
+					</object>
+					<int key="connectionID">370</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonConvert</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="301338893"/>
+					</object>
+					<int key="connectionID">98</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonEditDiskFormat</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="587710888"/>
+					</object>
+					<int key="connectionID">99</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldEditDiskName</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="940346522"/>
+					</object>
+					<int key="connectionID">100</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">convert:</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="301338893"/>
+					</object>
+					<int key="connectionID">102</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">rename:</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="723233098"/>
+					</object>
+					<int key="connectionID">103</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonOK</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="723233098"/>
+					</object>
+					<int key="connectionID">120</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="22334157"/>
+					</object>
+					<int key="connectionID">367</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">closeWindow:</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="304734839"/>
+					</object>
+					<int key="connectionID">369</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="454242853"/>
+						<reference key="destination" ref="1001"/>
+					</object>
+					<int key="connectionID">371</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1679,14 +1724,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableMedias</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="454242853"/>
-					</object>
-					<int key="connectionID">265</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">imageDriveIcon</string>
 						<reference key="source" ref="481583244"/>
 						<reference key="destination" ref="799735575"/>
@@ -1719,22 +1756,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="222290834"/>
-						<reference key="destination" ref="245251930"/>
-					</object>
-					<int key="connectionID">361</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainPopover</string>
-						<reference key="source" ref="923147024"/>
-						<reference key="destination" ref="222290834"/>
-					</object>
-					<int key="connectionID">362</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">view</string>
 						<reference key="source" ref="245251930"/>
 						<reference key="destination" ref="182673466"/>
@@ -1744,18 +1765,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">contentViewController</string>
-						<reference key="source" ref="22334157"/>
-						<reference key="destination" ref="108710004"/>
+						<reference key="source" ref="222290834"/>
+						<reference key="destination" ref="245251930"/>
 					</object>
-					<int key="connectionID">366</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainPopover</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="22334157"/>
-					</object>
-					<int key="connectionID">367</int>
+					<int key="connectionID">361</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1766,28 +1779,12 @@
 					<int key="connectionID">368</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closeWindow:</string>
-						<reference key="source" ref="762612592"/>
-						<reference key="destination" ref="304734839"/>
-					</object>
-					<int key="connectionID">369</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closeWindow:</string>
-						<reference key="source" ref="923147024"/>
-						<reference key="destination" ref="112572689"/>
-					</object>
-					<int key="connectionID">370</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="454242853"/>
-						<reference key="destination" ref="1001"/>
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="22334157"/>
+						<reference key="destination" ref="108710004"/>
 					</object>
-					<int key="connectionID">371</int>
+					<int key="connectionID">366</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1795,7 +1792,9 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -3075,7 +3074,6 @@
 							<string>buttonOK</string>
 							<string>fieldEditDiskName</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3084,7 +3082,6 @@
 							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSPopover</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -3096,7 +3093,6 @@
 							<string>buttonOK</string>
 							<string>fieldEditDiskName</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3119,10 +3115,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainPopover</string>
 								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mainWindow</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>
@@ -3258,7 +3250,6 @@
 							<string>fieldNewDiskName</string>
 							<string>fieldNewDiskSize</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3271,7 +3262,6 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSPopover</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -3287,7 +3277,6 @@
 							<string>fieldNewDiskName</string>
 							<string>fieldNewDiskSize</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3326,10 +3315,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainPopover</string>
 								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mainWindow</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>
@@ -3389,7 +3374,6 @@
 							<string>editDriveController</string>
 							<string>fieldFilter</string>
 							<string>newDriveController</string>
-							<string>scrollViewDisks</string>
 							<string>tableMedias</string>
 							<string>viewTableContainer</string>
 						</object>
@@ -3400,7 +3384,6 @@
 							<string>TNEditDriveController</string>
 							<string>NSSearchField</string>
 							<string>TNNewDriveController</string>
-							<string>TNUIKitScrollView</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
 						</object>
@@ -3414,7 +3397,6 @@
 							<string>editDriveController</string>
 							<string>fieldFilter</string>
 							<string>newDriveController</string>
-							<string>scrollViewDisks</string>
 							<string>tableMedias</string>
 							<string>viewTableContainer</string>
 						</object>
@@ -3439,10 +3421,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">newDriveController</string>
 								<string key="candidateClassName">TNNewDriveController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewDisks</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableMedias</string>

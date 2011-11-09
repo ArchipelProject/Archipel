@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1617</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -38,11 +38,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -498,7 +495,7 @@
 					<object class="NSTextField" id="260386770">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 379}, {458, 20}}</string>
+						<string key="NSFrame">{{17, 379}, {616, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="1030451056"/>
 						<bool key="NSEnabled">YES</bool>
@@ -519,7 +516,7 @@
 					<object class="NSTextField" id="363251976">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 407}, {214, 26}}</string>
+						<string key="NSFrame">{{17, 407}, {616, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="300146505"/>
 						<bool key="NSEnabled">YES</bool>
@@ -1267,6 +1264,38 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonBarControl</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="246992960"/>
+					</object>
+					<int key="connectionID">100</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewTableContainer</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="82778366"/>
+					</object>
+					<int key="connectionID">102</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">imageViewModuleReady</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="300146505"/>
+					</object>
+					<int key="connectionID">105</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tablePermissions</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="487991068"/>
+					</object>
+					<int key="connectionID">129</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldNewTemplateName</string>
 						<reference key="source" ref="630613853"/>
 						<reference key="destination" ref="997540605"/>
@@ -1331,86 +1360,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonBarControl</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="246992960"/>
-					</object>
-					<int key="connectionID">100</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewTableContainer</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="82778366"/>
-					</object>
-					<int key="connectionID">102</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">imageViewModuleReady</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="300146505"/>
-					</object>
-					<int key="connectionID">105</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="404718952"/>
-						<reference key="destination" ref="904518639"/>
-					</object>
-					<int key="connectionID">107</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="904518639"/>
-						<reference key="destination" ref="717026415"/>
-					</object>
-					<int key="connectionID">108</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="717026415"/>
-						<reference key="destination" ref="1046904586"/>
-					</object>
-					<int key="connectionID">109</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="1046904586"/>
-						<reference key="destination" ref="404718952"/>
-					</object>
-					<int key="connectionID">110</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="997540605"/>
-						<reference key="destination" ref="924088602"/>
-					</object>
-					<int key="connectionID">113</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="607119627"/>
-						<reference key="destination" ref="997540605"/>
-					</object>
-					<int key="connectionID">115</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tablePermissions</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="487991068"/>
-					</object>
-					<int key="connectionID">129</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">tableRoles</string>
 						<reference key="source" ref="630613853"/>
 						<reference key="destination" ref="942897243"/>
@@ -1424,14 +1373,6 @@
 						<reference key="destination" ref="232979406"/>
 					</object>
 					<int key="connectionID">201</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="821866017"/>
-						<reference key="destination" ref="717026415"/>
-					</object>
-					<int key="connectionID">204</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1451,6 +1392,78 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="630613853"/>
+						<reference key="destination" ref="755849807"/>
+					</object>
+					<int key="connectionID">211</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverNewTemplate</string>
+						<reference key="source" ref="630613853"/>
+						<reference key="destination" ref="907356276"/>
+					</object>
+					<int key="connectionID">216</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addRoles:</string>
+						<reference key="source" ref="630613853"/>
+						<reference key="destination" ref="904518639"/>
+					</object>
+					<int key="connectionID">218</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="404718952"/>
+						<reference key="destination" ref="904518639"/>
+					</object>
+					<int key="connectionID">107</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="1046904586"/>
+						<reference key="destination" ref="404718952"/>
+					</object>
+					<int key="connectionID">110</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="717026415"/>
+						<reference key="destination" ref="1046904586"/>
+					</object>
+					<int key="connectionID">109</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="904518639"/>
+						<reference key="destination" ref="717026415"/>
+					</object>
+					<int key="connectionID">108</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="997540605"/>
+						<reference key="destination" ref="924088602"/>
+					</object>
+					<int key="connectionID">113</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="607119627"/>
+						<reference key="destination" ref="997540605"/>
+					</object>
+					<int key="connectionID">115</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="924088602"/>
 						<reference key="destination" ref="997540605"/>
@@ -1459,19 +1472,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="755849807"/>
-						<reference key="destination" ref="555180488"/>
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="821866017"/>
+						<reference key="destination" ref="717026415"/>
 					</object>
-					<int key="connectionID">210</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainPopover</string>
-						<reference key="source" ref="630613853"/>
-						<reference key="destination" ref="755849807"/>
-					</object>
-					<int key="connectionID">211</int>
+					<int key="connectionID">204</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1484,18 +1489,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">contentViewController</string>
-						<reference key="source" ref="907356276"/>
-						<reference key="destination" ref="442518831"/>
+						<reference key="source" ref="755849807"/>
+						<reference key="destination" ref="555180488"/>
 					</object>
-					<int key="connectionID">215</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">popoverNewTemplate</string>
-						<reference key="source" ref="630613853"/>
-						<reference key="destination" ref="907356276"/>
-					</object>
-					<int key="connectionID">216</int>
+					<int key="connectionID">210</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1506,12 +1503,12 @@
 					<int key="connectionID">217</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">addRoles:</string>
-						<reference key="source" ref="630613853"/>
-						<reference key="destination" ref="904518639"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="907356276"/>
+						<reference key="destination" ref="442518831"/>
 					</object>
-					<int key="connectionID">218</int>
+					<int key="connectionID">215</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1519,7 +1516,9 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -2424,7 +2423,6 @@
 							<string>filterField</string>
 							<string>labelNoUserSelected</string>
 							<string>rolesController</string>
-							<string>scrollViewPermissions</string>
 							<string>scrollViewUsers</string>
 							<string>splitView</string>
 							<string>tablePermissions</string>
@@ -2437,7 +2435,6 @@
 							<string>NSSearchField</string>
 							<string>NSTextField</string>
 							<string>TNRolesController</string>
-							<string>TNUIKitScrollView</string>
 							<string>NSScrollView</string>
 							<string>NSSplitView</string>
 							<string>NSTableView</string>
@@ -2453,7 +2450,6 @@
 							<string>filterField</string>
 							<string>labelNoUserSelected</string>
 							<string>rolesController</string>
-							<string>scrollViewPermissions</string>
 							<string>scrollViewUsers</string>
 							<string>splitView</string>
 							<string>tablePermissions</string>
@@ -2477,10 +2473,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">rolesController</string>
 								<string key="candidateClassName">TNRolesController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewPermissions</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewUsers</string>
@@ -2521,17 +2513,13 @@
 							<string>closeNewTemplateWindow:</string>
 							<string>closeWindow:</string>
 							<string>deleteSelectedRole:</string>
-							<string>hideWindow:</string>
 							<string>openNewTemplateWindow:</string>
 							<string>openWindow:</string>
 							<string>retractRoles:</string>
 							<string>saveRole:</string>
-							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2552,12 +2540,10 @@
 							<string>closeNewTemplateWindow:</string>
 							<string>closeWindow:</string>
 							<string>deleteSelectedRole:</string>
-							<string>hideWindow:</string>
 							<string>openNewTemplateWindow:</string>
 							<string>openWindow:</string>
 							<string>retractRoles:</string>
 							<string>saveRole:</string>
-							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2582,10 +2568,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">hideWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">openNewTemplateWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -2601,10 +2583,6 @@
 								<string key="name">saveRole:</string>
 								<string key="candidateClassName">id</string>
 							</object>
-							<object class="IBActionInfo">
-								<string key="name">showWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
@@ -2617,12 +2595,9 @@
 							<string>fieldNewTemplateName</string>
 							<string>filterField</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 							<string>popoverNewTemplate</string>
-							<string>scrollViewTableRoles</string>
 							<string>tableRoles</string>
 							<string>viewTableContainer</string>
-							<string>windowNewTemplate</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2632,12 +2607,9 @@
 							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSPopover</string>
-							<string>NSWindow</string>
 							<string>NSPopover</string>
-							<string>TNUIKitScrollView</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -2650,12 +2622,9 @@
 							<string>fieldNewTemplateName</string>
 							<string>filterField</string>
 							<string>mainPopover</string>
-							<string>mainWindow</string>
 							<string>popoverNewTemplate</string>
-							<string>scrollViewTableRoles</string>
 							<string>tableRoles</string>
 							<string>viewTableContainer</string>
-							<string>windowNewTemplate</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2684,16 +2653,8 @@
 								<string key="candidateClassName">NSPopover</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">mainWindow</string>
-								<string key="candidateClassName">NSWindow</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">popoverNewTemplate</string>
 								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewTableRoles</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableRoles</string>
@@ -2702,10 +2663,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>
 								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowNewTemplate</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>

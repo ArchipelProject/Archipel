@@ -46,14 +46,11 @@
 /* Archipel Help */
 "Archipel Help" = "Archipel Help";
 
-/* Are you sure you want to delete this contact? */
-"Are you sure you want to delete this contact?" = "Are you sure you want to delete this contact?";
+/* Are you sure you want to delete selected items? */
+"Are you sure you want to delete selected items?" = "Are you sure you want to delete selected items?";
 
-/* Are you sure you want to delete this group? */
-"Are you sure you want to delete this group?" = "Are you sure you want to delete this group?";
-
-/* Ask subscribtion again */
-"Ask subscribtion again" = "Ask subscribtion again";
+/* Ask subscribtion */
+"Ask subscribtion" = "Ask subscribtion";
 
 /* authenticating */
 "authenticating" = "authenticating";
@@ -151,6 +148,9 @@
 
 /* Delete group */
 "Delete group" = "Delete group";
+
+/* Delete items */
+"Delete items" = "Delete items";
 
 /* disconnected */
 "disconnected" = "disconnected";
@@ -293,6 +293,9 @@
 /* Release note */
 "Release note" = "Release note";
 
+/* Remove subscribtion */
+"Remove subscribtion" = "Remove subscribtion";
+
 /* Remove the selected contact. It will only remove it from your roster. */
 "Remove the selected contact. It will only remove it from your roster." = "Remove the selected contact. It will only remove it from your roster.";
 
@@ -329,20 +332,14 @@
 /* Select next entity */
 "Select next entity" = "Select next entity";
 
+/* Select next module */
+"Select next module" = "Select next module";
+
 /* Select previous entity */
 "Select previous entity" = "Select previous entity";
 
-/* Set custom status */
-"Set custom status" = "Set custom status";
-
-/* Set status available */
-"Set status available" = "Set status available";
-
-/* Set status away */
-"Set status away" = "Set status away";
-
-/* Set status busy */
-"Set status busy" = "Set status busy";
+/* Select previous module */
+"Select previous module" = "Select previous module";
 
 /* Set the log level of the client. The more verbose, the less performance. */
 "Set the log level of the client. The more verbose, the less performance." = "Set the log level of the client. The more verbose, the less performance.";
@@ -410,6 +407,9 @@
 /* This LED is ON when XMPP data are sent */
 "This LED is ON when XMPP data are sent" = "This LED is ON when XMPP data are sent";
 
+/* Toggle tag view */
+"Toggle tag view" = "Toggle tag view";
+
 /* Turn this ON to activate eye candy animation. Turn it off to gain performances */
 "Turn this ON to activate eye candy animation. Turn it off to gain performances" = "Turn this ON to activate eye candy animation. Turn it off to gain performances";
 
@@ -443,9 +443,6 @@
 /* User admin rights successfuly revoked */
 "User admin rights successfuly revoked" = "User admin rights successfuly revoked";
 
-/* User supression */
-"User supression" = "User supression";
-
 /* Virtual machine */
 "Virtual machine" = "Virtual machine";
 
@@ -463,12 +460,6 @@
 
 /* You have to enter a valid group name. */
 "You have to enter a valid group name." = "You have to enter a valid group name.";
-
-/* You must choose a contact */
-"You must choose a contact" = "You must choose a contact";
-
-/* You must choose a group */
-"You must choose a group" = "You must choose a group";
 
 /* You must enter a JID using the form user@domain. */
 "You must enter a JID using the form user@domain." = "You must enter a JID using the form user@domain.";

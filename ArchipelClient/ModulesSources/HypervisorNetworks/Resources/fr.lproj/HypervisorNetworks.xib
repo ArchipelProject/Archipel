@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11C71</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1617</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.23</string>
 		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1617</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -41,11 +41,8 @@
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys" id="0">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
-			<reference key="dict.values" ref="0"/>
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2949,6 +2946,118 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">networkController</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="416875448"/>
+					</object>
+					<int key="connectionID">115</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">imageViewModuleReady</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="993959355"/>
+					</object>
+					<int key="connectionID">118</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tableViewNetworks</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="484911195"/>
+					</object>
+					<int key="connectionID">329</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">networkDataViewPrototype</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1064896233"/>
+					</object>
+					<int key="connectionID">330</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">popoverXMLString</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="588778352"/>
+					</object>
+					<int key="connectionID">647</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldXMLString</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="511295237"/>
+					</object>
+					<int key="connectionID">668</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">defineXMLString:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="685171644"/>
+					</object>
+					<int key="connectionID">669</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonDefineXMLString</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="685171644"/>
+					</object>
+					<int key="connectionID">670</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="396097288"/>
+						<reference key="destination" ref="193292368"/>
+					</object>
+					<int key="connectionID">120</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="193292368"/>
+						<reference key="destination" ref="132394055"/>
+					</object>
+					<int key="connectionID">121</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="132394055"/>
+						<reference key="destination" ref="884205983"/>
+					</object>
+					<int key="connectionID">122</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="884205983"/>
+						<reference key="destination" ref="784852908"/>
+					</object>
+					<int key="connectionID">123</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="204776721"/>
+						<reference key="destination" ref="396097288"/>
+					</object>
+					<int key="connectionID">126</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="159830380"/>
+						<reference key="destination" ref="204776721"/>
+					</object>
+					<int key="connectionID">125</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldNetworkName</string>
 						<reference key="source" ref="416875448"/>
 						<reference key="destination" ref="396097288"/>
@@ -3077,75 +3186,123 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">networkController</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="416875448"/>
-					</object>
-					<int key="connectionID">115</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">imageViewModuleReady</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="993959355"/>
-					</object>
-					<int key="connectionID">118</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="396097288"/>
-						<reference key="destination" ref="193292368"/>
-					</object>
-					<int key="connectionID">120</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="193292368"/>
-						<reference key="destination" ref="132394055"/>
-					</object>
-					<int key="connectionID">121</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="132394055"/>
-						<reference key="destination" ref="884205983"/>
-					</object>
-					<int key="connectionID">122</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="884205983"/>
-						<reference key="destination" ref="784852908"/>
-					</object>
-					<int key="connectionID">123</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="159830380"/>
-						<reference key="destination" ref="204776721"/>
-					</object>
-					<int key="connectionID">125</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="204776721"/>
-						<reference key="destination" ref="396097288"/>
-					</object>
-					<int key="connectionID">126</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">buttonOK</string>
 						<reference key="source" ref="416875448"/>
 						<reference key="destination" ref="204776721"/>
 					</object>
 					<int key="connectionID">127</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tableViewRanges</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="120425070"/>
+					</object>
+					<int key="connectionID">340</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tableViewHosts</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="1032407584"/>
+					</object>
+					<int key="connectionID">352</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">closeWindow:</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="159830380"/>
+					</object>
+					<int key="connectionID">418</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainPopover</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="802441286"/>
+					</object>
+					<int key="connectionID">424</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">checkBoxAutostart</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="364659927"/>
+					</object>
+					<int key="connectionID">429</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">DHCPChange:</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="350876592"/>
+					</object>
+					<int key="connectionID">438</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">checkBoxBandwidthOutbound</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="240739361"/>
+					</object>
+					<int key="connectionID">590</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthOutboundAverage</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="669351867"/>
+					</object>
+					<int key="connectionID">594</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthOutboundBurst</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="649313860"/>
+					</object>
+					<int key="connectionID">595</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthOutboundPeak</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="653598119"/>
+					</object>
+					<int key="connectionID">596</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">outboundLimitChange:</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="240739361"/>
+					</object>
+					<int key="connectionID">599</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldErrorMessage</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="371363148"/>
+					</object>
+					<int key="connectionID">603</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">inboundLimitChange:</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="455167967"/>
+					</object>
+					<int key="connectionID">642</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">checkBoxBandwidthInbound</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="455167967"/>
+					</object>
+					<int key="connectionID">673</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3317,78 +3474,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableViewNetworks</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="484911195"/>
-					</object>
-					<int key="connectionID">329</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">networkDataViewPrototype</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1064896233"/>
-					</object>
-					<int key="connectionID">330</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableViewRanges</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="120425070"/>
-					</object>
-					<int key="connectionID">340</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">tableViewHosts</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="1032407584"/>
-					</object>
-					<int key="connectionID">352</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closeWindow:</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="159830380"/>
-					</object>
-					<int key="connectionID">418</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">contentViewController</string>
-						<reference key="source" ref="802441286"/>
-						<reference key="destination" ref="622002801"/>
-					</object>
-					<int key="connectionID">421</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">view</string>
-						<reference key="source" ref="622002801"/>
-						<reference key="destination" ref="101047790"/>
-					</object>
-					<int key="connectionID">423</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainPopover</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="802441286"/>
-					</object>
-					<int key="connectionID">424</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">checkBoxAutostart</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="364659927"/>
-					</object>
-					<int key="connectionID">429</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">labelAutostart</string>
 						<reference key="source" ref="1064896233"/>
 						<reference key="destination" ref="516412161"/>
@@ -3402,86 +3487,6 @@
 						<reference key="destination" ref="121981814"/>
 					</object>
 					<int key="connectionID">435</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">DHCPChange:</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="350876592"/>
-					</object>
-					<int key="connectionID">438</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">checkBoxBandwidthOutbound</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="240739361"/>
-					</object>
-					<int key="connectionID">590</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldBandwidthOutboundAverage</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="669351867"/>
-					</object>
-					<int key="connectionID">594</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldBandwidthOutboundBurst</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="649313860"/>
-					</object>
-					<int key="connectionID">595</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldBandwidthOutboundPeak</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="653598119"/>
-					</object>
-					<int key="connectionID">596</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">outboundLimitChange:</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="240739361"/>
-					</object>
-					<int key="connectionID">599</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldErrorMessage</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="371363148"/>
-					</object>
-					<int key="connectionID">603</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="669351867"/>
-						<reference key="destination" ref="649313860"/>
-					</object>
-					<int key="connectionID">608</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="649313860"/>
-						<reference key="destination" ref="653598119"/>
-					</object>
-					<int key="connectionID">609</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="653598119"/>
-						<reference key="destination" ref="396097288"/>
-					</object>
-					<int key="connectionID">610</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3517,11 +3522,43 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="554134887"/>
-						<reference key="destination" ref="794798432"/>
+						<string key="label">view</string>
+						<reference key="source" ref="622002801"/>
+						<reference key="destination" ref="101047790"/>
 					</object>
-					<int key="connectionID">640</int>
+					<int key="connectionID">423</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">contentViewController</string>
+						<reference key="source" ref="802441286"/>
+						<reference key="destination" ref="622002801"/>
+					</object>
+					<int key="connectionID">421</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="669351867"/>
+						<reference key="destination" ref="649313860"/>
+					</object>
+					<int key="connectionID">608</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="649313860"/>
+						<reference key="destination" ref="653598119"/>
+					</object>
+					<int key="connectionID">609</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="653598119"/>
+						<reference key="destination" ref="396097288"/>
+					</object>
+					<int key="connectionID">610</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3532,12 +3569,12 @@
 					<int key="connectionID">641</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">inboundLimitChange:</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="455167967"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="554134887"/>
+						<reference key="destination" ref="794798432"/>
 					</object>
-					<int key="connectionID">642</int>
+					<int key="connectionID">640</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3549,35 +3586,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="874469162"/>
+						<reference key="destination" ref="647956328"/>
+					</object>
+					<int key="connectionID">665</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">contentViewController</string>
 						<reference key="source" ref="588778352"/>
 						<reference key="destination" ref="874469162"/>
 					</object>
 					<int key="connectionID">646</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">popoverXMLString</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="588778352"/>
-					</object>
-					<int key="connectionID">647</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="294896998"/>
-						<reference key="destination" ref="685171644"/>
-					</object>
-					<int key="connectionID">659</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="685171644"/>
-						<reference key="destination" ref="396097288"/>
-					</object>
-					<int key="connectionID">660</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -3589,43 +3610,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">view</string>
-						<reference key="source" ref="874469162"/>
-						<reference key="destination" ref="647956328"/>
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="685171644"/>
+						<reference key="destination" ref="396097288"/>
 					</object>
-					<int key="connectionID">665</int>
+					<int key="connectionID">660</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldXMLString</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="511295237"/>
-					</object>
-					<int key="connectionID">668</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">defineXMLString:</string>
-						<reference key="source" ref="1001"/>
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="294896998"/>
 						<reference key="destination" ref="685171644"/>
 					</object>
-					<int key="connectionID">669</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonDefineXMLString</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="685171644"/>
-					</object>
-					<int key="connectionID">670</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">checkBoxBandwidthInbound</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="455167967"/>
-					</object>
-					<int key="connectionID">673</int>
+					<int key="connectionID">659</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3633,7 +3630,9 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBObjectRecord">
 						<int key="objectID">0</int>
-						<reference key="object" ref="0"/>
+						<object class="NSArray" key="object" id="0">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
 						<reference key="children" ref="1000"/>
 						<nil key="parent"/>
 					</object>
@@ -5992,7 +5991,6 @@
 							<string>networkController</string>
 							<string>networkDataViewPrototype</string>
 							<string>popoverXMLString</string>
-							<string>scrollViewNetworks</string>
 							<string>tableViewNetworks</string>
 							<string>viewTableContainer</string>
 						</object>
@@ -6005,7 +6003,6 @@
 							<string>TNNetworkEditionController</string>
 							<string>TNNetworkDataView</string>
 							<string>NSPopover</string>
-							<string>TNUIKitScrollView</string>
 							<string>NSTableView</string>
 							<string>NSView</string>
 						</object>
@@ -6021,7 +6018,6 @@
 							<string>networkController</string>
 							<string>networkDataViewPrototype</string>
 							<string>popoverXMLString</string>
-							<string>scrollViewNetworks</string>
 							<string>tableViewNetworks</string>
 							<string>viewTableContainer</string>
 						</object>
@@ -6054,10 +6050,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">popoverXMLString</string>
 								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">scrollViewNetworks</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableViewNetworks</string>
