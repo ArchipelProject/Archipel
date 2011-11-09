@@ -103,6 +103,7 @@ var TNModuleStatusImageReady,
     CPToolbar                       _toolbar                    @accessors(property=toolbar);
     CPToolbarItem                   _toolbarItem                @accessors(property=toolbarItem);
     CPView                          _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
+    float                           _sendDelay                  @accessors(property=sendDelay);
     id                              _entity                     @accessors(property=entity);
     id                              _moduleType                 @accessors(property=moduleType);
     int                             _animationDuration          @accessors(property=animationDuration);
@@ -112,8 +113,9 @@ var TNModuleStatusImageReady,
 
     BOOL                            _pubSubPermissionRegistred;
     BOOL                            _registredToPermissionCenter;
-    CPArray                         _registredSelectors;
+    CPDictionary                    _registredSelectors;
     id                              _pubSubHandlerId;
+    CPDictionary                    _sendTimers;
 }
 
 
@@ -133,7 +135,9 @@ var TNModuleStatusImageReady,
 {
     _isActive               = NO;
     _isVisible              = NO;
-    _registredSelectors     = [CPArray array];
+    _registredSelectors     = [CPDictionary dictionary];
+    _sendTimers             = [CPDictionary dictionary];
+    _sendDelay              = 0.1;
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
@@ -192,9 +196,6 @@ var TNModuleStatusImageReady,
     if (!_isActive)
         [self willLoad];
 
-    if (!_isVisible && _isCurrentSelectedIndex)
-        [self willShow];
-
     [self _hidePermissionDeniedView];
 }
 
@@ -243,8 +244,6 @@ var TNModuleStatusImageReady,
         [self _managePermissionGranted];
     else
         [self _managePermissionDenied];
-
-    [self permissionsChanged];
 }
 
 
@@ -442,10 +441,17 @@ var TNModuleStatusImageReady,
     [[CPNotificationCenter defaultCenter] removeObserver:self];
 
     // unregister all selectors
-    for (var i = 0; i < [_registredSelectors count]; i++)
+    for (var i = 0; i < [[_registredSelectors allValues] count]; i++)
     {
-        CPLog.trace("deleting SELECTOR in  " + _label + " :" + [_registredSelectors objectAtIndex:i]);
-        [[[TNStropheIMClient defaultClient] connection] deleteRegisteredSelector:[_registredSelectors objectAtIndex:i]];
+        CPLog.trace("deleting SELECTOR in  " + _label + " :" + [[_registredSelectors allValues] objectAtIndex:i]);
+        [[[TNStropheIMClient defaultClient] connection] deleteRegisteredSelector:[[_registredSelectors allValues] objectAtIndex:i]];
+    }
+
+    // flush all timers
+    for (var i = 0; i < [[_sendTimers allValues] count]; i++)
+    {
+        CPLog.trace("deleting Timer in  " + _label + " :" + [[_sendTimers allValues] objectAtIndex:i]);
+        [[[_sendTimers allValues] objectAtIndex:i] invalidate];
     }
 
     // flush any outgoing stanza
@@ -467,6 +473,11 @@ var TNModuleStatusImageReady,
 */
 - (BOOL)willShow
 {
+    if (_isVisible)
+        return NO;
+
+    _isVisible = YES;
+
     if (![self isCurrentEntityGranted])
         return NO;
 
@@ -480,7 +491,6 @@ var TNModuleStatusImageReady,
         [anim setDuration:_animationDuration];
         [anim startAnimation];
     }
-    _isVisible = YES;
 
     return YES;
 }
@@ -582,23 +592,47 @@ var TNModuleStatusImageReady,
 /*! this message simplify the sending and the post management of TNStropheStanza to the contact
     @param aStanza: TNStropheStanza to send to the contact
     @param aSelector: Selector to perform when contact send answer
+    @param anObject: the target object
 */
-- (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
+- (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector ofObject:(id)anObject
 {
-    var selectorID = [_entity sendStanza:aStanza andRegisterSelector:aSelector ofObject:self];
-    [_registredSelectors addObject:selectorID];
+    var key = [CPString stringWithFormat:@"%@-%@", anObject, aSelector];
+    if ([_registredSelectors containsKey:key])
+    {
+        CPLog.info("dereferencing old registration for selector " + aSelector);
+        [[[TNStropheIMClient defaultClient] connection] deleteRegisteredSelector:[_registredSelectors objectForKey:key]];
+        [_registredSelectors removeObjectForKey:key];
+    }
+    var info = {"stanza": aStanza, "selector": aSelector, "object": anObject, "key": key},
+        timer = [CPTimer timerWithTimeInterval:_sendDelay target:self selector:@selector(performSendStanza:) userInfo:info repeats:NO];
+
+    if ([_sendTimers containsKey:key])
+    {
+        [[_sendTimers objectForKey:key] invalidate];
+        [_sendTimers removeObjectForKey:key];
+    }
+
+    [_sendTimers setObject:timer forKey:key];
+
+    [[CPRunLoop currentRunLoop] addTimer:timer forMode:CPDefaultRunLoopMode];
+}
+
+/*! @ignore */
+- (void)performSendStanza:(CPTimer)aTimer
+{
+    var info = [aTimer userInfo],
+        selectorID = [_entity sendStanza:info["stanza"] andRegisterSelector:info["selector"] ofObject:info["object"] handlerDelegate:self];
+    [_registredSelectors setObject:selectorID forKey:info["key"]];
+    [_sendTimers removeObjectForKey:info["key"]];
 }
 
 /*! this message simplify the sending and the post management of TNStropheStanza to the contact
-    if also allow to define the XMPP uid of the stanza. This is useless in the most of case.
     @param aStanza: TNStropheStanza to send to the contact
     @param aSelector: Selector to perform when contact send answer
-    @param anUid: CPString containing the XMPP uid to use.
 */
-- (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector withSpecificID:(CPString)anUid
+- (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
 {
-    var selectorID = [_entity sendStanza:aStanza andRegisterSelector:aSelector ofObject:self withSpecificID:anUid];
-    [_registredSelectors addObject:selectorID];
+    [self sendStanza:aStanza andRegisterSelector:aSelector ofObject:self];
 }
 
 /*! This message allow to display an error when stanza type is error
@@ -647,7 +681,21 @@ var TNModuleStatusImageReady,
     {
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
+        [self permissionsChanged];
     }
+}
+
+/*! Delegate of TNStropheConnection
+*/
+- (void)stropheConnection:(TNStropheConnection)aConnection performedHandlerId:(id)aHandler
+{
+    if (!aHandler)
+        return;
+
+    keys = [_registredSelectors allKeysForObject:aHandler];
+    for (var i = 0; i < [keys count]; i++)
+        [_registredSelectors removeObjectForKey:[keys objectAtIndex:i]];
+    aHandler = nil;
 }
 
 
