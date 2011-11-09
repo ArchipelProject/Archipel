@@ -285,7 +285,9 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         return;
 
     CPLog.info("recovering last selected tab index " + oldSelectedIndex);
-    [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
+
+    if ([_mainTabView selectedTabViewIndex] != oldSelectedIndex)
+        [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
 
