@@ -22,8 +22,6 @@
 import types
 import xmpp
 
-from archipelcore.utils import log
-
 
 XMPP_PUBSUB_VAR_TITLE                                       = "pubsub#title"
 XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION                        = "pubsub#deliver_notifications"
@@ -57,6 +55,13 @@ XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_ON_SUB_PRESENCE    = "on_sub_and_presen
 XMPP_PUBSUB_VAR_ITEM_REPLY_OWNER                            = "owner"
 XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER                        = "publisher"
 
+XMPP_PUBSUB_AFFILIATION_OWNER                              = "owner"
+XMPP_PUBSUB_AFFILIATION_PUBLISHER                          = "publisher"
+XMPP_PUBSUB_AFFILIATION_PUBLISHERONLY                      = "publisher-only"
+XMPP_PUBSUB_AFFILIATION_MEMBER                             = "member"
+XMPP_PUBSUB_AFFILIATION_NONE                               = "none"
+XMPP_PUBSUB_AFFILIATION_OUTCAST                            = "outcast"
+
 
 class TNPubSubNode:
 
@@ -75,6 +80,7 @@ class TNPubSubNode:
         self.nodename       = nodename
         self.recovered      = False
         self.content        = None
+        self.affiliations   = {}
 
 
     ### Node management
@@ -88,12 +94,12 @@ class TNPubSubNode:
         @return: True in case of success
         """
         try:
+            self.retrieve_items(wait=wait)
             return self.retrieve_items(wait=wait)
         except Exception as ex:
-            log.error("PUBSUB: can't get node %s : %s" % (self.nodename, str(ex)))
             return False
 
-    def retrieve_items(self, wait=False):
+    def retrieve_items(self, callback=None, wait=False):
         """
         Retrieve or update the content of the node.
         @type wait: Boolean
@@ -104,25 +110,25 @@ class TNPubSubNode:
         iq           = xmpp.Iq(typ="get", to=self.pubsubserver)
         iq_pubsub    = iq.addChild(name='pubsub', namespace="http://jabber.org/protocol/pubsub")
         iq_pubsub.addChild(name="items", attrs={"node": self.nodename})
+
+        def _did_retrieve_items(conn, resp, callback=None):
+            ret = False
+            if resp.getType() == "result":
+                self.content = resp.getTag("pubsub").getTag("items").getTags("item")
+                self.recovered = True
+                ret = True
+            if callback:
+                callback(resp)
+            return ret
+
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
-            return self._did_retrieve_items(None, resp)
+            return _did_retrieve_items(None, resp, callback)
         else:
-            self.xmppclient.SendAndCallForResponse(iq, func=self._did_retrieve_items)
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_retrieve_items, args={"callback": callback})
             return True
 
-    def _did_retrieve_items(self, conn, resp):
-        """
-        Callback triggered by retrieve_items.
-        """
-        if resp.getType() == "result":
-            self.content = resp.getTag("pubsub").getTag("items").getTags("item")
-            self.recovered = True
-            return True
-        else:
-            return False
-
-    def create(self, wait=False):
+    def create(self, callback=None, wait=False):
         """
         Create node on server if not exists.
         @type wait: Boolean
@@ -130,33 +136,29 @@ class TNPubSubNode:
         @rtype: Boolean
         @return: True in case of success
         """
-        log.info("PUBSUB: trying to create pubsub node %s" % self.nodename)
         if self.recovered:
             raise Exception("PUBSUB: can't create. Node %s already exists." % self.nodename)
+
         iq = xmpp.Iq(typ="set", to=self.pubsubserver)
         iq.addChild(name="pubsub", namespace=xmpp.protocol.NS_PUBSUB).addChild(name="create", attrs={"node": self.nodename})
+
+        def _did_create(conn, resp, callback=None, wait=False):
+            ret = False
+            if resp.getType() == "result":
+                self.recover(wait=wait)
+                ret = True
+            if callback:
+                callback(resp)
+            return ret
+
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
-            return self._did_create(None, resp)
+            return _did_create(None, resp, callback, wait)
         else:
-            self.xmppclient.SendAndCallForResponse(iq, func=self._did_create)
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_create, args={"callback": callback, "wait": wait})
             return True
 
-    def _did_create(self, conn, resp):
-        """
-        Called after pubsub creation.
-        """
-        try:
-            if resp.getType() == "result":
-                log.info("PUBSUB: pubsub node %s has been created." % self.nodename)
-                return self.recover(wait=True)
-            else:
-                log.error("PUBSUB: can't create pubsub: %s" % str(resp))
-                return False
-        except Exception as ex:
-            log.error("PUBSUB: unable to create pubsub node: %s" % str(ex))
-
-    def delete(self, wait=False):
+    def delete(self, callback=None, wait=False):
         """
         Delete the node from server if exists.
         @type wait: Boolean
@@ -168,28 +170,23 @@ class TNPubSubNode:
             raise Exception("PUBSUB: Can't delete. Node %s doesn't exists." % self.nodename)
         iq = xmpp.Iq(typ="set", to=self.pubsubserver)
         iq.addChild(name="pubsub", namespace=xmpp.protocol.NS_PUBSUB + "#owner").addChild(name="delete", attrs={"node": self.nodename})
+
+        def _did_delete(conn, resp, callback):
+            ret = False
+            if resp.getType() == "result":
+                ret = True
+            if callback:
+                callback(resp)
+            return ret
+
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
-            return self._did_delete(None, resp)
+            return _did_delete(None, resp, callback)
         else:
-            self.xmppclient.SendAndCallForResponse(iq, func=self._did_delete)
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_delete, args={"callback": callback})
             return True
 
-    def _did_delete(self, conn, resp):
-        """
-        Called after pubsub deletion.
-        """
-        try:
-            if resp.getType() == "result":
-                log.info("PUBSUB: pubsub node %s has been deleted." % self.nodename)
-                return True
-            else:
-                log.error("PUBSUB: can't delete pubsub: %s" % str(resp))
-                return False
-        except Exception as ex:
-            log.error("PUBSUB: unable to delete pubsub node: %s" % str(ex))
-
-    def configure(self, options, wait=False):
+    def configure(self, options, callback=None, wait=False):
         """
         Configure the node.
         @type options: dict
@@ -201,10 +198,10 @@ class TNPubSubNode:
         """
         if not self.recovered:
             raise Exception("PUBSUB: can't configure. Node %s doesn't exists." % self.nodename)
-        iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
-        pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB + "#owner")
-        configure   = pubsub.addChild("configure", attrs={"node": self.nodename})
-        x           = configure.addChild("x", namespace=xmpp.protocol.NS_DATA, attrs={"type": "submit"})
+        iq = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB + "#owner")
+        configure = pubsub.addChild("configure", attrs={"node": self.nodename})
+        x = configure.addChild("x", namespace=xmpp.protocol.NS_DATA, attrs={"type": "submit"})
         x.addChild("field", attrs={"var": "FORM_TYPE", "type": "hidden"}).addChild("value").setData("http://jabber.org/protocol/pubsub#node_config")
         for key, value in options.items():
             field = x.addChild("field", attrs={"var": key})
@@ -213,26 +210,21 @@ class TNPubSubNode:
                     field.addChild("value").setData(v)
             else:
                 field.addChild("value").setData(str(value))
+
+        def _did_configure(conn, resp, callback):
+            ret = False
+            if resp.getType() == "result":
+                ret = True
+            if callback:
+                callback(resp)
+            return ret
+
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
-            return self._did_configure(None, resp)
+            return _did_configure(None, resp, callback)
         else:
-            self.xmppclient.SendAndCallForResponse(iq, func=self._did_configure)
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_configure, args={"callback": callback})
             return True
-
-    def _did_configure(self, conn, resp):
-        """
-        Called when node has been configured.
-        """
-        try:
-            if resp.getType() == "result":
-                log.info("PUBSUB: pubsub node %s has been configured." % self.nodename)
-                return True
-            else:
-                log.error("PUBSUB: can't configure pubsub: %s" % str(resp))
-                return False
-        except Exception as ex:
-            log.error("PUBSUB: unable to configure pubsub node: %s" % str(ex))
 
 
     ### Item management
@@ -272,28 +264,23 @@ class TNPubSubNode:
         publish     = pubsub.addChild("publish", attrs={"node": self.nodename})
         item        = publish.addChild("item")
         item.addChild(node=itemcontentnode)
+
+        def _did_publish_item(conn, resp, callback, item):
+            ret = False
+            if resp.getType() == "result":
+                item.setAttr("id", resp.getTag("pubsub").getTag("publish").getTag("item").getAttr("id"))
+                self.content.append(item)
+                ret = True
+            if callback:
+                return callback(resp)
+            return ret
+
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
-            return self.did_publish_item(None, resp, callback, item)
+            return _did_publish_item(None, resp, callback, item)
         else:
-            self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback, "item": item})
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_publish_item, args={"callback": callback, "item": item})
             return True
-
-    def did_publish_item(self, conn, response, callback, item):
-        """
-        Triggered on response.
-        """
-        log.debug("PUBSUB: item published is node %s" % self.nodename)
-        if response.getType() == "result":
-            item.setAttr("id", response.getTag("pubsub").getTag("publish").getTag("item").getAttr("id"))
-            self.content.append(item)
-            ret = True
-        else:
-            log.error("PUBSUB: cannot publish item: %s" % response)
-            ret = False
-        if callback:
-            return callback(response)
-        return ret
 
 
     def remove_item(self, item_id, callback=None, user_info=None, wait=False):
@@ -306,33 +293,33 @@ class TNPubSubNode:
         @type user_info: Object
         @param user_info: random info to pass to the callback
         """
-        iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
-        pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
-        retract     = pubsub.addChild("retract", attrs={"node": self.nodename})
-        item        = retract.addChild("item", attrs={"id": item_id})
+        iq = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        retract = pubsub.addChild("retract", attrs={"node": self.nodename})
+        item = retract.addChild("item", attrs={"id": item_id})
+
         for item in self.content:
             if item.getAttr("id") == item_id:
                 self.content.remove(item)
                 break
+
+        def _did_remove_item(conn, resp, callback, user_info):
+            ret = False
+            if resp.getType() == "result":
+                ret = True
+            if callback:
+                return callback(resp, user_info)
+            return ret
+
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
-            return self.did_remove_item(None, resp, callback, user_info)
+            return _did_remove_item(None, resp, callback, user_info)
         else:
-            self.xmppclient.SendAndCallForResponse(iq, func=self.did_remove_item, args={"callback": callback, "user_info": user_info})
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_remove_item, args={"callback": callback, "user_info": user_info})
 
-    def did_remove_item(self, conn, response, callback, user_info):
-        """
-        Triggered on response.
-        """
-        if response.getType() == "result":
-            log.debug("PUBSUB: retract done. Answer is: %s" % str(response))
-            ret = True
-        else:
-            log.error("PUBSUB: cannot retract item: %s" % response)
-            ret = False
-        if callback:
-            return callback(response, user_info)
-        return ret
+
+
+    ## Subscription management
 
     def subscribe(self, jid, event_callback):
         """
@@ -354,12 +341,9 @@ class TNPubSubNode:
         """
         Trigger the callback for events.
         """
-        try:
-            node = event.getTag("event").getTag("items").getAttr("node")
-            if node == self.nodename and self.subscriber_callback and event.getTo() == self.subscriber_jid:
-                self.subscriber_callback(event)
-        except Exception as ex:
-            log.error("Error in on_pubsub_event: %s" % str(ex))
+        node = event.getTag("event").getTag("items").getAttr("node")
+        if node == self.nodename and self.subscriber_callback and event.getTo() == self.subscriber_jid:
+            self.subscriber_callback(event)
 
     def unsubscribe(self, jid):
         """
@@ -373,5 +357,70 @@ class TNPubSubNode:
         pubsub                      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
         pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid})
         self.xmppclient.UnregisterHandler('message', self.on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
-        log.info(str(iq))
         self.xmppclient.send(iq)
+
+
+    ## Affilication management
+
+    def fetch_affiliations(self, callback=None, wait=False):
+        """
+        fetch the affiliations for the node
+        @type callback: Function
+        @param callback: the callback function
+        @type wait: Boolean
+        @param wait: if true, wait for answer
+        """
+        iq = xmpp.Node("iq", attrs={"type": "get", "to": self.pubsubserver})
+        pubsubNode = iq.addChild("pubsub", namespace="http://jabber.org/protocol/pubsub#owner")
+        affNode = pubsubNode.addChild("affiliations", attrs={"node": self.nodename})
+
+        def _did_fetch_affiliations(conn, resp, callback):
+            ret = False
+            if resp.getType() == "result":
+                self.affiliations = {}
+                for affiliations in resp.getTag("pubsub").getTag("affiliations").getTags("affiliation"):
+                    self.affiliations[affiliations.getAttr("jid")] = affiliations.getAttr("affiliation")
+                ret = True
+            if callback:
+                return callback(resp)
+            return ret
+
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return _did_fetch_affiliations(None, resp, callback)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_fetch_affiliations, args={"callback": callback})
+            return True
+
+    def set_affiliation(self, jid, affiliation, callback=None, wait=False):
+        """
+        set an affiliation for the node
+        @type jid: xmpp.JID
+        @param jid: the jid to change affiliation
+        @type affiliation: String
+        @param affiliation: the affiliation
+        @type callback: Function
+        @param callback: the callback function
+        @type wait: Boolean
+        @param wait: if true, wait for answer
+        """
+        iq = xmpp.Node("iq", attrs={"type": "set", "to": self.pubsubserver})
+        pubsubNode = iq.addChild("pubsub", namespace="http://jabber.org/protocol/pubsub#owner")
+        affNode = pubsubNode.addChild("affiliations", attrs={"node": self.nodename})
+        affNode.addChild("affiliation", attrs={"jid": jid.getStripped(), "affiliation": affiliation})
+
+        def _did_set_affiliations(conn, resp, callback, wait):
+            ret = False
+            if resp.getType() == "result":
+                self.fetch_affiliations(wait=wait)
+                ret = True
+            if callback:
+                return callback(resp)
+            return ret
+
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return _did_set_affiliations(None, resp, callback, wait)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_set_affiliations, args={"callback": callback, "wait": wait})
+            return True
