@@ -44,7 +44,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     @outlet CPTextField labelCompany;
     @outlet CPTextField labelHypervisor;
     @outlet CPTextField labelLocality;
-    @outlet CPTextField labelNickName;
+    @outlet CPTextField labelName;
     @outlet CPTextField labelServer;
     @outlet CPTextField labelStatus;
 }
@@ -64,11 +64,11 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [fieldCompany setHidden:shouldHide];
     [fieldLocality setHidden:shouldHide];
     [fieldStatus setHidden:shouldHide];
-    [fieldNickName setHidden:shouldHide];
+    [fieldName setHidden:shouldHide];
     [labelCompany setHidden:shouldHide];
     [labelLocality setHidden:shouldHide];
     [labelStatus setHidden:shouldHide];
-    [labelNickName setHidden:shouldHide];
+    [labelName setHidden:shouldHide];
 }
 
 #pragma mark -
@@ -95,7 +95,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     }
     else
     {
-        [fieldName setStringValue:[aContact nickname] || @"This machine is not in your roster. Double click to add it."];
+        [fieldNickName setStringValue:[aContact nickname] || @"This machine is not in your roster. Double click to add it."];
         [imageAvatar setImage:TNVirtualMachineDataViewAvatarUnknown];
         [self shouldHideLabels:YES];
     }
@@ -126,7 +126,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
         labelCompany = [aCoder decodeObjectForKey:@"labelCompany"];
         labelHypervisor = [aCoder decodeObjectForKey:@"labelHypervisor"];
         labelLocality = [aCoder decodeObjectForKey:@"labelLocality"];
-        labelNickName = [aCoder decodeObjectForKey:@"labelNickName"];
+        labelName = [aCoder decodeObjectForKey:@"labelName"];
         labelServer = [aCoder decodeObjectForKey:@"labelServer"];
         labelStatus = [aCoder decodeObjectForKey:@"labelStatus"];
 
@@ -154,7 +154,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [aCoder encodeObject:labelCompany forKey:@"labelCompany"];
     [aCoder encodeObject:labelHypervisor forKey:@"labelHypervisor"];
     [aCoder encodeObject:labelLocality forKey:@"labelLocality"];
-    [aCoder encodeObject:labelNickName forKey:@"labelNickName"];
+    [aCoder encodeObject:labelName forKey:@"labelName"];
     [aCoder encodeObject:labelServer forKey:@"labelServer"];
     [aCoder encodeObject:labelStatus forKey:@"labelStatus"];
     [aCoder encodeObject:imageStatusIcon forKey:@"imageStatusIcon"];

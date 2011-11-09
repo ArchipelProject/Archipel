@@ -875,6 +875,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             }
         }
 
+        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]]]
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
         [self setModuleStatus:TNArchipelModuleStatusReady];
