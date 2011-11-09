@@ -825,7 +825,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
     [self setModuleStatus:TNArchipelModuleStatusWaiting];
-    [self sendUniqueStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorRoster:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorRoster:)];
 }
 
 /*! compute the answer of the hypervisor about its roster
