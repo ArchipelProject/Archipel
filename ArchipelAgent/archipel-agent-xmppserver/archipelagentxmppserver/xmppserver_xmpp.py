@@ -236,10 +236,3 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         Not supported in XMPP API
         """
         pass
-
-    def iq_users_list(self, iq):
-        """
-        We overrides this method here because in XMPP
-        we fetch the list of users using a asynchrnoous way
-        """
-        pass

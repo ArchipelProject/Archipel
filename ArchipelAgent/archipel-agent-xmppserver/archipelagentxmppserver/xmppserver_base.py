@@ -435,6 +435,8 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
             reply = iq.buildReply("result")
             nodes = []
             users = self.users_list()
+            if not users:
+                return reply
             for user in users:
                 nodes.append(xmpp.Node("user", attrs=user))
             reply.setQueryPayload(nodes)
