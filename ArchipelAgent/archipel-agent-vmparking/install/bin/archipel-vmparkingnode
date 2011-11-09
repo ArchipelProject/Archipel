@@ -74,9 +74,9 @@ def set_affiliation(xmppclient, account, affiliation, pubsubserver):
     check_valid_jid(account, bare=True)
     pubSubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING)
     if pubSubNode.set_affiliation(account, affiliation, wait=True):
-        success("JID %s has been inserted as publisher" % account)
+        success("JID %s affiliation is now %s" % (account, affiliation))
     else:
-        error("Unable to add set affiliation to account %s" % account)
+        error("Unable to set affiliation %s to account %s" % (affiliation, account))
 
 
 
@@ -122,15 +122,11 @@ if __name__ == "__main__":
 
     if options.list:
         list_affiliations(xmppclient, options.pubsubserver)
-
     elif options.auth:
         set_affiliation(xmppclient, xmpp.JID(options.auth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_PUBLISHER, options.pubsubserver)
-
     elif options.unauth:
         set_affiliation(xmppclient, xmpp.JID(options.unauth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_NONE, options.pubsubserver)
-
     elif options.create:
         create(xmppclient, options.pubsubserver)
-
     elif options.delete:
         delete(xmppclient, options.pubsubserver)
