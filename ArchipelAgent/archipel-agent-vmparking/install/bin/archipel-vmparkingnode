@@ -22,132 +22,62 @@ import sys
 from optparse import OptionParser
 import xmpp
 import archipelcore.pubsub
+from archipelcore.scriptutils import *
 
-def connect(jid, password):
-    xmppclient = xmpp.Client(jid.getDomain(), debug=[])
-    if not xmppclient.connect():
-        print "\033[31mERROR: cannot connect to the server. exiting\033[0m"
-        sys.exit(0)
-    if xmppclient.auth(jid.getNode(), password, "configurator") == None:
-        print "\033[31mERROR: bad authentication. exiting\033[0m"
-        sys.exit(0)
-    return xmppclient
 
-def perform(jid, password, pubsubserver, action):
-    if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
-    xmppclient = connect(jid, password)
-    #creating/getting the roles pubsub node
-    parkNodeName    = "/archipel/vmparking"
-    pubSubNodePark  = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, parkNodeName)
-    if action:
-        if not pubSubNodePark.recover(wait=True):
-            pubSubNodePark.create(wait=True)
-        else:
-            print "\033[31mERROR: The pubsub node %s already exist\033[0m" % parkNodeName
-            return
-        pubSubNodePark.configure({
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 99,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 1,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
-        }, wait=True)
-        print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % parkNodeName
+NODENAME_VMPARKING = "/archipel/vmparking"
+
+def create(xmppclient, pubsubserver):
+    """
+    Create the pubsub node
+    """
+    config = {
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 99,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
+    }
+    create_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING, config)
+
+
+def delete(xmppclient, pubsubserver):
+    """
+    Delete the pubsub node
+    """
+    delete_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING)
+
+
+def list_affiliations(xmppclient, pubsubserver):
+    """
+    List the affiliatons
+    """
+    pubSubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING)
+    if pubSubNode.fetch_affiliations(wait=True):
+        if len(pubSubNode.affiliations) == 0: print "Parking authorized accounts"
+        for jid, aff in pubSubNode.affiliations.items():
+            print " - %s (%s)" % (jid, aff)
     else:
-        if pubSubNodePark.recover(wait=True):
-            pubSubNodePark.delete(wait=True)
-            print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % parkNodeName
-        else:
-            print "\033[31mERROR: The pubsub node %s doesn't exist\033[0m" % parkNodeName
-            return
+        error("Unable to add set affiliation to node %s" % NODENAME_VMPARKING)
 
 
-def list_jid(jid, password, pubsubserver=None):
-    if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
-    xmppclient = connect(jid, password)
-    nodeName = "/archipel/vmparking"
-    pubSubNode = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, nodeName)
-    if not pubSubNode.recover(wait=True):
-        print "\033[31mERROR: The node %s doesn't exist. create it first\033[0m" % nodeName
-        sys.exit(0)
-
-    authNode = xmpp.Node("iq", attrs={"type": "get", "to": pubsubserver})
-    pubsubNode = authNode.addChild("pubsub", namespace="http://jabber.org/protocol/pubsub#owner")
-    affNode = pubsubNode.addChild("affiliations", attrs={"node": nodeName})
-    resp = xmppclient.SendAndWaitForResponse(authNode)
-    if resp.getType() == "result":
-        affs = resp.getTag("pubsub").getTag("affiliations").getTags("affiliation")
-        print "Parking authorized accounts"
-        if len(affs) == 0:
-            print "No affiliations"
-        for aff in affs:
-            print " - %s (%s)" % (aff.getAttr("jid"), aff.getAttr("affiliation"))
+def set_affiliation(xmppclient, account, affiliation, pubsubserver):
+    """
+    Set the affiliation of an account
+    @type jid: xmpp.JID
+    @param jid: what
+    """
+    check_valid_jid(account, bare=True)
+    pubSubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING)
+    if pubSubNode.set_affiliation(account, affiliation, wait=True):
+        success("JID %s has been inserted as publisher" % account)
     else:
-        print "\033[31mERROR: Unable to add set affiliation to account %s\033[0m" % str(account)
+        error("Unable to add set affiliation to account %s" % account)
 
-def authorize_jid(jid, password, account, pubsubserver=None):
-    if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
-
-    if not account.getNode() or not account.getDomain():
-        print "\033[31mERROR: JID as to be in form user@domain\033[0m"
-        sys.exit(1)
-
-    if account.getResource():
-        print "\033[31mERROR: JID must not has a resource set\033[0m"
-        sys.exit(1)
-
-    xmppclient = connect(jid, password)
-    nodeName = "/archipel/vmparking"
-    pubSubNode = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, nodeName)
-    if not pubSubNode.recover(wait=True):
-        print "\033[31mERROR: The node %s doesn't exist. create it first\033[0m" % nodeName
-        sys.exit(0)
-
-    authNode = xmpp.Node("iq", attrs={"type": "set", "to": pubsubserver})
-    pubsubNode = authNode.addChild("pubsub", namespace="http://jabber.org/protocol/pubsub#owner")
-    affNode = pubsubNode.addChild("affiliations", attrs={"node": nodeName})
-    affNode.addChild("affiliation", attrs={"jid": account.getStripped(), "affiliation": "publisher"})
-
-    resp = xmppclient.SendAndWaitForResponse(authNode)
-
-    if resp.getType():
-        print "\033[32mSUCCESS: JID %s has been inserted as publisher.\033[0m" % str(account)
-    else:
-        print "\033[31mERROR: Unable to add set affiliation to account %s\033[0m" % str(account)
-
-def unauthorize_jid(jid, password, account, pubsubserver=None):
-    if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
-
-    if not account.getNode() or not account.getDomain():
-        print "\033[31mERROR: JID as to be in form user@domain\033[0m"
-        sys.exit(1)
-
-    if account.getResource():
-        print "\033[31mERROR: JID must not has a resource set\033[0m"
-        sys.exit(1)
-
-    xmppclient = connect(jid, password)
-    nodeName = "/archipel/vmparking"
-    pubSubNode = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, nodeName)
-    if not pubSubNode.recover(wait=True):
-        print "\033[31mERROR: The node %s doesn't exist. create it first\033[0m" % nodeName
-        sys.exit(0)
-
-    authNode = xmpp.Node("iq", attrs={"type": "set", "to": pubsubserver})
-    pubsubNode = authNode.addChild("pubsub", namespace="http://jabber.org/protocol/pubsub#owner")
-    affNode = pubsubNode.addChild("affiliations", attrs={"node": nodeName})
-    affNode.addChild("affiliation", attrs={"jid": account.getStripped(), "affiliation": "none"})
-
-    resp = xmppclient.SendAndWaitForResponse(authNode)
-
-    if resp.getType():
-        print "\033[32mSUCCESS: JID %s has been removed.\033[0m" % str(account)
-    else:
-        print "\033[31mERROR: Unable to remove affiliation of account %s\033[0m" % str(account)
 
 
 if __name__ == "__main__":
@@ -155,52 +85,52 @@ if __name__ == "__main__":
     parser.add_option("-j", "--jid",
                         dest="jid",
                         help="set the JID to use",
-                        metavar="JID")
+                        metavar="user@domain")
     parser.add_option("-p", "--password",
                         dest="password",
                         help="set the password associated to the JID",
-                        metavar="PASSWORD")
+                        metavar="123456")
     parser.add_option("-P", "--pubsubserver",
                         dest="pubsubserver",
                         help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
-                        metavar="PUBSUBSERVER",
+                        metavar="pubsub.domain",
                         default=None)
     parser.add_option("-c", "--create",
                         action="store_true",
-                        dest="action",
-                        help="create the node (default action)",
-                        metavar="ACTION",
-                        default=True)
+                        dest="create",
+                        help="create the node (default action)")
     parser.add_option("-d", "--delete",
-                        action="store_false",
-                        dest="action",
-                        help="delete the node",
-                        metavar="ACTION")
+                        action="store_true",
+                        dest="delete",
+                        help="delete the node")
     parser.add_option("-a", "--authorize",
                         dest="auth",
                         help="authorize an hypervisor to handle the parking",
-                        metavar="ACTION")
+                        metavar="user@domain")
     parser.add_option("-u", "--unauthorize",
                         dest="unauth",
                         help="unauthorize an hypervisor to handle the parking",
-                        metavar="ACTION")
+                        metavar="user@domain")
     parser.add_option("-l", "--list",
                         action="store_true",
                         dest="list",
-                        help="List authorized accounts",
-                        metavar="ACTION")
-
+                        help="List authorized accounts")
 
     options, args = parser.parse_args()
 
-    if not options.jid or not options.password:
-        parser.error("you must enter a JID and a PASSWORD. see --help for help")
+    xmppclient = initialize(options)
 
     if options.list:
-        list_jid(xmpp.JID(options.jid), options.password, options.pubsubserver)
+        list_affiliations(xmppclient, options.pubsubserver)
+
     elif options.auth:
-        authorize_jid(xmpp.JID(options.jid), options.password, xmpp.JID(options.auth), options.pubsubserver)
+        set_affiliation(xmppclient, xmpp.JID(options.auth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_PUBLISHER, options.pubsubserver)
+
     elif options.unauth:
-        unauthorize_jid(xmpp.JID(options.jid), options.password, xmpp.JID(options.unauth), options.pubsubserver)
-    else:
-        perform(xmpp.JID(options.jid), options.password, options.pubsubserver, options.action)
+        set_affiliation(xmppclient, xmpp.JID(options.unauth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_NONE, options.pubsubserver)
+
+    elif options.create:
+        create(xmppclient, options.pubsubserver)
+
+    elif options.delete:
+        delete(xmppclient, options.pubsubserver)
