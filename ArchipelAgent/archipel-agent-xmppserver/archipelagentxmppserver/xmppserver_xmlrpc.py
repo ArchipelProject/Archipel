@@ -57,7 +57,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         """
         server = self.entity.jid.getDomain()
         for user in users:
-            username = user["username"]
+            username = user["username"].getNode()
             password = user["password"]
             answer = self.xmlrpc_server.register({"user": username, "password": password, "host": server})
             if not answer['res'] == 0:

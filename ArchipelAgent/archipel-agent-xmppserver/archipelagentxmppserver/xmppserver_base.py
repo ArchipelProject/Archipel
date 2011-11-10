@@ -21,9 +21,10 @@
 
 import xmpp
 
+from archipel.archipelHypervisor import TNArchipelHypervisor
+from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
-
 
 
 ARCHIPEL_NS_XMPPSERVER_GROUPS   = "archipel:xmppserver:groups"
@@ -55,14 +56,28 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
 
         if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
-            if configuration.has_option("XMPPSERVER", "auto_group_name"):
-                self.autogroup_name = configuration.get("XMPPSERVER", "auto_group_name")
-            else:
-                self.autogroup_name = "Platform"
-            self.autogroup_id = "AUTOGROUP_SYSTEM"
-            self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroup_if_needed)
-            self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_on_alloc)
-            self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_on_vm_wake_up)
+            self.autogroup_name_hypervisors = "All Hypervisors"
+            self.autogroup_name_vms = "All Virtual Machines"
+            if configuration.has_option("XMPPSERVER", "auto_group_name_virtualmachines"):
+                self.autogroup_name_vms = configuration.get("XMPPSERVER", "auto_group_name_virtualmachines")
+            if configuration.has_option("XMPPSERVER", "auto_group_name_hypervisors"):
+                self.autogroup_name_hypervisors = configuration.get("XMPPSERVER", "auto_group_name_hypervisors")
+
+            auto_group_filter = "all"
+            if configuration.has_option("XMPPSERVER", "auto_group_filter"):
+                auto_group_filter = configuration.get("XMPPSERVER", "auto_group_filter")
+                if not auto_group_filter in ("virtualmachines", "hypervisors", "all"):
+                    raise Exception("Bad configuration", "auto_group_filter must be virtualmachines, hypervisors or all.")
+            self.autogroup_vms_id = "AUTOGROUP_SYSTEM_VM"
+            self.autogroup_hypervisors_id = "AUTOGROUP_SYSTEM_HYPERVISORS"
+
+            self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
+            if auto_group_filter in ("all", "hypervisors"):
+                self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.handle_autogroup_for_entity)
+
+            if auto_group_filter in ("all", "virtualmachines"):
+                self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
+                self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
@@ -111,23 +126,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
 
     ## Hooks
 
-    def handle_autogroup_on_alloc(self, origin, user_info, newvm):
-        """
-        Will add all new virtual machines in autogroup if configured to
-        @type origin: L{TNArchipelEntity}
-        @param origin: the origin of the hook
-        @type user_info: object
-        @param user_info: random user info
-        @type newvm: object
-        @param newvm: runtime argument
-        """
-        try:
-            self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (newvm.jid, self.autogroup_name))
-            self.group_add_users(self.autogroup_id, [newvm.jid.getStripped()])
-        except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (newvm.jid, self.autogroup_name, ex))
-
-    def create_autogroup_if_needed(self, origin, user_info, parameters):
+    def create_autogroups_if_needed(self, origin, user_info, parameters):
         """
         Will create the auto_group when plugin loaded and add hypervisor if needed
         @type origin: L{TNArchipelEntity}
@@ -138,32 +137,37 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         @param parameters: runtime argument
         """
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name)
-            self.group_create(self.autogroup_id, self.autogroup_name, "Automatic group")
+            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_vms)
+            self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group")
         except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name, ex))
+            self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_vms, ex))
         try:
-            self.entity.log.info("XMPPSERVER: Trying to add hypervisor %s into the autogroup %s" % (self.entity.jid, self.autogroup_name))
-            self.group_add_users(self.autogroup_id, [self.entity.jid.getStripped()])
+            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_hypervisors)
+            self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group")
         except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: unable to add hypervisor %s in auto group %s: %s" % (self.entity.jid, self.autogroup_name, ex))
+            self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_hypervisors, ex))
 
-
-    def handle_autogroup_on_vm_wake_up(self, origin, user_info, vm):
+    def handle_autogroup_for_entity(self, origin, user_info, entity):
         """
-        Will add awaken virtual machine in autogroup if needed
+        Will add all new virtual machines in autogroup if configured to
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
         @param user_info: random user info
-        @type parameters: object
-        @param parameters: runtime argument
+        @type entity: object
+        @param entity: runtime argument
         """
+        if isinstance(entity, TNArchipelVirtualMachine):
+            group_name = self.autogroup_name_vms
+            group_id = self.autogroup_vms_id
+        elif isinstance(entity, TNArchipelHypervisor):
+            group_name = self.autogroup_name_hypervisors
+            group_id = self.autogroup_hypervisors_id
         try:
-            self.entity.log.info("XMPPSERVER: Trying to add virtual machine %s into the autogroup %s" % (vm.jid, self.autogroup_name))
-            self.group_add_users(self.autogroup_id, [vm.jid.getStripped()])
+            self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (entity.jid, group_name))
+            self.group_add_users(group_id, [entity.jid.getStripped()])
         except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: unable to add hypervisor %s in auto group %s: %s" % (vm.jid, self.autogroup_name, ex))
+            self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (entity.jid, group_name, ex))
 
 
     ### Protocol to implement
@@ -401,7 +405,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            users = map(lambda x: {"username": x.getAttr("username"), "password": x.getAttr("password")}, iq.getTag("query").getTag("archipel").getTags("user"))
+            users = map(lambda x: {"username": xmpp.JID(x.getAttr("username")), "password": x.getAttr("password")}, iq.getTag("query").getTag("archipel").getTags("user"))
             self.users_register(users)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)

@@ -162,6 +162,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE")
         self.create_hook("HOOK_HYPERVISOR_CLONE")
         self.create_hook("HOOK_HYPERVISOR_VM_WOKE_UP")
+        self.create_hook("HOOK_HYPERVISOR_WOKE_UP")
 
         # vocabulary
         self.init_vocabulary()
@@ -209,6 +210,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param parameters: runtime arguments
         """
         self.manage_persistance()
+        self.perform_hooks("HOOK_HYPERVISOR_WOKE_UP", self)
 
     def register_handlers(self):
         """
