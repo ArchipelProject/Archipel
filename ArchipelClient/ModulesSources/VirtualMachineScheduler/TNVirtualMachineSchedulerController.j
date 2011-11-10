@@ -127,15 +127,30 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unschedule selected action", @"Unschedule selected action") action:@selector(unschedule:) keyEquivalent:@""] setTarget:schedulerController];
 }
 
-/*! called when permissions changes
+/*! called when user permissions changed
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     [self setControl:_buttonSchedule enabledAccordingToPermission:@"scheduler_schedule"];
     [self setControl:_buttonUnschedule enabledAccordingToPermission:@"scheduler_unschedule"];
 
     if (![self currentEntityHasPermission:@"scheduler_schedule"])
         [schedulerController closeWindow:nil];
+}
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_datasourceJobs removeAllObjects];
+    [tableJobs reloadData];
 }
 
 

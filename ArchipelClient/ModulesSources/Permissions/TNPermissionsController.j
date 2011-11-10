@@ -158,7 +158,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 {
     [super willLoad];
     [rolesController fetchPubSubNodeIfNeeded];
-    [_datasourceUsers removeAllObjects];
+
     [_outlineViewUsers setDelegate:nil];
     [_outlineViewUsers setDelegate:self];
     [tablePermissions setDelegate:nil];
@@ -194,19 +194,19 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (void)willUnload
 {
-    [_datasourcePermissions removeAllObjects];
-    [tablePermissions reloadData];
-    [_datasourceUsers removeAllObjects];
-    [_outlineViewUsers reloadData];
-    [viewTableContainer setHidden:YES];
-    [labelNoUserSelected setHidden:NO];
-    [_outlineViewUsers deselectAll];
     [super willUnload];
 }
 
 /*! called when permissions changes
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     if (![self currentEntityHasPermission:@"permission_get"])
         [self changeCurrentUser:nil];
@@ -223,6 +223,17 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     }
     else
         [self setControl:_saveButton enabledAccordingToPermission:@"permission_FAKE!"];
+}
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_datasourceUsers removeAllObjects];
+    [_datasourcePermissions removeAllObjects];
+
+    [_outlineViewUsers reloadData];
+    [tablePermissions reloadData];
 }
 
 
@@ -594,8 +605,15 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 
 - (void)tableView:(CPTableView)aTableView willDisplayView:(CPView)aView forTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
-    if ([aView isKindOfClass:CPCheckBox])
-        [aView setState:[[_datasourcePermissions objectAtIndex:aRow] objectForKey:@"state"]];
+    try
+    {
+        if ([aView isKindOfClass:CPCheckBox])
+            [aView setState:[[_datasourcePermissions objectAtIndex:aRow] objectForKey:@"state"]]; // I guess there is bug in Capp here
+    }
+    catch (e)
+    {
+        CPLog.error("weird error here " + e);
+    }
 }
 
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification

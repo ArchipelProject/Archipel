@@ -188,8 +188,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)willUnload
 {
-    [_networksRAW removeAllObjects];
-
     [super willUnload];
 }
 
@@ -209,14 +207,34 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)permissionsChanged
 {
+    [super permissionsChanged];
+    if ([self currentEntityHasPermission:@"network_get"])
+        [self getHypervisorNetworks];
+    if ([self currentEntityHasPermission:@"network_getnics"])
+        [self getHypervisorNICS];
+
+    [self _didTableSelectionChange:nil];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
+{
     [self setControl:_plusButton enabledAccordingToPermission:@"network_define"];
     [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine"];
     [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
     [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
     [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
     [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define"];
+}
 
-    [self _didTableSelectionChange:nil];
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_networksRAW removeAllObjects];
+    [_datasourceNetworks removeAllObjects];
+    [tableViewNetworks reloadData];
 }
 
 
@@ -530,8 +548,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         [allNetworks addObjectsFromArray:activeNetworks];
         [allNetworks addObjectsFromArray:unactiveNetworks];
 
-        [_datasourceNetworks removeAllObjects];
-        [_networksRAW removeAllObjects];
+        [self flushUI];
 
         for (var i = 0; i < [allNetworks count]; i++)
         {

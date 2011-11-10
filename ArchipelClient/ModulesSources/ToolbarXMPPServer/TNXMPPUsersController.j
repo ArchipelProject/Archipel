@@ -154,8 +154,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
             var users = [stanza childrenWithName:@"user"],
                 validationMode  = [[TNPermissionsCenter defaultCenter] validationMode];
 
-            [_datasourceUsers removeAllObjects];
-            [_users removeAllObjects];
+            [self flushUI];
 
             for (var i = 0; i < [users count]; i++)
             {
@@ -228,13 +227,18 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)permissionsChanged
 {
+    [self reload];
+}
+
+/*! set the UI according to the permissions
+*/
+- (void)setUIAccordingToPermissions
+{
     [_delegate setControl:_addButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
     [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
         [popoverNewUser close];
-
-    [self reload];
 }
 
 /*! reload the display of the module
@@ -249,6 +253,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [self getXMPPUsers];
 }
 
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_datasourceUsers removeAllObjects];
+    [tableUsers reloadData];
+}
 
 #pragma mark -
 #pragma mark Actions
@@ -376,8 +388,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:_entity])
     {
-        [_datasourceUsers removeAllObjects];
-        [tableUsers reloadData];
+        [self flushUI];
         return;
     }
 

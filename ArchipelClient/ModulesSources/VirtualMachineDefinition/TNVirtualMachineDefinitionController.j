@@ -735,9 +735,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
 }
 
-/*! called when permissions changes
+/*! called when user permissions changed
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+    [self checkIfRunning];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     [self setControl:buttonBoot enabledAccordingToPermission:@"define"];
     [self setControl:buttonClocks enabledAccordingToPermission:@"define"];
@@ -770,6 +778,23 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [interfaceController updateAfterPermissionChanged];
     [driveController updateAfterPermissionChanged];
+}
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_characterDevicesDatasource removeAllObjects];
+    [_drivesDatasource removeAllObjects];
+    [_graphicDevicesDatasource removeAllObjects];
+    [_inputDevicesDatasource removeAllObjects];
+    [_nicsDatasource removeAllObjects];
+
+    [tableCharacterDevices reloadData];
+    [tableDrives reloadData];
+    [tableGraphicsDevices reloadData];
+    [tableInputDevices reloadData];
+    [tableInterfaces reloadData];
 }
 
 

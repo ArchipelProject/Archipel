@@ -142,7 +142,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     }
 
     [usersController closeRegisterUserWindow:nil];
-
+    [self flushUI];
     [super willHide];
     // message sent when the tab is changed
 }
@@ -151,9 +151,19 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)permissionsChanged
 {
+    [super permissionsChanged];
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
         [sharedGroupsController permissionsChanged];
     [usersController permissionsChanged];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
+{
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+        [sharedGroupsController setUIAccordingToPermissions];
+    [usersController setUIAccordingToPermissions];
 }
 
 /*! called when user saves preferences
@@ -174,6 +184,15 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [checkBoxPreferencesUseSRG setState:[defaults boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] ? CPOnState : CPOffState];
 }
 
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+        [sharedGroupsController flushUI];
+    [usersController flushUI];
+
+}
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -248,7 +267,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [buttonHypervisors selectItemAtIndex:0];
     _entity = [[buttonHypervisors selectedItem] objectValue];
-    [self permissionsChanged];
 }
 
 

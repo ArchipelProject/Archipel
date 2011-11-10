@@ -115,7 +115,6 @@ var TNModuleStatusImageReady,
     BOOL                            _registredToPermissionCenter;
     CPDictionary                    _registredSelectors;
     id                              _pubSubHandlerId;
-    CPDictionary                    _sendTimers;
 }
 
 
@@ -136,7 +135,6 @@ var TNModuleStatusImageReady,
     _isActive               = NO;
     _isVisible              = NO;
     _registredSelectors     = [CPDictionary dictionary];
-    _sendTimers             = [CPDictionary dictionary];
     _sendDelay              = 0.1;
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
@@ -240,6 +238,16 @@ var TNModuleStatusImageReady,
 */
 - (void)_beforeWillLoad
 {
+    if (!_view)
+        return;
+
+    if (![[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+    {
+        // we force the permission center to cache
+        [[TNPermissionsCenter defaultCenter] hasPermission:@"foo" forEntity:_entity]
+        return;
+    }
+
     if ([self isCurrentEntityGranted])
         [self _managePermissionGranted];
     else
@@ -447,13 +455,6 @@ var TNModuleStatusImageReady,
         [[[TNStropheIMClient defaultClient] connection] deleteRegisteredSelector:[[_registredSelectors allValues] objectAtIndex:i]];
     }
 
-    // flush all timers
-    for (var i = 0; i < [[_sendTimers allValues] count]; i++)
-    {
-        CPLog.trace("deleting Timer in  " + _label + " :" + [[_sendTimers allValues] objectAtIndex:i]);
-        [[[_sendTimers allValues] objectAtIndex:i] invalidate];
-    }
-
     // flush any outgoing stanza
     [[[TNStropheIMClient defaultClient] connection] flush];
 
@@ -464,6 +465,8 @@ var TNModuleStatusImageReady,
     [_registredSelectors removeAllObjects];
 
     [_menuItem setEnabled:NO];
+
+    [self flushUI];
 
     _isActive = NO;
 }
@@ -480,6 +483,8 @@ var TNModuleStatusImageReady,
 
     if (![self isCurrentEntityGranted])
         return NO;
+
+    [self setUIAccordingToPermissions];
 
     var defaults = [CPUserDefaults standardUserDefaults];
 
@@ -541,7 +546,16 @@ var TNModuleStatusImageReady,
 */
 - (void)permissionsChanged
 {
-    // called when permissions changes
+    [self flushUI];
+    [self setUIAccordingToPermissions];
+    // overwrite this to relaod any data in your module
+}
+
+/*! this message called when the UI need to be updated
+*/
+- (void)setUIAccordingToPermissions
+{
+    // set the UI according to the permissions
 }
 
 /*! this message is sent only in case of a ToolbarItem module when user
@@ -550,6 +564,13 @@ var TNModuleStatusImageReady,
 - (IBAction)toolbarItemClicked:(id)sender
 {
     // executed when users click toolbar item in case of toolbar module
+}
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    // flush all datasources, etc..
 }
 
 #pragma mark -
@@ -603,27 +624,7 @@ var TNModuleStatusImageReady,
         [[[TNStropheIMClient defaultClient] connection] deleteRegisteredSelector:[_registredSelectors objectForKey:key]];
         [_registredSelectors removeObjectForKey:key];
     }
-    var info = {"stanza": aStanza, "selector": aSelector, "object": anObject, "key": key},
-        timer = [CPTimer timerWithTimeInterval:_sendDelay target:self selector:@selector(performSendStanza:) userInfo:info repeats:NO];
-
-    if ([_sendTimers containsKey:key])
-    {
-        [[_sendTimers objectForKey:key] invalidate];
-        [_sendTimers removeObjectForKey:key];
-    }
-
-    [_sendTimers setObject:timer forKey:key];
-
-    [[CPRunLoop currentRunLoop] addTimer:timer forMode:CPDefaultRunLoopMode];
-}
-
-/*! @ignore */
-- (void)performSendStanza:(CPTimer)aTimer
-{
-    var info = [aTimer userInfo],
-        selectorID = [_entity sendStanza:info["stanza"] andRegisterSelector:info["selector"] ofObject:info["object"] handlerDelegate:self];
-    [_registredSelectors setObject:selectorID forKey:info["key"]];
-    [_sendTimers removeObjectForKey:info["key"]];
+    [_entity sendStanza:aStanza andRegisterSelector:aSelector ofObject:anObject handlerDelegate:self];
 }
 
 /*! this message simplify the sending and the post management of TNStropheStanza to the contact

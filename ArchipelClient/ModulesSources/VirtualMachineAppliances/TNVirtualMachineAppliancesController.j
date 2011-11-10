@@ -139,9 +139,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)willUnload
 {
-    [_appliancesDatasource removeAllObjects];
-    [tableAppliances reloadData];
-
     [super willUnload];
 }
 
@@ -175,9 +172,17 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create appliance from this virtual machine", @"Create appliance from this virtual machine") action:@selector(package:) keyEquivalent:@""] setTarget:self];
 }
 
-/*! called when permissions changes
+/*! called when user permissions changed
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+    [self tableViewSelectionDidChange:nil];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     [self setControl:_packageButton enabledAccordingToPermission:@"appliance_package"];
     [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
@@ -185,8 +190,14 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
     if ([self currentEntityHasPermission:@"appliance_package"])
         [popoverNewAppliances close];
+}
 
-    [self tableViewSelectionDidChange:nil];
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_appliancesDatasource removeAllObjects];
+    [tableAppliances reloadData];
 }
 
 
@@ -364,7 +375,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if ([aStanza type] == @"result")
     {
-        [_appliancesDatasource removeAllObjects];
+        [self flushUI];
 
         var appliances = [aStanza childrenWithName:@"appliance"];
 

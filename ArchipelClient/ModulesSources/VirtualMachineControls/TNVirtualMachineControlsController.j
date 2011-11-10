@@ -352,9 +352,17 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [fieldPreferencesScreenshotRefresh setIntValue:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]];
 }
 
-/*! called when permissions changes
+/*! called when user permissions changed
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+    [self checkIfRunning];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     var isOnline = ([_entity XMPPShow] == TNStropheContactStatusOnline);
 
@@ -375,8 +383,14 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     if (_VMLibvirtStatus)
         [self layoutButtons:_VMLibvirtStatus];
+}
 
-    [self checkIfRunning];
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_datasourceHypervisors removeAllObjects];
+    [tableHypervisors reloadData];
 }
 
 
@@ -391,9 +405,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [imageState setImage:[_entity statusIcon]];
 
     [self checkIfRunning];
-
-    if ([self currentEntityHasPermission:@"oom_getadjust"])
-        [self getOOMKiller];
 }
 
 /*! called when an Archipel push is received
@@ -454,9 +465,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (![self isVisible])
         return;
 
-    var XMPPShow = [_entity XMPPShow];
-
-    [self getVirtualMachineInfo];
+    if ([self currentEntityHasPermission:@"info"])
+        [self getVirtualMachineInfo];
 
     if ([self currentEntityHasPermission:@"oom_getadjust"])
         [self getOOMKiller];

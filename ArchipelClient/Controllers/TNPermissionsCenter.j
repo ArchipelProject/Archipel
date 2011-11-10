@@ -151,6 +151,14 @@ var __defaultPermissionCenter;
         [_cachedPermissions removeObjectForKey:aContact];
 }
 
+/*! Check if permissions are cached for the current user
+    @param anEntity TNStropheContact the contact to check
+*/
+- (void)arePermissionsCachedForEntity:(TNStropheContact)aContact
+{
+    return [_cachedPermissions containsKey:aContact];
+}
+
 /*! check if user has given permissions against entity
     @param somePermissions array of permissions
     @param anEntity TNStropheContact representing the entity

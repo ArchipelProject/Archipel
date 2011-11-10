@@ -153,6 +153,13 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)permissionsChanged
 {
+    [self reload];
+}
+
+/*! set the UI according to the permissions
+*/
+- (void)setUIAccordingToPermissions
+{
     [_delegate setControl:_addGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
     [_delegate setControl:_deleteGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"]];
     [_delegate setControl:_addUserInGroupButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]];
@@ -163,10 +170,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]])
         [popoverNewGroup close];
-
-    [self reload];
 }
-
 
 /*! reload the controller
 */
@@ -175,6 +179,18 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [self getSharedGroupsInfo];
 }
 
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_datasourceGroups removeAllObjects];
+    [_datasourceUsers removeAllObjects];
+    [_datasourceUsersInGroup removeAllObjects];
+
+    [tableUsers reloadData];
+    [tableUsersInGroup reloadData];
+    [tableGroups reloadData];
+}
 
 #pragma mark -
 #pragma mark Actions

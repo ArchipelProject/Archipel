@@ -305,11 +305,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)willUnload
 {
-    [_virtualMachinesDatasource removeAllObjects];
-    [_virtualMachinesNotManagedDatasource removeAllObjects];
-    [tableVirtualMachines reloadData];
-    [tableVirtualMachinesNotManaged reloadData];
-
     [super willUnload];
 }
 
@@ -329,6 +324,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 /*! called when permissions changes
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+    [self populateVirtualMachinesTable];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     var tableManagedCondition = ([tableVirtualMachines numberOfSelectedRows] > 0),
         tableNotManagedCondition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0),
@@ -358,8 +361,19 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableVirtualMachinesParked]];
     [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableVirtualMachines]];
     [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableVirtualMachinesNotManaged]];
+}
 
-    [self populateVirtualMachinesTable];
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_virtualMachinesDatasource removeAllObjects];
+    [_virtualMachinesNotManagedDatasource removeAllObjects];
+    [_virtualMachinesParkedDatasource removeAllObjects];
+
+    [tableVirtualMachines reloadData];
+    [tableVirtualMachinesNotManaged reloadData];
+    [tableVirtualMachinesParked reloadData];
 }
 
 #pragma mark -
@@ -819,7 +833,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)getHypervisorRoster
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
-
+    debugger;
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];

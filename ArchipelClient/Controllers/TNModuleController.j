@@ -539,6 +539,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     }
 
     [_loadedTabModules setObject:currentModuleController forKey:moduleName];
+    [currentModuleController _beforeWillLoad];
 }
 
 /*! Insert a toolbar item module
@@ -603,8 +604,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 
     [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
-
-    [currentModuleController _beforeWillLoad];
 }
 
 /*! Insert all modules' MainMenu items

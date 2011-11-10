@@ -229,9 +229,16 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected snapshot", @"Delete selected snapshot") action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
 }
 
-/*! called when permissions changes
+/*! called when user permissions changed
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     [self setControl:_plusButton enabledAccordingToPermission:@"snapshot_take"];
     [self setControl:_minusButton enabledAccordingToPermission:@"snapshot_delete" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
@@ -240,6 +247,15 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     if (![self currentEntityHasPermission:@"snapshot_take"])
         [popoverNewSnapshot close];
 }
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_datasourceSnapshots removeAllObjects];
+    [_outlineViewSnapshots reloadData];
+}
+
 
 #pragma mark -
 #pragma mark Notification

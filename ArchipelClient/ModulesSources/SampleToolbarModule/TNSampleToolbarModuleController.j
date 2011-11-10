@@ -87,7 +87,16 @@
 */
 - (void)permissionsChanged
 {
-    [super permissionsChanged]
+    [super permissionsChanged];
+    // call here the reloading process
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
+{
+    // You may need to update your GUI to disable some
+    // controls if permissions changed
 }
 
 
@@ -100,6 +109,14 @@
 - (void)_didUpdateNickName:(CPNotification)aNotification
 {
     [fieldName setStringValue:[_entity nickname]];
+}
+
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    // flush all your Datasource here
+    // and reload everything
 }
 
 

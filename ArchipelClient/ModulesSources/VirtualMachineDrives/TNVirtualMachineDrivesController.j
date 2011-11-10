@@ -182,19 +182,32 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected drive", @"Delete selected drive") action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
 }
 
-/*! called when permissions changes
+/*! called when user permissions changed
 */
 - (void)permissionsChanged
+{
+    [super permissionsChanged];
+    [self tableViewSelectionDidChange:nil];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
 {
     if (![self currentEntityHasPermission:@"drives_create"])
         [newDriveController closeWindow:nil];
 
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
         [editDriveController closeWindow:nil];
-
-    [self tableViewSelectionDidChange:nil];
 }
 
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [_mediasDatasource removeAllObjects];
+    [tableMedias reloadData];
+}
 
 #pragma mark -
 #pragma mark Notification handlers

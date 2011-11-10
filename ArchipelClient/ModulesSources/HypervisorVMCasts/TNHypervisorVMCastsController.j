@@ -196,9 +196,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     [_mainOutlineView deselectAll];
 
-    [[_castsDatasource contents] removeAllObjects];
-    [_mainOutlineView reloadData];
-
     [super willUnload];
 }
 
@@ -229,6 +226,14 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)permissionsChanged
 {
+    [super permissionsChanged];
+    [self outlineViewSelectionDidChange:NO];
+}
+
+/*! called when the UI needs to be updated according to the permissions
+*/
+- (void)setUIAccordingToPermissions
+{
     [self setControl:_downloadQueueButton enabledAccordingToPermission:@"vmcasting_downloadqueue"];
     [self setControl:_plusButton enabledAccordingToPermission:@"vmcasting_register"];
 
@@ -247,9 +252,14 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
         [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance"]
     else
         [_minusButton setEnabled:NO];
+}
 
-
-    [self outlineViewSelectionDidChange:NO];
+/*! this message is used to flush the UI
+*/
+- (void)flushUI
+{
+    [[_castsDatasource contents] removeAllObjects];
+    [_mainOutlineView reloadData];
 }
 
 #pragma mark -
@@ -428,7 +438,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 {
     if ([aStanza type] == @"result")
     {
-        [[_castsDatasource contents] removeAllObjects];
+        [self flushUI];
 
         var sources = [aStanza childrenWithName:@"source"];
 
