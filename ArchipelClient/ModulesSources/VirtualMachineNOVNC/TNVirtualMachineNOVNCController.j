@@ -157,9 +157,10 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     [[CPNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(_showExternalScreen:)
@@ -174,6 +175,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVNC];
 
     [self getVirtualMachineVNCDisplay];
+
+    return YES;
 }
 
 /*! called when module is unloaded

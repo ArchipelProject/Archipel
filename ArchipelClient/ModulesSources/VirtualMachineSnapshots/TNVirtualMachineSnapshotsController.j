@@ -173,9 +173,11 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
+
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
 
     _currentSnapshot = nil;

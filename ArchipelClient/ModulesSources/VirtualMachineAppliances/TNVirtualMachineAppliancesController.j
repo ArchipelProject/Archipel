@@ -119,9 +119,11 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
+
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
@@ -133,6 +135,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [tableAppliances setDelegate:self]; // hum....
 
     [self getInstalledAppliances];
+
+    return YES;
 }
 
 /*! called when module is unloaded

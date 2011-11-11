@@ -103,7 +103,6 @@ var TNModuleStatusImageReady,
     CPToolbar                       _toolbar                    @accessors(property=toolbar);
     CPToolbarItem                   _toolbarItem                @accessors(property=toolbarItem);
     CPView                          _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
-    float                           _sendDelay                  @accessors(property=sendDelay);
     id                              _entity                     @accessors(property=entity);
     id                              _moduleType                 @accessors(property=moduleType);
     int                             _animationDuration          @accessors(property=animationDuration);
@@ -135,7 +134,6 @@ var TNModuleStatusImageReady,
     _isActive               = NO;
     _isVisible              = NO;
     _registredSelectors     = [CPDictionary dictionary];
-    _sendDelay              = 0.1;
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
@@ -194,6 +192,9 @@ var TNModuleStatusImageReady,
     if (!_isActive)
         [self willLoad];
 
+    if (!_isVisible && _isCurrentSelectedIndex)
+        [self willShow];
+
     [self _hidePermissionDeniedView];
 }
 
@@ -202,7 +203,7 @@ var TNModuleStatusImageReady,
 */
 - (void)_managePermissionDenied
 {
-    if (_isVisible)
+    if (_isCurrentSelectedIndex && _isVisible)
         [self willHide];
 
     if (_isActive)
@@ -240,13 +241,6 @@ var TNModuleStatusImageReady,
 {
     if (!_view)
         return;
-
-    if (![[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
-    {
-        // we force the permission center to cache
-        [[TNPermissionsCenter defaultCenter] hasPermission:@"foo" forEntity:_entity]
-        return;
-    }
 
     if ([self isCurrentEntityGranted])
         [self _managePermissionGranted];
@@ -429,15 +423,21 @@ var TNModuleStatusImageReady,
 
 /*! This message is sent when module is loaded. It will
     reinitialize the _registredSelectors dictionary
+    @return YES if subclass should continue
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
+    if (_isActive)
+        return NO;
+
+    _isActive = YES;
+
     [self _hidePermissionDeniedView];
 
-    _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
-    _isActive           = YES;
+    _animationDuration = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"];
     [_menuItem setEnabled:YES];
 
+    return YES;
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -472,7 +472,7 @@ var TNModuleStatusImageReady,
 }
 
 /*! This message is sent when module will be displayed
-    @return YES if all permission are granted
+    @return YES if subclass should continue
 */
 - (BOOL)willShow
 {
@@ -680,6 +680,9 @@ var TNModuleStatusImageReady,
 {
     if ((anEntity === _entity) || (_moduleType === TNArchipelModuleTypeToolbar))
     {
+        if (TNHypervisorVMCreationController && [self isKindOfClass:TNHypervisorVMCreationController])
+            debugger;
+
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
         [self permissionsChanged];

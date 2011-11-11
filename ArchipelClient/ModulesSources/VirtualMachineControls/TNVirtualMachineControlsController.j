@@ -250,9 +250,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center = [CPNotificationCenter defaultCenter];
 
@@ -268,6 +269,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self disableAllButtons];
 
     [imageState setImage:[_entity statusIcon]];
+
+    return YES;
 }
 
 /*! called when module is unloaded

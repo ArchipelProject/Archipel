@@ -583,9 +583,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     _definitionRecovered = NO;
     [self handleDefinitionEdition:NO];
@@ -621,6 +622,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     // seems to be necessary
     [tableDrives reloadData];
     [tableInterfaces reloadData];
+
+    return YES;
 }
 
 /*! called when module is unloaded

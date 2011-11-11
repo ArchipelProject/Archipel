@@ -157,9 +157,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center = [CPNotificationCenter defaultCenter];
 
@@ -172,6 +173,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];
     [self getHypervisorNICS];
+
+    return YES;
 }
 
 /*! called when the module hides

@@ -172,9 +172,10 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center = [CPNotificationCenter defaultCenter];
 
@@ -185,6 +186,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self getVMCasts];
+
+    return YES;
 }
 
 /*! called when module is unloaded

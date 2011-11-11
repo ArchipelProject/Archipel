@@ -140,9 +140,10 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center = [CPNotificationCenter defaultCenter];
 
@@ -150,6 +151,8 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+
+    return YES;
 }
 
 /*! called when module is unloaded

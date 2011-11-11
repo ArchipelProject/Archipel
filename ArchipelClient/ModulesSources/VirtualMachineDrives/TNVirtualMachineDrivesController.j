@@ -128,9 +128,10 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     _registredDiskListeningId = nil;
 
@@ -147,6 +148,8 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [tableMedias setDelegate:self];
 
     [self getDisksInfo];
+
+    return YES;
 }
 
 /*! called when module becomes visible

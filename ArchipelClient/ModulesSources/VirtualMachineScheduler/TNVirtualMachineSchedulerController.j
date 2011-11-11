@@ -96,9 +96,10 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -107,6 +108,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
     [self getJobs];
     [schedulerController getActions];
+
+    return YES;
 }
 
 /*! called when module becomes unvisible

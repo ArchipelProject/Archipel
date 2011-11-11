@@ -133,13 +133,18 @@ var __defaultPermissionCenter;
     [_pubsubAdminAccounts retrieveAffiliations];
 }
 
-/*! start to listen change for user
+/*! Cache permissions for a user
     @param anEntity TNStropheContact the contact to watch
+    @return YES if already cached
 */
-- (void)cachePermissionsForEntityIfNeeded:(TNStropheContact)aContact
+- (BOOL)cachePermissionsForEntityIfNeeded:(TNStropheContact)aContact
 {
     if (![_cachedPermissions containsKey:aContact])
+    {
         [self getPermissionForEntity:aContact];
+        return NO;
+    }
+    return YES;
 }
 
 /*! start to listen change for user
@@ -222,19 +227,6 @@ var __defaultPermissionCenter;
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! message sent when an entity updated it's vCard, which mean it is fully ready
-    @param aNotification the notification
-*/
-- (void)_entityReady:(CPNotification)aNotification
-{
-    var contact = [aNotification object],
-        entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]];
-
-    if ((entityType == TNArchipelEntityTypeHypervisor) || (entityType == TNArchipelEntityTypeVirtualMachine))
-        [self getPermissionForEntity:contact];
-}
-
 
 /*! @ignore
     this message is sent when module receive a permission push in order to refresh

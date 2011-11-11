@@ -267,9 +267,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     // [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
@@ -287,6 +288,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setDelegate:self];
 
     [self populateVirtualMachinesTable];
+
+    return YES;
 }
 
 /*! called when the module hides
@@ -833,7 +836,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)getHypervisorRoster
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
-    debugger;
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];

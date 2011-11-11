@@ -164,6 +164,9 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 */
 - (BOOL)setEntity:(id)anEntity ofType:(CPString)aType
 {
+    if (_numberOfModulesToLoad && _numberOfModulesLoaded != _numberOfModulesToLoad)
+        return NO;
+
     if ((anEntity === _entity) && (anEntity != nil))
         return NO;
 
@@ -414,9 +417,12 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     [scrollView setDocumentView:[aModule view]];
 
-    [aModule _beforeWillLoad];
-
     [_mainTabView addTabViewItem:newViewItem];
+
+    // if not permissions are not cached, AppController will do it
+    // we just wait
+    if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+        [aModule _beforeWillLoad];
 }
 
 - (void)_loadLocalizedModuleController:(CPString)bundleLocale forBundle:(CPBundle)aBundle
@@ -539,7 +545,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     }
 
     [_loadedTabModules setObject:currentModuleController forKey:moduleName];
-    [currentModuleController _beforeWillLoad];
 }
 
 /*! Insert a toolbar item module
@@ -604,6 +609,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 
     [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
+
+    [_currentToolbarModule _beforeWillLoad];
 }
 
 /*! Insert all modules' MainMenu items
@@ -636,6 +643,9 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 */
 - (void)_didPresenceUpdate:(CPNotification)aNotification
 {
+    if (_numberOfModulesLoaded != _numberOfModulesToLoad)
+        return;
+
     if ([[aNotification object] XMPPShow] == TNStropheContactStatusOffline)
     {
         _numberOfActiveModules  = 0;

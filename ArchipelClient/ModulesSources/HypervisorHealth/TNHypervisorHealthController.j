@@ -294,9 +294,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center      = [CPNotificationCenter defaultCenter],
         defaults    = [CPUserDefaults standardUserDefaults],
@@ -320,6 +321,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [self getHypervisorHealthHistory];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+
+    return YES;
 }
 
 /*! called when module is unloaded

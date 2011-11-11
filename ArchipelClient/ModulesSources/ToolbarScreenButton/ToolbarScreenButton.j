@@ -37,11 +37,14 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
 #pragma mark -
 #pragma mark Intialization
 
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     [_toolbarItem setEnabled:NO];
+
+    return YES;
 }
 
 

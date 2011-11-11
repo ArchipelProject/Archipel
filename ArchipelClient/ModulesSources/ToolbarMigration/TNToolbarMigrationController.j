@@ -98,10 +98,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
+
     // message sent when view will be added from superview;
+
+    return YES;
 }
 
 /*! called when module is unloaded

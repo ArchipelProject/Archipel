@@ -48,11 +48,14 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
 #pragma mark -
 #pragma mark Intialization
 
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didStropheConnected:) name:TNStropheConnectionStatusConnectedNotification object:nil];
+
+    return YES;
 }
 
 

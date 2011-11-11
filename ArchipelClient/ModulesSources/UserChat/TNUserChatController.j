@@ -126,9 +126,10 @@
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return NO;
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didReceiveMessageComposing:) name:TNStropheContactMessageComposingNotification object:_entity];
@@ -148,6 +149,8 @@
     [_messageBoard scrollPoint:newScrollOrigin];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+
+    return YES;
 }
 
 /*! called when module is unloaded
