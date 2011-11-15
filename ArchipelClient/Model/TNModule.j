@@ -680,9 +680,6 @@ var TNModuleStatusImageReady,
 {
     if ((anEntity === _entity) || (_moduleType === TNArchipelModuleTypeToolbar))
     {
-        if (TNHypervisorVMCreationController && [self isKindOfClass:TNHypervisorVMCreationController])
-            debugger;
-
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
         [self permissionsChanged];
