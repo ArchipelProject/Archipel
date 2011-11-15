@@ -1,18 +1,18 @@
 #!/usr/bin/python
-# 
+#
 # bootstrap
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -32,7 +32,7 @@ MSG_ARCHIPEL_CLIENT_HEADER = """\
 ###############################################################################
 
 Welcome to the installation script of Archipel Client.
-Note that you must be root in order to install this software. Please answer the 
+Note that you must be root in order to install this software. Please answer the
 following questions.
 
 """
@@ -52,15 +52,15 @@ will initialize it for you. Please wait.
 
 
 class Spinner(threading.Thread):
-    
+
     def __init__(self, delay=0.2):
         threading.Thread.__init__(self);
         self.sequence = ["#   ", "##  ", "### ", "####", " ###", "  ##", "   #", "    " ];
         self.on = True;
         self.delay = delay
         self.start()
-    
-    
+
+
     def run(self):
         if REDIRECT == "":
             return
@@ -72,11 +72,11 @@ class Spinner(threading.Thread):
             if i >= len(self.sequence):
                 i = 0;
             time.sleep(self.delay)
-    
-    
+
+
     def stop(self):
         self.on = False;
-    
+
 
 
 
@@ -93,21 +93,21 @@ def ask(message, answers=None, default=None):
             question += a + "/"
         question = question[:-1]
         question += "]"
-        
+
     if not answers and default:
         question += " [\033[32m" + default + "\033[0m]"
-        
+
     question += " : "
-    
+
     resp = raw_input(question)
-    
+
     if default:
         if resp == "": resp = default;
-    
+
     if answers and default:
         if not resp in answers and len(answers) > 0:
             resp = ask("\033[33mYou must select of the following answer\033[0m", answers, default);
-    
+
     return resp
 
 
@@ -182,14 +182,14 @@ def clear():
 def install_archipelclient(interactive=True, properties=None):
     clear()
     print MSG_ARCHIPEL_CLIENT_HEADER
-    
+
     print " Testing environment"
     test_install_archipelclient()
     print ""
-    
-    
+
+
     inst_export = None
-    
+
     if interactive:
         inst_capp           = ask_bool("Would you like to build Cappuccino ?", default="n")
         inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
@@ -214,7 +214,7 @@ def install_archipelclient(interactive=True, properties=None):
             inst_export     = properties["inst_export"]
         else:
             inst_appcapp    = False
-    
+
     print ""
     print " Installation information"
     print "   - build Cappuccino            : %s" % str(inst_capp)
@@ -227,19 +227,19 @@ def install_archipelclient(interactive=True, properties=None):
     print "   - apply Cappuccino            : %s" % str(inst_appcapp)
     if inst_export: print "   - export to                   : %s" % inst_export
     print ""
-    
-    if interactive: 
+
+    if interactive:
         confirm = ask("Do you confirm ?", ["y", "n"], "y")
         if confirm == "n":
             print " \033[33m* Installation canceled by user\033[0m"
             sys.exit(0)
-    
+
     if inst_capp:
         client_build_cappuccino()
     elif test_cmd("jake") == False:
         print "\033[31mYou don't want to install Cappuccino but it's also not already installed\033[0m"
         sys.exit(1)
-    
+
     if inst_growl:          client_build_growlcappuccino()
     if inst_vnc:            client_build_vnccappuccino()
     if inst_strophe:        client_build_strophecappuccino()
@@ -248,36 +248,21 @@ def install_archipelclient(interactive=True, properties=None):
     if inst_appcapp:        client_apply_cappuccino_frameworks()
     if inst_archipel:       client_build_archipel()
     if inst_export:         client_export_archipel(inst_export)
-    
+
     print "\033[32m"
     print " Installation is now complete.\n"
     print "\033[0m"
-    
+
     if interactive: ask_bool("Continue ?")
 
 
 def client_build_cappuccino():
     print " * Building Cappuccino";
     print "\n\033[35m*******************************************************************************"
-    ret = os.system("cd ./Libraries/Cappuccino && ./bootstrap.sh --install-capp")
+    ret = os.system("cd ./Libraries/Cappuccino && ./bootstrap.sh")
     if ret != 0:
         print "\033[31mUnable to bootstrap Cappuccino\033[0m"
         sys.exit(1)
-    if os.path.exists(os.path.expanduser("~/.profile")):
-        profile = open(os.path.expanduser("~/.profile"), "r")
-        for line in profile:
-             # We just want the last line but it seems Python must do something in a loop
-             last_line = line
-        profile.close()
-        if (last_line.find('export PATH=\"') != -1) and (last_line.find(':$PATH\"') != -1):
-             last_line = last_line.replace('export PATH=\"', '')
-             last_line = last_line.replace(':$PATH\"', '')
-             last_line = last_line.strip();
-             os.environ['PATH'] = os.environ['PATH']+':'+last_line
-        else:
-             os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
-    else:
-        os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
     ret = os.system("cd ./Libraries/Cappuccino && jake install")
     print "*******************************************************************************\033[0m"
     if ret != 0:
@@ -343,7 +328,7 @@ def client_build_tnkit():
 
 def client_build_archipel(exportpath=None):
     if exportpath:
-        export = " --export=%s" % exportpath 
+        export = " --export=%s" % exportpath
     else:
         export = ""
     print " * Building ArchipelClient"
@@ -386,7 +371,7 @@ def main(interactive=True, properties=None):
         git_init_submodules()
         print " "
 
-        if interactive: 
+        if interactive:
             confirm = ask("Do want to start installation ?", ["y", "n"], "y")
             if confirm == "n":
                 print " \033[33m* Installation canceled by user\033[0m"
@@ -403,7 +388,7 @@ if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "", [  "notinteractive",
                                                         "cappuccino",
-                                                        "growlcappuccino", 
+                                                        "growlcappuccino",
                                                         "vnccappuccino",
                                                         "strophecappuccino",
                                                         "lpkit",
@@ -414,9 +399,9 @@ if __name__ == "__main__":
         print str(err)
         #usage()
         sys.exit(2);
-    
+
     interactive = True
-    
+
     properties = {}
     properties["inst_capp"]             = False
     properties["inst_growl"]            = False
@@ -426,12 +411,12 @@ if __name__ == "__main__":
     properties["inst_tnkit"]            = False
     properties["inst_archipel"]         = False
     properties["inst_export"]           = None
-    
-    
+
+
     for o, a in opts:
         if o in ("--notinteractive"):
             interactive = False
-            
+
         if not interactive and o in ("--cappuccino"):           properties["inst_capp"]             = True
         if not interactive and o in ("--growlcappuccino"):      properties["inst_growl"]            = True
         if not interactive and o in ("--vnccappuccino"):        properties["inst_vnc"]              = True
@@ -440,8 +425,8 @@ if __name__ == "__main__":
         if not interactive and o in ("--tnkit"):                properties["inst_tnkit"]            = True
         if not interactive and o in ("--archipel"):             properties["inst_archipel"]         = True
         if not interactive and o in ("--export"):               properties["inst_export"]           = a
-    
-    
+
+
     main(interactive, properties)
 
 
