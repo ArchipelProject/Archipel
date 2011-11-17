@@ -22,7 +22,7 @@
 import xmpp
 
 from archipelcore.utils import build_error_iq
-from xmppserver_base import TNXMPPServerControllerBase
+import xmppserver_base
 
 
 IQ_REGISTER_USER_FORM = """
@@ -70,7 +70,7 @@ IQ_UNREGISTRATION_FORM = """
 </iq>
 """
 
-class TNXMPPServerController (TNXMPPServerControllerBase):
+class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
@@ -82,7 +82,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         @type entry_point_group: string
         @param entry_point_group: the group name of plugin entry_point
         """
-        TNXMPPServerControllerBase.__init__(self, configuration, entity, entry_point_group)
+        xmppserver_base.TNXMPPServerControllerBase.__init__(self, configuration, entity, entry_point_group)
 
         self.entities_types_cache = {}
         self.entity.log.info("XMPPSERVER: module is using XMPP API for managing XMPP server")
@@ -140,23 +140,30 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
         self.entity.log.info("XMPPSERVER: Unregistring some users %s" % str(users))
 
-    def users_list(self):
+    def users_list(self, base_reply, only_humans=True):
         """
         List all registered users
         """
-        def on_receive_users(conn, iq):
+        final_reply = [base_reply]
+
+        def on_receive_users(conn, iq, reply):
             if not iq.getType() == "result":
                 return
             try:
                 items = iq.getTag("query").getTags("item")
+                if items[0].getAttr("node"):
+                    reply = build_error_iq(self, "You have too much registred user. Please use the XMLRPC API.", iq, xmppserver_base.ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
+                    self.entity.xmppclient.send(reply)
+                    return
                 users = map(lambda x: x.getAttr("jid"), items)
                 nodes = []
                 number_of_users = len(users)
                 number_of_vcards = 0
-                def on_receive_vcard(conn, iq):
+                def on_receive_vcard(conn, iq, reply):
                     try:
                         if not iq.getType() == "result":
                             return
+
                         entity_type = "human"
                         if iq.getTag("vCard") and iq.getTag("vCard").getTag("ROLE"):
                             vcard_role = iq.getTag("vCard").getTag("ROLE").getData()
@@ -165,26 +172,30 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
                         self.entities_types_cache[iq.getFrom().getStripped()] = entity_type
                         nodes.append(xmpp.Node("user", attrs={"jid": iq.getFrom().getStripped(), "type": entity_type}))
                         if len(nodes) >= number_of_users:
-                            self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
+                            reply.setQueryPayload(nodes)
+                            self.entity.xmppclient.send(reply)
                     except Exception as ex:
                         self.entity.log.error("XMPPSERVER: Error while fetching contact vCard: %s" % str(ex))
-                        self.entity.push_change("xmppserver:users", "listfetcherror", content_node=iq)
+                        reply = build_error_iq(self, ex, iq, xmppserver_base.ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
+                        self.entity.xmppclient.send(reply)
+
                 for user in users:
                     iq_vcard = xmpp.Iq(typ="get", to=user)
                     iq_vcard.addChild("vCard", namespace="vcard-temp")
                     if not user in self.entities_types_cache:
                         self.entity.log.debug("XMPPSERVER: Entity type of %s is not cached. fetching..." % user)
-                        self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
+                        self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard, args={"reply": base_reply})
                     else:
                         self.entity.log.debug("XMPPSERVER: Entity type of %s is already cached (%s)" % (user, self.entities_types_cache[user]))
                         nodes.append(xmpp.Node("user", attrs={"jid": user, "type": self.entities_types_cache[user]}))
                         if len(nodes) >= number_of_users:
-                            self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
+                            reply.setQueryPayload(nodes)
+                            self.entity.xmppclient.send(reply)
             except Exception as ex:
                 self.entity.log.error("XMPPSERVER: Unable to manage to get users or their vcards. error is %s" % str(ex))
         user_iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
         user_iq.addChild("query", attrs={"node": "all users"}, namespace="http://jabber.org/protocol/disco#items")
-        self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_users)
+        self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_users, args={"reply": base_reply})
 
     def group_create(self, ID, name, description):
         """
