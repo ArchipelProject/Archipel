@@ -81,6 +81,7 @@ class TNPubSubNode:
         self.recovered      = False
         self.content        = None
         self.affiliations   = {}
+        self.subscriptions  = []
 
 
     ### Node management
@@ -289,7 +290,7 @@ class TNPubSubNode:
         @type item_id: string
         @param item_id: the id of the node to remove
         @type callback: function
-        @param callback: if not None, callback will be called after publication
+        @param callback: if not None, callback will be called after retraction
         @type user_info: Object
         @param user_info: random info to pass to the callback
         """
@@ -321,23 +322,78 @@ class TNPubSubNode:
 
     ## Subscription management
 
-    def subscribe(self, jid, event_callback):
+    def retrieve_subscriptions(self, callback=None, wait=False):
+        """
+        Recover the subscriptions
+        @type callback: function
+        @param callback: if not None, callback will be called after retrieval
+        @type wait: Boolean
+        @param wait: if True, action will be done in sync mode
+        """
+        iq  = xmpp.Iq(typ="get", to=self.pubsubserver)
+        pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        pubsub.addChild("subscriptions")
+
+        def _did_retrieve_subscription(conn, resp, callback):
+            ret = False
+            if resp.getType() == "result":
+                self.subscriptions = []
+                for subscription in resp.getTag("pubsub").getTag("subscriptions").getTags("subscription"):
+                    self.subscriptions.append(subscription.getAttr("subid"))
+                ret = True
+            return ret
+
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return _did_retrieve_subscription(None, resp, callback)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_retrieve_subscription, args={"callback": callback})
+            return True
+
+    def subscribe(self, jid, callback, unique=True, wait=False):
         """
         Subscribe to the node.
         @type jid: xmpp.Protocol.JID
         @param jid: the JID of the subscriber
-        @type event_callback: function
-        @param event_callback: the callback that will be called when an item is published
+        @type callback: function
+        @param callback: the callback that will be called when an item is published
+        @type unique: Boolean
+        @param unique: if True, it will subscribe only if no subscription is already done
+        @type wait: Boolean
+        @param wait: if True, action will be done in sync mode
         """
-        self.subscriber_callback    = event_callback
-        self.subscriber_jid         = jid
-        iq                          = xmpp.Iq(typ="set", to=self.pubsubserver)
-        pubsub                      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
-        pubsub.addChild("subscribe", attrs={"node": self.nodename, "jid": jid})
-        self.xmppclient.RegisterHandler('message', self.on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+        self.subscriber_callback = callback
+        self.subscriber_jid = jid
+
+        if unique:
+            if len(self.subscriptions) == 0:
+                self.retrieve_subscriptions(wait=True)
+            if not len(self.subscriptions) == 0:
+                self.xmppclient.RegisterHandler('message', self._on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+                return;
+
+        iq = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        pubsub.addChild("subscribe", attrs={"node": self.nodename, "jid": jid.getStripped()})
+
+        def _did_subscribe(conn, resp, callback):
+            ret = False
+            if resp.getType() == "result":
+                self.xmppclient.RegisterHandler('message', self._on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+                ret = True
+            return ret
+
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return _did_subscribe(None, resp, callback)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_subscribe, args={"callback": callback})
+            return True
+
+
         self.xmppclient.send(iq)
 
-    def on_pubsub_event(self, conn, event):
+    def _on_pubsub_event(self, conn, event):
         """
         Trigger the callback for events.
         """
@@ -345,19 +401,38 @@ class TNPubSubNode:
         if node == self.nodename and self.subscriber_callback and event.getTo() == self.subscriber_jid:
             self.subscriber_callback(event)
 
-    def unsubscribe(self, jid):
+    def unsubscribe(self, jid, subID=None, callback=None, wait=False):
         """
         Unsubscribe from a node.
         @type jid: xmpp.Protocol.JID
         @param jid: the JID of the entity to unsubscribe
+        @type subID: String
+        @param subID: the subscription ID to remove. If None, all subscriptions will be removed
+        @param callback: the callback that will be called when an item is published
+        @type wait: Boolean
+        @param wait: if True, action will be done in sync mode
         """
-        self.subscriber_callback    = None
-        self.subscriber_jid         = None
-        iq                          = xmpp.Iq(typ="set", to=self.pubsubserver)
-        pubsub                      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
-        pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid})
-        self.xmppclient.UnregisterHandler('message', self.on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
-        self.xmppclient.send(iq)
+        self.subscriber_callback = None
+        self.subscriber_jid = None
+
+        iq = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        if not subID:
+            pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid.getStripped()})
+        else:
+            for sid in self.subscriptions:
+                pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid.getStripped(), "subid": sid})
+
+        def _did_unsubscribe(conn, resp, callback):
+            print resp
+            self.xmppclient.UnregisterHandler('message', self._on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+
+        if wait:
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
+            return _did_unsubscribe(None, resp, callback)
+        else:
+            self.xmppclient.SendAndCallForResponse(iq, func=_did_unsubscribe, args={"callback": callback})
+            return True
 
 
     ## Affilication management
@@ -378,8 +453,8 @@ class TNPubSubNode:
             ret = False
             if resp.getType() == "result":
                 self.affiliations = {}
-                for affiliations in resp.getTag("pubsub").getTag("affiliations").getTags("affiliation"):
-                    self.affiliations[affiliations.getAttr("jid")] = affiliations.getAttr("affiliation")
+                for affiliation in resp.getTag("pubsub").getTag("affiliations").getTags("affiliation"):
+                    self.affiliations[affiliation.getAttr("jid")] = affiliation.getAttr("affiliation")
                 ret = True
             if callback:
                 return callback(resp)
