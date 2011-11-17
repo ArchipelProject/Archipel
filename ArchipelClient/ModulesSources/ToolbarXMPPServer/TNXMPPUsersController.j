@@ -29,14 +29,13 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
 
-
+@import "TNXMPPServerUserFetcher.j"
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
     TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",
-    TNArchipelTypeXMPPServerUsersList               = @"list",
     TNArchipelXMPPUserAdminImage,
     TNArchipelXMPPUserNormalImage;
 
@@ -56,19 +55,15 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
 
-    CPArray                     _users                          @accessors(getter=users);
     id                          _delegate                       @accessors(property=delegate);
-    TNStropheContact            _entity                         @accessors(setter=setEntity:);
-    TNTableViewDataSource       _datasourceUsers                @accessors(getter=datasource);
+    TNStropheContact            _entity;
+    TNTableViewLazyDataSource   _datasourceUsers;
 
     CPButton                    _addButton;
     CPButton                    _deleteButton;
     CPButton                    _grantAdminButton;
     CPButton                    _revokeAdminButton;
-    CPImage                     _iconEntityTypeHuman;
-    CPImage                     _iconEntityTypeHypervisor;
-    CPImage                     _iconEntityTypeVM;
-    CPImage                     _iconUserAdmin;
+    TNXMPPServerUserFetcher     _usersFetcher;
 }
 
 #pragma mark -
@@ -78,19 +73,18 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    var bundle = [CPBundle bundleForClass:[self class]];
-
-    _users                      = [CPArray array];
-    _iconEntityTypeHuman        = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CPSizeMake(16, 16)];
-    _iconEntityTypeVM           = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CPSizeMake(16, 16)];
-    _iconEntityTypeHypervisor   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CPSizeMake(16, 16)];
-    _iconUserAdmin              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-admin.png"] size:CPSizeMake(16, 16)];
-
     // table users
-    _datasourceUsers = [[TNTableViewDataSource alloc] init];
+    _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
     [_datasourceUsers setTable:tableUsers];
     [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
     [tableUsers setDataSource:_datasourceUsers];
+
+    // user fetcher
+    _usersFetcher = [[TNXMPPServerUserFetcher alloc] init];
+    [_usersFetcher setDataSource:_datasourceUsers];
+    [_usersFetcher setDelegate:self];
+    [_usersFetcher setDisplaysOnlyHumans:YES];
+    [_datasourceUsers setDelegate:_usersFetcher];
 
     _addButton = [CPButtonBar plusButton];
     [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
@@ -133,7 +127,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)_didAdminAccountsListUpdate:(CPNotification)aNotification
 {
     if ([[TNStropheIMClient defaultClient] JID])
-    [self reload];
+        [self reload];
 }
 
 
@@ -150,76 +144,32 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     switch (change)
     {
-        case @"listfetched":
-            var users = [stanza childrenWithName:@"user"],
-                validationMode  = [[TNPermissionsCenter defaultCenter] validationMode];
-
-            [self flushUI];
-
-            for (var i = 0; i < [users count]; i++)
-            {
-                var user            = [users objectAtIndex:i],
-                    jid             = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-                    usertype        = [user valueForAttribute:@"type"],
-                    name            = [jid node],
-                    contact         = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
-                    userAdminIcon   = nil,
-                    newItem;
-
-                if (contact)
-                    name = [contact nickname];
-
-                var icon = _iconEntityTypeHuman;
-                switch (usertype)
-                {
-                    case "virtualmachine":
-                        icon = _iconEntityTypeVM;
-                        break;
-                    case "hypervisor":
-                        icon = _iconEntityTypeHypervisor;
-                        break;
-                }
-
-                if ([[TNPermissionsCenter defaultCenter] isJIDInAdminList:jid])
-                    userAdminIcon = _iconUserAdmin;
-
-                newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon, userAdminIcon] forKeys:[@"name", @"jid", @"type", @"icon", @"admin"]]
-                [_users addObject:newItem];
-
-                if (usertype == "human")
-                    [_datasourceUsers addObject:newItem];
-            }
-
-            [tableUsers reloadData];
-            break;
-
-        case @"registerationerror":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Registration error", @"Registration error")
-                                                             message:CPLocalizedString(@"Agent was unable to register the user.", @"Agent was unable to register the user.")
-                                                                icon:TNGrowlIconError];
-            break;
-
         case @"registered":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Regisration complete", @"Regisration complete")
-                                                             message:CPLocalizedString(@"New user has been sucessfully registred", @"New user has been sucessfully registred")];
+            [self flushUI];
+            [_usersFetcher getXMPPUsers];
             break;
 
         case @"unregistered":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Unegisration complete", @"Unegisration complete")
-                                                             message:CPLocalizedString(@"User has been sucessfully unregistred", @"User has been sucessfully unregistred")];
-
-            break;
-
-        case @"unregisterationerror":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Unregistration error", @"Unregistration error")
-                                                             message:CPLocalizedString(@"Agent was unable to unregister the user.", @"Agent was unable to unregister the user.")
-                                                                icon:TNGrowlIconError];
-            break;
+            [self flushUI];
+            [_usersFetcher getXMPPUsers];
+            break
     }
 
 
     return YES;
 }
+
+
+#pragma mark -
+#pragma mark Setters / Getters
+
+- (void)setEntity:(TNStropheContact)anEntity
+{
+    _entity = anEntity;
+    [_usersFetcher setEntity:_entity];
+}
+
+
 #pragma mark -
 #pragma mark Utilities
 
@@ -250,17 +200,25 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_delegate setControl:_revokeAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
     [_delegate setControl:_grantAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
 
-    [self getXMPPUsers];
-}
+    [_delegate setControl:_addButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
+    [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
+    if ([_datasourceUsers isCurrentlyLoading])
+        return;
+
+    [self flushUI];
+    [_usersFetcher getXMPPUsers];
+}
 
 /*! this message is used to flush the UI
 */
 - (void)flushUI
 {
+    [_usersFetcher reset];
     [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
 }
+
 
 #pragma mark -
 #pragma mark Actions
@@ -382,36 +340,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 #pragma mark -
 #pragma mark XMPP Management
 
-/*! ask for permissions of given user
-*/
-- (void)getXMPPUsers
-{
-    if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:_entity])
-    {
-        [self flushUI];
-        return;
-    }
-
-    var stanza = [TNStropheStanza iqWithType:@"get"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeXMPPServerUsersList}];
-
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
-}
-
-/*! compute the answer containing the user' permissions
-    @param aStanza TNStropheStanza containing the answer
-*/
-- (void)_didGetXMPPUsers:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] != @"result")
-    {
-        [_delegate handleIqErrorFromStanza:aStanza];
-    }
-}
-
 /*! create a new user with given username and password
     @param aUserName the username of the new user
     @param aPasswor the password of the new user
@@ -435,9 +363,18 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)_didRegisterUser:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [self reload]
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Regisration complete", @"Regisration complete")
+                                                         message:CPLocalizedString(@"New user has been sucessfully registred", @"New user has been sucessfully registred")];
+
+    }
     else
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Registration error", @"Registration error")
+                                                         message:CPLocalizedString(@"Agent was unable to register the user.", @"Agent was unable to register the user.")
+                                                            icon:TNGrowlIconError];
         [_delegate handleIqErrorFromStanza:aStanza];
+    }
 }
 
 /*! unregister a new user with given username and password
@@ -467,9 +404,29 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)_didUnregisterUsers:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [self reload]
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Unegisration complete", @"Unegisration complete")
+                                                         message:CPLocalizedString(@"User has been sucessfully unregistred", @"User has been sucessfully unregistred")];
+
+    }
     else
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Unregistration error", @"Unregistration error")
+                                                         message:CPLocalizedString(@"Agent was unable to unregister the user.", @"Agent was unable to unregister the user.")
+                                                            icon:TNGrowlIconError];
         [_delegate handleIqErrorFromStanza:aStanza];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Delegates
+
+/*! delegate of TNXMPPServerUserFetcher
+*/
+- (void)userFetcherClean
+{
+    [self flushUI];
 }
 
 @end
