@@ -464,11 +464,7 @@ var __defaultPermissionCenter;
 
     var keys = [_adminAccounts allKeysForObject:JIDTranslation];
 
-    for (var i = 0; i < [keys count]; i++)
-    {
-        var ref = [keys objectAtIndex:i];
-        [_pubsubAdminAccounts retractItemWithID:ref];
-    }
+    [_pubsubAdminAccounts retractItemsWithIDs:keys]
     [_pubsubAdminAccounts changeAffiliation:TNPubSubNodeAffiliationNone forJID:aJID];
 }
 
@@ -497,8 +493,6 @@ var __defaultPermissionCenter;
 
         [_adminAccounts setObject:adminAccount forKey:itemId];
     }
-
-    [[CPNotificationCenter defaultCenter] postNotificationName:TNPermissionsAdminListUpdatedNotification object:self];
 }
 
 /*! TNPubSubNode delegate
@@ -529,6 +523,7 @@ var __defaultPermissionCenter;
         return;
 
     [_pubsubAdminAccounts retrieveItems];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNPermissionsAdminListUpdatedNotification object:self];
 }
 
 - (void)pubSubNode:(TNPubSubNode)aPubSubNode publishedItem:(TNStropheStanza)aStanza
