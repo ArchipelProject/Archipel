@@ -36,7 +36,7 @@ var _iconEntityTypeHuman,
     BOOL                        _displaysOnlyHumans @accessors(getter=isDisplayingOnlyHumans, setter=setDisplaysOnlyHumans:);
     id                          _delegate           @accessors(property=delegate);
     TNStropheContact            _entity             @accessors(property=entity);
-    TNTableViewLazyDataSource   _dataSource         @accessors(property=dataSource);
+    TNTableViewLazyDataSource   _dataSource         @accessors(getter=dataSource);
 
     int                         _maxLoadedPage;
 }
@@ -69,6 +69,18 @@ var _iconEntityTypeHuman,
     return self;
 }
 
+#pragma mark -
+#pragma mark Getters / Setters
+
+/*! Set the target datasource, and set self ad datasource delegate
+    @pathForResource aDataSource the TNTableViewLazyDataSource to use
+*/
+- (void)setDataSource:(TNTableViewLazyDataSource)aDataSource
+{
+    _dataSource = aDataSource;
+    [_dataSource setDelegate:self];
+}
+
 
 #pragma mark -
 #pragma mark Utilities
@@ -79,6 +91,7 @@ var _iconEntityTypeHuman,
 {
     _maxLoadedPage = 0;
     [_dataSource setTotalCount:-1];
+    [_dataSource setCurrentlyLoading:NO];
 }
 
 

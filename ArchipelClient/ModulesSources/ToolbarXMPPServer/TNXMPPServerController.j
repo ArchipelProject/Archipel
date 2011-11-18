@@ -136,15 +136,11 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)willHide
 {
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-    {
-        [sharedGroupsController closeNewGroupWindow:nil];
-        [sharedGroupsController closeAddUserInGroupWindow:nil];
-    }
+        [sharedGroupsController willHide]
 
-    [usersController closeRegisterUserWindow:nil];
+    [usersController willHide];
     [self flushUI];
     [super willHide];
-    // message sent when the tab is changed
 }
 
 /*! called when permissions changes

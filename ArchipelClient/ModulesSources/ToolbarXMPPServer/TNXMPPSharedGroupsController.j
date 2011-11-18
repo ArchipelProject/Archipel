@@ -106,7 +106,6 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_usersFetcher setDataSource:_datasourceUsers];
     [_usersFetcher setDelegate:self];
     [_usersFetcher setDisplaysOnlyHumans:NO];
-    [_datasourceUsers setDelegate:_usersFetcher];
 
     /* table Groups */
     _datasourceGroups   = [[TNTableViewDataSource alloc] init];
@@ -172,6 +171,16 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! clean stuff when hidden
+*/
+- (void)willHide
+{
+    [self closeNewGroupWindow:nil];
+    [self closeAddUserInGroupWindow:nil];
+
+    [_usersFetcher reset];
+}
 
 /*! called when permissions has changed
 */

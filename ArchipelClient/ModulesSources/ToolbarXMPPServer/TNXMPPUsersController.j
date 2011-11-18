@@ -84,7 +84,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_usersFetcher setDataSource:_datasourceUsers];
     [_usersFetcher setDelegate:self];
     [_usersFetcher setDisplaysOnlyHumans:YES];
-    [_datasourceUsers setDelegate:_usersFetcher];
 
     _addButton = [CPButtonBar plusButton];
     [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
@@ -173,6 +172,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 #pragma mark -
 #pragma mark Utilities
 
+/*! clean stuff when hidden
+*/
+- (void)willHide
+{
+    [self closeRegisterUserWindow:nil];
+    [_usersFetcher reset];
+}
+
 /*! called when permissions has changed
 */
 - (void)permissionsChanged
@@ -184,6 +191,11 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)setUIAccordingToPermissions
 {
+    // this will check against a non existing permissions
+    // As these controls are only for admins, we don't really care about the permission
+    [_delegate setControl:_revokeAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
+    [_delegate setControl:_grantAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
+
     [_delegate setControl:_addButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
     [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
@@ -195,13 +207,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)reload
 {
-    // this will check against a non existing permissions
-    // As these controls are only for admins, we don't really care about the permission
-    [_delegate setControl:_revokeAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
-    [_delegate setControl:_grantAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
-
-    [_delegate setControl:_addButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
-    [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
+    [self setUIAccordingToPermissions];
 
     if ([_datasourceUsers isCurrentlyLoading])
         return;
