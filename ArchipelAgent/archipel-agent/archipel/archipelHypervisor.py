@@ -461,7 +461,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ###  Hypervisor controls
 
-    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None):
+    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None, xml_description=None):
         """
         Alloc a new XMPP entity.
         @type requester: xmpp.JID
@@ -472,6 +472,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param start: if True, start the vm immediatly
         @type requested_uuid: string
         @param requested_uuid: if set, the UUID to use as libvirt UUID and JID's node
+        @type xml_description: xmpp.Node
+        @param xml_description: Optional description
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
@@ -504,6 +506,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.log.info("Adding the requesting controller %s to the VM's roster." % (str(requester)))
             vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.add_jid_hook, user_info=xmpp.JID(requester), oneshot=True)
             vm.permission_center.grant_permission_to_user("all", requester.getStripped())
+
+        if xml_description:
+            vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=xml_description, oneshot=True)
 
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), '', name))
@@ -967,7 +972,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 if uuid in self.virtualmachines:
                     raise Exception("Virtual machine with UUID %s is already managed by Archipel" % uuid)
                 vm = self.libvirt_connection.lookupByUUIDString(uuid)
-                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid)
+                xmldesc = vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
+                descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
+                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode)
                 self.log.info("manage new virtual machine with UUID: %s" % uuid)
             self.push_change("hypervisor", "manage")
         except Exception as ex:

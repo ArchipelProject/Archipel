@@ -444,7 +444,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_XMPP_DISCONNECT")
         TNArchipelEntity.disconnect(self)
 
-
     def add_jid_hook(self, origin=None, user_info=None, arguments=None):
         """
         Hook to add a JID.
