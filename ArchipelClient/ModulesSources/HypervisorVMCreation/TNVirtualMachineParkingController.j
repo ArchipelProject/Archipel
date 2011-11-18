@@ -56,6 +56,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     id                              _delegate   @accessors(property=delegate);
 }
 
+
 #pragma mark -
 #pragma mark Initialization
 

@@ -892,9 +892,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             }
         }
 
-        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]]]
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
+        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]]]
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
