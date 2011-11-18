@@ -332,7 +332,7 @@ class TNPubSubNode:
         """
         iq  = xmpp.Iq(typ="get", to=self.pubsubserver)
         pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
-        pubsub.addChild("subscriptions")
+        pubsub.addChild("subscriptions", attrs={"node": self.nodename})
 
         def _did_retrieve_subscription(conn, resp, callback):
             ret = False
@@ -397,14 +397,15 @@ class TNPubSubNode:
         """
         Trigger the callback for events.
         """
+        self.retrieve_items()
         node = event.getTag("event").getTag("items").getAttr("node")
-        if node == self.nodename and self.subscriber_callback and event.getTo() == self.subscriber_jid:
+        if node == self.nodename and self.subscriber_callback and event.getTo().getStripped() == self.subscriber_jid.getStripped():
             self.subscriber_callback(event)
 
-    def unsubscribe(self, jid, subID=None, callback=None, wait=False):
+    def unsubscribe(self, jid, subID, callback=None, wait=False):
         """
         Unsubscribe from a node.
-        @type jid: xmpp.Protocol.JID
+        @type jid: xmpp.JID
         @param jid: the JID of the entity to unsubscribe
         @type subID: String
         @param subID: the subscription ID to remove. If None, all subscriptions will be removed
@@ -415,17 +416,12 @@ class TNPubSubNode:
         self.subscriber_callback = None
         self.subscriber_jid = None
 
+        def _did_unsubscribe(conn, resp, callback):
+            self.xmppclient.UnregisterHandler('message', self._on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+
         iq = xmpp.Iq(typ="set", to=self.pubsubserver)
         pubsub = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
-        if not subID:
-            pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid.getStripped()})
-        else:
-            for sid in self.subscriptions:
-                pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid.getStripped(), "subid": sid})
-
-        def _did_unsubscribe(conn, resp, callback):
-            print resp
-            self.xmppclient.UnregisterHandler('message', self._on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+        pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid.getStripped(), "subid": subID})
 
         if wait:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
