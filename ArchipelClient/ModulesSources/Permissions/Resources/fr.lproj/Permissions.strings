@@ -80,3 +80,15 @@
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "203"; */
 "203.title" = "Close";
 
+/* Class = "NSTableColumn"; headerCell.title = "Roster Users"; ObjectID = "351"; */
+"351.headerCell.title" = "Roster Users";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "352"; */
+"352.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Server Users"; ObjectID = "374"; */
+"374.headerCell.title" = "Server Users";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "375"; */
+"375.title" = "Text Cell";
+

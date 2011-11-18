@@ -12,8 +12,6 @@
 	<string>Save the current set of permissions as a role</string>
 	<key>Select a role as permissions template</key>
 	<string>Select a role as permissions template</string>
-	<key>Users</key>
-	<string>Users</string>
 	<key>Your role cannot be deleted.</key>
 	<string>Your role cannot be deleted.</string>
 	<key>Your role cannot be saved.</key>

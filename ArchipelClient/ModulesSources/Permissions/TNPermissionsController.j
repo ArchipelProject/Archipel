@@ -29,11 +29,10 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
 
+@import "TNPermissionUserFetcher.j"
 @import "TNRolesController.j"
-@import "TNXMPPUserDatasource.j"
-
-
 
 var TNArchipelTypePermissions                   = @"archipel:permissions",
     TNArchipelTypePermissionsList               = @"list",
@@ -42,9 +41,8 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     TNArchipelTypePermissionsGetOwn             = @"getown",
     TNArchipelTypePermissionsSetOwn             = @"setown",
     TNArchipelPushNotificationPermissions       = @"archipel:push:permissions",
-    TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users",
-    TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
-    TNArchipelTypeXMPPServerUsersList           = @"list";
+    TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users";
+
 
 /*! @defgroup  permissionsmodule Module Permissions
     @desc This module allow to manages entity permissions
@@ -56,13 +54,15 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 @implementation TNPermissionsController : TNModule
 {
     @outlet CPButtonBar             buttonBarControl;
-    @outlet CPScrollView            scrollViewUsers;
     @outlet CPSearchField           filterField;
+    @outlet CPSearchField           filterUsers;
+    @outlet CPSearchField           filterRosterUsers;
     @outlet CPSplitView             splitView;
     @outlet CPTableView             tablePermissions;
+    @outlet CPTableView             tableRosterUsers;
+    @outlet CPTableView             tableUsers;
     @outlet CPTextField             labelNoUserSelected;
     @outlet CPView                  viewTableContainer;
-    @outlet CPView                  viewUsersLeft;
     @outlet TNRolesController       rolesController;
 
     TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
@@ -73,7 +73,9 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     CPButton                        _saveButton;
     CPImage                         _defaultAvatar;
     CPOutlineView                   _outlineViewUsers;
-    TNXMPPUserDatasource            _datasourceUsers;
+    TNPermissionUserFetcher         _userFetcher;
+    TNTableViewDataSource           _datasourceRosterUsers;
+    TNTableViewLazyDataSource       _datasourceUsers;
 }
 
 
@@ -122,30 +124,36 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 
     [rolesController setDelegate:self];
 
-    // outline view
+    // Label no users selected
     [labelNoUserSelected setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelNoUserSelected setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
-    [viewUsersLeft setBackgroundColor:[CPColor colorWithHexString:@"F4F4F4"]];
-    [scrollViewUsers setAutohidesScrollers:YES];
 
-    _outlineViewUsers = [[CPOutlineView alloc] initWithFrame:[scrollViewUsers bounds]];
-    _datasourceUsers = [[TNXMPPUserDatasource alloc] init];
+    // Table users in roster
+    _datasourceRosterUsers= [[TNTableViewDataSource alloc] init];
+    [_datasourceRosterUsers setTable:tableRosterUsers];
+    [_datasourceRosterUsers setSearchableKeyPaths:[@"JID"]];
+    [tableRosterUsers setDataSource:_datasourceRosterUsers];
 
-    [_outlineViewUsers setDelegate:self];
-    [_outlineViewUsers setCornerView:nil];
-    [_outlineViewUsers setAllowsColumnResizing:YES];
-    [_outlineViewUsers setUsesAlternatingRowBackgroundColors:YES];
-    [_outlineViewUsers setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_outlineViewUsers setDataSource:_datasourceUsers];
-    [_outlineViewUsers setBackgroundColor:[CPColor blueColor]];
-    [scrollViewUsers setDocumentView:_outlineViewUsers];
+    // Table users from server
+    _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
+    [_datasourceUsers setTable:tableUsers];
+    [tableUsers setDataSource:_datasourceUsers];
 
-    var columnName  = [[CPTableColumn alloc] initWithIdentifier:@"description"];
+    // user fetcher
+    _userFetcher = [[TNPermissionUserFetcher alloc] init];
+    [_userFetcher setDisplaysOnlyHumans:YES];
+    [_userFetcher setDataSource:_datasourceUsers];
+    [_userFetcher setDelegate:self];
 
-    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Users", @"Users")];
+    [filterUsers setTarget:_datasourceUsers];
+    [filterUsers setAction:@selector(filterObjects:)];
+    [filterRosterUsers setTarget:_datasourceRosterUsers];
+    [filterRosterUsers setAction:@selector(filterObjects:)];
 
-    [_outlineViewUsers setOutlineTableColumn:columnName];
-    [_outlineViewUsers addTableColumn:columnName];
+    var filterBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/background-filter.png"]];
+    [[filterUsers superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
+    [[filterRosterUsers superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
+    [[filterField superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
 }
 
 
@@ -156,11 +164,17 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (BOOL)willLoad
 {
-    [super willLoad];
+    if (![super willLoad])
+        return;
+
     [rolesController fetchPubSubNodeIfNeeded];
 
-    [_outlineViewUsers setDelegate:nil];
-    [_outlineViewUsers setDelegate:self];
+    [_userFetcher setEntity:_entity];
+
+    [tableRosterUsers setDelegate:nil];
+    [tableRosterUsers setDelegate:self];
+    [tableUsers setDelegate:nil];
+    [tableUsers setDelegate:self];
     [tablePermissions setDelegate:nil];
     [tablePermissions setDelegate:self];
 
@@ -170,31 +184,19 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [self registerSelector:@selector(_didReceivePermissionsPush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
     [self registerSelector:@selector(_didReceiveUsersPush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
 
-    for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
-    {
-        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
-
-        if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
-            [_datasourceUsers addRosterUser:[TNStropheJID stropheJIDWithString:[[contact JID] bare]]];
-    }
-
-    [self getXMPPUsers];
+    [self reloadRosterUsersTable];
+    [self reloadUsersTable];
+    return YES;
 }
 
 /*! called when module is hidden
 */
 - (void)willHide
 {
+    [_userFetcher reset];
     [rolesController closeWindow:nil];
     [rolesController closeNewTemplateWindow:nil];
     [super willHide];
-}
-
-/*! called when module is unloaded
-*/
-- (void)willUnload
-{
-    [super willUnload];
 }
 
 /*! called when permissions changes
@@ -202,14 +204,17 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 - (void)permissionsChanged
 {
     [super permissionsChanged];
+    [self reloadRosterUsersTable];
+    [self reloadUsersTable];
 }
 
 /*! called when the UI needs to be updated according to the permissions
 */
 - (void)setUIAccordingToPermissions
 {
-    if (![self currentEntityHasPermission:@"permission_get"])
-        [self changeCurrentUser:nil];
+    // ATTENTION
+    // if (![self currentEntityHasPermission:@"permission_get"])
+    //     [self changeCurrentUser:nil];
 
     var hasSetOwn   = [self currentEntityHasPermission:@"permission_setown"],
         hasSet      = [self currentEntityHasPermission:@"permission_set"];
@@ -229,10 +234,14 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (void)flushUI
 {
+    [_userFetcher reset];
+
     [_datasourceUsers removeAllObjects];
+    [_datasourceRosterUsers removeAllObjects];
     [_datasourcePermissions removeAllObjects];
 
-    [_outlineViewUsers reloadData];
+    [tableUsers reloadData];
+    [tableRosterUsers reloadData];
     [tablePermissions reloadData];
 }
 
@@ -250,7 +259,8 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         change  = [somePushInfo objectForKey:@"change"],
         date    = [somePushInfo objectForKey:@"date"];
 
-    [self changeCurrentUser:nil];
+    // ATTENTION
+    // [self changeCurrentUser:nil];
 
     return YES;
 }
@@ -267,19 +277,8 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         stanza  = [somePushInfo objectForKey:@"rawStanza"];
 
     var users = [stanza childrenWithName:@"user"];
-    [_datasourceUsers removeAllObjects];
-    for (var i = 0; i < [users count]; i++)
-    {
-        var user    = [users objectAtIndex:i],
-            jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-            type    = [user valueForAttribute:@"type"];
 
-        if (type == @"human" && ![jid bareEquals:[[TNStropheIMClient defaultClient] JID]])
-            [_datasourceUsers addXMPPUser:jid];
-    }
-    [_outlineViewUsers expandAll];
-    [_outlineViewUsers reloadData];
-
+    [self reloadUsersTable];
     return YES;
 }
 
@@ -346,6 +345,56 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [tablePermissions reloadData];
 }
 
+/*! Reloads the server users table
+*/
+- (void)reloadUsersTable
+{
+    [_userFetcher reset];
+    [_datasourceUsers removeAllObjects];
+    [tableUsers reloadData];
+    [_userFetcher getXMPPUsers];
+}
+
+/*! Reloads the roster users table
+*/
+- (void)reloadRosterUsersTable
+{
+    [_datasourceRosterUsers removeAllObjects];
+    for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
+    {
+        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
+
+        if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
+            [_datasourceRosterUsers addObject:contact];
+    }
+
+    [tableRosterUsers reloadData];
+}
+
+/*! will take care of the current user change
+    @param currentTable the source tableview
+*/
+- (void)changeCurrentUser:(id)currentTable
+{
+    if ([currentTable numberOfSelectedRows] > 0)
+    {
+        var object = [[currentTable dataSource] objectAtIndex:[currentTable selectedRow]];
+
+        [viewTableContainer setHidden:NO];
+        [labelNoUserSelected setHidden:YES];
+        if ([object isKindOfClass:TNStropheContact])
+            [self getUserPermissions:[[object JID] bare]];
+        else
+            [self getUserPermissions:[object bare]];
+    }
+    else
+    {
+        [_datasourcePermissions removeAllObjects];
+        [tablePermissions reloadData];
+        [viewTableContainer setHidden:YES];
+        [labelNoUserSelected setHidden:NO];
+    }
+}
 
 #pragma mark -
 #pragma mark Actions
@@ -356,45 +405,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 - (IBAction)changePermissionsState:(id)aSender
 {
     [self changePermissionsState];
-}
-
-/*! will take care of the current user change
-    @param aSender the sender of the action
-*/
-- (IBAction)changeCurrentUser:(id)aSender
-{
-    if ([_outlineViewUsers numberOfSelectedRows] > 0)
-    {
-        var selectedIndexes = [_outlineViewUsers selectedRowIndexes],
-            object          = [_outlineViewUsers itemAtRow:[selectedIndexes firstIndex]];
-
-        if ([object isKindOfClass:TNStropheJID])
-        {
-            [viewTableContainer setHidden:NO];
-            [labelNoUserSelected setHidden:YES];
-            [self getUserPermissions:[object bare]];
-        }
-        else if (object == TNXMPPUserDatasourceMe)
-        {
-            [viewTableContainer setHidden:NO];
-            [labelNoUserSelected setHidden:YES];
-            [self getUserPermissions:[[[TNStropheIMClient defaultClient] JID] bare]];
-        }
-        else
-        {
-            [_datasourcePermissions removeAllObjects];
-            [tablePermissions reloadData];
-            [viewTableContainer setHidden:YES];
-            [labelNoUserSelected setHidden:NO];
-        }
-    }
-    else
-    {
-        [_datasourcePermissions removeAllObjects];
-        [tablePermissions reloadData];
-        [viewTableContainer setHidden:YES];
-        [labelNoUserSelected setHidden:NO];
-    }
 }
 
 /*! will open the new role window
@@ -424,7 +434,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 
     [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceivePermissions:) ofObject:self];
-
 }
 
 /*! compute the answer containing the permissions
@@ -512,10 +521,15 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (void)changePermissionsState
 {
-    var stanza = [TNStropheStanza iqWithType:@"set"],
+    var currentTable = ([tableUsers numberOfSelectedRows] > 0) ? tableUsers : tableRosterUsers,
+        stanza = [TNStropheStanza iqWithType:@"set"],
         currentAction = TNArchipelTypePermissionsSetOwn,
-        selectedIndexes = [_outlineViewUsers selectedRowIndexes],
-        permissionTarget = [_outlineViewUsers itemAtRow:[selectedIndexes firstIndex]];
+        permissionTarget = [[currentTable dataSource] objectAtIndex:[currentTable selectedRow]];
+
+    if ([permissionTarget isKindOfClass:TNStropheContact])
+        permissionTarget = [[permissionTarget JID] bare];
+    else
+        permissionTarget = [permissionTarget bare];
 
     if ([self currentEntityHasPermission:@"permission_set"])
         currentAction = TNArchipelTypePermissionsSet
@@ -552,59 +566,15 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         [self handleIqErrorFromStanza:aStanza];
 }
 
-/*! ask for permissions of given user
-*/
-- (void)getXMPPUsers
-{
-    var hypervisors = [CPArray array],
-        servers = [CPArray array],
-        roster = [[TNStropheIMClient defaultClient] roster];
-
-    for (var i = 0; i < [[roster contacts] count]; i++)
-    {
-        var contact = [[roster contacts] objectAtIndex:i];
-
-        if (([roster analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
-            && ([contact XMPPShow] != TNStropheContactStatusOffline)
-            && ![hypervisors containsObject:contact]
-            && ![servers containsObject:[[contact JID] domain]])
-        {
-            if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:contact])
-                continue;
-            [servers addObject:[[contact JID] domain]];
-            [hypervisors addObject:contact];
-        }
-    }
-
-    for (var i = 0; i < [hypervisors count]; i++)
-    {
-        var stanza = [TNStropheStanza iqWithType:@"get"];
-
-        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];
-        [stanza addChildWithName:@"archipel" andAttributes:{
-            "action": TNArchipelTypeXMPPServerUsersList}];
-
-        [[hypervisors objectAtIndex:i] sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
-    }
-}
-
-/*! compute the answer containing the user' permissions
-    @param aStanza TNStropheStanza containing the answer
-*/
-- (void)_didGetXMPPUsers:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] != @"result")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
 
 #pragma mark -
 #pragma mark Delegate
 
 - (void)tableView:(CPTableView)aTableView willDisplayView:(CPView)aView forTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
+    if (aTableView !== tablePermissions)
+        return;
+
     try
     {
         if ([aView isKindOfClass:CPCheckBox])
@@ -616,29 +586,40 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     }
 }
 
-- (void)outlineViewSelectionDidChange:(CPNotification)aNotification
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
-    [self changeCurrentUser:nil];
-}
+    if ([aNotification object] === tablePermissions)
+        return;
 
-- (void)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
-{
-    return ([anItem isKindOfClass:TNStropheJID] || anItem == TNXMPPUserDatasourceMe);
-}
-
-- (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
-{
-    var viewProto = [[CPTextField alloc] init];
-
-    if (![anItem isKindOfClass:TNStropheJID])
+    switch ([aNotification object])
     {
-        [viewProto setTextColor:[CPColor colorWithHexString:@"7F7F7F"]];
-        [viewProto setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [viewProto setFont:[CPFont boldSystemFontOfSize:12.0]];
-        return viewProto;
+        case tableUsers:
+            // avoid stack spam
+            if ([tableRosterUsers numberOfSelectedRows] > 0)
+                [tableRosterUsers deselectAll];
+            else
+                [self changeCurrentUser:tableUsers];
+            break;
+
+        case tableRosterUsers:
+            // avoid stack spam
+            if ([tableUsers numberOfSelectedRows] > 0)
+                [tableUsers deselectAll];
+            else
+                [self changeCurrentUser:tableRosterUsers];
+            break;
     }
-    return viewProto;
 }
+
+/*! delegate of TNPermissionUserFetcher
+*/
+- (void)userFetcherClean
+{
+
+    [_datasourceUsers removeAllObjects];
+    [tableUsers reloadData];
+}
+
 @end
 
 
