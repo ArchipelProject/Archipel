@@ -56,13 +56,13 @@ class TNHookableEntity (object):
         @rtype: boolean
         @return: True in case of success
         """
-        if hookname in self.hooks:
-            for hook in self.hooks[hookname]:
-                self.hooks[hookname].remove(hook)
-            del self.hooks[hookname]
-            self.log.info("HOOK: removing hook with name %s" % hookname)
-            return True
-        return False
+        if not hookname in self.hooks:
+            return False
+        for hook in self.hooks[hookname]:
+            self.hooks[hookname].remove(hook)
+        del self.hooks[hookname]
+        self.log.info("HOOK: removing hook with name %s" % hookname)
+        return True
 
     def register_hook(self, hookname, method, user_info=None, oneshot=False):
         """
@@ -93,14 +93,15 @@ class TNHookableEntity (object):
         @rtype: boolean
         @return: True in case of success
         """
-        if hookname in self.hooks:
-            for hook in self.hooks[hookname]:
-                if hook["method"] == method:
-                    self.hooks[hookname].remove(hook)
-                    break
-            self.log.info("HOOK: unregistering hook method %s for hook name %s" % (method.__name__, hookname))
-            return True
-        return False
+        if not hookname in self.hooks:
+            return False
+        for hook in self.hooks[hookname]:
+            if hook["method"] == method:
+                self.hooks[hookname].remove(hook)
+                break
+        self.log.info("HOOK: unregistering hook method %s for hook name %s" % (method.__name__, hookname))
+        return True
+
 
     def perform_hooks(self, hookname, arguments=None):
         """
@@ -128,6 +129,6 @@ class TNHookableEntity (object):
             except Exception as ex:
                 self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
 
-            for hook_method in hook_to_remove:
-                self.log.info("HOOK: removing registred hook for deletion %s" % (hook_method.__name__))
-                self.unregister_hook(hookname, hook_method)
+        for hook_method in hook_to_remove:
+            self.log.info("HOOK: removing registred hook for deletion %s" % (hook_method.__name__))
+            self.unregister_hook(hookname, hook_method)
