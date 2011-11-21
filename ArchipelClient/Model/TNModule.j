@@ -112,7 +112,7 @@ var TNModuleStatusImageReady,
     int                             _moduleStatus               @accessors(getter=moduleStatus);
     TNStropheGroup                  _group                      @accessors(property=group);
 
-    BOOL                            _initialPermissionsReceived;
+    CPArray                         _initialPermissionsReceived;
     CPDictionary                    _registredSelectors;
 }
 
@@ -134,7 +134,7 @@ var TNModuleStatusImageReady,
     _isActive                   = NO;
     _isVisible                  = NO;
     _isCurrentSelectedIndex     = NO;
-    _initialPermissionsReceived = NO
+    _initialPermissionsReceived = [CPArray array];
     _registredSelectors         = [CPDictionary dictionary];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
@@ -685,9 +685,11 @@ var TNModuleStatusImageReady,
     {
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
-        if (_initialPermissionsReceived)
+        if ([_initialPermissionsReceived containsObject:[_entity description]])
             [self permissionsChanged];
-        _initialPermissionsReceived = YES;
+
+        // @TODO: we should flush this registry at some point
+        [_initialPermissionsReceived addObject:[_entity description]];
     }
 }
 
