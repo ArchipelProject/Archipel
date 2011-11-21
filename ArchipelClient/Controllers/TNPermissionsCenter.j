@@ -161,6 +161,9 @@ var __defaultPermissionCenter;
 */
 - (void)arePermissionsCachedForEntity:(TNStropheContact)aContact
 {
+    if (![aContact isKindOfClass:TNStropheContact])
+        return YES;
+
     return [_cachedPermissions containsKey:aContact];
 }
 
