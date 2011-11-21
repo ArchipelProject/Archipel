@@ -148,8 +148,6 @@
 
     [_messageBoard scrollPoint:newScrollOrigin];
 
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-
     return YES;
 }
 

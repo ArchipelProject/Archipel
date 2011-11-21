@@ -275,10 +275,15 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     // [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
 
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-    [center addObserver:self selector:@selector(populateVirtualMachinesTable:) name:TNStropheRosterPushNotification object:nil];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_reload:)
+                                                 name:TNStropheContactPresenceUpdatedNotification
+                                               object:nil];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(populateVirtualMachinesTable:)
+                                                 name:TNStropheRosterPushNotification
+                                               object:nil];
 
     [tableVirtualMachines setDelegate:nil];
     [tableVirtualMachines setDelegate:self];

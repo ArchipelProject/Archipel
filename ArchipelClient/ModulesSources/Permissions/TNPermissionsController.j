@@ -178,9 +178,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [tablePermissions setDelegate:nil];
     [tablePermissions setDelegate:self];
 
-    var center = [CPNotificationCenter defaultCenter];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-
     [self registerSelector:@selector(_didReceivePermissionsPush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
     [self registerSelector:@selector(_didReceiveUsersPush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
 

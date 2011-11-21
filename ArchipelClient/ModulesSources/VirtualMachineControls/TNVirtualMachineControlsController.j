@@ -255,12 +255,15 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (![super willLoad])
         return NO;
 
-    var center = [CPNotificationCenter defaultCenter];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didReceiveControlNotification:)
+                                                 name:TNArchipelControlNotification
+                                               object:nil];
 
-    [center addObserver:self selector:@selector(_didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didUpdatePresence:)
+                                                 name:TNStropheContactPresenceUpdatedNotification
+                                               object:_entity];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinition];

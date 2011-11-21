@@ -299,12 +299,14 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     if (![super willLoad])
         return NO;
 
-    var center      = [CPNotificationCenter defaultCenter],
-        defaults    = [CPUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
         shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
 
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didUpdatePresence:)
+                                                 name:TNStropheContactPresenceUpdatedNotification
+                                               object:_entity];
 
     _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
@@ -319,8 +321,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
-
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     return YES;
 }

@@ -124,10 +124,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     if (![super willLoad])
         return NO;
 
-
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didUpdatePresence:)
+                                                 name:TNStropheContactPresenceUpdatedNotification
+                                               object:_entity];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 

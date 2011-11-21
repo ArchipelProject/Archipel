@@ -177,13 +177,10 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     if (![super willLoad])
         return NO;
 
-    var center = [CPNotificationCenter defaultCenter];
-
     [_mainOutlineView setDelegate:nil];
     [_mainOutlineView setDelegate:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self getVMCasts];
 

@@ -598,8 +598,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-
     [tableDrives setDelegate:nil];
     [tableDrives setDelegate:self];
     [tableInterfaces setDelegate:nil];
@@ -743,7 +741,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)permissionsChanged
 {
     [super permissionsChanged];
-    [self checkIfRunning];
+    if ([self isVisible])
+        [self checkIfRunning];
 }
 
 /*! called when the UI needs to be updated according to the permissions

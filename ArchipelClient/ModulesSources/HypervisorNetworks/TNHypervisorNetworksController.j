@@ -162,10 +162,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     if (![super willLoad])
         return NO;
 
-    var center = [CPNotificationCenter defaultCenter];
-
-    [center addObserver:self selector:@selector(_didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:tableViewNetworks];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didTableSelectionChange:)
+                                                 name:CPTableViewSelectionDidChangeNotification
+                                               object:tableViewNetworks];
 
     [tableViewNetworks setDelegate:nil];
     [tableViewNetworks setDelegate:self];

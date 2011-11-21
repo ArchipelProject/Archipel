@@ -101,9 +101,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     if (![super willLoad])
         return NO;
 
-    var center = [CPNotificationCenter defaultCenter];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationScheduler];
 
     [self getJobs];
