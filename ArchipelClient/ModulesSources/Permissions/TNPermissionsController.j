@@ -352,7 +352,35 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [_userFetcher reset];
     [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
-    [_userFetcher getXMPPUsers];
+
+    var roster = [[TNStropheIMClient defaultClient] roster];
+
+    if ([roster analyseVCard:[_entity vCard]] === TNArchipelEntityTypeHypervisor)
+    {
+        // is this is a hypervisor, then we ask directly the users.
+        [_userFetcher setEntity:_entity];
+        [_userFetcher getXMPPUsers];
+    }
+    else
+    {
+        for (var i = 0; i < [[roster contacts] count]; i++)
+        {
+            // Otherwise, we search in the roster for the virtual machine's hypervisor
+            // in order to ask it. This may change in the future, to directly query the
+            // virtual machine that will forward the request to its hypervisor.
+            var contact = [[roster contacts] objectAtIndex:i];
+
+            if (([roster analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+                && ([contact XMPPShow] != TNStropheContactStatusOffline)
+                && ([[contact JID] node] == [[_entity resources] objectAtIndex:0]))
+            {
+                if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:contact])
+                    continue;
+                [_userFetcher setEntity:contact];
+                [_userFetcher getXMPPUsers];
+            }
+        }
+    }
 }
 
 /*! Reloads the roster users table
