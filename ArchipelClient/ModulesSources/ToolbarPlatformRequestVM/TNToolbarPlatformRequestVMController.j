@@ -76,7 +76,7 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
     [_pubSubRequestOut setDelegate:self];
     [_pubSubRequestOut recoverSubscriptions];
 
-    [_toolbarItem setEnabled:NO];
+    [_UIItem setEnabled:NO];
 }
 
 
@@ -176,11 +176,11 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
         CPLog.info("sucessfully subscriptions retreived for node " + [aPubSubNode name]);
         if ([aPubSubNode numberOfSubscriptions] == 0)
             [aPubSubNode subscribe];
-        [_toolbarItem setEnabled:YES];
+        [_UIItem setEnabled:YES];
     }
     else
     {
-        [_toolbarItem setEnabled:NO];
+        [_UIItem setEnabled:NO];
         CPLog.error("cannot retrieve subscriptions for node " + [aPubSubNode name]);
     }
 }

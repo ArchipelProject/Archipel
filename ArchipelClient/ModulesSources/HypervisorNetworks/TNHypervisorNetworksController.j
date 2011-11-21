@@ -187,13 +187,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [super willHide];
 }
 
-/*! Called when the module unload
-*/
-- (void)willUnload
-{
-    [super willUnload];
-}
-
 /*! called when MainMenu is ready
 */
 - (void)menuReady

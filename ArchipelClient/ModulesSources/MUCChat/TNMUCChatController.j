@@ -135,8 +135,8 @@
         return NO;
 
     _numberOfNotices = 0;
-    [_toolbarItem setImage:_toolbarItemImages[0]];
-    [_toolbar _reloadToolbarItems];
+    [_UIItem setImage:_toolbarItemImages[0]];
+    [_UIObject _reloadToolbarItems];
     [self reload:nil];
     [_messageBoard reloadData];
     [self scrollToBottom];
@@ -340,8 +340,8 @@
         _numberOfNotices++;
         var index = _numberOfNotices > 6 ? 6 : _numberOfNotices;
 
-        [_toolbarItem setImage:_toolbarItemImages[index]];
-        [_toolbar _reloadToolbarItems];
+        [_UIItem setImage:_toolbarItemImages[index]];
+        [_UIObject _reloadToolbarItems];
         [_audioTagReceive play];
     }
 }

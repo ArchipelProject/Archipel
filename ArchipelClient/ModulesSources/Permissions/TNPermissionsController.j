@@ -165,7 +165,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 - (BOOL)willLoad
 {
     if (![super willLoad])
-        return;
+        return NO;
 
     [rolesController fetchPubSubNodeIfNeeded];
 
@@ -184,8 +184,19 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [self registerSelector:@selector(_didReceivePermissionsPush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
     [self registerSelector:@selector(_didReceiveUsersPush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
 
+    return YES;
+}
+
+/*! called when module become visible
+*/
+- (BOOL)willShow
+{
+    if (![super willShow])
+        return NO;
+
     [self reloadRosterUsersTable];
     [self reloadUsersTable];
+
     return YES;
 }
 
@@ -204,8 +215,11 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 - (void)permissionsChanged
 {
     [super permissionsChanged];
-    [self reloadRosterUsersTable];
-    [self reloadUsersTable];
+    if ([self isVisible])
+    {
+        [self reloadRosterUsersTable];
+        [self reloadUsersTable];
+    }
 }
 
 /*! called when the UI needs to be updated according to the permissions
