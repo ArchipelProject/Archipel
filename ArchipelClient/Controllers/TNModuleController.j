@@ -743,8 +743,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         [_mainTabView addTabViewItem:[module UIItem]];
 
         // if not permissions are not cached, AppController will do it
-        // we just wait
-        if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+        // we just wait. If entity is nil, then there is no permissions to wait for
+        if (!_entity || [[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
             [module _beforeWillLoad];
 
         _numberOfActiveModules++;
@@ -758,7 +758,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     var currentModule = [_tabModules objectForKey:[[_mainTabView selectedTabViewItem] identifier]];
     [currentModule setCurrentSelectedIndex:YES];
-    if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+    if (!_entity || [[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
         [currentModule willShow];
 }
 
