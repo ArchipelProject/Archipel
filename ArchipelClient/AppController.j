@@ -204,7 +204,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPTimer                                     _moduleLoadingDelay;
     CPView                                      _viewGradientAnimation;
     CPWindow                                    _helpWindow;
-    int                                         _tempNumberOfReadyModules;
     TNOutlineViewRoster                         _rosterOutlineView;
     TNPubSubController                          _pubSubController;
     TNRosterDataViewContact                     _rosterDataViewForContacts;
@@ -440,7 +439,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* module controller */
     CPLog.trace(@"initializing moduleController");
-    _tempNumberOfReadyModules = -1;
     _moduleLoadingStarted = NO;
     [moduleController setDelegate:self];
     [moduleController setMainToolbar:_mainToolbar];
