@@ -87,10 +87,11 @@ var TNModuleStatusImageReady,
     @outlet CPView                  viewPreferences             @accessors;
     @outlet CPView                  viewMask                    @accessors;
 
+    BOOL                            _fullscreen                 @accessors(getter=isFullscreen, setter=setFullscreen:);
+    BOOL                            _hasCIB                     @accessors(getter=hasCIB, setter=setHasCIB:);
     BOOL                            _isActive                   @accessors(property=isActive, readonly);
     BOOL                            _isCurrentSelectedIndex     @accessors(getter=isCurrentSelectedIndex, setter=setCurrentSelectedIndex:);
     BOOL                            _isVisible                  @accessors(property=isVisible, readonly);
-    BOOL                            _toolbarItemOnly            @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
     CPArray                         _mandatoryPermissions       @accessors(property=mandatoryPermissions);
     CPArray                         _supportedEntityTypes       @accessors(property=supportedEntityTypes);
     CPBundle                        _bundle                     @accessors(property=bundle);
@@ -98,22 +99,20 @@ var TNModuleStatusImageReady,
     CPMenu                          _rosterContactsMenu         @accessors(property=rosterContactsMenu);
     CPMenu                          _rosterGroupsMenu           @accessors(property=rosterGroupsMenu);
     CPMenuItem                      _menuItem                   @accessors(property=menuItem);
+    CPString                        _identifier                 @accessors(property=identifier);
     CPString                        _label                      @accessors(property=label);
     CPString                        _name                       @accessors(property=name);
-    CPToolbar                       _toolbar                    @accessors(property=toolbar);
-    CPToolbarItem                   _toolbarItem                @accessors(property=toolbarItem);
     CPView                          _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
     id                              _entity                     @accessors(property=entity);
     id                              _moduleType                 @accessors(property=moduleType);
+    id                              _UIObject                   @accessors(property=UIObject);
+    id                              _UItem                      @accessors(property=UIItem);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
     int                             _moduleStatus               @accessors(getter=moduleStatus);
     TNStropheGroup                  _group                      @accessors(property=group);
 
-    BOOL                            _pubSubPermissionRegistred;
-    BOOL                            _registredToPermissionCenter;
     CPDictionary                    _registredSelectors;
-    id                              _pubSubHandlerId;
 }
 
 
@@ -133,6 +132,7 @@ var TNModuleStatusImageReady,
 {
     _isActive               = NO;
     _isVisible              = NO;
+    _isCurrentSelectedIndex = NO;
     _registredSelectors     = [CPDictionary dictionary];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
@@ -269,10 +269,11 @@ var TNModuleStatusImageReady,
     if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
         return YES;
 
-    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity]) && [[[TNStropheIMClient defaultClient] JID] bare] != defaultAdminAccount)
+    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity])
+        && [[[TNStropheIMClient defaultClient] JID] bare] != defaultAdminAccount)
     {
         if (![[TNPermissionsCenter defaultCenter] hasPermissions:_mandatoryPermissions forEntity:anEntity ])
-                return NO;
+            return NO;
     }
     return YES;
 }

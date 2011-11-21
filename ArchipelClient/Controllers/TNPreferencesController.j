@@ -147,8 +147,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     _moduleLoader = [aNotification object];
 
-    var tabModules          = [[_moduleLoader loadedTabModules] allValues],
-        toolbarModules      = [[_moduleLoader loadedToolbarModules] allValues],
+    var tabModules          = [_moduleLoader tabModules],
+        toolbarModules      = [_moduleLoader toolbarModules],
         notSortedModules    = [tabModules arrayByAddingObjectsFromArray:toolbarModules],
         sortDescriptor      = [CPSortDescriptor sortDescriptorWithKey:@"label" ascending:YES];
 

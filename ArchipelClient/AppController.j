@@ -1480,7 +1480,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
 {
-    var tabsModules = [[moduleController loadedTabModules] allValues];
+    var tabsModules = [moduleController tabModules];
 
     for (var i = 0; i < [tabsModules count]; i++)
     {
@@ -1656,11 +1656,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [_rosterOutlineView setAlphaValue:Math.pow(percent, 3)];
     _viewGradientAnimation._DOMElement.style.opacity = (1 - percent) + 0.3;
-    if (percent == 1)
-    {
-        _rosterOutlineView._DOMElement.style.WebkitTransition = "";
-        _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
-    }
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
@@ -1668,6 +1663,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
 {
     CPLog.info(@"All modules have been loaded");
+
+    _rosterOutlineView._DOMElement.style.WebkitTransition = "";
+    _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
+
+    [_rosterOutlineView setAlphaValue:1.0];
+    _viewGradientAnimation._DOMElement.style.opacity = 0;
 
     [_mainToolbar reloadToolbarItems];
     [_rosterOutlineView setEnabled:YES];
