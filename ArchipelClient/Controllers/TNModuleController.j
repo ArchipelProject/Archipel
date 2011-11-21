@@ -753,10 +753,13 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     // and we reactivate it
     _deactivateModuleTabItemPositionStorage = NO;
 
-    [_mainTabView setDelegate:self];
     [self recoverFromLastSelectedIndex];
+    [_mainTabView setDelegate:self];
 
-    [[_tabModules objectForKey:[[_mainTabView selectedTabViewItem] identifier]] willShow];
+    var currentModule = [_tabModules objectForKey:[[_mainTabView selectedTabViewItem] identifier]];
+    [currentModule setCurrentSelectedIndex:YES];
+    if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+        [currentModule willShow];
 }
 
 /*! will remove all loaded modules and send message willHide willUnload to all TNModules
