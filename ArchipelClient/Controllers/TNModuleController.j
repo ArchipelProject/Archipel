@@ -35,8 +35,6 @@ TNArchipelModuleTypeTab     = @"tab";
 TNArchipelModuleTypeToolbar = @"toolbar";
 
 TNArchipelModulesLoadingCompleteNotification    = @"TNArchipelModulesLoadingCompleteNotification";
-TNArchipelModulesReadyNotification              = @"TNArchipelModulesReadyNotification";
-TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNotification";
 TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityRequestNotification";
 
 
@@ -64,7 +62,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 {
     @outlet CPView                  viewPermissionDenied;
 
-    BOOL                            _allModulesReady                @accessors(getter=isAllModulesReady);
     BOOL                            _moduleLoadingStarted           @accessors(getter=isModuleLoadingStarted);
     CPColor                         _toolbarModuleBackgroundColor   @accessors(property=toolbarModuleBackgroundColor);
     CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
@@ -77,7 +74,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     id                              _delegate                       @accessors(property=delegate);
     id                              _entity                         @accessors(property=entity);
     int                             _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
-    int                             _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
     TNTabView                       _mainTabView                    @accessors(property=mainTabView);
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
@@ -85,7 +81,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     CPDictionary                    _openedTabsRegistry;
     CPDictionary                    _tabModules;
     CPDictionary                    _toolbarModules;
-    CPString                        _previousXMPPShow;
     id                              _modulesPList;
     int                             _numberOfModulesLoaded;
     int                             _numberOfModulesToLoad;
@@ -118,8 +113,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         _numberOfModulesToLoad                  = 0;
         _numberOfModulesLoaded                  = 0;
         _numberOfActiveModules                  = 0;
-        _numberOfReadyModules                   = 0;
-        _allModulesReady                        = NO;
         _deactivateModuleTabItemPositionStorage = NO;
         _moduleLoadingStarted                   = NO;
         _openedTabsRegistry                     = [CPDictionary dictionary];
@@ -140,68 +133,33 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 {
     if (_numberOfModulesToLoad && _numberOfModulesLoaded != _numberOfModulesToLoad)
         return NO;
-
     if ((anEntity === _entity) && (anEntity != nil))
         return NO;
 
+    _numberOfActiveModules = 0;
+    _entity = anEntity;
+    _moduleType = aType;
+
     var center = [CPNotificationCenter defaultCenter];
 
-    [self _removeAllTabsFromModulesTabView];
-    [_infoTextField setStringValue:@""];
-    [_infoTextField setHidden:YES];
-
-    _numberOfActiveModules  = 0;
-    _numberOfReadyModules   = 0;
-    _allModulesReady        = NO;
-    _entity                 = anEntity;
-    _moduleType             = aType;
-
     [center removeObserver:self];
-    [[CPNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_didReceiveVisibilityRequest:)
-                                                 name:TNArchipelModulesVisibilityRequestNotification
-                                               object:nil];
-
-
-    if (_moduleType != TNArchipelEntityTypeGeneral)
-    {
-        [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-        [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
-    }
-    [center addObserver:self selector:@selector(_didAllModulesReady:) name:TNArchipelModulesReadyNotification object:nil];
+    [center addObserver:self selector:@selector(_didReceiveVisibilityRequest:) name:TNArchipelModulesVisibilityRequestNotification object:nil];
 
     if ([_entity isKindOfClass:TNStropheContact])
     {
-        _previousXMPPShow = [_entity XMPPShow];
-
-        if ((_previousXMPPShow != TNStropheContactStatusOffline) && (_previousXMPPShow != TNStropheContactStatusDND))
+        if (_moduleType != TNArchipelEntityTypeGeneral)
         {
-            [self _populateModulesTabView];
+            [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+            [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
         }
-        else
-        {
-            if (_previousXMPPShow == TNStropheContactStatusOffline)
-            {
-                [_infoTextField setStringValue:@"Entity is offline"];
-                [_infoTextField setHidden:NO];
-            }
-            else if (_previousXMPPShow == TNStropheContactStatusDND)
-            {
-                if ([_mainTabView selectedTabViewItem])
-                    [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
-                [_infoTextField setStringValue:@"Entity does not want to be disturbed"];
-                [_infoTextField setHidden:NO];
-            }
-            else
-            {
-                [_infoTextField setStringValue:@""];
-                [_infoTextField setHidden:YES];
-            }
-            [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-        }
+        [self _removeAllTabsFromModulesTabView];
+        [self updateUIAccordingToPresence:_entity]
     }
     else
     {
+        [_infoTextField setStringValue:@""];
+        [_infoTextField setHidden:YES];
+        [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
 
@@ -217,6 +175,81 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     }
 }
 
+#pragma mark -
+#pragma mark Utilities
+
+- (void)updateUIAccordingToPresence:(TNStropheContact)aContact
+{
+    var infoText = @"";
+
+    switch ([aContact XMPPShow])
+    {
+        case TNStropheContactStatusOffline:
+            [self _removeAllTabsFromModulesTabView];
+            infoText = @"Entity is offline";
+            break;
+
+        case TNStropheContactStatusDND:
+            if ([_mainTabView selectedTabViewItem])
+                [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
+            [self _removeAllTabsFromModulesTabView];
+            infoText = @"Entity does not want to be disturbed";
+            break;
+
+        case TNStropheContactStatusOnline:
+        case TNStropheContactStatusBusy:
+        case TNStropheContactStatusAway:
+            if (_numberOfActiveModules == 0)
+                [self _populateModulesTabView];
+    }
+
+    [_infoTextField setStringValue:infoText];
+    [_infoTextField setHidden:(infoText == @"")];
+}
+
+
+#pragma mark -
+#pragma mark Notifications handlers
+
+/*! triggered on TNStropheContactPresenceUpdatedNotification receiption. This will sent _removeAllTabsFromModulesTabView
+    to self if presence if Offline. If presence was Offline and bacame online, it will ask for the vCard to
+    know what TNModules to load.
+*/
+- (void)_didPresenceUpdate:(CPNotification)aNotification
+{
+    if (_numberOfModulesLoaded != _numberOfModulesToLoad)
+        return;
+
+    [self updateUIAccordingToPresence:[aNotification object]]
+}
+
+/*! triggered on vCard reception
+    @param aNotification CPNotification that trigger the selector
+*/
+- (void)_didReceiveVcard:(CPNotification)aNotification
+{
+    var vCard = [[aNotification object] vCard];
+
+    if ([vCard text] != [[_entity vCard] text])
+    {
+        _moduleType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
+
+        [self _removeAllTabsFromModulesTabView];
+        [self _populateModulesTabView];
+    }
+}
+
+/*! Triggered when TNArchipelModulesVisibilityRequestNotification is recieved
+*/
+- (void)_didReceiveVisibilityRequest:(CPNotification)aNotification
+{
+    var requester = [aNotification object],
+        module = [_tabModules objectForKey:[requester identifier]];
+
+    for (var i = 0; i < [[_mainTabView tabViewItems] count]; i++)
+        if ([[[_mainTabView tabViewItems] objectAtIndex:i] identifier] == [requester name])
+            [_mainTabView selectTabViewItem:[[_mainTabView tabViewItems] objectAtIndex:i]];
+}
 
 #pragma mark -
 #pragma mark Getters / Setters
@@ -606,98 +639,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
 
 #pragma mark -
-#pragma mark Notifications handlers
-
-/*! triggered on TNStropheContactPresenceUpdatedNotification receiption. This will sent _removeAllTabsFromModulesTabView
-    to self if presence if Offline. If presence was Offline and bacame online, it will ask for the vCard to
-    know what TNModules to load.
-*/
-- (void)_didPresenceUpdate:(CPNotification)aNotification
-{
-    if (_numberOfModulesLoaded != _numberOfModulesToLoad)
-        return;
-
-    if ([[aNotification object] XMPPShow] == TNStropheContactStatusOffline)
-    {
-        _numberOfActiveModules  = 0;
-        _allModulesReady        = NO;
-
-        [self _removeAllTabsFromModulesTabView];
-        _previousXMPPShow = TNStropheContactStatusOffline;
-        [_infoTextField setStringValue:@"Entity is offline"];
-        [_infoTextField setHidden:NO];
-    }
-    else if ([[aNotification object] XMPPShow] == TNStropheContactStatusDND)
-    {
-        _numberOfActiveModules  = 0;
-        _allModulesReady        = NO;
-
-        [self _removeAllTabsFromModulesTabView];
-        _previousXMPPShow = TNStropheContactStatusDND;
-        [_infoTextField setStringValue:@"Entity does not want to be disturbed"];
-        [_infoTextField setHidden:NO];
-    }
-    else if ((_previousXMPPShow == TNStropheContactStatusOffline) || (_previousXMPPShow == TNStropheContactStatusDND))
-    {
-        _previousXMPPShow           = nil;
-        _numberOfActiveModules      = 0;
-        _allModulesReady            = NO;
-
-        [_infoTextField setStringValue:@""];
-        [_infoTextField setHidden:YES];
-        [self _removeAllTabsFromModulesTabView];
-        [self _populateModulesTabView];
-    }
-}
-
-/*! triggered on vCard reception
-    @param aNotification CPNotification that trigger the selector
-*/
-- (void)_didReceiveVcard:(CPNotification)aNotification
-{
-    var vCard   = [[aNotification object] vCard];
-
-    if ([vCard text] != [[_entity vCard] text])
-    {
-        _moduleType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
-
-        [self _removeAllTabsFromModulesTabView];
-        [self _populateModulesTabView];
-    }
-}
-
-/*! Triggered when all modules are ready
-*/
-- (void)_didAllModulesReady:(CPNotification)aNotification
-{
-    _numberOfReadyModules++;
-
-    if (_numberOfReadyModules == _numberOfActiveModules)
-    {
-        var center = [CPNotificationCenter defaultCenter];
-
-        CPLog.debug("sending all modules ready notification")
-        [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
-
-        _allModulesReady = YES;
-    }
-}
-
-/*! Triggered when TNArchipelModulesVisibilityRequestNotification is recieved
-*/
-- (void)_didReceiveVisibilityRequest:(CPNotification)aNotification
-{
-    var requester = [aNotification object],
-        module = [_tabModules objectForKey:[requester identifier]];
-
-    for (var i = 0; i < [[_mainTabView tabViewItems] count]; i++)
-        if ([[[_mainTabView tabViewItems] objectAtIndex:i] identifier] == [requester name])
-            [_mainTabView selectTabViewItem:[[_mainTabView tabViewItems] objectAtIndex:i]];
-}
-
-
-
-#pragma mark -
 #pragma mark Tabs Modules Management
 
 /*! will display the modules that have to be displayed according to the entity type.
@@ -743,8 +684,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         [_mainTabView addTabViewItem:[module UIItem]];
 
         // if not permissions are not cached, AppController will do it
-        // we just wait. If entity is nil, then there is no permissions to wait for
-        if (!_entity || [[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+        // we just wait for them.
+        if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
             [module _beforeWillLoad];
 
         _numberOfActiveModules++;
@@ -758,7 +699,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     var currentModule = [_tabModules objectForKey:[[_mainTabView selectedTabViewItem] identifier]];
     [currentModule setCurrentSelectedIndex:YES];
-    if (!_entity || [[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
+    if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
         [currentModule willShow];
 }
 
@@ -770,6 +711,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         return;
 
     var arrayCpy = [CPArray arrayWithArray:[_mainTabView tabViewItems]];
+
+    _numberOfActiveModules = 0;
 
     [_mainTabView setDelegate:nil];
 
