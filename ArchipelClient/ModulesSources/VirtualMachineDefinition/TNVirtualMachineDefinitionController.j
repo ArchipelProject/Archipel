@@ -772,6 +772,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:_minusButtonNics enabledAccordingToPermission:@"define"];
     [self setControl:_plusButtonDrives enabledAccordingToPermission:@"define"];
     [self setControl:_plusButtonNics enabledAccordingToPermission:@"define"];
+    [self setControl:_plusButtonCharacter enabledAccordingToPermission:@"define"];
+    [self setControl:_minusButtonCharacterDevice enabledAccordingToPermission:@"define"];
+    [self setControl:_editButtonCharacterDevice enabledAccordingToPermission:@"define"];
+    [self setControl:fieldMemoryTuneSoftLimit enabledAccordingToPermission:@"define"];
+    [self setControl:fieldMemoryTuneHardLimit enabledAccordingToPermission:@"define"];
+    [self setControl:fieldMemoryTuneGuarantee enabledAccordingToPermission:@"define"];
+    [self setControl:fieldMemoryTuneSwapHardLimit enabledAccordingToPermission:@"define"];
+    [self setControl:fieldBlockIOTuningWeight enabledAccordingToPermission:@"define"];
 
     if (![self currentEntityHasPermission:@"define"])
     {
@@ -2252,6 +2260,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         {
             [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
             [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
+        }
+    }
+    else if ([aNotification object] == tableCharacterDevices)
+    {
+        if ([[aNotification object] numberOfSelectedRows] > 0)
+        {
+            [self setControl:_minusButtonCharacterDevice enabledAccordingToPermission:@"define"];
+            [self setControl:_editButtonCharacterDevice enabledAccordingToPermission:@"define"];
         }
     }
 }
