@@ -79,15 +79,18 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
                 self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
                 self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
-        self.user_page_size = 50;
+        self.user_page_size = 50
+
         # permissions
-        self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
-        self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
+        if self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
+
         self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
         self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
 
@@ -99,15 +102,21 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
-        self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
-        self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+            self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
     def unregister_handlers(self):
         """
         Unregister the handlers.
         """
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
     @staticmethod
     def plugin_info():
@@ -397,9 +406,40 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
 
     ### XMPP Processing for users
 
-    def process_users_iq(self, conn, iq):
+    def process_users_iq_for_virtualmachines(self, conn, iq):
         """
-        This method is invoked when a ARCHIPEL_NS_EJABBERDCTL_USERS IQ is received.
+        This method is invoked when a ARCHIPEL_NS_XMPPSERVER_USERS IQ is received.
+        It understands IQ of type:
+            - list
+            - filter
+            - number
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_users_")
+        reply = None
+        if action == "number":
+            reply = self.iq_users_number(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        elif action == "list":
+            reply = self.iq_users_list(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        elif action == "filter":
+            reply = self.iq_users_filter(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+    def process_users_iq_for_hypervisors(self, conn, iq):
+        """
+        This method is invoked when a ARCHIPEL_NS_XMPPSERVER_USERS IQ is received.
         It understands IQ of type:
             - register
             - unregister
