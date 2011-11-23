@@ -57,6 +57,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.folder_nwfilters = self.configuration.get("NETWORKS", "libvirt_nw_filters_path")
+        if not os.path.exists(self.folder_nwfilters):
+            raise Exception("%s is not found. You may need to modify archipel.conf file" % self.folder_nwfilters)
         # permissions
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
