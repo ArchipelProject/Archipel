@@ -747,6 +747,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
     [popoverXMLString close];
+    [networkController closeWindow:nil];
     [self setUIAccordingToPermissions];
 }
 
