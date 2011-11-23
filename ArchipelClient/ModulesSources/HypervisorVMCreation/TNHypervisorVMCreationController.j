@@ -557,6 +557,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)didManagedTableDoubleClick:(id)aSender
 {
+    if ([tableVirtualMachines numberOfSelectedRows] <= 0)
+        return;
+
     var vm = [_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]];
 
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
