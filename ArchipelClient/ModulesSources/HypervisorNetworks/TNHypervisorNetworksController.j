@@ -162,17 +162,16 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     if (![super willLoad])
         return NO;
 
-    [[CPNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_didTableSelectionChange:)
-                                                 name:CPTableViewSelectionDidChangeNotification
-                                               object:tableViewNetworks];
-
     [tableViewNetworks setDelegate:nil];
     [tableViewNetworks setDelegate:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
-    [self getHypervisorNetworks];
-    [self getHypervisorNICS];
+
+    if ([self currentEntityHasPermission:@"network_get"])
+        [self getHypervisorNetworks];
+
+    if ([self currentEntityHasPermission:@"network_getnics"])
+        [self getHypervisorNICS];
 
     return YES;
 }
@@ -204,24 +203,32 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (void)permissionsChanged
 {
     [super permissionsChanged];
-    if ([self currentEntityHasPermission:@"network_get"])
-        [self getHypervisorNetworks];
-    if ([self currentEntityHasPermission:@"network_getnics"])
-        [self getHypervisorNICS];
-
-    [self _didTableSelectionChange:nil];
+    // Right, this is useless to reimplement it
+    // but this is just to explain that we don't
+    // reload anything else, because the permissions
+    // system of TNModule will replay _beforeWillLoad,
+    // and so refetch the data.
 }
 
 /*! called when the UI needs to be updated according to the permissions
 */
 - (void)setUIAccordingToPermissions
 {
+    var selectedIndex = [[tableViewNetworks selectedRowIndexes] firstIndex],
+        conditionTableSelectedRow = ([tableViewNetworks numberOfSelectedRows] != 0),
+        networkObject = conditionTableSelectedRow ? [_datasourceNetworks objectAtIndex:selectedIndex] : nil,
+        conditionNetworkActive = [networkObject isActive],
+        conditionTableSelectedOnlyOnRow = ([tableViewNetworks numberOfSelectedRows] == 1);
+
     [self setControl:_plusButton enabledAccordingToPermission:@"network_define"];
-    [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine"];
-    [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
-    [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
-    [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
-    [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define"];
+
+    [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy" specialCondition:conditionTableSelectedRow && conditionNetworkActive];
+    [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && conditionNetworkActive];
+    [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine" specialCondition:conditionTableSelectedRow && !conditionNetworkActive];
+    [self setControl:_editButton enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
+    [self setControl:_activateButton enabledAccordingToPermission:@"network_create" specialCondition:conditionTableSelectedRow && !conditionNetworkActive];
+    [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
+    [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
 }
 
 /*! this message is used to flush the UI
@@ -248,47 +255,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         date    = [somePushInfo objectForKey:@"date"];
 
     [self getHypervisorNetworks];
-    return YES;
-}
-
-/*! triggered when the main table selection changes. it will update GUI
-*/
-- (void)_didTableSelectionChange:(CPNotification)aNotification
-{
-    var selectedIndex   = [[tableViewNetworks selectedRowIndexes] firstIndex];
-
-    [popoverXMLString close];
-
-    [_minusButton setEnabled:NO];
-    [_editButton setEnabled:NO];
-    [_activateButton setEnabled:NO];
-    [_deactivateButton setEnabled:NO];
-    [buttonDefineXMLString setEnabled:NO];
-    [_editXMLButton setEnabled:NO];
-
-    if ([tableViewNetworks numberOfSelectedRows] == 0)
-        return;
-
-    var networkObject = [_datasourceNetworks objectAtIndex:selectedIndex];
-
-    if ([networkObject isActive])
-    {
-        [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
-        if ([tableViewNetworks numberOfSelectedRows] == 1)
-            [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
-    }
-    else
-    {
-        [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine"];
-        [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
-        [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
-        if ([tableViewNetworks numberOfSelectedRows] == 1)
-        {
-            [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define"];
-            [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define"];
-        }
-    }
-
     return YES;
 }
 
@@ -772,6 +738,17 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     return NO;
 }
 
+
+#pragma mark -
+#pragma mark Delegate
+
+/*! TableView delegate
+*/
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    [popoverXMLString close];
+    [self setUIAccordingToPermissions];
+}
 
 @end
 
