@@ -40,7 +40,7 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     if (![super willLoad])
         return NO;
 
-    [_UIItem setEnabled:NO];
+    [[_UIObject itemWithIdentifier:_identifier] setEnabled:NO];
 
     return YES;
 }
@@ -53,10 +53,10 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     switch ([_entity XMPPShow])
     {
         case TNStropheContactStatusBusy:
-            [_UIItem setEnabled:YES];
+            [[_UIObject itemWithIdentifier:_identifier] setEnabled:YES];
             break;
         default:
-            [_UIItem setEnabled:NO];
+            [[_UIObject itemWithIdentifier:_identifier] setEnabled:NO];
    }
 }
 
@@ -67,12 +67,11 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
 - (void)setEntity:(TNStropheContact)anEntity
 {
     [super setEntity:anEntity];
-    _UIItem = [_UIObject itemWithIdentifier:_identifier];
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
     if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
     {
-        [_UIItem setEnabled:NO];
+        [[_UIObject itemWithIdentifier:_identifier] setEnabled:NO];
         return;
     }
     [self setGUIAccordingToStatus:nil];
