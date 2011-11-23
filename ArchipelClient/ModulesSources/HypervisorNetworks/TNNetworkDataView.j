@@ -223,7 +223,6 @@ var TNNetworkDataViewStatusImageActive,
     [aCoder encodeObject:labelAutostart forKey:@"labelAutostart"];
     [aCoder encodeObject:labelInLimit forKey:@"labelInLimit"];
     [aCoder encodeObject:labelOutLimit forKey:@"labelOutLimit"];
-
 }
 
 @end
