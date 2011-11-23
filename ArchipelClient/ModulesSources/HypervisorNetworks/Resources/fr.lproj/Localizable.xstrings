@@ -2,89 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Activate or deactivate Spanning Tree Protocol for the bridge</key>
-	<string>Activer ou désactiver Spanning Tree Protocol</string>
-	<key>Activate selected networks</key>
-	<string>Activer les réseaux sélectionnés</string>
-	<key>Activate this network</key>
-	<string>Activer ce réseau</string>
-	<key>Add new host reservation</key>
-	<string>Ajouter une nouvelle réservation d'hôte</string>
-	<key>Add new range</key>
-	<string>Ajouter une nouvelle gamme DHCP</string>
-	<key>Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.</key>
-	<string>Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.</string>
-	<key>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</key>
-	<string>Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.</string>
-	<key>Cancel</key>
-	<string>Annuler</string>
-	<key>Choose the forward mode for this virtual network</key>
-	<string>Choissisez le mode de renvoi pour ce réseau</string>
-	<key>Create a new DHCP range</key>
-	<string>Créer une nouvelle gamme DHCP</string>
-	<key>Create a new DHCP reservation</key>
-	<string>Créer une nouvelle réservation d'hôte</string>
-	<key>Create a new network</key>
-	<string>Créer un réseau</string>
-	<key>Create new virtual network</key>
-	<string>Créer un nouveau réseau</string>
-	<key>DHCP Hosts</key>
-	<string>Hôtes DHCP</string>
-	<key>DHCP Ranges</key>
-	<string>Gammes DHCP</string>
-	<key>Deactivate</key>
-	<string>Désactiver</string>
-	<key>Deactivate Network</key>
-	<string>Désactiver réseau</string>
-	<key>Deactivate selected networks</key>
-	<string>Désactiver les réseaux sélectionnés</string>
-	<key>Deactivate this network</key>
-	<string>Désactiver ce réseau</string>
-	<key>Delete</key>
-	<string>Supprimer</string>
-	<key>Delete Network</key>
-	<string>Supprimer réseau</string>
-	<key>Delete selected network</key>
-	<string>Supprimer le réseau sélectionné</string>
-	<key>Delete selected networks</key>
-	<string>Supprimer les réseaux sélectionnés</string>
-	<key>Edit selected network</key>
-	<string>Editer le réseau sélectionné</string>
-	<key>Enable DHCP for this virtual network</key>
-	<string>Activer DHCP pour ce réseau</string>
-	<key>Enter the name of the bridge to create when this network is activated</key>
-	<string>Entrer le nom du pont réseau à utiliser</string>
-	<key>Enter the name of the virtual network</key>
-	<string>Entrer le nom du réseau</string>
-	<key>Enter the value of delay for the bridge</key>
-	<string>Entrer la valeur du délai</string>
+	<key>Define if network should start with host</key>
+	<string>Define if network should start with host</string>
 	<key>Error</key>
 	<string>Erreur</string>
-	<key>Network has been defined</key>
-	<string>Le réseau a été défini</string>
-	<key>Network has been removed</key>
-	<string>Le réseau a été supprimé</string>
-	<key>Network status has changed</key>
-	<string>Le statut du réseau a changé</string>
-	<key>Open configuration panel for selected network</key>
-	<string>Ouvrir le panneau de configuration pour le résau sélectionné</string>
-	<key>Remove</key>
-	<string>Supprimer</string>
-	<key>Remove selected DHCP range</key>
-	<string>Supprimer la gamme DHCP</string>
-	<key>Remove selected DHCP reservation</key>
-	<string>Supprimer la réservation d'hôte sélectionnée</string>
-	<key>Select the hypervisor network card you want to use for this virtual network</key>
-	<string>Sélectionner la carte réseau à utiliser pour ce réseau</string>
-	<key>The IP address to assign to the bridge</key>
-	<string>L'addresse IP à assigner au pont</string>
-	<key>The netmask to use for the bridge</key>
-	<string>Le masque réseau à utiliser pour le pont</string>
-	<key>You can't edit a running network</key>
-	<string>Vous ne pouvez pas éditer un reseau activé</string>
-	<key>You can't update a running network</key>
-	<string>Vous ne pouvez pas mettre à jour un réseau activé</string>
-	<key>domain.com</key>
-	<string>domaine.com</string>
+	<key>Open the manual XML editor</key>
+	<string>Open the manual XML editor</string>
+	<key>Unable to parse the given XML</key>
+	<string>Unable to parse the given XML</string>
+	<key>You must set at least the "average" value for inbound limit</key>
+	<string>You must set at least the "average" value for inbound limit</string>
+	<key>You must set at least the "average" value for outbound limit</key>
+	<string>You must set at least the "average" value for outbound limit</string>
 </dict>
 </plist>

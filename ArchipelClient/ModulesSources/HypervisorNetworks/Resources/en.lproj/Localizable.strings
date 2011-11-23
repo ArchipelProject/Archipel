@@ -1,126 +1,18 @@
-/* Activate or deactivate Spanning Tree Protocol for the bridge */
-"Activate or deactivate Spanning Tree Protocol for the bridge" = "Activate or deactivate Spanning Tree Protocol for the bridge";
-
-/* Activate selected networks */
-"Activate selected networks" = "Activate selected networks";
-
-/* Activate this network */
-"Activate this network" = "Activate this network";
-
-/* Add new host reservation */
-"Add new host reservation" = "Add new host reservation";
-
-/* Add new range */
-"Add new range" = "Add new range";
-
-/* Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity. */
-"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity." = "Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.";
-
-/* Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity. */
-"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity." = "Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.";
-
-/* Cancel */
-"Cancel" = "Cancel";
-
-/* Choose the forward mode for this virtual network */
-"Choose the forward mode for this virtual network" = "Choose the forward mode for this virtual network";
-
-/* Create a new DHCP range */
-"Create a new DHCP range" = "Create a new DHCP range";
-
-/* Create a new DHCP reservation */
-"Create a new DHCP reservation" = "Create a new DHCP reservation";
-
-/* Create a new network */
-"Create a new network" = "Create a new network";
-
-/* Create new virtual network */
-"Create new virtual network" = "Create new virtual network";
-
-/* Deactivate */
-"Deactivate" = "Deactivate";
-
-/* Deactivate Network */
-"Deactivate Network" = "Deactivate Network";
-
-/* Deactivate selected networks */
-"Deactivate selected networks" = "Deactivate selected networks";
-
-/* Deactivate this network */
-"Deactivate this network" = "Deactivate this network";
-
-/* Delete */
-"Delete" = "Delete";
-
-/* Delete Network */
-"Delete Network" = "Delete Network";
-
-/* Delete selected network */
-"Delete selected network" = "Delete selected network";
-
-/* Delete selected networks */
-"Delete selected networks" = "Delete selected networks";
-
-/* DHCP Hosts */
-"DHCP Hosts" = "DHCP Hosts";
-
-/* DHCP Ranges */
-"DHCP Ranges" = "DHCP Ranges";
-
-/* domain.com */
-"domain.com" = "domain.com";
-
-/* Edit selected network */
-"Edit selected network" = "Edit selected network";
-
-/* Enable DHCP for this virtual network */
-"Enable DHCP for this virtual network" = "Enable DHCP for this virtual network";
-
-/* Enter the name of the bridge to create when this network is activated */
-"Enter the name of the bridge to create when this network is activated" = "Enter the name of the bridge to create when this network is activated";
-
-/* Enter the name of the virtual network */
-"Enter the name of the virtual network" = "Enter the name of the virtual network";
-
-/* Enter the value of delay for the bridge */
-"Enter the value of delay for the bridge" = "Enter the value of delay for the bridge";
+/* Define if network should start with host */
+"Define if network should start with host" = "Define if network should start with host";
 
 /* Error */
 "Error" = "Error";
 
-/* Network has been defined */
-"Network has been defined" = "Network has been defined";
+/* Open the manual XML editor */
+"Open the manual XML editor" = "Open the manual XML editor";
 
-/* Network has been removed */
-"Network has been removed" = "Network has been removed";
+/* Unable to parse the given XML */
+"Unable to parse the given XML" = "Unable to parse the given XML";
 
-/* Network status has changed */
-"Network status has changed" = "Network status has changed";
+/* You must set at least the \"average\" value for inbound limit */
+"You must set at least the \"average\" value for inbound limit" = "You must set at least the \"average\" value for inbound limit";
 
-/* Open configuration panel for selected network */
-"Open configuration panel for selected network" = "Open configuration panel for selected network";
-
-/* Remove */
-"Remove" = "Remove";
-
-/* Remove selected DHCP range */
-"Remove selected DHCP range" = "Remove selected DHCP range";
-
-/* Remove selected DHCP reservation */
-"Remove selected DHCP reservation" = "Remove selected DHCP reservation";
-
-/* Select the hypervisor network card you want to use for this virtual network */
-"Select the hypervisor network card you want to use for this virtual network" = "Select the hypervisor network card you want to use for this virtual network";
-
-/* The IP address to assign to the bridge */
-"The IP address to assign to the bridge" = "The IP address to assign to the bridge";
-
-/* The netmask to use for the bridge */
-"The netmask to use for the bridge" = "The netmask to use for the bridge";
-
-/* You can't edit a running network */
-"You can't edit a running network" = "You can't edit a running network";
-
-/* You can't update a running network */
-"You can't update a running network" = "You can't update a running network";
+/* You must set at least the \"average\" value for outbound limit */
+"You must set at least the \"average\" value for outbound limit" = "You must set at least the \"average\" value for outbound limit";
 

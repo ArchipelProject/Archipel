@@ -1,126 +1,18 @@
-/* Activate or deactivate Spanning Tree Protocol for the bridge */
-"Activate or deactivate Spanning Tree Protocol for the bridge" = "Activer ou désactiver Spanning Tree Protocol";
-
-/* Activate selected networks */
-"Activate selected networks" = "Activer les réseaux sélectionnés";
-
-/* Activate this network */
-"Activate this network" = "Activer ce réseau";
-
-/* Add new host reservation */
-"Add new host reservation" = "Ajouter une nouvelle réservation d'hôte";
-
-/* Add new range */
-"Add new range" = "Ajouter une nouvelle gamme DHCP";
-
-/* Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity. */
-"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity." = "Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.";
-
-/* Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity. */
-"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity." = "Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.";
-
-/* Cancel */
-"Cancel" = "Annuler";
-
-/* Choose the forward mode for this virtual network */
-"Choose the forward mode for this virtual network" = "Choissisez le mode de renvoi pour ce réseau";
-
-/* Create a new DHCP range */
-"Create a new DHCP range" = "Créer une nouvelle gamme DHCP";
-
-/* Create a new DHCP reservation */
-"Create a new DHCP reservation" = "Créer une nouvelle réservation d'hôte";
-
-/* Create a new network */
-"Create a new network" = "Créer un réseau";
-
-/* Create new virtual network */
-"Create new virtual network" = "Créer un nouveau réseau";
-
-/* Deactivate */
-"Deactivate" = "Désactiver";
-
-/* Deactivate Network */
-"Deactivate Network" = "Désactiver réseau";
-
-/* Deactivate selected networks */
-"Deactivate selected networks" = "Désactiver les réseaux sélectionnés";
-
-/* Deactivate this network */
-"Deactivate this network" = "Désactiver ce réseau";
-
-/* Delete */
-"Delete" = "Supprimer";
-
-/* Delete Network */
-"Delete Network" = "Supprimer réseau";
-
-/* Delete selected network */
-"Delete selected network" = "Supprimer le réseau sélectionné";
-
-/* Delete selected networks */
-"Delete selected networks" = "Supprimer les réseaux sélectionnés";
-
-/* DHCP Hosts */
-"DHCP Hosts" = "Hôtes DHCP";
-
-/* DHCP Ranges */
-"DHCP Ranges" = "Gammes DHCP";
-
-/* domain.com */
-"domain.com" = "domaine.com";
-
-/* Edit selected network */
-"Edit selected network" = "Editer le réseau sélectionné";
-
-/* Enable DHCP for this virtual network */
-"Enable DHCP for this virtual network" = "Activer DHCP pour ce réseau";
-
-/* Enter the name of the bridge to create when this network is activated */
-"Enter the name of the bridge to create when this network is activated" = "Entrer le nom du pont réseau à utiliser";
-
-/* Enter the name of the virtual network */
-"Enter the name of the virtual network" = "Entrer le nom du réseau";
-
-/* Enter the value of delay for the bridge */
-"Enter the value of delay for the bridge" = "Entrer la valeur du délai";
+/* Define if network should start with host */
+"Define if network should start with host" = "Define if network should start with host";
 
 /* Error */
 "Error" = "Erreur";
 
-/* Network has been defined */
-"Network has been defined" = "Le réseau a été défini";
+/* Open the manual XML editor */
+"Open the manual XML editor" = "Open the manual XML editor";
 
-/* Network has been removed */
-"Network has been removed" = "Le réseau a été supprimé";
+/* Unable to parse the given XML */
+"Unable to parse the given XML" = "Unable to parse the given XML";
 
-/* Network status has changed */
-"Network status has changed" = "Le statut du réseau a changé";
+/* You must set at least the \"average\" value for inbound limit */
+"You must set at least the \"average\" value for inbound limit" = "You must set at least the \"average\" value for inbound limit";
 
-/* Open configuration panel for selected network */
-"Open configuration panel for selected network" = "Ouvrir le panneau de configuration pour le résau sélectionné";
-
-/* Remove */
-"Remove" = "Supprimer";
-
-/* Remove selected DHCP range */
-"Remove selected DHCP range" = "Supprimer la gamme DHCP";
-
-/* Remove selected DHCP reservation */
-"Remove selected DHCP reservation" = "Supprimer la réservation d'hôte sélectionnée";
-
-/* Select the hypervisor network card you want to use for this virtual network */
-"Select the hypervisor network card you want to use for this virtual network" = "Sélectionner la carte réseau à utiliser pour ce réseau";
-
-/* The IP address to assign to the bridge */
-"The IP address to assign to the bridge" = "L'addresse IP à assigner au pont";
-
-/* The netmask to use for the bridge */
-"The netmask to use for the bridge" = "Le masque réseau à utiliser pour le pont";
-
-/* You can't edit a running network */
-"You can't edit a running network" = "Vous ne pouvez pas éditer un reseau activé";
-
-/* You can't update a running network */
-"You can't update a running network" = "Vous ne pouvez pas mettre à jour un réseau activé";
+/* You must set at least the \"average\" value for outbound limit */
+"You must set at least the \"average\" value for outbound limit" = "You must set at least the \"average\" value for outbound limit";
 
