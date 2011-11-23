@@ -2,133 +2,85 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Add a virtual drive</key>
-	<string>Add a virtual drive</string>
-	<key>Add a virtual network card</key>
-	<string>Add a virtual network card</string>
-	<key>All your changes will be definitly lost.</key>
-	<string>All your changes will be definitly lost.</string>
-	<key>Are you sure you want to undefine this virtual machine ?</key>
-	<string>Are you sure you want to undefine this virtual machine ?</string>
-	<key>Cancel</key>
-	<string>Cancel</string>
-	<key>Char Devices</key>
-	<string>Char Devices</string>
-	<key>Definition edited</key>
-	<string>Definition edited</string>
-	<key>Delete selected drives</key>
-	<string>Delete selected drives</string>
-	<key>Discard</key>
-	<string>Discard</string>
-	<key>Edit selected drive</key>
-	<string>Edit selected drive</string>
-	<key>Edit selected virtual network card</key>
-	<string>Edit selected virtual network card</string>
-	<key>Enable or disable PAE</key>
-	<string>Enable or disable PAE</string>
-	<key>Enable or disable usage of huge pages backed memory</key>
-	<string>Enable or disable usage of huge pages backed memory</string>
-	<key>Enable usage of ACPI (allow to use 'shutdown' control)</key>
-	<string>Enable usage of ACPI (allow to use 'shutdown' control)</string>
-	<key>Enable usage of APIC</key>
-	<string>Enable usage of APIC</string>
-	<key>Enable usage of PAE</key>
-	<string>Enable usage of PAE</string>
+	<key>%s %s device</key>
+	<string>%1$s %2$s device</string>
+	<key>Add a new character device</key>
+	<string>Add a new character device</string>
+	<key>Add a new graphic device</key>
+	<string>Add a new graphic device</string>
+	<key>Add a new input device</key>
+	<string>Add a new input device</string>
+	<key>Advanced</key>
+	<string>Advanced</string>
+	<key>Basics</key>
+	<string>Basics</string>
+	<key>Choose the kind of the character device</key>
+	<string>Choose the kind of the character device</string>
+	<key>Choose the mode of the source</key>
+	<string>Choose the mode of the source</string>
+	<key>Choose the protocol type</key>
+	<string>Choose the protocol type</string>
+	<key>Choose the target type</key>
+	<string>Choose the target type</string>
+	<key>Choose the type of the character device</key>
+	<string>Choose the type of the character device</string>
+	<key>Edit the current selected character device</key>
+	<string>Edit the current selected character device</string>
+	<key>Edit the current selected graphic device</key>
+	<string>Edit the current selected graphic device</string>
+	<key>Edit the current selected input device</key>
+	<string>Edit the current selected input device</string>
 	<key>Error</key>
 	<string>Error</string>
-	<key>Open the XML editor</key>
-	<string>Open the XML editor</string>
-	<key>Remove selected virtual network card</key>
-	<string>Remove selected virtual network card</string>
-	<key>Save changes</key>
-	<string>Save changes</string>
-	<key>Set amount of memort (in Mb)</key>
-	<string>Set amount of memort (in Mb)</string>
-	<key>Set boot origin</key>
-	<string>Set boot origin</string>
-	<key>Set the MAC address of the card</key>
-	<string>Set the MAC address of the card</string>
-	<key>Set the VNC password (no password if blank)</key>
-	<string>Set the VNC password (no password if blank)</string>
-	<key>Set the bus to use for the drive</key>
-	<string>Set the bus to use for the drive</string>
-	<key>Set the cache mode the drive</key>
-	<string>Set the cache mode the drive</string>
-	<key>Set the default VNC keymap for new domains</key>
-	<string>Set the default VNC keymap for new domains</string>
-	<key>Set the default amount of memory for new domains</key>
-	<string>Set the default amount of memory for new domains</string>
-	<key>Set the default behaviour on crash for new domains</key>
-	<string>Set the default behaviour on crash for new domains</string>
-	<key>Set the default behaviour on power off for new domains</key>
-	<string>Set the default behaviour on power off for new domains</string>
-	<key>Set the default behaviour on reboot for new domains</key>
-	<string>Set the default behaviour on reboot for new domains</string>
-	<key>Set the default boot device for new domains</key>
-	<string>Set the default boot device for new domains</string>
-	<key>Set the default clock offset for new domains</key>
-	<string>Set the default clock offset for new domains</string>
-	<key>Set the default domain type for new domains</key>
-	<string>Set the default domain type for new domains</string>
-	<key>Set the default drive cache for new drives</key>
-	<string>Set the default drive cache for new drives</string>
-	<key>Set the default guest for new domains</key>
-	<string>Set the default guest for new domains</string>
-	<key>Set the default input type for new domains</key>
-	<string>Set the default input type for new domains</string>
-	<key>Set the default machine type for new domains</key>
-	<string>Set the default machine type for new domains</string>
-	<key>Set the default number of CPUs for new domains</key>
-	<string>Set the default number of CPUs for new domains</string>
-	<key>Set the default usage of huge pages for new domains</key>
-	<string>Set the default usage of huge pages for new domains</string>
-	<key>Set the domain machine type</key>
-	<string>Set the domain machine type</string>
-	<key>Set the domain type</key>
-	<string>Set the domain type</string>
-	<key>Set the guest type</key>
-	<string>Set the guest type</string>
-	<key>Set the mode of the virtual machine clock</key>
-	<string>Set the mode of the virtual machine clock</string>
-	<key>Set the model of the card</key>
-	<string>Set the model of the card</string>
-	<key>Set the number of virtual CPUs</key>
-	<string>Set the number of virtual CPUs</string>
-	<key>Set the source to use</key>
-	<string>Set the source to use</string>
-	<key>Set the source to use for the drive</key>
-	<string>Set the source to use for the drive</string>
-	<key>Set the target to use for the drive</key>
-	<string>Set the target to use for the drive</string>
-	<key>Set what to do when virtual machine crashes</key>
-	<string>Set what to do when virtual machine crashes</string>
-	<key>Set what to do when virtual machine is rebooted</key>
-	<string>Set what to do when virtual machine is rebooted</string>
-	<key>Set what to do when virtual machine is stopped</key>
-	<string>Set what to do when virtual machine is stopped</string>
-	<key>Undefine</key>
-	<string>Undefine</string>
-	<key>Undefine the domain</key>
-	<string>Undefine the domain</string>
-	<key>Unsaved changes</key>
-	<string>Unsaved changes</string>
+	<key>If checked, all modifications to the drive will be lost when VM is shut down</key>
+	<string>If checked, all modifications to the drive will be lost when VM is shut down</string>
+	<key>If checked, drive can be shared bewteen VMs</key>
+	<string>If checked, drive can be shared bewteen VMs</string>
+	<key>If checked, drive is mounted as read only</key>
+	<string>If checked, drive is mounted as read only</string>
+	<key>Remove the selected character device</key>
+	<string>Remove the selected character device</string>
+	<key>Remove the selected graphic device</key>
+	<string>Remove the selected graphic device</string>
+	<key>Remove the selected input device</key>
+	<string>Remove the selected input device</string>
+	<key>Select the keymap to use</key>
+	<string>Select the keymap to use</string>
+	<key>Sending...</key>
+	<string>Sending...</string>
+	<key>Set the bus of the input device</key>
+	<string>Set the bus of the input device</string>
+	<key>Set the graphic type</key>
+	<string>Set the graphic type</string>
+	<key>Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)</key>
+	<string>Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)</string>
+	<key>Set the real VNC server listen port. leave it to blank for autoport</key>
+	<string>Set the real VNC server listen port. leave it to blank for autoport</string>
+	<key>Set the source host</key>
+	<string>Set the source host</string>
+	<key>Set the source path</key>
+	<string>Set the source path</string>
+	<key>Set the source service</key>
+	<string>Set the source service</string>
+	<key>Set the target address</key>
+	<string>Set the target address</string>
+	<key>Set the target name</key>
+	<string>Set the target name</string>
+	<key>Set the target port</key>
+	<string>Set the target port</string>
+	<key>Set the type of the input device</key>
+	<string>Set the type of the input device</string>
+	<key>Source is not selected</key>
+	<string>Source is not selected</string>
+	<key>Unable to parse the given XML</key>
+	<string>Unable to parse the given XML</string>
 	<key>Validate</key>
 	<string>Validate</string>
-	<key>Virtual Medias</key>
-	<string>Virtual Medias</string>
-	<key>Virtual Nics</key>
-	<string>Virtual Nics</string>
-	<key>Virtual machine has been undefined</key>
-	<string>Virtual machine has been undefined</string>
-	<key>You have made some changes in the virtual machine definition. Would you like save these changes?</key>
-	<string>You have made some changes in the virtual machine definition. Would you like save these changes?</string>
-	<key>You must select a drive</key>
-	<string>You must select a drive</string>
-	<key>You must select a network interface</key>
-	<string>You must select a network interface</string>
-	<key>You started the virtual machine, but you haven't save the current changes.</key>
-	<string>You started the virtual machine, but you haven't save the current changes.</string>
-	<key>Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.</key>
-	<string>Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.</string>
+	<key>You must select a source for your drive</key>
+	<string>You must select a source for your drive</string>
+	<key>You must set at least the "average" value for inbound limit</key>
+	<string>You must set at least the "average" value for inbound limit</string>
+	<key>You must set at least the "average" value for outbound limit</key>
+	<string>You must set at least the "average" value for outbound limit</string>
 </dict>
 </plist>

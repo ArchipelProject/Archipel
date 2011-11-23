@@ -140,9 +140,6 @@
 /* Class = "NSTextFieldCell"; title = "Target:"; ObjectID = "172"; */
 "172.title" = "Target:";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "183"; */
-"183.title" = "Box";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "192"; */
 "192.title" = "Box";
 
@@ -605,9 +602,6 @@
 /* Class = "NSTextFieldCell"; title = "Filter:"; ObjectID = "749"; */
 "749.title" = "Filter:";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "753"; */
-"753.title" = "Box";
-
 /* Class = "NSTextFieldCell"; title = "Network filters"; ObjectID = "754"; */
 "754.title" = "Network filters";
 
@@ -619,9 +613,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "762"; */
 "762.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "763"; */
-"763.title" = "Text Cell";
 
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
@@ -1135,4 +1126,70 @@
 
 /* Class = "NSTextFieldCell"; title = "TCP console device"; ObjectID = "1745"; */
 "1745.title" = "TCP console device";
+
+/* Class = "NSTextFieldCell"; title = "Basic settings"; ObjectID = "1748"; */
+"1748.title" = "Basic settings";
+
+/* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "1767"; */
+"1767.title" = "Burst";
+
+/* Class = "NSTextFieldCell"; title = "Peak"; ObjectID = "1768"; */
+"1768.title" = "Peak";
+
+/* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "1769"; */
+"1769.title" = "Average";
+
+/* Class = "NSTextFieldCell"; title = "Inbound:"; ObjectID = "1770"; */
+"1770.title" = "Inbound:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "1771"; */
+"1771.placeholderString" = "100";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1500"; ObjectID = "1772"; */
+"1772.placeholderString" = "1500";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1000"; ObjectID = "1773"; */
+"1773.placeholderString" = "1000";
+
+/* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "1775"; */
+"1775.title" = "Burst";
+
+/* Class = "NSTextFieldCell"; title = "Peak"; ObjectID = "1776"; */
+"1776.title" = "Peak";
+
+/* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "1777"; */
+"1777.title" = "Average";
+
+/* Class = "NSTextFieldCell"; title = "Outbound:"; ObjectID = "1778"; */
+"1778.title" = "Outbound:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "1779"; */
+"1779.placeholderString" = "100";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1500"; ObjectID = "1780"; */
+"1780.placeholderString" = "1500";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1000"; ObjectID = "1781"; */
+"1781.placeholderString" = "1000";
+
+/* Class = "NSTextFieldCell"; title = "Quality of service"; ObjectID = "1782"; */
+"1782.title" = "Quality of service";
+
+/* Class = "NSTextFieldCell"; title = "Message"; ObjectID = "1799"; */
+"1799.title" = "Message";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1800"; */
+"1800.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "None/None/None"; ObjectID = "1812"; */
+"1812.title" = "None/None/None";
+
+/* Class = "NSTextFieldCell"; title = "In limit:"; ObjectID = "1813"; */
+"1813.title" = "In limit:";
+
+/* Class = "NSTextFieldCell"; title = "None/None/None"; ObjectID = "1814"; */
+"1814.title" = "None/None/None";
+
+/* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "1815"; */
+"1815.title" = "Out limit:";
 

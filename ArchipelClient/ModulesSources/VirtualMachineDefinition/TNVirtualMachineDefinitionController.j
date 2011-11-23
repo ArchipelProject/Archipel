@@ -396,7 +396,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [inputDeviceController setDelegate:self];
     [inputDeviceController setTable:tableInputDevices];
 
-
     // Graphic Devices
     _graphicDevicesDatasource = [[TNTableViewDataSource alloc] init];
     [[tableGraphicsDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewGraphicDevicePrototype duplicate]];
@@ -602,13 +601,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives setDelegate:self];
     [tableInterfaces setDelegate:nil];
     [tableInterfaces setDelegate:self];
+    [tableCharacterDevices setDelegate:nil];
+    [tableCharacterDevices setDelegate:self];
+    [tableInputDevices setDelegate:nil];
+    [tableInputDevices setDelegate:self];
+    [tableGraphicsDevices setDelegate:nil];
+    [tableGraphicsDevices setDelegate:self];
 
-    [driveController setDelegate:nil];
-    [driveController setDelegate:self];
     [driveController setEntity:_entity];
-
-    [interfaceController setDelegate:nil];
-    [interfaceController setDelegate:self];
     [interfaceController setEntity:_entity];
 
     [self setDefaultValues];
@@ -653,6 +653,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [driveController closeWindow:nil];
     [inputDeviceController closeWindow:nil];
     [graphicDeviceController closeWindow:nil];
+    [characterDeviceController closeWindow:nil];
 
     [popoverXMLEditor close];
 
@@ -675,6 +676,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [interfaceController closeWindow:nil];
         [driveController closeWindow:nil];
         [popoverXMLEditor close];
+        [characterDeviceController closeWindow:nil];
+        [inputDeviceController closeWindow:nil];
+        [graphicDeviceController closeWindow:nil];
 
         [alert runModal];
         return NO;
@@ -784,6 +788,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         [interfaceController closeWindow:nil];
         [driveController closeWindow:nil];
+        [characterDeviceController closeWindow:nil];
+        [graphicDeviceController closeWindow:nil];
+        [inputDeviceController closeWindow:nil];
     }
 
     [interfaceController updateAfterPermissionChanged];
@@ -984,6 +991,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [inputDeviceController closeWindow:nil];
         [interfaceController closeWindow:nil];
         [graphicDeviceController closeWindow:nil];
+        [characterDeviceController closeWindow:nil];
 
         if (_definitionEdited)
             [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Definition edited", @"Definition edited")
@@ -1194,18 +1202,22 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableGraphicsDevices setEnabled:shouldEnableGUI];
     [tableInputDevices setEnabled:shouldEnableGUI];
     [tableInterfaces setEnabled:shouldEnableGUI];
+    [tableCharacterDevices setEnabled:shouldEnableGUI];
     [_editButtonDrives setEnabled:shouldEnableGUI];
     [_editButtonGraphicDevice setEnabled:shouldEnableGUI];
     [_editButtonInputDevice setEnabled:shouldEnableGUI];
     [_editButtonNics setEnabled:shouldEnableGUI];
+    [_editButtonCharacterDevice setEnabled:shouldEnableGUI];
     [_minusButtonDrives setEnabled:shouldEnableGUI];
     [_minusButtonGraphicDevice setEnabled:shouldEnableGUI];
     [_minusButtonInputDevice setEnabled:shouldEnableGUI];
     [_minusButtonNics setEnabled:shouldEnableGUI];
+    [_minusButtonCharacterDevice setEnabled:shouldEnableGUI];
     [_plusButtonDrives setEnabled:shouldEnableGUI];
     [_plusButtonGraphics setEnabled:shouldEnableGUI];
     [_plusButtonInputs setEnabled:shouldEnableGUI];
     [_plusButtonNics setEnabled:shouldEnableGUI];
+    [_plusButtonCharacter setEnabled:shouldEnableGUI];
     [switchACPI setEnabled:shouldEnableGUI];
     [switchAPIC setEnabled:shouldEnableGUI];
     [switchHugePages setEnabled:shouldEnableGUI];
@@ -2245,29 +2257,42 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonDrives setEnabled:NO];
     [_editButtonDrives setEnabled:NO];
 
-    if ([aNotification object] == tableDrives)
+    switch ([aNotification object])
     {
-        if ([[aNotification object] numberOfSelectedRows] > 0)
-        {
-            [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
-            [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
-        }
-    }
-    else if ([aNotification object] == tableInterfaces)
-    {
-        if ([[aNotification object] numberOfSelectedRows] > 0)
-        {
-            [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
-            [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
-        }
-    }
-    else if ([aNotification object] == tableCharacterDevices)
-    {
-        if ([[aNotification object] numberOfSelectedRows] > 0)
-        {
-            [self setControl:_minusButtonCharacterDevice enabledAccordingToPermission:@"define"];
-            [self setControl:_editButtonCharacterDevice enabledAccordingToPermission:@"define"];
-        }
+        case tableDrives:
+            [driveController closeWindow:nil];
+            if ([[aNotification object] numberOfSelectedRows] > 0)
+            {
+                [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
+                [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
+            }
+            break;
+
+        case tableInterfaces:
+            [interfaceController closeWindow:nil];
+            if ([[aNotification object] numberOfSelectedRows] > 0)
+            {
+                [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
+                [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
+            }
+            break;
+
+        case tableCharacterDevices:
+            [characterDeviceController closeWindow:nil];
+            if ([[aNotification object] numberOfSelectedRows] > 0)
+            {
+                [self setControl:_minusButtonCharacterDevice enabledAccordingToPermission:@"define"];
+                [self setControl:_editButtonCharacterDevice enabledAccordingToPermission:@"define"];
+            }
+            break;
+
+        case tableGraphicsDevices:
+            [graphicDeviceController closeWindow:nil];
+            break;
+
+        case tableInputDevices:
+            [inputDeviceController closeWindow:nil];
+            break;
     }
 }
 
@@ -2279,6 +2304,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [driveController closeWindow:nil];
     [inputDeviceController closeWindow:nil];
     [graphicDeviceController closeWindow:nil];
+    [characterDeviceController closeWindow:nil];
+    [popoverXMLEditor close];
 }
 
 @end
