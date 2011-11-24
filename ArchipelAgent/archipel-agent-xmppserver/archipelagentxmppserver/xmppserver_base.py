@@ -484,7 +484,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            users = map(lambda x: {"username": xmpp.JID(x.getAttr("username")), "password": x.getAttr("password")}, iq.getTag("query").getTag("archipel").getTags("user"))
+            users = map(lambda x: {"jid": xmpp.JID(x.getAttr("jid")), "password": x.getAttr("password")}, iq.getTag("query").getTag("archipel").getTags("user"))
             self.users_register(users)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)
@@ -500,7 +500,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            users = map(lambda x: x.getAttr("username"), iq.getTag("query").getTag("archipel").getTags("user"))
+            users = map(lambda x: xmpp.JID(x.getAttr("jid")), iq.getTag("query").getTag("archipel").getTags("user"))
             self.users_unregister(users)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER)
