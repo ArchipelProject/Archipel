@@ -114,7 +114,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     if (!_pushRegistred)
     {
-        // [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
         [self registerSelector:@selector(_didReceiveUsersPush:) ofObject:usersController forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
         _pushRegistred = YES;
     }
@@ -199,6 +198,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)_didHypervisorPresenceUpdate:(CPNotification)aNotification
 {
     [self populateHypervisors];
+    [usersController reload];
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+        [sharedGroupsController reload];
 }
 
 

@@ -56,9 +56,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @outlet CPView              viewTableContainer;
 
     id                          _delegate                       @accessors(property=delegate);
+
     TNStropheContact            _entity;
     TNTableViewLazyDataSource   _datasourceUsers;
-
     CPButton                    _addButton;
     CPButton                    _deleteButton;
     CPButton                    _grantAdminButton;
@@ -126,7 +126,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)_didAdminAccountsListUpdate:(CPNotification)aNotification
 {
     if ([[TNStropheIMClient defaultClient] JID])
-        [self reload];
+    {
+        [self flushUI];
+        [_usersFetcher getXMPPUsers];
+    }
 }
 
 
@@ -153,7 +156,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
             [_usersFetcher getXMPPUsers];
             break
     }
-
 
     return YES;
 }
@@ -272,7 +274,20 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     }
 
     [popoverNewUser close];
-    [self registerUserWithName:[fieldNewUserUsername stringValue] password:[fieldNewUserPassword stringValue]];
+    var JID;
+    try {
+        JID = [TNStropheJID stropheJIDWithString:[fieldNewUserUsername stringValue]];
+        if (![JID domain])
+            [CPException raise:@"Bad JID" reason:@"JID must follow the form user@node"]
+    }
+    catch(e)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Bad JID", @"Bad JID")
+                          informative:[fieldNewUserUsername stringValue] + CPLocalizedString(" is not a valid JID.", " is not a valid JID.")
+                          style:CPCriticalAlertStyle];
+        return;
+    }
+    [self registerUserWithJID:JID password:[fieldNewUserPassword stringValue]];
 }
 
 /*! create a new user
@@ -294,13 +309,13 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     for (var i = 0; i < [users count]; i ++)
     {
         var user = [users objectAtIndex:i];
-        [usernames addObject:[[user objectForKey:@"jid"] stringValue]];
+        [usernames addObject:[user objectForKey:@"jid"]];
     }
 
     var thealert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unregister", @"Unregister")
                                 informative:CPBundleLocalizedString(@"Are you sure you want to unregister selected user(s) ?", @"Are you sure you want to unregister selected user(s) ?")
                                  target:self
-                                 actions:[[CPBundleLocalizedString("Confirm", "Confirm"), @selector(unregisterUserWithNames:)], [CPBundleLocalizedString("Cancel", "Cancel"), nil]]];
+                                 actions:[[CPBundleLocalizedString("Confirm", "Confirm"), @selector(unregisterUserWithJIDs:)], [CPBundleLocalizedString("Cancel", "Cancel"), nil]]];
 
     [thealert setUserInfo:usernames];
     [thealert runModal];
@@ -311,8 +326,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (IBAction)grantAdmin:(id)aSender
 {
-    var indexes     = [tableUsers selectedRowIndexes],
-        users       = [_datasourceUsers objectsAtIndexes:indexes];
+    var indexes = [tableUsers selectedRowIndexes],
+        users = [_datasourceUsers objectsAtIndexes:indexes];
 
     for (var i = 0; i < [users count]; i ++)
     {
@@ -326,8 +341,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (IBAction)revokeAdmin:(id)aSender
 {
-    var indexes     = [tableUsers selectedRowIndexes],
-        users       = [_datasourceUsers objectsAtIndexes:indexes];
+    var indexes = [tableUsers selectedRowIndexes],
+        users = [_datasourceUsers objectsAtIndexes:indexes];
 
     for (var i = 0; i < [users count]; i ++)
     {
@@ -350,7 +365,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @param aUserName the username of the new user
     @param aPasswor the password of the new user
 */
-- (void)registerUserWithName:(CPString)aUserName password:(CPString)aPassword
+- (void)registerUserWithJID:(TNStropheJID)aJID password:(CPString)aPassword
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -358,8 +373,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeXMPPServerUsersRegister}];
 
-    [stanza addChildWithName:@"user" andAttributes:{"username": aUserName, "password": aPassword}];
-
+    [stanza addChildWithName:@"user" andAttributes:{"jid": [aJID bare], "password": aPassword}];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didRegisterUser:) ofObject:self];
 }
 
@@ -386,7 +400,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 /*! unregister a new user with given username and password
     @param aUserName the username of the user
 */
-- (void)unregisterUserWithNames:(CPArray)someUserNames
+- (void)unregisterUserWithJIDs:(CPArray)someJIDs
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -394,13 +408,12 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeXMPPServerUsersUnregister}];
 
-    for (var i = 0; i < [someUserNames count]; i++)
+    for (var i = 0; i < [someJIDs count]; i++)
     {
-        var username = [someUserNames objectAtIndex:i];
-        [stanza addChildWithName:@"user" andAttributes:{"username": username}];
+        var JID = [someJIDs objectAtIndex:i];
+        [stanza addChildWithName:@"user" andAttributes:{"jid": [JID bare]}];
         [stanza up];
     }
-
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didUnregisterUsers:) ofObject:self];
 }
 
