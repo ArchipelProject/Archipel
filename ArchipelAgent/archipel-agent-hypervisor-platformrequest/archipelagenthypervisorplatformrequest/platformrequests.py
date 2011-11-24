@@ -136,7 +136,7 @@ class TNPlatformRequests (TNArchipelPlugin):
         self.pubsub_request_in_node = TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, nodeVMRequestsInName)
         self.pubsub_request_in_node.recover()
         self.entity.log.info("PLATFORMREQ: node %s recovered." % nodeVMRequestsInName)
-        self.pubsub_request_in_node.subscribe(self.entity.jid.getStripped(), self._handle_request_event)
+        self.pubsub_request_in_node.subscribe(self.entity.jid, self._handle_request_event)
         self.entity.log.info("PLATFORMREQ: entity %s is now subscribed to events from node %s" % (self.entity.jid, nodeVMRequestsInName))
         nodeVMRequestsOutName = "/archipel/platform/requests/out"
         self.entity.log.info("PLATFORMREQ: getting the pubsub node %s" % nodeVMRequestsOutName)
