@@ -47,6 +47,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
         self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
 
+
     ## TNXMPPServerControllerBase implementation
 
     def users_register(self, users):
@@ -57,12 +58,10 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         """
         server = self.entity.jid.getDomain()
         for user in users:
-            username = user["username"].getNode()
-            password = user["password"]
-            answer = self.xmlrpc_server.register({"user": username, "password": password, "host": server})
+            answer = self.xmlrpc_server.register({"user": user["jid"].getNode(), "password": user["password"], "host": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot register new user. %s" % str(answer))
-            self.entity.log.info("XMPPSERVER: Registred a new user %s@%s" % (username, server))
+            self.entity.log.info("XMPPSERVER: Registered a new user %s@%s" % (user["jid"].getNode(), server))
         self.entity.push_change("xmppserver:users", "registered")
         return True
 
@@ -73,11 +72,11 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         @param users: list of users to unregister
         """
         server = self.entity.jid.getDomain()
-        for username in users:
-            answer = self.xmlrpc_server.unregister({"user": username.split("@")[0],"host": server})
+        for jid in users:
+            answer = self.xmlrpc_server.unregister({"user": jid.getNode(),"host": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot unregister user. %s" % str(answer))
-            self.entity.log.info("XMPPSERVER: Unregistred user %s@%s" % (username, server))
+            self.entity.log.info("XMPPSERVER: Unregistered user %s@%s" % (jid.getNode(), server))
         self.entity.push_change("xmppserver:users", "unregistered")
         return True
 
