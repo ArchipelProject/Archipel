@@ -462,10 +462,8 @@ var __defaultPermissionCenter;
 
 - (void)removeAdminAccount:(TNStropheJID)aJID
 {
-    var ref,
-        JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node];
-
-    var keys = [_adminAccounts allKeysForObject:JIDTranslation];
+    var JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node],
+        keys = [_adminAccounts allKeysForObject:JIDTranslation];
 
     [_pubsubAdminAccounts retractItemsWithIDs:keys]
     [_pubsubAdminAccounts changeAffiliation:TNPubSubNodeAffiliationNone forJID:aJID];
