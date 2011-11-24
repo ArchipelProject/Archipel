@@ -627,7 +627,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (void)userFetcherClean
 {
-
+    [_userFetcher reset];
     [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
 }

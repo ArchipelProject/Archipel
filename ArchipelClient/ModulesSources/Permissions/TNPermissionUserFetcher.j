@@ -85,6 +85,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)getNumberOfXMPPUsers
 {
+    [self getNumberOfXMPPUsers:nil];
+}
+
+/*! Ask the agent for the total number of accounts
+    @param aCallback eventual callback to call when user number has been fetched
+*/
+- (void)getNumberOfXMPPUsers:(SEL)aCallback
+{
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];
@@ -92,17 +100,19 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         "action": TNArchipelTypeXMPPServerUsersNumber,
         "humans_only": _displaysOnlyHumans ? "true" : "false"}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetNumberOfXMPPUsers:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetNumberOfXMPPUsers:callback:) ofObject:self userInfo:aCallback];
 }
 
 /*! @ignore
 */
-- (BOOL)_didGetNumberOfXMPPUsers:(TNStropheStanza)aStanza
+- (BOOL)_didGetNumberOfXMPPUsers:(TNStropheStanza)aStanza callback:(SEL)aCallback
 {
     if ([aStanza type] == @"result")
     {
         var total = [[aStanza firstChildWithName:@"users"] valueForAttribute:@"total"];
         [_dataSource setTotalCount:total];
+        if (aCallback)
+            [self performSelector:aCallback];
     }
     else
     {
@@ -122,7 +132,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     }
 
     if ([_dataSource totalCount] == -1)
-        [self getNumberOfXMPPUsers];
+    {
+        [self getNumberOfXMPPUsers:@selector(getXMPPUsers)];
+        return;
+    }
 
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
@@ -169,7 +182,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
         for (var i = 0; i < [users count]; i++)
         {
-            var user            = [users objectAtIndex:i],
+            var user = [users objectAtIndex:i],
                 jid;
 
             try {jid = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]]} catch(e){continue};
