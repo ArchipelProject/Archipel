@@ -2,17 +2,89 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Define if network should start with host</key>
-	<string>Define if network should start with host</string>
+	<key>Activate or deactivate Spanning Tree Protocol for the bridge</key>
+	<string>Activate or deactivate Spanning Tree Protocol for the bridge</string>
+	<key>Activate selected networks</key>
+	<string>Activate selected networks</string>
+	<key>Activate this network</key>
+	<string>Activate this network</string>
+	<key>Add new host reservation</key>
+	<string>Add new host reservation</string>
+	<key>Add new range</key>
+	<string>Add new range</string>
+	<key>Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.</key>
+	<string>Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.</string>
+	<key>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</key>
+	<string>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Choose the forward mode for this virtual network</key>
+	<string>Choose the forward mode for this virtual network</string>
+	<key>Create a new DHCP range</key>
+	<string>Create a new DHCP range</string>
+	<key>Create a new DHCP reservation</key>
+	<string>Create a new DHCP reservation</string>
+	<key>Create a new network</key>
+	<string>Create a new network</string>
+	<key>Create new virtual network</key>
+	<string>Create new virtual network</string>
+	<key>DHCP Hosts</key>
+	<string>DHCP Hosts</string>
+	<key>DHCP Ranges</key>
+	<string>DHCP Ranges</string>
+	<key>Deactivate</key>
+	<string>Deactivate</string>
+	<key>Deactivate Network</key>
+	<string>Deactivate Network</string>
+	<key>Deactivate selected networks</key>
+	<string>Deactivate selected networks</string>
+	<key>Deactivate this network</key>
+	<string>Deactivate this network</string>
+	<key>Delete</key>
+	<string>Delete</string>
+	<key>Delete Network</key>
+	<string>Delete Network</string>
+	<key>Delete selected network</key>
+	<string>Delete selected network</string>
+	<key>Delete selected networks</key>
+	<string>Delete selected networks</string>
+	<key>Edit selected network</key>
+	<string>Edit selected network</string>
+	<key>Enable DHCP for this virtual network</key>
+	<string>Enable DHCP for this virtual network</string>
+	<key>Enter the name of the bridge to create when this network is activated</key>
+	<string>Enter the name of the bridge to create when this network is activated</string>
+	<key>Enter the name of the virtual network</key>
+	<string>Enter the name of the virtual network</string>
+	<key>Enter the value of delay for the bridge</key>
+	<string>Enter the value of delay for the bridge</string>
 	<key>Error</key>
 	<string>Erreur</string>
-	<key>Open the manual XML editor</key>
-	<string>Open the manual XML editor</string>
-	<key>Unable to parse the given XML</key>
-	<string>Unable to parse the given XML</string>
-	<key>You must set at least the "average" value for inbound limit</key>
-	<string>You must set at least the "average" value for inbound limit</string>
-	<key>You must set at least the "average" value for outbound limit</key>
-	<string>You must set at least the "average" value for outbound limit</string>
+	<key>Network has been defined</key>
+	<string>Network has been defined</string>
+	<key>Network has been removed</key>
+	<string>Network has been removed</string>
+	<key>Network status has changed</key>
+	<string>Network status has changed</string>
+	<key>Open configuration panel for selected network</key>
+	<string>Open configuration panel for selected network</string>
+	<key>Remove</key>
+	<string>Remove</string>
+	<key>Remove selected DHCP range</key>
+	<string>Remove selected DHCP range</string>
+	<key>Remove selected DHCP reservation</key>
+	<string>Remove selected DHCP reservation</string>
+	<key>Select the hypervisor network card you want to use for this virtual network</key>
+	<string>Select the hypervisor network card you want to use for this virtual network</string>
+	<key>The IP address to assign to the bridge</key>
+	<string>The IP address to assign to the bridge</string>
+	<key>The netmask to use for the bridge</key>
+	<string>The netmask to use for the bridge</string>
+	<key>You can't edit a running network</key>
+	<string>You can't edit a running network</string>
+	<key>You can't update a running network</key>
+	<string>You can't update a running network</string>
+	<key>domain.com</key>
+	<string>domain.com</string>
 </dict>
 </plist>

@@ -149,7 +149,7 @@
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "198"; */
 "198.title" = "OK";
 
-/* Class = "NSTextFieldCell"; title = "Virtual Network Card"; ObjectID = "199"; */
+/* Class = "NSTextFieldCell"; title = "Physical bindings"; ObjectID = "199"; */
 "199.title" = "Physical bindings";
 
 /* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "201"; */

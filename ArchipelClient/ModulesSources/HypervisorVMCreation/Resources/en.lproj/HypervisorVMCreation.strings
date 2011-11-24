@@ -95,16 +95,16 @@
 /* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "267"; */
 "267.title" = "Text";
 
-/* Class = "NSTextFieldCell"; title = "Virtual Machine Nickname"; ObjectID = "273"; */
+/* Class = "NSTextFieldCell"; title = "Virtual Machine Name"; ObjectID = "273"; */
 "273.title" = "Virtual Machine Name";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "277"; */
+/* Class = "NSTextFieldCell"; title = "Nickname:"; ObjectID = "277"; */
 "277.title" = "Nickname:";
 
 /* Class = "NSTextFieldCell"; title = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f"; ObjectID = "282"; */
 "282.title" = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f";
 
-/* Class = "NSTextFieldCell"; title = "name"; ObjectID = "283"; */
+/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "283"; */
 "283.title" = "Nickname";
 
 /* Class = "NSTextFieldCell"; title = "hypervisor"; ObjectID = "288"; */
@@ -128,7 +128,7 @@
 /* Class = "NSTextFieldCell"; title = "Running"; ObjectID = "327"; */
 "327.title" = "Running";
 
-/* Class = "NSTextFieldCell"; title = "Status:"; ObjectID = "328"; */
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "328"; */
 "328.title" = "Status";
 
 /* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "329"; */

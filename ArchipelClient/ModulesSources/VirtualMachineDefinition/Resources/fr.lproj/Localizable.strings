@@ -1,120 +1,192 @@
-/* %s %s device */
-"%s %s device" = "%1$s %2$s device";
+/* Add a virtual drive */
+"Add a virtual drive" = "Add a virtual drive";
 
-/* Add a new character device */
-"Add a new character device" = "Add a new character device";
+/* Add a virtual network card */
+"Add a virtual network card" = "Add a virtual network card";
 
-/* Add a new graphic device */
-"Add a new graphic device" = "Add a new graphic device";
+/* All your changes will be definitly lost. */
+"All your changes will be definitly lost." = "All your changes will be definitly lost.";
 
-/* Add a new input device */
-"Add a new input device" = "Add a new input device";
+/* Are you sure you want to undefine this virtual machine ? */
+"Are you sure you want to undefine this virtual machine ?" = "Are you sure you want to undefine this virtual machine ?";
 
-/* Advanced */
-"Advanced" = "Advanced";
+/* Cancel */
+"Cancel" = "Cancel";
 
-/* Basics */
-"Basics" = "Basics";
+/* Char Devices */
+"Char Devices" = "Char Devices";
 
-/* Choose the kind of the character device */
-"Choose the kind of the character device" = "Choose the kind of the character device";
+/* Definition edited */
+"Definition edited" = "Definition edited";
 
-/* Choose the mode of the source */
-"Choose the mode of the source" = "Choose the mode of the source";
+/* Delete selected drives */
+"Delete selected drives" = "Delete selected drives";
 
-/* Choose the protocol type */
-"Choose the protocol type" = "Choose the protocol type";
+/* Discard */
+"Discard" = "Discard";
 
-/* Choose the target type */
-"Choose the target type" = "Choose the target type";
+/* Edit selected drive */
+"Edit selected drive" = "Edit selected drive";
 
-/* Choose the type of the character device */
-"Choose the type of the character device" = "Choose the type of the character device";
+/* Edit selected virtual network card */
+"Edit selected virtual network card" = "Edit selected virtual network card";
 
-/* Edit the current selected character device */
-"Edit the current selected character device" = "Edit the current selected character device";
+/* Enable or disable PAE */
+"Enable or disable PAE" = "Enable or disable PAE";
 
-/* Edit the current selected graphic device */
-"Edit the current selected graphic device" = "Edit the current selected graphic device";
+/* Enable or disable usage of huge pages backed memory */
+"Enable or disable usage of huge pages backed memory" = "Enable or disable usage of huge pages backed memory";
 
-/* Edit the current selected input device */
-"Edit the current selected input device" = "Edit the current selected input device";
+/* Enable usage of ACPI (allow to use 'shutdown' control) */
+"Enable usage of ACPI (allow to use 'shutdown' control)" = "Enable usage of ACPI (allow to use 'shutdown' control)";
+
+/* Enable usage of APIC */
+"Enable usage of APIC" = "Enable usage of APIC";
+
+/* Enable usage of PAE */
+"Enable usage of PAE" = "Enable usage of PAE";
 
 /* Error */
 "Error" = "Error";
 
-/* If checked, all modifications to the drive will be lost when VM is shut down */
-"If checked, all modifications to the drive will be lost when VM is shut down" = "If checked, all modifications to the drive will be lost when VM is shut down";
+/* Open the XML editor */
+"Open the XML editor" = "Open the XML editor";
 
-/* If checked, drive can be shared bewteen VMs */
-"If checked, drive can be shared bewteen VMs" = "If checked, drive can be shared bewteen VMs";
+/* Remove selected virtual network card */
+"Remove selected virtual network card" = "Remove selected virtual network card";
 
-/* If checked, drive is mounted as read only */
-"If checked, drive is mounted as read only" = "If checked, drive is mounted as read only";
+/* Save changes */
+"Save changes" = "Save changes";
 
-/* Remove the character graphic device */
-"Remove the selected character device" = "Remove the selected character device";
+/* Set amount of memort (in Mb) */
+"Set amount of memort (in Mb)" = "Set amount of memort (in Mb)";
 
-/* Remove the selected graphic device */
-"Remove the selected graphic device" = "Remove the selected graphic device";
+/* Set boot origin */
+"Set boot origin" = "Set boot origin";
 
-/* Remove the selected input device */
-"Remove the selected input device" = "Remove the selected input device";
+/* Set the bus to use for the drive */
+"Set the bus to use for the drive" = "Set the bus to use for the drive";
 
-/* Select the keymap to use */
-"Select the keymap to use" = "Select the keymap to use";
+/* Set the cache mode the drive */
+"Set the cache mode the drive" = "Set the cache mode the drive";
 
-/* Sending... */
-"Sending..." = "Sending...";
+/* Set the default amount of memory for new domains */
+"Set the default amount of memory for new domains" = "Set the default amount of memory for new domains";
 
-/* Set the bus of the input device */
-"Set the bus of the input device" = "Set the bus of the input device";
+/* Set the default behaviour on crash for new domains */
+"Set the default behaviour on crash for new domains" = "Set the default behaviour on crash for new domains";
 
-/* Set the graphic type */
-"Set the graphic type" = "Set the graphic type";
+/* Set the default behaviour on power off for new domains */
+"Set the default behaviour on power off for new domains" = "Set the default behaviour on power off for new domains";
 
-/* Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1) */
-"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)" = "Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)";
+/* Set the default behaviour on reboot for new domains */
+"Set the default behaviour on reboot for new domains" = "Set the default behaviour on reboot for new domains";
 
-/* Set the real VNC server listen port. leave it to blank for autoport */
-"Set the real VNC server listen port. leave it to blank for autoport" = "Set the real VNC server listen port. leave it to blank for autoport";
+/* Set the default boot device for new domains */
+"Set the default boot device for new domains" = "Set the default boot device for new domains";
 
-/* Set the source host */
-"Set the source host" = "Set the source host";
+/* Set the default clock offset for new domains */
+"Set the default clock offset for new domains" = "Set the default clock offset for new domains";
 
-/* Set the source path */
-"Set the source path" = "Set the source path";
+/* Set the default domain type for new domains */
+"Set the default domain type for new domains" = "Set the default domain type for new domains";
 
-/* Set the source service */
-"Set the source service" = "Set the source service";
+/* Set the default drive cache for new drives */
+"Set the default drive cache for new drives" = "Set the default drive cache for new drives";
 
-/* Set the target address */
-"Set the target address" = "Set the target address";
+/* Set the default guest for new domains */
+"Set the default guest for new domains" = "Set the default guest for new domains";
 
-/* Set the target name */
-"Set the target name" = "Set the target name";
+/* Set the default input type for new domains */
+"Set the default input type for new domains" = "Set the default input type for new domains";
 
-/* Set the target port */
-"Set the target port" = "Set the target port";
+/* Set the default machine type for new domains */
+"Set the default machine type for new domains" = "Set the default machine type for new domains";
 
-/* Set the type of the input device */
-"Set the type of the input device" = "Set the type of the input device";
+/* Set the default number of CPUs for new domains */
+"Set the default number of CPUs for new domains" = "Set the default number of CPUs for new domains";
 
-/* Source is not selected */
-"Source is not selected" = "Source is not selected";
+/* Set the default usage of huge pages for new domains */
+"Set the default usage of huge pages for new domains" = "Set the default usage of huge pages for new domains";
 
-/* Unable to parse the given XML */
-"Unable to parse the given XML" = "Unable to parse the given XML";
+/* Set the default VNC keymap for new domains */
+"Set the default VNC keymap for new domains" = "Set the default VNC keymap for new domains";
+
+/* Set the domain machine type */
+"Set the domain machine type" = "Set the domain machine type";
+
+/* Set the domain type */
+"Set the domain type" = "Set the domain type";
+
+/* Set the guest type */
+"Set the guest type" = "Set the guest type";
+
+/* Set the MAC address of the card */
+"Set the MAC address of the card" = "Set the MAC address of the card";
+
+/* Set the mode of the virtual machine clock */
+"Set the mode of the virtual machine clock" = "Set the mode of the virtual machine clock";
+
+/* Set the model of the card */
+"Set the model of the card" = "Set the model of the card";
+
+/* Set the number of virtual CPUs */
+"Set the number of virtual CPUs" = "Set the number of virtual CPUs";
+
+/* Set the source to use */
+"Set the source to use" = "Set the source to use";
+
+/* Set the source to use for the drive */
+"Set the source to use for the drive" = "Set the source to use for the drive";
+
+/* Set the target to use for the drive */
+"Set the target to use for the drive" = "Set the target to use for the drive";
+
+/* Set the VNC password (no password if blank) */
+"Set the VNC password (no password if blank)" = "Set the VNC password (no password if blank)";
+
+/* Set what to do when virtual machine crashes */
+"Set what to do when virtual machine crashes" = "Set what to do when virtual machine crashes";
+
+/* Set what to do when virtual machine is rebooted */
+"Set what to do when virtual machine is rebooted" = "Set what to do when virtual machine is rebooted";
+
+/* Set what to do when virtual machine is stopped */
+"Set what to do when virtual machine is stopped" = "Set what to do when virtual machine is stopped";
+
+/* Undefine */
+"Undefine" = "Undefine";
+
+/* Undefine the domain */
+"Undefine the domain" = "Undefine the domain";
+
+/* Unsaved changes */
+"Unsaved changes" = "Unsaved changes";
 
 /* Validate */
 "Validate" = "Validate";
 
-/* You must select a source for your drive */
-"You must select a source for your drive" = "You must select a source for your drive";
+/* Virtual machine has been undefined */
+"Virtual machine has been undefined" = "Virtual machine has been undefined";
 
-/* You must set at least the \"average\" value for inbound limit */
-"You must set at least the \"average\" value for inbound limit" = "You must set at least the \"average\" value for inbound limit";
+/* Virtual Medias */
+"Virtual Medias" = "Virtual Medias";
 
-/* You must set at least the \"average\" value for outbound limit */
-"You must set at least the \"average\" value for outbound limit" = "You must set at least the \"average\" value for outbound limit";
+/* Virtual Nics */
+"Virtual Nics" = "Virtual Nics";
+
+/* You have made some changes in the virtual machine definition. Would you like save these changes? */
+"You have made some changes in the virtual machine definition. Would you like save these changes?" = "You have made some changes in the virtual machine definition. Would you like save these changes?";
+
+/* You must select a drive */
+"You must select a drive" = "You must select a drive";
+
+/* You must select a network interface */
+"You must select a network interface" = "You must select a network interface";
+
+/* You started the virtual machine, but you haven't save the current changes. */
+"You started the virtual machine, but you haven't save the current changes." = "You started the virtual machine, but you haven't save the current changes.";
+
+/* Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry. */
+"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry." = "Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.";
 

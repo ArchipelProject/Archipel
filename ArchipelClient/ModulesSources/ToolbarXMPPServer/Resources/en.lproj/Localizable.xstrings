@@ -6,6 +6,8 @@
 	<string>Add users into selected shared group</string>
 	<key>Are you sure you want to unregister selected user(s) ?</key>
 	<string>Are you sure you want to unregister selected user(s) ?</string>
+	<key>Bad JID</key>
+	<string>Bad JID</string>
 	<key>Bad password</key>
 	<string>Bad password</string>
 	<key>Cancel</key>
