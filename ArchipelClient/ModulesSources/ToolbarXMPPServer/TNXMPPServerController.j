@@ -139,9 +139,10 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [usersController willHide];
     [self flushUI];
-    [super willHide];
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
+
+    [super willHide];
 }
 
 /*! called when permissions changes
