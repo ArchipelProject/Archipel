@@ -44,7 +44,11 @@
     @outlet CPScrollView        scrollViewPeople;
     @outlet CPTextField         fieldPreferencesDefaultRoom;
     @outlet CPTextField         fieldPreferencesDefaultService;
+    @outlet CPTextField         labelConferenceRoom;
+    @outlet CPTextField         labelConferenceServer;
     @outlet CPTextField         textFieldMessage;
+    @outlet CPView              viewConferenceInfo;
+    @outlet CPView              viewMessage;
 
     CPArray                     _toolbarItemImages;
     CPSound                     _audioTagReceive;
@@ -97,6 +101,10 @@
 
     _audioTagReceive = [[CPSound alloc] initWithContentsOfFile:sound byReference:NO];
 
+    [viewMessage setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]]]];
+    [viewConferenceInfo setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-info.png"]]]];
+    [viewConferenceInfo applyShadow];
+
     _toolbarItemImages = [
         [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)],
         [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-1.png"] size:CPSizeMake(32,32)],
@@ -127,6 +135,18 @@
 #pragma mark -
 #pragma mark TNModule overrides
 
+/*! Called when the module has been loaded
+*/
+- (BOOL)willLoad
+{
+    if (![super willLoad])
+        return NO;
+
+    [self connectToRoom];
+
+    return YES;
+}
+
 /*! this message is called when module becomes visible
 */
 - (BOOL)willShow
@@ -135,7 +155,7 @@
         return NO;
 
     _numberOfNotices = 0;
-    [_UIItem setImage:_toolbarItemImages[0]];
+    [[self UIItem] setImage:_toolbarItemImages[0]];
     [_UIObject _reloadToolbarItems];
     [self reload:nil];
     [_messageBoard reloadData];
@@ -160,20 +180,7 @@
         || (oldRoom != [fieldPreferencesDefaultRoom stringValue]))
         {
             [_session leave];
-
-            [center removeObserver:self name:TNStropheMUCContactJoinedNotification object:[_session roster]];
-            [center removeObserver:self name:TNStropheMUCContactLeftNotification object:[_session roster]];
-
-            _session = [TNStropheMUCRoom joinRoom:[defaults objectForKey:@"TNArchipelMUCDefaultRoom"]
-                                        onService:[defaults objectForKey:@"TNArchipelMUCDefaultService"]
-                                  usingConnection:[[TNStropheIMClient defaultClient] connection]
-                                         withNick:[[TNStropheIMClient defaultClient] JID]];
-            [_session setDelegate:self];
-            [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactJoinedNotification object:[_session roster]];
-            [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactLeftNotification object:[_session roster]];
-
-            [_session join];
-            [self reload:nil];
+            [self connectToRoom];
         }
 }
 
@@ -197,19 +204,7 @@
 */
 - (void)stropheConnected:(CPNotification)aNotification
 {
-    var center = [CPNotificationCenter defaultCenter],
-        defaults = [CPUserDefaults standardUserDefaults];
-
-    _session = [TNStropheMUCRoom joinRoom:[defaults objectForKey:@"TNArchipelMUCDefaultRoom"]
-                                onService:[defaults objectForKey:@"TNArchipelMUCDefaultService"]
-                          usingConnection:[aNotification object]
-                                 withNick:[[[aNotification object] JID] node]];
-
-    [_session setDelegate:self];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactJoinedNotification object:[_session roster]];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactLeftNotification object:[_session roster]];
-
-    [_session join];
+    [self connectToRoom];
 }
 
 /*! triggered when main stropheconnection is disconnecting
@@ -224,6 +219,33 @@
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! Connect to the conference room
+*/
+- (void)connectToRoom
+{
+    var center = [CPNotificationCenter defaultCenter],
+        defaults = [CPUserDefaults standardUserDefaults],
+        roomName = [defaults objectForKey:@"TNArchipelMUCDefaultRoom"],
+        serviceName = [defaults objectForKey:@"TNArchipelMUCDefaultService"];
+
+    [center removeObserver:self name:TNStropheMUCContactJoinedNotification object:[_session roster]];
+    [center removeObserver:self name:TNStropheMUCContactLeftNotification object:[_session roster]];
+
+     _session = [TNStropheMUCRoom joinRoom:roomName
+                                 onService:serviceName
+                           usingConnection:[[TNStropheIMClient defaultClient] connection]
+                                  withNick:[[TNStropheIMClient defaultClient] JID]];
+
+    [_session setDelegate:self];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactJoinedNotification object:[_session roster]];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactLeftNotification object:[_session roster]];
+    [labelConferenceServer setStringValue:serviceName];
+    [labelConferenceRoom setStringValue:roomName];
+    [self reload:nil];
+
+    [_session join];
+}
 
 /*! reload the content of the MessageBoard
     @param aNotification the notification that triggers the message
@@ -316,7 +338,7 @@
     if (isNotice)
         color = TNMessageViewBubbleColorNotice;
 
-    if ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage objectForKey:@"from"] JID] resource])
+    if ([[[TNStropheIMClient defaultClient] JID] bare] == [[[aMessage objectForKey:@"from"] JID] resource])
     {
         avatar = [[TNStropheIMClient defaultClient] avatar];
         position= TNMessageViewAvatarPositionLeft;
@@ -337,11 +359,10 @@
 
     if (!_isVisible && isNotice && _toolbarItemImages)
     {
-        _numberOfNotices++;
-        var index = _numberOfNotices > 6 ? 6 : _numberOfNotices;
-
-        [_UIItem setImage:_toolbarItemImages[index]];
-        [_UIObject _reloadToolbarItems];
+        // _numberOfNotices++;
+        // var index = _numberOfNotices > 6 ? 6 : _numberOfNotices;
+        // [[self UIItem] setImage:_toolbarItemImages[index]];
+        // [_UIObject _reloadToolbarItems];
         [_audioTagReceive play];
     }
 }
