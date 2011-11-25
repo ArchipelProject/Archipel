@@ -103,16 +103,16 @@ class ColorFormatter (logging.Formatter):
         return rec
 
 
-def init_conf(path):
+def init_conf(paths):
     """
     This method initialize the configuration object (that will be passed to all
     entities) from a given path.
-    @type path: string
-    @param path: the path of the config file to read
+    @type path: List
+    @param paths: list of the paths of the config files to read
     @return : the ConfigParser object containing the configuration
     """
     conf = ConfigParser.ConfigParser()
-    conf.readfp(open(path))
+    conf.read(paths)
     logging_level = conf.get("LOGGING", "logging_level")
     if logging_level == "debug":
         level = logging.DEBUG
