@@ -1,5 +1,5 @@
 
-/* Class = "NSTextFieldCell"; title = "Set the different permissions and roles you give to users for thus entity."; ObjectID = "6"; */
+/* Class = "NSTextFieldCell"; title = "Set the different permissions and roles you give to users."; ObjectID = "6"; */
 "6.title" = "Set the different permissions and roles you give to users for thus entity.";
 
 /* Class = "NSTextFieldCell"; title = "Permissions"; ObjectID = "7"; */
@@ -91,4 +91,7 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "375"; */
 "375.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Fetching users..."; ObjectID = "384"; */
+"384.title" = "Fetching users...";
 

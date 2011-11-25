@@ -46,12 +46,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarControl;
+    @outlet CPImageView         imageFecthingUsers;
     @outlet CPPopover           popoverNewUser;
     @outlet CPSearchField       filterField;
     @outlet CPTableView         tableUsers;
     @outlet CPTextField         fieldNewUserPassword;
     @outlet CPTextField         fieldNewUserPasswordConfirm;
     @outlet CPTextField         fieldNewUserUsername;
+    @outlet CPTextField         labelFecthingUsers;
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
 
@@ -72,6 +74,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)]];
 
     // table users
     _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
@@ -210,6 +213,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)reload
 {
     [self setUIAccordingToPermissions];
+    [labelFecthingUsers setHidden:YES];
+    [imageFecthingUsers setHidden:YES];
 
     if ([_datasourceUsers isCurrentlyLoading])
         return;
@@ -446,6 +451,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)userFetcherClean
 {
     [self flushUI];
+}
+
+/*! delegate of TNXMPPServerUserFetcher
+*/
+- (void)userFetcher:(TNXMPPServerUserFetcher)userFecther isLoading:(BOOL)isLoading
+{
+    [labelFecthingUsers setHidden:!isLoading];
+    [imageFecthingUsers setHidden:!isLoading];
 }
 
 @end

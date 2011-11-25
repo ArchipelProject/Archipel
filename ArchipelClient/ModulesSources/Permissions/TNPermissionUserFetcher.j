@@ -75,6 +75,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     _maxLoadedPage = 0;
     [_dataSource setTotalCount:-1];
     [_dataSource setCurrentlyLoading:NO];
+    if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
+        [_delegate userFetcher:self isLoading:NO];
 }
 
 
@@ -146,6 +148,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         "humans_only": _displaysOnlyHumans ? "true" : "false"}];
 
     [_dataSource setCurrentlyLoading:YES];
+    if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
+        [_delegate userFetcher:self isLoading:YES];
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
 }
 
@@ -168,6 +173,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         "filter": aFilter}];
 
     [_dataSource setCurrentlyLoading:YES];
+    if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
+        [_delegate userFetcher:self isLoading:YES];
+    
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
 }
 
@@ -198,6 +206,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     }
 
     [_dataSource setCurrentlyLoading:NO];
+    if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
+        [_delegate userFetcher:self isLoading:NO];
+    
 }
 
 

@@ -54,13 +54,15 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 @implementation TNPermissionsController : TNModule
 {
     @outlet CPButtonBar             buttonBarControl;
+    @outlet CPImageView             imageFecthingUsers;
     @outlet CPSearchField           filterField;
-    @outlet CPSearchField           filterUsers;
     @outlet CPSearchField           filterRosterUsers;
+    @outlet CPSearchField           filterUsers;
     @outlet CPSplitView             splitView;
     @outlet CPTableView             tablePermissions;
     @outlet CPTableView             tableRosterUsers;
     @outlet CPTableView             tableUsers;
+    @outlet CPTextField             labelFecthingUsers;
     @outlet CPTextField             labelNoUserSelected;
     @outlet CPView                  viewTableContainer;
     @outlet TNRolesController       rolesController;
@@ -88,6 +90,9 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 {
     _currentUserPermissions = [CPArray array];
     _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
+
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)]];
 
     [splitView setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -190,6 +195,9 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 {
     if (![super willShow])
         return NO;
+
+    [labelFecthingUsers setHidden:NO];
+    [imageFecthingUsers setHidden:NO];
 
     [self reloadRosterUsersTable];
     [self reloadUsersTable];
@@ -630,6 +638,14 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [_userFetcher reset];
     [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
+}
+
+/*! delegate of TNXMPPServerUserFetcher
+*/
+- (void)userFetcher:(TNXMPPServerUserFetcher)userFecther isLoading:(BOOL)isLoading
+{
+    [labelFecthingUsers setHidden:!isLoading];
+    [imageFecthingUsers setHidden:!isLoading];
 }
 
 @end

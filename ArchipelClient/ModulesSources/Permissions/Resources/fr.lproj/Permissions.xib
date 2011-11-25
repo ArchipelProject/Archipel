@@ -57,6 +57,69 @@
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSImageView" id="1006199396">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">265</int>
+						<object class="NSMutableSet" key="NSDragTypes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="set.sortedObjects">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<string>Apple PDF pasteboard type</string>
+								<string>Apple PICT pasteboard type</string>
+								<string>Apple PNG pasteboard type</string>
+								<string>NSFilenamesPboardType</string>
+								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
+								<string>NeXT TIFF v4.0 pasteboard type</string>
+							</object>
+						</object>
+						<string key="NSFrame">{{621, 382}, {12, 12}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<string key="NSReuseIdentifierKey">_NS:2141</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSImageCell" key="NSCell" id="100911220">
+							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags2">33554432</int>
+							<string key="NSCellIdentifier">_NS:2141</string>
+							<int key="NSAlign">0</int>
+							<int key="NSScale">0</int>
+							<int key="NSStyle">2</int>
+							<bool key="NSAnimates">NO</bool>
+						</object>
+						<bool key="NSEditable">YES</bool>
+					</object>
+					<object class="NSTextField" id="326445471">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">265</int>
+						<string key="NSFrame">{{503, 378}, {116, 17}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<string key="NSReuseIdentifierKey">_NS:3944</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="667245190">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">71304192</int>
+							<string key="NSContents">Fetching users...</string>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">10</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<string key="NSCellIdentifier">_NS:3944</string>
+							<reference key="NSControlView" ref="326445471"/>
+							<object class="NSColor" key="NSBackgroundColor" id="114604100">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">controlColor</string>
+								<object class="NSColor" key="NSColor" id="275484660">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+								</object>
+							</object>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
+							</object>
+						</object>
+					</object>
 					<object class="NSImageView" id="300146505">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">265</int>
@@ -255,10 +318,7 @@
 																				<int key="NSColorSpace">6</int>
 																				<string key="NSCatalogName">System</string>
 																				<string key="NSColorName">controlBackgroundColor</string>
-																				<object class="NSColor" key="NSColor" id="275484660">
-																					<int key="NSColorSpace">3</int>
-																					<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-																				</object>
+																				<reference key="NSColor" ref="275484660"/>
 																			</object>
 																			<reference key="NSTextColor" ref="665503277"/>
 																		</object>
@@ -909,12 +969,7 @@
 												<int key="NSfFlags">16</int>
 											</object>
 											<reference key="NSControlView" ref="315658567"/>
-											<object class="NSColor" key="NSBackgroundColor" id="114604100">
-												<int key="NSColorSpace">6</int>
-												<string key="NSCatalogName">System</string>
-												<string key="NSColorName">controlColor</string>
-												<reference key="NSColor" ref="275484660"/>
-											</object>
+											<reference key="NSBackgroundColor" ref="114604100"/>
 											<object class="NSColor" key="NSTextColor">
 												<int key="NSColorSpace">2</int>
 												<bytes key="NSRGB">MC4zNzI1NDkwMjcyIDAuNDAzOTIxNjA0MiAwLjQzNTI5NDE1MTMAA</bytes>
@@ -937,7 +992,7 @@
 					<object class="NSTextField" id="260386770">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 379}, {616, 20}}</string>
+						<string key="NSFrame">{{17, 379}, {479, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="1030451056"/>
 						<bool key="NSEnabled">YES</bool>
@@ -1762,6 +1817,22 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">labelFecthingUsers</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="326445471"/>
+					</object>
+					<int key="connectionID">385</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">imageFecthingUsers</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1006199396"/>
+					</object>
+					<int key="connectionID">386</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldNewTemplateName</string>
 						<reference key="source" ref="630613853"/>
 						<reference key="destination" ref="997540605"/>
@@ -2015,6 +2086,8 @@
 							<reference ref="260386770"/>
 							<reference ref="1022451958"/>
 							<reference ref="300146505"/>
+							<reference ref="326445471"/>
+							<reference ref="1006199396"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -2742,6 +2815,34 @@
 						<reference key="object" ref="777549315"/>
 						<reference key="parent" ref="1030451056"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">381</int>
+						<reference key="object" ref="326445471"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="667245190"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">382</int>
+						<reference key="object" ref="1006199396"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="100911220"/>
+						</object>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">383</int>
+						<reference key="object" ref="100911220"/>
+						<reference key="parent" ref="1006199396"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">384</int>
+						<reference key="object" ref="667245190"/>
+						<reference key="parent" ref="326445471"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2811,6 +2912,10 @@
 					<string>374.IBPluginDependency</string>
 					<string>375.IBPluginDependency</string>
 					<string>376.IBPluginDependency</string>
+					<string>381.IBPluginDependency</string>
+					<string>382.IBPluginDependency</string>
+					<string>383.IBPluginDependency</string>
+					<string>384.IBPluginDependency</string>
 					<string>4.IBPluginDependency</string>
 					<string>47.IBPluginDependency</string>
 					<string>48.IBPluginDependency</string>
@@ -2955,6 +3060,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -2969,7 +3078,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">380</int>
+			<int key="maxID">386</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3075,6 +3184,8 @@
 							<string>filterField</string>
 							<string>filterRosterUsers</string>
 							<string>filterUsers</string>
+							<string>imageFecthingUsers</string>
+							<string>labelFecthingUsers</string>
 							<string>labelNoUserSelected</string>
 							<string>rolesController</string>
 							<string>splitView</string>
@@ -3089,6 +3200,8 @@
 							<string>NSSearchField</string>
 							<string>NSSearchField</string>
 							<string>NSSearchField</string>
+							<string>NSImageView</string>
+							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>TNRolesController</string>
 							<string>NSSplitView</string>
@@ -3106,6 +3219,8 @@
 							<string>filterField</string>
 							<string>filterRosterUsers</string>
 							<string>filterUsers</string>
+							<string>imageFecthingUsers</string>
+							<string>labelFecthingUsers</string>
 							<string>labelNoUserSelected</string>
 							<string>rolesController</string>
 							<string>splitView</string>
@@ -3131,6 +3246,14 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">filterUsers</string>
 								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageFecthingUsers</string>
+								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelFecthingUsers</string>
+								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">labelNoUserSelected</string>

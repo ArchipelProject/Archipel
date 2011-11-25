@@ -92,3 +92,6 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "375"; */
 "375.title" = "Text Cell";
 
+/* Class = "NSTextFieldCell"; title = "Fetching users..."; ObjectID = "384"; */
+"384.title" = "Fetching users...";
+
