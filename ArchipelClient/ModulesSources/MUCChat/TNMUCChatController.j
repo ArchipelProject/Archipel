@@ -235,7 +235,7 @@
      _session = [TNStropheMUCRoom joinRoom:roomName
                                  onService:serviceName
                            usingConnection:[[TNStropheIMClient defaultClient] connection]
-                                  withNick:[[TNStropheIMClient defaultClient] JID]];
+                                  withNick:[[[TNStropheIMClient defaultClient] JID] node]];
 
     [_session setDelegate:self];
     [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactJoinedNotification object:[_session roster]];
@@ -338,7 +338,7 @@
     if (isNotice)
         color = TNMessageViewBubbleColorNotice;
 
-    if ([[[TNStropheIMClient defaultClient] JID] bare] == [[[aMessage objectForKey:@"from"] JID] resource])
+    if ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage objectForKey:@"from"] JID] resource])
     {
         avatar = [[TNStropheIMClient defaultClient] avatar];
         position= TNMessageViewAvatarPositionLeft;
