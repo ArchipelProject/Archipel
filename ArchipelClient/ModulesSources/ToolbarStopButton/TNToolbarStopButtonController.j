@@ -40,7 +40,7 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     if (![super willLoad])
         return NO;
 
-    [[_UIObject itemWithIdentifier:_identifier] setEnabled:NO];
+    [[self UIItem] setEnabled:NO];
 
     return YES;
 }
@@ -54,13 +54,13 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     switch ([_entity XMPPShow])
     {
         case TNStropheContactStatusOnline:
-            [[_UIObject itemWithIdentifier:_identifier] setEnabled:YES];
+            [[self UIItem] setEnabled:YES];
             break;
         case TNStropheContactStatusAway:
-            [[_UIObject itemWithIdentifier:_identifier] setEnabled:YES];
+            [[self UIItem] setEnabled:YES];
             break;
         default:
-            [[_UIObject itemWithIdentifier:_identifier] setEnabled:NO];
+            [[self UIItem] setEnabled:NO];
    }
 }
 
@@ -74,7 +74,7 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     [[CPNotificationCenter defaultCenter] removeObserver:self];
     if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
     {
-        [[_UIObject itemWithIdentifier:_identifier] setEnabled:NO];
+        [[self UIItem] setEnabled:NO];
         return;
     }
     [self setGUIAccordingToStatus:nil];
