@@ -106,7 +106,7 @@ var TNModuleStatusImageReady,
     id                              _entity                     @accessors(property=entity);
     id                              _moduleType                 @accessors(property=moduleType);
     id                              _UIObject                   @accessors(property=UIObject);
-    id                              _UItem                      @accessors(property=UIItem);
+    id                              _UIItem                     @accessors(setter=setUIItem:);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
     int                             _moduleStatus               @accessors(getter=moduleStatus);
@@ -250,6 +250,12 @@ var TNModuleStatusImageReady,
         [self _managePermissionDenied];
 }
 
+- (void)UIItem
+{
+    if ([_UIObject isKindOfClass:CPToolbar])
+        return [_UIObject itemWithIdentifier:_identifier]
+    return _UIItem;
+}
 
 #pragma mark -
 #pragma mark Permissions interface
