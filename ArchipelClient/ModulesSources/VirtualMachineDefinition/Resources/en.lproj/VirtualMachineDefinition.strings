@@ -1193,3 +1193,6 @@
 /* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "1815"; */
 "1815.title" = "Out limit:";
 
+/* Class = "NSTextFieldCell"; title = "Use port like 5903. Ports \nlower than 1024 need root access."; ObjectID = "1823"; */
+"1823.title" = "Use port like 5903. Ports \nlower than 1024 need root access.";
+
