@@ -163,7 +163,8 @@ def localize(path, routine):
                 os.rename(xib_original, xib_old)
                 os.system('ibtool --generate-strings-file %s/%s.strings %s' % (language, bname_noext, base_xib))
                 os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (xib_original, xib_new))
-                merge(xib_merged, xib_old, xib_new)
+                if not language == "Resources/en.lproj":
+                    merge(xib_merged, xib_old, xib_new)
             else:
                 os.system('ibtool --generate-strings-file %s/%s.strings %s' % (language, bname_noext, base_xib))
                 os.rename(xib_original, xib_old)
