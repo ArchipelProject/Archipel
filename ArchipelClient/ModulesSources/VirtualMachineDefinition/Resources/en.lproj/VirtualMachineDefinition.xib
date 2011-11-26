@@ -444,7 +444,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Swap Hard</string>
 							<reference key="NSControlView" ref="652750642"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>
@@ -513,7 +513,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Guarantee</string>
 							<reference key="NSControlView" ref="1038678631"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>
@@ -566,7 +566,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Hard</string>
 							<reference key="NSControlView" ref="556292822"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>
@@ -619,7 +619,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Weight</string>
 							<reference key="NSControlView" ref="393364307"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>
@@ -696,7 +696,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Soft</string>
 							<reference key="NSControlView" ref="190246114"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>
@@ -2018,7 +2018,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Memory</string>
 							<reference key="NSControlView" ref="956154605"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>
@@ -3760,7 +3760,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
-							<string key="NSPlaceholderString">1024</string>
+							<string key="NSPlaceholderString">Default RAM</string>
 							<reference key="NSControlView" ref="721079328"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="818769575"/>

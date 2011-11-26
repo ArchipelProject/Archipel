@@ -35,8 +35,8 @@
 /* Class = "NSTextFieldCell"; title = "Boot from:"; ObjectID = "21"; */
 "21.title" = "Boot from:";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "24"; */
-"24.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "Memory"; ObjectID = "24"; */
+"24.placeholderString" = "Memory";
 
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "27"; */
 "27.title" = "MB";
@@ -206,8 +206,8 @@
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for virtual machine definition module."; ObjectID = "305"; */
 "305.title" = "You can configure preferences for virtual machine definition module.";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "306"; */
-"306.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "MemoryA"; ObjectID = "306"; */
+"306.placeholderString" = "Default RAM";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Default guest"; ObjectID = "307"; */
 "307.placeholderString" = "Default guest";
@@ -617,8 +617,8 @@
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "872"; */
-"872.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "MemoryB"; ObjectID = "872"; */
+"872.placeholderString" = "Soft";
 
 /* Class = "NSTextFieldCell"; title = "Soft limit:"; ObjectID = "873"; */
 "873.title" = "Soft limit:";
@@ -632,8 +632,8 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "878"; */
 "878.title" = "MB";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "882"; */
-"882.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "MemoryC"; ObjectID = "882"; */
+"882.placeholderString" = "Hard";
 
 /* Class = "NSTextFieldCell"; title = "Hard limit:"; ObjectID = "883"; */
 "883.title" = "Hard limit:";
@@ -641,8 +641,8 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "884"; */
 "884.title" = "MB";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "889"; */
-"889.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "MemoryD"; ObjectID = "889"; */
+"889.placeholderString" = "Guarantee";
 
 /* Class = "NSTextFieldCell"; title = "Guarantee:"; ObjectID = "890"; */
 "890.title" = "Guarantee:";
@@ -650,8 +650,8 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "891"; */
 "891.title" = "MB";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "896"; */
-"896.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "MemoryE"; ObjectID = "896"; */
+"896.placeholderString" = "Swap Hard";
 
 /* Class = "NSTextFieldCell"; title = "Swap hard limit:"; ObjectID = "897"; */
 "897.title" = "Swap hard limit:";
@@ -659,8 +659,8 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "898"; */
 "898.title" = "MB";
 
-/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "913"; */
-"913.placeholderString" = "1024";
+/* Class = "NSTextFieldCell"; placeholderString = "MemoryF"; ObjectID = "913"; */
+"913.placeholderString" = "Weight";
 
 /* Class = "NSTextFieldCell"; title = "Weight:"; ObjectID = "914"; */
 "914.title" = "Weight:";
