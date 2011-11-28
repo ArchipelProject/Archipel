@@ -164,6 +164,9 @@ var __defaultPermissionCenter;
     if (![aContact isKindOfClass:TNStropheContact])
         return YES;
 
+    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[aContact vCard]] == TNArchipelEntityTypeUser)
+        return YES;
+
     return [_cachedPermissions containsKey:aContact];
 }
 
