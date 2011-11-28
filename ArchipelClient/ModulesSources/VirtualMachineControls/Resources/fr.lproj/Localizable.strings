@@ -112,8 +112,8 @@
 /* Unplug */
 "Unplug" = "Unplug";
 
-/* Unplug Virtual Machine ? */
-"Unplug Virtual Machine ?" = "Unplug Virtual Machine ?";
+/* Unplug %@? */
+"Unplug %@?" = "Unplug %@?";
 
 /* Virtual machine has been destroyed. */
 "Virtual machine has been destroyed." = "Virtual machine has been destroyed.";

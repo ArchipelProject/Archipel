@@ -1105,7 +1105,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if (![[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"])
     {
-        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unplug Virtual Machine ?", @"Unplug Virtual Machine ?")
+        var alert = [TNAlert alertWithMessage:[CPString stringWithFormat:CPBundleLocalizedString(@"Unplug %@?", @"Unplug %@?"), [_entity nickname]]
                                     informative:CPBundleLocalizedString(@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
                                      target:self
                                      actions:[[CPBundleLocalizedString(@"Unplug", @"Unplug"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];

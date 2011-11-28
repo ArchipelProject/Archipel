@@ -78,8 +78,8 @@
 	<string>Trigger a live migration from current hypervisor to selected one</string>
 	<key>Unplug</key>
 	<string>Unplug</string>
-	<key>Unplug Virtual Machine ?</key>
-	<string>Unplug Virtual Machine ?</string>
+	<key>Unplug %@?</key>
+	<string>Unplug %@?</string>
 	<key>Virtual machine has been destroyed.</key>
 	<string>Virtual machine has been destroyed.</string>
 	<key>Virtual machine is paused.</key>
