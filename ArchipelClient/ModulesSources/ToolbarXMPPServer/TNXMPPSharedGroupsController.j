@@ -32,6 +32,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "TNXMPPServerUserFetcher.j"
 
 
 var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
@@ -66,10 +67,10 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     @outlet CPView              viewTableGroupsContainer;
     @outlet CPView              viewTableUsersInGroupContainer;
 
-    id                          _delegate           @accessors(property=delegate);
-    TNStropheContact            _entity             @accessors(setter=setEntity:);
-    TNXMPPUsersController       _usersController    @accessors(setter=setUsersController:);
+    id                          _delegate                   @accessors(property=delegate);
+    TNXMPPUsersController       _usersController            @accessors(setter=setUsersController:);
 
+    TNStropheContact            _entity;
     CPButton                    _addGroupButton;
     CPButton                    _addUserInGroupButton;
     CPButton                    _deleteGroupButton;
@@ -79,6 +80,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     TNTableViewDataSource       _datasourceGroups;
     TNTableViewDataSource       _datasourceUsers;
     TNTableViewDataSource       _datasourceUsersInGroup;
+    TNXMPPServerUserFetcher     _usersFetcher;
 }
 
 #pragma mark -
@@ -94,12 +96,16 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [splitViewVertical setIsPaneSplitter:YES];
 
     /* table Users */
-    _datasourceUsers  = [[TNTableViewDataSource alloc] init];
+    _datasourceUsers  = [[TNTableViewLazyDataSource alloc] init];
     [_datasourceUsers setTable:tableUsers];
     [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
     [tableUsers setDataSource:_datasourceUsers];
-    [filterFieldUsers setTarget:_datasourceUsers];
-    [filterFieldUsers setAction:@selector(filterObjects:)];
+
+    // user fetcher
+    _usersFetcher = [[TNXMPPServerUserFetcher alloc] init];
+    [_usersFetcher setDataSource:_datasourceUsers];
+    [_usersFetcher setDelegate:self];
+    [_usersFetcher setDisplaysOnlyHumans:NO];
 
     /* table Groups */
     _datasourceGroups   = [[TNTableViewDataSource alloc] init];
@@ -107,8 +113,6 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_datasourceGroups setSearchableKeyPaths:[@"name", @"description"]];
     [tableGroups setDataSource:_datasourceGroups];
     [tableGroups setDelegate:self];
-    [filterFieldGroups setTarget:_datasourceGroups];
-    [filterFieldGroups setAction:@selector(filterObjects:)];
 
     _addGroupButton = [CPButtonBar plusButton];
     [_addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-add.png"] size:CPSizeMake(16, 16)]];
@@ -128,8 +132,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_datasourceUsersInGroup setTable:tableUsersInGroup];
     [_datasourceUsersInGroup setSearchableKeyPaths:[@"jid"]];
     [tableUsersInGroup setDataSource:_datasourceUsersInGroup];
-    [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
-    [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
+    [tableUsersInGroup setDelegate:self];
 
     _addUserInGroupButton = [CPButtonBar plusButton];
     [_addUserInGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
@@ -143,11 +146,41 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_deleteUserFromGroupButton setAction:@selector(removeUsersFromGroup:)];
     [_deleteUserFromGroupButton setToolTip:CPBundleLocalizedString(@"Remove users from selected shared group", @"Remove users from selected shared group")];
     [buttonBarUsersInGroups setButtons:[_addUserInGroupButton, _deleteUserFromGroupButton]];
+
+    [filterFieldGroups setTarget:_datasourceGroups];
+    [filterFieldGroups setAction:@selector(filterObjects:)];
+
+    [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
+    [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
+
+    [filterFieldUsers setSendsSearchStringImmediately:YES];
+    [filterFieldUsers setTarget:_datasourceUsers];
+    [filterFieldUsers setAction:@selector(filterObjects:)];
+}
+
+
+#pragma mark -
+#pragma mark Getters / Setters
+
+- (void)setEntity:(TNStropheContact)anEntity
+{
+    _entity = anEntity;
+    [_usersFetcher setEntity:_entity];
 }
 
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! clean stuff when hidden
+*/
+- (void)willHide
+{
+    [self closeNewGroupWindow:nil];
+    [self closeAddUserInGroupWindow:nil];
+
+    [_usersFetcher reset];
+}
 
 /*! called when permissions has changed
 */
@@ -160,10 +193,14 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)setUIAccordingToPermissions
 {
+    var condition1 = ([tableGroups numberOfSelectedRows] > 0),
+        condition2 = condition1 && ([tableUsersInGroup numberOfSelectedRows] > 0);
+
     [_delegate setControl:_addGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
-    [_delegate setControl:_deleteGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"]];
-    [_delegate setControl:_addUserInGroupButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]];
-    [_delegate setControl:_deleteUserFromGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"]];
+    [_delegate setControl:_deleteGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"] specialCondition:condition1];
+
+    [_delegate setControl:_addUserInGroupButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"] specialCondition:condition1];
+    [_delegate setControl:_deleteUserFromGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"] specialCondition:condition2];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]])
         [popoverAddUserInGroup close];
@@ -176,6 +213,9 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)reload
 {
+    if ([_datasourceUsers isCurrentlyLoading])
+        return;
+
     [self getSharedGroupsInfo];
 }
 
@@ -222,9 +262,12 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (IBAction)openAddUserInGroupWindow:(id)aSender
 {
-    [_datasourceUsers setContent:[[_usersController users] copy]];
+    [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
-    [tableUsers deselectAll];
+
+    [_usersFetcher reset];
+    [_usersFetcher getXMPPUsers];
+
     [popoverAddUserInGroup close];
     [popoverAddUserInGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
     [popoverAddUserInGroup setDefaultButton:buttonAdd];
@@ -500,25 +543,36 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
             _currentSelectedGroup = nil;
             [_datasourceUsersInGroup removeAllObjects];
             [tableUsersInGroup reloadData];
-
-            return;
         }
-
-        var index   = [[tableGroups selectedRowIndexes] firstIndex],
-            group   = [_datasourceGroups objectAtIndex:index],
-            users   = [group objectForKey:@"users"];
-
-        _currentSelectedGroup = group;
-
-        [_datasourceUsersInGroup removeAllObjects];
-        for (var i = 0; i < [users count]; i++)
+        else
         {
-            var user    = [users objectAtIndex:i],
-                newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"jid"]];
-            [_datasourceUsersInGroup addObject:newItem];
+            var index   = [[tableGroups selectedRowIndexes] firstIndex],
+                group   = [_datasourceGroups objectAtIndex:index],
+                users   = [group objectForKey:@"users"];
+
+            _currentSelectedGroup = group;
+
+            [_datasourceUsersInGroup removeAllObjects];
+            for (var i = 0; i < [users count]; i++)
+            {
+                var user    = [users objectAtIndex:i],
+                    newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"jid"]];
+                [_datasourceUsersInGroup addObject:newItem];
+            }
+            [tableUsersInGroup reloadData];
         }
-        [tableUsersInGroup reloadData];
     }
+
+    [self setUIAccordingToPermissions];
+}
+
+/*! delegate of TNXMPPServerUserFetcher
+*/
+- (void)userFetcherClean
+{
+    [_usersFetcher reset];
+    [_datasourceUsers removeAllObjects];
+    [tableUsers reloadData];
 }
 
 @end

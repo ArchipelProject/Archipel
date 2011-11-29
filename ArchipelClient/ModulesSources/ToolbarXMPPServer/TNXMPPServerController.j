@@ -46,7 +46,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     @outlet TNXMPPSharedGroupsController    sharedGroupsController;
     @outlet TNXMPPUsersController           usersController;
 
-    BOOL        pushRegistred;
+    BOOL        _pushRegistred;
     CPImage     _defaultAvatar;
 }
 
@@ -88,7 +88,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [usersController setDelegate:self];
 
-    pushRegistred = NO;
+    _pushRegistred = NO;
 
     [buttonHypervisors setTarget:self];
     [buttonHypervisors setAction:@selector(changeCurrentHypervisor:)];
@@ -112,11 +112,10 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [self populateHypervisors];
 
-    if (!pushRegistred)
+    if (!_pushRegistred)
     {
-        [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
         [self registerSelector:@selector(_didReceiveUsersPush:) ofObject:usersController forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
-        pushRegistred = YES;
+        _pushRegistred = YES;
     }
 
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
@@ -136,15 +135,14 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)willHide
 {
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-    {
-        [sharedGroupsController closeNewGroupWindow:nil];
-        [sharedGroupsController closeAddUserInGroupWindow:nil];
-    }
+        [sharedGroupsController willHide]
 
-    [usersController closeRegisterUserWindow:nil];
+    [usersController willHide];
     [self flushUI];
+
+    [[CPNotificationCenter defaultCenter] removeObserver:self];
+
     [super willHide];
-    // message sent when the tab is changed
 }
 
 /*! called when permissions changes
@@ -203,26 +201,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)_didHypervisorPresenceUpdate:(CPNotification)aNotification
 {
     [self populateHypervisors];
-}
-
-/*! called when an Archipel push is received
-    @param somePushInfo CPDictionary containing the push information
-*/
-- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
-{
-    var sender  = [somePushInfo objectForKey:@"owner"],
-        type    = [somePushInfo objectForKey:@"type"],
-        change  = [somePushInfo objectForKey:@"change"],
-        date    = [somePushInfo objectForKey:@"date"];
-
-    if (change != @"listfetched")
-    {
-        [usersController reload];
-        if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-            [sharedGroupsController reload];
-    }
-
-    return YES;
+    [usersController reload];
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+        [sharedGroupsController reload];
 }
 
 

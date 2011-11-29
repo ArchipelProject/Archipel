@@ -1,126 +1,126 @@
 /* Activate or deactivate Spanning Tree Protocol for the bridge */
-"Activate or deactivate Spanning Tree Protocol for the bridge" = "Activer ou désactiver Spanning Tree Protocol";
+"Activate or deactivate Spanning Tree Protocol for the bridge" = "Activate or deactivate Spanning Tree Protocol for the bridge";
 
 /* Activate selected networks */
-"Activate selected networks" = "Activer les réseaux sélectionnés";
+"Activate selected networks" = "Activate selected networks";
 
 /* Activate this network */
-"Activate this network" = "Activer ce réseau";
+"Activate this network" = "Activate this network";
 
 /* Add new host reservation */
-"Add new host reservation" = "Ajouter une nouvelle réservation d'hôte";
+"Add new host reservation" = "Add new host reservation";
 
 /* Add new range */
-"Add new range" = "Ajouter une nouvelle gamme DHCP";
+"Add new range" = "Add new range";
 
 /* Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity. */
-"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity." = "Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.";
+"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity." = "Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.";
 
 /* Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity. */
-"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity." = "Etes-vous sûr de vouloir désactiver ce réseau ? Les VMs qui l'utilisent perdront leur connectivité.";
+"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity." = "Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.";
 
 /* Cancel */
-"Cancel" = "Annuler";
+"Cancel" = "Cancel";
 
 /* Choose the forward mode for this virtual network */
-"Choose the forward mode for this virtual network" = "Choissisez le mode de renvoi pour ce réseau";
+"Choose the forward mode for this virtual network" = "Choose the forward mode for this virtual network";
 
 /* Create a new DHCP range */
-"Create a new DHCP range" = "Créer une nouvelle gamme DHCP";
+"Create a new DHCP range" = "Create a new DHCP range";
 
 /* Create a new DHCP reservation */
-"Create a new DHCP reservation" = "Créer une nouvelle réservation d'hôte";
+"Create a new DHCP reservation" = "Create a new DHCP reservation";
 
 /* Create a new network */
-"Create a new network" = "Créer un réseau";
+"Create a new network" = "Create a new network";
 
 /* Create new virtual network */
-"Create new virtual network" = "Créer un nouveau réseau";
+"Create new virtual network" = "Create new virtual network";
 
 /* Deactivate */
-"Deactivate" = "Désactiver";
+"Deactivate" = "Deactivate";
 
 /* Deactivate Network */
-"Deactivate Network" = "Désactiver réseau";
+"Deactivate Network" = "Deactivate Network";
 
 /* Deactivate selected networks */
-"Deactivate selected networks" = "Désactiver les réseaux sélectionnés";
+"Deactivate selected networks" = "Deactivate selected networks";
 
 /* Deactivate this network */
-"Deactivate this network" = "Désactiver ce réseau";
+"Deactivate this network" = "Deactivate this network";
 
 /* Delete */
-"Delete" = "Supprimer";
+"Delete" = "Delete";
 
 /* Delete Network */
-"Delete Network" = "Supprimer réseau";
+"Delete Network" = "Delete Network";
 
 /* Delete selected network */
-"Delete selected network" = "Supprimer le réseau sélectionné";
+"Delete selected network" = "Delete selected network";
 
 /* Delete selected networks */
-"Delete selected networks" = "Supprimer les réseaux sélectionnés";
+"Delete selected networks" = "Delete selected networks";
 
 /* DHCP Hosts */
-"DHCP Hosts" = "Hôtes DHCP";
+"DHCP Hosts" = "DHCP Hosts";
 
 /* DHCP Ranges */
-"DHCP Ranges" = "Gammes DHCP";
+"DHCP Ranges" = "DHCP Ranges";
 
 /* domain.com */
-"domain.com" = "domaine.com";
+"domain.com" = "domain.com";
 
 /* Edit selected network */
-"Edit selected network" = "Editer le réseau sélectionné";
+"Edit selected network" = "Edit selected network";
 
 /* Enable DHCP for this virtual network */
-"Enable DHCP for this virtual network" = "Activer DHCP pour ce réseau";
+"Enable DHCP for this virtual network" = "Enable DHCP for this virtual network";
 
 /* Enter the name of the bridge to create when this network is activated */
-"Enter the name of the bridge to create when this network is activated" = "Entrer le nom du pont réseau à utiliser";
+"Enter the name of the bridge to create when this network is activated" = "Enter the name of the bridge to create when this network is activated";
 
 /* Enter the name of the virtual network */
-"Enter the name of the virtual network" = "Entrer le nom du réseau";
+"Enter the name of the virtual network" = "Enter the name of the virtual network";
 
 /* Enter the value of delay for the bridge */
-"Enter the value of delay for the bridge" = "Entrer la valeur du délai";
+"Enter the value of delay for the bridge" = "Enter the value of delay for the bridge";
 
 /* Error */
 "Error" = "Erreur";
 
 /* Network has been defined */
-"Network has been defined" = "Le réseau a été défini";
+"Network has been defined" = "Network has been defined";
 
 /* Network has been removed */
-"Network has been removed" = "Le réseau a été supprimé";
+"Network has been removed" = "Network has been removed";
 
 /* Network status has changed */
-"Network status has changed" = "Le statut du réseau a changé";
+"Network status has changed" = "Network status has changed";
 
 /* Open configuration panel for selected network */
-"Open configuration panel for selected network" = "Ouvrir le panneau de configuration pour le résau sélectionné";
+"Open configuration panel for selected network" = "Open configuration panel for selected network";
 
 /* Remove */
-"Remove" = "Supprimer";
+"Remove" = "Remove";
 
 /* Remove selected DHCP range */
-"Remove selected DHCP range" = "Supprimer la gamme DHCP";
+"Remove selected DHCP range" = "Remove selected DHCP range";
 
 /* Remove selected DHCP reservation */
-"Remove selected DHCP reservation" = "Supprimer la réservation d'hôte sélectionnée";
+"Remove selected DHCP reservation" = "Remove selected DHCP reservation";
 
 /* Select the hypervisor network card you want to use for this virtual network */
-"Select the hypervisor network card you want to use for this virtual network" = "Sélectionner la carte réseau à utiliser pour ce réseau";
+"Select the hypervisor network card you want to use for this virtual network" = "Select the hypervisor network card you want to use for this virtual network";
 
 /* The IP address to assign to the bridge */
-"The IP address to assign to the bridge" = "L'addresse IP à assigner au pont";
+"The IP address to assign to the bridge" = "The IP address to assign to the bridge";
 
 /* The netmask to use for the bridge */
-"The netmask to use for the bridge" = "Le masque réseau à utiliser pour le pont";
+"The netmask to use for the bridge" = "The netmask to use for the bridge";
 
 /* You can't edit a running network */
-"You can't edit a running network" = "Vous ne pouvez pas éditer un reseau activé";
+"You can't edit a running network" = "You can't edit a running network";
 
 /* You can't update a running network */
-"You can't update a running network" = "Vous ne pouvez pas mettre à jour un réseau activé";
+"You can't update a running network" = "You can't update a running network";
 

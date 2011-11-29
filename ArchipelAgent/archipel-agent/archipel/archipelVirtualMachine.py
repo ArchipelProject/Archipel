@@ -444,7 +444,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_XMPP_DISCONNECT")
         TNArchipelEntity.disconnect(self)
 
-
     def add_jid_hook(self, origin=None, user_info=None, arguments=None):
         """
         Hook to add a JID.
@@ -845,8 +844,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         parentname = parentvm.name
         xmlstring = str(xml)
         xmlstring = xmlstring.replace(parentuuid, self.uuid)
-        xmlstring = xmlstring.replace(parentname, self.name)
         newxml = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
+
+        name_node = newxml.getTag("name")
+        name_node.setData(self.name)
 
         nics_nodes = newxml.getTag("devices").getTags("interface")
         for nic in nics_nodes:

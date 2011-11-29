@@ -150,7 +150,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     return YES;
 }

@@ -135,14 +135,15 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
     _registredDiskListeningId = nil;
 
-    var params = [[CPDictionary alloc] init],
-        center = [CPNotificationCenter defaultCenter];
+    var params = [CPDictionary dictionary];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDisk]
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationAppliance]
 
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didUpdatePresence:)
+                                                 name:TNStropheContactPresenceUpdatedNotification
+                                               object:_entity];
 
     [tableMedias setDelegate:nil];
     [tableMedias setDelegate:self];

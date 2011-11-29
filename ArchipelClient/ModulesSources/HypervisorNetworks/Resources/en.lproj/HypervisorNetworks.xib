@@ -3257,22 +3257,6 @@
 					<int key="connectionID">594</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldBandwidthOutboundBurst</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="649313860"/>
-					</object>
-					<int key="connectionID">595</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">fieldBandwidthOutboundPeak</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="653598119"/>
-					</object>
-					<int key="connectionID">596</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">outboundLimitChange:</string>
 						<reference key="source" ref="416875448"/>
@@ -3303,6 +3287,46 @@
 						<reference key="destination" ref="455167967"/>
 					</object>
 					<int key="connectionID">673</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthOutboundPeak</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="649313860"/>
+					</object>
+					<int key="connectionID">674</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthOutboundBurst</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="653598119"/>
+					</object>
+					<int key="connectionID">675</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthInboundAverage</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="967368217"/>
+					</object>
+					<int key="connectionID">676</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthInboundPeak</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="554134887"/>
+					</object>
+					<int key="connectionID">677</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldBandwidthInboundBurst</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="794798432"/>
+					</object>
+					<int key="connectionID">678</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3542,7 +3566,7 @@
 						<reference key="source" ref="669351867"/>
 						<reference key="destination" ref="649313860"/>
 					</object>
-					<int key="connectionID">608</int>
+					<int key="connectionID">679</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3550,15 +3574,15 @@
 						<reference key="source" ref="649313860"/>
 						<reference key="destination" ref="653598119"/>
 					</object>
-					<int key="connectionID">609</int>
+					<int key="connectionID">680</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="653598119"/>
-						<reference key="destination" ref="396097288"/>
+						<reference key="destination" ref="967368217"/>
 					</object>
-					<int key="connectionID">610</int>
+					<int key="connectionID">681</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3566,7 +3590,7 @@
 						<reference key="source" ref="967368217"/>
 						<reference key="destination" ref="554134887"/>
 					</object>
-					<int key="connectionID">641</int>
+					<int key="connectionID">682</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3574,7 +3598,7 @@
 						<reference key="source" ref="554134887"/>
 						<reference key="destination" ref="794798432"/>
 					</object>
-					<int key="connectionID">640</int>
+					<int key="connectionID">683</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -3582,7 +3606,7 @@
 						<reference key="source" ref="794798432"/>
 						<reference key="destination" ref="669351867"/>
 					</object>
-					<int key="connectionID">643</int>
+					<int key="connectionID">684</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -5882,7 +5906,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">673</int>
+			<int key="maxID">684</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

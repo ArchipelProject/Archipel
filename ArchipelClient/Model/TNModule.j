@@ -87,10 +87,11 @@ var TNModuleStatusImageReady,
     @outlet CPView                  viewPreferences             @accessors;
     @outlet CPView                  viewMask                    @accessors;
 
+    BOOL                            _fullscreen                 @accessors(getter=isFullscreen, setter=setFullscreen:);
+    BOOL                            _hasCIB                     @accessors(getter=hasCIB, setter=setHasCIB:);
     BOOL                            _isActive                   @accessors(property=isActive, readonly);
     BOOL                            _isCurrentSelectedIndex     @accessors(getter=isCurrentSelectedIndex, setter=setCurrentSelectedIndex:);
     BOOL                            _isVisible                  @accessors(property=isVisible, readonly);
-    BOOL                            _toolbarItemOnly            @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
     CPArray                         _mandatoryPermissions       @accessors(property=mandatoryPermissions);
     CPArray                         _supportedEntityTypes       @accessors(property=supportedEntityTypes);
     CPBundle                        _bundle                     @accessors(property=bundle);
@@ -98,22 +99,21 @@ var TNModuleStatusImageReady,
     CPMenu                          _rosterContactsMenu         @accessors(property=rosterContactsMenu);
     CPMenu                          _rosterGroupsMenu           @accessors(property=rosterGroupsMenu);
     CPMenuItem                      _menuItem                   @accessors(property=menuItem);
+    CPString                        _identifier                 @accessors(property=identifier);
     CPString                        _label                      @accessors(property=label);
     CPString                        _name                       @accessors(property=name);
-    CPToolbar                       _toolbar                    @accessors(property=toolbar);
-    CPToolbarItem                   _toolbarItem                @accessors(property=toolbarItem);
     CPView                          _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
     id                              _entity                     @accessors(property=entity);
     id                              _moduleType                 @accessors(property=moduleType);
+    id                              _UIObject                   @accessors(property=UIObject);
+    id                              _UIItem                     @accessors(setter=setUIItem:);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
     int                             _moduleStatus               @accessors(getter=moduleStatus);
     TNStropheGroup                  _group                      @accessors(property=group);
 
-    BOOL                            _pubSubPermissionRegistred;
-    BOOL                            _registredToPermissionCenter;
+    CPArray                         _initialPermissionsReceived;
     CPDictionary                    _registredSelectors;
-    id                              _pubSubHandlerId;
 }
 
 
@@ -131,9 +131,11 @@ var TNModuleStatusImageReady,
 
 - (BOOL)initializeModule
 {
-    _isActive               = NO;
-    _isVisible              = NO;
-    _registredSelectors     = [CPDictionary dictionary];
+    _isActive                   = NO;
+    _isVisible                  = NO;
+    _isCurrentSelectedIndex     = NO;
+    _initialPermissionsReceived = [CPArray array];
+    _registredSelectors         = [CPDictionary dictionary];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
@@ -248,6 +250,12 @@ var TNModuleStatusImageReady,
         [self _managePermissionDenied];
 }
 
+- (void)UIItem
+{
+    if ([_UIObject isKindOfClass:CPToolbar])
+        return [_UIObject itemWithIdentifier:_identifier]
+    return _UIItem;
+}
 
 #pragma mark -
 #pragma mark Permissions interface
@@ -269,10 +277,11 @@ var TNModuleStatusImageReady,
     if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
         return YES;
 
-    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity]) && [[[TNStropheIMClient defaultClient] JID] bare] != defaultAdminAccount)
+    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity])
+        && [[[TNStropheIMClient defaultClient] JID] bare] != defaultAdminAccount)
     {
         if (![[TNPermissionsCenter defaultCenter] hasPermissions:_mandatoryPermissions forEntity:anEntity ])
-                return NO;
+            return NO;
     }
     return YES;
 }
@@ -682,7 +691,11 @@ var TNModuleStatusImageReady,
     {
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
-        [self permissionsChanged];
+        if ([_initialPermissionsReceived containsObject:[_entity description]])
+            [self permissionsChanged];
+
+        // @TODO: we should flush this registry at some point
+        [_initialPermissionsReceived addObject:[_entity description]];
     }
 }
 

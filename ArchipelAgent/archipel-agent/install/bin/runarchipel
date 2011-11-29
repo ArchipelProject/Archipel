@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     options, args = parser.parse_args()
     try:
-        config = init_conf(options.config)
+        config = init_conf(options.config.split(","))
     except:
         print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % options.config
         sys.exit(ARCHIPEL_INIT_ERROR_NO_CONFIG)

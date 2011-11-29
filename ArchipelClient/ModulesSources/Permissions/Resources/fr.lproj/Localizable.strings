@@ -13,9 +13,6 @@
 /* Select a role as permissions template */
 "Select a role as permissions template" = "Select a role as permissions template";
 
-/* Users */
-"Users" = "Users";
-
 /* Your role cannot be deleted. */
 "Your role cannot be deleted." = "Your role cannot be deleted.";
 

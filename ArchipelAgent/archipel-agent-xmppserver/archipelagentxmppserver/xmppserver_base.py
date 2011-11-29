@@ -38,7 +38,7 @@ ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST           = -10005
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -10006
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -10007
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -10008
-
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER         = -10009
 
 
 class TNXMPPServerControllerBase (TNArchipelPlugin):
@@ -79,15 +79,20 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
                 self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
                 self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
+        self.user_page_size = 50
+
         # permissions
-        self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False)
-        self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
-        self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
+        if self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False)
+            self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
+
         self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
+        self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
 
 
     ### Plugin interface
@@ -97,15 +102,21 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
-        self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
-        self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+            self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
     def unregister_handlers(self):
         """
         Unregister the handlers.
         """
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
     @staticmethod
     def plugin_info():
@@ -188,9 +199,35 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         raise Exception("Not Implemented")
 
-    def users_list(self):
+    def users_number(self, perpared_reply, only_humans=True):
+        """
+        Return total number of users
+        @type prepared_reply: xmpp.Iq
+        @param prepared_reply: the base reply to use for sending users
+        @type only_humans: Boolean
+        @param only_humans: if true, don't count hypervisors or virtualmachines
+        """
+        raise Exception("Not Implemented")
+
+    def users_list(self, perpared_reply, page, only_humans=True):
         """
         List all registered users
+        @type prepared_reply: xmpp.Iq
+        @param prepared_reply: the base reply to use for sending users
+        @type page: Integer
+        @param page: the page number
+        @type only_humans: Boolean
+        @param only_humans: if true, don't count hypervisors or virtualmachines
+        """
+        raise Exception("Not Implemented")
+
+    def users_filter(self, perpared_reply, filterString):
+        """
+        filter all registered users
+        @type prepared_reply: xmpp.Iq
+        @param prepared_reply: the base reply to use for sending users
+        @type filterString: String
+        @param filterString: the filter
         """
         raise Exception("Not Implemented")
 
@@ -239,7 +276,6 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         @param users: list of users to remove
         """
         raise Exception("Not Implemented")
-
 
 
     ### XMPP Processing for shared groups
@@ -370,13 +406,46 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
 
     ### XMPP Processing for users
 
-    def process_users_iq(self, conn, iq):
+    def process_users_iq_for_virtualmachines(self, conn, iq):
         """
-        This method is invoked when a ARCHIPEL_NS_EJABBERDCTL_USERS IQ is received.
+        This method is invoked when a ARCHIPEL_NS_XMPPSERVER_USERS IQ is received.
+        It understands IQ of type:
+            - list
+            - filter
+            - number
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_users_")
+        reply = None
+        if action == "number":
+            reply = self.iq_users_number(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        elif action == "list":
+            reply = self.iq_users_list(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        elif action == "filter":
+            reply = self.iq_users_filter(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+    def process_users_iq_for_hypervisors(self, conn, iq):
+        """
+        This method is invoked when a ARCHIPEL_NS_XMPPSERVER_USERS IQ is received.
         It understands IQ of type:
             - register
             - unregister
             - list
+            - filter
+            - number
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -389,8 +458,18 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
             reply = self.iq_users_register(iq)
         elif action == "unregister":
             reply = self.iq_users_unregister(iq)
+        elif action == "number":
+            reply = self.iq_users_number(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
         elif action == "list":
             reply = self.iq_users_list(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        elif action == "filter":
+            reply = self.iq_users_filter(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -405,7 +484,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            users = map(lambda x: {"username": xmpp.JID(x.getAttr("username")), "password": x.getAttr("password")}, iq.getTag("query").getTag("archipel").getTags("user"))
+            users = map(lambda x: {"jid": xmpp.JID(x.getAttr("jid")), "password": x.getAttr("password")}, iq.getTag("query").getTag("archipel").getTags("user"))
             self.users_register(users)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)
@@ -421,10 +500,31 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            users = map(lambda x: x.getAttr("username"), iq.getTag("query").getTag("archipel").getTags("user"))
+            users = map(lambda x: xmpp.JID(x.getAttr("jid")), iq.getTag("query").getTag("archipel").getTags("user"))
             self.users_unregister(users)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER)
+        return reply
+
+    def iq_users_number(self, iq):
+        """
+        Return number of registered users.
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            only_humans = iq.getTag("query").getTag("archipel").getAttr("humans_only")
+            if only_humans and only_humans.lower() in ("true", "1", "yes"):
+                only_humans = True
+            else:
+                only_humans = False
+            self.users_number(reply, only_humans)
+            return None
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
         return reply
 
     def iq_users_list(self, iq):
@@ -437,14 +537,31 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            nodes = []
-            users = self.users_list()
-            if not users:
-                return reply
-            for user in users:
-                nodes.append(xmpp.Node("user", attrs=user))
-            reply.setQueryPayload(nodes)
-            self.entity.push_change("xmppserver:users", "listfetched", content_node=xmpp.Node("users", payload=nodes))
+            page = int(iq.getTag("query").getTag("archipel").getAttr("page"))
+            only_humans = iq.getTag("query").getTag("archipel").getAttr("humans_only")
+            if only_humans and only_humans.lower() in ("true", "1", "yes"):
+                only_humans = True
+            else:
+                only_humans = False
+            self.users_list(reply, page, only_humans)
+            return None
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
+        return reply
+
+    def iq_users_filter(self, iq):
+        """
+        Filter all registered users.
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            filterString = iq.getTag("query").getTag("archipel").getAttr("filter")
+            users = self.users_filter(reply, filterString)
+            return None
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER)
         return reply

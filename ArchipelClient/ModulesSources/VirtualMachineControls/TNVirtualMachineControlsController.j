@@ -255,12 +255,15 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (![super willLoad])
         return NO;
 
-    var center = [CPNotificationCenter defaultCenter];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didReceiveControlNotification:)
+                                                 name:TNArchipelControlNotification
+                                               object:nil];
 
-    [center addObserver:self selector:@selector(_didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didUpdatePresence:)
+                                                 name:TNStropheContactPresenceUpdatedNotification
+                                               object:_entity];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinition];
@@ -1102,7 +1105,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if (![[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"])
     {
-        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unplug Virtual Machine ?", @"Unplug Virtual Machine ?")
+        var alert = [TNAlert alertWithMessage:[CPString stringWithFormat:CPBundleLocalizedString(@"Unplug %@?", @"Unplug %@?"), [_entity nickname]]
                                     informative:CPBundleLocalizedString(@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
                                      target:self
                                      actions:[[CPBundleLocalizedString(@"Unplug", @"Unplug"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];

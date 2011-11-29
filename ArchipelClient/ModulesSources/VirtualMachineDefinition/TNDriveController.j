@@ -197,6 +197,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         default:
             CPLog.warn("unrecognized disk type.");
     }
+    [self busTypeChanged:aSender];
 }
 
 /*! Change the type of the drive (file or block)
@@ -252,10 +253,20 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevices];
     }
 
+    switch ([buttonDevice title])
+    {
+        case TNLibvirtDeviceDiskDeviceDisk:
+            [buttonTargetDevice selectItemAtIndex:0];
+            break;
+        case  TNLibvirtDeviceDiskDeviceCDROM:
+            [buttonTargetDevice selectItemAtIndex:2];
+            break;
+        default:
+            [buttonTargetDevice selectItemAtIndex:0];
+    }
+
     if ([[buttonTargetDevice itemTitles] containsObject:[[_drive target] device]])
         [buttonTargetDevice selectItemWithTitle:[[_drive target] device]];
-    else
-        [buttonTargetDevice selectItemAtIndex:0];
 }
 
 /*! show the main window

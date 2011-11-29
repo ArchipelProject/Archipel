@@ -47,6 +47,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
         self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
 
+
     ## TNXMPPServerControllerBase implementation
 
     def users_register(self, users):
@@ -57,12 +58,10 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         """
         server = self.entity.jid.getDomain()
         for user in users:
-            username = user["username"].getNode()
-            password = user["password"]
-            answer = self.xmlrpc_server.register({"user": username, "password": password, "host": server})
+            answer = self.xmlrpc_server.register({"user": user["jid"].getNode(), "password": user["password"], "host": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot register new user. %s" % str(answer))
-            self.entity.log.info("XMPPSERVER: Registred a new user %s@%s" % (username, server))
+            self.entity.log.info("XMPPSERVER: Registered a new user %s@%s" % (user["jid"].getNode(), server))
         self.entity.push_change("xmppserver:users", "registered")
         return True
 
@@ -73,23 +72,71 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         @param users: list of users to unregister
         """
         server = self.entity.jid.getDomain()
-        for username in users:
-            answer = self.xmlrpc_server.unregister({"user": username.split("@")[0],"host": server})
+        for jid in users:
+            answer = self.xmlrpc_server.unregister({"user": jid.getNode(),"host": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot unregister user. %s" % str(answer))
-            self.entity.log.info("XMPPSERVER: Unregistred user %s@%s" % (username, server))
+            self.entity.log.info("XMPPSERVER: Unregistered user %s@%s" % (jid.getNode(), server))
         self.entity.push_change("xmppserver:users", "unregistered")
         return True
 
-    def users_list(self):
+    def users_number(self, base_reply, only_humans=True):
+        """
+        Return total number of registered users
+        """
+        server = self.entity.jid.getDomain()
+        answer = self.xmlrpc_server.registered_users({"host": server})
+        n = 0
+        if not only_humans:
+            n = len(answer["users"])
+        else:
+            users = answer["users"]
+            for user in users:
+                entity_type = "human"
+                try:
+                    answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                    if not answer["content"] in ("hypervisor", "virtualmachine"):
+                        n = n + 1
+                except:
+                    n = n + 1
+        base_reply.setQueryPayload([xmpp.Node("users", attrs={"total": n})])
+        self.entity.xmppclient.send(base_reply)
+
+    def users_list(self, base_reply, page, only_humans=True):
         """
         List all registered users
         """
         server = self.entity.jid.getDomain()
         answer = self.xmlrpc_server.registered_users({"host": server})
-        ret = []
-        users = answer["users"]
+        nodes = []
+        bound_begin = page * self.user_page_size
+        bound_end = bound_begin + self.user_page_size
+        users = sorted(answer["users"], cmp=lambda x, y: cmp(x["username"], y["username"]))[bound_begin:bound_end]
         for user in users:
+            entity_type = "human"
+            try:
+                answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                if answer["content"] in ("hypervisor", "virtualmachine"):
+                    entity_type = answer["content"]
+                if only_humans and not entity_type == "human":
+                    continue
+            except:
+                pass
+            nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
+        base_reply.setQueryPayload(nodes)
+        self.entity.xmppclient.send(base_reply)
+
+    def users_filter(self, base_reply, filterString):
+        """
+        Filter all registered users.
+        """
+        server = self.entity.jid.getDomain()
+        answer = self.xmlrpc_server.registered_users({"host": server})
+        nodes = []
+        users = sorted(answer["users"], cmp=lambda x, y: cmp(x["username"], y["username"]))
+        for user in users:
+            if not user["username"].upper().find(filterString.upper()) > -1:
+                continue
             entity_type = "human"
             try:
                 answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
@@ -97,8 +144,9 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
                     entity_type = answer["content"]
             except:
                 pass
-            ret.append({"jid": "%s@%s" % (user["username"], server), "type": entity_type})
-        return ret
+            nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
+        base_reply.setQueryPayload(nodes)
+        self.entity.xmppclient.send(base_reply)
 
     def group_create(self, ID, name, description):
         """

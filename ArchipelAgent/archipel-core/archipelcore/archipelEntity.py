@@ -418,6 +418,7 @@ class TNArchipelEntity (object):
                 admin_id = admin.getAttr("id")
                 addition_admin_account = "%s@%s" % (admin_node.getAttr("node"), admin_node.getAttr("domain"))
                 self.permission_center.add_admin(admin_id, addition_admin_account)
+            self.pubSubNodeAdmins.retrieve_subscriptions(wait=True)
             self.pubSubNodeAdmins.subscribe(self.jid, self.on_new_admin_account_publication)
         else:
             self.log.warning("Unable to find pubsub node %s for getting additional admin accounts. Using only static ones" % adminNodeName)
@@ -443,7 +444,7 @@ class TNArchipelEntity (object):
             admin_id = item.getAttr("id")
             admin_account = "%s@%s" % (item.getTag("admin").getAttr("node"), item.getTag("admin").getAttr("domain"))
             self.permission_center.add_admin(admin_id, admin_account)
-            self.push_change("permissions", admin_account)
+            #self.push_change("permissions", admin_account)
             self.log.info("Adding %s (%s) as admin account" % (admin_account, admin_id))
 
         retracts = event.getTag("event").getTag("items").getTags("retract")
@@ -451,7 +452,8 @@ class TNArchipelEntity (object):
             admin_id = retract.getAttr("id")
             self.permission_center.del_admin(admin_id)
             self.log.info("Removing %s from admin account list" % admin_id)
-            self.push_change("permissions", "admins") # 'admins' will say to the client, that admin list has changed
+
+        #self.push_change("permissions", "admins") # 'admins' will say to the client, that admin list has changed
         self.log.debug("Here is the final admin list: %s" % self.permission_center.admins())
 
 

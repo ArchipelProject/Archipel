@@ -36,15 +36,19 @@ var TNInterfaceDeviceDataViewIconNetwork,
 @implementation TNInterfaceDeviceDataView : TNBasicDataView
 {
     @outlet CPImageView         imageIcon;
-    @outlet CPTextField         fieldMAC;
-    @outlet CPTextField         fieldType;
-    @outlet CPTextField         fieldModel;
-    @outlet CPTextField         fieldSource;
     @outlet CPTextField         fieldFilter;
-    @outlet CPTextField         labelType;
-    @outlet CPTextField         labelModel;
-    @outlet CPTextField         labelSource;
+    @outlet CPTextField         fieldInLimit;
+    @outlet CPTextField         fieldMAC;
+    @outlet CPTextField         fieldModel;
+    @outlet CPTextField         fieldOutLimit;
+    @outlet CPTextField         fieldSource;
+    @outlet CPTextField         fieldType;
     @outlet CPTextField         labelFilter;
+    @outlet CPTextField         labelInLimit;
+    @outlet CPTextField         labelModel;
+    @outlet CPTextField         labelOutLimit;
+    @outlet CPTextField         labelSource;
+    @outlet CPTextField         labelType;
 
     TNLibvirtDeviceInterface    _currentInterface;
 }
@@ -97,6 +101,30 @@ var TNInterfaceDeviceDataViewIconNetwork,
     [fieldModel setStringValue:[_currentInterface model]];
     [fieldSource setStringValue:[[_currentInterface source] sourceObject]];
     [fieldFilter setStringValue:[[_currentInterface filterref] name] || @"None"];
+
+    [fieldInLimit setHidden:YES];
+    [labelInLimit setHidden:YES];
+    if ([[_currentInterface bandwidth] inbound])
+    {
+        var average = [[[_currentInterface bandwidth] inbound] average] || @"None",
+            peak = [[[_currentInterface bandwidth] inbound] peak] || @"None",
+            burst = [[[_currentInterface bandwidth] inbound] burst] || @"None";
+        [fieldInLimit setStringValue:[CPString stringWithFormat:@"%s/%s/%s", average, peak, burst]];
+        [fieldInLimit setHidden:NO];
+        [labelInLimit setHidden:NO];
+    }
+
+    [fieldOutLimit setHidden:YES];
+    [labelOutLimit setHidden:YES];
+    if ([[_currentInterface bandwidth] outbound])
+    {
+        var average = [[[_currentInterface bandwidth] outbound] average] || @"None",
+            peak = [[[_currentInterface bandwidth] outbound] peak] || @"None",
+            burst = [[[_currentInterface bandwidth] outbound] burst] || @"None";
+        [fieldOutLimit setStringValue:[CPString stringWithFormat:@"%s/%s/%s", average, peak, burst]];
+        [fieldOutLimit setHidden:NO];
+        [labelOutLimit setHidden:NO];
+    }
 }
 
 
@@ -112,15 +140,19 @@ var TNInterfaceDeviceDataViewIconNetwork,
     if (self)
     {
         imageIcon = [aCoder decodeObjectForKey:@"imageIcon"];
-        fieldMAC = [aCoder decodeObjectForKey:@"fieldMAC"];
-        fieldType = [aCoder decodeObjectForKey:@"fieldType"];
-        fieldModel = [aCoder decodeObjectForKey:@"fieldModel"];
-        fieldSource = [aCoder decodeObjectForKey:@"fieldSource"];
         fieldFilter = [aCoder decodeObjectForKey:@"fieldFilter"];
-        labelType = [aCoder decodeObjectForKey:@"labelType"];
-        labelModel = [aCoder decodeObjectForKey:@"labelModel"];
-        labelSource = [aCoder decodeObjectForKey:@"labelSource"];
+        fieldInLimit = [aCoder decodeObjectForKey:@"fieldInLimit"];
+        fieldMAC = [aCoder decodeObjectForKey:@"fieldMAC"];
+        fieldModel = [aCoder decodeObjectForKey:@"fieldModel"];
+        fieldOutLimit = [aCoder decodeObjectForKey:@"fieldOutLimit"];
+        fieldSource = [aCoder decodeObjectForKey:@"fieldSource"];
+        fieldType = [aCoder decodeObjectForKey:@"fieldType"];
         labelFilter = [aCoder decodeObjectForKey:@"labelFilter"];
+        labelInLimit = [aCoder decodeObjectForKey:@"labelInLimit"];
+        labelModel = [aCoder decodeObjectForKey:@"labelModel"];
+        labelOutLimit = [aCoder decodeObjectForKey:@"labelOutLimit"];
+        labelSource = [aCoder decodeObjectForKey:@"labelSource"];
+        labelType = [aCoder decodeObjectForKey:@"labelType"];
     }
 
     return self;
@@ -134,15 +166,19 @@ var TNInterfaceDeviceDataViewIconNetwork,
 
     [aCoder encodeObject:imageIcon forKey:@"imageIcon"];
 
-    [aCoder encodeObject:fieldMAC forKey:@"fieldMAC"];
-    [aCoder encodeObject:fieldType forKey:@"fieldType"];
-    [aCoder encodeObject:fieldModel forKey:@"fieldModel"];
-    [aCoder encodeObject:fieldSource forKey:@"fieldSource"];
     [aCoder encodeObject:fieldFilter forKey:@"fieldFilter"];
-    [aCoder encodeObject:labelType forKey:@"labelType"];
-    [aCoder encodeObject:labelModel forKey:@"labelModel"];
-    [aCoder encodeObject:labelSource forKey:@"labelSource"];
+    [aCoder encodeObject:fieldInLimit forKey:@"fieldInLimit"];
+    [aCoder encodeObject:fieldMAC forKey:@"fieldMAC"];
+    [aCoder encodeObject:fieldModel forKey:@"fieldModel"];
+    [aCoder encodeObject:fieldOutLimit forKey:@"fieldOutLimit"];
+    [aCoder encodeObject:fieldSource forKey:@"fieldSource"];
+    [aCoder encodeObject:fieldType forKey:@"fieldType"];
     [aCoder encodeObject:labelFilter forKey:@"labelFilter"];
+    [aCoder encodeObject:labelInLimit forKey:@"labelInLimit"];
+    [aCoder encodeObject:labelModel forKey:@"labelModel"];
+    [aCoder encodeObject:labelOutLimit forKey:@"labelOutLimit"];
+    [aCoder encodeObject:labelSource forKey:@"labelSource"];
+    [aCoder encodeObject:labelType forKey:@"labelType"];
 }
 
 @end

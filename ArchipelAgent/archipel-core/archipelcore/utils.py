@@ -103,16 +103,16 @@ class ColorFormatter (logging.Formatter):
         return rec
 
 
-def init_conf(path):
+def init_conf(paths):
     """
     This method initialize the configuration object (that will be passed to all
     entities) from a given path.
-    @type path: string
-    @param path: the path of the config file to read
+    @type path: List
+    @param paths: list of the paths of the config files to read
     @return : the ConfigParser object containing the configuration
     """
     conf = ConfigParser.ConfigParser()
-    conf.readfp(open(path))
+    conf.read(paths)
     logging_level = conf.get("LOGGING", "logging_level")
     if logging_level == "debug":
         level = logging.DEBUG
@@ -141,11 +141,18 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     #traceback.print_exc(file=sys.stdout, limit=20)
     caller = inspect.stack()[1][3]
     log.error("%s.%s: exception raised is: '%s' triggered by stanza :\n%s" % (originclass, caller, ex, str(iq)))
+    try:
+        origin_namespace = iq.getTag("query").getNamespace()
+        origin_action = iq.getTag("query").getTag("archipel").getAttr("action")
+        text_message = "%s\n\n%s\n%s" % (str(ex), origin_namespace, origin_action)
+    except Exception as e:
+        log.error("The stanza is not a valid ACP: %s" % str(e))
+        text_message = str(ex)
     reply = iq.buildReply('error')
     reply.setQueryPayload(iq.getQueryPayload())
     error = xmpp.Node("error", attrs={"code": code, "type": "cancel"})
     error.addChild(name=ns.replace(":", "-"), namespace=ns)
-    error.addChild(name="text", payload=str(ex))
+    error.addChild(name="text", payload=text_message)
     reply.addChild(node=error)
     return reply
 

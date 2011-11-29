@@ -42,7 +42,7 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
     if (![super willLoad])
         return NO;
 
-    [_toolbarItem setEnabled:NO];
+    [[self UIItem] setEnabled:NO];
 
     return YES;
 }
@@ -55,17 +55,17 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
 {
     if (!_vncReady)
     {
-        [_toolbarItem setEnabled:NO];
+        [[self UIItem] setEnabled:NO];
         return;
     }
 
     switch ([_entity XMPPShow])
     {
         case TNStropheContactStatusOnline:
-            [_toolbarItem setEnabled:YES];
+            [[self UIItem] setEnabled:YES];
             break;
         default:
-            [_toolbarItem setEnabled:NO];
+            [[self UIItem] setEnabled:NO];
    }
 }
 
@@ -75,6 +75,7 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
         _vncReady = NO;
     else
         _vncReady = YES;
+
     [self setGUIAccordingToStatus:nil];
 }
 
@@ -86,12 +87,11 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
 {
     _vncReady = NO;
     [super setEntity:anEntity];
-    _toolbarItem = [_toolbar itemWithIdentifier:_name];
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
     if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
     {
-        [_toolbarItem setEnabled:NO];
+        [[self UIItem] setEnabled:NO];
         return;
     }
     [self setGUIAccordingToStatus:nil];

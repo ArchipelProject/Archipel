@@ -19,7 +19,11 @@
 @import <Foundation/Foundation.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
-@import "TNLibvirtBase.j";
+@import "TNLibvirtBase.j"
+@import "TNLibvirtDeviceInterfaceBandwidth.j"
+@import "TNLibvirtDeviceInterfaceFilterRef.j"
+@import "TNLibvirtDeviceInterfaceSource.j"
+@import "TNLibvirtDeviceInterfaceTarget.j"
 
 
 TNLibvirtDeviceInterfaceModelNE2KISA    = @"ne2k_isa";
@@ -60,6 +64,7 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     CPString                            _model          @accessors(property=model);
     CPString                            _script         @accessors(property=script);
     CPString                            _type           @accessors(property=type);
+    TNLibvirtDeviceInterfaceBandwidth   _bandwidth      @accessors(property=bandwidth);
     TNLibvirtDeviceInterfaceFilterRef   _filterref      @accessors(property=filterref);
     TNLibvirtDeviceInterfaceSource      _source         @accessors(property=source);
     TNLibvirtDeviceInterfaceTarget      _target         @accessors(property=target);
@@ -78,6 +83,7 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
         _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] init];
         _source     = [[TNLibvirtDeviceInterfaceSource alloc] init];
         _target     = [[TNLibvirtDeviceInterfaceTarget alloc] init];
+        _bandwidth  = [[TNLibvirtDeviceInterfaceBandwidth alloc] init];
     }
 
     return self
@@ -98,6 +104,7 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
         _script = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
         _type   = [aNode valueForAttribute:@"type"];
 
+        _bandwidth  = [[TNLibvirtDeviceInterfaceBandwidth alloc] initWithXMLNode:[aNode firstChildWithName:@"bandwidth"]];
         _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] initWithXMLNode:[aNode firstChildWithName:@"filterref"]];
         _source     = [[TNLibvirtDeviceInterfaceSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         _target     = [[TNLibvirtDeviceInterfaceTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
@@ -148,6 +155,11 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     if (_target)
     {
         [node addNode:[_target XMLNode]];
+        [node up];
+    }
+    if (_bandwidth)
+    {
+        [node addNode:[_bandwidth XMLNode]];
         [node up];
     }
 

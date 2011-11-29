@@ -112,9 +112,9 @@ class TNVMParking (TNArchipelPlugin):
         nodeVMParkingName = "/archipel/vmparking"
         self.entity.log.info("VMPARKING: getting the pubsub node %s" % nodeVMParkingName)
         self.pubsub_vmparking = TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, nodeVMParkingName)
-        self.pubsub_vmparking.recover()
+        self.pubsub_vmparking.recover(wait=True)
         self.entity.log.info("VMPARKING: node %s recovered." % nodeVMParkingName)
-        self.pubsub_vmparking.subscribe(self.entity.jid.getStripped(), self._handle_request_event)
+        self.pubsub_vmparking.subscribe(self.entity.jid, self._handle_request_event, wait=True)
         self.entity.log.info("VMPARKING: entity %s is now subscribed to events from node %s" % (self.entity.jid, nodeVMParkingName))
 
     def _handle_request_event(self, event):

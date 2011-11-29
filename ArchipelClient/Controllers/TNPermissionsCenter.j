@@ -161,6 +161,12 @@ var __defaultPermissionCenter;
 */
 - (void)arePermissionsCachedForEntity:(TNStropheContact)aContact
 {
+    if (![aContact isKindOfClass:TNStropheContact])
+        return YES;
+
+    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[aContact vCard]] == TNArchipelEntityTypeUser)
+        return YES;
+
     return [_cachedPermissions containsKey:aContact];
 }
 
@@ -459,16 +465,10 @@ var __defaultPermissionCenter;
 
 - (void)removeAdminAccount:(TNStropheJID)aJID
 {
-    var ref,
-        JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node];
+    var JIDTranslation = (_adminAccountValidationMode === TNPermissionsValidationModeBare) ? [aJID bare] : [aJID node],
+        keys = [_adminAccounts allKeysForObject:JIDTranslation];
 
-    var keys = [_adminAccounts allKeysForObject:JIDTranslation];
-
-    for (var i = 0; i < [keys count]; i++)
-    {
-        var ref = [keys objectAtIndex:i];
-        [_pubsubAdminAccounts retractItemWithID:ref];
-    }
+    [_pubsubAdminAccounts retractItemsWithIDs:keys]
     [_pubsubAdminAccounts changeAffiliation:TNPubSubNodeAffiliationNone forJID:aJID];
 }
 
@@ -497,8 +497,6 @@ var __defaultPermissionCenter;
 
         [_adminAccounts setObject:adminAccount forKey:itemId];
     }
-
-    [[CPNotificationCenter defaultCenter] postNotificationName:TNPermissionsAdminListUpdatedNotification object:self];
 }
 
 /*! TNPubSubNode delegate
@@ -529,6 +527,7 @@ var __defaultPermissionCenter;
         return;
 
     [_pubsubAdminAccounts retrieveItems];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNPermissionsAdminListUpdatedNotification object:self];
 }
 
 - (void)pubSubNode:(TNPubSubNode)aPubSubNode publishedItem:(TNStropheStanza)aStanza

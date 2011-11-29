@@ -4,6 +4,9 @@
 /* Are you sure you want to unregister selected user(s) ? */
 "Are you sure you want to unregister selected user(s) ?" = "Are you sure you want to unregister selected user(s) ?";
 
+/* Bad JID */
+"Bad JID" = "Bad JID";
+
 /* Bad password */
 "Bad password" = "Bad password";
 

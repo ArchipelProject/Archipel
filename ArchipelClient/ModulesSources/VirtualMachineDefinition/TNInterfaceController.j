@@ -37,12 +37,21 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 {
     @outlet CPButton        buttonOK;
     @outlet CPButtonBar     buttonBarNetworkParameters;
+    @outlet CPCheckBox      checkBoxBandwidthInbound;
+    @outlet CPCheckBox      checkBoxBandwidthOutbound;
     @outlet CPPopover       mainPopover;
     @outlet CPPopUpButton   buttonModel;
     @outlet CPPopUpButton   buttonNetworkFilter;
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonType;
     @outlet CPTableView     tableViewNetworkFilterParameters;
+    @outlet CPTextField     fieldBandwidthInboundAverage;
+    @outlet CPTextField     fieldBandwidthInboundBurst;
+    @outlet CPTextField     fieldBandwidthInboundPeak;
+    @outlet CPTextField     fieldBandwidthOutboundAverage;
+    @outlet CPTextField     fieldBandwidthOutboundBurst;
+    @outlet CPTextField     fieldBandwidthOutboundPeak;
+    @outlet CPTextField     fieldErrorMessage;
     @outlet CPTextField     fieldMac;
     @outlet CPView          viewNWFilterParametersContainer;
 
@@ -101,6 +110,8 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 */
 - (void)update
 {
+    [fieldErrorMessage setStringValue:@""];
+
     [buttonSource removeAllItems];
     [buttonNetworkFilter removeAllItems];
 
@@ -120,8 +131,21 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     if ([_nic filterref])
         [_datasourceNWFilterParameters setContent:[[_nic filterref] parameters]];
-
     [tableViewNetworkFilterParameters reloadData];
+
+    // Bandwidth
+    [checkBoxBandwidthInbound setState:[[_nic bandwidth] inbound] ? CPOnState : CPOffState];
+    [self inboundLimitChange:nil];
+    [checkBoxBandwidthOutbound setState:[[_nic bandwidth] outbound] ? CPOnState : CPOffState];
+    [self outboundLimitChange:nil];
+
+    [fieldBandwidthInboundAverage setStringValue:[[[_nic bandwidth] inbound] average] || @""];
+    [fieldBandwidthInboundPeak setStringValue:[[[_nic bandwidth] inbound] peak] || @""];
+    [fieldBandwidthInboundBurst setStringValue:[[[_nic bandwidth] inbound] burst] || @""];
+
+    [fieldBandwidthOutboundAverage setStringValue:[[[_nic bandwidth] outbound] average] || @""];
+    [fieldBandwidthOutboundPeak setStringValue:[[[_nic bandwidth] outbound] peak] || @""];
+    [fieldBandwidthOutboundBurst setStringValue:[[[_nic bandwidth] outbound] burst] || @""];
 }
 
 
@@ -160,12 +184,14 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     [_nic setModel:[buttonModel title]];
     [_nic setType:[buttonType title]];
 
+    // source
     if (![_nic source])
     {
         var source = [[TNLibvirtDeviceInterfaceSource alloc] init];
         [_nic setSource:source]
     }
 
+    // type
     switch ([_nic type])
     {
         case TNLibvirtDeviceInterfaceTypeNetwork:
@@ -194,6 +220,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
             break;
     }
 
+    // Filter
     if ([buttonNetworkFilter title] != @"None")
     {
         var filter = [[TNLibvirtDeviceInterfaceFilterRef alloc] init];
@@ -204,8 +231,56 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
         [_nic setFilterref:filter];
     }
     else
+    {
         [_nic setFilterref:nil];
+    }
 
+    // Bandwidth
+    if ([checkBoxBandwidthInbound state] == CPOnState)
+    {
+        if (![_nic bandwidth])
+            [_nic setBandwidth:[TNLibvirtDeviceInterfaceBandwidth defaultBandwidth]];
+
+        if (![[_nic bandwidth] inbound])
+            [[_nic bandwidth] setInbound:[[TNLibvirtDeviceInterfaceBandwidthInbound alloc] init]];
+
+        if ([fieldBandwidthInboundAverage stringValue] == @"")
+        {
+            [fieldErrorMessage setStringValue:CPLocalizedString(@"You must set at least the \"average\" value for inbound limit", @"You must set at least the \"average\" value for inbound limit")];
+            return;
+        }
+        [[[_nic bandwidth] inbound] setAverage:[fieldBandwidthInboundAverage intValue]];
+        [[[_nic bandwidth] inbound] setPeak:[fieldBandwidthInboundPeak intValue]];
+        [[[_nic bandwidth] inbound] setBurst:[fieldBandwidthInboundBurst intValue]];
+    }
+    else
+    {
+        [[_nic bandwidth] setInbound:nil];
+    }
+
+    if ([checkBoxBandwidthOutbound state] == CPOnState)
+    {
+        if (![_nic bandwidth])
+            [_nic setBandwidth:[TNLibvirtDeviceInterfaceBandwidth defaultBandwidth]];
+
+        if (![[_nic bandwidth] outbound])
+            [[_nic bandwidth] setOutbound:[[TNLibvirtDeviceInterfaceBandwidthOutbound alloc] init]];
+
+        if ([fieldBandwidthOutboundAverage stringValue] == @"")
+        {
+            [fieldErrorMessage setStringValue:CPLocalizedString(@"You must set at least the \"average\" value for outbound limit", @"You must set at least the \"average\" value for outbound limit")];
+            return;
+        }
+        [[[_nic bandwidth] outbound] setAverage:[fieldBandwidthOutboundAverage intValue]];
+        [[[_nic bandwidth] outbound] setPeak:[fieldBandwidthOutboundPeak intValue]];
+        [[[_nic bandwidth] outbound] setBurst:[fieldBandwidthOutboundBurst intValue]];
+    }
+    else
+    {
+        [[_nic bandwidth] setOutbound:nil];
+    }
+
+    // final
     [_delegate handleDefinitionEdition:YES];
 
     if (![[_table dataSource] containsObject:_nic])
@@ -294,6 +369,60 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 - (IBAction)closeWindow:(id)aSender
 {
     [mainPopover close];
+}
+
+/*! Called when checkbox for inbound changed
+    @param aSender the sender of the action
+*/
+- (IBAction)inboundLimitChange:(id)aSender
+{
+    if ([checkBoxBandwidthInbound state] == CPOnState)
+    {
+        [fieldBandwidthInboundAverage setEnabled:YES];
+        [fieldBandwidthInboundPeak setEnabled:YES];
+        [fieldBandwidthInboundBurst setEnabled:YES];
+        if (![_nic bandwidth])
+            [_nic setBandwidth:[TNLibvirtDeviceInterfaceBandwidth defaultBandwidth]];
+    }
+    else
+    {
+        [fieldBandwidthInboundAverage setEnabled:NO];
+        [fieldBandwidthInboundPeak setEnabled:NO];
+        [fieldBandwidthInboundBurst setEnabled:NO];
+        [fieldBandwidthInboundAverage setStringValue:@""];
+        [fieldBandwidthInboundPeak setStringValue:@""];
+        [fieldBandwidthInboundBurst setStringValue:@""];
+
+        if (![_nic bandwidth])
+            [[_nic bandwidth] setInbound:nil];
+    }
+}
+
+/*! Called when checkbox for outbound changed
+    @param aSender the sender of the action
+*/
+- (IBAction)outboundLimitChange:(id)aSender
+{
+    if ([checkBoxBandwidthOutbound state] == CPOnState)
+    {
+        [fieldBandwidthOutboundAverage setEnabled:YES];
+        [fieldBandwidthOutboundPeak setEnabled:YES];
+        [fieldBandwidthOutboundBurst setEnabled:YES];
+        if (![_nic bandwidth])
+            [_nic setBandwidth:[TNLibvirtDeviceInterfaceBandwidth defaultBandwidth]];
+    }
+    else
+    {
+        [fieldBandwidthOutboundAverage setEnabled:NO];
+        [fieldBandwidthOutboundPeak setEnabled:NO];
+        [fieldBandwidthOutboundBurst setEnabled:NO];
+        [fieldBandwidthOutboundAverage setStringValue:@""];
+        [fieldBandwidthOutboundPeak setStringValue:@""];
+        [fieldBandwidthOutboundBurst setStringValue:@""];
+
+        if (![_nic bandwidth])
+            [[_nic bandwidth] setOutbound:nil];
+    }
 }
 
 
