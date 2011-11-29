@@ -123,7 +123,7 @@ if __name__ == "__main__":
     if options.list:
         list_affiliations(xmppclient, options.pubsubserver)
     elif options.auth:
-        set_affiliation(xmppclient, xmpp.JID(options.auth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_PUBLISHER, options.pubsubserver)
+        set_affiliation(xmppclient, xmpp.JID(options.auth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_OWNER, options.pubsubserver)
     elif options.unauth:
         set_affiliation(xmppclient, xmpp.JID(options.unauth), archipelcore.pubsub.XMPP_PUBSUB_AFFILIATION_NONE, options.pubsubserver)
     elif options.create:
