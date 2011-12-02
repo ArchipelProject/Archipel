@@ -1,4 +1,5 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
 #
 # archipel-importvirtualmachine
 #
