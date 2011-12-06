@@ -62,6 +62,7 @@ class TNVMParking (TNArchipelPlugin):
         # vocabulary
         registrar_items = [
                             {   "commands" : ["park list"],
+                                "parameters": [],
                                 "method": self.message_list,
                                 "permissions": ["vmparking_list"],
                                 "description": "List all parked virtual machines" },
@@ -74,7 +75,7 @@ class TNVMParking (TNArchipelPlugin):
                                 "parameters": [{"name": "identifiers", "description": "UUIDs of the virtual machines or parking tickets, separated by comas, with no space"}],
                                 "method": self.message_unpark,
                                 "permissions": ["vmparking_unpark"],
-                                "description": "Unpark the virtual machine parked with the given identifier"},
+                                "description": "Unpark the virtual machine parked with the given identifier"}
                             ]
         self.entity.add_message_registrar_items(registrar_items)
 
