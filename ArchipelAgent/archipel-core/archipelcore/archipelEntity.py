@@ -1184,7 +1184,7 @@ class TNArchipelEntity (object):
                     self.log.info("LOOP EXCEPTION: Account has been removed from server.")
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 else:
-                    if  str(ex).upper().find('SYSTEM-SHUTDOWN'):
+                    if  str(ex).upper().find('SYSTEM-SHUTDOWN') > -1:
                         self.log.warning("LOOP EXCEPTION: The XMPP server has been shut down. Waiting 5 second for reconnection")
                     else:
                         self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 seconds.")
