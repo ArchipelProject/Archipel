@@ -63,7 +63,7 @@ def connect(jid, password):
         error("bad authentication. exiting")
     return xmppclient
 
-def initialize(options):
+def initialize(options, fill_pubsubserver=True):
     """
     Lazy initialization according to OptionParser options. must contains
     options.jid, options.password and options.pubsubserver
@@ -77,7 +77,7 @@ def initialize(options):
 
     JID = xmpp.JID(options.jid)
     xmppclient = connect(JID, options.password)
-    if not options.pubsubserver:
+    if fill_pubsubserver and not options.pubsubserver:
         options.pubsubserver = "pubsub." + JID.getDomain()
     return xmppclient
 
@@ -184,3 +184,57 @@ def delete_pubsub(xmppclient, pubsubserver, nodename):
         success("pubsub node %s deleted" % nodename)
     else:
         error("The pubsub node %s doesn't exist" % nodename)
+
+def send_acp(xmppclient, dest_jid, iq_type, query_ns, action, acp_parameters={}, acp_payload=[], debug=False):
+    """
+    Simplify the generation of an ACP.
+    @type xmppclient: xmpp.Client
+    @param xmppclient: a connected/authenticated xmpp client
+    @type dest_jid: xmpp.JID
+    @param dest_jid: the target entity
+    @type iq_type: String
+    @param iq_type: the IQ type (get or set)
+    @type query_ns: String
+    @param query_ns: the namespace of the query (i.e. archipel:hypervisor:control)
+    @type action: String
+    @param action: the Archipel action (i.e. alloc)
+    @type acp_parameters: Dict
+    @param acp_parameters: any additional acp parameters (i.e. {"name": "my new VM"})
+    @type acp_payload: xmpp.Node
+    @param acp_payload: any additional information that should be appended to the <archipel/> tag
+    @rtype: xmpp.Node
+    @return: the answer stanza
+    """
+    acp = xmpp.Iq(typ=iq_type, to=dest_jid, queryNS=query_ns)
+    acp.getTag("query").addChild("archipel")
+    acp.getTag("query").getTag("archipel").setAttr("action", action)
+
+    for k,v in acp_parameters.items():
+        acp.getTag("query").getTag("archipel").setAttr(k, v)
+
+    if len(acp_payload) > 0:
+        acp.getTag("query").getTag("archipel").setPayload(acp_payload)
+    if debug:
+        print "sending stanza %s" % str(acp)
+    resp = xmppclient.SendAndWaitForResponse(acp)
+    return resp
+
+def send_raw_acp(xmppclient, dest_jid, raw_acp_string, debug=False):
+    """
+    Take a string, convert it to a valid IQ, and send it.
+    @type xmppclient: xmpp.Client
+    @param xmppclient: a connected/authenticated xmpp client
+    @type dest_jid: xmpp.JID
+    @param dest_jid: the target entity
+    @type raw_acp_string: String
+    @param raw_acp_string: the IQ to send
+    @rtype: xmpp.Node
+    @return: the answer stanza
+    """
+    acp = xmpp.simplexml.NodeBuilder(data=raw_acp_string).getDom()
+    acp = xmpp.Iq(node=acp)
+    acp.setTo(dest_jid)
+    resp = xmppclient.SendAndWaitForResponse(acp)
+    return resp
+
+
