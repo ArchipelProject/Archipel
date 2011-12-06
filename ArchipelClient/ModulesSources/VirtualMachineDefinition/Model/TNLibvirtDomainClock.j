@@ -71,7 +71,6 @@ TNLibvirtDomainClockClocks          = [ TNLibvirtDomainClockClockUTC,
         var timerNodes = [aNode ownChildrenWithName:@"timer"];
         for (var i = 0; i < [timerNodes count]; i++)
             [_timers addObject:[[TNLibvirtDomainClockTimer alloc] initWithXMLNode:[timerNodes objectAtIndex:i]]];
-
     }
 
     return self;
