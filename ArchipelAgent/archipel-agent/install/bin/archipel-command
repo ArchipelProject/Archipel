@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import xmpp
 from optparse import OptionParser
 
@@ -54,3 +55,9 @@ if __name__ == "__main__":
 
     if options.send_raw:
         send_raw(xmppclient, xmpp.JID(options.dest_jid), options.send_raw)
+    else:
+        data = "".join(sys.stdin.readlines())
+        try:
+            send_raw(xmppclient, xmpp.JID(options.dest_jid), data)
+        except Exception as ex:
+            error("the data from stdin are not well formed")
