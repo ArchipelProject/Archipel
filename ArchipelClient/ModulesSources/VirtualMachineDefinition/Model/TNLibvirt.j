@@ -39,6 +39,8 @@
 @import "TNLibvirtDomain.j"
 @import "TNLibvirtDomainBlockIOTune.j"
 @import "TNLibvirtDomainClock.j"
+@import "TNLibvirtDomainClockTimer.j"
+@import "TNLibvirtDomainClockTimerCatchup.j"
 @import "TNLibvirtDomainFeatures.j"
 @import "TNLibvirtDomainMemoryBacking.j"
 @import "TNLibvirtDomainMemoryTune.j"
