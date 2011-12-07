@@ -396,8 +396,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* Growl */
     CPLog.trace(@"initializing Growl");
-    [[TNGrowlCenter defaultCenter] setView:rightView];
-
+    [[TNGrowlCenter defaultCenter] setView:[theWindow contentView]];
 
     /* traffic LEDs */
     CPLog.trace(@"Initializing the traffic status LED");
