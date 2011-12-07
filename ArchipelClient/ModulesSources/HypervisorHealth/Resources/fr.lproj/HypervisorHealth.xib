@@ -1375,6 +1375,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{237, 52}, {257, 22}}</string>
 						<reference key="NSSuperview" ref="157857637"/>
+						<reference key="NSNextKeyView" ref="351954962"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="658958594">
 							<int key="NSCellFlags">-1804468671</int>
@@ -1638,6 +1639,37 @@
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSImageView" id="116292419">
+						<reference key="NSNextResponder" ref="942883421"/>
+						<int key="NSvFlags">268</int>
+						<object class="NSMutableSet" key="NSDragTypes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="set.sortedObjects">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<string>Apple PDF pasteboard type</string>
+								<string>Apple PICT pasteboard type</string>
+								<string>Apple PNG pasteboard type</string>
+								<string>NSFilenamesPboardType</string>
+								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
+								<string>NeXT TIFF v4.0 pasteboard type</string>
+							</object>
+						</object>
+						<string key="NSFrame">{{17, 61}, {18, 18}}</string>
+						<reference key="NSSuperview" ref="942883421"/>
+						<reference key="NSNextKeyView" ref="706696653"/>
+						<string key="NSReuseIdentifierKey">_NS:2141</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSImageCell" key="NSCell" id="272950628">
+							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags2">33554432</int>
+							<string key="NSCellIdentifier">_NS:2141</string>
+							<int key="NSAlign">0</int>
+							<int key="NSScale">0</int>
+							<int key="NSStyle">2</int>
+							<bool key="NSAnimates">NO</bool>
+						</object>
+						<bool key="NSEditable">YES</bool>
+					</object>
 					<object class="NSTextField" id="518803003">
 						<reference key="NSNextResponder" ref="942883421"/>
 						<int key="NSvFlags">265</int>
@@ -1662,7 +1694,7 @@
 					<object class="NSTextField" id="706696653">
 						<reference key="NSNextResponder" ref="942883421"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 62}, {67, 17}}</string>
+						<string key="NSFrame">{{37, 62}, {67, 17}}</string>
 						<reference key="NSSuperview" ref="942883421"/>
 						<reference key="NSNextKeyView" ref="153298100"/>
 						<string key="NSReuseIdentifierKey">_NS:3944</string>
@@ -1703,7 +1735,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{499, 88}</string>
-				<reference key="NSNextKeyView" ref="706696653"/>
+				<reference key="NSNextKeyView" ref="116292419"/>
 				<string key="NSReuseIdentifierKey">_NS:1192</string>
 				<string key="NSClassName">TNCellLogView</string>
 			</object>
@@ -2102,6 +2134,14 @@
 						<reference key="destination" ref="153298100"/>
 					</object>
 					<int key="connectionID">252</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">imageViewIcon</string>
+						<reference key="source" ref="942883421"/>
+						<reference key="destination" ref="116292419"/>
+					</object>
+					<int key="connectionID">255</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3202,6 +3242,7 @@
 							<reference ref="153298100"/>
 							<reference ref="706696653"/>
 							<reference ref="518803003"/>
+							<reference ref="116292419"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -3246,6 +3287,20 @@
 						<int key="objectID">248</int>
 						<reference key="object" ref="820521056"/>
 						<reference key="parent" ref="518803003"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">253</int>
+						<reference key="object" ref="116292419"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="272950628"/>
+						</object>
+						<reference key="parent" ref="942883421"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">254</int>
+						<reference key="object" ref="272950628"/>
+						<reference key="parent" ref="116292419"/>
 					</object>
 				</object>
 			</object>
@@ -3338,6 +3393,8 @@
 					<string>247.IBPluginDependency</string>
 					<string>248.IBPluginDependency</string>
 					<string>25.IBPluginDependency</string>
+					<string>253.IBPluginDependency</string>
+					<string>254.IBPluginDependency</string>
 					<string>26.IBPluginDependency</string>
 					<string>27.IBPluginDependency</string>
 					<string>28.IBPluginDependency</string>
@@ -3560,6 +3617,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3574,7 +3633,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">252</int>
+			<int key="maxID">255</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3613,12 +3672,14 @@
 							<string>fieldDate</string>
 							<string>fieldLevel</string>
 							<string>fieldMessage</string>
+							<string>imageViewIcon</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
+							<string>NSImageView</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -3628,6 +3689,7 @@
 							<string>fieldDate</string>
 							<string>fieldLevel</string>
 							<string>fieldMessage</string>
+							<string>imageViewIcon</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3642,6 +3704,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldMessage</string>
 								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageViewIcon</string>
+								<string key="candidateClassName">NSImageView</string>
 							</object>
 						</object>
 					</object>
