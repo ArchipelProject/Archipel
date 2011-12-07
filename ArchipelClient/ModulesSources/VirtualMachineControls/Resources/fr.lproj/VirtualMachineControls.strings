@@ -56,10 +56,10 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "64"; */
 "64.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "Kill the virtual machine"; ObjectID = "71"; */
+/* Class = "NSTextFieldCell"; title = "Advanced controls"; ObjectID = "71"; */
 "71.title" = "Kill the virtual machine";
 
-/* Class = "NSTextFieldCell"; title = "Killing a virtual machine is definitive. It will be completely removed."; ObjectID = "73"; */
+/* Class = "NSTextFieldCell"; title = "These advanced commands can affect the availability of the virtual machine."; ObjectID = "73"; */
 "73.title" = "Killing a virtual machine is definitive. It will be completely removed.";
 
 /* Class = "NSTextFieldCell"; title = "Virtual machine controls preferences"; ObjectID = "96"; */
@@ -91,4 +91,25 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "173"; */
 "173.title" = "Text Cell";
+
+/* Class = "NSButtonCell"; title = "Activate advanced commands"; ObjectID = "178"; */
+"178.title" = "Activate advanced commands";
+
+/* Class = "NSTextFieldCell"; title = "Kill the virtual machine"; ObjectID = "180"; */
+"180.title" = "Kill the virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Park the virtual machine"; ObjectID = "182"; */
+"182.title" = "Park the virtual machine";
+
+/* Class = "NSButtonCell"; title = "Park"; ObjectID = "184"; */
+"184.title" = "Park";
+
+/* Class = "NSTextFieldCell"; title = "Killing a virtual machine will completely \ndelete its account and all its data."; ObjectID = "198"; */
+"198.title" = "Killing a virtual machine will completely \ndelete its account and all its data.";
+
+/* Class = "NSTextFieldCell"; title = "Parking a virtual machine \nwill send its informations in the park."; ObjectID = "200"; */
+"200.title" = "Parking a virtual machine \nwill send its informations in the park.";
+
+/* Class = "NSBox"; title = "Commands"; ObjectID = "201"; */
+"201.title" = "Commands";
 

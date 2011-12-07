@@ -50,6 +50,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     TNArchipelControlReboot                         = @"TNArchipelControlReboot",
     TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     TNArchipelTypeVirtualMachineOOM                 = @"archipel:vm:oom",
+    TNArchipelTypeVirtualMachineVMParking           = @"archipel:vm:vmparking",
     TNArchipelTypeVirtualMachineControlInfo         = @"info",
     TNArchipelTypeVirtualMachineControlCreate       = @"create",
     TNArchipelTypeVirtualMachineControlShutDown     = @"shutdown",
@@ -65,6 +66,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     TNArchipelTypeVirtualMachineControlScreenshot   = @"screenshot",
     TNArchipelTypeVirtualMachineOOMSetAdjust        = @"setadjust",
     TNArchipelTypeVirtualMachineOOMGetAdjust        = @"getadjust",
+    TNArchipelTypeVirtualMachineVMParkingPark       = @"park",
     VIR_DOMAIN_NOSTATE                              = 0,
     VIR_DOMAIN_RUNNING                              = 1,
     VIR_DOMAIN_BLOCKED                              = 2,
@@ -88,9 +90,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 @implementation TNVirtualMachineControlsController : TNModule
 {
+    @outlet CPBox                   boxAdvancedCommands;
     @outlet CPButton                buttonKill;
+    @outlet CPButton                buttonPark;
     @outlet CPButton                buttonScreenshot;
     @outlet CPButtonBar             buttonBarMigration;
+    @outlet CPCheckBox              checkBoxAdvancedCommands;
     @outlet CPImageView             imageState;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
@@ -148,7 +153,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
            [bundle objectForInfoDictionaryKey:@"TNArchipelControlsScreenshotRefresh"], @"TNArchipelControlsScreenshotRefresh"
     ]];
 
-    [buttonKill setTitle:@"Kill"];
+    [boxAdvancedCommands setCornerRadius:3.0];
 
     [sliderMemory setContinuous:YES];
     [sliderMemory setToolTip:CPBundleLocalizedString(@"Adjust the maximum amout of memory of the VM (only when running)", @"Adjust the maximum amout of memory of the VM (only when running)")];
@@ -241,6 +246,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [fieldOOMScore setToolTip:CPBundleLocalizedString(@"Current OOM score for the virtual machine", @"Current OOM score for the virtual machine")];
     [fieldOOMAdjust setToolTip:CPBundleLocalizedString(@"Current OOM adjust value of the virtual machine", @"Current OOM adjust value of the virtual machine")];
     [buttonKill setToolTip:CPBundleLocalizedString(@"Will definitly delete the virtual machine, and all it's informations", @"Will definitly delete the virtual machine, and all it's informations")];
+    [buttonPark setToolTip:CPLocalizedString(@"Ask virtual machine's hypervisor to park it", @"Ask virtual machine's hypervisor to park it")];
     [fieldPreferencesScreenshotRefresh setToolTip:CPLocalizedString(@"Set the delay between two virtual machine screenshots", @"Set the delay between two virtual machine screenshots")];
 }
 
@@ -312,6 +318,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [sliderMemory setEnabled:NO];
     [stepperCPU setEnabled:NO];
 
+    [buttonKill setEnabled:NO];
+    [buttonPark setEnabled:NO];
+    [checkBoxAdvancedCommands setState:CPOffState];
+
     [tableHypervisors deselectAll];
     [self populateHypervisorsTable];
 
@@ -377,6 +387,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:sliderMemory enabledAccordingToPermission:@"memory" specialCondition:isOnline];
     [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus" specialCondition:isOnline];
     [self setControl:buttonKill enabledAccordingToPermission:@"free"];
+    [self setControl:buttonPark enabledAccordingToPermission:@"vmparking_park"];
 
     [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
     [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
@@ -763,12 +774,29 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self free];
 }
 
+/*! send park command
+    @param aSender the sender of the action
+*/
+- (IBAction)park:(id)aSender
+{
+    [self park];
+}
+
 /*! open the full screenshot window
     @param aSender the sender of the action
 */
 - (IBAction)openFullScreenshotWindow:(id)aSender
 {
     [self getFullScreenshot];
+}
+
+/*! Set if the advanced controls should be enabled or disabled
+    @param aSender the sender of the action
+*/
+- (IBAction)manageAdvancedControls:(id)aSender
+{
+    [buttonPark setEnabled:([aSender state] == CPOnState)];
+    [buttonKill setEnabled:([aSender state] == CPOnState)];
 }
 
 #pragma mark -
@@ -1466,7 +1494,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self sendStanza:stanza andRegisterSelector:@selector(_didFree:)];
 }
 
-/*! compute the destroy result
+/*! compute the free result
     @param aStanza TNStropheStanza containing the results
 */
 - (BOOL)_didFree:(TNStropheStanza)aStanza
@@ -1483,6 +1511,45 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
+}
+
+/*! send park command. but ask for user confirmation
+*/
+- (void)park
+{
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Park virtual machine?", @"Park virtual machine?")
+                                informative:CPLocalizedString(@"Do you want to park this virtual machine?", @"Do you want to park this virtual machine?")
+                                 target:self
+                                 actions:[[CPBundleLocalizedString(@"Park", @"Park"), @selector(performPark:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+
+    [alert runModal];
+}
+
+/*! send park command
+*/
+- (void)performPark:(id)someUserInfo
+{
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMParking}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineVMParkingPark}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didPark:)];
+}
+
+/*! compute the park result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didPark:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+                                                         message:CPBundleLocalizedString(@"Virtual machine is parking.", @"Virtual machine is parking.")];
+    else
+        [self handleIqErrorFromStanza:aStanza];
 
     return NO;
 }
