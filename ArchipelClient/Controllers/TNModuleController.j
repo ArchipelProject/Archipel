@@ -828,6 +828,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
         _currentToolbarModule = newModule;
         [_mainToolbar selectToolbarItem:sender];
+        [[newModule view] setBackgroundColor:_toolbarModuleBackgroundColor];
         [newModule willShow];
 
         [_animationToolBarModuleShow setUserInfo:newModule];
