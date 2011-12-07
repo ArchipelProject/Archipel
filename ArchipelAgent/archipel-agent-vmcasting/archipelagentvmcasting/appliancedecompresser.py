@@ -156,18 +156,22 @@ class TNApplianceDecompresser (Thread):
         xml_desc = xmpp.simplexml.NodeBuilder(data=desc_string).getDom()
         name_node = xml_desc.getTag("name")
         uuid_node = xml_desc.getTag("uuid")
-        disk_nodes = xml_desc.getTag("devices").getTags("disk")
-        for disk in disk_nodes:
-            source = disk.getTag("source")
-            source_file = os.path.basename(source.getAttr("file")).replace(".gz", "")
-            source.setAttr("file", os.path.join(self.entity.folder, source_file))
-        nics_nodes = xml_desc.getTag("devices").getTags("interface")
-        for nic in nics_nodes:
-            mac = nic.getTag("mac")
-            if mac:
-                mac.setAttr("address", generate_mac_adress())
-            else:
-                nic.addChild(name="mac", attrs={"address" : generate_mac_adress()})
+        if xml_desc.getTag("devices"):
+            disk_nodes = xml_desc.getTag("devices").getTags("disk")
+            for disk in disk_nodes:
+                source = disk.getTag("source")
+                if source:
+                    source_file = os.path.basename(source.getAttr("file")).replace(".gz", "")
+                    source.setAttr("file", os.path.join(self.entity.folder, source_file))
+
+        if xml_desc.getTag("devices"):
+            nics_nodes = xml_desc.getTag("devices").getTags("interface")
+            for nic in nics_nodes:
+                mac = nic.getTag("mac")
+                if mac:
+                    mac.setAttr("address", generate_mac_adress())
+                else:
+                    nic.addChild(name="mac", attrs={"address" : generate_mac_adress()})
         name_node.setData(self.entity.uuid)
         uuid_node.setData(self.entity.uuid)
         self.description_node = xml_desc
