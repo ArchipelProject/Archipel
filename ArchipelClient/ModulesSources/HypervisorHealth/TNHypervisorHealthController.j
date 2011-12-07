@@ -88,6 +88,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet TNCellPartitionView partitionDataViewPrototype;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
 
+    BOOL                        _needReloadDataForCharts;
+    BOOL                        _needReloadDataForLogs;
     CPTimer                     _timerLogs;
     CPTimer                     _timerStats;
     TNDatasourceChartView       _cpuDatasource;
@@ -171,9 +173,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     // tabview
     [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
+    [tabViewInfos setDelegate:self];
 
-    var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
-        tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"],
+    var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"charts"],
+        tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"logs"],
         scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:CPBundleLocalizedString(@"Charts", @"Charts")];
@@ -527,11 +530,17 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
 
             /* reload the charts view */
-            [chartViewMemory reloadData];
-            [chartViewCPU reloadData];
-            [chartViewLoad reloadData];
-            [chartViewNetwork reloadData];
-            [tablePartitions reloadData];
+            if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
+            {
+                [chartViewMemory reloadData];
+                [chartViewCPU reloadData];
+                [chartViewLoad reloadData];
+                [chartViewNetwork reloadData];
+                [tablePartitions reloadData];
+                _needReloadDataForCharts = NO;
+            }
+            else
+                _needReloadDataForCharts = YES;
 
             CPLog.debug("current stats recovered");
         }
@@ -629,12 +638,17 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 
             /* reload the charts view */
-            [chartViewMemory reloadData];
-            [chartViewCPU reloadData];
-            [chartViewLoad reloadData];
-            [chartViewNetwork reloadData];
-
-            [tablePartitions reloadData];
+            if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
+            {
+                [chartViewMemory reloadData];
+                [chartViewCPU reloadData];
+                [chartViewLoad reloadData];
+                [chartViewNetwork reloadData];
+                [tablePartitions reloadData];
+                _needReloadDataForCharts = NO;
+            }
+            else
+                _needReloadDataForCharts = YES;
 
             CPLog.debug("Stats history recovered");
         }
@@ -702,7 +716,14 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
             [_datasourceLogs addObject:logEntry];
         }
-        [tableLogs reloadData];
+        if ([[tabViewInfos selectedTabViewItem] identifier] == @"logs")
+        {
+            [tableLogs reloadData];
+            _needReloadDataForLogs = NO;
+        }
+        else
+            _needReloadDataForLogs = YES;
+
         CPLog.debug("logs recovered");
 
     }
@@ -726,6 +747,27 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         theWidth = [tableView frameSize].width - 34;
 
     return [[logEntry message] sizeWithFont:[CPFont systemFontFace] inWidth:theWidth].height + 37;
+}
+
+/*! CPTabViewDelegate
+*/
+- (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    if ([anItem identifier] == @"logs" && _needReloadDataForLogs)
+    {
+        [tableLogs reloadData];
+        _needReloadDataForLogs = NO;
+    }
+
+    if ([anItem identifier] == @"charts" && _needReloadDataForCharts)
+    {
+        [chartViewMemory reloadData];
+        [chartViewCPU reloadData];
+        [chartViewLoad reloadData];
+        [chartViewNetwork reloadData];
+        [tablePartitions reloadData];
+        _needReloadDataForCharts = NO;
+    }
 }
 
 @end
