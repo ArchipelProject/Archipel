@@ -45,10 +45,6 @@
     <integer>100</integer>
     <key>TNArchipelHealthMaxLogEntry</key>
     <integer>50</integer>
-    <key>TNArchipelHealthTableLogDisplayMethodColumn</key>
-    <integer>0</integer>
-    <key>TNArchipelHealthTableLogDisplayFileColumn</key>
-    <integer>0</integer>
     <key>MandatoryPermissions</key>
     <array>
         <string>health_info</string>

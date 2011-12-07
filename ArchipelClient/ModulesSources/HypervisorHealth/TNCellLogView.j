@@ -1,5 +1,5 @@
 /*
- * TNCellPartitionView.j
+ * TNCellLogView.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,13 @@
 @import <AppKit/CPProgressIndicator.j>
 @import <AppKit/CPTextField.j>
 
-/*! represent a Partition object in a CPTableView
+/*! represent a LogEntry object in a CPTableView
 */
-@implementation TNCellPartitionView : TNBasicDataView
+@implementation TNCellLogView : TNBasicDataView
 {
-    @outlet CPLevelIndicator        levelIndicator;
-    @outlet CPTextField             nameLabel;
-    @outlet CPTextField             totalLabel;
-    @outlet CPTextField             usedLabel;
-    @outlet CPTextField             availableLabel;
+    @outlet CPTextField     fieldDate;
+    @outlet CPTextField     fieldLevel;
+    @outlet CPTextField     fieldMessage;
 }
 
 
@@ -39,14 +37,27 @@
 /*! set the object value of the cell
     @params aPartition the current value
 */
-- (void)setObjectValue:(CPDictionary)aPartition
+- (void)setObjectValue:(TNLogEntryObject)aLog
 {
-    var capacity = parseInt([aPartition capacity]);
-    [levelIndicator setDoubleValue:50 - capacity / 2];
+    [fieldLevel setStringValue:[aLog level]];
+    [fieldDate setStringValue:[aLog date]];
+    [fieldMessage setStringValue:[aLog message]];
 
-    [nameLabel setStringValue:[aPartition mount]];
-    [usedLabel setStringValue:CPBundleLocalizedString(@"Used: ", @"Used: ") + [CPString formatByteSize:[[aPartition used] intValue]]];
-    [availableLabel setStringValue:CPBundleLocalizedString(@"Available: ", @"Available: ") + [CPString formatByteSize:[[aPartition available] intValue]]];
+    switch ([[aLog level] lowercaseString])
+    {
+        case "debug":
+            [fieldLevel setTextColor:[CPColor colorWithHexString:@"4C8AFF"]];
+            break;
+        case "info":
+            [fieldLevel setTextColor:[CPColor colorWithHexString:@"EAD700"]];
+            break;
+        case "warn":
+            [fieldLevel setTextColor:[CPColor colorWithHexString:@"EC9C1B"]];
+            break;
+        case "error":
+            [fieldLevel setTextColor:[CPColor colorWithHexString:@"ED4E44"]];
+            break;
+    }
 }
 
 
@@ -57,10 +68,9 @@
 {
     if (self = [super initWithCoder:aCoder])
     {
-        levelIndicator = [aCoder decodeObjectForKey:@"levelIndicator"];
-        nameLabel      = [aCoder decodeObjectForKey:@"nameLabel"];
-        usedLabel      = [aCoder decodeObjectForKey:@"usedLabel"];
-        availableLabel = [aCoder decodeObjectForKey:@"availableLabel"];
+        fieldDate       = [aCoder decodeObjectForKey:@"fieldDate"];
+        fieldLevel      = [aCoder decodeObjectForKey:@"fieldLevel"];
+        fieldMessage    = [aCoder decodeObjectForKey:@"fieldMessage"];
     }
 
     return self;
@@ -70,10 +80,9 @@
 {
     [super encodeWithCoder:aCoder];
 
-    [aCoder encodeObject:nameLabel forKey:@"nameLabel"];
-    [aCoder encodeObject:levelIndicator forKey:@"levelIndicator"];
-    [aCoder encodeObject:usedLabel forKey:@"usedLabel"];
-    [aCoder encodeObject:availableLabel forKey:@"availableLabel"];
+    [aCoder encodeObject:fieldDate forKey:@"fieldDate"];
+    [aCoder encodeObject:fieldLevel forKey:@"fieldLevel"];
+    [aCoder encodeObject:fieldMessage forKey:@"fieldMessage"];
 }
 
 @end
