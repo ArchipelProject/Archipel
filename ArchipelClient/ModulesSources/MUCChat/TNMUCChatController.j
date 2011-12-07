@@ -292,8 +292,10 @@
 */
 - (IBAction)didDoubleClick:(id)aSender
 {
-    var index   = [[_tableViewPeople selectedRowIndexes] firstIndex],
-        member  = [_peopleDatasource objectAtIndex:index];
+    if ([_tableViewPeople numberOfSelectedRows] == 0)
+        return;
+
+    var member  = [_peopleDatasource objectAtIndex:[_tableViewPeople selectedRow]];
 
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[member JID]])
     {
