@@ -797,10 +797,12 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     if (newModule != oldModule)
     {
-        [[newModule view] setFrame:[_mainModuleView bounds]];
+        var frame = [[[CPApp mainWindow] contentView] bounds];
+        frame.size.height -= 25;
+        [[newModule view] setFrame:frame];
         [newModule setUIItem:sender]; // due to archiving, we lost the origin item
         [newModule willShow];
-        [_mainModuleView addSubview:[newModule view]];
+        [[[CPApp mainWindow] contentView] addSubview:[newModule view]];
         _currentToolbarModule = newModule;
         [_mainToolbar selectToolbarItem:sender];
     }
