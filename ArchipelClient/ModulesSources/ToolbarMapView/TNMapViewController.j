@@ -223,18 +223,25 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if ([aStanza type] == @"result")
     {
-        var latitude    = [[aStanza firstChildWithName:@"Latitude"] text],
-            longitude   = [[aStanza firstChildWithName:@"Longitude"] text],
-            item        = [[[TNStropheIMClient defaultClient] roster] contactWithJID:[aStanza from]],
-            loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude],
-            marker      = [[MKMarker alloc] initAtLocation:loc];
+        try
+        {
+            var latitude    = [[aStanza firstChildWithName:@"Latitude"] text],
+                longitude   = [[aStanza firstChildWithName:@"Longitude"] text],
+                item        = [[[TNStropheIMClient defaultClient] roster] contactWithJID:[aStanza from]],
+                loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude],
+                marker      = [[MKMarker alloc] initAtLocation:loc];
 
-        [marker setDraggable:NO];
-        [marker setClickable:YES];
-        [marker setDelegate:self];
-        [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
-        [marker addToMapView:_mainMapView];
-        [_mainMapView setCenter:loc];
+            [marker setDraggable:NO];
+            [marker setClickable:YES];
+            [marker setDelegate:self];
+            [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
+            [marker addToMapView:_mainMapView];
+            [_mainMapView setCenter:loc];
+        }
+        catch(e)
+        {
+            CPLog.warn("The map view has been removed. this happens when the module is hidden while loading info");
+        }
     }
     else
     {
