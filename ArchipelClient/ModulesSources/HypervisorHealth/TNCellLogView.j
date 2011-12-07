@@ -21,18 +21,37 @@
 @import <AppKit/CPProgressIndicator.j>
 @import <AppKit/CPTextField.j>
 
+
+var TNCellLogViewIconError,
+    TNCellLogViewIconWarning,
+    TNCellLogViewIconInfo,
+    TNCellLogViewIconDebug;
+
 /*! represent a LogEntry object in a CPTableView
 */
 @implementation TNCellLogView : TNBasicDataView
 {
+    @outlet CPImageView     imageViewIcon;
     @outlet CPTextField     fieldDate;
     @outlet CPTextField     fieldLevel;
     @outlet CPTextField     fieldMessage;
 }
 
+#pragma mark -
+#pragma mark Initialization
+
++ (void)initialize
+{
+    var bundle = [CPBundle bundleForClass:TNCellLogView];
+    TNCellLogViewIconError      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-error.png"] size:CPSizeMake(18.0, 18.0)];
+    TNCellLogViewIconWarning    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-warning.png"] size:CPSizeMake(18.0, 18.0)];
+    TNCellLogViewIconInfo       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-info.png"] size:CPSizeMake(18.0, 18.0)];
+    TNCellLogViewIconDebug      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-debug.png"] size:CPSizeMake(18.0, 18.0)];
+
+}
 
 #pragma mark -
-#pragma mark CPColumn view protocol
+#pragma mark Overides
 
 /*! set the object value of the cell
     @params aPartition the current value
@@ -47,15 +66,19 @@
     {
         case "debug":
             [fieldLevel setTextColor:[CPColor colorWithHexString:@"4C8AFF"]];
+            [imageViewIcon setImage:TNCellLogViewIconDebug];
             break;
         case "info":
             [fieldLevel setTextColor:[CPColor colorWithHexString:@"EAD700"]];
+            [imageViewIcon setImage:TNCellLogViewIconInfo];
             break;
         case "warn":
             [fieldLevel setTextColor:[CPColor colorWithHexString:@"EC9C1B"]];
+            [imageViewIcon setImage:TNCellLogViewIconWarning];
             break;
         case "error":
             [fieldLevel setTextColor:[CPColor colorWithHexString:@"ED4E44"]];
+            [imageViewIcon setImage:TNCellLogViewIconError];
             break;
     }
 }
@@ -68,6 +91,7 @@
 {
     if (self = [super initWithCoder:aCoder])
     {
+        imageViewIcon   = [aCoder decodeObjectForKey:@"imageViewIcon"];
         fieldDate       = [aCoder decodeObjectForKey:@"fieldDate"];
         fieldLevel      = [aCoder decodeObjectForKey:@"fieldLevel"];
         fieldMessage    = [aCoder decodeObjectForKey:@"fieldMessage"];
@@ -80,17 +104,10 @@
 {
     [super encodeWithCoder:aCoder];
 
+    [aCoder encodeObject:imageViewIcon forKey:@"imageViewIcon"];
     [aCoder encodeObject:fieldDate forKey:@"fieldDate"];
     [aCoder encodeObject:fieldLevel forKey:@"fieldLevel"];
     [aCoder encodeObject:fieldMessage forKey:@"fieldMessage"];
 }
 
 @end
-
-
-// add this code to make the CPLocalizedString looking at
-// the current bundle.
-function CPBundleLocalizedString(key, comment)
-{
-    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNCellPartitionView], comment);
-}
