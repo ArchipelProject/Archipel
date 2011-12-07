@@ -317,7 +317,7 @@ class TNVMParking (TNArchipelPlugin):
         """
         Update the domain XML of a parked VM
         @type identifier: String
-        @param identifier: the pubsub ID (parking ticket)
+        @param identifier: the pubsub ID (parking ticket) or the VM UUID
         @type domain: xmpp.Node
         @param domain: the new XML description
         """
@@ -492,8 +492,8 @@ class TNVMParking (TNArchipelPlugin):
             reply = iq.buildReply("result")
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
-                ticket = item.getAttr("ticket")
-                self.unpark(ticket)
+                identifier = item.getAttr("identifier")
+                self.unpark(identifier)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UNPARK)
         return reply
@@ -532,8 +532,8 @@ class TNVMParking (TNArchipelPlugin):
             reply = iq.buildReply("result")
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
-                ticket = item.getAttr("ticket")
-                self.delete(ticket)
+                identifier = item.getAttr("identifier")
+                self.delete(identifier)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_DELETE)
         return reply
@@ -548,9 +548,9 @@ class TNVMParking (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            ticket = iq.getTag("query").getTag("archipel").getAttr("ticket")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
             domain = iq.getTag("query").getTag("archipel").getTag("domain")
-            self.updatexml(ticket, domain)
+            self.updatexml(identifier, domain)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML)
         return reply

@@ -246,7 +246,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"ticket": [vm parkingID]}];
+        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm parkingID]}];
         [stanza up];
     }
 
@@ -277,7 +277,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorParking}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorParkingUpdateXML,
-        "ticket": [_currentItem parkingID]}];
+        "identifier": [_currentItem parkingID]}];
 
     [stanza addNode:aNewDefinition];
     _currentItem = nil;
@@ -313,7 +313,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"ticket": [vm parkingID]}];
+        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm parkingID]}];
         [stanza up];
     }
 
