@@ -182,6 +182,38 @@ Sec-WebSocket-Accept: %s\r
         return sock
 
     @staticmethod
+    def unmask(buf, f):
+        pstart = f['hlen'] + 4
+        pend = pstart + f['length']
+        if numpy:
+            b = c = s2b('')
+            if f['length'] >= 4:
+                mask = numpy.frombuffer(buf, dtype=numpy.dtype('<u4'),
+                        offset=f['hlen'], count=1)
+                data = numpy.frombuffer(buf, dtype=numpy.dtype('<u4'),
+                        offset=pstart, count=int(f['length'] / 4))
+                #b = numpy.bitwise_xor(data, mask).data
+                b = numpy.bitwise_xor(data, mask).tostring()
+
+            if f['length'] % 4:
+                #print("Partial unmask")
+                mask = numpy.frombuffer(buf, dtype=numpy.dtype('B'),
+                        offset=f['hlen'], count=(f['length'] % 4))
+                data = numpy.frombuffer(buf, dtype=numpy.dtype('B'),
+                        offset=pend - (f['length'] % 4),
+                        count=(f['length'] % 4))
+                c = numpy.bitwise_xor(data, mask).tostring()
+            return b + c
+        else:
+            # Slower fallback
+            data = array.array('B')
+            mask = s2a(f['mask'])
+            data.fromstring(buf[pstart:pend])
+            for i in range(len(data)):
+                data[i] ^= mask[i % 4]
+            return data.tostring()
+
+    @staticmethod
     def encode_hybi(buf, opcode, base64=False):
         """ Encode a HyBi style WebSocket frame.
         Optional opcode:
