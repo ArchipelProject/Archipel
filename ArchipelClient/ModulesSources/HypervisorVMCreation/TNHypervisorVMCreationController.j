@@ -886,8 +886,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                 }
                 else
                 {
-                    var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil];
-                    [contact setNickname:@"This machine is not in your roster. Double click to add it."];
+                    var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil],
+                        name = [[queryItems objectAtIndex:i] valueForAttribute:@"name"];
+
+                    [contact setNickname:name + @" (Double click to add in your roster)"];
                     [_virtualMachinesDatasource addObject:contact];
                 }
             }
