@@ -830,10 +830,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             managed_vm_uuids = []
             not_managed_vm_uuids = []
             for uuid, vm in self.virtualmachines.iteritems():
-                if vm.vCard and vm.vCard.getTag("FN"):
-                    name = vm.vCard.getTag("FN").getData()
-                else:
-                    name = vm.uuid
+                name = vm.vCard.getTag("FN").getData()
                 n = xmpp.Node("item", attrs={"managed": "True", "name": name})
                 n.addData(vm.jid.getStripped())
                 managed_vm_uuids.append(vm.jid.getNode())
