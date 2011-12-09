@@ -820,6 +820,8 @@ class TNArchipelEntity (object):
                 node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
                 payload.append(node_photo)
             node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
+            ## updating internal representation of the vCard
+            self.vCard = node_iq.getTag("vCard")
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
             self.log.info("vCard information sent with type: %s" % self.entity_type)
         except Exception as ex:
