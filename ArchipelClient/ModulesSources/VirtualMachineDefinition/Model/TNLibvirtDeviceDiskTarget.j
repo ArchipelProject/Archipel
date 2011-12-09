@@ -21,55 +21,11 @@
 
 @import "TNLibvirtBase.j";
 
-TNLibvirtDeviceDiskTargetDeviceHda      = @"hda";
-TNLibvirtDeviceDiskTargetDeviceHdb      = @"hdb";
-TNLibvirtDeviceDiskTargetDeviceHdc      = @"hdc";
-TNLibvirtDeviceDiskTargetDeviceHdd      = @"hdd";
-TNLibvirtDeviceDiskTargetDeviceHde      = @"hde";
-TNLibvirtDeviceDiskTargetDeviceSda      = @"sda";
-TNLibvirtDeviceDiskTargetDeviceSdb      = @"sdb";
-TNLibvirtDeviceDiskTargetDeviceSdc      = @"sdc";
-TNLibvirtDeviceDiskTargetDeviceSdd      = @"sdd";
-TNLibvirtDeviceDiskTargetDeviceSde      = @"sde";
-TNLibvirtDeviceDiskTargetDeviceXVDA     = @"xvda";
-TNLibvirtDeviceDiskTargetDeviceXVDB     = @"xvdb";
-TNLibvirtDeviceDiskTargetDeviceXVDC     = @"xvdc";
-TNLibvirtDeviceDiskTargetDeviceXVDD     = @"xvdd";
-TNLibvirtDeviceDiskTargetDeviceXVDE     = @"xvde";
-TNLibvirtDeviceDiskTargetDeviceVDA      = @"vda";
-TNLibvirtDeviceDiskTargetDeviceVDB      = @"vdb";
-TNLibvirtDeviceDiskTargetDeviceVDC      = @"vdc";
-TNLibvirtDeviceDiskTargetDeviceVDD      = @"vdd";
-TNLibvirtDeviceDiskTargetDeviceVDE      = @"vde";
-TNLibvirtDeviceDiskTargetDevices        = [ TNLibvirtDeviceDiskTargetDeviceHda, TNLibvirtDeviceDiskTargetDeviceHdb,
-                                            TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd,
-                                            TNLibvirtDeviceDiskTargetDeviceHde,
-                                            TNLibvirtDeviceDiskTargetDeviceSda, TNLibvirtDeviceDiskTargetDeviceSdb,
-                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd,
-                                            TNLibvirtDeviceDiskTargetDeviceSde,
-                                            TNLibvirtDeviceDiskTargetDeviceXVDA, TNLibvirtDeviceDiskTargetDeviceXVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceXVDC, TNLibvirtDeviceDiskTargetDeviceXVDD,
-                                            TNLibvirtDeviceDiskTargetDeviceXVDE,
-                                            TNLibvirtDeviceDiskTargetDeviceVDA, TNLibvirtDeviceDiskTargetDeviceVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceVDC, TNLibvirtDeviceDiskTargetDeviceVDD,
-                                            TNLibvirtDeviceDiskTargetDeviceVDE];
-
-TNLibvirtDeviceDiskTargetDevicesIDE     = [ TNLibvirtDeviceDiskTargetDeviceHda, TNLibvirtDeviceDiskTargetDeviceHdb,
-                                            TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd,
-                                            TNLibvirtDeviceDiskTargetDeviceHde];
-
-TNLibvirtDeviceDiskTargetDevicesSCSI    = [ TNLibvirtDeviceDiskTargetDeviceSda, TNLibvirtDeviceDiskTargetDeviceSdb,
-                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd,
-                                            TNLibvirtDeviceDiskTargetDeviceSde];
-
-TNLibvirtDeviceDiskTargetDevicesXEN     = [ TNLibvirtDeviceDiskTargetDeviceXVDA, TNLibvirtDeviceDiskTargetDeviceXVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceXVDC, TNLibvirtDeviceDiskTargetDeviceXVDD,
-                                            TNLibvirtDeviceDiskTargetDeviceXVDE];
-
-TNLibvirtDeviceDiskTargetDevicesVIRTIO  = [ TNLibvirtDeviceDiskTargetDeviceVDA, TNLibvirtDeviceDiskTargetDeviceVDB,
-                                            TNLibvirtDeviceDiskTargetDeviceVDC, TNLibvirtDeviceDiskTargetDeviceVDD,
-                                            TNLibvirtDeviceDiskTargetDeviceVDE];
-
+TNLibvirtDeviceDiskTargetDevices        = [];
+TNLibvirtDeviceDiskTargetDevicesIDE     = [];
+TNLibvirtDeviceDiskTargetDevicesSCSI    = [];
+TNLibvirtDeviceDiskTargetDevicesXEN     = [];
+TNLibvirtDeviceDiskTargetDevicesVIRTIO  = [];
 
 TNLibvirtDeviceDiskTargetBusIDE         = @"ide";
 TNLibvirtDeviceDiskTargetBusSCSI        = @"scsi";
@@ -95,6 +51,25 @@ TNLibvirtDeviceDiskTargetBuses          = [ TNLibvirtDeviceDiskTargetBusIDE,
 
 #pragma mark -
 #pragma mark Initialization
+
++ (void)initialize
+{
+    letters = ["a", "b", "c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
+                "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
+    for (var i = 0; i < [letters count]; i++)
+    {
+        [TNLibvirtDeviceDiskTargetDevicesIDE addObject:@"hd" + [letters objectAtIndex:i]];
+        [TNLibvirtDeviceDiskTargetDevicesSCSI addObject:@"sd" + [letters objectAtIndex:i]];
+        [TNLibvirtDeviceDiskTargetDevicesXEN addObject:@"xvd" + [letters objectAtIndex:i]];
+        [TNLibvirtDeviceDiskTargetDevicesVIRTIO addObject:@"vd" + [letters objectAtIndex:i]];
+    }
+
+    TNLibvirtDeviceDiskTargetDevices = [].concat( TNLibvirtDeviceDiskTargetDevicesIDE,
+                                                TNLibvirtDeviceDiskTargetDevicesSCSI,
+                                                TNLibvirtDeviceDiskTargetDevicesXEN,
+                                                TNLibvirtDeviceDiskTargetDevicesVIRTIO);
+}
 
 /*! initialize the object with a given XML node
     @param aNode the node to use
