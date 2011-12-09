@@ -92,9 +92,6 @@
 /* Class = "NSTextFieldCell"; title = "Disks usage"; ObjectID = "104"; */
 "104.title" = "Utilisation disque";
 
-/* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "126"; */
-"126.title" = "Ce tableau contient les logs de l'hyperviseur";
-
 /* Class = "NSTextFieldCell"; title = "Health preferences"; ObjectID = "136"; */
 "136.title" = "Préférences Santé";
 
@@ -151,4 +148,7 @@
 
 /* Class = "NSTextFieldCell"; title = "2011-01-01 15:12:56"; ObjectID = "248"; */
 "248.title" = "2011-01-01 15:12:56";
+
+/* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "257"; */
+"257.title" = "This table contains hypervisor's logs.";
 

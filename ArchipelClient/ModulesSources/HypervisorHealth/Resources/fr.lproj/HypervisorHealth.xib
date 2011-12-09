@@ -1128,6 +1128,24 @@
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="327616811">
+						<reference key="NSNextResponder" ref="859523883"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{17, 433}, {575, 17}}</string>
+						<reference key="NSSuperview" ref="859523883"/>
+						<string key="NSReuseIdentifierKey">_NS:3944</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="178811535">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">272630784</int>
+							<string key="NSContents">This table contains hypervisor's logs.</string>
+							<reference key="NSSupport" ref="75421548"/>
+							<string key="NSCellIdentifier">_NS:3944</string>
+							<reference key="NSControlView" ref="327616811"/>
+							<reference key="NSBackgroundColor" ref="301951145"/>
+							<reference key="NSTextColor" ref="506221711"/>
+						</object>
+					</object>
 					<object class="NSScrollView" id="608560813">
 						<reference key="NSNextResponder" ref="859523883"/>
 						<int key="NSvFlags">274</int>
@@ -1336,26 +1354,8 @@
 							<int key="NSMaximumRecents">255</int>
 						</object>
 					</object>
-					<object class="NSTextField" id="435801532">
-						<reference key="NSNextResponder" ref="859523883"/>
-						<int key="NSvFlags">282</int>
-						<string key="NSFrame">{{16, 430}, {576, 20}}</string>
-						<reference key="NSSuperview" ref="859523883"/>
-						<reference key="NSNextKeyView" ref="829065892"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="290273378">
-							<int key="NSCellFlags">67239424</int>
-							<int key="NSCellFlags2">4194304</int>
-							<string key="NSContents">Ce tableau contient les logs de l'hyperviseur</string>
-							<reference key="NSSupport" ref="208984078"/>
-							<reference key="NSControlView" ref="435801532"/>
-							<reference key="NSBackgroundColor" ref="301951145"/>
-							<reference key="NSTextColor" ref="506221711"/>
-						</object>
-					</object>
 				</object>
 				<string key="NSFrameSize">{609, 470}</string>
-				<reference key="NSNextKeyView" ref="435801532"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="157857637">
@@ -2817,26 +2817,12 @@
 						<reference key="object" ref="859523883"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="435801532"/>
 							<reference ref="829065892"/>
 							<reference ref="608560813"/>
+							<reference ref="327616811"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Logs view</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">125</int>
-						<reference key="object" ref="435801532"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="290273378"/>
-						</object>
-						<reference key="parent" ref="859523883"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">126</int>
-						<reference key="object" ref="290273378"/>
-						<reference key="parent" ref="435801532"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">127</int>
@@ -3302,6 +3288,20 @@
 						<reference key="object" ref="272950628"/>
 						<reference key="parent" ref="116292419"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">256</int>
+						<reference key="object" ref="327616811"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="178811535"/>
+						</object>
+						<reference key="parent" ref="859523883"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">257</int>
+						<reference key="object" ref="178811535"/>
+						<reference key="parent" ref="327616811"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3318,8 +3318,6 @@
 					<string>11.IBPluginDependency</string>
 					<string>12.IBPluginDependency</string>
 					<string>122.IBPluginDependency</string>
-					<string>125.IBPluginDependency</string>
-					<string>126.IBPluginDependency</string>
 					<string>127.IBPluginDependency</string>
 					<string>128.IBPluginDependency</string>
 					<string>13.IBPluginDependency</string>
@@ -3395,6 +3393,8 @@
 					<string>25.IBPluginDependency</string>
 					<string>253.IBPluginDependency</string>
 					<string>254.IBPluginDependency</string>
+					<string>256.IBPluginDependency</string>
+					<string>257.IBPluginDependency</string>
 					<string>26.IBPluginDependency</string>
 					<string>27.IBPluginDependency</string>
 					<string>28.IBPluginDependency</string>
@@ -3465,8 +3465,6 @@
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3619,6 +3617,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3633,7 +3633,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">255</int>
+			<int key="maxID">257</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
