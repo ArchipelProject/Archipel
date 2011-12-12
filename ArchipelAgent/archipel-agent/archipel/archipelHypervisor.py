@@ -508,6 +508,14 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vm.permission_center.grant_permission_to_user("all", requester.getStripped())
 
         if xml_description:
+            if not xml_description.getTag("uuid"):
+                xml_description.addChild("uuid")
+            if not xml_description.getTag("uuid").getData().lower() == vmuuid.lower():
+                xml_description.getTag("uuid").setData(vmuuid)
+            if not xml_description.getTag("name"):
+                xml_description.addChild("name")
+            if not xml_description.getTag("name").getData().lower() == name.lower():
+                xml_description.getTag("name").setData(name)
             vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=xml_description, oneshot=True)
 
         self.log.info("Registering the new VM in hypervisor's database.")
@@ -670,9 +678,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
             except:
                 requested_name = None
-            vm = self.alloc(iq.getFrom(), requested_name=requested_name)
+            domainXML = None
+            if iq.getTag("query").getTag("archipel").getTag("domain"):
+                domainXML = iq.getTag("query").getTag("archipel").getTag("domain")
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name, xml_description=domainXML)
             reply = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
+
             reply.setQueryPayload([payload])
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid))
         except libvirt.libvirtError as ex:
