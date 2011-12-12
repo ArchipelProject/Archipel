@@ -495,17 +495,6 @@ var TNModuleStatusImageReady,
 
     [self setUIAccordingToPermissions];
 
-    var defaults = [CPUserDefaults standardUserDefaults];
-
-    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
-    {
-        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self view], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
-            anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-
-        [anim setDuration:_animationDuration];
-        [anim startAnimation];
-    }
-
     return YES;
 }
 

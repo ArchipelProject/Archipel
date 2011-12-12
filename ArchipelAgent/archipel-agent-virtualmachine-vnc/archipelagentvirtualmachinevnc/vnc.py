@@ -62,7 +62,6 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.register_hook("HOOK_VM_STOP", method=self.stop_novnc_proxy)
         self.entity.register_hook("HOOK_VM_DESTROY", method=self.stop_novnc_proxy)
         self.entity.register_hook("HOOK_VM_TERMINATE", method=self.stop_novnc_proxy)
-        self.entity.register_hook("HOOK_XMPP_DISCONNECT", method=self.stop_novnc_proxy)
         self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.awake_from_initialization)
 
         self.websocket_verbose = False

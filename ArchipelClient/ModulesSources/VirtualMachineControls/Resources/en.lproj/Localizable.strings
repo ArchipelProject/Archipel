@@ -70,6 +70,12 @@
 /* OOM Killer cannot kill this virtual machine. */
 "OOM Killer cannot kill this virtual machine." = "OOM Killer cannot kill this virtual machine.";
 
+/* Park */
+"Park" = "Park";
+
+/* Park virtual machine? */
+"Park virtual machine?" = "Park virtual machine?";
+
 /* Pause */
 "Pause" = "Pause";
 
@@ -117,6 +123,9 @@
 
 /* Virtual machine has been destroyed. */
 "Virtual machine has been destroyed." = "Virtual machine has been destroyed.";
+
+/* Virtual machine is parking. */
+"Virtual machine is parking." = "Virtual machine is parking.";
 
 /* Virtual machine is paused. */
 "Virtual machine is paused." = "Virtual machine is paused.";

@@ -24,9 +24,11 @@ import os
 import shutil
 import xmpp
 
+from archipel.archipelHypervisor import TNArchipelHypervisor
+from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.pubsub import TNPubSubNode
-from archipelcore.utils import build_error_iq
+from archipelcore.utils import build_error_iq, build_error_message
 
 ARCHIPEL_ERROR_CODE_VMPARK_LIST         = -11001
 ARCHIPEL_ERROR_CODE_VMPARK_PARK         = -11002
@@ -34,8 +36,8 @@ ARCHIPEL_ERROR_CODE_VMPARK_UNPARK       = -11003
 ARCHIPEL_ERROR_CODE_VMPARK_DELETE       = -11004
 ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML    = -11004
 
-ARCHIPEL_NS_VMPARKING = "archipel:hypervisor:vmparking"
-
+ARCHIPEL_NS_HYPERVISOR_VMPARKING = "archipel:hypervisor:vmparking"
+ARCHIPEL_NS_VM_VMPARKING         = "archipel:vm:vmparking"
 
 class TNVMParking (TNArchipelPlugin):
 
@@ -53,14 +55,47 @@ class TNVMParking (TNArchipelPlugin):
         self.pubsub_vmparking = None;
 
         # creates permissions
-        self.entity.permission_center.create_permission("vmparking_list", "Authorizes user to list virtual machines in parking", False)
         self.entity.permission_center.create_permission("vmparking_park", "Authorizes user to park a virtual machines", False)
-        self.entity.permission_center.create_permission("vmparking_unpark", "Authorizes user to unpark a virtual machines", False)
-        self.entity.permission_center.create_permission("vmparking_delete", "Authorizes user to delete parked virtual machines", False)
-        self.entity.permission_center.create_permission("vmparking_updatexml", "Authorizes user to delete parked virtual machines", False)
+
+        if isinstance(self.entity, TNArchipelHypervisor):
+            self.entity.permission_center.create_permission("vmparking_list", "Authorizes user to list virtual machines in parking", False)
+            self.entity.permission_center.create_permission("vmparking_unpark", "Authorizes user to unpark a virtual machines", False)
+            self.entity.permission_center.create_permission("vmparking_delete", "Authorizes user to delete parked virtual machines", False)
+            self.entity.permission_center.create_permission("vmparking_updatexml", "Authorizes user to delete parked virtual machines", False)
+
+        # vocabulary
+        if isinstance(self.entity, TNArchipelHypervisor):
+            registrar_items = [{    "commands" : ["park"],
+                                    "parameters": [{"name": "identifiers", "description": "the UUIDs of the VM to park, separated with comas, with no space"}],
+                                    "method": self.message_park_hypervisor,
+                                    "permissions": ["vmparking_park"],
+                                    "description": "Park the virtual machine with the given UUIDs"},
+
+                                {   "commands" : ["unpark"],
+                                    "parameters": [{"name": "identifiers", "description": "UUIDs of the virtual machines or parking tickets, separated by comas, with no space"}],
+                                    "method": self.message_unpark,
+                                    "permissions": ["vmparking_unpark"],
+                                    "description": "Unpark the virtual machine parked with the given identifier"},
+
+                                {    "commands" : ["park list"],
+                                     "parameters": [],
+                                     "method": self.message_list,
+                                     "permissions": ["vmparking_list"],
+                                     "description": "List all parked virtual machines" }
+                                ]
+        elif isinstance(self.entity, TNArchipelVirtualMachine):
+            registrar_items = [{    "commands" : ["park"],
+                                    "parameters": [],
+                                    "method": self.message_park_vm,
+                                    "permissions": ["vmparking_park"],
+                                    "description": "Park the virtual machine"},
+                                ]
+
+        self.entity.add_message_registrar_items(registrar_items)
 
         # register to the node vmrequest
-        self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vmparking_node)
+        if isinstance(self.entity, TNArchipelHypervisor):
+            self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vmparking_node)
 
 
     ### Plugin interface
@@ -70,13 +105,20 @@ class TNVMParking (TNArchipelPlugin):
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
-        self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VMPARKING)
+        if isinstance(self.entity, TNArchipelHypervisor):
+            self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_hypervisor, ns=ARCHIPEL_NS_HYPERVISOR_VMPARKING)
+        elif isinstance(self.entity, TNArchipelVirtualMachine):
+            self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_vm, ns=ARCHIPEL_NS_VM_VMPARKING)
 
     def unregister_handlers(self):
         """
         Unregister the handlers.
         """
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VMPARKING)
+        if isinstance(self.entity, TNArchipelHypervisor):
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_for_hypervisor, ns=ARCHIPEL_NS_HYPERVISOR_VMPARKING)
+        elif isinstance(self.entity, TNArchipelVirtualMachine):
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_for_vm, ns=ARCHIPEL_NS_VM_VMPARKING)
+
 
     @staticmethod
     def plugin_info():
@@ -126,7 +168,22 @@ class TNVMParking (TNArchipelPlugin):
         self.entity.log.debug("VMPARKING: received pubsub event")
 
 
-    ### Processing function
+    ### Utilities
+
+    def get_ticket_from_uuid(self, uuid):
+        """
+        parse the parked vm to find the ticket of the given uuid
+        @type uuid: String
+        @param uuid: the UUID of the vm
+        @rtype: String
+        @return: pubsub item id
+        """
+        items = self.pubsub_vmparking.get_items()
+        for item in items:
+            domain = item.getTag("virtualmachine").getTag("domain")
+            if domain.getTag("uuid").getData() == uuid:
+                return item.getAttr("id")
+        return None
 
     def is_vm_already_parked(self, uuid):
         """
@@ -140,6 +197,9 @@ class TNVMParking (TNArchipelPlugin):
             if n.getTag("virtualmachine").getTag("domain").getTag("uuid").getData().lower() == uuid.lower():
                 return True
         return False
+
+
+    ### Processing function
 
     def list(self):
         """
@@ -198,12 +258,15 @@ class TNVMParking (TNArchipelPlugin):
         self.pubsub_vmparking.add_item(vmparkednode, callback=publish_success)
         self.entity.log.info("VMPARKING: virtual machine %s as been parked" % uuid)
 
-    def unpark(self, ticket):
+    def unpark(self, identifier):
         """
         Unpark virtual machine
-        @type ticket: String
-        @param ticket: the pubsub ID (parking ticket)
+        @type identifier: String
+        @param identifier: the UUID of a VM or the pubsub ID (parking ticket)
         """
+        ticket = self.get_ticket_from_uuid(identifier)
+        if not ticket:
+            ticket = identifier
         vm_item = self.pubsub_vmparking.get_item(ticket)
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
@@ -225,20 +288,23 @@ class TNVMParking (TNArchipelPlugin):
                 self.entity.push_change("vmparking", "cannot-unpark", content_node=resp)
         self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
 
-    def delete(self, ticket):
+    def delete(self, identifier):
         """
         Delete a parked virtual machine
-        @type ticket: String
-        @param ticket: the pubsub ID (parking ticket)
+        @type identifier: String
+        @param identifier: the UUID of a parked VM or the pubsub ID (parking ticket)
         """
+        ticket = self.get_ticket_from_uuid(identifier)
+        if not ticket:
+            ticket = identifier
         vm_item = self.pubsub_vmparking.get_item(ticket)
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
 
         def retract_success(resp, user_info):
             if resp.getType() == "result":
-                vmjid = vm_item.getTag("virtualmachine").getTag("domain").getTag("description").getData().split("::::")[0]
-                vmfolder = "%s/%s" % (self.configuration.get("VIRTUALMACHINE", "vm_base_path"), vmjid.split("@")[0])
+                vmjid = xmpp.JID(vm_item.getTag("virtualmachine").getTag("domain").getTag("description").getData().split("::::")[0])
+                vmfolder = "%s/%s" % (self.configuration.get("VIRTUALMACHINE", "vm_base_path"), vmjid.getNode())
                 if os.path.exists(vmfolder):
                     shutil.rmtree(vmfolder)
                 self.entity.get_plugin("xmppserver").users_unregister([vmjid])
@@ -247,14 +313,17 @@ class TNVMParking (TNArchipelPlugin):
                 self.entity.push_change("vmparking", "cannot-delete", content_node=resp)
         self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
 
-    def updatexml(self, ticket, domain):
+    def updatexml(self, identifier, domain):
         """
         Update the domain XML of a parked VM
-        @type ticket: String
-        @param ticket: the pubsub ID (parking ticket)
+        @type identifier: String
+        @param identifier: the pubsub ID (parking ticket) or the VM UUID
         @type domain: xmpp.Node
         @param domain: the new XML description
         """
+        ticket = self.get_ticket_from_uuid(identifier)
+        if not ticket:
+            ticket = identifier
         vm_item = self.pubsub_vmparking.get_item(ticket)
         if not vm_item:
             raise Exception("There is no virtual machine parked with ticket %s" % ticket)
@@ -292,11 +361,11 @@ class TNVMParking (TNArchipelPlugin):
 
 
 
-    ### XMPP Management
+    ### XMPP Management for hypervisors
 
-    def process_iq(self, conn, iq):
+    def process_iq_for_hypervisor(self, conn, iq):
         """
-        This method is invoked when a ARCHIPEL_NS_VMPARKING IQ is received.
+        This method is invoked when a ARCHIPEL_NS_HYPERVISOR_VMPARKING IQ is received.
         It understands IQ of type:
             - list
             - park
@@ -348,6 +417,29 @@ class TNVMParking (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_LIST)
         return reply
 
+    def message_list(self, msg):
+        """
+        Handle the parking list message.
+        @type msg: xmmp.Protocol.Message
+        @param msg: the message
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            tokens = msg.getBody().split()
+            if not len(tokens) == 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
+            parked_vms = self.list()
+            resp = "Sure! Here is the virtual machines parked:\n"
+            for info in parked_vms:
+                ticket = info["info"]["itemid"]
+                name = info["domain"].getTag("name").getData()
+                uuid = info["domain"].getTag("uuid").getData()
+                resp = "%s - [%s]: %s (%s)\n" % (resp, ticket, name, uuid)
+            return resp
+        except Exception as ex:
+            return build_error_message(self, ex, msg)
+
     def iq_park(self, iq):
         """
         Park virtual machine
@@ -366,6 +458,28 @@ class TNVMParking (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_PARK)
         return reply
 
+    def message_park_hypervisor(self, msg):
+        """
+        Handle the park message.
+        @type msg: xmmp.Protocol.Message
+        @param msg: the message
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            tokens = msg.getBody().split()
+            if len(tokens) < 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
+            uuids = tokens[1].split(",")
+            for vmuuid in uuids:
+                self.park(vmuuid, msg.getFrom())
+            if len(uuids) == 1:
+                return "Virtual machine is parking."
+            else:
+                return "Virtual machines are parking."
+        except Exception as ex:
+            return build_error_message(self, ex, msg)
+
     def iq_unpark(self, iq):
         """
         Unpark virtual machine
@@ -378,11 +492,33 @@ class TNVMParking (TNArchipelPlugin):
             reply = iq.buildReply("result")
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
-                ticket = item.getAttr("ticket")
-                self.unpark(ticket)
+                identifier = item.getAttr("identifier")
+                self.unpark(identifier)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UNPARK)
         return reply
+
+    def message_unpark(self, msg):
+        """
+        Handle the unpark message.
+        @type msg: xmmp.Protocol.Message
+        @param msg: the message
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            tokens = msg.getBody().split()
+            if len(tokens) < 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
+            itemids = tokens[1].split(",")
+            for itemid in itemids:
+                self.unpark(itemid)
+            if len(itemids) == 1:
+                return "Virtual machine is unparking."
+            else:
+                return "Virtual machines are unparking."
+        except Exception as ex:
+            return build_error_message(self, ex, msg)
 
     def iq_delete(self, iq):
         """
@@ -396,8 +532,8 @@ class TNVMParking (TNArchipelPlugin):
             reply = iq.buildReply("result")
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
-                ticket = item.getAttr("ticket")
-                self.delete(ticket)
+                identifier = item.getAttr("identifier")
+                self.delete(identifier)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_DELETE)
         return reply
@@ -412,9 +548,63 @@ class TNVMParking (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            ticket = iq.getTag("query").getTag("archipel").getAttr("ticket")
+            identifier = iq.getTag("query").getTag("archipel").getAttr("identifier")
             domain = iq.getTag("query").getTag("archipel").getTag("domain")
-            self.updatexml(ticket, domain)
+            self.updatexml(identifier, domain)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML)
         return reply
+
+
+    ## XMPP Management for hypervisors
+
+    def process_iq_for_vm(self, conn, iq):
+        """
+        This method is invoked when a ARCHIPEL_NS_VM_VMPARKING IQ is received.
+        It understands IQ of type:
+            - park
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        reply = None
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1, prefix="vmparking_")
+        if action == "park":
+            reply = self.iq_park_vm(iq)
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+    def iq_park_vm(self, iq):
+        """
+        ask own hypervisor to park the virtual machine
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            self.entity.hypervisor.get_plugin("vmparking").park(self.entity.uuid, iq.getFrom())
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_PARK)
+        return reply
+
+    def message_park_vm(self, msg):
+        """
+        Handle the park message for vm.
+        @type msg: xmmp.Protocol.Message
+        @param msg: the message
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            tokens = msg.getBody().split()
+            if not len(tokens) == 1:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
+            self.entity.hypervisor.get_plugin("vmparking").park(self.entity.uuid, msg.getFrom())
+            return "I'm parking."
+        except Exception as ex:
+            return build_error_message(self, ex, msg)

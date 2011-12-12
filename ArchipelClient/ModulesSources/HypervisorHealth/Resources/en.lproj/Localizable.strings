@@ -10,35 +10,11 @@
 /* Charts */
 "Charts" = "Charts";
 
-/* Date */
-"Date" = "Date";
-
-/* Display the file column in the log table */
-"Display the file column in the log table" = "Display the file column in the log table";
-
-/* Display the method column in the log table */
-"Display the method column in the log table" = "Display the method column in the log table";
-
-/* file */
-"file" = "file";
-
 /* GB */
 "GB" = "GB";
 
-/* Level */
-"Level" = "Level";
-
 /* Logs */
 "Logs" = "Logs";
-
-/* message */
-"message" = "message";
-
-/* method */
-"method" = "method";
-
-/* Partition name */
-"Partition name" = "Partition name";
 
 /* Set the delay between asking hypervisor statistics */
 "Set the delay between asking hypervisor statistics" = "Set the delay between asking hypervisor statistics";

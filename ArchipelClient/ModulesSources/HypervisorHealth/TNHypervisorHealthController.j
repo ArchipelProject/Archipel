@@ -28,11 +28,12 @@
 @import <LPKit/LPChartView.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "TNCellLogView.j"
 @import "TNCellPartitionView.j"
 @import "TNDatasourceChartView.j"
 @import "TNDatasourcePieChartView.j"
 @import "TNLogEntryObject.j"
-
+@import "TNPartitionObject.j"
 
 
 var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
@@ -54,9 +55,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPImageView         imageDiskLoading;
     @outlet CPImageView         imageLoadLoading;
     @outlet CPImageView         imageMemoryLoading;
-    @outlet CPScrollView        scrollViewLogsTable;
-    @outlet CPScrollView        scrollViewPartitionTable;
     @outlet CPSearchField       filterLogField;
+    @outlet CPTableView         tableLogs;
+    @outlet CPTableView         tablePartitions;
     @outlet CPTabView           tabViewInfos;
     @outlet CPTextField         fieldHalfMemory;
     @outlet CPTextField         fieldPreferencesAutoRefresh;
@@ -83,12 +84,12 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet LPChartView         chartViewLoad;
     @outlet LPChartView         chartViewMemory;
     @outlet LPChartView         chartViewNetwork;
+    @outlet TNCellLogView       logDataViewPrototype;
+    @outlet TNCellPartitionView partitionDataViewPrototype;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
-    @outlet TNSwitch            switchPreferencesShowColunmFile;
-    @outlet TNSwitch            switchPreferencesShowColunmMethod;
 
-    CPTableView                 _tableLogs;
-    CPTableView                 _tablePartitions;
+    BOOL                        _needReloadDataForCharts;
+    BOOL                        _needReloadDataForLogs;
     CPTimer                     _timerLogs;
     CPTimer                     _timerStats;
     TNDatasourceChartView       _cpuDatasource;
@@ -116,8 +117,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"], @"TNArchipelHealthRefreshStatsInterval",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"], @"TNArchipelHealthStatsHistoryCollectionSize",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"], @"TNArchipelHealthMaxLogEntry",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayMethodColumn"], @"TNArchipelHealthTableLogDisplayMethodColumn",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayFileColumn"], @"TNArchipelHealthTableLogDisplayFileColumn",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"], @"TNArchipelHealthAutoRefreshStats"
     ]];
 
@@ -174,9 +173,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     // tabview
     [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
+    [tabViewInfos setDelegate:self];
 
-    var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
-        tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"],
+    var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"charts"],
+        tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"logs"],
         scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:CPBundleLocalizedString(@"Charts", @"Charts")];
@@ -197,94 +197,31 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     // tables partition
     _datasourcePartitions = [[TNTableViewDataSource alloc] init];
-    _tablePartitions     = [[CPTableView alloc] initWithFrame:CPRectMakeZero()];
 
-    [_tablePartitions setFrameSize:[scrollViewPartitionTable contentSize]];
+    [tablePartitions setDataSource:_datasourcePartitions];
+    [_datasourcePartitions setTable:tablePartitions];
 
-    [scrollViewPartitionTable setBorderedWithHexColor:@"C0C7D2"];
-    [scrollViewPartitionTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewPartitionTable setAutohidesScrollers:YES];
-    [scrollViewPartitionTable setDocumentView:_tablePartitions];
-
-    [_tablePartitions setUsesAlternatingRowBackgroundColors:YES];
-    [_tablePartitions setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tablePartitions setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
-    [_tablePartitions setAllowsEmptySelection:YES];
-    [_tablePartitions setAllowsMultipleSelection:NO];
-    [_tablePartitions setRowHeight:50.0];
-    [_tablePartitions setHeaderView:nil];
-    [_tablePartitions setCornerView:nil];
-
-    var columnPartitionCell = [[CPTableColumn alloc] initWithIdentifier:@"partition"],
-        partitionViewPrototype = [[TNCellPartitionView alloc] initWithFrame:CPRectMake(0, 0, 420, 60)];
-
-    [columnPartitionCell setWidth:[scrollViewPartitionTable contentSize].width - 3]; // yeah -3...
-    [columnPartitionCell setDataView:partitionViewPrototype];
-    [_tablePartitions addTableColumn:columnPartitionCell];
-    [_datasourcePartitions setTable:_tablePartitions];
+    [[tablePartitions tableColumnWithIdentifier:@"self"] setDataView:[partitionDataViewPrototype duplicate]];
+    [tablePartitions setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
 
     // logs tables
     _datasourceLogs = [[TNTableViewDataSource alloc] init];
-    _tableLogs      = [[CPTableView alloc] initWithFrame:[scrollViewLogsTable bounds]];
+    [tableLogs setDelegate:self];
+    [tableLogs setDataSource:_datasourceLogs];
 
-    [scrollViewLogsTable setBorderedWithHexColor:@"#C0C7D2"];
-    [scrollViewLogsTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewLogsTable setAutohidesScrollers:NO];
-    [scrollViewLogsTable setDocumentView:_tableLogs];
-
-    [_tableLogs setUsesAlternatingRowBackgroundColors:YES];
-    [_tableLogs setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableLogs setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableLogs setAllowsColumnReordering:NO];
-    [_tableLogs setAllowsColumnResizing:YES];
-    [_tableLogs setAllowsEmptySelection:YES];
-    [_tableLogs setAllowsMultipleSelection:NO];
-
-    var columnLogLevel      = [[CPTableColumn alloc] initWithIdentifier:@"level"],
-        columnLogDate       = [[CPTableColumn alloc] initWithIdentifier:@"date"],
-        columnLogFile       = [[CPTableColumn alloc] initWithIdentifier:@"file"],
-        columnLogMethod     = [[CPTableColumn alloc] initWithIdentifier:@"method"],
-        columnLogMessage    = [[CPTableColumn alloc] initWithIdentifier:@"message"];
-
-    [columnLogLevel setWidth:50];
-    [columnLogLevel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"level" ascending:YES]];
-    [[columnLogLevel headerView] setStringValue:CPBundleLocalizedString(@"Level", @"Level")];
-
-    [columnLogDate setWidth:125];
-    [columnLogDate setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"date" ascending:YES]];
-    [[columnLogDate headerView] setStringValue:CPBundleLocalizedString(@"Date", @"Date")];
-
-    [columnLogFile setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"file" ascending:YES]];
-    [[columnLogFile headerView] setStringValue:CPBundleLocalizedString(@"file", @"file")];
-
-    [columnLogMethod setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"method" ascending:YES]];
-    [[columnLogMethod headerView] setStringValue:CPBundleLocalizedString(@"method", @"method")];
-
-    [columnLogMessage setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"message" ascending:YES]];
-    [[columnLogMessage headerView] setStringValue:CPBundleLocalizedString(@"message", @"message")];
-
-    [_tableLogs addTableColumn:columnLogLevel];
-    [_tableLogs addTableColumn:columnLogDate];
-
-    if ([defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"])
-        [_tableLogs addTableColumn:columnLogFile];
-
-    if ([defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"])
-        [_tableLogs addTableColumn:columnLogMethod];
-
-    [_tableLogs addTableColumn:columnLogMessage];
-
-    [_datasourceLogs setTable:_tableLogs];
+    [_datasourceLogs setTable:tableLogs];
     [_datasourceLogs setSearchableKeyPaths:[@"level", @"date", @"message"]];
 
     [filterLogField setTarget:_datasourceLogs];
     [filterLogField setAction:@selector(filterObjects:)];
 
+    [[tableLogs tableColumnWithIdentifier:@"self"] setDataView:[logDataViewPrototype duplicate]];
+    [tableLogs setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
+
+
     [fieldPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Set the delay between asking hypervisor statistics", @"Set the delay between asking hypervisor statistics")];
     [fieldPreferencesMaxItems setToolTip:CPBundleLocalizedString(@"Set the max number of statistic entries to fetch", @"Set the max number of statistic entries to fetch")];
     [fieldPreferencesMaxLogEntries setToolTip:CPBundleLocalizedString(@"Set the max number of log item to fetch", @"Set the max number of log item to fetch")];
-    [switchPreferencesShowColunmMethod setToolTip:CPBundleLocalizedString(@"Display the method column in the log table", @"Display the method column in the log table")];
-    [switchPreferencesShowColunmFile setToolTip:CPBundleLocalizedString(@"Display the file column in the log table", @"Display the file column in the log table")];
     [switchPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Activate the statistics auto fetching", @"Activate the statistics auto fetching")];
 }
 
@@ -316,8 +253,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [chartViewMemory setDataSource:_memoryDatasource];
     [chartViewCPU setDataSource:_cpuDatasource];
     [chartViewLoad setDataSource:_loadDatasource];
-    [_tablePartitions setDataSource:_datasourcePartitions];
-    [_tableLogs setDataSource:_datasourceLogs];
+    [tablePartitions setDataSource:_datasourcePartitions];
+    [tableLogs setDataSource:_datasourceLogs];
 
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
@@ -378,8 +315,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [defaults setInteger:[fieldPreferencesAutoRefresh intValue] forKey:@"TNArchipelHealthRefreshStatsInterval"];
     [defaults setInteger:[fieldPreferencesMaxItems intValue] forKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
     [defaults setInteger:[fieldPreferencesMaxLogEntries intValue] forKey:@"TNArchipelHealthMaxLogEntry"];
-    [defaults setBool:[switchPreferencesShowColunmMethod isOn] forKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
-    [defaults setBool:[switchPreferencesShowColunmFile isOn] forKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
     [defaults setBool:[switchPreferencesAutoRefresh isOn] forKey:@"TNArchipelHealthAutoRefreshStats"];
 
     [self handleAutoRefresh];
@@ -394,8 +329,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [fieldPreferencesAutoRefresh setIntValue:[defaults integerForKey:@"TNArchipelHealthRefreshStatsInterval"]];
     [fieldPreferencesMaxItems setIntValue:[defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]];
     [fieldPreferencesMaxLogEntries setIntValue:[defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]];
-    [switchPreferencesShowColunmMethod setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"] animated:YES sendAction:NO];
-    [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO];
     [switchPreferencesAutoRefresh setOn:[defaults boolForKey:@"TNArchipelHealthAutoRefreshStats"] animated:YES sendAction:NO];
 }
 
@@ -444,14 +377,14 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     for (var i = 0; i < [[diskNode childrenWithName:@"partition"] count]; i++)
     {
         var partition   = [[diskNode childrenWithName:@"partition"] objectAtIndex:i],
-            part        = [CPDictionary dictionary];
+            part        = [[TNPartitionObject alloc] init];
 
-        [part setObject:[partition valueForAttribute:@"capacity"] forKey:@"capacity"];
-        [part setObject:[partition valueForAttribute:@"mount"] forKey:@"mount"];
-        [part setObject:[partition valueForAttribute:@"used"] forKey:@"used"];
-        [part setObject:[partition valueForAttribute:@"available"] forKey:@"available"];
+        [part setCapacity:[partition valueForAttribute:@"capacity"]];
+        [part setMount:[partition valueForAttribute:@"mount"]];
+        [part setUsed:[partition valueForAttribute:@"used"]];
+        [part setAvailable:[partition valueForAttribute:@"available"]];
 
-        [ret addObject:[CPDictionary dictionaryWithObjectsAndKeys:part, @"partition"]];
+        [ret addObject:part];
     }
 
     return ret;
@@ -597,11 +530,17 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
 
             /* reload the charts view */
-            [chartViewMemory reloadData];
-            [chartViewCPU reloadData];
-            [chartViewLoad reloadData];
-            [chartViewNetwork reloadData];
-            [_tablePartitions reloadData];
+            if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
+            {
+                [chartViewMemory reloadData];
+                [chartViewCPU reloadData];
+                [chartViewLoad reloadData];
+                [chartViewNetwork reloadData];
+                [tablePartitions reloadData];
+                _needReloadDataForCharts = NO;
+            }
+            else
+                _needReloadDataForCharts = YES;
 
             CPLog.debug("current stats recovered");
         }
@@ -699,12 +638,17 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 
             /* reload the charts view */
-            [chartViewMemory reloadData];
-            [chartViewCPU reloadData];
-            [chartViewLoad reloadData];
-            [chartViewNetwork reloadData];
-
-            [_tablePartitions reloadData];
+            if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
+            {
+                [chartViewMemory reloadData];
+                [chartViewCPU reloadData];
+                [chartViewLoad reloadData];
+                [chartViewNetwork reloadData];
+                [tablePartitions reloadData];
+                _needReloadDataForCharts = NO;
+            }
+            else
+                _needReloadDataForCharts = YES;
 
             CPLog.debug("Stats history recovered");
         }
@@ -772,7 +716,14 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
             [_datasourceLogs addObject:logEntry];
         }
-        [_tableLogs reloadData];
+        if ([[tabViewInfos selectedTabViewItem] identifier] == @"logs")
+        {
+            [tableLogs reloadData];
+            _needReloadDataForLogs = NO;
+        }
+        else
+            _needReloadDataForLogs = YES;
+
         CPLog.debug("logs recovered");
 
     }
@@ -782,6 +733,41 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     }
 
     return NO;
+}
+
+
+#pragma mark -
+#pragma mark Delegate
+
+/*! CPTableViewDelegate
+*/
+- (float)tableView:(CPTableView)tableView heightOfRow:(int)row
+{
+    var logEntry = [_datasourceLogs objectAtIndex:row],
+        theWidth = [tableView frameSize].width - 34;
+
+    return [[logEntry message] sizeWithFont:[CPFont systemFontFace] inWidth:theWidth].height + 37;
+}
+
+/*! CPTabViewDelegate
+*/
+- (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    if ([anItem identifier] == @"logs" && _needReloadDataForLogs)
+    {
+        [tableLogs reloadData];
+        _needReloadDataForLogs = NO;
+    }
+
+    if ([anItem identifier] == @"charts" && _needReloadDataForCharts)
+    {
+        [chartViewMemory reloadData];
+        [chartViewCPU reloadData];
+        [chartViewLoad reloadData];
+        [chartViewNetwork reloadData];
+        [tablePartitions reloadData];
+        _needReloadDataForCharts = NO;
+    }
 }
 
 @end

@@ -23,61 +23,13 @@
 
 /*! represent a Partition object in a CPTableView
 */
-@implementation TNCellPartitionView : CPView
+@implementation TNCellPartitionView : TNBasicDataView
 {
-    CPLevelIndicator        _levelIndicator;
-    CPTextField             _nameLabel;
-    CPTextField             _totalLabel;
-    CPTextField             _usedLabel;
-    CPTextField             _availableLabel;
-}
-
-#pragma mark -
-#pragma mark Initialization
-
-/*! initialize the view
-*/
-- (id)initWithFrame:(CPRect)aFrame
-{
-    if (self = [super initWithFrame:aFrame])
-    {
-        [self setAutoresizingMask: CPViewWidthSizable];
-
-        _nameLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Partition name", @"Partition name")];
-        [_nameLabel setFont:[CPFont boldSystemFontOfSize:12.0]];
-        [_nameLabel setFrame:CPRectMake(3.0, 3.0, 210.0, 18.0)]
-        [_nameLabel setLineBreakMode:CPLineBreakByTruncatingTail];
-
-        _usedLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Used: ", @"Used: ")];
-        [_usedLabel setFont:[CPFont systemFontOfSize:10.0]];
-        [_usedLabel setFrame:CPRectMake(210.0, 3.0, 95.0, 18.0)];
-        [_usedLabel setAutoresizingMask:CPViewMinXMargin];
-        [_usedLabel setAlignment:CPRightTextAlignment];
-        [_usedLabel setLineBreakMode:CPLineBreakByTruncatingTail];
-
-        _availableLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Available: ", @"Available: ")];
-        [_availableLabel setFont:[CPFont systemFontOfSize:10.0]];
-        [_availableLabel setFrame:CPRectMake(310.0, 3.0, 108.0, 18.0)];
-        [_availableLabel setAutoresizingMask:CPViewMinXMargin];
-        [_availableLabel setAlignment:CPRightTextAlignment];
-        [_availableLabel setLineBreakMode:CPLineBreakByTruncatingTail];
-
-        _levelIndicator = [[CPLevelIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, aFrame.size.width - 6, 18.0)];
-        [_levelIndicator setEditable:NO];
-        [_levelIndicator setNumberOfTickMarks:50.0];
-        [_levelIndicator setMaxValue:50.0];
-        [_levelIndicator setMinValue:0.0];
-        [_levelIndicator setCriticalValue:10.0];
-        [_levelIndicator setWarningValue:30.0];
-        [_levelIndicator setAutoresizingMask:CPViewWidthSizable];
-
-        [self addSubview:_nameLabel];
-        [self addSubview:_usedLabel];
-        [self addSubview:_availableLabel];
-        [self addSubview:_levelIndicator];
-    }
-
-    return self;
+    @outlet CPLevelIndicator        levelIndicator;
+    @outlet CPTextField             nameLabel;
+    @outlet CPTextField             totalLabel;
+    @outlet CPTextField             usedLabel;
+    @outlet CPTextField             availableLabel;
 }
 
 
@@ -85,16 +37,16 @@
 #pragma mark CPColumn view protocol
 
 /*! set the object value of the cell
-    @params aValue the current value
+    @params aPartition the current value
 */
-- (void)setObjectValue:(CPDictionary)aContent
+- (void)setObjectValue:(CPDictionary)aPartition
 {
-    var capacity = parseInt([aContent objectForKey:@"capacity"]);
-    [_levelIndicator setDoubleValue:50 - capacity / 2];
+    var capacity = parseInt([aPartition capacity]);
+    [levelIndicator setDoubleValue:50 - capacity / 2];
 
-    [_nameLabel setStringValue:[aContent objectForKey:@"mount"]];
-    [_usedLabel setStringValue:CPBundleLocalizedString(@"Used: ", @"Used: ") + [CPString formatByteSize:[[aContent objectForKey:@"used"] intValue]]];
-    [_availableLabel setStringValue:CPBundleLocalizedString(@"Available: ", @"Available: ") + [CPString formatByteSize:[[aContent objectForKey:@"available"] intValue]]];
+    [nameLabel setStringValue:[aPartition mount]];
+    [usedLabel setStringValue:CPBundleLocalizedString(@"Used: ", @"Used: ") + [CPString formatByteSize:[[aPartition used] intValue]]];
+    [availableLabel setStringValue:CPBundleLocalizedString(@"Available: ", @"Available: ") + [CPString formatByteSize:[[aPartition available] intValue]]];
 }
 
 
@@ -105,10 +57,10 @@
 {
     if (self = [super initWithCoder:aCoder])
     {
-        _levelIndicator = [aCoder decodeObjectForKey:@"_levelIndicator"];
-        _nameLabel      = [aCoder decodeObjectForKey:@"_nameLabel"];
-        _usedLabel      = [aCoder decodeObjectForKey:@"_usedLabel"];
-        _availableLabel = [aCoder decodeObjectForKey:@"_availableLabel"];
+        levelIndicator = [aCoder decodeObjectForKey:@"levelIndicator"];
+        nameLabel      = [aCoder decodeObjectForKey:@"nameLabel"];
+        usedLabel      = [aCoder decodeObjectForKey:@"usedLabel"];
+        availableLabel = [aCoder decodeObjectForKey:@"availableLabel"];
     }
 
     return self;
@@ -118,10 +70,10 @@
 {
     [super encodeWithCoder:aCoder];
 
-    [aCoder encodeObject:_nameLabel forKey:@"_nameLabel"];
-    [aCoder encodeObject:_levelIndicator forKey:@"_levelIndicator"];
-    [aCoder encodeObject:_usedLabel forKey:@"_usedLabel"];
-    [aCoder encodeObject:_availableLabel forKey:@"_availableLabel"];
+    [aCoder encodeObject:nameLabel forKey:@"nameLabel"];
+    [aCoder encodeObject:levelIndicator forKey:@"levelIndicator"];
+    [aCoder encodeObject:usedLabel forKey:@"usedLabel"];
+    [aCoder encodeObject:availableLabel forKey:@"availableLabel"];
 }
 
 @end

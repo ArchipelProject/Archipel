@@ -1,0 +1,63 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
+#
+# archipel-command
+#
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+import xmpp
+from optparse import OptionParser
+
+import archipelcore.pubsub
+from archipelcore.scriptutils import *
+
+
+def send_raw(xmppclient, to, acp):
+    """
+    Send the given stanza to given entity using given xmppclient
+    """
+    print send_raw_acp(xmppclient, to, acp)
+
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-j", "--jid",
+                        dest="jid",
+                        help="set the JID to use",
+                        metavar="user@domain")
+    parser.add_option("-p", "--password",
+                        dest="password",
+                        help="set the password associated to the JID",
+                        metavar="123456")
+    parser.add_option("-t", "--to",
+                        dest="dest_jid",
+                        help="the target **full** JID (i.e. entity@fqdn/resource)")
+    parser.add_option("-r", "--raw",
+                        dest="send_raw",
+                        help="the raw acp string to send. You do not need to set the 'from', 'to', and 'id' information")
+
+    options, args = parser.parse_args()
+
+    xmppclient = initialize(options, fill_pubsubserver=False)
+
+    if options.send_raw:
+        send_raw(xmppclient, xmpp.JID(options.dest_jid), options.send_raw)
+    else:
+        data = "".join(sys.stdin.readlines())
+        try:
+            send_raw(xmppclient, xmpp.JID(options.dest_jid), data)
+        except Exception as ex:
+            error("the data from stdin are not well formed")

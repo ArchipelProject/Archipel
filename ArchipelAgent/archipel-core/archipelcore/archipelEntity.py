@@ -148,8 +148,6 @@ class TNArchipelEntity (object):
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
-            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
-            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
             self.create_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")
 
             ## recover/create pubsub after connection
@@ -317,11 +315,13 @@ class TNArchipelEntity (object):
             debug_mode = ['always', 'nodebuilder']
         self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=debug_mode) #debug=['dispatcher', 'nodebuilder', 'protocol'])
         if self.xmppclient.connect() == "":
-            self.log.error("Unable to connect to XMPP server.")
             if self.auto_reconnect:
                 self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
+                self.log.warning("Unable to connect to XMPP server. Waiting 5 seconds for reconnection")
+                time.sleep(5)
                 return False
             else:
+                self.log.error("Unable to connect to XMPP server. Exiting")
                 self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.log.info("Successfully connected to XMPP with JID %s" % str(self.jid))
@@ -342,7 +342,7 @@ class TNArchipelEntity (object):
                 return
             self.log.error("Bad authentication or unable to register account. Exiting.")
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-            raise Exception("Unable to authenticate register. exiting")
+            raise Exception("Unable to authenticate user. exiting")
         self.log.info("Successfully authenticated.")
         self.isAuth = True
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
@@ -820,6 +820,8 @@ class TNArchipelEntity (object):
                 node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
                 payload.append(node_photo)
             node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
+            ## updating internal representation of the vCard
+            self.vCard = node_iq.getTag("vCard")
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
             self.log.info("vCard information sent with type: %s" % self.entity_type)
         except Exception as ex:
@@ -1165,8 +1167,6 @@ class TNArchipelEntity (object):
         """
         This is the main loop of the client.
         """
-        if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
-            self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
         while not self.loop_status == ARCHIPEL_XMPP_LOOP_OFF:
             try:
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_REMOVE_USER:
@@ -1176,26 +1176,24 @@ class TNArchipelEntity (object):
                     if self.xmppclient.isConnected():
                         self.xmppclient.Process(3)
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
-                    self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
                     if self.xmppclient.isConnected():
                         self.xmppclient.disconnect()
                     time.sleep(1.0)
                     self.connect()
+
             except Exception as ex:
-                if str(ex).find('User removed') > -1: # ok, weird.
+                if str(ex).upper().find('USER REMOVED') > -1:
                     self.log.info("LOOP EXCEPTION: Account has been removed from server.")
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-                elif self.auto_reconnect:
-                    self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 (five) seconds.")
-                    t, v, tr = sys.exc_info()
-                    self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
+                else:
+                    if  str(ex).upper().find('SYSTEM-SHUTDOWN') > -1:
+                        self.log.warning("LOOP EXCEPTION: The XMPP server has been shut down. Waiting 5 second for reconnection")
+                    else:
+                        self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 seconds.")
+                        t, v, tr = sys.exc_info()
+                        self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
-                else:
-                    self.log.error("LOOP EXCEPTION : End of loop forced by exception: %s" % str(ex))
-                    t, v, tr = sys.exc_info()
-                    self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
-                    self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-        self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
+
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()

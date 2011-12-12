@@ -24,6 +24,7 @@
 @import <AppKit/CPView.j>
 
 @import <StropheCappuccino/StropheCappuccino.j>
+@import <TNKit/TNAnimation.j>
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
@@ -77,6 +78,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     TNTabView                       _mainTabView                    @accessors(property=mainTabView);
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
+    BOOL                            _allowToolbarSwitching;
     CPDictionary                    _modulesMenuItems;
     CPDictionary                    _openedTabsRegistry;
     CPDictionary                    _tabModules;
@@ -84,6 +86,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     id                              _modulesPList;
     int                             _numberOfModulesLoaded;
     int                             _numberOfModulesToLoad;
+    TNAnimation                     _animationToolBarModuleHide;
+    TNAnimation                     _animationToolBarModuleShow;
     TNModule                        _currentToolbarModule;
 }
 
@@ -115,7 +119,15 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         _numberOfActiveModules                  = 0;
         _deactivateModuleTabItemPositionStorage = NO;
         _moduleLoadingStarted                   = NO;
+        _allowToolbarSwitching                  = YES;
         _openedTabsRegistry                     = [CPDictionary dictionary];
+        _animationToolBarModuleHide             = [[TNAnimation alloc] init];
+        _animationToolBarModuleShow             = [[TNAnimation alloc] init];
+
+        [_animationToolBarModuleHide setDelegate:self];
+        [_animationToolBarModuleHide setDuration:0.3];
+        [_animationToolBarModuleShow setDelegate:self];
+        [_animationToolBarModuleShow setDuration:0.3];
 
         if  (![defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"])
             [defaults setObject:_openedTabsRegistry forKey:@"TNArchipelModuleControllerOpenedTabRegistry"];
@@ -783,26 +795,76 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 */
 - (IBAction)didToolbarModuleClicked:(CPToolbarItem)sender
 {
+    if (!_allowToolbarSwitching)
+        return;
+
     var newModule = [_toolbarModules objectForKey:[sender itemIdentifier]],
+        useAnimation = [[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelUseAnimations"],
         oldModule;
 
     if (_currentToolbarModule)
     {
         oldModule = _currentToolbarModule;
-        [_currentToolbarModule willHide];
-        [[_currentToolbarModule view] removeFromSuperview];
         _currentToolbarModule = nil;
         [_mainToolbar deselectToolbarItem];
+        [oldModule willHide];
+
+        [_animationToolBarModuleHide setUserInfo:oldModule];
+        if (useAnimation)
+            [_animationToolBarModuleHide startAnimation];
+        else
+            [self animation:_animationToolBarModuleHide valueForProgress:1.0];
     }
 
     if (newModule != oldModule)
     {
-        [[newModule view] setFrame:[_mainModuleView bounds]];
+        var frame = [[[CPApp mainWindow] contentView] bounds];
+
+        frame.size.height -= 25;
+        frame.origin.y = -frame.size.height ;
+        [[newModule view] setFrame:frame];
         [newModule setUIItem:sender]; // due to archiving, we lost the origin item
-        [newModule willShow];
-        [_mainModuleView addSubview:[newModule view]];
+        [[[CPApp mainWindow] contentView] addSubview:[newModule view]];
+
         _currentToolbarModule = newModule;
         [_mainToolbar selectToolbarItem:sender];
+        [[newModule view] setBackgroundColor:_toolbarModuleBackgroundColor];
+        [newModule willShow];
+
+        [_animationToolBarModuleShow setUserInfo:newModule];
+        if (useAnimation)
+            [_animationToolBarModuleShow startAnimation];
+        else
+            [self animation:_animationToolBarModuleShow valueForProgress:1.0];
+    }
+}
+
+- (float)animation:(CPAnimation)animation valueForProgress:(float)progress
+{
+    var module = [animation userInfo],
+        view = [module view],
+        frame = [view frame];
+
+    _allowToolbarSwitching = NO;
+
+    if (animation === _animationToolBarModuleShow)
+    {
+        frame.origin.y = -frame.size.height + (frame.size.height * progress);
+        [view setFrame:frame];
+
+        if (progress == 1.0)
+            _allowToolbarSwitching = YES;
+    }
+    else if (animation === _animationToolBarModuleHide)
+    {
+        frame.origin.y =  - (frame.size.height * progress);
+        [view setFrame:frame];
+
+        if (progress == 1.0)
+        {
+            [view removeFromSuperview];
+            _allowToolbarSwitching = YES;
+        }
     }
 }
 

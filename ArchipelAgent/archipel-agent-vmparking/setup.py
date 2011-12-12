@@ -28,6 +28,8 @@ SHORTDESCRIPTION    = "Handle the virtual machine parking"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.hypervisor' : [
                             'factory=archipelagentvmparking:make_archipel_plugin'],
+                        'archipel.plugin.virtualmachine' : [
+                            'factory=archipelagentvmparking:make_archipel_plugin'],
                         'archipel.plugin' : [
                             'version=archipelagentvmparking:version']}
 

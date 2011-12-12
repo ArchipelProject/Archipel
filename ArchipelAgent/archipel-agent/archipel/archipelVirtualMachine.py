@@ -157,7 +157,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.create_hook("HOOK_VM_FREE")
         self.create_hook("HOOK_VM_CRASH")
         self.create_hook("HOOK_XMPP_CONNECT")
-        self.create_hook("HOOK_XMPP_DISCONNECT")
 
         # actions on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.connect_domain)
@@ -432,17 +431,15 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
             self.libvirt_event_callback_id = None
 
-    def disconnect(self):
+    def disconnect_libvirt(self):
         """
-        Overrides the disconnect function.
+        Disconnect everything from libvirt
         """
-        self.log.info("%s is disconnecting from everything" % self.jid)
+        self.log.info("%s is disconnecting from libvirt" % self.jid)
         self.remove_libvirt_handler()
         if self.libvirt_connection:
             self.libvirt_connection.close()
             self.libvirt_connection = None
-        self.perform_hooks("HOOK_XMPP_DISCONNECT")
-        TNArchipelEntity.disconnect(self)
 
     def add_jid_hook(self, origin=None, user_info=None, arguments=None):
         """
@@ -820,6 +817,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.domain.undefine()
         self.definition = None
         self.unlock()
+        self.disconnect_libvirt()
         self.disconnect()
         self.log.info("Virtual machine undefined and disconnected.")
 
@@ -941,12 +939,13 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
     def terminate(self, clean_files=True):
         """
         This method is called by hypervisor when VM is freed.
-        It will perform HOOK_VM_TERMINATE, close databases
-        and remove own folder.
+        It will perform HOOK_VM_TERMINATE, close databases,
+        close libvirt connection and remove own folder.
         @type clean_files: boolean
         @param clean_files: if True, remove the permission file and folder
         """
         self.perform_hooks("HOOK_VM_TERMINATE")
+        self.disconnect_libvirt()
         self.permission_center.close_database()
         if clean_files:
             os.unlink(self.permission_db_file)

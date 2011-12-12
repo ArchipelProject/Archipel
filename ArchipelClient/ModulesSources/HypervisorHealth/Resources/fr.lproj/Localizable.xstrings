@@ -10,20 +10,10 @@
 	<string>Disponible: </string>
 	<key>Charts</key>
 	<string>Grahiques</string>
-	<key>Date</key>
-	<string>Date</string>
-	<key>Display the file column in the log table</key>
-	<string>Affiche la colonne Fichier dans le tableau de log</string>
-	<key>Display the method column in the log table</key>
-	<string>Affiche la colonne Methode dans le tableau de log</string>
 	<key>GB</key>
 	<string>Go</string>
-	<key>Level</key>
-	<string>Niveau</string>
 	<key>Logs</key>
 	<string>Logs</string>
-	<key>Partition name</key>
-	<string>Partition</string>
 	<key>Set the delay between asking hypervisor statistics</key>
 	<string>Définit l'intervale entre deux collecte de statistiques</string>
 	<key>Set the max number of log item to fetch</key>
@@ -32,11 +22,5 @@
 	<string>Définit le nombre maximum d'entrées de statistiques à récupérer</string>
 	<key>Used: </key>
 	<string>Utilisé: </string>
-	<key>file</key>
-	<string>fichier</string>
-	<key>message</key>
-	<string>message</string>
-	<key>method</key>
-	<string>méthode</string>
 </dict>
 </plist>

@@ -76,7 +76,7 @@
 */
 - (CPString)level
 {
-    return [self stripTerminalColors:_level];
+    return [self stripTerminalColors:_level].replace(/ /g, "");
 }
 
 /*! will clean up log message from eventual colors
@@ -92,6 +92,9 @@
     _message = _message.replace(new RegExp('[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+', 'g'), '');
     _message = _message.replace('::::', '');
     _message = _message.replace('::', ' ');
+    _message = _message.replace(/(^\s*)|(\s*$)/gi,"");
+    _message = _message.replace(/[ ]{2,}/gi,"");
+    _message = _message.replace(/\n /,"\n");
 
     return [self stripTerminalColors:_message];
 }

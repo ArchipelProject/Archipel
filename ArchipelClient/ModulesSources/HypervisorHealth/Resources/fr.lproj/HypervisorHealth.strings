@@ -92,9 +92,6 @@
 /* Class = "NSTextFieldCell"; title = "Disks usage"; ObjectID = "104"; */
 "104.title" = "Utilisation disque";
 
-/* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "126"; */
-"126.title" = "Ce tableau contient les logs de l'hyperviseur";
-
 /* Class = "NSTextFieldCell"; title = "Health preferences"; ObjectID = "136"; */
 "136.title" = "Préférences Santé";
 
@@ -110,12 +107,6 @@
 /* Class = "NSTextFieldCell"; title = "Max log lines:"; ObjectID = "144"; */
 "144.title" = "Nombre max de logs :";
 
-/* Class = "NSTextFieldCell"; title = "Show \"Method\" column:"; ObjectID = "146"; */
-"146.title" = "Affiche la colonne \"Méthode\" :";
-
-/* Class = "NSTextFieldCell"; title = "Show \"File\" column:"; ObjectID = "148"; */
-"148.title" = "Affiche la colonne \"Fichier\" :";
-
 /* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
 "150.title" = "Rafraichissement auto :";
 
@@ -130,4 +121,34 @@
 
 /* Class = "NSTextFieldCell"; title = "Libvirt version:"; ObjectID = "187"; */
 "187.title" = "Libvirt version:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Logs messages"; ObjectID = "209"; */
+"209.headerCell.title" = "Logs messages";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "216"; */
+"216.title" = "Text";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "226"; */
+"226.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Partition name"; ObjectID = "232"; */
+"232.title" = "Partition name";
+
+/* Class = "NSTextFieldCell"; title = "Used: 1000GB"; ObjectID = "234"; */
+"234.title" = "Used: 1000GB";
+
+/* Class = "NSTextFieldCell"; title = "Available: 1000GB"; ObjectID = "236"; */
+"236.title" = "Available: 1000GB";
+
+/* Class = "NSTextFieldCell"; title = "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum."; ObjectID = "244"; */
+"244.title" = "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum.";
+
+/* Class = "NSTextFieldCell"; title = "INFO"; ObjectID = "246"; */
+"246.title" = "INFO";
+
+/* Class = "NSTextFieldCell"; title = "2011-01-01 15:12:56"; ObjectID = "248"; */
+"248.title" = "2011-01-01 15:12:56";
+
+/* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "257"; */
+"257.title" = "This table contains hypervisor's logs.";
 

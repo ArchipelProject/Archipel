@@ -10,20 +10,10 @@
 	<string>Available: </string>
 	<key>Charts</key>
 	<string>Charts</string>
-	<key>Date</key>
-	<string>Date</string>
-	<key>Display the file column in the log table</key>
-	<string>Display the file column in the log table</string>
-	<key>Display the method column in the log table</key>
-	<string>Display the method column in the log table</string>
 	<key>GB</key>
 	<string>GB</string>
-	<key>Level</key>
-	<string>Level</string>
 	<key>Logs</key>
 	<string>Logs</string>
-	<key>Partition name</key>
-	<string>Partition name</string>
 	<key>Set the delay between asking hypervisor statistics</key>
 	<string>Set the delay between asking hypervisor statistics</string>
 	<key>Set the max number of log item to fetch</key>
@@ -32,11 +22,5 @@
 	<string>Set the max number of statistic entries to fetch</string>
 	<key>Used: </key>
 	<string>Used: </string>
-	<key>file</key>
-	<string>file</string>
-	<key>message</key>
-	<string>message</string>
-	<key>method</key>
-	<string>method</string>
 </dict>
 </plist>

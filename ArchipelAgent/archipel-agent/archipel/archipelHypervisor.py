@@ -183,7 +183,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
-        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook)
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
 
     def update_presence(self, origin=None, user_info=None, parameters=None):
@@ -830,7 +830,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             managed_vm_uuids = []
             not_managed_vm_uuids = []
             for uuid, vm in self.virtualmachines.iteritems():
-                n = xmpp.Node("item", attrs={"managed": "True"})
+                n = xmpp.Node("item", attrs={"managed": "True", "name": vm.name})
                 n.addData(vm.jid.getStripped())
                 managed_vm_uuids.append(vm.jid.getNode())
                 nodes.append(n)

@@ -50,6 +50,10 @@
 	<string>OOM Killer cannot kill this virtual machine.</string>
 	<key>Off</key>
 	<string>Off</string>
+	<key>Park</key>
+	<string>Park</string>
+	<key>Park virtual machine?</key>
+	<string>Park virtual machine?</string>
 	<key>Pause</key>
 	<string>Pause</string>
 	<key>Pause / Resume</key>
@@ -82,6 +86,8 @@
 	<string>Unplug %@?</string>
 	<key>Virtual machine has been destroyed.</key>
 	<string>Virtual machine has been destroyed.</string>
+	<key>Virtual machine is parking.</key>
+	<string>Virtual machine is parking.</string>
 	<key>Virtual machine is paused.</key>
 	<string>Virtual machine is paused.</string>
 	<key>Virtual machine is rebooting.</key>
