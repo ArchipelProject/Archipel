@@ -250,8 +250,10 @@ class TNVMParking (TNArchipelPlugin):
             if resp.getType() == "result":
                 self.entity.soft_free(vm_jid)
                 self.entity.push_change("vmparking", "parked")
+                self.entity.log.info("VMPARKING: successfully parked %s" % str(vm_jid))
             else:
                 self.entity.push_change("vmparking", "cannot-park", content_node=resp)
+                self.entity.log.error("VMPARKING: cannot park: %s" % str(resp))
 
         vmparkednode = xmpp.Node(tag="virtualmachine", attrs={"parker": parker_jid.getStripped(), "date": datetime.datetime.now()})
         vmparkednode.addChild(node=domain)
@@ -284,8 +286,10 @@ class TNVMParking (TNArchipelPlugin):
                 vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
                 vm_thread.start()
                 self.entity.push_change("vmparking", "unparked")
+                self.entity.log.info("VMPARKING: successfully unparked %s" % str(vmjid))
             else:
                 self.entity.push_change("vmparking", "cannot-unpark", content_node=resp)
+                self.entity.log.error("VMPARKING: cannot unpark: %s" % str(resp))
         self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
 
     def delete(self, identifier):
@@ -309,8 +313,10 @@ class TNVMParking (TNArchipelPlugin):
                     shutil.rmtree(vmfolder)
                 self.entity.get_plugin("xmppserver").users_unregister([vmjid])
                 self.entity.push_change("vmparking", "deleted")
+                self.entity.log.info("VMPARKING: successfully deleted %s from parking" % str(vmjid))
             else:
                 self.entity.push_change("vmparking", "cannot-delete", content_node=resp)
+                self.entity.log.error("VMPARKING: cannot delete: %s" % str(resp))
         self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
 
     def updatexml(self, identifier, domain):
