@@ -167,6 +167,23 @@ def create_pubsub(xmppclient, pubsubserver, nodename, configuration):
     pubsubNode.configure(configuration, wait=True)
     success("pubsub node %s created" % nodename)
 
+def configure_pubsub(xmppclient, pubsubserver, nodename, key, value):
+    """
+    Configure a specific token for the pubsub
+    @type xmppclient: xmpp.Client
+    @param xmppclient: a connected/authenticated xmpp client
+    @type pubsub: String
+    @param pubsub: pubsub server.
+    @type nodename: String
+    @param nodename: the name of the node to create
+    @type key: string
+    @param key: the config token name
+    @type value: string
+    @param value: the value
+    """
+    pubsubNode = get_pubsub(xmppclient, pubsubserver, nodename, wait=True)
+    return pubsubNode.configure({key: value}, wait=True)
+
 def delete_pubsub(xmppclient, pubsubserver, nodename):
     """
     Delete a pubsub node
