@@ -1039,9 +1039,11 @@ class TNArchipelEntity (object):
         """
         This method is invoked when a ARCHIPEL_NS_PERMISSIONS IQ is received.
         It understands IQ of type:
-            - list
             - get
+            - getown
+            - list
             - set
+            - setown
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
