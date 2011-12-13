@@ -53,6 +53,7 @@ class TNVMParking (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.pubsub_vmparking = None;
+        self.inhibit_next_general_push = None
 
         # creates permissions
         self.entity.permission_center.create_permission("vmparking_park", "Authorizes user to park a virtual machines", False)
@@ -166,6 +167,10 @@ class TNVMParking (TNArchipelPlugin):
         @param event: the push event
         """
         self.entity.log.debug("VMPARKING: received pubsub event")
+        if not self.inhibit_next_general_push:
+            self.entity.push_change("vmparking", "external-update")
+        self.inhibit_next_general_push = False
+
 
 
     ### Utilities
@@ -193,9 +198,8 @@ class TNVMParking (TNArchipelPlugin):
         @rtype: Boolean
         @return: True is vm is already in park
         """
-        for n in self.pubsub_vmparking.get_items():
-            if n.getTag("virtualmachine").getTag("domain").getTag("uuid").getData().lower() == uuid.lower():
-                return True
+        if self.get_ticket_from_uuid(uuid):
+            return True
         return False
 
 
@@ -249,13 +253,17 @@ class TNVMParking (TNArchipelPlugin):
         def publish_success(resp):
             if resp.getType() == "result":
                 self.entity.soft_free(vm_jid)
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "parked")
                 self.entity.log.info("VMPARKING: successfully parked %s" % str(vm_jid))
             else:
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "cannot-park", content_node=resp)
                 self.entity.log.error("VMPARKING: cannot park: %s" % str(resp))
 
-        vmparkednode = xmpp.Node(tag="virtualmachine", attrs={"parker": parker_jid.getStripped(), "date": datetime.datetime.now()})
+        vmparkednode = xmpp.Node(tag="virtualmachine", attrs={  "parker": parker_jid.getStripped(),
+                                                                "date": datetime.datetime.now(),
+                                                                "origin": self.entity.jid.getStripped().lower()})
         vmparkednode.addChild(node=domain)
         self.pubsub_vmparking.add_item(vmparkednode, callback=publish_success)
         self.entity.log.info("VMPARKING: virtual machine %s as been parked" % uuid)
@@ -285,9 +293,11 @@ class TNVMParking (TNArchipelPlugin):
                 vm = vm_thread.get_instance()
                 vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
                 vm_thread.start()
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "unparked")
                 self.entity.log.info("VMPARKING: successfully unparked %s" % str(vmjid))
             else:
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "cannot-unpark", content_node=resp)
                 self.entity.log.error("VMPARKING: cannot unpark: %s" % str(resp))
         self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
@@ -312,9 +322,11 @@ class TNVMParking (TNArchipelPlugin):
                 if os.path.exists(vmfolder):
                     shutil.rmtree(vmfolder)
                 self.entity.get_plugin("xmppserver").users_unregister([vmjid])
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "deleted")
                 self.entity.log.info("VMPARKING: successfully deleted %s from parking" % str(vmjid))
             else:
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "cannot-delete", content_node=resp)
                 self.entity.log.error("VMPARKING: cannot delete: %s" % str(resp))
         self.pubsub_vmparking.remove_item(ticket, callback=retract_success)
@@ -357,10 +369,12 @@ class TNVMParking (TNArchipelPlugin):
 
         def publish_success(resp):
             if resp.getType() == "result":
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "updated")
                 self.pubsub_vmparking.remove_item(ticket)
                 self.entity.log.info("VMPARKING: virtual machine %s as been updated" % new_uuid)
             else:
+                self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "cannot-update", content_node=resp)
                 self.entity.log.error("VMPARKING: unable to update item for virtual machine %s: %s" % (new_uuid, resp))
         self.pubsub_vmparking.add_item(vm_item.getTag("virtualmachine"), callback=publish_success)
