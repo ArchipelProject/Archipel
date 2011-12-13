@@ -254,4 +254,15 @@ def send_raw_acp(xmppclient, dest_jid, raw_acp_string, debug=False):
     resp = xmppclient.SendAndWaitForResponse(acp)
     return resp
 
+def xml_print(xml_node):
+    """
+    This function will prettify an XML node
+    @type xml_node: xmpp.Node
+    @param xml_node: the node to format
+    @rtype: String
+    @return: a pretiffied XML string
+    """
+    import xml.dom.minidom
+    elem = xml.dom.minidom.parseString(str(xml_node))
+    return elem.toprettyxml(indent="    ").replace("<?xml version=\"1.0\" ?>\n", "")
 
