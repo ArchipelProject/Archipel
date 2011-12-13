@@ -91,7 +91,7 @@ def content(xmppclient, pubsubserver, show_domain=False):
         print "Date     : %s" % item.getTag("virtualmachine").getAttr("date")
         if show_domain:
             print "XML  : "
-            print "%s" % str(item.getTag("virtualmachine").getTag("domain")).replace("><", ">\n<")
+            print "%s" % str(item.getTag("virtualmachine").getTag("domain")).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', "")
         print ""
 
 def delete_item(xmppclient, pubsubserver, pid):

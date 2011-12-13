@@ -25,11 +25,16 @@ import archipelcore.pubsub
 from archipelcore.scriptutils import *
 
 
-def send_raw(xmppclient, to, acp):
+def send_raw(xmppclient, to, acp, pretty):
     """
     Send the given stanza to given entity using given xmppclient
     """
-    print send_raw_acp(xmppclient, to, acp)
+    out = send_raw_acp(xmppclient, to, acp)
+    if pretty:
+        success("Answer received: ")
+        print xml_print(out)
+    else:
+        print out
 
 
 if __name__ == "__main__":
@@ -48,6 +53,10 @@ if __name__ == "__main__":
     parser.add_option("-r", "--raw",
                         dest="send_raw",
                         help="the raw acp string to send. You do not need to set the 'from', 'to', and 'id' information")
+    parser.add_option("-P", "--nopretty",
+                        dest="nopretty_output",
+                        action="store_false",
+                        default=True)
 
     options, args = parser.parse_args()
 
@@ -58,6 +67,6 @@ if __name__ == "__main__":
     else:
         data = "".join(sys.stdin.readlines())
         try:
-            send_raw(xmppclient, xmpp.JID(options.dest_jid), data)
+            send_raw(xmppclient, xmpp.JID(options.dest_jid), data, options.nopretty_output)
         except Exception as ex:
             error("the data from stdin are not well formed")
