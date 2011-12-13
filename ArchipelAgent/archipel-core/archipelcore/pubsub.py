@@ -397,10 +397,13 @@ class TNPubSubNode:
         """
         Trigger the callback for events.
         """
-        self.retrieve_items()
-        node = event.getTag("event").getTag("items").getAttr("node")
-        if node == self.nodename and self.subscriber_callback and event.getTo().getStripped() == self.subscriber_jid.getStripped():
-            self.subscriber_callback(event)
+        def on_retrieve(resp):
+            if resp.getType() == "result":
+                node = event.getTag("event").getTag("items").getAttr("node")
+                if node == self.nodename and self.subscriber_callback and event.getTo().getStripped() == self.subscriber_jid.getStripped():
+                    self.subscriber_callback(event)
+
+        self.retrieve_items(callback=on_retrieve)
 
     def unsubscribe(self, jid, subID, callback=None, wait=False):
         """
