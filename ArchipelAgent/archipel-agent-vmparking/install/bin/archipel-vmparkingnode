@@ -35,7 +35,7 @@ def create(xmppclient, pubsubserver):
             archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 99,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1000,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
@@ -43,6 +43,7 @@ def create(xmppclient, pubsubserver):
             archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
     }
     create_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING, config)
+    configure_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING, archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS, 1000)
 
 
 def delete(xmppclient, pubsubserver):
@@ -78,6 +79,52 @@ def set_affiliation(xmppclient, account, affiliation, pubsubserver):
     else:
         error("Unable to set affiliation %s to account %s" % (affiliation, account))
 
+def content(xmppclient, pubsubserver, show_domain=False):
+    """
+    List the content of the parking
+    """
+    pubSubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_VMPARKING)
+    for item in  pubSubNode.get_items():
+        print "ID       : %s" % item.getAttr("id")
+        print "Name     : %s" % item.getTag("virtualmachine").getTag("domain").getTag("name").getData()
+        print "Parker   : %s" % item.getTag("virtualmachine").getAttr("parker")
+        print "Date     : %s" % item.getTag("virtualmachine").getAttr("date")
+        if show_domain:
+            print "XML  : "
+            print "%s" % str(item.getTag("virtualmachine").getTag("domain")).replace("><", ">\n<")
+        print ""
+
+def delete_item(xmppclient, pubsubserver, pid):
+    """
+    delete a parked VM
+    """
+    if retract_item(xmppclient, pubsubserver, NODENAME_VMPARKING, pid, wait=True):
+        success("VM Parking with ID %s has been removed" % pid)
+    else:
+        error("Unable to remove VM with parking ticket %s" % pid)
+
+
+def park(xmppclient, pubsubserver, name, uuid, xml_string):
+    """
+    Directly park a virtual machine
+    """
+    import random
+    import string
+    import datetime
+    xml = xmpp.simplexml.NodeBuilder(data=xml_string).getDom()
+    if xml.getTag("uuid"):
+        xml.delChild("uuid")
+    xml.addChild("uuid").setData(uuid)
+    if xml.getTag("name"):
+        xml.delChild("name")
+    xml.addChild("name").setData(name)
+    if xml.getTag("description"):
+        xml.delChild("description")
+    password = ''.join([random.choice(string.letters + string.digits) for i in range(32)])
+    xml.addChild("description").setData("%s@%s::::%s" % (uuid, xmppclient.Server, password))
+    vmparkednode = xmpp.Node(tag="virtualmachine", attrs={"parker": "from@script", "date": datetime.datetime.now()})
+    vmparkednode.addChild(node=xml)
+    publish_item(xmppclient, pubsubserver, NODENAME_VMPARKING, vmparkednode, wait=True)
 
 
 if __name__ == "__main__":
@@ -111,10 +158,36 @@ if __name__ == "__main__":
                         dest="unauth",
                         help="unauthorize an hypervisor to handle the parking",
                         metavar="user@domain")
+    parser.add_option("--park",
+                        action="store_true",
+                        help="directly park a XML description")
+    parser.add_option("--uuid",
+                        dest="park_uuid",
+                        help="UUID of a the VM to park",
+                        metavar="uuid")
+    parser.add_option("--xml",
+                        dest="park_xml_string",
+                        help="the libvirt description",
+                        metavar="libvirt desc")
+    parser.add_option("--name",
+                        dest="park_name",
+                        help="the name of the virtual machine",
+                        metavar="a name")
     parser.add_option("-l", "--list",
                         action="store_true",
                         dest="list",
                         help="List authorized accounts")
+    parser.add_option("-L", "--List",
+                        action="store_true",
+                        dest="listContent",
+                        help="List parked information")
+    parser.add_option("-r", "--remove",
+                        dest="delete_item",
+                        help="Delete a parked VM")
+    parser.add_option("-v", "--verbose",
+                        action="store_true",
+                        dest="verbose",
+                        help="verbose mode")
 
     options, args = parser.parse_args()
 
@@ -130,3 +203,11 @@ if __name__ == "__main__":
         create(xmppclient, options.pubsubserver)
     elif options.delete:
         delete(xmppclient, options.pubsubserver)
+    elif options.listContent:
+        content(xmppclient, options.pubsubserver, options.verbose)
+    elif options.delete_item:
+        delete_item(xmppclient, options.pubsubserver, options.delete_item)
+    elif options.park:
+        if not options.park_uuid or not options.park_xml_string or not options.park_name:
+            error("You must set the UUID and the XML string if you want to park directly a virtual machine")
+        park(xmppclient, options.pubsubserver, options.park_name, options.park_uuid, options.park_xml_string)
