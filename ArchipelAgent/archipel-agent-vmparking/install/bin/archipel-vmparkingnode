@@ -122,7 +122,7 @@ def park(xmppclient, pubsubserver, name, uuid, xml_string):
         xml.delChild("description")
     password = ''.join([random.choice(string.letters + string.digits) for i in range(32)])
     xml.addChild("description").setData("%s@%s::::%s" % (uuid, xmppclient.Server, password))
-    vmparkednode = xmpp.Node(tag="virtualmachine", attrs={"parker": "from@script", "date": datetime.datetime.now()})
+    vmparkednode = xmpp.Node(tag="virtualmachine", attrs={"parker": "from@script", "date": datetime.datetime.now(), "origin": "from@script"})
     vmparkednode.addChild(node=xml)
     publish_item(xmppclient, pubsubserver, NODENAME_VMPARKING, vmparkednode, wait=True)
 
