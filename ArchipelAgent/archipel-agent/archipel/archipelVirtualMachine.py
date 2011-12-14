@@ -867,6 +867,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Then ask for the destination_jid hypervisor what is his
         libvirt uri.
         """
+        ### Sanity checks
         if not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             raise Exception('Archipel only supports Live migration for QEMU/KVM domains at the moment.')
         if self.is_migrating:
@@ -877,9 +878,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             raise Exception('Virtual machine must be running.')
         if self.hypervisor.jid.getStripped() == destination_jid.getStripped():
             raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
-        self.is_migrating               = True
 
-        migration_destination_jid       = destination_jid
+        self.is_migrating = True
+        migration_destination_jid = destination_jid
 
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=migration_destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "uri"})
@@ -890,9 +891,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Once received the remote hypervisor URI, start libvirt migration in a thread.
         """
         try:
-            remote_hypervisor_uri = resp.getTag("query").getTag("uri").getCDATA()
-        except:
+            remote_hypervisor_uri = resp.getTag("query").getTag("uri").getData()
+            self.log.info("MIGRATION: remote libvirt URI is %s" % remote_hypervisor_uri)
+        except Exception as ex:
+            self.log.error("MIGRATION: unable to get remote libvirt URI: %s" % str(ex))
             self.is_migrating = False
+
         self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
         thread.start_new_thread(self.migrate_step3, (remote_hypervisor_uri, ))
 
@@ -903,12 +907,13 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
         flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
         try:
+            self.log.info("MIGRATION: starting to migrate domain %s to %s" % (self.domain.name(), remote_hypervisor_uri))
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
         except Exception as ex:
             self.is_migrating = False
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
-            self.log.error("Can't migrate because of : %s" % str(ex))
+            self.log.error("Can't migrate to %s because of : %s" % (remote_hypervisor_uri, str(ex)))
 
     def free(self):
         """

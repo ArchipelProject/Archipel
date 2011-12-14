@@ -158,6 +158,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         # hooks
         self.create_hook("HOOK_HYPERVISOR_ALLOC")
+        self.create_hook("HOOK_HYPERVISOR_SOFT_ALLOC")
         self.create_hook("HOOK_HYPERVISOR_FREE")
         self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE")
         self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE")
@@ -396,6 +397,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 strdesc = dom.XMLDesc(0)
                 desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
+                if desc.getTag("uuid").getData() in self.virtualmachines:
+                    self.log.error("MIGRATION: soft allocation canceled. virtual machine is already here. This is mostly due a failed migration.")
+                    return
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
                 vmname  = desc.getTag(name="name").getCDATA()
@@ -556,6 +560,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         self.update_presence()
         self.log.info("Migrated XMPP VM is ready.")
+        self.perform_hooks("HOOK_HYPERVISOR_SOFT_ALLOC", vm)
         if start:
             vm_thread.start()
             return vm
