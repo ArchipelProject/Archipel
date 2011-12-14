@@ -1415,8 +1415,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)migrate
 {
-    var index                   = [[tableHypervisors selectedRowIndexes] firstIndex],
-        destinationHypervisor   = [_datasourceHypervisors objectAtIndex:index];
+    if ([tableHypervisors numberOfSelectedRows] != 1)
+        return;
+
+    var destinationHypervisor   = [_datasourceHypervisors objectAtIndex:[tableHypervisors selectedRow]];
 
     if ([destinationHypervisor fullJID] == _currentHypervisorJID)
     {
