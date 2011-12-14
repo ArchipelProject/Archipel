@@ -385,12 +385,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
             try:
-                strdesc = dom.XMLDesc(0)
-                desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
-                vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
-                self.log.info("MIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmjid)
-                self.soft_free(xmpp.JID(vmjid))
-                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmjid)
+                vmuuid = dom.UUIDString()
+                self.log.info("MIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmuuid)
+                self.soft_free(vmuuid)
+                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmuuid)
             except Exception as ex:
                 self.log.error("MIGRATION: Can't free softly this virtual machine: %s" % str(ex))
         elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
@@ -599,19 +597,23 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.push_change("hypervisor", "free")
         self.update_presence()
 
-    def soft_free(self, jid):
+    def soft_free(self, identifier):
         """
         Perform light free (no removing of account, no unsubscription).
-        @type jid: xmpp.JID
-        @param jid: the JID of the migrated VM to free
+        @type identifier: xmpp.JID or UUID
+        @param jid: the JID or the UUID of the migrated VM to free
         """
-        uuid    = jid.getNode()
-        vm      = self.virtualmachines[uuid]
+        uuid = ""
+        if isinstance(identifier, xmpp.JID):
+            uuid = jid.getNode()
+        else:
+            uuid = identifier
+        vm = self.virtualmachines[uuid]
 
         vm.undefine_and_disconnect()
 
         self.log.info("Unregistering the VM from hypervisor's database.")
-        self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
+        self.database.execute("delete from virtualmachines where jid='%s'" % vm.jid.getStripped())
         self.database.commit()
         del self.virtualmachines[uuid]
         self.update_presence()

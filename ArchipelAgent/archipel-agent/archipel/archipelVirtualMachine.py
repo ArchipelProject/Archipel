@@ -815,8 +815,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Undefine the domain and disconnect from XMPP.
         """
         self.remove_libvirt_handler()
-        if self.domain:
+        try:
+            self.log.info("undefining virtual machine.")
             self.domain.undefine()
+        except:
+            self.log.info("Virtual machine is already undefined.")
+            pass
         self.definition = None
         self.unlock()
         self.disconnect_libvirt()
