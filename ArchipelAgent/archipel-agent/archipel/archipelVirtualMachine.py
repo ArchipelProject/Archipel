@@ -157,6 +157,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.create_hook("HOOK_VM_FREE")
         self.create_hook("HOOK_VM_CRASH")
         self.create_hook("HOOK_XMPP_CONNECT")
+        self.create_hook("HOOK_VM_MIGRATED")
 
         # actions on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.connect_domain)
@@ -814,7 +815,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Undefine the domain and disconnect from XMPP.
         """
         self.remove_libvirt_handler()
-        self.domain.undefine()
+        if self.domain:
+            self.domain.undefine()
         self.definition = None
         self.unlock()
         self.disconnect_libvirt()
@@ -883,7 +885,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         migration_destination_jid = destination_jid
 
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=migration_destination_jid)
-        iq.getTag("query").addChild(name="archipel", attrs={"action": "uri"})
+        iq.getTag("query").addChild(name="archipel", attrs={"action": "migrationinfo"})
         self.xmppclient.SendAndCallForResponse(iq, self.migrate_step2)
 
     def migrate_step2(self, conn, resp):
@@ -891,8 +893,19 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Once received the remote hypervisor URI, start libvirt migration in a thread.
         """
         try:
-            remote_hypervisor_uri = resp.getTag("query").getTag("uri").getData()
-            self.log.info("MIGRATION: remote libvirt URI is %s" % remote_hypervisor_uri)
+            remote_hypervisor_uri = resp.getTag("query").getTag("migration").getAttr("libvirt_uri")
+            shared_folder = "%s/%s" % (resp.getTag("query").getTag("migration").getAttr("base_folder"), self.uuid)
+
+            self.log.info("MIGRATION: remote info: libvirt URI is %s" % remote_hypervisor_uri)
+            self.log.info("MIGRATION: remote info: shared folder is %s" % shared_folder)
+
+            if not os.path.exists(shared_folder):
+                self.is_migrating = False
+                self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migration aborted")
+                self.shout("migration", "I can't migrate because remote hypervisor has no folder %s" % shared_folder)
+                self.log.error("MIGRATION: migration aborted because remote hypervisor has no folder %s" % shared_folder)
+                return
+
         except Exception as ex:
             self.log.error("MIGRATION: unable to get remote libvirt URI: %s" % str(ex))
             self.is_migrating = False
@@ -907,8 +920,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
         flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
         try:
-            self.log.info("MIGRATION: starting to migrate domain %s to %s" % (self.domain.name(), remote_hypervisor_uri))
+            self.log.info("MIGRATION: starting to migrate domain %s" % remote_hypervisor_uri)
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
+            self.log.info("MIGRATION: migration to %s is a SUCCESS" % remote_hypervisor_uri)
+            self.perform_hooks("HOOK_VM_MIGRATED")
         except Exception as ex:
             self.is_migrating = False
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")

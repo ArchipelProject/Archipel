@@ -51,12 +51,13 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE             = -9002
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER           = -9003
 ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE            = -9004
 ARCHIPEL_ERROR_CODE_HYPERVISOR_IP               = -9005
-ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI      = -9006
-ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION  = -9007
-ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION   = -9008
+ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO   = -9006
+ARCHIPEL_ERROR_CODE_HYPERVISOR_SOFT_ALLOC       = -9007
+ARCHIPEL_ERROR_CODE_HYPERVISOR_SOFT_FREE        = -9008
 ARCHIPEL_ERROR_CODE_HYPERVISOR_CAPABILITIES     = -9009
 ARCHIPEL_ERROR_CODE_HYPERVISOR_MANAGE           = -9010
 ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE         = -9011
+ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO   = -9012
 
 # Namespace
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
@@ -240,11 +241,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                                 "method": self.message_capabilities,
                                 "permissions": ["capabilities"],
                                 "description": "Get my libvirt capabilities" },
-                            {   "commands" : ["libvirt uri"],
+                            {   "commands" : ["libvirt uri", "migration info"],
                                 "parameters": [],
-                                "method": self.message_libvirt_uri,
-                                "permissions": ["uri"],
-                                "description": "Get my libvirt URI" },
+                                "method": self.message_migration_info,
+                                "permissions": ["migrationinfo"],
+                                "description": "Get my migration informations" },
                             {   "commands" : ["ip"],
                                 "parameters": [],
                                 "method": self.message_ip,
@@ -284,7 +285,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.permission_center.create_permission("rostervm", "Authorizes users to access the hypervisor's roster", False)
         self.permission_center.create_permission("clone", "Authorizes users to clone virtual machines", False)
         self.permission_center.create_permission("ip", "Authorizes users to get hypervisor's IP address", False)
-        self.permission_center.create_permission("uri", "Authorizes users to get the hypervisor's libvirt URI", False)
+        self.permission_center.create_permission("migrationinfo", "Authorizes users to get the migration informations", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False)
         self.permission_center.create_permission("manage", "Authorizes users make Archipel able to manage external virtual machines", False)
         self.permission_center.create_permission("unmanage", "Authorizes users to make Archipel able to unmanage virtual machines", False)
@@ -392,7 +393,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmjid)
             except Exception as ex:
                 self.log.error("MIGRATION: Can't free softly this virtual machine: %s" % str(ex))
-
         elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
@@ -436,7 +436,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         # temp fix to authorize migration
         # We should find a way to authorize
         # hypervisors to ask uri with another way
-        if not action in ('uri'):
+        if not action in ('migrationinfo'):
             self.check_perm(conn, iq, action, -1)
 
         if action == "alloc":
@@ -449,8 +449,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = self.iq_clone(iq)
         elif action == "ip":
             reply = self.iq_ip(iq)
-        elif action == "uri":
-            reply = self.iq_libvirt_uri(iq)
+        elif action == "migrationinfo":
+            reply = self.iq_migration_info(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
         elif action == "manage":
@@ -656,14 +656,15 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
         return capp
 
-    def migration_libvirt_uri(self):
+    def migration_info(self):
         """
-        Return the libvirt URI
+        Return the migration information
         """
+        uri = self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
         if self.configuration.has_option("GLOBAL", "migration_uri"):
-            return self.configuration.get("GLOBAL", "migration_uri")
-        else:
-            return self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
+            uri = self.configuration.get("GLOBAL", "migration_uri")
+        return {"libvirt_uri": uri,
+                "base_folder": self.configuration.get("VIRTUALMACHINE", "vm_base_path")}
 
 
     ###  Hypervisor IQs
@@ -737,7 +738,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.push_change("hypervisor", "migrate")
             self.shout("virtualmachine", "The virtual machine %s has been migrated from hypervisor %s" % (vmjid, iq.getFrom()))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SOFT_ALLOC)
         return reply
 
     def iq_free(self, iq):
@@ -783,14 +784,14 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     def iq_soft_free(self, iq):
         """
-        Perform light free for virtual machine migration.
+        Perform light free.
         """
         try:
             reply = iq.buildReply("result")
             vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
             self.soft_free(vmjid)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SOFT_FREE)
         return reply
 
     def iq_clone(self, iq):
@@ -916,7 +917,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
-    def iq_libvirt_uri(self, iq):
+    def iq_migration_info(self, iq):
         """
         Send the hypervisor IP address.
         @type iq: xmpp.Protocol.Iq
@@ -925,14 +926,14 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready-to-send IQ containing the results
         """
         try:
-            network_libvirt_uri = self.migration_libvirt_uri()
+            info = self.migration_info()
             reply = iq.buildReply("result")
-            reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri)
+            reply.getTag("query").addChild(name="migration", attrs=info)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO)
         return reply
 
-    def message_libvirt_uri(self, msg):
+    def message_migration_info(self, msg):
         """
         Process the libvirt URI message request.
         @type msg: xmpp.Protocol.Message
@@ -941,7 +942,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready to send Message containing the result of the action
         """
         try:
-            return "Sure, my libvirt URI is %s" % self.migration_libvirt_uri()
+            return "Sure, my libvirt URI is %s" % self.migration_info()["libvirt_uri"]
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
