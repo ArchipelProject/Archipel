@@ -586,7 +586,10 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
             [buttonNetworkFilter selectItemWithTitle:@"None"];
     }
     else
+    {
+        [buttonNetworkFilter addItemWithTitle:@"None"];
         [_delegate handleIqErrorFromStanza:aStanza];
+    }
 }
 
 @end

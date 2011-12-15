@@ -77,6 +77,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
 
             if auto_group_filter in ("all", "virtualmachines"):
                 self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
+                self.entity.register_hook("HOOK_HYPERVISOR_SOFT_ALLOC", method=self.handle_autogroup_for_entity)
                 self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
         self.user_page_size = 50

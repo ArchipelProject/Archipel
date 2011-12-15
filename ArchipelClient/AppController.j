@@ -1614,7 +1614,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults
 */
-- (void)splitView:(CPSlipView)aSplitView constrainMaxCoordinate:(int)position ofSubviewAt:(int)index
+- (float)splitView:(CPSlipView)aSplitView constrainMaxCoordinate:(int)position ofSubviewAt:(int)index
 {
     if ((aSplitView === splitViewTagsContents) && (index == 0))
         return (_tagsVisible) ? 33 : 0;
@@ -1624,7 +1624,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 /*! Delegate of splitViewTagsContents and splitViewMain.
 */
-- (void)splitView:(CPSlipView)aSplitView constrainMinCoordinate:(int)position ofSubviewAt:(int)index
+- (float)splitView:(CPSlipView)aSplitView constrainMinCoordinate:(int)position ofSubviewAt:(int)index
 {
     if ((aSplitView === splitViewTagsContents) && (index == 0))
         return (_tagsVisible) ? 33 : 0;
