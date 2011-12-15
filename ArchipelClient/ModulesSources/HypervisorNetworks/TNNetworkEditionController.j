@@ -309,6 +309,12 @@
 */
 - (void)save
 {
+    if (![fieldNetworkName stringValue] || [fieldNetworkName stringValue] == @"")
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid network name", @"You must enter a valid network name")];
+        return;
+    }
+
     [_network setAutostart:([checkBoxAutostart state] == CPOnState) ? YES : NO];
     [_network setName:[fieldNetworkName stringValue]];
 
