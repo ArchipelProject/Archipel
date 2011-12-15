@@ -454,6 +454,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         self.define(user_info)
 
+    def control_create_hook(self, origin=None, user_info=None, arguments=None):
+        """
+        Hook for creating (starting) the vm
+        """
+        self.create()
+
 
     ### Process IQ
 
