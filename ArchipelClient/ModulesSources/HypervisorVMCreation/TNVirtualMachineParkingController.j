@@ -145,6 +145,26 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 
 
 #pragma mark -
+#pragma mark Utilities
+
+/*! unpark given virtual machines but not start them
+    @param someVirtualMachines CPArray of virtual machine to park
+*/
+- (void)unparkVirtualMachines:(CPArray)someVirtualMachines
+{
+    [self unparkVirtualMachines:someVirtualMachines start:NO];
+}
+
+/*! unpark given virtual machines and start them
+    @param someVirtualMachines CPArray of virtual machine to park
+*/
+- (void)unparkAndStartVirtualMachines:(CPArray)someVirtualMachines
+{
+    [self unparkVirtualMachines:someVirtualMachines start:YES];
+}
+
+
+#pragma mark -
 #pragma mark XMPP Controls
 
 /*! Get list of parked virtual machines
@@ -235,7 +255,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 /*! unpark some virtual machines
     @param someVirtualMachines CPArray of virtual machine to unpark
 */
-- (void)unparkVirtualMachines:(CPArray)someVirtualMachines
+- (void)unparkVirtualMachines:(CPArray)someVirtualMachines start:(BOOL)shouldStart
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -246,7 +266,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm parkingID]}];
+        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm parkingID], "start": shouldStart ? @"yes" : @"no"}];
         [stanza up];
     }
 
