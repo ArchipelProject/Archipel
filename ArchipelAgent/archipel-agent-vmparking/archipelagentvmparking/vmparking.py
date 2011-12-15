@@ -231,11 +231,13 @@ class TNVMParking (TNArchipelPlugin):
         ret.sort(sorting)
         return ret
 
-    def park(self, uuid, parker_jid):
+    def park(self, uuid, parker_jid, force=False):
         """
         Park a virtual machine
         @type uuid: String
         @param uuid: the UUID of the virtual machine to park
+        @type force: Boolean
+        @param force: if True, the machine will be destroyed if running
         """
         if self.is_vm_already_parked(uuid):
             raise Exception("VM with UUID %s is already parked" % uuid)
@@ -246,7 +248,11 @@ class TNVMParking (TNArchipelPlugin):
         if not vm.domain:
             raise Exception("VM with UUID %s cannot be parked because it is not defined" % uuid)
         if not vm.info()["state"] == 5:
-            raise Exception("VM with UUID %s cannot be parked because it is running" % uuid)
+            if not force:
+                raise Exception("VM with UUID %s cannot be parked because it is running" % uuid)
+            else:
+                vm.destroy()
+
         domain = vm.xmldesc(mask_description=False)
         vm_jid = xmpp.JID(domain.getTag("description").getData().split("::::")[0])
 
@@ -476,7 +482,10 @@ class TNVMParking (TNArchipelPlugin):
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
                 vm_uuid = item.getAttr("uuid")
-                self.park(vm_uuid, iq.getFrom())
+                force_destroy = False
+                if item.getAttr("force") and item.getAttr("force").lower() in ("yes", "y", "true", "1"):
+                    force_destroy = True
+                self.park(vm_uuid, iq.getFrom(), force=force_destroy)
             reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_PARK)
