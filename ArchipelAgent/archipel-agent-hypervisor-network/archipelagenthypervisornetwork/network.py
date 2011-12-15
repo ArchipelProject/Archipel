@@ -58,7 +58,9 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.folder_nwfilters = self.configuration.get("NETWORKS", "libvirt_nw_filters_path")
         if not os.path.exists(self.folder_nwfilters):
-            raise Exception("%s is not found. You may need to modify archipel.conf file" % self.folder_nwfilters)
+            self.folder_nwfilters = None
+            self.entity.log.warning("NETWORK: unable to find network filter folder at path %s. agent will not offer any network filter")
+
         # permissions
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
@@ -167,7 +169,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         except:
             libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
         libvirt_network.create()
-        self.entity.log.info("Virtual network %s created." % identifier)
+        self.entity.log.info("NETWORK: Virtual network %s created." % identifier)
         self.entity.push_change("network", "created")
 
     def destroy(self, identifier):
@@ -181,7 +183,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         except:
             libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
         libvirt_network.destroy()
-        self.entity.log.info("virtual network %s destroyed" % identifier)
+        self.entity.log.info("NETWORK: virtual network %s destroyed" % identifier)
         self.entity.push_change("network", "destroyed")
 
     def define(self, definition):
@@ -191,7 +193,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @param definition: the XML definition to use
         """
         self.entity.libvirt_connection.networkDefineXML(str(definition))
-        self.entity.log.info("Virtual network XML is defined.")
+        self.entity.log.info("NETWORK: Virtual network XML is defined.")
         self.entity.push_change("network", "defined")
 
     def undefine(self, identifier):
@@ -205,7 +207,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         except:
             libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
         libvirt_network.undefine()
-        self.entity.log.info("Virtual network %s is undefined." % identifier)
+        self.entity.log.info("NETWORK: Virtual network %s is undefined." % identifier)
         self.entity.push_change("network", "undefined")
 
     def getnics(self):
@@ -227,6 +229,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @return: list containing network cards names
         """
         ret = []
+        if not self.folder_nwfilters:
+            return ret
         for nwfilter in os.listdir(self.folder_nwfilters):
             ret.append(os.path.splitext(nwfilter)[0])
         return ret
