@@ -25,6 +25,7 @@
 @import "TNLibvirtDeviceGraphic.j"
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
+@import "TNLibvirtDeviceHostDev.j"
 
 
 /*! @ingroup virtualmachinedefinition
@@ -32,11 +33,12 @@
 */
 @implementation TNLibvirtDevices : TNLibvirtBase
 {
+    CPArray     _characters     @accessors(property=characters);
     CPArray     _disks          @accessors(property=disks);
     CPArray     _graphics       @accessors(property=graphics);
+    CPArray     _hostdevs       @accessors(property=hostdevs);
     CPArray     _inputs         @accessors(property=inputs);
     CPArray     _interfaces     @accessors(property=interfaces);
-    CPArray     _characters     @accessors(property=characters);
     CPString    _emulator       @accessors(property=emulator);
 }
 
@@ -48,11 +50,12 @@
 {
     if (self = [super init])
     {
+        _characters = [CPArray array];
         _disks      = [CPArray array];
         _graphics   = [CPArray array];
+        _hostdevs   = [CPArray array];
         _inputs     = [CPArray array];
         _interfaces = [CPArray array];
-        _characters = [CPArray array];
     }
 
     return self;
@@ -69,11 +72,12 @@
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid devices"];
 
         _emulator   = [[aNode firstChildWithName:@"emulator"] text];
+        _characters = [CPArray array];
         _disks      = [CPArray array];
         _graphics   = [CPArray array];
         _inputs     = [CPArray array];
         _interfaces = [CPArray array];
-        _characters = [CPArray array];
+        _hostdevs   = [CPArray array];
 
         var diskNodes = [aNode ownChildrenWithName:@"disk"];
         for (var i = 0; i < [diskNodes count]; i++)
@@ -106,6 +110,10 @@
         var parallelNodes = [aNode ownChildrenWithName:@"parallel"];
         for (var i = 0; i < [parallelNodes count]; i++)
             [_characters addObject:[[TNLibvirtDeviceCharacter alloc] initWithXMLNode:[parallelNodes objectAtIndex:i]]];
+
+        var hostdevNodes = [aNode ownChildrenWithName:@"hostdev"];
+        for (var i = 0; i < [hostdevNodes count]; i++)
+            [_hostdevs addObject:[[TNLibvirtDeviceHostDev alloc] initWithXMLNode:[hostdevNodes objectAtIndex:i]]];
     }
 
     return self;
@@ -156,6 +164,12 @@
     for (var i = 0; i < [_characters count]; i++)
     {
         [node addNode:[[_characters objectAtIndex:i] XMLNode]];
+        [node up];
+    }
+
+    for (var i = 0; i < [_hostdevs count]; i++)
+    {
+        [node addNode:[[_hostdevs objectAtIndex:i] XMLNode]];
         [node up];
     }
 
