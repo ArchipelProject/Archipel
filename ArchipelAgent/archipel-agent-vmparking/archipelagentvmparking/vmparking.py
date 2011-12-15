@@ -268,11 +268,13 @@ class TNVMParking (TNArchipelPlugin):
         self.pubsub_vmparking.add_item(vmparkednode, callback=publish_success)
         self.entity.log.info("VMPARKING: virtual machine %s as been parked" % uuid)
 
-    def unpark(self, identifier):
+    def unpark(self, identifier, start=False):
         """
         Unpark virtual machine
         @type identifier: String
         @param identifier: the UUID of a VM or the pubsub ID (parking ticket)
+        @type start: Boolean
+        @param start: if True, the virtual machine will start after unparking
         """
         ticket = self.get_ticket_from_uuid(identifier)
         if not ticket:
@@ -292,6 +294,8 @@ class TNVMParking (TNArchipelPlugin):
                 vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False)
                 vm = vm_thread.get_instance()
                 vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
+                if start:
+                    vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.control_create_hook, oneshot=True)
                 vm_thread.start()
                 self.inhibit_next_general_push = True
                 self.entity.push_change("vmparking", "unparked")
@@ -513,7 +517,10 @@ class TNVMParking (TNArchipelPlugin):
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
                 identifier = item.getAttr("identifier")
-                self.unpark(identifier)
+                autostart = False
+                if item.getAttr("start") and item.getAttr("start").lower() in ("yes", "y", "true", "1"):
+                    autostart = True
+                self.unpark(identifier, start=autostart)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UNPARK)
         return reply
