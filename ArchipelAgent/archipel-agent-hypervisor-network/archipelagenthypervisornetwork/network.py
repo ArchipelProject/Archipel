@@ -138,6 +138,26 @@ class TNHypervisorNetworks (TNArchipelPlugin):
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
 
+    ### Utilities
+
+    def get_network_with_identifier(self, identifier):
+        """
+        Return a libvirtNetwork according to the identifier, which can be the name or the UUID
+        @type identifier: String
+        @param identifier: the name or the UUID of the network
+        @rtype: libvirtNetwork
+        @return: the network object with given identifier
+        """
+        try:
+            try:
+                libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+            except:
+                libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
+            return libvirt_network
+        except Exception as ex:
+            self.entity.log.error("NETWORK: Unable to find a network with identifier %s: %s" % (identifier, str(ex)))
+            raise Exception("Unable to find a network with identifier %s" % identifier)
+
 
     ### libvirt controls
 
@@ -164,10 +184,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @type identifier: string
         @param identifier: the identifer of the network to create. It can be its name or UUID
         """
-        try:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
-        except:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        libvirt_network = self.get_network_with_identifier(identifier)
         libvirt_network.create()
         self.entity.log.info("NETWORK: Virtual network %s created." % identifier)
         self.entity.push_change("network", "created")
@@ -178,10 +195,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @type identifier: string
         @param identifier: the identifer of the network to destroy. It can be its name or UUID
         """
-        try:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
-        except:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        libvirt_network = self.get_network_with_identifier(identifier)
         libvirt_network.destroy()
         self.entity.log.info("NETWORK: virtual network %s destroyed" % identifier)
         self.entity.push_change("network", "destroyed")
@@ -202,10 +216,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @type identifier: string
         @param identifier: the identifer of the network to destroy. It can be its name or UUID
         """
-        try:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
-        except:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        libvirt_network = self.get_network_with_identifier(identifier)
         libvirt_network.undefine()
         self.entity.log.info("NETWORK: Virtual network %s is undefined." % identifier)
         self.entity.push_change("network", "undefined")
@@ -245,10 +256,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @rtype: integer
         @return: the result of the libvirt call
         """
-        try:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
-        except:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        libvirt_network = self.get_network_with_identifier(identifier)
         return libvirt_network.setAutostart(shouldAutostart)
 
     def getAutostart(self, identifier):
@@ -259,10 +267,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @rtype: Boolean
         @return: True is network is in autostart mode
         """
-        try:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByUUIDString(identifier)
-        except:
-            libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
+        libvirt_network = self.get_network_with_identifier(identifier)
         return libvirt_network.autostart()
 
 
