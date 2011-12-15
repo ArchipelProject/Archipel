@@ -605,7 +605,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         uuid = ""
         if isinstance(identifier, xmpp.JID):
-            uuid = jid.getNode()
+            uuid = identifier.getNode()
         else:
             uuid = identifier
         vm = self.virtualmachines[uuid]
