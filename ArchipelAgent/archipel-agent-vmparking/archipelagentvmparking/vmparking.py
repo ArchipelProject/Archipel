@@ -482,6 +482,9 @@ class TNVMParking (TNArchipelPlugin):
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
                 vm_uuid = item.getAttr("uuid")
+                if not vm_uuid:
+                    self.entity.log.error("VMPARKING: Unable to park vm: missing 'uuid' element.")
+                    raise Exception("You must must set the UUID of the vms you want to park")
                 force_destroy = False
                 if item.getAttr("force") and item.getAttr("force").lower() in ("yes", "y", "true", "1"):
                     force_destroy = True
