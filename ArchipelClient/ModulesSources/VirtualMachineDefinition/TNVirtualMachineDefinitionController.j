@@ -1431,6 +1431,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [popoverXMLEditor close];
     [popoverXMLEditor showRelativeToRect:nil ofView:buttonXMLEditor preferredEdge:nil];
     [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
+    [fieldStringXMLDesc setNeedsDisplay:YES];
 }
 
 /*! close the manual XML editor
@@ -1943,7 +1944,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)getXMLDesc
 {
-    var stanza   = [TNStropheStanza iqWithType:@"get"];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
