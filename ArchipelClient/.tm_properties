@@ -1,2 +1,32 @@
-tabSize     = 4
-softTabs    = true
+## Archipel Default TextMate 2 Configuration
+## DO NOT CHANGE THE TABSIZE AND SOFTTABS VALUES
+##
+## Copyright 2011 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+
+tabSize                 = 4
+softTabs                = true
+showInvisibles          = true
+exclude                 = "{*.{o,pyc},Modules,Build,Frameworks,Libraries/Cappuccino}"
+excludeInFileChooser    = "{$exclude}"
+excludeInFolderSearch   = "{$exclude}"
+windowTitle             = "$TM_DISPLAYNAME — ${CWD/^.*\///} $TM_SCM_BRANCH"
+projectDirectory        = "$CWD"
+
+TM_MAKE_FILE            = '${CWD}/buildArchipel -bag'
+
+[ *.j ]
+fileType                = "source.js.objj"
+
+[ Jakefile ]
+fileType                = "source.js"
+
+[ *.jake ]
+fileType                = "source.js"
+
+[ .git/COMMIT_EDITMSG ]
+softWrap                = true
+spellChecking           = true
+spellingLanguage        = 'en'
+
+[ *.{icns,ico,jpg,jpeg,m4v,nib,pdf,png,psd,pyc,rtf,tif,tiff,cib} ]
+binary                  = true
