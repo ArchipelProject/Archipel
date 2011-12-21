@@ -571,6 +571,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [alert setUserInfo:vm];
         [alert runModal];
     }
+    else
+    {
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewSelectItemNotification object:self userInfo:vm];
+    }
 }
 
 /*! add double clicked vm to roster if not present or go to virtual machine
