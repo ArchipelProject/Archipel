@@ -1196,3 +1196,33 @@
 /* Class = "NSTextFieldCell"; title = "Use port like 5903. Ports \nlower than 1024 need root access."; ObjectID = "1823"; */
 "1823.title" = "Use port like 5903. Ports \nlower than 1024 need root access.";
 
+/* Class = "NSTextFieldCell"; placeholderString = "/loader/hvmloader"; ObjectID = "1874"; */
+"1874.placeholderString" = "/loader/hvmloader";
+
+/* Class = "NSTextFieldCell"; title = "Loader:"; ObjectID = "1875"; */
+"1875.title" = "Loader:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Kernel params"; ObjectID = "1877"; */
+"1877.placeholderString" = "Kernel params";
+
+/* Class = "NSTextFieldCell"; title = "Kernel params:"; ObjectID = "1878"; */
+"1878.title" = "Kernel params:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "/kernels/initrd"; ObjectID = "1880"; */
+"1880.placeholderString" = "/kernels/initrd";
+
+/* Class = "NSTextFieldCell"; title = "Initrd path:"; ObjectID = "1881"; */
+"1881.title" = "Initrd path:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "/kernels/vmlinuz"; ObjectID = "1883"; */
+"1883.placeholderString" = "/kernels/vmlinuz";
+
+/* Class = "NSTextFieldCell"; title = "Kernel path:"; ObjectID = "1884"; */
+"1884.title" = "Kernel path:";
+
+/* Class = "NSTextFieldCell"; title = "You can configure the direct kernel boot informations."; ObjectID = "1885"; */
+"1885.title" = "You can configure the direct kernel boot informations.";
+
+/* Class = "NSTextFieldCell"; title = "Direct kernel boot"; ObjectID = "1886"; */
+"1886.title" = "Direct kernel boot";
+
