@@ -98,7 +98,7 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
         [node addNode:[_type XMLNode]];
         [node up];
     }
-    if (_loader)
+    if (_loader && _loader != @"")
     {
         [node addChildWithName:@"loader"];
         [node addTextNode:_loader];
@@ -115,19 +115,19 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
         [node addChildWithName:@"bootmenu" andAttributes:{@"enable": enabled}];
         [node up];
     }
-    if (_kernel)
+    if (_kernel  && _kernel != @"")
     {
         [node addChildWithName:@"kernel"];
         [node addTextNode:_kernel];
         [node up];
     }
-    if (_initrd)
+    if (_initrd  && _initrd != @"")
     {
         [node addChildWithName:@"initrd"];
         [node addTextNode:_initrd];
         [node up];
     }
-    if (_commandLine)
+    if (_commandLine  && _commandLine != @"")
     {
         [node addChildWithName:@"cmdline"];
         [node addTextNode:_commandLine];
