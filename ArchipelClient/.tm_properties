@@ -7,11 +7,12 @@ tabSize                 = 4
 softTabs                = true
 showInvisibles          = true
 exclude                 = "{*.{o,pyc},Modules,Build,Frameworks,Libraries/Cappuccino}"
-excludeInFileChooser    = "{$exclude}"
-excludeInFolderSearch   = "{$exclude}"
+excludeInFileChooser    = "{$excludeInFileChooser,$exclude}"
+excludeInFolderSearch   = "{$excludeInFolderSearch,$exclude,*.cib,*.xib}"
+excludeInBrowser        = "{$excludeInBrowser,$exclude}"
 windowTitle             = "$TM_DISPLAYNAME — ${CWD/^.*\///} $TM_SCM_BRANCH"
 projectDirectory        = "$CWD"
-
+showInvisibles          = true
 TM_MAKE_FILE            = '${CWD}/buildArchipel -bag'
 
 [ *.j ]
