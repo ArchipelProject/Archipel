@@ -1500,7 +1500,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         newNicSource = [[TNLibvirtDeviceInterfaceSource alloc] init];
 
     [newNic setType:TNLibvirtDeviceInterfaceTypeBridge];
-    [newNic setModel:TNLibvirtDeviceInterfaceModelPCNET];
+    [newNic setModel:TNLibvirtDeviceInterfaceModelRTL8139];
     [newNic setMAC:[self generateMacAddr]];
     [newNic setSource:newNicSource];
     [interfaceController setNic:newNic];
