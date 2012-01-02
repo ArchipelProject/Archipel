@@ -101,7 +101,7 @@
     if ([[_datas objectAtIndex:setIndex] count] >= _maxNumberOfPoints)
         [[_datas objectAtIndex:setIndex] removeObjectAtIndex:0];
 
-    [_datas objectAtIndex:setIndex].push(parseInt(data));
+    [_datas objectAtIndex:setIndex].push(parseFloat(data));
 
 }
 
