@@ -32,6 +32,22 @@ order to use Archipel and a recent version of Libvirt.
 For more information, please go to http://archipelproject.org
 """
 
+#RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt-python"
+RPM_REQUIRED_DEPS = "archipel-core, python-imaging"
+RPM_POST_INSTALL = "%post\narchipel-initinstall\n"
+
+## HACK FOR DEPS IN RPMS
+from setuptools.command.bdist_rpm import bdist_rpm
+def custom_make_spec_file(self):
+    spec = self._original_make_spec_file()
+    lineDescription = "%description"
+    spec.insert(spec.index(lineDescription) - 1, "requires: %s" % RPM_REQUIRED_DEPS)
+    spec.append(RPM_POST_INSTALL)
+    return spec
+bdist_rpm._original_make_spec_file = bdist_rpm._make_spec_file
+bdist_rpm._make_spec_file = custom_make_spec_file
+## END OF HACK
+
 def create_avatar_list(folder):
     ret = []
     for avatar in os.listdir(folder):
