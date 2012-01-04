@@ -209,7 +209,10 @@ def uninstall():
     Completely uninstall Archipel agent files.
     Data files are kept.
     """
-    import site
+    try:
+        import site
+    except:
+        error("You don't have the python site module. Sorry, you need to uninstall Archipel manually.")
     for site_package_path in site.getsitepackages():
         msg("Cleaning archipel from %s" % site_package_path)
         os.system("rm -rf %s/archipel*" % site_package_path)
