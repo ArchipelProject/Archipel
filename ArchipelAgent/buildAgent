@@ -19,86 +19,268 @@
 import sys, os
 from optparse import OptionParser
 
-PATH    = os.path.dirname(os.path.realpath(__file__))
+PATH = os.path.dirname(os.path.realpath(__file__))
+LOG_PATH = os.path.join(PATH, "buildAgent.log")
+
+### Log messages
+
+def success(msg):
+    """
+    Print a standardized success message
+    @type msg: String
+    @param msg: the message to print
+    """
+    print "\033[32mSUCCESS: %s\033[0m" % msg
+
+def error(msg, exit=True):
+    """
+    Print a standardized success message
+    @type msg: String
+    @param msg: the message to print
+    @type exit: Boolean
+    @param exit: if True, exit after print
+    """
+    print "\033[31mERROR: %s\033[0m" % msg
+    if exit:
+        sys.exit(1)
+
+def msg(msg, exit=True):
+    """
+    Print a standardized neutral message
+    @type msg: String
+    @param msg: the message to print
+    @type exit: Boolean
+    @param exit: if True, exit after print
+    """
+    print "\033[35mMESSAGE: %s\033[0m" % msg
 
 
-def clean_build(path, notexit=False):
-    """clean build"""
-    os.system('find %s -maxdepth 2 -name "*.egg-info" -type d -exec rm -rf "{}" \;' % path)
-    os.system('find %s -maxdepth 2 -name "build" -type d -exec rm -rf "{}" \;' % path)
-    os.system('find %s -maxdepth 2 -name "dist" -type d -exec rm -rf "{}" \;' % path)
-    os.system('find %s -maxdepth 2 -name "temp" -type d -exec rm -rf "{}" \;' % path)
-    print "\033[32mSUCCESS: build cleaned \033[0m\n"
-    if not notexit: sys.exit(0)
+### Repo parsing
 
-
-def forceinstallation(path):
-    """force reinstall"""
+def parse_repo(path):
+    """
+    Parse the repository and return an array of all archipel modules
+    @type path: string
+    @param path: the base path
+    @rtype: list
+    @return: array of full paths of all modules
+    """
+    paths = []
     for plugin_folder in os.listdir(path):
         if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-agent") or plugin_folder.startswith("archipel-core")):
-            cmd = "easy_install -m %s ; easy_install -H None -f %s -U -a --no-deps %s" % (plugin_folder, path, plugin_folder)
-            os.system(cmd)
-    print "\033[32mSUCCESS: installation done \033[0m\n"
-    sys.exit(0)
+            paths.append(os.path.join(path, plugin_folder))
+    return paths
 
-def process(path, build, upload, register, clean, devinstall):
-    """parse command"""
-    for plugin_folder in os.listdir(path):
-        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-agent") or plugin_folder.startswith("archipel-core")):
-            os.chdir(plugin_folder)
-            if devinstall:
-                os.system("python setup.py develop --no-deps")
-            elif register:
-                os.system("python setup.py register")
-            elif build and not upload:
-                os.system("python setup.py bdist_egg")
-            elif build and upload:
-                os.system("python setup.py bdist_egg upload")
-            os.chdir("..")
-    print "\033[32mSUCCESS: all action performed \033[0m\n"
 
+### Build functions
+
+def pypi_register(package_paths):
+    """
+    register all package against pypi.
+    You need the file ~/.pypirc containing your information.
+    For instance:
+    ```ini
+        [pypirc]
+        servers =
+            pypi
+        [pypi]
+        username:username
+        password:yourpassword
+        [server-login]
+        username:username
+        password:yourpassword
+    ```
+    @type package_paths: list
+    @param package_paths: array of all module paths
+    """
+    for package_path in package_paths:
+        os.chdir(package_path)
+        if os.system("python setup.py register") == 0:
+            success("Package %s registered" % os.path.basename(package_path))
+        else:
+            error("Unable to register package %s" % os.path.basename(package_path))
+        os.chdir("..")
+
+def install_dev(package_paths):
+    """
+    Perform the dev installation (symlink install)
+    @type package_paths: list
+    @param package_paths: array of all module paths
+    """
+    for package_path in package_paths:
+        os.chdir(package_path)
+        if os.system("python setup.py develop --no-deps &>> %s" % LOG_PATH) == 0:
+            success("EGG package %s installed in developer mode" % os.path.basename(package_path))
+        else:
+            error("Unable to install EGG package %s in developer mode" % os.path.basename(package_path))            
+        os.chdir("..")
+
+def install_clean(repo_path):
+    """
+    Clean all the build artifacts
+    @type repo_path: String
+    @param repo_path: base path of the packages
+    """
+    os.system('find %s -maxdepth 2 -name "*.egg-info" -type d -exec rm -rf "{}" \;' % repo_path)
+    os.system('find %s -maxdepth 2 -name "build" -type d -exec rm -rf "{}" \;' % repo_path)
+    os.system('find %s -maxdepth 2 -name "dist" -type d -exec rm -rf "{}" \;' % repo_path)
+    os.system('find %s -maxdepth 2 -name "temp" -type d -exec rm -rf "{}" \;' % repo_path)
+    os.system("rm -rf Archipel_EGGS Archipel_RPMS buildAgent.log")
+    success("build cleaned")
+
+def generate_eggs(package_paths, upload=False):
+    """
+    Generate python EGGS
+    @type package_paths: list
+    @param package_paths: array of all module paths
+    @type upload: Boolean
+    @param upload: if True, will upload the eggs to pypi. (Default: False)
+    """
+    for package_path in package_paths:
+        os.chdir(package_path)
+        if upload:
+            if os.system("python setup.py bdist_egg upload &>> %s" % LOG_PATH) == 0:
+                success("EGG package %s generated and uploaded" % os.path.basename(package_path))
+            else:
+                error("Unable to build and/or upload EGG package %s" % os.path.basename(package_path))
+        else:
+            if os.system("python setup.py bdist_egg &>> %s" % LOG_PATH) == 0:
+                success("EGG package %s generated" % os.path.basename(package_path))
+            else:
+                error("Unable to build EGG package %s" % os.path.basename(package_path))
+        os.chdir("..")
+
+def generate_rpms(package_paths):
+    """
+    Generate RPMS
+    @type package_paths: list
+    @param package_paths: array of all module paths
+    """
+    for package_path in package_paths:
+        os.chdir(package_path)
+        if os.system("python setup.py bdist_rpm &>> %s" % LOG_PATH) == 0:
+            success("RPM package %s generated" % os.path.basename(package_path))
+        else:
+            error("Unable to build RPM package %s" % os.path.basename(package_path))
+        os.chdir("..")
+
+def export_eggs(repo_path, package_paths, export_path=None):
+    """
+    Export all generated EGGS in custom folder
+    @type repo_path: String
+    @param repo_path: base path of the packages
+    @type package_path: list
+    @param package_path: array of all module paths
+    @type export_path: string
+    @param export_path: the destination path. if None, it will be exported in ./Archipel_EGGS
+    """
+    if not export_path:
+        export_path = os.path.join(repo_path, "Archipel_EGGS")
+    if not os.path.isdir(export_path):
+        os.makedirs(export_path)
+    for package_path in package_paths:
+        if os.system("cp -a %s/dist/*.egg %s" % (package_path, export_path)) == 0:
+            success("Package %s copied to %s" % (os.path.basename(package_path), export_path))
+        else:
+            error("Unable to copy %s to %s" % (os.path.basename(package_path), export_path))
+
+def export_rpms(repo_path, package_paths, export_path=None):
+    """
+    Export all generated RPMS in custom folder
+    @type repo_path: String
+    @param repo_path: base path of the packages
+    @type package_path: list
+    @param package_path: array of all module paths
+    @type export_path: string
+    @param export_path: the destination path. if None, it will be exported in ./Archipel_RPMS
+    """
+    if not export_path:
+        export_path = os.path.join(repo_path, "Archipel_RPMS")
+    if not os.path.isdir(export_path):
+        os.makedirs(export_path)
+    for package_path in package_paths:
+        if os.system("cp -a %s/dist/*.rpm %s" % (package_path, export_path)) == 0:
+            success("Package %s copied to %s" % (os.path.basename(package_path), export_path))
+        else:
+            error("Unable to copy %s to %s" % (os.path.basename(package_path), export_path))
+         
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("-b", "--build",
-                        dest="build",
-                        help="build the bdist_egg target",
+    parser.add_option("-b", "--buildeggs",
+                        dest="build_eggs",
+                        help="Generate the EGGS",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-B", "--buildprms",
+                        dest="build_rpms",
+                        help="Generate the RPMS",
                         action="store_true",
                         default=False)
     parser.add_option("-u", "--upload",
-                        dest="upload",
-                        help="upload to pypi using your .pypirc",
+                        dest="pypi_upload",
+                        help="Upload to pypi using your .pypirc",
                         action="store_true",
                         default=False)
     parser.add_option("-r", "--register",
-                        dest="register",
+                        dest="pypi_register",
                         help="register to pypi using your .pypirc",
                         action="store_true",
                         default=False)
     parser.add_option("-c", "--clean",
                         dest="clean",
-                        help="clean build",
-                        action="store_true",
-                        default=False)
-    parser.add_option("-f", "--force",
-                        dest="forceinstall",
-                        help="force (re)installation (for developers)",
+                        help="Clean build",
                         action="store_true",
                         default=False)
     parser.add_option("-d", "--devinstall",
                         dest="devinstall",
-                        help="symlink the eggs",
+                        help="Install Archipel using the developer mode",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-e", "--export",
+                        dest="export",
+                        help="Export all RPMS to ./Archipel_RPMS",
                         action="store_true",
                         default=False)
 
     options, args = parser.parse_args()
 
-    if not (options.devinstall or options.clean) and not (options.build or options.register or options.upload):
-        parser.error("Wrong usage. see --help for help")
     os.chdir(PATH)
-    if options.clean or options.devinstall:
-        clean_build(PATH, options.devinstall)
-    if options.forceinstall:
-        forceinstallation(PATH)
+    packages_paths = parse_repo(PATH)
 
-    process(PATH, options.build, options.upload, options.register, options.clean, options.devinstall)
+    if options.build_eggs:
+        if options.pypi_upload:
+            msg("Generating python EGGS and upload them to PyPi")
+        else:
+            msg("Generating python EGGS")
+        generate_eggs(packages_paths, upload=options.pypi_upload)
+        if options.export:
+            msg("Exporting the EGGS in Archipel_EGGS")
+            export_eggs(PATH, packages_paths)
+        msg("All action performed")
+
+    elif options.build_rpms:
+        msg("Generating RPMS")
+        generate_rpms(packages_paths)
+        if options.export:
+            msg("Exporting the RPMS in Archipel_RPMS")
+            export_rpms(PATH, packages_paths)
+        msg("All action performed")
+        
+    elif options.pypi_register:
+        msg("Registering the EGGS on PyPi")
+        pypi_register(packages_paths)        
+        msg("All action performed")
+        
+    elif options.devinstall:
+        msg("Performing the developer installation")
+        install_dev(packages_paths)
+        msg("All action performed")
+        
+    elif options.clean:
+        msg("Cleaning build")
+        install_clean(PATH)
+        msg("All action performed")
+        
+    else:
+        error("Wrong usage. Please type ./buildAgent --help for help")
