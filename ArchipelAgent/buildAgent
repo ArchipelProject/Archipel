@@ -216,10 +216,20 @@ def uninstall():
     for site_package_path in site.getsitepackages():
         msg("Cleaning archipel from %s" % site_package_path)
         os.system("rm -rf %s/archipel*" % site_package_path)
+        success("Folder %s cleared" % site_package_path)
         local_easy_install_pth = os.path.join(site_package_path, "easy-install.pth")
         if os.path.exists(local_easy_install_pth):
-            msg("Trimming archipel entry from %s" % local_easy_install_pth)
+            msg("Trimming %s/easy-install.pth file" % site_package_path)
             os.system("sed '/archipel*./d' %s -i" % local_easy_install_pth)
+            success("Archipel entries removed from %s" % local_easy_install_pth)
+
+    msg("Cleaning binary scripts")
+    for script_name in ["adminaccounts", "commandsbytag", "initinstall", "tagnode", \
+                        "updatedomain", "vmrequestnode", "command", "importvirtualmachine",\
+                        "rolesnode", "testxmppserver", "vmparkingnode"]:
+        if os.system("which archipel-%s &> /dev/null" % script_name) == 0:
+            os.system("rm -f `which archipel-%s`" % script_name)
+            success("archipel-%s script has been removed" % script_name)
 
 
 ### Main function
