@@ -60,7 +60,6 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "archipel-agent"
       ],
       entry_points=ENTRY_POINTS,
       scripts = [
