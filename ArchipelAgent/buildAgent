@@ -112,7 +112,7 @@ def install_dev(package_paths):
         if os.system("python setup.py develop --no-deps &>> %s" % LOG_PATH) == 0:
             success("EGG package %s installed in developer mode" % os.path.basename(package_path))
         else:
-            error("Unable to install EGG package %s in developer mode" % os.path.basename(package_path))            
+            error("Unable to install EGG package %s in developer mode" % os.path.basename(package_path))
         os.chdir("..")
 
 def install_clean(repo_path):
@@ -203,7 +203,23 @@ def export_rpms(repo_path, package_paths, export_path=None):
             success("Package %s copied to %s" % (os.path.basename(package_path), export_path))
         else:
             error("Unable to copy %s to %s" % (os.path.basename(package_path), export_path))
-         
+
+def uninstall():
+    """
+    Completely uninstall Archipel agent files.
+    Data files are kept.
+    """
+    import site
+    for site_package_path in site.getsitepackages():
+        msg("Cleaning archipel from %s" % site_package_path)
+        os.system("rm -rf %s/archipel*" % site_package_path)
+        local_easy_install_pth = os.path.join(site_package_path, "easy-install.pth")
+        if os.path.exists(local_easy_install_pth):
+            msg("Trimming archipel entry from %s" % local_easy_install_pth)
+            os.system("sed '/archipel*./d' %s -i" % local_easy_install_pth)
+
+
+### Main function
 
 if __name__ == "__main__":
     parser = OptionParser()
@@ -242,6 +258,11 @@ if __name__ == "__main__":
                         help="Export all RPMS to ./Archipel_RPMS",
                         action="store_true",
                         default=False)
+    parser.add_option("-U", "--uninstall",
+                        dest="uninstall",
+                        help="Remove all Archipel's binary files. Data files (info, conf) remains safe",
+                        action="store_true",
+                        default=False)
 
     options, args = parser.parse_args()
 
@@ -266,21 +287,26 @@ if __name__ == "__main__":
             msg("Exporting the RPMS in Archipel_RPMS")
             export_rpms(PATH, packages_paths)
         msg("All action performed")
-        
+
     elif options.pypi_register:
         msg("Registering the EGGS on PyPi")
-        pypi_register(packages_paths)        
+        pypi_register(packages_paths)
         msg("All action performed")
-        
+
     elif options.devinstall:
         msg("Performing the developer installation")
         install_dev(packages_paths)
         msg("All action performed")
-        
+
     elif options.clean:
         msg("Cleaning build")
         install_clean(PATH)
         msg("All action performed")
-        
+
+    elif options.uninstall:
+        msg("Uninstalling Archipel")
+        uninstall()
+        msg("All action performed")
+
     else:
         error("Wrong usage. Please type ./buildAgent --help for help")
