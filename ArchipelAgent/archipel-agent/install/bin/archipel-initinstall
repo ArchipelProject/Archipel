@@ -232,11 +232,11 @@ def get_data_files(prefix):
 
     # we are in the case of RPM installation
     if not os.path.exists(init_script):
-        init_script = "%prefix/usr/install/etc/init.d/archipel" % prefix
+        init_script = "%s/usr/install/etc/init.d/archipel" % prefix
     if not os.path.exists(conf_folder):
-        conf_folder = "%prefix/usr/install/etc/archipel" % prefix
+        conf_folder = "%s/usr/install/etc/archipel" % prefix
     if not os.path.exists(lib_folder):
-        lib_folder = "%prefix/usr/install/var/lib/archipel" % prefix
+        lib_folder = "%s/usr/install/var/lib/archipel" % prefix
     return (init_script, conf_folder, lib_folder)
 
 
