@@ -33,17 +33,19 @@ def success(msg):
     """
     print "\033[32mSUCCESS: %s\033[0m" % msg
 
-def error(msg, exit=True):
+def error(msg, exit=True, code=1):
     """
     Print a standardized success message
     @type msg: String
     @param msg: the message to print
     @type exit: Boolean
     @param exit: if True, exit after print
+    @type code: int
+    @param code: the error code
     """
     print "\033[31mERROR: %s\033[0m" % msg
     if exit:
-        sys.exit(1)
+        sys.exit(code)
 
 def connect(jid, password):
     """
