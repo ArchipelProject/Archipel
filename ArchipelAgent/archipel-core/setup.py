@@ -28,7 +28,7 @@ SHORTDESCRIPTION    = "Base framework of Archipel."
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = {}
 
-RPM_REQUIRED_DEPS   = "python-xmpp, python-sqlalchemy"
+RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy"
 
 ## HACK FOR DEPS IN RPMS
 from setuptools.command.bdist_rpm import bdist_rpm
