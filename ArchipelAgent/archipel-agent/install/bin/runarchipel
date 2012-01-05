@@ -21,6 +21,8 @@ import os, sys
 from optparse import OptionParser
 import xmpp
 import socket
+from subprocess import check_call
+from archipelcore.scriptutils import error
 
 ## error codes
 ARCHIPEL_INIT_SUCCESS                   = 0
@@ -30,14 +32,14 @@ ARCHIPEL_INIT_ERROR_BAD_LIBVIRT         = 3
 ARCHIPEL_INIT_ERROR_UNKNOWN             = 4
 ARCHIPEL_INIT_ERROR_CONNECTION          = 5
 ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION   = 6
+ARCHIPEL_INIT_ERROR_STATELESS_MODE      = 7
 
 try:
     from archipelcore.utils import init_conf
     from archipel.archipelHypervisor import TNArchipelHypervisor
     from archipel.libvirtEventLoop import virEventLoopPureStart
 except ImportError as ex:
-    print "\033[31mERROR: %s\033[0m" % str(ex)
-    sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
+    error("%s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 def format_version(info):
     """format the verson info"""
@@ -64,7 +66,7 @@ def versions(option, opt, value, parser):
             method  = version_method.load()
             format_version(method())
         except Exception as ex:
-            print "\033[31mERROR: unable to get the version of one plugin: %s\033[0m" % ex
+            error("unable to get the version of one plugin: %s" % ex, exit=False)
     sys.exit(ARCHIPEL_INIT_SUCCESS)
 
 def test_libvirt():
@@ -72,25 +74,76 @@ def test_libvirt():
     try:
         import libvirt
     except:
-        print "\n\n\033[31mERROR: you need python libvirt module. I can't import it.\033[0m\n"
-        return False
+        error("You need python libvirt module. I can't import it.", code=ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
     try:
         getattr(libvirt.virConnect, "domainEventRegisterAny")
     except:
-        print "\n\n\033[31mERROR: your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.\033[0m\n"
+        error("Your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.", code=ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
         return False
     return True
 
-def main():
+
+### Stateless node functions
+
+def stateless_read_kernel_parameters(path="/proc/cmdline"):
+    """
+    Read the kernel parameters
+    @type path: string
+    @param path: the path to the file containing the kernel params (Default: /proc/cmdline)
+    @rtype: dict
+    @return: dictionnary containing the archipel informations
+    """
+    f = open(path, "r")
+    cmdline = f.read()
+    f.close()
+    tokens = cmdline.replace(" archipel_", "\narchipel_").split("\n")
+    ret = {}
+    for token in tokens:
+        if token.startswith("archipel_"):
+            ret[token.split("=", 1)[0]] = token.split("=", 1)[1].strip()
+
+    # check we have all the needed kernel parameters
+    if not "archipel_storage_mount_command" in ret:
+        raise Exception("you need to set the kernel parameter archipel_storage_mount_command")
+    if not "archipel_storage_config_general" in ret:
+        raise Exception("you need to set the kernel parameter archipel_storage_config_general")
+    if not "archipel_storage_config_local" in ret:
+        raise Exception("you need to set the kernel parameter archipel_storage_config_local")
+
+    return ret
+
+def stateless_mount_storage(mount_command):
+    """
+    Mount the given file system. for example, give:
+        mount -t cifs //server/share /vm -o password=secret,user=toto
+    @type mount_command: string
+    @param mount_command: the command to run to mount.
+    """
+    check_call(mount_command, shell=True)
+
+def main(config):
     """
     main function of Archipel
+    @type config: ConfigParser
+    @param config: the origin config parser coming from the cli
     """
-    if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
+    test_libvirt()
 
     # starting the libvirt event loop
     virEventLoopPureStart()
 
-    # initializing the hypervisor XMPP entity
+    # If we are in a stateless mode, read the stateless node configuration
+    # from the kernel parameters
+    if config.has_option("GLOBAL", "stateless_node") and config.getboolean("GLOBAL", "stateless_node"):
+        try:
+            stateless_mode_parameters = stateless_read_kernel_parameters("/tmp/cmdline.test") # @TODO change me!
+            stateless_mount_storage(stateless_mode_parameters["archipel_storage_mount_command"])
+            config = init_conf([stateless_mode_parameters["archipel_storage_config_general"], stateless_mode_parameters["archipel_storage_config_local"]])
+            if "archipel_pre_init_script" in stateless_mode_parameters:
+                check_call(stateless_mode_parameters["archipel_pre_init_script"], shell=True)
+        except Exception as ex:
+            error("Stateless node initialization error: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_STATELESS_MODE)
+
     jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
@@ -100,15 +153,13 @@ def main():
     try:
         hyp.connect()
     except Exception as ex:
-        print "\033[31mRUNARCHIPEL: Cannot connect using JID %s. Initialization aborted: %s\033[0m" % (jid, str(ex))
-        sys.exit(ARCHIPEL_INIT_ERROR_CONNECTION)
+        error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)), code=ARCHIPEL_INIT_ERROR_CONNECTION)
     try:
         hyp.loop()
     except Exception as ex:
         if hyp.xmppclient.isConnected():
             hyp.xmppclient.disconnect()
-        print "\033[31mRUNARCHIPEL: Exception has stopped the hypervisor main loop: %s\033[0m" % str(ex)
-        sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
+        error("Exception has stopped the hypervisor main loop: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
 
 
 if __name__ == "__main__":
@@ -134,23 +185,22 @@ if __name__ == "__main__":
     try:
         config = init_conf(options.config.split(","))
     except:
-        print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % options.config
-        sys.exit(ARCHIPEL_INIT_ERROR_NO_CONFIG)
+        error("Unable to read configuration file %s" % options.config, code=ARCHIPEL_INIT_ERROR_NO_CONFIG)
 
     if not options.nofork:
         try:
             pid = os.fork()
             if pid > 0: sys.exit(0)
-        except OSError as e:
-            sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+        except Exception as e:
+            error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
         os.chdir("/")
         os.setsid()
         os.umask(0)
         try:
             pid = os.fork()
             if pid > 0: sys.exit(0)
-        except OSError, e:
-            sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+        except Exception as e:
+            error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
 
     # start the daemon main loop
-    main()
+    main(config)
