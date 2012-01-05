@@ -17,14 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import commands
+import optparse
 import os, sys
-from optparse import OptionParser
-import xmpp
 import socket
-from subprocess import check_call
-from archipelcore.scriptutils import error
+import subprocess
 
-## error codes
+## Error codes
 ARCHIPEL_INIT_SUCCESS                   = 0
 ARCHIPEL_INIT_ERROR_NO_CONFIG           = 1
 ARCHIPEL_INIT_ERROR_NO_MODULE           = 2
@@ -34,33 +33,54 @@ ARCHIPEL_INIT_ERROR_CONNECTION          = 5
 ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION   = 6
 ARCHIPEL_INIT_ERROR_STATELESS_MODE      = 7
 
+# Import and check essential modules
+try:
+    from archipelcore.scriptutils import error
+except ImportError as ex:
+    print "FATAL: you need to install archipel-core"
+    sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+try:
+    import xmpp
+except ImportError as ex:
+    error("Bad XMPPPY installation you need python-xmpp (xmpppy): %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
+
 try:
     from archipelcore.utils import init_conf
     from archipel.archipelHypervisor import TNArchipelHypervisor
     from archipel.libvirtEventLoop import virEventLoopPureStart
 except ImportError as ex:
-    error("%s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
+    error("Bad archipel installation. You need archipel-core and archipel-agent: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 def format_version(info):
-    """format the verson info"""
-    if (len(info) == 2):
+    """
+    Format the version info
+    @type info: list
+    @param info: plugin informations
+    """
+    if len(info) == 2:
         print " - %s: %s" % (info[0], info[1])
     else:
         print " - %s: %s" % (info[0], info[1])
         for p in info[2]:
-            print "     + \033[35m%s\033[0m" % p["identifier"]
+            print "     + %s" % p["identifier"]
 
 def help():
-    """display help"""
+    """
+    Display help
+    """
     print ARCHIPEL_CMD_HELP
     sys.exit(ARCHIPEL_INIT_SUCCESS)
 
 def versions(option, opt, value, parser):
+    """
+    Display all the versions
+    """
     import pkg_resources
     """print versions of all installed modules"""
-    print "\033[32m* Archipel Agent version : \033[0m"
+    print "* Archipel Agent version :"
     format_version(("archipelagent", pkg_resources.get_distribution("archipel-agent").version))
-    print "\n\033[32m* Installed plugins versions : \033[0m"
+    print "\n* Installed plugins versions :"
     for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
         try:
             method  = version_method.load()
@@ -70,7 +90,9 @@ def versions(option, opt, value, parser):
     sys.exit(ARCHIPEL_INIT_SUCCESS)
 
 def test_libvirt():
-    """test if all needed libvirt's functions are present"""
+    """
+    test if all needed libvirt's functions are present
+    """
     try:
         import libvirt
     except:
@@ -79,11 +101,6 @@ def test_libvirt():
         getattr(libvirt.virConnect, "domainEventRegisterAny")
     except:
         error("Your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.", code=ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
-        return False
-    return True
-
-
-### Stateless node functions
 
 def stateless_read_kernel_parameters(path="/proc/cmdline"):
     """
@@ -102,58 +119,114 @@ def stateless_read_kernel_parameters(path="/proc/cmdline"):
         if token.startswith("archipel_"):
             ret[token.split("=", 1)[0]] = token.split("=", 1)[1].strip()
 
-    # check we have all the needed kernel parameters
-    if not "archipel_storage_mount_command" in ret:
-        raise Exception("you need to set the kernel parameter archipel_storage_mount_command")
-    if not "archipel_storage_config_general" in ret:
-        raise Exception("you need to set the kernel parameter archipel_storage_config_general")
-    if not "archipel_storage_config_local" in ret:
-        raise Exception("you need to set the kernel parameter archipel_storage_config_local")
+    # Check we have all the needed kernel parameters
+    if not "archipel_storage_mount_type" in ret:
+        raise Exception("You need to set the kernel parameter archipel_storage_mount_type")
+    if not "archipel_storage_mount_address" in ret:
+        raise Exception("You need to set the kernel parameter archipel_storage_mount_address")
+    if not "archipel_config_local" in ret:
+        raise Exception("you need to set the kernel parameter archipel_config_local")
+
+    # Check correct values for archipel_storage_mount_type
+    supported_mount_type = ('nfs', 'cifs')
+    if not ret["archipel_storage_mount_type"] in supported_mount_type:
+        raise Exception("archipel_storage_mount_type can only be %s" % ", ".join(supported_mount_type))
+
+    # Set default value if tokens missing
+    if not "archipel_config_general" in ret:
+        ret["archipel_config_general"] = "/etc/archipel/archipel.conf"
+    if not "archipel_storage_mount_options" in ret:
+        ret["archipel_storage_mount_options"] = None
+    if not "archipel_storage_mount_mountpoint" in ret:
+        ret["archipel_storage_mount_mountpoint"] = "/vm"
 
     return ret
 
-def stateless_mount_storage(mount_command):
+def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount_point="/vm"):
     """
-    Mount the given file system. for example, give:
-        mount -t cifs //server/share /vm -o password=secret,user=toto
-    @type mount_command: string
-    @param mount_command: the command to run to mount.
+    Mount the remote file system.
+    @type mount_type: string
+    @param mount_type: the mount type (nfs or cifs)
+    @type mount_address: string
+    @param mount_address: remote fs URL (i.e. //example.com/share)
+    @type mount_options: string
+    @param mount_options: the options (i.e. "username=user,password=secret")
+    @type mount_point: string
+    @param mount_point: mount path (Default: "/vm")
     """
-    check_call(mount_command, shell=True)
+    if " %s " % mount_point in commands.getoutput("mount"):
+        return
+    if not mount_options:
+        subprocess.check_call("mount", "-t", mount_type, mount_address, mount_point)
+    else:
+        subprocess.check_call("mount", "-t", mount_type, "-o", mount_options, mount_address, mount_point)
+
+def initialize_config(paths):
+    """
+    Initialize the ConfigParser object
+    @type paths: list
+    @param paths: list of the path of the config files
+    @rtype: ConfigParser
+    @return: ready to use config object
+    """
+    # Read the local config file(s)
+    try:
+        config = init_conf(paths)
+    except:
+        error("Unable to read local configuration file(s) %s" % str(paths), code=ARCHIPEL_INIT_ERROR_NO_CONFIG)
+
+    # If we are in a stateless mode, read the stateless node configuration from the kernel parameters
+    if config.has_option("GLOBAL", "stateless_node") and config.getboolean("GLOBAL", "stateless_node"):
+        try:
+            # Get Kernel parameters
+            stateless_mode_parameters = stateless_read_kernel_parameters("/tmp/cmdline.test") # @TODO change me!
+            p_storage_mount_type = stateless_mode_parameters["archipel_storage_mount_type"]
+            p_storage_mount_address = stateless_mode_parameters["archipel_storage_mount_address"]
+            p_storage_mount_options = stateless_mode_parameters["archipel_storage_mount_options"]
+            p_storage_mount_mountpoint = stateless_mode_parameters["archipel_storage_mount_mountpoint"]
+            p_config_general = stateless_mode_parameters["archipel_config_general"]
+            p_config_local = stateless_mode_parameters["archipel_config_local"]
+
+            # Mount remote filestem
+            stateless_mount_storage(p_storage_mount_type, p_storage_mount_address, p_storage_mount_options, p_storage_mount_mountpoint)
+
+            # Reinitialize the configuration according to the kernel parameters about remote config
+            config = init_conf([p_config_general, p_config_local])
+
+            if "archipel_pre_init_script" in stateless_mode_parameters:
+                subprocess.check_call(stateless_mode_parameters["archipel_pre_init_script"], shell=True)
+        except Exception as ex:
+            error("Stateless node initialization error: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_STATELESS_MODE)
+
+    return config
 
 def main(config):
     """
     main function of Archipel
     @type config: ConfigParser
-    @param config: the origin config parser coming from the cli
+    @param config: the configuration
     """
-    test_libvirt()
+    jid = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
+    password = config.get("HYPERVISOR", "hypervisor_xmpp_password")
+    database = config.get("HYPERVISOR", "hypervisor_database_path")
+    name = config.get("HYPERVISOR", "hypervisor_name")
 
-    # starting the libvirt event loop
+    # Set the resource
+    jid.setResource(socket.gethostname())
+
+    # Starting the libvirt event loop
     virEventLoopPureStart()
 
-    # If we are in a stateless mode, read the stateless node configuration
-    # from the kernel parameters
-    if config.has_option("GLOBAL", "stateless_node") and config.getboolean("GLOBAL", "stateless_node"):
-        try:
-            stateless_mode_parameters = stateless_read_kernel_parameters("/tmp/cmdline.test") # @TODO change me!
-            stateless_mount_storage(stateless_mode_parameters["archipel_storage_mount_command"])
-            config = init_conf([stateless_mode_parameters["archipel_storage_config_general"], stateless_mode_parameters["archipel_storage_config_local"]])
-            if "archipel_pre_init_script" in stateless_mode_parameters:
-                check_call(stateless_mode_parameters["archipel_pre_init_script"], shell=True)
-        except Exception as ex:
-            error("Stateless node initialization error: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_STATELESS_MODE)
-
-    jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
-    password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
-    database    = config.get("HYPERVISOR", "hypervisor_database_path")
-    name        = config.get("HYPERVISOR", "hypervisor_name")
-    jid.setResource(socket.gethostname())
+    # Create the archipel hypervisor instance
     hyp = TNArchipelHypervisor(jid, password, config, name, database)
+
+    # Try to connect
     try:
         hyp.connect()
     except Exception as ex:
         error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)), code=ARCHIPEL_INIT_ERROR_CONNECTION)
+
+    # Main runloop
     try:
         hyp.loop()
     except Exception as ex:
@@ -166,7 +239,7 @@ if __name__ == "__main__":
     """
     Main loop of the program
     """
-    parser = OptionParser()
+    parser = optparse.OptionParser()
     parser.add_option("-c", "--config",
                         dest="config",
                         help="the config file to use",
@@ -182,10 +255,6 @@ if __name__ == "__main__":
                         help="do not fork. For testing purpose")
 
     options, args = parser.parse_args()
-    try:
-        config = init_conf(options.config.split(","))
-    except:
-        error("Unable to read configuration file %s" % options.config, code=ARCHIPEL_INIT_ERROR_NO_CONFIG)
 
     if not options.nofork:
         try:
@@ -201,6 +270,12 @@ if __name__ == "__main__":
             if pid > 0: sys.exit(0)
         except Exception as e:
             error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
+
+    # Sanity checks
+    test_libvirt()
+
+    # Read configuration
+    config = initialize_config(options.config.split(","))
 
     # start the daemon main loop
     main(config)
