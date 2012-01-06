@@ -35,7 +35,7 @@ ARCHIPEL_INIT_ERROR_STATELESS_MODE      = 7
 
 # Import and check essential modules
 try:
-    from archipelcore.scriptutils import error
+    from archipelcore.scriptutils import error, msg, warn, success
 except ImportError as ex:
     print "FATAL: you need to install archipel-core"
     sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
@@ -113,36 +113,40 @@ def stateless_read_kernel_parameters(path="/proc/cmdline"):
     f = open(path, "r")
     cmdline = f.read()
     f.close()
-    tokens = cmdline.replace(" archipel_", "\narchipel_").split("\n")
+    tokens = cmdline.replace(" ARCHIPEL_", "\nARCHIPEL_").split("\n")
     ret = {}
     for token in tokens:
-        if token.startswith("archipel_"):
-            ret[token.split("=", 1)[0]] = token.split("=", 1)[1].strip()
+        if token.startswith("ARCHIPEL_"):
+            ret[token.split("=", 1)[0]] = token.split("=", 1)[1].split(" ")[0].strip()
 
     # Check we have all the needed kernel parameters
-    if not "archipel_storage_mount_type" in ret:
-        raise Exception("You need to set the kernel parameter archipel_storage_mount_type")
-    if not "archipel_storage_mount_address" in ret:
-        raise Exception("You need to set the kernel parameter archipel_storage_mount_address")
-    if not "archipel_config_local" in ret:
-        raise Exception("you need to set the kernel parameter archipel_config_local")
+    if not "ARCHIPEL_STORAGE_MOUNT_TYPE" in ret:
+        raise Exception("You need to set the kernel parameter ARCHIPEL_STORAGE_MOUNT_TYPE")
+    if not "ARCHIPEL_STORAGE_MOUNT_ADDRESS" in ret:
+        raise Exception("You need to set the kernel parameter ARCHIPEL_STORAGE_MOUNT_ADDRESS")
+    if not "ARCHIPEL_CONFIG_PATH" in ret:
+        raise Exception("you need to set the kernel parameter ARCHIPEL_CONFIG_PATH")
 
     # Check correct values for archipel_storage_mount_type
     supported_mount_type = ('nfs', 'cifs')
-    if not ret["archipel_storage_mount_type"] in supported_mount_type:
-        raise Exception("archipel_storage_mount_type can only be %s" % ", ".join(supported_mount_type))
+    if not ret["ARCHIPEL_STORAGE_MOUNT_TYPE"] in supported_mount_type:
+        raise Exception("ARCHIPEL_STORAGE_MOUNT_TYPE can only be %s" % ", ".join(supported_mount_type))
 
     # Set default value if tokens missing
-    if not "archipel_config_general" in ret:
-        ret["archipel_config_general"] = "/etc/archipel/archipel.conf"
-    if not "archipel_storage_mount_options" in ret:
-        ret["archipel_storage_mount_options"] = None
-    if not "archipel_storage_mount_mountpoint" in ret:
-        ret["archipel_storage_mount_mountpoint"] = "/vm"
+    if not "ARCHIPEL_CONFIG_PATH_GENERAL" in ret:
+        ret["ARCHIPEL_CONFIG_PATH_GENERAL"] = os.path.join(ret["ARCHIPEL_CONFIG_PATH"], "archipel.conf")
+    if not "ARCHIPEL_CONFIG_PATH_LOCAL" in ret:
+        ret["ARCHIPEL_CONFIG_PATH_LOCAL"] = os.path.join(ret["ARCHIPEL_CONFIG_PATH"], "archipel.%s.conf" % socket.gethostname())
+    if not "ARCHIPEL_STORAGE_MOUNT_OPTIONS" in ret:
+        ret["ARCHIPEL_STORAGE_MOUNT_OPTIONS"] = None
+    if not "ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT" in ret:
+        ret["ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT"] = "/vm"
+    if not "ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT" in ret:
+        ret["ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT"] = None
 
     return ret
 
-def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount_point="/vm"):
+def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount_point="/vm", post_script_path=None):
     """
     Mount the remote file system.
     @type mount_type: string
@@ -153,6 +157,8 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
     @param mount_options: the options (i.e. "username=user,password=secret")
     @type mount_point: string
     @param mount_point: mount path (Default: "/vm")
+    @type post_script_path: string
+    @param post_script_path: path of the script to run after a sucessfull mount
     """
     if mount_address in commands.getoutput("mount"):
         return
@@ -160,44 +166,62 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
         subprocess.check_call(["mount", "-t", mount_type, mount_address, mount_point])
     else:
         subprocess.check_call(["mount", "-t", mount_type, "-o", mount_options, mount_address, mount_point])
+    if post_script_path:
+        msg("Running post mount script from %s" % post_script_path)
+        subprocess.check_call(post_script_path, shell=True)
+        msg("Post mount script sucessfully ran")
 
-def initialize_config(paths):
+def initialize_config(paths, cmdline_path="/proc/cmdline"):
     """
     Initialize the ConfigParser object
     @type paths: list
     @param paths: list of the path of the config files
+    @type cmdline_path: string
+    @param cmdline_path: the path of kernel param file
     @rtype: ConfigParser
     @return: ready to use config object
     """
     # Read the local config file(s)
     try:
         config = init_conf(paths)
-    except:
-        error("Unable to read local configuration file(s) %s" % str(paths), code=ARCHIPEL_INIT_ERROR_NO_CONFIG)
+    except Exception as ex:
+        error("Unable to read local configuration file(s) %s : %s" % (str(paths), str(ex)), code=ARCHIPEL_INIT_ERROR_NO_CONFIG)
 
     # If we are in a stateless mode, read the stateless node configuration from the kernel parameters
     if config.has_option("GLOBAL", "stateless_node") and config.getboolean("GLOBAL", "stateless_node"):
         try:
+            msg("Archipel is configured to start in stateless mode")
             # Get Kernel parameters
-            stateless_mode_parameters = stateless_read_kernel_parameters("/tmp/cmdline.test") # @TODO change me!
-            p_storage_mount_type = stateless_mode_parameters["archipel_storage_mount_type"]
-            p_storage_mount_address = stateless_mode_parameters["archipel_storage_mount_address"]
-            p_storage_mount_options = stateless_mode_parameters["archipel_storage_mount_options"]
-            p_storage_mount_mountpoint = stateless_mode_parameters["archipel_storage_mount_mountpoint"]
-            p_config_general = stateless_mode_parameters["archipel_config_general"]
-            p_config_local = stateless_mode_parameters["archipel_config_local"]
+            stateless_mode_parameters = stateless_read_kernel_parameters(cmdline_path)
+            p_storage_mount_type = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_TYPE"]
+            p_storage_mount_address = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_ADDRESS"]
+            p_storage_mount_options = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_OPTIONS"]
+            p_storage_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT"]
+            p_storage_mount_post_script = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT"]
+            p_config_general = stateless_mode_parameters["ARCHIPEL_CONFIG_PATH_GENERAL"]
+            p_config_local = stateless_mode_parameters["ARCHIPEL_CONFIG_PATH_LOCAL"]
+
+            msg("Information from /proc/cmdline read:")
+            msg(" - ARCHIPEL_STORAGE_MOUNT_TYPE: %s" % p_storage_mount_type)
+            msg(" - ARCHIPEL_STORAGE_MOUNT_ADDRESS: %s" % p_storage_mount_address)
+            msg(" - ARCHIPEL_STORAGE_MOUNT_OPTIONS: %s" % p_storage_mount_options)
+            msg(" - ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT: %s" % p_storage_mount_mountpoint)
+            msg(" - ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT: %s" % p_storage_mount_post_script)
+            msg(" - ARCHIPEL_CONFIG_PATH_GENERAL: %s" % p_config_general)
+            msg(" - ARCHIPEL_CONFIG_PATH_LOCAL: %s" % p_config_local)
 
             # Mount remote filestem
-            stateless_mount_storage(p_storage_mount_type, p_storage_mount_address, p_storage_mount_options, p_storage_mount_mountpoint)
+            msg("Mouting remote file system from %s (type: %s)" % (p_storage_mount_address, p_storage_mount_type))
+            stateless_mount_storage(p_storage_mount_type, p_storage_mount_address, p_storage_mount_options, p_storage_mount_mountpoint, p_storage_mount_post_script)
+            msg("Remote filesystem sucessfull mounted")
 
             # Reinitialize the configuration according to the kernel parameters about remote config
+            msg("Re-read the configuration files %s" % (str([p_config_general, p_config_local])))
             config = init_conf([p_config_general, p_config_local])
+            success("Stateless configuration ready")
 
-            if "archipel_pre_init_script" in stateless_mode_parameters:
-                subprocess.check_call(stateless_mode_parameters["archipel_pre_init_script"], shell=True)
         except Exception as ex:
             error("Stateless node initialization error: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_STATELESS_MODE)
-
     return config
 
 def main(config):
@@ -253,9 +277,19 @@ if __name__ == "__main__":
                         action="store_true",
                         dest="nofork",
                         help="do not fork. For testing purpose")
+    parser.add_option("-C", "--cmdline",
+                        dest="cmdline_path",
+                        help="Path of the kernel parameter file to use (default: /proc/cmdline)",
+                        default="/proc/cmdline")
 
     options, args = parser.parse_args()
+    # Sanity checks
+    test_libvirt()
 
+    # Read configuration
+    config = initialize_config(options.config.split(","), options.cmdline_path)
+
+    # fork
     if not options.nofork:
         try:
             pid = os.fork()
@@ -270,12 +304,6 @@ if __name__ == "__main__":
             if pid > 0: sys.exit(0)
         except Exception as e:
             error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
-
-    # Sanity checks
-    test_libvirt()
-
-    # Read configuration
-    config = initialize_config(options.config.split(","))
 
     # Start the daemon main loop
     main(config)
