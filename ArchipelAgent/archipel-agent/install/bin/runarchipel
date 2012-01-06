@@ -154,7 +154,7 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
     @type mount_point: string
     @param mount_point: mount path (Default: "/vm")
     """
-    if " %s " % mount_point in commands.getoutput("mount"):
+    if mount_address in commands.getoutput("mount"):
         return
     if not mount_options:
         subprocess.check_call(["mount", "-t", mount_type, mount_address, mount_point])
