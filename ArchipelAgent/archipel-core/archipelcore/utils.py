@@ -113,28 +113,29 @@ def init_conf(paths):
     """
     conf = ConfigParser.ConfigParser()
     conf.read(paths)
-    logging_level = conf.get("LOGGING", "logging_level")
-    if logging_level == "debug":
-        level = logging.DEBUG
-    elif logging_level == "info":
-        level = logging.INFO
-    elif logging_level == "warning":
-        level = logging.WARNING
-    elif logging_level == "error":
-        level = logging.ERROR
-    elif logging_level == "critical":
-        level = logging.CRITICAL
-    log_file = conf.get("LOGGING", "logging_file_path")
-    if not os.path.exists(os.path.dirname(log_file)):
-        os.makedirs(os.path.dirname(log_file))
-    logger          = globals()["log"]
-    max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
-    backup_count    = conf.getint("LOGGING", "logging_backup_count")
-    handler         = logging.handlers.RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
-    log_format      = ColorFormatter(conf.get("LOGGING", "logging_formatter", raw=True), conf.get("LOGGING", "logging_date_format", raw=True))
-    handler.setFormatter(log_format)
-    logger.addHandler(handler)
-    logger.setLevel(level)
+    if conf.has_section("LOGGING"):
+        logging_level = conf.get("LOGGING", "logging_level")
+        if logging_level == "debug":
+            level = logging.DEBUG
+        elif logging_level == "info":
+            level = logging.INFO
+        elif logging_level == "warning":
+            level = logging.WARNING
+        elif logging_level == "error":
+            level = logging.ERROR
+        elif logging_level == "critical":
+            level = logging.CRITICAL
+        log_file = conf.get("LOGGING", "logging_file_path")
+        if not os.path.exists(os.path.dirname(log_file)):
+            os.makedirs(os.path.dirname(log_file))
+        logger          = globals()["log"]
+        max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
+        backup_count    = conf.getint("LOGGING", "logging_backup_count")
+        handler         = logging.handlers.RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+        log_format      = ColorFormatter(conf.get("LOGGING", "logging_formatter", raw=True), conf.get("LOGGING", "logging_date_format", raw=True))
+        handler.setFormatter(log_format)
+        logger.addHandler(handler)
+        logger.setLevel(level)
     return conf
 
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
