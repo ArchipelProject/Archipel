@@ -47,6 +47,24 @@ def error(msg, exit=True, code=1):
     if exit:
         sys.exit(code)
 
+def msg(msg, exit=True):
+    """
+    Print a standardized neutral message
+    @type msg: String
+    @param msg: the message to print
+    @type exit: Boolean
+    @param exit: if True, exit after print
+    """
+    print "\033[35mMESSAGE: %s\033[0m" % msg
+
+def warn(msg):
+    """
+    Print a standardized warning message
+    @type msg: String
+    @param msg: the message to print
+    """
+    print "\033[33mWARNING: %s\033[0m" % msg
+
 def connect(jid, password):
     """
     Perform an XMPP connection/auth.
