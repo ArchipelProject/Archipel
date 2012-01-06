@@ -136,7 +136,7 @@ def stateless_read_kernel_parameters(path="/proc/cmdline"):
     if not "ARCHIPEL_CONFIG_PATH_GENERAL" in ret:
         ret["ARCHIPEL_CONFIG_PATH_GENERAL"] = os.path.join(ret["ARCHIPEL_CONFIG_PATH"], "archipel.conf")
     if not "ARCHIPEL_CONFIG_PATH_LOCAL" in ret:
-        ret["ARCHIPEL_CONFIG_PATH_LOCAL"] = os.path.join(ret["ARCHIPEL_CONFIG_PATH"], "archipel.%s.conf" % socket.gethostname())
+        ret["ARCHIPEL_CONFIG_PATH_LOCAL"] = None
     if not "ARCHIPEL_STORAGE_MOUNT_OPTIONS" in ret:
         ret["ARCHIPEL_STORAGE_MOUNT_OPTIONS"] = None
     if not "ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT" in ret:
@@ -198,6 +198,7 @@ def initialize_config(paths, cmdline_path="/proc/cmdline"):
             p_storage_mount_options = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_OPTIONS"]
             p_storage_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT"]
             p_storage_mount_post_script = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT"]
+            p_config_path = stateless_mode_parameters["ARCHIPEL_CONFIG_PATH"]
             p_config_general = stateless_mode_parameters["ARCHIPEL_CONFIG_PATH_GENERAL"]
             p_config_local = stateless_mode_parameters["ARCHIPEL_CONFIG_PATH_LOCAL"]
 
@@ -214,6 +215,10 @@ def initialize_config(paths, cmdline_path="/proc/cmdline"):
             msg("Mouting remote file system from %s (type: %s)" % (p_storage_mount_address, p_storage_mount_type))
             stateless_mount_storage(p_storage_mount_type, p_storage_mount_address, p_storage_mount_options, p_storage_mount_mountpoint, p_storage_mount_post_script)
             msg("Remote filesystem sucessfull mounted")
+
+            # We set the hostname here because the post mount script may have changed it.
+            if not p_config_local:
+                p_config_local = os.path.join(p_config_path, "archipel.%s.conf" % socket.gethostname())
 
             # Reinitialize the configuration according to the kernel parameters about remote config
             msg("Re-read the configuration files %s" % (str([p_config_general, p_config_local])))
