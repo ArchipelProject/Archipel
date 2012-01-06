@@ -157,9 +157,9 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
     if " %s " % mount_point in commands.getoutput("mount"):
         return
     if not mount_options:
-        subprocess.check_call("mount", "-t", mount_type, mount_address, mount_point)
+        subprocess.check_call(["mount", "-t", mount_type, mount_address, mount_point])
     else:
-        subprocess.check_call("mount", "-t", mount_type, "-o", mount_options, mount_address, mount_point)
+        subprocess.check_call(["mount", "-t", mount_type, "-o", mount_options, mount_address, mount_point])
 
 def initialize_config(paths):
     """
@@ -218,20 +218,20 @@ def main(config):
     virEventLoopPureStart()
 
     # Create the archipel hypervisor instance
-    hyp = TNArchipelHypervisor(jid, password, config, name, database)
+    hypervisor = TNArchipelHypervisor(jid, password, config, name, database)
 
-    # Try to connect
+    # Try to connect to XMPP and Libvirt
     try:
-        hyp.connect()
+        hypervisor.connect()
     except Exception as ex:
         error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)), code=ARCHIPEL_INIT_ERROR_CONNECTION)
 
     # Main runloop
     try:
-        hyp.loop()
+        hypervisor.loop()
     except Exception as ex:
-        if hyp.xmppclient.isConnected():
-            hyp.xmppclient.disconnect()
+        if hypervisor.xmppclient.isConnected():
+            hypervisor.xmppclient.disconnect()
         error("Exception has stopped the hypervisor main loop: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
 
 
@@ -277,5 +277,5 @@ if __name__ == "__main__":
     # Read configuration
     config = initialize_config(options.config.split(","))
 
-    # start the daemon main loop
+    # Start the daemon main loop
     main(config)
