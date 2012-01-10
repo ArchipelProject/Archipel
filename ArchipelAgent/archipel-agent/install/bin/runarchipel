@@ -120,27 +120,27 @@ def stateless_read_kernel_parameters(path="/proc/cmdline"):
             ret[token.split("=", 1)[0]] = token.split("=", 1)[1].split(" ")[0].strip()
 
     # Check we have all the needed kernel parameters
-    if not "ARCHIPEL_STORAGE_MOUNT_ADDRESS" in ret:
-        raise Exception("You need to set the kernel parameter ARCHIPEL_STORAGE_MOUNT_ADDRESS")
+    if not "ARCHIPEL_MOUNT_ADDRESS" in ret:
+        raise Exception("You need to set the kernel parameter ARCHIPEL_MOUNT_ADDRESS")
 
     # Set default value if tokens missing
 
     ## MOUNT
-    if not "ARCHIPEL_STORAGE_MOUNT_TYPE" in ret:
-        ret["ARCHIPEL_STORAGE_MOUNT_TYPE"] = "cifs"
+    if not "ARCHIPEL_MOUNT_TYPE" in ret:
+        ret["ARCHIPEL_MOUNT_TYPE"] = "cifs"
 
-    if not "ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT" in ret:
-        ret["ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT"] = "/vm"
+    if not "ARCHIPEL_MOUNT_MOUNTPOINT" in ret:
+        ret["ARCHIPEL_MOUNT_MOUNTPOINT"] = "/vm"
 
-    if not "ARCHIPEL_STORAGE_MOUNT_OPTIONS" in ret:
-        ret["ARCHIPEL_STORAGE_MOUNT_OPTIONS"] = None
+    if not "ARCHIPEL_MOUNT_OPTIONS" in ret:
+        ret["ARCHIPEL_MOUNT_OPTIONS"] = None
 
-    if not "ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT" in ret:
-        ret["ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT"] = None
+    if not "ARCHIPEL_POST_SCRIPT" in ret:
+        ret["ARCHIPEL_POST_SCRIPT"] = None
 
     ## STATELESS FOLDERS
     if not "ARCHIPEL_STATELESS_PATH" in ret:
-        ret["ARCHIPEL_STATELESS_PATH"] = os.path.join(ret["ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT"], "stateless")
+        ret["ARCHIPEL_STATELESS_PATH"] = os.path.join(ret["ARCHIPEL_MOUNT_MOUNTPOINT"], "stateless")
 
     if not "ARCHIPEL_STATELESS_CONFIG_PATH" in ret:
         ret["ARCHIPEL_STATELESS_CONFIG_PATH"] = os.path.join(ret["ARCHIPEL_STATELESS_PATH"], "config")
@@ -167,7 +167,7 @@ def stateless_read_kernel_parameters(path="/proc/cmdline"):
 
     return ret
 
-def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount_point="/vm", post_script_path=None):
+def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount_point="/vm"):
     """
     Mount the remote file system.
     @type mount_type: string
@@ -178,19 +178,16 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
     @param mount_options: the options (i.e. "username=user,password=secret")
     @type mount_point: string
     @param mount_point: mount path (Default: "/vm")
-    @type post_script_path: string
-    @param post_script_path: path of the script to run after a sucessfull mount
     """
     if mount_address in commands.getoutput("mount"):
+        msg("Remote filesystem is already mounted. Ignored")
         return
+    msg("Mouting remote file system from %s (type: %s)" % (p_mount_address, p_mount_type))
     if not mount_options:
         subprocess.check_call(["mount", "-t", mount_type, mount_address, mount_point])
     else:
         subprocess.check_call(["mount", "-t", mount_type, "-o", mount_options, mount_address, mount_point])
-    if post_script_path:
-        msg("Running post mount script from %s" % post_script_path)
-        subprocess.check_call(post_script_path, shell=True)
-        msg("Post mount script sucessfully ran")
+    msg("Remote filesystem sucessfull mounted")
 
 def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
     """
@@ -217,11 +214,10 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             # Get Kernel parameters
             stateless_mode_parameters = stateless_read_kernel_parameters(cmdline_path)
 
-            p_storage_mount_type = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_TYPE"]
-            p_storage_mount_address = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_ADDRESS"]
-            p_storage_mount_options = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_OPTIONS"]
-            p_storage_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_MOUNTPOINT"]
-            p_storage_mount_post_script = stateless_mode_parameters["ARCHIPEL_STORAGE_MOUNT_POST_SCRIPT"]
+            p_mount_type = stateless_mode_parameters["ARCHIPEL_MOUNT_TYPE"]
+            p_mount_address = stateless_mode_parameters["ARCHIPEL_MOUNT_ADDRESS"]
+            p_mount_options = stateless_mode_parameters["ARCHIPEL_MOUNT_OPTIONS"]
+            p_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_MOUNT_MOUNTPOINT"
             p_stateless_path = stateless_mode_parameters["ARCHIPEL_STATELESS_PATH"]
             p_stateless_logs_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LOGS_PATH"]
             p_stateless_lib_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LIB_PATH"]
@@ -231,6 +227,7 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             p_stateless_config_path_general = stateless_mode_parameters["ARCHIPEL_STATELESS_CONFIG_PATH_GENERAL"]
             p_stateless_config_path_local = stateless_mode_parameters["ARCHIPEL_STATELESS_CONFIG_PATH_LOCAL"]
             p_selinux_enforce = stateless_mode_parameters["ARCHIPEL_SELINUX_MODE"]
+            p_post_script = stateless_mode_parameters["ARCHIPEL_POST_SCRIPT"]
 
             # selinux
             msg("Setting selinux in mode %s" % p_selinux_enforce)
@@ -242,9 +239,7 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
                 msg(" - %s: %s" % (k, v))
 
             # Mount remote filestem
-            msg("Mouting remote file system from %s (type: %s)" % (p_storage_mount_address, p_storage_mount_type))
-            stateless_mount_storage(p_storage_mount_type, p_storage_mount_address, p_storage_mount_options, p_storage_mount_mountpoint, p_storage_mount_post_script)
-            msg("Remote filesystem sucessfull mounted")
+            stateless_mount_storage(p_mount_type, p_mount_address, p_mount_options, p_mount_mountpoint)
 
             # Create remote folders if needed
             paths = [p_stateless_path, p_stateless_logs_path, p_stateless_lib_path, p_stateless_qemu_path, p_stateless_logs_path, p_stateless_config_path]
@@ -254,11 +249,28 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
                     os.makedirs(path)
 
             # Mount --bind the /etc/libvirt/qemu to the solid state path
-            msg("Mounting /etc/libvirt/qemu on %s" % p_stateless_qemu_path)
-            if not p_stateless_qemu_path in commands.getoutput("mount"):
+            if not "/etc/libvirt/qemu" in commands.getoutput("mount"):
+                msg("Mounting /etc/libvirt/qemu on %s" % p_stateless_qemu_path)
                 subprocess.check_call(["mount", "--bind", p_stateless_qemu_path, "/etc/libvirt/qemu"])
             else:
-                msg("/etc/libvirt/qemu is already mounted on %s" % p_stateless_qemu_path)
+                msg("/etc/libvirt/qemu is already mounted on %s. Ignored" % p_stateless_qemu_path)
+
+            # We reload the libvirt
+            if os.path.exists("/bin/systemctl") or os.path.exists("/sbin/systemctl"):
+                subprocess.check_call(["systemctl", "reload", "libvirtd.service"])
+                msg("Libvirt restarted using systemctl")
+            elif os.path.exists("/sbin/service"):
+                subprocess.check_call(["service", "libvirtd", "restart"])
+                msg("Libvirt restarted using service")
+            else:
+                subprocess.check_call(["/etc/init.d/libvirtd", "restart"])
+                msg("Libvirt restarted using /etc/init.d/libvirtd")
+
+            # We start the post script if any
+            if p_post_script:
+                msg("Running post mount script from %s" % p_post_script)
+                subprocess.check_call("%s %s %s" % (p_post_script, socket.gethostname(), " ".join(stateless_mode_parameters)), shell=True)
+                msg("Post mount script sucessfully ran")
 
             # We set the hostname here because the post mount script may have changed it.
             if not p_stateless_config_path_local:
