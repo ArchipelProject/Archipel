@@ -182,7 +182,7 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
     if mount_address in commands.getoutput("mount"):
         msg("Remote filesystem is already mounted. Ignored")
         return
-    msg("Mouting remote file system from %s (type: %s)" % (p_mount_address, p_mount_type))
+    msg("Mouting remote file system from %s (type: %s)" % (mount_address, mount_type))
     if not mount_options:
         subprocess.check_call(["mount", "-t", mount_type, mount_address, mount_point])
     else:
