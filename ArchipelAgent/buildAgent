@@ -241,6 +241,67 @@ def uninstall():
             os.system("rm -f `which archipel-%s`" % script_name)
             success("archipel-%s script has been removed" % script_name)
 
+def build_live_cd():
+    """
+    Build the live CD
+    """
+    import commands, tempfile
+    required_tools = ["ksflatten", "livecd-creator", "rpmbuild", "createrepo", "make", "autoconf", "automake", "image-minimizer"]
+    for tool in required_tools:
+        msg("Testing command %s" % tool)
+        if os.system("which %s &> /dev/null" % tool):
+            error("You need the command '%s'" % tool)
+    success("All needed tools are present")
+
+    msg("Generating the rpmbuild repo if needed")
+    rpm_topdir = commands.getoutput("rpm --eval %_topdir")
+    os.system("mkdir -p %s/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}" % rpm_topdir)
+    os.system("mkdir -p %s/RPMS/noarch" % rpm_topdir)
+    success("rpmbuild folder structure seems to be ok")
+
+    msg("Copying all archipel rpm to the repo")
+    if os.system("cp ./Archipel_RPMS/RPMS/* %s/RPMS/noarch/" % rpm_topdir):
+        error("Unable to copy archipel RPMS to %s" % rpm_topdir)
+    success("All Archipel RPMS have been copied")
+
+    msg("Generating the repository")
+    if os.path.exists("%s/RPMS/repodata" % rpm_topdir):
+        msg("Flushing old repodata")
+        if os.system("rm -rf %s/RPMS/repodata" % rpm_topdir):
+            error("Unable to flush %s/RPMS/repodata" % rpm_topdir)
+    if os.system("cd '%s/RPMS' && createrepo ." % rpm_topdir):
+        error("Unable to run createrepo in %s/RPMS" % rpm_topdir)
+    success("Repository successfully created in %s/RPMS" % rpm_topdir)
+
+    msg("Create a working dir")
+    temp_dir = tempfile.mkdtemp()
+    msg("Temporary work folder is at %s" % temp_dir)
+    success("Work folder ready")
+
+    # environment variables
+    msg("Setting environment variables")
+    os.environ['BASEDIR'] = rpm_topdir
+    os.environ['OVIRT_CACHE_DIR'] = temp_dir
+    os.environ['OVIRT_LOCAL_REPO'] = "file://%s/RPMS" % rpm_topdir
+    os.environ['EXTRA_RELEASE'] = ".archipel"
+    success("Environment variables set")
+
+    msg("Generating the liveCD ISO. This can take more than 20min if your computer is slow.")
+    ret = os.system("""\
+cd ./LiveCD  \
+&& ./autogen.sh --with-image-minimizer --with-archipel \
+&& make  \
+&& make dist \
+&& rpmbuild --nodeps --define "extra_release $EXTRA_RELEASE" -ta --clean *.tar.gz \
+&& cd recipe \
+&& make archipel-node-image.iso \
+&& cp archipel-node-image.iso ../..
+""")
+    os.system("rm -rf %s" % temp_dir)
+    if ret:
+        error("Something bad happens while generating the Live CD ISO. please review the console log")
+    success("LiveCD of archipel-node is now ready!")
+
 
 ### Main function
 
@@ -286,6 +347,11 @@ if __name__ == "__main__":
                         help="Remove all Archipel's binary files. Data files (info, conf) remains safe",
                         action="store_true",
                         default=False)
+    parser.add_option("-l", "--livecd",
+                        dest="livecd",
+                        help="Build the archipel-node liveCD ISO",
+                        action="store_true",
+                        default=False)
 
     options, args = parser.parse_args()
 
@@ -303,11 +369,11 @@ if __name__ == "__main__":
             export_eggs(PATH, packages_paths)
         msg("All action performed")
 
-    elif options.build_rpms:
+    elif options.build_rpms or options.livecd:
         msg("Generating RPMS")
         generate_rpms(packages_paths)
-        if options.export:
-            msg("Exporting the RPMS in Archipel_RPMS")
+        if options.export or options.livecd:
+            msg("Exporting the RPMS in %s")
             export_rpms(PATH, packages_paths)
         msg("All action performed")
 
@@ -333,3 +399,6 @@ if __name__ == "__main__":
 
     else:
         error("Wrong usage. Please type ./buildAgent --help for help")
+
+    if options.livecd:
+        build_live_cd()
