@@ -217,7 +217,7 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             p_mount_type = stateless_mode_parameters["ARCHIPEL_MOUNT_TYPE"]
             p_mount_address = stateless_mode_parameters["ARCHIPEL_MOUNT_ADDRESS"]
             p_mount_options = stateless_mode_parameters["ARCHIPEL_MOUNT_OPTIONS"]
-            p_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_MOUNT_MOUNTPOINT"
+            p_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_MOUNT_MOUNTPOINT"]
             p_stateless_path = stateless_mode_parameters["ARCHIPEL_STATELESS_PATH"]
             p_stateless_logs_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LOGS_PATH"]
             p_stateless_lib_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LIB_PATH"]
