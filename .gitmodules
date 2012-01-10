@@ -16,3 +16,6 @@
 [submodule "ArchipelClient/Libraries/TNKit"]
 	path = ArchipelClient/Libraries/TNKit
 	url = git://github.com/primalmotion/TNKit.git
+[submodule "ArchipelAgent/LiveCD"]
+	path = ArchipelAgent/LiveCD
+	url = git://github.com/primalmotion/archipel-node.git
