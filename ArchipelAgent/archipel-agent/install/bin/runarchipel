@@ -145,9 +145,6 @@ def stateless_read_kernel_parameters(path="/proc/cmdline"):
     if not "ARCHIPEL_STATELESS_CONFIG_PATH" in ret:
         ret["ARCHIPEL_STATELESS_CONFIG_PATH"] = os.path.join(ret["ARCHIPEL_STATELESS_PATH"], "config")
 
-    if not "ARCHIPEL_STATELESS_LOGS_PATH" in ret:
-        ret["ARCHIPEL_STATELESS_LOGS_PATH"] = os.path.join(ret["ARCHIPEL_STATELESS_PATH"], "logs", socket.gethostname())
-
     if not "ARCHIPEL_STATELESS_LIB_PATH" in ret:
         ret["ARCHIPEL_STATELESS_LIB_PATH"] = os.path.join(ret["ARCHIPEL_STATELESS_PATH"], "lib", socket.gethostname())
 
@@ -219,10 +216,8 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             p_mount_options = stateless_mode_parameters["ARCHIPEL_MOUNT_OPTIONS"]
             p_mount_mountpoint = stateless_mode_parameters["ARCHIPEL_MOUNT_MOUNTPOINT"]
             p_stateless_path = stateless_mode_parameters["ARCHIPEL_STATELESS_PATH"]
-            p_stateless_logs_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LOGS_PATH"]
             p_stateless_lib_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LIB_PATH"]
             p_stateless_qemu_path = stateless_mode_parameters["ARCHIPEL_STATELESS_QEMU_PATH"]
-            p_stateless_logs_path = stateless_mode_parameters["ARCHIPEL_STATELESS_LOGS_PATH"]
             p_stateless_config_path = stateless_mode_parameters["ARCHIPEL_STATELESS_CONFIG_PATH"]
             p_stateless_config_path_general = stateless_mode_parameters["ARCHIPEL_STATELESS_CONFIG_PATH_GENERAL"]
             p_stateless_config_path_local = stateless_mode_parameters["ARCHIPEL_STATELESS_CONFIG_PATH_LOCAL"]
@@ -242,7 +237,7 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             stateless_mount_storage(p_mount_type, p_mount_address, p_mount_options, p_mount_mountpoint)
 
             # Create remote folders if needed
-            paths = [p_stateless_path, p_stateless_logs_path, p_stateless_lib_path, p_stateless_qemu_path, p_stateless_logs_path, p_stateless_config_path]
+            paths = [p_stateless_path, p_stateless_lib_path, p_stateless_qemu_path, p_stateless_config_path]
             for path in paths:
                 if not os.path.exists(path):
                     msg("Creating solid state path %s" % path)
