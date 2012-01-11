@@ -246,15 +246,28 @@ def build_live_cd():
     Build the live CD
     """
     import commands, tempfile
-    required_tools = ["ksflatten", "livecd-creator", "rpmbuild", "createrepo", "make", "autoconf", "automake", "image-minimizer"]
+    required_tools = ["ksflatten", "livecd-creator", "rpmbuild", "createrepo", "make", "autoconf", "automake"]
     for tool in required_tools:
         msg("Testing command %s" % tool)
         if os.system("which %s &> /dev/null" % tool):
             error("You need the command '%s'" % tool)
     success("All needed tools are present")
 
+    image_minizer = "--with-image-minimizer"
+    if os.system("image-minimizer %s &> /dev/null" % tool):
+        image_minizer = ""
+
     msg("Generating the rpmbuild repo if needed")
     rpm_topdir = commands.getoutput("rpm --eval %_topdir")
+    centos_mode = ""
+
+    try:
+        if int(commands.getoutput("rpm --eval '0%{?centos}'")):
+            msg("You are on CentOS. Building the CentOS based live OS")
+            centos_mode = "--with-centos"
+    except:
+        pass
+
     os.system("mkdir -p %s/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}" % rpm_topdir)
     os.system("mkdir -p %s/RPMS/noarch" % rpm_topdir)
     success("rpmbuild folder structure seems to be ok")
@@ -273,10 +286,11 @@ def build_live_cd():
         error("Unable to run createrepo in %s/RPMS" % rpm_topdir)
     success("Repository successfully created in %s/RPMS" % rpm_topdir)
 
-    msg("Create a working dir")
-    temp_dir = tempfile.mkdtemp()
-    msg("Temporary work folder is at %s" % temp_dir)
-    success("Work folder ready")
+    msg("Checking cache dir")
+    temp_dir = "/tmp/archipel-node-cache"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+        msg("Cachedir is at %s" % temp_dir)
 
     # environment variables
     msg("Setting environment variables")
@@ -287,17 +301,17 @@ def build_live_cd():
     success("Environment variables set")
 
     msg("Generating the liveCD ISO. This can take more than 20min if your computer is slow.")
-    ret = os.system("""\
-cd ./LiveCD  \
-&& ./autogen.sh --with-image-minimizer --with-archipel \
-&& make  \
-&& make dist \
-&& rpmbuild --nodeps --define "extra_release $EXTRA_RELEASE" -ta --clean *.tar.gz \
-&& cd recipe \
-&& make archipel-node-image.iso \
-&& cp archipel-node-image.iso ../..
-""")
-    os.system("rm -rf %s" % temp_dir)
+    build_command = """\
+    cd ./LiveCD  \
+    && make distclean \
+    ; ./autogen.sh %s --with-archipel %s \
+    && make  \
+    && make dist \
+    && rpmbuild --nodeps --define "extra_release $EXTRA_RELEASE" -ta --clean *.tar.gz \
+    && cd recipe \
+    && make archipel-node-image.iso \
+    && cp archipel-node-image.iso ../..""" % (image_minizer, centos_mode)
+    ret = os.system(build_command)
     if ret:
         error("Something bad happens while generating the Live CD ISO. please review the console log")
     success("LiveCD of archipel-node is now ready!")
@@ -369,10 +383,10 @@ if __name__ == "__main__":
             export_eggs(PATH, packages_paths)
         msg("All action performed")
 
-    elif options.build_rpms or options.livecd:
+    elif options.build_rpms:
         msg("Generating RPMS")
         generate_rpms(packages_paths)
-        if options.export or options.livecd:
+        if options.export:
             msg("Exporting the RPMS in %s")
             export_rpms(PATH, packages_paths)
         msg("All action performed")
@@ -396,9 +410,6 @@ if __name__ == "__main__":
         msg("Uninstalling Archipel")
         uninstall()
         msg("All action performed")
-
-    else:
-        error("Wrong usage. Please type ./buildAgent --help for help")
 
     if options.livecd:
         build_live_cd()
