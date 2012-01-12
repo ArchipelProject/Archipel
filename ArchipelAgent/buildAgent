@@ -257,14 +257,10 @@ def build_live_cd():
     if os.system("image-minimizer %s &> /dev/null" % tool):
         image_minizer = ""
 
-    msg("Generating the rpmbuild repo if needed")
-    rpm_topdir = commands.getoutput("rpm --eval %_topdir")
-    centos_mode = ""
-
+    distro_mode = "ovirt"
     try:
         if int(commands.getoutput("rpm --eval '0%{?centos}'")):
-            msg("You are on CentOS. Building the CentOS based live OS")
-            centos_mode = "--with-centos"
+            distro_mode = "centos"
     except:
         pass
 
@@ -304,13 +300,14 @@ def build_live_cd():
     build_command = """\
     cd ./LiveCD  \
     && make distclean \
-    ; ./autogen.sh %s --with-archipel %s \
+    ; ./autogen.sh %s --with-archipel \
     && make  \
     && make dist \
     && rpmbuild --nodeps --define "extra_release $EXTRA_RELEASE" -ta --clean *.tar.gz \
     && cd recipe \
     && make archipel-node-image.iso \
-    && cp archipel-node-image.iso ../..""" % (image_minizer, centos_mode)
+    && rm -f ../../archipel-node-image-%s.iso
+    && cp archipel-node-image.iso ../../archipel-node-image-%s.iso""" % (image_minizer, centos_mode)
     ret = os.system(build_command)
     if ret:
         error("Something bad happens while generating the Live CD ISO. please review the console log")
