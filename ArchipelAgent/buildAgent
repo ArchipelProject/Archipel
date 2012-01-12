@@ -54,6 +54,13 @@ def msg(msg, exit=True):
     """
     print "\033[35mMESSAGE: %s\033[0m" % msg
 
+def warn(msg):
+    """
+    Print a standardized warning message
+    @type msg: String
+    @param msg: the message to print
+    """
+    print "\033[33mWARNING: %s\033[0m" % msg
 
 ### Repo parsing
 
@@ -264,6 +271,8 @@ def build_live_cd():
     except:
         pass
 
+    msg("Generating the rpmbuild repo if needed")
+    rpm_topdir = commands.getoutput("rpm --eval %_topdir")
     os.system("mkdir -p %s/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}" % rpm_topdir)
     os.system("mkdir -p %s/RPMS/noarch" % rpm_topdir)
     success("rpmbuild folder structure seems to be ok")
@@ -273,14 +282,6 @@ def build_live_cd():
         error("Unable to copy archipel RPMS to %s" % rpm_topdir)
     success("All Archipel RPMS have been copied")
 
-    msg("Generating the repository")
-    if os.path.exists("%s/RPMS/repodata" % rpm_topdir):
-        msg("Flushing old repodata")
-        if os.system("rm -rf %s/RPMS/repodata" % rpm_topdir):
-            error("Unable to flush %s/RPMS/repodata" % rpm_topdir)
-    if os.system("cd '%s/RPMS' && createrepo ." % rpm_topdir):
-        error("Unable to run createrepo in %s/RPMS" % rpm_topdir)
-    success("Repository successfully created in %s/RPMS" % rpm_topdir)
 
     msg("Checking cache dir")
     temp_dir = "/tmp/archipel-node-cache"
@@ -297,20 +298,39 @@ def build_live_cd():
     success("Environment variables set")
 
     msg("Generating the liveCD ISO. This can take more than 20min if your computer is slow.")
-    build_command = """\
-    cd ./LiveCD  \
-    && make distclean \
-    ; ./autogen.sh %s --with-archipel \
-    && make  \
-    && make dist \
-    && rpmbuild --nodeps --define "extra_release $EXTRA_RELEASE" -ta --clean *.tar.gz \
-    && cd recipe \
-    && make archipel-node-image.iso \
-    && rm -f ../../archipel-node-image-%s.iso
-    && cp archipel-node-image.iso ../../archipel-node-image-%s.iso""" % (image_minizer, centos_mode)
-    ret = os.system(build_command)
-    if ret:
-        error("Something bad happens while generating the Live CD ISO. please review the console log")
+
+    msg("Dist cleaning")
+    if os.system("cd ./LiveCD && make distclean"):
+        warn("Unable to distclean. maybe it's the first build")
+
+    msg("Running ./autogen.sh %s --with-archipel" % image_minizer)
+    if os.system("cd ./LiveCD && ./autogen.sh %s --with-archipel" % image_minizer):
+        error("Unable to autogen")
+    success("Autogen complete")
+
+    msg("Building the oVirt RPMS")
+    if os.system("cd ./LiveCD && make && make dist && rpmbuild --nodeps --define \"extra_release $EXTRA_RELEASE\" -ta --clean *.tar.gz"):
+        error("Uable to generate the RPMS")
+    success("oVirt RPMS generation complete")
+
+    msg("Generating the local repository")
+    if os.path.exists("%s/RPMS/repodata" % rpm_topdir):
+        msg("Flushing old repodata")
+        if os.system("rm -rf %s/RPMS/repodata" % rpm_topdir):
+            error("Unable to flush %s/RPMS/repodata" % rpm_topdir)
+    if os.system("cd '%s/RPMS' && createrepo ." % rpm_topdir):
+        error("Unable to run createrepo in %s/RPMS" % rpm_topdir)
+    success("Repository successfully generated in %s/RPMS" % rpm_topdir)
+
+    msg("Building the archipel-node-image-%s.iso" % distro_mode)
+    if os.system("cd ./LiveCD/recipe && make archipel-node-image.iso"):
+        error("Uable to genrate the ISO")
+    success("ISO sucessfully generated")
+
+    msg("Copying the ISO")
+    os.system("rm -f ../../archipel-node-image-%s.iso" % distro_mode)
+    os.system("cp /LiveCD/recipe/archipel-node-image.iso ./archipel-node-image-%s.iso" % distro_mode)
+
     success("LiveCD of archipel-node is now ready!")
 
 
