@@ -182,7 +182,7 @@ var _iconEntityTypeHuman,
 {
     if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:_entity])
     {
-        [_delegate userFetcherClean:self]
+        [_delegate userFetcherClean]
         return;
     }
 
