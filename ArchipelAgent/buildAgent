@@ -355,7 +355,7 @@ def build_live_cd():
 
     msg("Copying the ISO")
     os.system("rm -f ../../archipel-node-image-%s.iso" % distro_mode)
-    os.system("cp /LiveCD/recipe/archipel-node-image.iso ./archipel-node-image-%s.iso" % distro_mode)
+    os.system("cp ./LiveCD/recipe/archipel-node-image.iso ./archipel-node-image-%s.iso" % distro_mode)
 
     success("LiveCD of archipel-node is now ready!")
 
