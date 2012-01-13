@@ -248,6 +248,30 @@ def uninstall():
             os.system("rm -f `which archipel-%s`" % script_name)
             success("archipel-%s script has been removed" % script_name)
 
+def build_apscheduler_rpm(export_path):
+    """
+    Build the APScheduler RPM
+    @type export_path: String
+    @param export_path: the path where to copy the RPM after build
+    """
+    apscheduler_url = "http://pypi.python.org/packages/source/A/APScheduler/APScheduler-2.0.2.tar.gz"
+    msg("Downloading the APScheduler source from pypi")
+    if os.system("cd /tmp && wget %s" % apscheduler_url):
+        error("Unable to download APScheduler source from %s" %apscheduler_url)
+    success("APScheduler source downloaded")
+    msg("Untaring the source")
+    if os.system("cd /tmp && tar -xzf APScheduler-2.0.2.tar.gz"):
+        error("Unable to untar the source tar")
+    success("Source untared")
+    msg("Building the RPM")
+    if os.system("cd /tmp/APScheduler-2.0.2 && python setup.py bdist_rpm"):
+        error("Unable to build the RPM")
+    success("RPM Built")
+    msg("Copying RPMS to %s" % export_path)
+    if os.system("cp /tmp/APScheduler-2.0.2/dist/*rpm '%s'" % export_path):
+        error("Unable to copy the RPM to repo path %s" % export_path)
+    success("APScheduler RPM ready")
+
 def build_live_cd():
     """
     Build the live CD
@@ -312,6 +336,8 @@ def build_live_cd():
     if os.system("cd ./LiveCD && make && make dist && rpmbuild --nodeps --define \"extra_release $EXTRA_RELEASE\" -ta --clean *.tar.gz"):
         error("Uable to generate the RPMS")
     success("oVirt RPMS generation complete")
+
+    build_apscheduler_rpm("%s/RPMS/noarch/" %rpm_topdir)
 
     msg("Generating the local repository")
     if os.path.exists("%s/RPMS/repodata" % rpm_topdir):
