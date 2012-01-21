@@ -57,6 +57,8 @@ self.onmessage = function(e) {
     load1.reverse();
     load5.reverse();
     load15.reverse();
+    for (nic in networks)
+        networks[nic].reverse()
 
     self.postMessage({  "memoryFree": memoryFree,
                         "memoryUsed": memoryUsed,

@@ -406,10 +406,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         nnic++;
     }
 
-    [healthMemUsage setStringValue:someData.memoryFree + CPBundleLocalizedString(" MB", " MB")];
-    [healthMemSwapped setStringValue:someData.memorySwapped + CPBundleLocalizedString(" MB", " MB")];
-    [healthCPUUsage setStringValue:someData.cpuFree + @"%"];
-
     var maxMem = Math.round(someData.memoryTotal / 1024 / 1024);
     [fieldTotalMemory setStringValue:maxMem  + CPBundleLocalizedString("GB", "GB")];
     [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + CPBundleLocalizedString("GB", "GB")];
