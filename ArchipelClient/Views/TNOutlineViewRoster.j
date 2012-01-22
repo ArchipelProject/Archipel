@@ -23,9 +23,10 @@
 @import <AppKit/CPTextField.j>
 
 
-TNArchipelRosterOutlineViewReload           = @"TNArchipelRosterOutlineViewReload";
-TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowNotification";
-TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectAll";
+TNArchipelRosterOutlineViewReload                   = @"TNArchipelRosterOutlineViewReload";
+TNArchipelPropertiesViewDidShowNotification         = @"TNArchipelPropertiesViewDidShowNotification";
+TNArchipelRosterOutlineViewDeselectAll              = @"TNArchipelRosterOutlineDeselectAll";
+TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineViewSelectItemNotification";
 
 /*! @ingroup archipelcore
     Subclass of TNOutlineView. This will display the roster according to the TNDatasourceRoster given as datasource.
@@ -58,6 +59,7 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(reload:) name:TNArchipelRosterOutlineViewReload object:nil];
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(deselectAll:) name:TNArchipelRosterOutlineViewDeselectAll object:nil];
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didPropertiesViewUpdate:) name:TNArchipelPropertiesViewDidShowNotification object:nil];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveSelectItemNotification:) name:TNArchipelRosterOutlineViewSelectItemNotification object:nil];
 
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
@@ -123,6 +125,22 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
     [self scrollRowToVisible:selectedIndex];
 }
 
+/*! called when TNArchipelRosterOutlineViewSelectItemNotification is received.
+    It will select the item if present
+    @param aNotification the notification
+*/
+- (void)didReceiveSelectItemNotification:(CPNotification)aNotification
+{
+    if (![aNotification userInfo])
+    {
+        CPLog.warning("received notification to select an item, but no item is provided.")
+        return;
+    }
+
+    var rowIndex = [self rowForItem:[aNotification userInfo]];
+    if (rowIndex !== CPNotFound)
+        [self selectRowIndexes:[CPIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+}
 
 #pragma mark -
 #pragma mark Overrides

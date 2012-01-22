@@ -101,8 +101,22 @@
     if ([[_datas objectAtIndex:setIndex] count] >= _maxNumberOfPoints)
         [[_datas objectAtIndex:setIndex] removeObjectAtIndex:0];
 
-    [_datas objectAtIndex:setIndex].push(parseInt(data));
+    [_datas objectAtIndex:setIndex].push(parseFloat(data));
 
+}
+
+/*! Set the complete set of data for the given set index
+    @param data the CPArray of data to set into the datasource
+    @param setIndex the index of set in which you want to push the data
+*/
+- (void)setData:(CPArray)data inSet:(CPNumber)setIndex
+{
+    if (setIndex >= [_datas count])
+    {
+        [CPException raise:@"set index too big" reason:@"setIndex set to " + setIndex + ". Maximum is " + [_datas count]];
+    }
+
+    _datas[setIndex] = [CPArray arrayWithArray:data];
 }
 
 /*! remove all object from the datasource

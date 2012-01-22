@@ -27,6 +27,7 @@
 
 @import <LPKit/LPChartView.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNWorker.j>
 
 @import "TNCellLogView.j"
 @import "TNCellPartitionView.j"
@@ -98,6 +99,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     TNDatasourceChartView       _networkDatasource;
     TNTableViewDataSource       _datasourceLogs;
     TNTableViewDataSource       _datasourcePartitions;
+    TNWorker                    _logsWorker;
+    TNWorker                    _statsHistoryWorker;
+    TNWorker                    _statsWorker;
 }
 
 
@@ -218,11 +222,20 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [[tableLogs tableColumnWithIdentifier:@"self"] setDataView:[logDataViewPrototype duplicate]];
     [tableLogs setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
 
-
     [fieldPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Set the delay between asking hypervisor statistics", @"Set the delay between asking hypervisor statistics")];
     [fieldPreferencesMaxItems setToolTip:CPBundleLocalizedString(@"Set the max number of statistic entries to fetch", @"Set the max number of statistic entries to fetch")];
     [fieldPreferencesMaxLogEntries setToolTip:CPBundleLocalizedString(@"Set the max number of log item to fetch", @"Set the max number of log item to fetch")];
     [switchPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Activate the statistics auto fetching", @"Activate the statistics auto fetching")];
+
+    // Workers
+    _statsHistoryWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsHistoryWorker.js"]]];
+    [_statsHistoryWorker setDelegate:self];
+
+    _statsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsWorker.js"]]];
+    [_statsWorker setDelegate:self];
+
+    // _logsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"logsWorker.js"]]];
+    // [_logsWorker setDelegate:self];
 }
 
 
@@ -367,47 +380,94 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 #pragma mark -
 #pragma mark Utilities
 
-/*! parse diskNode info to get a CPTableView valid object
-    @parse diskNode TNStropheStanza containing the disk info
+/*! parse and update UI according the the _statsHistoryWorker replies
+    @param someData the data transfered by the worker
 */
-- (CPDictionary)parseDiskNodes:(TNStropheStanza)diskNode
+- (void)_parseStatsHistoryWorkerData:(id)someData
 {
-    var ret = [CPArray array];
+    [_memoryDatasource setData:someData.memoryUsed inSet:0];
+    [_loadDatasource setData:someData.loadOne inSet:0];
+    [_loadDatasource setData:someData.loadFive inSet:1];
+    [_loadDatasource setData:someData.loadFifteen inSet:2];
+    [_cpuDatasource setData:someData.cpuFree inSet:0];
 
-    for (var i = 0; i < [[diskNode childrenWithName:@"partition"] count]; i++)
-    {
-        var partition   = [[diskNode childrenWithName:@"partition"] objectAtIndex:i],
-            part        = [[TNPartitionObject alloc] init];
-
-        [part setCapacity:[partition valueForAttribute:@"capacity"]];
-        [part setMount:[partition valueForAttribute:@"mount"]];
-        [part setUsed:[partition valueForAttribute:@"used"]];
-        [part setAvailable:[partition valueForAttribute:@"available"]];
-
-        [ret addObject:part];
-    }
-
-    return ret;
-}
-
-/*! populate the network chart dataview
-    @param networkNodes CPArray of TNXMLNode containing the network information
-*/
-- (void)popupateNetworkDatasource:(CPArray)networkNodes
-{
+    var nnic = 0;
+    for (nic in someData.networks)
+        nnic++;
     if (!_networkDatasource)
     {
-        _networkDatasource = [[TNDatasourceChartView alloc] initWithNumberOfSets:[networkNodes count]];
+        _networkDatasource = [[TNDatasourceChartView alloc] initWithNumberOfSets:(nnic + 1)];
         [chartViewNetwork setDataSource:_networkDatasource];
     }
-
-    for (var i = 0 ; i < [networkNodes count]; i++)
+    nnic = 0;
+    for (nic in someData.networks)
     {
-        var node = [networkNodes objectAtIndex:i],
-            value = parseInt([node valueForAttribute:@"delta"]);
-        [_networkDatasource pushData:value inSet:i];
+        [_networkDatasource setData:someData.networks[nic] inSet:nnic];
+        nnic++;
     }
 
+    var maxMem = Math.round(someData.memoryTotal / 1024 / 1024);
+    [fieldTotalMemory setStringValue:maxMem  + CPBundleLocalizedString("GB", "GB")];
+    [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + CPBundleLocalizedString("GB", "GB")];
+    [chartViewMemory setFixedMaxValue:someData.memoryTotal];
+}
+
+/*! parse and update UI according the the _statsWorker replies
+    @param someData the data transfered by the worker
+*/
+- (void)_parseStatsWorkerData:(id)someData
+{
+    [_memoryDatasource pushData:someData.memory.used inSet:0];
+    [_loadDatasource pushData:someData.load.one inSet:0];
+    [_loadDatasource pushData:someData.load.five inSet:1];
+    [_loadDatasource pushData:someData.load.fifteen inSet:2];
+    [_cpuDatasource pushData:someData.cpu.idle inSet:0];
+
+    var nnic = 0;
+    for (nic in someData.networks)
+    {
+        [_networkDatasource pushData:someData.networks[nic][0] inSet:nnic];
+        nnic++;
+    }
+
+    var partitions = [CPArray array],
+        totalCapacity = 0;
+    for (var i = 0; i < someData.disks.length; i++)
+    {
+        var parts = someData.disks[i].partitions;
+
+        for (var j = 0; j < parts.length; j++)
+        {
+            var part = [[TNPartitionObject alloc] init],
+                infos = parts[j];
+
+            [part setCapacity:infos.capacity];
+            [part setMount:infos.mount];
+            [part setUsed:infos.used];
+            [part setAvailable:infos.available];
+            [partitions addObject:part];
+        }
+    }
+
+    [_datasourcePartitions removeAllObjects];
+    [_datasourcePartitions setContent:partitions];
+
+    var maxMem = Math.round(someData.memory.total / 1024 / 1024),
+        freeMem = Math.round(someData.memory.free / 1024),
+        swappedMed = Math.round(someData.memory.swapped / 1024)
+
+    [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(" MB", " MB")];
+    [healthMemSwapped setStringValue:swappedMed + CPBundleLocalizedString(" MB", " MB")];
+    [healthCPUUsage setStringValue:Math.round(someData.cpu.idle) + @"%"];
+    [fieldTotalMemory setStringValue:maxMem  + CPBundleLocalizedString("GB", "GB")];
+    [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + CPBundleLocalizedString("GB", "GB")];
+    [chartViewMemory setFixedMaxValue:someData.memory.total];
+    [healthDiskUsage setStringValue:totalCapacity];
+    [healthLoad setStringValue:someData.load.fifteen];
+    [healthUptime setStringValue:someData.uptime.up];
+    [healthInfo setStringValue:someData.uname.os + " " + someData.uname.kname + " " + someData.uname.machine];
+    [healthLibvirtVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s",someData.libvirt.major, someData.libvirt.minor, someData.libvirt.release]];
+    [healthLibvirtDriverVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s", someData.driver.major, someData.driver.minor, someData.driver.release]];
 }
 
 
@@ -483,81 +543,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 - (BOOL)_didReceiveHypervisorHealth:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {
-        try
-        {
-            var memNode         = [aStanza firstChildWithName:@"memory"],
-                freeMem         = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
-                swapped         = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
-                memUsed         = [[memNode valueForAttribute:@"used"] intValue],
-                diskNode        = [aStanza firstChildWithName:@"disk"],
-                loadNode        = [aStanza firstChildWithName:@"load"],
-                loadOne         = [[loadNode valueForAttribute:@"one"] floatValue],
-                loadFive        = [[loadNode valueForAttribute:@"five"] floatValue],
-                loadFifteen     = [[loadNode valueForAttribute:@"fifteen"] floatValue],
-                uptimeNode      = [aStanza firstChildWithName:@"uptime"],
-                cpuNode         = [aStanza firstChildWithName:@"cpu"],
-                cpuFree         = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
-                infoNode        = [aStanza firstChildWithName:@"uname"],
-                libvirtNode     = [aStanza firstChildWithName:@"libvirt"],
-                driverNode      = [aStanza firstChildWithName:@"driver"],
-                networkNodes    = [aStanza childrenWithName:@"network"];
-
-            [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(@" MB", @" MB")];
-            [healthMemSwapped setStringValue:swapped + CPBundleLocalizedString(@" MB", @" MB")];
-            [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
-            [healthLoad setStringValue:loadFive];
-            [healthUptime setStringValue:[uptimeNode valueForAttribute:@"up"]];
-            [healthCPUUsage setStringValue:cpuFree + @"%"];
-            [healthInfo setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
-            [healthLibvirtVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s",
-                                                        [libvirtNode valueForAttribute:@"major"],
-                                                        [libvirtNode valueForAttribute:@"minor"],
-                                                        [libvirtNode valueForAttribute:@"release"]]];
-            [healthLibvirtDriverVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s",
-                                                        [driverNode valueForAttribute:@"major"],
-                                                        [driverNode valueForAttribute:@"minor"],
-                                                        [driverNode valueForAttribute:@"release"]]];
-            [_cpuDatasource pushData:cpuFree inSet:0];
-            [_memoryDatasource pushData:memUsed inSet:0];
-            [_loadDatasource pushData:loadOne inSet:0];
-            [_loadDatasource pushData:loadFive inSet:1];
-            [_loadDatasource pushData:loadFifteen inSet:2];
-
-            [self popupateNetworkDatasource:networkNodes];
-
-            [_datasourcePartitions removeAllObjects];
-            [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
-
-            /* reload the charts view */
-            if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
-            {
-                [chartViewMemory reloadData];
-                [chartViewCPU reloadData];
-                [chartViewLoad reloadData];
-                [chartViewNetwork reloadData];
-                [tablePartitions reloadData];
-                _needReloadDataForCharts = NO;
-            }
-            else
-                _needReloadDataForCharts = YES;
-
-            CPLog.debug("current stats recovered");
-        }
-        catch(e)
-        {
-            CPLog.warn("populating the charts has been interupted");
-        }
-    }
+        [_statsWorker postMessage:[[aStanza firstChildWithName:@"query"] stringValue]];
     else if ([aStanza type] == @"error")
-    {
         [self handleIqErrorFromStanza:aStanza];
-    }
-
-    [imageCPULoading setHidden:YES];
-    [imageMemoryLoading setHidden:YES];
-    [imageLoadLoading setHidden:YES];
-    [imageDiskLoading setHidden:YES];
 
     return NO;
 }
@@ -590,72 +578,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 {
     if ([aStanza type] == @"result")
     {
-        try
-        {
-            var stats = [aStanza childrenWithName:@"stat"];
-
-            stats.reverse();
-
-            for (var i = 0; i < [stats count]; i++)
-            {
-                var currentNode     = [stats objectAtIndex:i],
-                    memNode         = [currentNode firstChildWithName:@"memory"],
-                    freeMem         = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
-                    memUsed         = [[memNode valueForAttribute:@"used"] intValue],
-                    swapped         = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
-                    cpuNode         = [currentNode firstChildWithName:@"cpu"],
-                    cpuFree         = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
-                    loadNode        = [currentNode firstChildWithName:@"load"],
-                    loadOne         = [[loadNode valueForAttribute:@"one"] floatValue],
-                    loadFive        = [[loadNode valueForAttribute:@"five"] floatValue],
-                    loadFifteen     = [[loadNode valueForAttribute:@"fifteen"] floatValue],
-                    networkNodes    = [currentNode childrenWithName:@"network"];
-
-                [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(" MB", " MB")];
-                [healthMemSwapped setStringValue:swapped + CPBundleLocalizedString(" MB", " MB")];
-
-                [healthCPUUsage setStringValue:cpuFree + @"%"];
-
-                [_cpuDatasource pushData:cpuFree inSet:0];
-                [_memoryDatasource pushData:memUsed inSet:0];
-                [_loadDatasource pushData:loadOne inSet:0];
-                [_loadDatasource pushData:loadFive inSet:1];
-                [_loadDatasource pushData:loadFifteen inSet:2];
-
-                [self popupateNetworkDatasource:networkNodes];
-            }
-
-            var maxMem      = Math.round([[memNode valueForAttribute:@"total"] floatValue] / 1024 / 1024),
-                diskNode    = [aStanza firstChildWithName:@"disk"];
-
-            [fieldTotalMemory setStringValue:maxMem + CPBundleLocalizedString("GB", "GB")];
-            [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + CPBundleLocalizedString("GB", "GB")];
-            [chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
-
-            [_datasourcePartitions removeAllObjects];
-            [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
-
-            [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
-
-            /* reload the charts view */
-            if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
-            {
-                [chartViewMemory reloadData];
-                [chartViewCPU reloadData];
-                [chartViewLoad reloadData];
-                [chartViewNetwork reloadData];
-                [tablePartitions reloadData];
-                _needReloadDataForCharts = NO;
-            }
-            else
-                _needReloadDataForCharts = YES;
-
-            CPLog.debug("Stats history recovered");
-        }
-        catch(e)
-        {
-            CPLog.warn("populating the charts has been interupted");
-        }
+        [_statsHistoryWorker postMessage:[[aStanza firstChildWithName:@"query"] stringValue]];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else if ([aStanza type] == @"error")
@@ -663,11 +586,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
-
-    [imageCPULoading setHidden:YES];
-    [imageMemoryLoading setHidden:YES];
-    [imageLoadLoading setHidden:YES];
-    [imageDiskLoading setHidden:YES];
 
     [self getHypervisorHealth:nil];
     [self handleAutoRefresh];
@@ -768,6 +686,31 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         [tablePartitions reloadData];
         _needReloadDataForCharts = NO;
     }
+}
+
+- (void)worker:(TNWorker)aWorker didReceiveData:(id)someData
+{
+    if (aWorker === _statsHistoryWorker)
+        [self _parseStatsHistoryWorkerData:someData];
+    else if (aWorker === _statsWorker)
+        [self _parseStatsWorkerData:someData];
+
+    if ([[tabViewInfos selectedTabViewItem] identifier] == @"charts")
+    {
+        [chartViewMemory reloadData];
+        [chartViewCPU reloadData];
+        [chartViewLoad reloadData];
+        [chartViewNetwork reloadData];
+        [tablePartitions reloadData];
+        _needReloadDataForCharts = NO;
+    }
+    else
+        _needReloadDataForCharts = YES;
+
+    [imageCPULoading setHidden:YES];
+    [imageMemoryLoading setHidden:YES];
+    [imageLoadLoading setHidden:YES];
+    [imageDiskLoading setHidden:YES];
 }
 
 @end

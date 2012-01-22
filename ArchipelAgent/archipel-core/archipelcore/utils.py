@@ -111,8 +111,22 @@ def init_conf(paths):
     @param paths: list of the paths of the config files to read
     @return : the ConfigParser object containing the configuration
     """
+    import socket
     conf = ConfigParser.ConfigParser()
     conf.read(paths)
+    for section in conf.sections():
+        for option in conf.options(section):
+            value = conf.get(section, option, raw=True)
+            value = value.replace("@HOSTNAME@", socket.gethostname())
+            conf.set(section, "%s" % option, value)
+    return conf
+
+def init_log(conf):
+    """
+    Initialize the logger
+    @type conf: ConfigParser
+    @param conf: the configuration where to read log info
+    """
     logging_level = conf.get("LOGGING", "logging_level")
     if logging_level == "debug":
         level = logging.DEBUG
@@ -135,7 +149,6 @@ def init_conf(paths):
     handler.setFormatter(log_format)
     logger.addHandler(handler)
     logger.setLevel(level)
-    return conf
 
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     #traceback.print_exc(file=sys.stdout, limit=20)

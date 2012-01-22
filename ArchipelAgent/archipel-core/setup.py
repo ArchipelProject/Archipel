@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
+import os
 
 VERSION             = '0.4.0'
 
@@ -27,6 +28,27 @@ NAME                = 'archipel-core'
 SHORTDESCRIPTION    = "Base framework of Archipel."
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = {}
+
+RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy >= 0.6.6"
+
+# fix RPM generation on CentOS. Note your need the EPEL repo installed.
+if os.path.exists("/etc/rpm/macros.dist"):
+    f = open("/etc/rpm/macros.dist")
+    c = f.read()
+    f.close()
+    if "centos" in c:
+        RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy0.7"
+
+## HACK FOR DEPS IN RPMS
+from setuptools.command.bdist_rpm import bdist_rpm
+def custom_make_spec_file(self):
+    spec = self._original_make_spec_file()
+    lineDescription = "%description"
+    spec.insert(spec.index(lineDescription) - 1, "requires: %s" % RPM_REQUIRED_DEPS)
+    return spec
+bdist_rpm._original_make_spec_file = bdist_rpm._make_spec_file
+bdist_rpm._make_spec_file = custom_make_spec_file
+## END OF HACK
 
 setup(name=NAME,
       version=VERSION,

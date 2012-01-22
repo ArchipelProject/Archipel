@@ -2,7 +2,7 @@
 #
 # Copyright 2010-2011, Antoine Mercadal (antoine.mercadal@trivialdev.com) - TrivialDev
 # Copyright 2011, Franck Villaume (franck.villaume@trivialdev.com) - TrivialDev
-# chkconfig: - 01 99
+# chkconfig: - 99 01
 # description: Archipel Agent Daemon
 # processname: runarchipel.py
 # config: /etc/archipel/archipel.conf

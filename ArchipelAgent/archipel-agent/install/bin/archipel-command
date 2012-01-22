@@ -63,7 +63,7 @@ if __name__ == "__main__":
     xmppclient = initialize(options, fill_pubsubserver=False)
 
     if options.send_raw:
-        send_raw(xmppclient, xmpp.JID(options.dest_jid), options.send_raw)
+        send_raw(xmppclient, xmpp.JID(options.dest_jid), options.send_raw, options.nopretty_output)
     else:
         data = "".join(sys.stdin.readlines())
         try:

@@ -1061,7 +1061,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     while ([indexes count] > 0)
     {
         var contact = [_rosterOutlineView itemAtRow:[indexes firstIndex]];
-        [contactsController askSubscription:[contact JID]];
+        if ([contact isKindOfClass:TNStropheContact])
+            [contactsController askSubscription:[contact JID]];
         [indexes removeIndex:[indexes firstIndex]];
     }
 }
@@ -1079,7 +1080,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     while ([indexes count] > 0)
     {
         var contact = [_rosterOutlineView itemAtRow:[indexes firstIndex]];
-        [contactsController removeSubscription:[contact JID]];
+        if ([contact isKindOfClass:TNStropheContact])
+            [contactsController removeSubscription:[contact JID]];
         [indexes removeIndex:[indexes firstIndex]];
     }
 }

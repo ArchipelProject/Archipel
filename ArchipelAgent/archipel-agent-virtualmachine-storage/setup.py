@@ -30,6 +30,18 @@ ENTRY_POINTS        = { 'archipel.plugin.virtualmachine': [
                             'factory=archipelagentvirtualmachinestorage:make_archipel_plugin'],
                         'archipel.plugin' : [
                             'version=archipelagentvirtualmachinestorage:version']}
+RPM_REQUIRED_DEPS   = "archipel-core"
+
+## HACK FOR DEPS IN RPMS
+from setuptools.command.bdist_rpm import bdist_rpm
+def custom_make_spec_file(self):
+    spec = self._original_make_spec_file()
+    lineDescription = "%description"
+    spec.insert(spec.index(lineDescription) - 1, "requires: %s" % RPM_REQUIRED_DEPS)
+    return spec
+bdist_rpm._original_make_spec_file = bdist_rpm._make_spec_file
+bdist_rpm._make_spec_file = custom_make_spec_file
+## END OF HACK
 
 setup(name=NAME,
       version=VERSION,
@@ -60,7 +72,7 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "archipel-agent"
+          "archipel-core>=0.4.0beta"
       ],
       entry_points=ENTRY_POINTS
       )

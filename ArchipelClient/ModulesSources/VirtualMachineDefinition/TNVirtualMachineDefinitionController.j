@@ -118,6 +118,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldMemoryTuneHardLimit;
     @outlet CPTextField                 fieldMemoryTuneSoftLimit;
     @outlet CPTextField                 fieldMemoryTuneSwapHardLimit;
+    @outlet CPTextField                 fieldOSCommandLine;
+    @outlet CPTextField                 fieldOSInitrd;
+    @outlet CPTextField                 fieldOSKernel;
+    @outlet CPTextField                 fieldOSLoader;
     @outlet CPTextField                 fieldPreferencesDomainType;
     @outlet CPTextField                 fieldPreferencesGuest;
     @outlet CPTextField                 fieldPreferencesMachine;
@@ -783,6 +787,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:fieldMemoryTuneGuarantee enabledAccordingToPermission:@"define"];
     [self setControl:fieldMemoryTuneSwapHardLimit enabledAccordingToPermission:@"define"];
     [self setControl:fieldBlockIOTuningWeight enabledAccordingToPermission:@"define"];
+    [self setControl:fieldOSLoader enabledAccordingToPermission:@"define"];
+    [self setControl:fieldOSKernel enabledAccordingToPermission:@"define"];
+    [self setControl:fieldOSInitrd enabledAccordingToPermission:@"define"];
+    [self setControl:fieldOSCommandLine enabledAccordingToPermission:@"define"];
 
     if (![self currentEntityHasPermission:@"define"])
     {
@@ -1222,6 +1230,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchAPIC setEnabled:shouldEnableGUI];
     [switchHugePages setEnabled:shouldEnableGUI];
     [switchPAE setEnabled:shouldEnableGUI];
+    [fieldOSCommandLine setEnabled:shouldEnableGUI];
+    [fieldOSKernel setEnabled:shouldEnableGUI];
+    [fieldOSInitrd setEnabled:shouldEnableGUI];
+    [fieldOSLoader setEnabled:shouldEnableGUI];
 
     [buttonBoot setNeedsDisplay:YES];
     [buttonClocks setNeedsDisplay:YES];
@@ -1241,6 +1253,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldMemoryTuneHardLimit setNeedsDisplay:YES];
     [fieldMemoryTuneSoftLimit setNeedsDisplay:YES];
     [fieldMemoryTuneSwapHardLimit setNeedsDisplay:YES];
+    [fieldOSCommandLine setNeedsDisplay:YES];
+    [fieldOSKernel setNeedsDisplay:YES];
+    [fieldOSInitrd setNeedsDisplay:YES];
+    [fieldOSLoader setNeedsDisplay:YES];
+
     [fieldStringXMLDesc setNeedsDisplay:YES];
     [stepperNumberCPUs setNeedsDisplay:YES];
     [tableDrives setNeedsDisplay:YES];
@@ -1431,6 +1448,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [popoverXMLEditor close];
     [popoverXMLEditor showRelativeToRect:nil ofView:buttonXMLEditor preferredEdge:nil];
     [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
+    [fieldStringXMLDesc setNeedsDisplay:YES];
 }
 
 /*! close the manual XML editor
@@ -1482,7 +1500,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         newNicSource = [[TNLibvirtDeviceInterfaceSource alloc] init];
 
     [newNic setType:TNLibvirtDeviceInterfaceTypeBridge];
-    [newNic setModel:TNLibvirtDeviceInterfaceModelPCNET];
+    [newNic setModel:TNLibvirtDeviceInterfaceModelRTL8139];
     [newNic setMAC:[self generateMacAddr]];
     [newNic setSource:newNicSource];
     [interfaceController setNic:newNic];
@@ -1662,6 +1680,50 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setBoot:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for kernel
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOSKernel:(id)aSender
+{
+    if (![_libvirtDomain OS])
+        [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
+    [[_libvirtDomain OS] setKernel:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for initrd
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOSInitrd:(id)aSender
+{
+    if (![_libvirtDomain OS])
+        [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
+    [[_libvirtDomain OS] setInitrd:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for cmdline
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOSCommandLine:(id)aSender
+{
+    if (![_libvirtDomain OS])
+        [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
+    [[_libvirtDomain OS] setCommandLine:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for loader
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOSLoader:(id)aSender
+{
+    if (![_libvirtDomain OS])
+        [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
+    [[_libvirtDomain OS] setLoader:[aSender stringValue]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1943,7 +2005,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)getXMLDesc
 {
-    var stanza   = [TNStropheStanza iqWithType:@"get"];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
@@ -1991,6 +2053,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeMemoryTuneGuarantee:fieldMemoryTuneGuarantee];
         [self didChangeBlockIOTuningWeight:fieldBlockIOTuningWeight];
         [self didChangeBoot:buttonBoot];
+        [self didChangeOSKernel:fieldOSKernel];
+        [self didChangeOSInitrd:fieldOSInitrd];
+        [self didChangeOSLoader:fieldOSLoader];
+        [self didChangeOSCommandLine:fieldOSCommandLine];
 
         [_inputDevicesDatasource setContent:[[_libvirtDomain devices] inputs]];
         [tableInputDevices reloadData];
@@ -2098,6 +2164,24 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [fieldMemoryTuneSwapHardLimit setIntValue:[[_libvirtDomain memoryTuning] swapHardLimit] / 1024];
     else
         [fieldMemoryTuneSwapHardLimit setStringValue:@""];
+
+    // DIRECT KERNEL BOOT
+    if ([[_libvirtDomain OS] kernel])
+        [fieldOSKernel setStringValue:[[_libvirtDomain OS] kernel]];
+    else
+        [fieldOSKernel setStringValue:@""];
+    if ([[_libvirtDomain OS] initrd])
+        [fieldOSInitrd setStringValue:[[_libvirtDomain OS] initrd]];
+    else
+        [fieldOSInitrd setStringValue:@""];
+    if ([[_libvirtDomain OS] commandLine])
+        [fieldOSCommandLine setStringValue:[[_libvirtDomain OS] commandLine]];
+    else
+        [fieldOSCommandLine setStringValue:@""];
+    if ([[_libvirtDomain OS] loader])
+        [fieldOSLoader setStringValue:[[_libvirtDomain OS] loader]];
+    else
+        [fieldOSLoader setStringValue:@""];
 
     // BLOCK IO TUNING
     if ([[_libvirtDomain blkiotune] weight])
