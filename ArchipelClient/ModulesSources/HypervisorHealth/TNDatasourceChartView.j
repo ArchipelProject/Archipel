@@ -113,7 +113,7 @@
 {
     if (setIndex >= [_datas count])
     {
-        [CPException raise:@"set index too big" reason:@"setIndex set to " + setIndex + ". Maximum is " + [_datas count]];
+        [CPException raise:@"set index too big" reason:@"setIndex set to " + setIndex + ". Maximum is " + [_datas count] - 1];
     }
 
     _datas[setIndex] = [CPArray arrayWithArray:data];
