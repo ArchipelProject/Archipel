@@ -18,4 +18,4 @@
 	url = git://github.com/primalmotion/TNKit.git
 [submodule "ArchipelAgent/LiveCD"]
 	path = ArchipelAgent/LiveCD
-	url = git://github.com/primalmotion/node.git
+	url = git://github.com/primalmotion/Node.git
