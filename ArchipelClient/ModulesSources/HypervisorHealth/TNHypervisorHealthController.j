@@ -229,13 +229,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     // Workers
     _statsHistoryWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsHistoryWorker.js"]]];
-    [_statsHistoryWorker setDelegate:self];
-
     _statsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsWorker.js"]]];
-    [_statsWorker setDelegate:self];
 
     // _logsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"logsWorker.js"]]];
-    // [_logsWorker setDelegate:self];
 }
 
 
@@ -268,6 +264,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [chartViewLoad setDataSource:_loadDatasource];
     [tablePartitions setDataSource:_datasourcePartitions];
     [tableLogs setDataSource:_datasourceLogs];
+
+    [_statsWorker setDelegate:self];
+    [_statsHistoryWorker setDelegate:self];
+    // [_logsWorker setDelegate:self];
 
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
@@ -305,6 +305,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         [_datasourcePartitions removeAllObjects];
     if (_datasourceLogs)
         [_datasourceLogs removeAllObjects];
+
+    [_statsWorker setDelegate:nil];
+    [_statsHistoryWorker setDelegate:nil];
+    // [_logsWorker setDelegate:nil];
 
     [super willUnload];
 }
@@ -690,6 +694,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
 - (void)worker:(TNWorker)aWorker didReceiveData:(id)someData
 {
+    // During the computation, user may have selected another entity
+    if (![self isActive])
+        return;
+
     if (aWorker === _statsHistoryWorker)
         [self _parseStatsHistoryWorkerData:someData];
     else if (aWorker === _statsWorker)
