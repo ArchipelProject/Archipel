@@ -44,6 +44,7 @@ self.onmessage = function(e) {
                 memory["free"] = elem.attributes.free
                 memory["used"] = elem.attributes.used
                 memory["swapped"] = elem.attributes.swapped
+                memory["shared"] = elem.attributes.shared
                 break;
             case "cpu":
                 cpu["idle"] = 100 - parseFloat(elem.attributes.id);

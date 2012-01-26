@@ -56,12 +56,13 @@ class TNThreadedHealthCollector (Thread):
         self.stats_load             = []
         self.stats_network          = []
         self.current_record         = {}
+        self.memoryPageSize         = int(subprocess.Popen(["getconf", "PAGESIZE"], stdout=subprocess.PIPE).communicate()[0])
         uname = subprocess.Popen(["uname", "-rsmo"], stdout=subprocess.PIPE).communicate()[0].split()
         self.uname_stats = {"krelease": uname[0], "kname": uname[1], "machine": uname[2], "os": uname[3]}
         self.database_query_connection = sqlite3.connect(self.database_file)
         self.cursor = self.database_query_connection.cursor()
         self.cursor.execute("create table if not exists cpu (collection_date date, idle int)")
-        self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
+        self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer, shared integer)")
         self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
         self.cursor.execute("create table if not exists network (collection_date date, records text)")
         self.database_query_connection.commit()
@@ -79,17 +80,17 @@ class TNThreadedHealthCollector (Thread):
         for values in self.cursor:
             date, idle = values
             self.stats_CPU.append({"date": date, "id": idle})
-        self.stats_CPU.reverse()   
+        self.stats_CPU.reverse()
         self.cursor.execute("select * from memory order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
-            date, free, used, total, swapped = values
-            self.stats_memory.append({"date": date, "free": free, "used": used, "total": total, "swapped": swapped})
-        self.stats_memory.reverse()     
+            date, free, used, total, swapped, shared = values
+            self.stats_memory.append({"date": date, "free": free, "used": used, "total": total, "swapped": swapped, "shared": shared})
+        self.stats_memory.reverse()
         self.cursor.execute("select * from load order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, one, five, fifteen = values
             self.stats_load.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
-        self.stats_load.reverse()     
+        self.stats_load.reverse()
         self.cursor.execute("select * from network order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, records = values
@@ -169,12 +170,16 @@ class TNThreadedHealthCollector (Thread):
         file_meminfo = open('/proc/meminfo')
         meminfo = file_meminfo.read()
         file_meminfo.close()
+        file_pages_sharing = open("/sys/kernel/mm/ksm/pages_sharing")
+        pagessharing = file_pages_sharing.read()
+        file_pages_sharing.close()
+        memshared = int(pagessharing) * self.memoryPageSize / 1024;
         meminfolines = meminfo.split("\n")
         memTotal = int(meminfolines[0].split()[1])
         memFree = int(meminfolines[1].split()[1]) + int(meminfolines[2].split()[1]) + int(meminfolines[3].split()[1])
         swapped = int(meminfolines[4].split()[1])
         memUsed = memTotal - memFree
-        return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": memTotal, "swapped": swapped}
+        return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": memTotal, "swapped": swapped, "shared": memshared}
 
     def get_cpu_stats(self):
         """
@@ -295,7 +300,7 @@ class TNThreadedHealthCollector (Thread):
                 if len(self.stats_CPU) >= self.max_cached_rows:
                     middle = (self.max_cached_rows - 1) / 2
 
-                    self.database_thread_cursor.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
+                    self.database_thread_cursor.executemany("insert into memory values(:date, :free, :used, :total, :swapped, :shared)", self.stats_memory[0:middle])
                     self.database_thread_cursor.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
                     self.database_thread_cursor.executemany("insert into load values(:date, :one , :five, :fifteen)", self.stats_load[0:middle])
                     self.database_thread_cursor.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])

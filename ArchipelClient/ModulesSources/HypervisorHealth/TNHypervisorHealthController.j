@@ -254,7 +254,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                                                  name:TNStropheContactPresenceUpdatedNotification
                                                object:_entity];
 
-    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
+    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:2];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
     _networkDatasource  = nil; // dynamically allocated according to the number of nics
@@ -390,6 +390,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 - (void)_parseStatsHistoryWorkerData:(id)someData
 {
     [_memoryDatasource setData:someData.memoryUsed inSet:0];
+    [_memoryDatasource setData:someData.memoryShared inSet:1];
     [_loadDatasource setData:someData.loadOne inSet:0];
     [_loadDatasource setData:someData.loadFive inSet:1];
     [_loadDatasource setData:someData.loadFifteen inSet:2];
@@ -422,6 +423,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 - (void)_parseStatsWorkerData:(id)someData
 {
     [_memoryDatasource pushData:someData.memory.used inSet:0];
+    [_memoryDatasource pushData:someData.memory.shared inSet:1];
     [_loadDatasource pushData:someData.load.one inSet:0];
     [_loadDatasource pushData:someData.load.five inSet:1];
     [_loadDatasource pushData:someData.load.fifteen inSet:2];
