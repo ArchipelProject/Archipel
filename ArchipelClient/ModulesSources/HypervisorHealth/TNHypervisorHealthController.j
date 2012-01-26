@@ -458,7 +458,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     var maxMem = Math.round(someData.memory.total / 1024 / 1024),
         freeMem = Math.round(someData.memory.free / 1024),
-        swappedMed = Math.round(someData.memory.swapped / 1024)
+        swappedMed = Math.round(someData.memory.swapped / 1024);
 
     [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(" MB", " MB")];
     [healthMemSwapped setStringValue:swappedMed + CPBundleLocalizedString(" MB", " MB")];
