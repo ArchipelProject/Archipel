@@ -161,7 +161,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @param path: the path of the file to check
         """
         output = self.magicObject.from_file(path).lower()
-        return output == "data" or "x86 boot sector" in output
+        return output == "data" or "x86 boot sector" in output or "filesystem data" in output
 
     def _is_file_a_vmdk(self, path):
         """
