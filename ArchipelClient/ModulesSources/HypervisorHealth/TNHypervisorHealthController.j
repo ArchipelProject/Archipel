@@ -229,13 +229,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     // Workers
     _statsHistoryWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsHistoryWorker.js"]]];
-    [_statsHistoryWorker setDelegate:self];
-
     _statsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsWorker.js"]]];
-    [_statsWorker setDelegate:self];
 
     // _logsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"logsWorker.js"]]];
-    // [_logsWorker setDelegate:self];
 }
 
 
@@ -258,7 +254,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                                                  name:TNStropheContactPresenceUpdatedNotification
                                                object:_entity];
 
-    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
+    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:2];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
     _networkDatasource  = nil; // dynamically allocated according to the number of nics
@@ -268,6 +264,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [chartViewLoad setDataSource:_loadDatasource];
     [tablePartitions setDataSource:_datasourcePartitions];
     [tableLogs setDataSource:_datasourceLogs];
+
+    [_statsWorker setDelegate:self];
+    [_statsHistoryWorker setDelegate:self];
+    // [_logsWorker setDelegate:self];
 
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
@@ -305,6 +305,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         [_datasourcePartitions removeAllObjects];
     if (_datasourceLogs)
         [_datasourceLogs removeAllObjects];
+
+    [_statsWorker setDelegate:nil];
+    [_statsHistoryWorker setDelegate:nil];
+    // [_logsWorker setDelegate:nil];
 
     [super willUnload];
 }
@@ -386,6 +390,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 - (void)_parseStatsHistoryWorkerData:(id)someData
 {
     [_memoryDatasource setData:someData.memoryUsed inSet:0];
+    [_memoryDatasource setData:someData.memoryShared inSet:1];
     [_loadDatasource setData:someData.loadOne inSet:0];
     [_loadDatasource setData:someData.loadFive inSet:1];
     [_loadDatasource setData:someData.loadFifteen inSet:2];
@@ -418,6 +423,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 - (void)_parseStatsWorkerData:(id)someData
 {
     [_memoryDatasource pushData:someData.memory.used inSet:0];
+    [_memoryDatasource pushData:someData.memory.shared inSet:1];
     [_loadDatasource pushData:someData.load.one inSet:0];
     [_loadDatasource pushData:someData.load.five inSet:1];
     [_loadDatasource pushData:someData.load.fifteen inSet:2];
@@ -454,7 +460,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     var maxMem = Math.round(someData.memory.total / 1024 / 1024),
         freeMem = Math.round(someData.memory.free / 1024),
-        swappedMed = Math.round(someData.memory.swapped / 1024)
+        swappedMed = Math.round(someData.memory.swapped / 1024);
 
     [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(" MB", " MB")];
     [healthMemSwapped setStringValue:swappedMed + CPBundleLocalizedString(" MB", " MB")];
@@ -690,6 +696,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
 - (void)worker:(TNWorker)aWorker didReceiveData:(id)someData
 {
+    // During the computation, user may have selected another entity
+    if (![self isActive])
+        return;
+
     if (aWorker === _statsHistoryWorker)
         [self _parseStatsHistoryWorkerData:someData];
     else if (aWorker === _statsWorker)

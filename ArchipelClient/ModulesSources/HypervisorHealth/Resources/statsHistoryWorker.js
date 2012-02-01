@@ -4,6 +4,7 @@ self.onmessage = function(e) {
     var raw = e.data,
         memoryFree = [],
         memoryUsed = [],
+        memoryShared = [],
         memorySwapped = 0,
         memoryTotal = 0,
         cpuFree = [],
@@ -26,6 +27,7 @@ self.onmessage = function(e) {
                 case "memory":
                     memoryFree.push(parseFloat(elem.attributes.free));
                     memoryUsed.push(parseFloat(elem.attributes.used));
+                    memoryShared.push(parseFloat(elem.attributes.shared));
                     memorySwapped = parseFloat(elem.attributes.swapped);
                     memoryTotal = parseFloat(elem.attributes.total);
                     break;
@@ -64,6 +66,7 @@ self.onmessage = function(e) {
                         "memoryUsed": memoryUsed,
                         "memoryTotal": memoryTotal,
                         "memorySwapped": memorySwapped,
+                        "memoryShared": memoryShared,
                         "cpuFree": cpuFree,
                         "loadOne": load1,
                         "loadFive": load5,
