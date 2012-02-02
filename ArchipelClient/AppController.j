@@ -898,7 +898,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)didReceiveUserMessage:(CPNotification)aNotification
 {
     var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
-        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
+        message         = TNStropheStripHTMLCharCode([[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text]),
         bundle          = [CPBundle bundleForClass:[self class]],
         customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
         currentContact  = [aNotification object];
