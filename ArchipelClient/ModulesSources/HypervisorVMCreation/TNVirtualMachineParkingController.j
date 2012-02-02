@@ -217,10 +217,11 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     return NO;
 }
 
-/*! park some virtual machines
+/*! Destroy if needed and park some virtual machines
     @param someVirtualMachines CPArray of virtual machine to park
+    @param shouldDestroy if True, the virtual machines will be destroyed if running
 */
-- (void)parkVirtualMachines:(CPArray)someVirtualMachines
+- (void)parkVirtualMachines:(CPArray)someVirtualMachines destroy:(BOOL)shouldDestroy
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -231,13 +232,30 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"uuid": [[vm JID] node]}];
+        [stanza addChildWithName:@"item" andAttributes:{"uuid": [[vm JID] node], "force": (shouldDestroy ? @"yes" : @"no")}];
         [stanza up];
     }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
     [_delegate sendStanza:stanza andRegisterSelector:@selector(_didParkVirtualMachine:) ofObject:self];
 }
+
+/*! park some virtual machines
+    @param someVirtualMachines CPArray of virtual machine to park
+*/
+- (void)parkVirtualMachines:(CPArray)someVirtualMachines
+{
+    [self parkVirtualMachines:someVirtualMachines destroy:NO];
+}
+
+/*! park some virtual machines
+    @param someVirtualMachines CPArray of virtual machine to park
+*/
+- (void)destroyAndParkVirtualMachines:(CPArray)someVirtualMachines
+{
+    [self parkVirtualMachines:someVirtualMachines destroy:YES];
+}
+
 
 /*! compute the answer of the hypervisor about its parking VMs
     @param aStanza TNStropheStanza containing hypervisor answer
