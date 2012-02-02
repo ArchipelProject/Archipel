@@ -645,8 +645,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![super willShow])
         return NO;
 
-    [self enableGUI:NO];
     [self checkIfRunning];
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return YES;
 }
