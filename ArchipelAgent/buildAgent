@@ -324,16 +324,16 @@ def build_live_cd():
     msg("Generating the liveCD ISO. This can take more than 20min if your computer is slow.")
 
     msg("Dist cleaning")
-    if os.system("cd ./LiveCD && make distclean"):
+    if os.system("cd ./ANSOS && make distclean"):
         warn("Unable to distclean. maybe it's the first build")
 
     msg("Running ./autogen.sh %s --with-archipel" % image_minizer)
-    if os.system("cd ./LiveCD && ./autogen.sh %s --with-archipel" % image_minizer):
+    if os.system("cd ./ANSOS && ./autogen.sh %s --with-archipel" % image_minizer):
         error("Unable to autogen")
     success("Autogen complete")
 
     msg("Building the oVirt RPMS")
-    if os.system("cd ./LiveCD && make && make dist && rpmbuild --nodeps --define \"extra_release $EXTRA_RELEASE\" -ta --clean *.tar.gz"):
+    if os.system("cd ./ANSOS && make && make dist && rpmbuild --nodeps --define \"extra_release $EXTRA_RELEASE\" -ta --clean *.tar.gz"):
         error("Uable to generate the RPMS")
     success("oVirt RPMS generation complete")
 
@@ -349,15 +349,15 @@ def build_live_cd():
     success("Repository successfully generated in %s/RPMS" % rpm_topdir)
 
     msg("Building the archipel-node-image-%s.iso" % distro_mode)
-    if os.system("cd ./LiveCD/recipe && make archipel-node-image.iso"):
+    if os.system("cd ./ANSOS/recipe && make archipel-node-image.iso"):
         error("Uable to genrate the ISO")
     success("ISO sucessfully generated")
 
     msg("Copying the ISO")
     os.system("rm -f ../../archipel-node-image-%s.iso" % distro_mode)
-    os.system("cp ./LiveCD/recipe/archipel-node-image.iso ./archipel-node-image-%s.iso" % distro_mode)
+    os.system("cp ./ANSOS/recipe/archipel-node-image.iso ./archipel-node-image-%s.iso" % distro_mode)
 
-    success("LiveCD of archipel-node is now ready!")
+    success("ANSOS is now ready!")
 
 
 ### Main function
@@ -406,7 +406,7 @@ if __name__ == "__main__":
                         default=False)
     parser.add_option("-l", "--livecd",
                         dest="livecd",
-                        help="Build the archipel-node liveCD ISO",
+                        help="Build ANSOS",
                         action="store_true",
                         default=False)
 
