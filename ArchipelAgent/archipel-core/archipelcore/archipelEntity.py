@@ -614,6 +614,7 @@ class TNArchipelEntity (object):
         def presence_callback(conn, resp):
             self.xmppstatus     = presence_status
             self.xmppstatusshow = presence_show
+            self.log.debug("PRESENCE : I just set change presence. The result is %s" % resp)
             if callback:
                 callback(conn, resp)
 
