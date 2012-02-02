@@ -645,6 +645,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![super willShow])
         return NO;
 
+    [self enableGUI:NO];
     [self checkIfRunning];
 
     return YES;
@@ -751,7 +752,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     [super permissionsChanged];
     if ([self isVisible])
+    {
         [self checkIfRunning];
+        [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
+    }
 }
 
 /*! called when the UI needs to be updated according to the permissions
@@ -833,6 +837,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)_didUpdatePresence:(CPNotification)aNotification
 {
     [self checkIfRunning];
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 }
 
 /*! called when an Archipel push is received
@@ -994,8 +999,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if (XMPPShow != TNStropheContactStatusBusy)
     {
-        [self enableGUI:NO];
-
         [driveController closeWindow:nil];
         [inputDeviceController closeWindow:nil];
         [interfaceController closeWindow:nil];
@@ -1005,10 +1008,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         if (_definitionEdited)
             [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Definition edited", @"Definition edited")
                               informative:CPBundleLocalizedString(@"You started the virtual machine, but you haven't save the current changes.", @"You started the virtual machine, but you haven't save the current changes.")];
-    }
-    else
-    {
-        [self enableGUI:YES];
     }
 }
 
@@ -1952,6 +1951,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (BOOL)_didGetXMLCapabilities:(TNStropheStanza)aStanza
 {
+    [self enableGUI:NO];
+
     if ([aStanza type] == @"result")
     {
         [buttonGuests removeAllItems];
@@ -2202,11 +2203,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
-
-    if ([_entity XMPPShow] != TNStropheContactStatusBusy)
-        [self enableGUI:NO];
-    else
-        [self enableGUI:YES];
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return NO;
 }
@@ -2230,6 +2227,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addNode:[_libvirtDomain XMLNode]];
     [buttonDefine setImage:_imageDefining];
     [buttonDefine setStringValue:CPLocalizedString(@"Sending...", @"Sending...")];
+    [self enableGUI:NO];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
 }
 
@@ -2260,6 +2258,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addNode:descNode];
 
     [buttonDefine setImage:_imageDefining];
+    [self enableGUI:NO];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
     [popoverXMLEditor close];
 }
@@ -2284,6 +2283,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self handleIqErrorFromStanza:aStanza];
     }
 
+    [self enableGUI:YES];
     return NO;
 }
 
