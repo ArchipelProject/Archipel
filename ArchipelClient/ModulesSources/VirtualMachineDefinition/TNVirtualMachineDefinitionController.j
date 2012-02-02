@@ -104,9 +104,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPPopUpButton               buttonPreferencesOnReboot;
     @outlet CPPopUpButton               buttonPreferencesVNCKeyMap;
     @outlet CPScrollView                scrollViewContentView;
+    @outlet CPSearchField               fieldFilterCharacters;
     @outlet CPSearchField               fieldFilterDrives;
     @outlet CPSearchField               fieldFilterNics;
-    @outlet CPSearchField               fieldFilterCharacters;
     @outlet CPTableView                 tableCharacterDevices;
     @outlet CPTableView                 tableDrives;
     @outlet CPTableView                 tableGraphicsDevices;
@@ -118,7 +118,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldMemoryTuneHardLimit;
     @outlet CPTextField                 fieldMemoryTuneSoftLimit;
     @outlet CPTextField                 fieldMemoryTuneSwapHardLimit;
-    @outlet CPTextField                 fieldOSCommandLine;
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
@@ -134,13 +133,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewInputDevicesContainer;
     @outlet CPView                      viewMainContent;
     @outlet CPView                      viewNicsContainer;
-    @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersAdvanced;
     @outlet CPView                      viewParametersCharacterDevices;
     @outlet CPView                      viewParametersDrives;
     @outlet CPView                      viewParametersEffectBottom;
     @outlet CPView                      viewParametersEffectTop;
+    @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersStandard;
+    @outlet LPMultiLineTextField        fieldOSCommandLine;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
     @outlet TNCharacterDeviceController characterDeviceController;
     @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
@@ -264,6 +264,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
+    [fieldOSCommandLine setTextColor:[CPColor blackColor]];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
