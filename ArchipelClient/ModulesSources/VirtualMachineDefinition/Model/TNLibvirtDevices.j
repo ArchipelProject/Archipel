@@ -19,7 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
-@import "TNLibvirtBase.j";
+@import "TNLibvirtBase.j"
 @import "TNLibvirtDeviceCharacter.j"
 @import "TNLibvirtDeviceDisk.j"
 @import "TNLibvirtDeviceGraphic.j"
@@ -33,13 +33,15 @@
 */
 @implementation TNLibvirtDevices : TNLibvirtBase
 {
-    CPArray     _characters     @accessors(property=characters);
-    CPArray     _disks          @accessors(property=disks);
-    CPArray     _graphics       @accessors(property=graphics);
-    CPArray     _hostdevs       @accessors(property=hostdevs);
-    CPArray     _inputs         @accessors(property=inputs);
-    CPArray     _interfaces     @accessors(property=interfaces);
-    CPString    _emulator       @accessors(property=emulator);
+    CPArray                 _characters     @accessors(property=characters);
+    CPArray                 _disks          @accessors(property=disks);
+    CPArray                 _graphics       @accessors(property=graphics);
+    CPArray                 _hostdevs       @accessors(property=hostdevs);
+    CPArray                 _inputs         @accessors(property=inputs);
+    CPArray                 _interfaces     @accessors(property=interfaces);
+    CPString                _emulator       @accessors(property=emulator);
+
+    TNLibvirtDeviceVideo    _video          @accessors(property=video);
 }
 
 
@@ -114,6 +116,9 @@
         var hostdevNodes = [aNode ownChildrenWithName:@"hostdev"];
         for (var i = 0; i < [hostdevNodes count]; i++)
             [_hostdevs addObject:[[TNLibvirtDeviceHostDev alloc] initWithXMLNode:[hostdevNodes objectAtIndex:i]]];
+
+        if  ([aNode firstChildWithName:@"video"])
+            _video = [[TNLibvirtDeviceVideo alloc] initWithXMLNode:[aNode firstChildWithName:@"video"]];
     }
 
     return self;
@@ -170,6 +175,12 @@
     for (var i = 0; i < [_hostdevs count]; i++)
     {
         [node addNode:[[_hostdevs objectAtIndex:i] XMLNode]];
+        [node up];
+    }
+
+    if (_video)
+    {
+        [node addNode:[_video XMLNode]];
         [node up];
     }
 
