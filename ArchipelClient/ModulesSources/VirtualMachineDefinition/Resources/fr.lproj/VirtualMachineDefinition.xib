@@ -435,7 +435,7 @@
 					<object class="NSTextField" id="69780469">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{145, 201}, {128, 22}}</string>
+						<string key="NSFrame">{{145, 229}, {128, 22}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="209014362"/>
 						<bool key="NSEnabled">YES</bool>
@@ -462,7 +462,7 @@
 					<object class="NSTextField" id="635232351">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{28, 205}, {101, 17}}</string>
+						<string key="NSFrame">{{28, 233}, {101, 17}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="69780469"/>
 						<bool key="NSEnabled">YES</bool>
@@ -484,13 +484,13 @@
 					<object class="NSTextField" id="683684724">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{145, 229}, {128, 22}}</string>
+						<string key="NSFrame">{{145, 157}, {128, 67}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="504178840"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="785767670">
-							<int key="NSCellFlags">-1804468671</int>
-							<int key="NSCellFlags2">4195328</int>
+							<int key="NSCellFlags">-1805517311</int>
+							<int key="NSCellFlags2">4194304</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="217579653"/>
 							<string key="NSPlaceholderString">Kernel params</string>
@@ -503,7 +503,7 @@
 					<object class="NSTextField" id="442910989">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 232}, {112, 17}}</string>
+						<string key="NSFrame">{{17, 205}, {112, 17}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="683684724"/>
 						<bool key="NSEnabled">YES</bool>
@@ -796,7 +796,7 @@
 					<object class="NSTextField" id="393364307">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{145, 106}, {128, 22}}</string>
+						<string key="NSFrame">{{698, 283}, {128, 22}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="522791036">
@@ -814,7 +814,7 @@
 					<object class="NSTextField" id="761242731">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{28, 108}, {101, 17}}</string>
+						<string key="NSFrame">{{581, 285}, {101, 17}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="393364307"/>
 						<bool key="NSEnabled">YES</bool>
@@ -831,7 +831,7 @@
 					<object class="NSTextField" id="519006294">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{34, 137}, {237, 14}}</string>
+						<string key="NSFrame">{{587, 314}, {237, 14}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="761242731"/>
 						<bool key="NSEnabled">YES</bool>
@@ -848,7 +848,7 @@
 					<object class="NSTextField" id="330467033">
 						<reference key="NSNextResponder" ref="927575755"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{28, 159}, {243, 20}}</string>
+						<string key="NSFrame">{{581, 336}, {243, 20}}</string>
 						<reference key="NSSuperview" ref="927575755"/>
 						<reference key="NSNextKeyView" ref="519006294"/>
 						<bool key="NSEnabled">YES</bool>
@@ -11435,14 +11435,6 @@ A</string>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
-						<reference key="source" ref="683684724"/>
-						<reference key="destination" ref="69780469"/>
-					</object>
-					<int key="connectionID">1906</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
 						<reference key="source" ref="69780469"/>
 						<reference key="destination" ref="190246114"/>
 					</object>
@@ -13301,14 +13293,14 @@ A</string>
 							<reference ref="998340749"/>
 							<reference ref="883474653"/>
 							<reference ref="1001487454"/>
+							<reference ref="330467033"/>
+							<reference ref="519006294"/>
+							<reference ref="761242731"/>
+							<reference ref="393364307"/>
 							<reference ref="442910989"/>
 							<reference ref="683684724"/>
 							<reference ref="635232351"/>
-							<reference ref="330467033"/>
-							<reference ref="519006294"/>
 							<reference ref="69780469"/>
-							<reference ref="393364307"/>
-							<reference ref="761242731"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">View param advanced</string>
@@ -18176,6 +18168,7 @@ A</string>
 					<string>1866.IBPluginDependency</string>
 					<string>1867.IBPluginDependency</string>
 					<string>1869.IBPluginDependency</string>
+					<string>1870.CustomClassName</string>
 					<string>1870.IBPluginDependency</string>
 					<string>1872.IBPluginDependency</string>
 					<string>1873.IBPluginDependency</string>
@@ -19028,6 +19021,7 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>LPMultiLineTextField</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19454,22 +19448,6 @@ A</string>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBPartialClassDescription">
-					<string key="className">LPMultiLineTextField</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/LPMultiLineTextField.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">LPSwitch</string>
-					<string key="superclassName">NSControl</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/LPSwitch.h</string>
-					</object>
-				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">TNBasicDataView</string>
 					<string key="superclassName">NSView</string>
@@ -20938,44 +20916,6 @@ A</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TNTabView</string>
-					<string key="superclassName">NSControl</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">_tabItemCliked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">_tabItemCliked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">_tabItemCliked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNTabView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNTextFieldStepper</string>
-					<string key="superclassName">NSStepper</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">_didTextFieldEdit:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">_didTextFieldEdit:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">_didTextFieldEdit:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNTextFieldStepper.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNVirtualMachineDefinitionController</string>
 					<string key="superclassName">TNModule</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -21436,7 +21376,7 @@ A</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
-							<string>NSTextField</string>
+							<string>LPMultiLineTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
@@ -21739,7 +21679,7 @@ A</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldOSCommandLine</string>
-								<string key="candidateClassName">NSTextField</string>
+								<string key="candidateClassName">LPMultiLineTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldOSInitrd</string>

@@ -104,9 +104,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPPopUpButton               buttonPreferencesOnReboot;
     @outlet CPPopUpButton               buttonPreferencesVNCKeyMap;
     @outlet CPScrollView                scrollViewContentView;
+    @outlet CPSearchField               fieldFilterCharacters;
     @outlet CPSearchField               fieldFilterDrives;
     @outlet CPSearchField               fieldFilterNics;
-    @outlet CPSearchField               fieldFilterCharacters;
     @outlet CPTableView                 tableCharacterDevices;
     @outlet CPTableView                 tableDrives;
     @outlet CPTableView                 tableGraphicsDevices;
@@ -118,7 +118,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldMemoryTuneHardLimit;
     @outlet CPTextField                 fieldMemoryTuneSoftLimit;
     @outlet CPTextField                 fieldMemoryTuneSwapHardLimit;
-    @outlet CPTextField                 fieldOSCommandLine;
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
@@ -134,13 +133,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewInputDevicesContainer;
     @outlet CPView                      viewMainContent;
     @outlet CPView                      viewNicsContainer;
-    @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersAdvanced;
     @outlet CPView                      viewParametersCharacterDevices;
     @outlet CPView                      viewParametersDrives;
     @outlet CPView                      viewParametersEffectBottom;
     @outlet CPView                      viewParametersEffectTop;
+    @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersStandard;
+    @outlet LPMultiLineTextField        fieldOSCommandLine;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
     @outlet TNCharacterDeviceController characterDeviceController;
     @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
@@ -264,6 +264,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
+    [fieldOSCommandLine setTextColor:[CPColor blackColor]];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -645,6 +646,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         return NO;
 
     [self checkIfRunning];
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return YES;
 }
@@ -750,7 +752,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     [super permissionsChanged];
     if ([self isVisible])
+    {
         [self checkIfRunning];
+        [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
+    }
 }
 
 /*! called when the UI needs to be updated according to the permissions
@@ -832,6 +837,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)_didUpdatePresence:(CPNotification)aNotification
 {
     [self checkIfRunning];
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 }
 
 /*! called when an Archipel push is received
@@ -993,8 +999,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if (XMPPShow != TNStropheContactStatusBusy)
     {
-        [self enableGUI:NO];
-
         [driveController closeWindow:nil];
         [inputDeviceController closeWindow:nil];
         [interfaceController closeWindow:nil];
@@ -1004,10 +1008,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         if (_definitionEdited)
             [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Definition edited", @"Definition edited")
                               informative:CPBundleLocalizedString(@"You started the virtual machine, but you haven't save the current changes.", @"You started the virtual machine, but you haven't save the current changes.")];
-    }
-    else
-    {
-        [self enableGUI:YES];
     }
 }
 
@@ -1951,6 +1951,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (BOOL)_didGetXMLCapabilities:(TNStropheStanza)aStanza
 {
+    [self enableGUI:NO];
+
     if ([aStanza type] == @"result")
     {
         [buttonGuests removeAllItems];
@@ -2201,11 +2203,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
-
-    if ([_entity XMPPShow] != TNStropheContactStatusBusy)
-        [self enableGUI:NO];
-    else
-        [self enableGUI:YES];
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return NO;
 }
@@ -2229,6 +2227,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addNode:[_libvirtDomain XMLNode]];
     [buttonDefine setImage:_imageDefining];
     [buttonDefine setStringValue:CPLocalizedString(@"Sending...", @"Sending...")];
+    [self enableGUI:NO];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
 }
 
@@ -2259,6 +2258,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addNode:descNode];
 
     [buttonDefine setImage:_imageDefining];
+    [self enableGUI:NO];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
     [popoverXMLEditor close];
 }
@@ -2283,6 +2283,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self handleIqErrorFromStanza:aStanza];
     }
 
+    [self enableGUI:YES];
     return NO;
 }
 

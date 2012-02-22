@@ -55,7 +55,7 @@ start() {
     fi
 
     echo -ne " * Starting $PROGNAME:\\r"
-    $ARCHIPEL --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1
+    $ARCHIPEL --config="$ARCHIPEL_CONF_FILE" >> /var/log/archipel-startup.log 2>&1
     retval=$?
 
     if [[ $retval == 0 ]]; then

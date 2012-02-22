@@ -17,7 +17,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION             = '0.4.0'
+VERSION             = '0.5.0'
 
 AUTHOR              = 'Antoine Mercadal'
 MAIL                = 'antoine.mercadal@archipelproject.org'
@@ -73,7 +73,7 @@ setup(name=NAME,
       zip_safe=False,
       install_requires=[
         "numpy",
-        "archipel-core>=0.4.0beta"
+        "archipel-core>=0.5.0beta"
       ],
       entry_points=ENTRY_POINTS
       )

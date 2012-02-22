@@ -74,17 +74,17 @@
     <key>TNArchipelUpdateServerURL</key>
     <string>http://updates.archipelproject.org</string>
     <key>TNArchipelUseAnimations</key>
-    <integer>1</integer>
+    <integer>0</integer>
     <key>TNArchipelVersion</key>
     <dict>
         <key>major</key>
         <integer>0</integer>
         <key>minor</key>
-        <integer>4</integer>
+        <integer>5</integer>
         <key>revision</key>
         <integer>0</integer>
         <key>codeName</key>
-        <string>Vesta</string>
+        <string>Moon</string>
     </dict>
     <key>TNArchipelPropertyControllerEnabled</key>
     <integer>1</integer>

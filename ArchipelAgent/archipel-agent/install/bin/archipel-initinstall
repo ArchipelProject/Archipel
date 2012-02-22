@@ -160,7 +160,7 @@ def install_config_folder(prefix, conf_folder):
     msg("Installing configuration to %s/etc/archipel" % prefix)
     if os.path.isdir("%s/etc/archipel/" % prefix):
         warn("Configuration files already exist. Leaving as it is")
-        return
+        return False
     os.makedirs("%s/etc/archipel/" % prefix)
     if os.system("cp -a %s/* '%s/etc/archipel/'" % (conf_folder.replace(" ", "\\ "), prefix)) == 0:
         success("Config folder installed")
@@ -170,6 +170,7 @@ def install_config_folder(prefix, conf_folder):
         success("Config file chmoded")
     else:
         error("Unable to chmod the config file", exit=False)
+    return True
 
 
 def pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server):
@@ -247,8 +248,8 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto"):
     msg("Installation initialization started")
     try:
         install_init_script(prefix, init_script)
-        install_config_folder(prefix, conf_folder)
-        pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
+        if install_config_folder(prefix, conf_folder):
+            pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
         install_data_folder(prefix,lib_folder )
     except Exception as ex :
         error(str(ex))

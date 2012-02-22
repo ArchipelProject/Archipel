@@ -610,7 +610,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         alert = [TNAlert alertWithMessage:titleMessage
                                 informative:informativeMessage
                                  target:VMParkingController
-                                 actions:[[CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+                                 actions:[[CPLocalizedString(@"Destroy and park", @"Destroy and park"), @selector(destroyAndParkVirtualMachines:)],
+                                          [CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)],
+                                          [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert setUserInfo:vms];
     [alert runModal];
 }
