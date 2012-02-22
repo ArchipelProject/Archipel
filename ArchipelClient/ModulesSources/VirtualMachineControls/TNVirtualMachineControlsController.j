@@ -1537,7 +1537,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMParking}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineVMParkingPark}];
+        "action": TNArchipelTypeVirtualMachineVMParkingPark,
+        "force": @"True"}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didPark:)];
 }
