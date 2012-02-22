@@ -626,7 +626,11 @@ class TNVMParking (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            self.entity.hypervisor.get_plugin("vmparking").park(self.entity.uuid, iq.getFrom())
+            force_destroy = False
+            force_attr = iq.getTag("query").getTag("archipel").getAttr("force")
+            if force_attr and force_attr.lower() in ("yes", "y", "true", "1"):
+                force_destroy = True
+            self.entity.hypervisor.get_plugin("vmparking").park(self.entity.uuid, iq.getFrom(), force=force_destroy)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_PARK)
         return reply
