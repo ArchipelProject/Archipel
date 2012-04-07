@@ -350,7 +350,7 @@ class TNPubSubNode:
             self.xmppclient.SendAndCallForResponse(iq, func=_did_retrieve_subscription, args={"callback": callback})
             return True
 
-    def subscribe(self, jid, callback, unique=True, wait=False):
+    def subscribe(self, jid, callback=None, unique=True, wait=False):
         """
         Subscribe to the node.
         @type jid: xmpp.Protocol.JID
