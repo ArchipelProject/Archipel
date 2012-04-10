@@ -103,7 +103,11 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
                             iq_vcard = xmpp.Iq(typ="get", to=user)
                             iq_vcard.addChild("vCard", namespace="vcard-temp")
                             self.entity.log.debug("XMPPSERVER: Entity type of %s is not cached. fetching..." % user)
-                            self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
+                            if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+                                self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
+                            else:
+                                self.entity.xmppclient.SendAndCallForResponse(iq_vcard, on_receive_vcard)
+
                         else:
                             self.entity.log.debug("XMPPSERVER: Entity type of %s is already cached (%s)" % (user, self.entities_types_cache[user]))
                             self.users.append({"jid": user, "type": self.entities_types_cache[user]})
@@ -116,7 +120,10 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
                         for page in range(0, len(items)):
                             iq_page = xmpp.Iq(typ="get", to=iq.getFrom())
                             iq_page.addChild("query", attrs={"node": iq.getTag("query").getTags("item")[page].getAttr("node")}, namespace="http://jabber.org/protocol/disco#items")
-                            self.entity.xmppclient.SendAndCallForResponse(iq_page, manage_received_users)
+                            if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+                                self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq_page, manage_received_users)
+                            else:
+                                self.entity.xmppclient.SendAndCallForResponse(iq_page, manage_received_users)
                     else:
                         manage_received_users(conn, iq)
 
@@ -125,11 +132,17 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
 
             user_iq = xmpp.Iq(typ="get", to=xmppserver)
             user_iq.addChild("query", attrs={"node": "all users"}, namespace="http://jabber.org/protocol/disco#items")
-            self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_users)
+            if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+                self.entity.hypervisor.xmppclient.SendAndCallForResponse(user_iq, on_receive_users)
+            else:
+                self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_users)
 
         iq = xmpp.Iq(typ="set", to=xmppserver)
         iq.addChild("command", attrs={"action": "execute", "node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/commands")
-        self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
+        else:
+            self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
 
 
     ## TNXMPPServerControllerBase implementation
@@ -159,7 +172,10 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
             iq_command_x.addChild("field", attrs={"var": "accountjid"}).addChild("value").setData(user["jid"])
             iq_command_x.addChild("field", attrs={"var": "password"}).addChild("value").setData(user["password"])
             iq_command_x.addChild("field", attrs={"var": "password-verify"}).addChild("value").setData(user["password"])
-            self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_registration)
+            if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+                self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_registration)
+            else:
+                self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_registration)
             self.entity.log.info("XMPPSERVER: Registering a new user %s@%s" % (user["jid"], server))
 
     def users_unregister(self, users):
@@ -187,7 +203,10 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
              accountjids_node.addChild("value").setData(jid.getStripped())
              if jid.getStripped() in self.entities_types_cache:
                  del self.entities_types_cache[jid.getStripped()]
-        self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
+        else:
+            self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
         self.entity.log.info("XMPPSERVER: Unregistring some users %s" % str(users))
 
     def users_number(self, base_reply, only_humans=True):
@@ -240,7 +259,12 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
                     continue
                 nodes.append(xmpp.Node("user", attrs={"jid": user["jid"], "type": user["type"]}))
             base_reply.setQueryPayload(nodes)
-            self.entity.xmppclient.send(base_reply)
+
+            if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+                self.entity.hypervisor.xmppclient.send(base_reply)
+            else:
+                self.entity.xmppclient.send(base_reply)
+
         if self.need_user_refresh:
             self._fetch_users(self.entity.jid.getDomain(), send_filtered_users, {"base_reply": base_reply})
         else:
