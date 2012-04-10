@@ -324,7 +324,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
-    [_rosterOutlineView setAlphaValue:0.0];
     _rosterOutlineView._DOMElement.style.WebkitTransition = "opacity 0.3s";
 
     /* init scroll view of the outline view */
@@ -828,6 +827,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
     [labelCurrentUser setStringValue:CPLocalizedString(@"Connected as ", @"Connected as ") + [[[TNStropheIMClient defaultClient] JID] bare]];
+
+    if (![moduleController isModuleLoadingStarted])
+    {
+        CPLog.trace(@"Starting loading all modules");
+        [moduleController load];
+    }
 }
 
 /*! Notification responder of TNStropheConnection
@@ -879,12 +884,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     }
 
     [_pubSubController retrieveSubscriptions];
-
-    if (![moduleController isModuleLoadingStarted])
-    {
-        CPLog.trace(@"Starting loading all modules");
-        [moduleController load];
-    }
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
@@ -1653,7 +1652,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [progressIndicatorModulesLoading setDoubleValue:percent];
     [[viewLoading viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
 
-    [_rosterOutlineView setAlphaValue:Math.pow(percent, 3)];
     _viewGradientAnimation._DOMElement.style.opacity = (1 - percent) + 0.3;
 }
 
@@ -1663,10 +1661,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     CPLog.info(@"All modules have been loaded");
 
+    [[[TNStropheIMClient defaultClient] roster] getRoster];
+
     _rosterOutlineView._DOMElement.style.WebkitTransition = "";
     _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
 
-    [_rosterOutlineView setAlphaValue:1.0];
     _viewGradientAnimation._DOMElement.style.opacity = 0;
 
     [_mainToolbar reloadToolbarItems];
