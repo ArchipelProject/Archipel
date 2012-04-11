@@ -833,6 +833,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         CPLog.trace(@"Starting loading all modules");
         [moduleController load];
     }
+    else
+    {
+        // If all modules are loaded, we can ask for the roster right now
+        [[[TNStropheIMClient defaultClient] roster] getRoster];
+    }
 }
 
 /*! Notification responder of TNStropheConnection
