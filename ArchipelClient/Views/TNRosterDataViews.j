@@ -41,7 +41,6 @@ var TNRosterDataViewContactImageUnknownUser,
     CPTextField         _name           @accessors(property=name);
     CPTextField         _status         @accessors(property=status);
 
-    CPButton            _buttonAction;
     CPString            _entityType;
     BOOL                _shouldDisplayAvatar;
     TNStropheContact    _contact;
@@ -124,21 +123,10 @@ var TNRosterDataViewContactImageUnknownUser,
         var actionImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction.png"] size:CPSizeMake(14.0, 14.0)],
             actionImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction-pressed.png"] size:CPSizeMake(14.0, 14.0)];
 
-        // _buttonAction = [[CPButton alloc] initWithFrame:CPRectMake(CPRectGetMaxX(aFrame) - 24, CPRectGetMidY(aFrame) - 18, 16, 16)];
-        // [_buttonAction setAutoresizingMask:CPViewMinXMargin];
-        // [_buttonAction setBordered:NO];
-        // [_buttonAction setImage:actionImage];
-        // [_buttonAction setValue:actionImage forThemeAttribute:@"image"];
-        // [_buttonAction setValue:actionImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        // [_buttonAction setHidden:YES];
-        // [_buttonAction setTarget:self];
-        // [_buttonAction setAction:@selector(openQuickActionWindow:)];
-
         [self addSubview:_statusIcon];
         [self addSubview:_name];
         [self addSubview:_events];
         [self addSubview:_status];
-        // [self addSubview:_buttonAction];
 
         if (_shouldDisplayAvatar)
             [self addSubview:_avatar];
@@ -161,18 +149,7 @@ var TNRosterDataViewContactImageUnknownUser,
     _contact = aContact;
 
     [_name setStringValue:[aContact nickname]];
-    // [_name sizeToFit];
     [_status setStringValue:[aContact XMPPStatus]];
-    // [_status sizeToFit];
-
-    // var boundsName = [_name frame];
-    // boundsName.size.width += 10;
-    // [_name setFrame:boundsName];
-
-    // var boundsShow = [_status frame];
-    // boundsShow.size.width += 10;
-    // [_status setFrame:boundsShow];
-
     [_statusIcon setImage:[aContact statusIcon]];
 
     if (_shouldDisplayAvatar)
@@ -207,9 +184,6 @@ var TNRosterDataViewContactImageUnknownUser,
     [_name setThemeState:aState];
     [_status setThemeState:aState];
     [_events setThemeState:aState];
-
-    // if ((aState == CPThemeStateSelectedDataView) && [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_contact vCard]] != TNArchipelEntityTypeUser)
-    //     [_buttonAction setHidden:NO];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -221,12 +195,6 @@ var TNRosterDataViewContactImageUnknownUser,
     [_name unsetThemeState:aState];
     [_status unsetThemeState:aState];
     [_events unsetThemeState:aState];
-
-    // if (aState == CPThemeStateSelectedDataView)
-    // {
-    //     [_buttonAction setHidden:YES];
-    //     [_quickActionWindow close:nil];
-    // }
 }
 
 
@@ -273,7 +241,6 @@ var TNRosterDataViewContactImageUnknownUser,
         _statusIcon             = [aCoder decodeObjectForKey:@"_statusIcon"];
         _events                 = [aCoder decodeObjectForKey:@"_events"];
         _avatar                 = [aCoder decodeObjectForKey:@"_avatar"];
-        // _buttonAction           = [aCoder decodeObjectForKey:@"_buttonAction"];
     }
 
     return self;

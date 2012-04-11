@@ -126,6 +126,7 @@ class TNArchipelEntity (object):
         self.entity_type            = "not-defined"
         self.plugins                = []
         self.is_unregistering       = False
+        self.use_avatar             = self.configuration.getboolean("GLOBAL", "use_avatar");
         self.permission_db_file     = "permissions.sqlite3"
         self.permission_admin_names = dict(map(lambda x: ("STATIC_%s" % x, x), self.configuration.get("GLOBAL", "archipel_root_admins").split()))
         self.permission_center      = TNArchipelPermissionCenter(root_admins=self.permission_admin_names)
@@ -778,7 +779,7 @@ class TNArchipelEntity (object):
         Callback of manage_vcard()
         """
         self.vCard = vcard.getTag("vCard")
-        if self.vCard and self.vCard.getTag("PHOTO"):
+        if self.use_avatar and  self.vCard and self.vCard.getTag("PHOTO"):
             self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
         self.log.info("Own vcard retrieved")
         self.set_vcard()
@@ -808,7 +809,7 @@ class TNArchipelEntity (object):
                 name_node = xmpp.Node(tag="FN")
                 name_node.setData(self.name)
                 payload.append(name_node)
-            if self.configuration.getboolean("GLOBAL", "use_avatar"):
+            if self.use_avatar:
                 if not self.b64Avatar:
                     if params and params["filename"]:
                         self.b64avatar_from_filename(params["filename"])
@@ -820,6 +821,7 @@ class TNArchipelEntity (object):
                 node_photo_data.setData(self.b64Avatar)
                 node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
                 payload.append(node_photo)
+
             node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
             ## updating internal representation of the vCard
             self.vCard = node_iq.getTag("vCard")

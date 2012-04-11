@@ -46,6 +46,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPDictionary                _tagsRegistry;
     CPArray                     _draggedItems;
     TNPubSubNode                _pubsubTagsNode;
+    CPTimer                     _reloadGraceTimer;
 }
 
 
@@ -124,7 +125,16 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (void)updateOutlineView:(CPNotification)aNotification
 {
+    if (_reloadGraceTimer)
+        [_reloadGraceTimer invalidate];
+
+    _reloadGraceTimer = [CPTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(_performUpdateOutlineView:) userInfo:nil repeats:NO];
+}
+
+- (void)_performUpdateOutlineView:(CPTimer)aTimer
+{
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
+    _reloadGraceTimer = nil;
 }
 
 /*! initializes the TNPubSubNode when roster is retreived
