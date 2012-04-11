@@ -20,20 +20,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import commands
+import datetime
 import os
 import xmpp
 
+from archipelcore.pubsub import TNPubSubNode
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
 
 
 ARCHIPEL_NS_HYPERVISOR_NUAGE_NETWORK        = "archipel:hypervisor:nuage:network"
 ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_CREATE   = -12001
-ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_DELETE   = -12001
-ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_UPDATE   = -12001
-ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GET      = -12001
+ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_DELETE   = -12002
+ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_UPDATE   = -12003
+ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GET      = -12004
 
+# This is a sample of the definition of a nuage network
+# <nuage_network name="blabla" type="ipv4" >
+#     <bandwidth>
+#         <inbound average='1000' peak='5000' burst='5120' />
+#         <outbound average='1000' peak='5000' burst='5120' />
+#     </bandwidth>
+#     <ip address="192.168.122.1" netmask="255.255.255.0" gateway="192.168.122.2" />
+# </nuage_network>
 
 
 class TNHypervisorNuageNetworks (TNArchipelPlugin):
@@ -60,7 +69,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             self.entity.permission_center.create_permission("nuagenetwork_update", "Authorizes user to update a Nuage network", False)
 
         # register to the node vmrequest
-        if isinstance(self.entity, TNArchipelHypervisor):
+        if self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_nuage_network_node)
 
 
@@ -94,7 +103,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         plugin_friendly_name           = "Hypervisor Nuage Networks"
         plugin_identifier              = "hypervisor_nuage_network"
-        plugin_configuration_section   = "NUAGE NETWORKS" //// HERE
+        plugin_configuration_section   = None
         plugin_configuration_tokens    = []
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
@@ -136,9 +145,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         items = self.pubsub_nuage_networks.get_items()
         for item in items:
-            # domain = item.getTag("virtualmachine").getTag("domain")
-            # if domain.getTag("uuid").getData() == uuid:
-            #     return item.getAttr("id")
+            name = item.getTag("nuage").getTag("nuage_network").getAttr("name")
+            if name == identifier:
+                return item.getAttr("id")
         return None
 
     def is_network_already_exists(self, identifier):
@@ -172,43 +181,91 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         nodes = self.pubsub_nuage_networks.get_items()
         ret = []
         for node in nodes:
-            network = xmpp.Node(node=node.getTag("network"))
-            # ret.append({"info":
-            #                 {"itemid": node.getAttr("id"),
-            #                 "parker": node.getTag("virtualmachine").getAttr("parker"),
-            #                 "date": node.getTag("virtualmachine").getAttr("date")},
-            #                 "domain": domain})
-        # def sorting(a, b):
-        #     return cmp(a["domain"].getTag("name").getData(), b["domain"].getTag("name").getData())
-        # ret.sort(sorting)
+            network = xmpp.Node(node=node.getTag("nuage"))
+            ret.append({"info": {"itemid": node.getAttr("id"),
+                                "creator": node.getTag("nuage").getAttr("creator"),
+                                "date": node.getTag("nuage").getAttr("date")},
+                        "network": node.getTag("nuage").getTag("nuage_network")})
+        def sorting(a, b):
+            return cmp(a["network"].getAttr("name"), b["network"].getAttr("name"))
+        ret.sort(sorting)
         return ret
 
-
-    def delete(self, identifier):
+    def delete(self, network_name):
         """
         delete the network with given identifier
-        @type identifier: string
-        @param identifier: the identifer of the network to destroy. It can be its name or UUID
+        @type network_name: string
+        @param network_name: the identifer of the network to destroy.
         """
-        pass
+        ticket = self.get_ticket_from_identifier(network_name)
+        network_item = self.pubsub_nuage_networks.get_item(ticket)
+        if not network_item:
+            raise Exception("There is no Nuage network with name %s" % network_name)
 
-    def create(self, definition):
+        def retract_success(resp, user_info):
+            if resp.getType() == "result":
+                self.entity.push_change("nuagenetwork", "deleted")
+                self.entity.log.info("NUAGENETWORKS: successfully deleted %s" % str(network_name))
+            else:
+                self.entity.push_change("nuagenetwork", "cannot-delete", content_node=resp)
+                self.entity.log.error("NUAGENETWORKS: cannot delete Network %s: %s" % (network_name, str(resp)))
+        self.pubsub_nuage_networks.remove_item(ticket, callback=retract_success)
+
+    def create(self, definition, creator_jid):
         """
         define the network
         @type definition: string
         @param definition: the XML definition to use
         """
-        pass
+        network_name = definition.getAttr("name");
 
-    def update(self, identifier, definition):
+        if self.is_network_already_exists(network_name):
+            raise Exception("Network with Name %s already exists" % network_name)
+
+        def publish_success(resp):
+            if resp.getType() == "result":
+                self.entity.push_change("nuagenetwork", "created")
+                self.entity.log.info("NUAGENETWORKS: Network %s successfuly created" % str(network_name))
+            else:
+                self.entity.push_change("nuagenetwork", "cannot-create", content_node=resp)
+                self.entity.log.error("NUAGENETWORKS: cannot create network %s: %s" % (network_name, str(resp)))
+
+        networknode = xmpp.Node(tag="nuage", attrs={    "creator": creator_jid.getStripped(),
+                                                        "date": datetime.datetime.now()})
+        networknode.addChild(node=definition)
+        self.pubsub_nuage_networks.add_item(networknode, callback=publish_success)
+        self.entity.log.info("NUAGENETWORKS: Network %s creation in progress..." % network_name)
+
+    def update(self, network_name, definition):
         """
         define the network
-        @type identifier: String
-        @param identifier: the identifier of the network
+        @type network_name: String
+        @param network_name: the name of the network
         @type definition: string
         @param definition: the XML definition to use
         """
-        pass
+        ticket = self.get_ticket_from_identifier(network_name)
+        network_item = self.pubsub_nuage_networks.get_item(ticket)
+        if not network_item:
+            raise Exception("There is no Nuage network with name %s" % network_name)
+
+        if not definition.getAttr("name") == network_item.getTag("nuage").getTag("nuage_network").getAttr("name"):
+            raise Exception("You cannot change the name of an existing network.")
+
+        network_item.getTag("nuage").delChild("nuage_network")
+        network_item.getTag("nuage").addChild(node=definition)
+
+        def publish_success(resp):
+            if resp.getType() == "result":
+                self.entity.push_change("nuagenetwork", "updated")
+                self.pubsub_nuage_networks.remove_item(ticket)
+                self.entity.log.info("NUAGENETWORKS: Nuage network %s as been updated" % network_name)
+            else:
+                self.inhibit_next_general_push = True
+                self.entity.push_change("nuagenetwork", "cannot-update", content_node=resp)
+                self.entity.log.error("NUAGENETWORKS: unable to update network %s: %s" % (network_name, resp))
+        self.pubsub_nuage_networks.add_item(network_item.getTag("nuage"), callback=publish_success)
+
 
 
     ### XMPP Processing
@@ -270,7 +327,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            pass
+            reply = iq.buildReply("result")
+            definition = iq.getTag("query").getTag("archipel").getTag("nuage_network")
+            self.create(definition, iq.getFrom())
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_CREATE)
         return reply
@@ -284,7 +343,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            pass
+            reply = iq.buildReply("result")
+            network_name = iq.getTag("query").getTag("archipel").getAttr("name")
+            self.delete(network_name)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_DELETE)
         return reply
@@ -298,7 +359,10 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            pass
+            reply = iq.buildReply("result")
+            network_xml = iq.getTag("query").getTag("archipel").getTag("nuage_network")
+            network_name = iq.getTag("query").getTag("archipel").getAttr("name")
+            self.update(network_name, network_xml)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_UPDATE)
         return reply
@@ -312,7 +376,14 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            pass;
+            reply = iq.buildReply("result")
+            networks = self.get()
+            nodes = []
+            for network_info in networks:
+                network_node = xmpp.Node("nuage", attrs=network_info["info"])
+                network_node.addChild(node=network_info["network"])
+                nodes.append(network_node)
+            reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GET)
         return reply
