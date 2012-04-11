@@ -32,8 +32,8 @@ def create(xmppclient, pubsubserver):
     Create the pubsub node
     """
     config = {
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_AUTHORIZE,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1000,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
