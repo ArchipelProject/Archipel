@@ -72,6 +72,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_nuage_network_node)
 
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.add_vm_definition_hook(self.update_vm_xml_hook)
+
 
     ### Plugin implementation
 
@@ -111,6 +114,47 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
                     "configuration-tokens"      : plugin_configuration_tokens }
 
 
+
+    ### VM XML Desc update
+    def update_vm_xml_hook(self, senderJID, vm_xml_node):
+        """
+        Update the VM definition to insert the metadata informations
+        @type sender: xmpp.JID
+        @param sender: The JID of the sender
+        @type vm_xml_node: xmpp.Node
+        @param vm_xml_node: The VM's XML description
+        """
+        if not vm_xml_node.getTag("metadata"):
+            vm_xml_node.addChild("metadata")
+        if vm_xml_node.getTag("metadata").getTag("nuage"):
+            vm_xml_node.getTag("metadata").delChild("nuage")
+
+        hypervisor_nuage_plugin = self.entity.hypervisor.get_plugin("hypervisor_nuage_network")
+
+        nuage_node = xmpp.Node("nuage", attrs={"xmlns": "alcatel-lucent.com/nuage/cna"})
+        nuage_node.addChild("user", attrs={"name": senderJID.getStripped()})
+        nuage_node.addChild("group", attrs={"name": "Group A"})
+        nuage_node.addChild("enterprise", attrs={"name": "Enterprise 1"})
+        app_node = nuage_node.addChild("application", attrs={"name": "LAMP"})
+
+        interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
+
+        for interface in interface_nodes:
+
+            if not interface.getAttr("type") == "nuage":
+                continue
+
+            network_name = interface.getAttr("name")
+            mac_address = interface.getTag("mac").getAttr("address")
+            network_item = hypervisor_nuage_plugin.get_network(network_name)
+            network_name_XML = network_item.getTag("nuage").getTag("nuage_network")
+            network_name_XML.addChild("interface_mac", attrs={"address": mac_address})
+            app_node.addChild(node=network_name_XML)
+
+        vm_xml_node.getTag("metadata").addChild(node=nuage_node)
+        return vm_xml_node
+
+
     ### PubSub Management
 
     def manage_nuage_network_node(self, origin, user_info, arguments):
@@ -135,7 +179,18 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
     ### Utilities
 
-    def get_ticket_from_identifier(self, identifier):
+    def get_network(self, network_name):
+        """
+        Return the a network according to a name
+        @type network_name: String
+        @param network_name: the name of the network
+        @rtype: xmpp.Node
+        @return: the pubsub item
+        """
+        ticket = self.get_ticket_from_network_name(network_name)
+        return self.pubsub_nuage_networks.get_item(ticket)
+
+    def get_ticket_from_network_name(self, identifier):
         """
         parse the parked vm to find the ticket of the given uuid
         @type identifier: String
@@ -150,15 +205,15 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
                 return item.getAttr("id")
         return None
 
-    def is_network_already_exists(self, identifier):
+    def is_network_already_existing(self, network_name):
         """
         Check if vm with given UUID is already parked
-        @type identifier: String
-        @param identifier: the identifier of the network
+        @type network_name: String
+        @param network_name: the name of the network
         @rtype: Boolean
         @return: True is vm is already in park
         """
-        if self.get_ticket_from_identifier(identifier):
+        if self.get_ticket_from_network_name(network_name):
             return True
         return False
 
@@ -197,7 +252,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type network_name: string
         @param network_name: the identifer of the network to destroy.
         """
-        ticket = self.get_ticket_from_identifier(network_name)
+        ticket = self.get_ticket_from_network_name(network_name)
         network_item = self.pubsub_nuage_networks.get_item(ticket)
         if not network_item:
             raise Exception("There is no Nuage network with name %s" % network_name)
@@ -219,7 +274,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         network_name = definition.getAttr("name");
 
-        if self.is_network_already_exists(network_name):
+        if self.is_network_already_existing(network_name):
             raise Exception("Network with Name %s already exists" % network_name)
 
         def publish_success(resp):
@@ -244,7 +299,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type definition: string
         @param definition: the XML definition to use
         """
-        ticket = self.get_ticket_from_identifier(network_name)
+        ticket = self.get_ticket_from_network_name(network_name)
         network_item = self.pubsub_nuage_networks.get_item(ticket)
         if not network_item:
             raise Exception("There is no Nuage network with name %s" % network_name)
