@@ -2463,7 +2463,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="808455146">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Website</string>
+							<string key="NSContents">Category</string>
 							<object class="NSFont" key="NSSupport" id="792006151">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">9</double>
@@ -2484,7 +2484,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="141250320">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">website</string>
+							<string key="NSContents">categorie</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="150318128"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -5161,6 +5161,14 @@
 						<reference key="destination" ref="717104277"/>
 					</object>
 					<int key="connectionID">1640</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">labelVCardCategory</string>
+						<reference key="source" ref="765536987"/>
+						<reference key="destination" ref="150318128"/>
+					</object>
+					<int key="connectionID">1641</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -9288,7 +9296,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1640</int>
+			<int key="maxID">1641</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10035,6 +10043,45 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/AppController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSCollectionViewItem</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageView</string>
+							<string>textField</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSImageView</string>
+							<string>NSTextField</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageView</string>
+							<string>textField</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageView</string>
+								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">textField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/NSCollectionViewItem.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -11003,13 +11050,13 @@
 							<string>labelStatus</string>
 							<string>labelType</string>
 							<string>labelVCard</string>
+							<string>labelVCardCategory</string>
 							<string>labelVCardCompany</string>
 							<string>labelVCardCompanyUnit</string>
 							<string>labelVCardEmail</string>
 							<string>labelVCardFN</string>
 							<string>labelVCardLocality</string>
 							<string>labelVCardRole</string>
-							<string>labelVCardWebiste</string>
 							<string>mainSwipeView</string>
 							<string>viewNicknameContainer</string>
 							<string>viewVCard</string>
@@ -11076,13 +11123,13 @@
 							<string>labelStatus</string>
 							<string>labelType</string>
 							<string>labelVCard</string>
+							<string>labelVCardCategory</string>
 							<string>labelVCardCompany</string>
 							<string>labelVCardCompanyUnit</string>
 							<string>labelVCardEmail</string>
 							<string>labelVCardFN</string>
 							<string>labelVCardLocality</string>
 							<string>labelVCardRole</string>
-							<string>labelVCardWebiste</string>
 							<string>mainSwipeView</string>
 							<string>viewNicknameContainer</string>
 							<string>viewVCard</string>
@@ -11172,6 +11219,10 @@
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">labelVCardCategory</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">labelVCardCompany</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
@@ -11193,10 +11244,6 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">labelVCardRole</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">labelVCardWebiste</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">

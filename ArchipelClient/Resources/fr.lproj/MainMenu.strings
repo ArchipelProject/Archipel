@@ -257,10 +257,10 @@
 /* Class = "NSTextFieldCell"; title = "Role"; ObjectID = "1118"; */
 "1118.title" = "Role";
 
-/* Class = "NSTextFieldCell"; title = "Website"; ObjectID = "1123"; */
+/* Class = "NSTextFieldCell"; title = "Category"; ObjectID = "1123"; */
 "1123.title" = "Site web";
 
-/* Class = "NSTextFieldCell"; title = "website"; ObjectID = "1124"; */
+/* Class = "NSTextFieldCell"; title = "categorie"; ObjectID = "1124"; */
 "1124.title" = "site web";
 
 /* Class = "NSTextFieldCell"; title = "Owner"; ObjectID = "1125"; */
