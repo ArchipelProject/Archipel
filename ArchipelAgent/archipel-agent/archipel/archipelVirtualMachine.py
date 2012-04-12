@@ -96,7 +96,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
     This class needs to already have .... end of story ? TODO fix the details
     """
 
-    def __init__(self, jid, password, hypervisor, configuration, name):
+    def __init__(self, jid, password, hypervisor, configuration, name, organizationInfo=None):
         """
         Contructor of the class.
         """
@@ -127,10 +127,17 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.connect_libvirt()
 
         self.vcard_infos = {}
-        if (self.configuration.has_section("VCARD")):
-            for key in ("orgname", "userid", "locality", "url"):
-                if self.configuration.has_option("VCARD", key):
-                    self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key)
+
+        if organizationInfo:
+            if organizationInfo["orgname"]:
+                self.vcard_infos["ORGNAME"] = organizationInfo["orgname"]
+            if  organizationInfo["orgunit"]:
+                self.vcard_infos["ORGUNIT"] = organizationInfo["orgunit"]
+            if  organizationInfo["userid"]:
+                self.vcard_infos["USERID"] = organizationInfo["userid"]
+            if  organizationInfo["locality"]:
+                self.vcard_infos["LOCALITY"] = organizationInfo["locality"]
+
         self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 
         # create VM folders if not exists
@@ -570,7 +577,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             reply = self.iq_undefine(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
-
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -965,6 +971,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_VM_FREE")
         self.hypervisor.free(self.jid)
 
+    def setowner(self, organization_name, organization_unit):
+        """
+        Set the vCard fields for the organization
+        """
+        ## NEED UPDATE
+        self.vcard_infos["ORGNAME"] = organization_name
+        self.vcard_infos["ORGUNIT"] = organization_unit
+        self.set_vcard()
 
     ### Other stuffs
 
