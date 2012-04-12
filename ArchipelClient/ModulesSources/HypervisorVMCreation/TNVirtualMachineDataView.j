@@ -41,12 +41,17 @@ var TNVirtualMachineDataViewAvatarUnknown;
     @outlet CPTextField fieldServer;
     @outlet CPTextField fieldStatus;
     @outlet CPTextField fieldJID;
+    @outlet CPTextField fieldLocality;
+    @outlet CPTextField fieldOwner;
+    @outlet CPTextField fieldUnit;
     @outlet CPTextField labelCompany;
     @outlet CPTextField labelHypervisor;
     @outlet CPTextField labelLocality;
     @outlet CPTextField labelName;
     @outlet CPTextField labelServer;
     @outlet CPTextField labelStatus;
+    @outlet CPTextField labelUnit;
+    @outlet CPTextField labelOwner;
 }
 
 
@@ -63,12 +68,16 @@ var TNVirtualMachineDataViewAvatarUnknown;
 {
     [fieldCompany setHidden:shouldHide];
     [fieldLocality setHidden:shouldHide];
+    [fieldOwner setHidden:shouldHide];
+    [fieldUnit setHidden:shouldHide];
     [fieldStatus setHidden:shouldHide];
     [fieldName setHidden:shouldHide];
     [labelCompany setHidden:shouldHide];
     [labelLocality setHidden:shouldHide];
     [labelStatus setHidden:shouldHide];
     [labelName setHidden:shouldHide];
+    [labelUnit setHidden:shouldHide];
+    [labelOwner setHidden:shouldHide];
 }
 
 #pragma mark -
@@ -89,6 +98,8 @@ var TNVirtualMachineDataViewAvatarUnknown;
         [fieldName setStringValue:[[[aContact vCard] firstChildWithName:@"FN"] text]];
         [fieldLocality setStringValue:[[[aContact vCard] firstChildWithName:@"LOCALITY"] text]];
         [fieldCompany setStringValue:[[[aContact vCard] firstChildWithName:@"ORGNAME"] text]];
+        [fieldUnit setStringValue:[[[aContact vCard] firstChildWithName:@"ORGUNIT"] text]];
+        [fieldOwner setStringValue:[[[aContact vCard] firstChildWithName:@"USERID"] text]];
         [fieldNickName setStringValue:[aContact nickname]];
         [fieldStatus setStringValue:[aContact XMPPStatus]];
         [imageAvatar setImage:[aContact avatar]];
@@ -118,6 +129,8 @@ var TNVirtualMachineDataViewAvatarUnknown;
         fieldCompany = [aCoder decodeObjectForKey:@"fieldCompany"];
         fieldHypervisor = [aCoder decodeObjectForKey:@"fieldHypervisor"];
         fieldLocality = [aCoder decodeObjectForKey:@"fieldLocality"];
+        fieldUnit = [aCoder decodeObjectForKey:@"fieldUnit"];
+        fieldOwner = [aCoder decodeObjectForKey:@"fieldOwner"];
         fieldName = [aCoder decodeObjectForKey:@"fieldName"];
         fieldNickName = [aCoder decodeObjectForKey:@"fieldNickName"];
         fieldServer = [aCoder decodeObjectForKey:@"fieldServer"];
@@ -145,6 +158,8 @@ var TNVirtualMachineDataViewAvatarUnknown;
 
     [aCoder encodeObject:fieldCompany forKey:@"fieldCompany"];
     [aCoder encodeObject:fieldHypervisor forKey:@"fieldHypervisor"];
+    [aCoder encodeObject:fieldUnit forKey:@"fieldUnit"];
+    [aCoder encodeObject:fieldOwner forKey:@"fieldOwner"];
     [aCoder encodeObject:fieldLocality forKey:@"fieldLocality"];
     [aCoder encodeObject:fieldName forKey:@"fieldName"];
     [aCoder encodeObject:fieldNickName forKey:@"fieldNickName"];
