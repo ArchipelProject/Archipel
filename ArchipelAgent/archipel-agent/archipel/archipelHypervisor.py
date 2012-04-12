@@ -72,7 +72,7 @@ class TNThreadedVirtualMachine (Thread):
     in a thread.
     """
 
-    def __init__(self, jid, password, hypervisor, configuration, name):
+    def __init__(self, jid, password, hypervisor, configuration, name, organizationInfo):
         """
         The contructor of the class.
         @type jid: string
@@ -83,11 +83,13 @@ class TNThreadedVirtualMachine (Thread):
         @param hypervisor: the hypervisor of the VM
         @type name: string
         @param name: the name of the VM
+        @type organizationInfo: Dict
+        @param organizationInfo: Dict containing locality, company name, company unit and owner
         """
         Thread.__init__(self)
         self.jid = jid
         self.password = password
-        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration, name)
+        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration, name, organizationInfo)
 
     def get_instance(self):
         """
@@ -145,7 +147,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         self.vcard_infos                = {}
         if (self.configuration.has_section("VCARD")):
-            for key in ("orgname", "userid", "locality", "url"):
+            for key in ("orgname", "orgunit", "userid", "locality", "url"):
                 if self.configuration.has_option("VCARD", key):
                     self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key)
         self.vcard_infos["TITLE"] = "Hypervisor (%s)" % self.current_hypervisor()
@@ -311,17 +313,21 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vm_thread.start()
             self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())
 
-    def create_threaded_vm(self, jid, password, name):
+    def create_threaded_vm(self, jid, password, name, organizationInfo=None):
         """
         This method creates a threaded L{TNArchipelVirtualMachine}, starts it and returns the Thread instance.
         @type jid: string
         @param jid: the JID of the L{TNArchipelVirtualMachine}
         @type password: string
         @param password: the password associated to the JID
+        @type name: String
+        @param name: the Name of the VM
+        @type organizationInfo: Dict
+        @param organizationInfo: Dict containing locality, company name, company unit and owner
         @rtype: L{TNThreadedVirtualMachine}
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        return TNThreadedVirtualMachine(jid, password, self, self.configuration, name)
+        return TNThreadedVirtualMachine(jid, password, self, self.configuration, name, organizationInfo)
 
     def generate_name(self):
         """
@@ -463,7 +469,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ###  Hypervisor controls
 
-    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None, xml_description=None):
+    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None, xml_description=None, organizationInfo=None):
         """
         Alloc a new XMPP entity.
         @type requester: xmpp.JID
@@ -476,6 +482,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param requested_uuid: if set, the UUID to use as libvirt UUID and JID's node
         @type xml_description: xmpp.Node
         @param xml_description: Optional description
+        @type organizationInfo: Dict
+        @param organizationInfo: Dict containing locality, company name, company unit and owner
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
@@ -501,7 +509,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             name = name.replace(" ", "-")
 
         self.log.info("Starting xmpp threaded virtual machine.")
-        vm_thread = self.create_threaded_vm(vm_jid, vm_password, name)
+        vm_thread = self.create_threaded_vm(vm_jid, vm_password, name, organizationInfo)
         vm = vm_thread.get_instance()
 
         if requester:
@@ -682,14 +690,27 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready-to-send IQ containing the results
         """
         try:
-            try:
-                requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
-            except:
-                requested_name = None
+            organizationInfo = {}
+            requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
+
+            organizationInfo["orgname"] = iq.getTag("query").getTag("archipel").getAttr("orgname")
+            organizationInfo["orgunit"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
+            organizationInfo["locality"] = iq.getTag("query").getTag("archipel").getAttr("locality")
+            organizationInfo["userid"] = iq.getTag("query").getTag("archipel").getAttr("userid")
+
+            if not organizationInfo["orgname"] or organizationInfo["orgname"] == "":
+                organizationInfo["orgname"] = self.vcard_infos["ORGNAME"]
+            if not organizationInfo["orgunit"] or organizationInfo["orgunit"] == "":
+                organizationInfo["orgunit"] = self.vcard_infos["ORGUNIT"]
+            if not organizationInfo["locality"] or organizationInfo["locality"] == "":
+                organizationInfo["locality"] = self.vcard_infos["LOCALITY"]
+            if not organizationInfo["userid"] or organizationInfo["userid"] == "":
+                organizationInfo["userid"] = self.vcard_infos["USERID"]
+
             domainXML = None
             if iq.getTag("query").getTag("archipel").getTag("domain"):
                 domainXML = iq.getTag("query").getTag("archipel").getTag("domain")
-            vm = self.alloc(iq.getFrom(), requested_name=requested_name, xml_description=domainXML)
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name, xml_description=domainXML, organizationInfo=organizationInfo)
             reply = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
 
