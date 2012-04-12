@@ -58,6 +58,7 @@
     @outlet CPTextField             labelType;
     @outlet CPTextField             labelVCard;
     @outlet CPTextField             labelVCardCompany;
+    @outlet CPTextField             labelVCardCompanyUnit;
     @outlet CPTextField             labelVCardEmail;
     @outlet CPTextField             labelVCardFN;
     @outlet CPTextField             labelVCardLocality;
@@ -178,6 +179,7 @@
     [buttonViewVCardSwipe setValue:imageArrowLeftPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
     [labelVCardCompany setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardCompanyUnit setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardEmail setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardFN setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardLocality setLineBreakMode:CPLineBreakByTruncatingTail];
@@ -353,6 +355,7 @@
         [labelVCardFN setStringValue:@""];
         [labelVCardLocality setStringValue:@""];
         [labelVCardCompany setStringValue:@""];
+        [labelVCardCompanyUnit setStringValue:@""];
         [labelVCardRole setStringValue:@""];
         [labelVCardEmail setStringValue:@""]
         [labelVCardWebiste setStringValue:@""];
@@ -367,6 +370,7 @@
             [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
             [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
             [labelVCardCompany setStringValue:[[[vCard firstChildWithName:@"ORGNAME"] text] capitalizedString]];
+            [labelVCardCompanyUnit setStringValue:[[[vCard firstChildWithName:@"ORGUNIT"] text] capitalizedString]];
             [labelVCardRole setStringValue:[[[vCard firstChildWithName:@"TITLE"] text] capitalizedString]];
             [labelVCardEmail setStringValue:[[vCard firstChildWithName:@"USERID"] text]]
             [labelVCardWebiste setStringValue:[[vCard firstChildWithName:@"URL"] text]];
