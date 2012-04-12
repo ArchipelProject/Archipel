@@ -224,3 +224,15 @@
 /* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "533"; */
 "533.title" = "Owner:";
 
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "540"; */
+"540.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "Category:"; ObjectID = "541"; */
+"541.title" = "Category:";
+
+/* Class = "NSTextFieldCell"; title = "Category:"; ObjectID = "546"; */
+"546.title" = "Category:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "LAMP Stack 1"; ObjectID = "547"; */
+"547.placeholderString" = "LAMP Stack 1";
+

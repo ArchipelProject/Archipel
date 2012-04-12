@@ -31,27 +31,29 @@ var TNVirtualMachineDataViewAvatarUnknown;
 */
 @implementation TNVirtualMachineDataView : TNBasicDataView
 {
-    @outlet CPImageView imageStatusIcon;
     @outlet CPImageView imageAvatar;
+    @outlet CPImageView imageStatusIcon;
+    @outlet CPTextField fieldCategories;
     @outlet CPTextField fieldCompany;
     @outlet CPTextField fieldHypervisor;
+    @outlet CPTextField fieldJID;
+    @outlet CPTextField fieldLocality;
     @outlet CPTextField fieldLocality;
     @outlet CPTextField fieldName;
     @outlet CPTextField fieldNickName;
+    @outlet CPTextField fieldOwner;
     @outlet CPTextField fieldServer;
     @outlet CPTextField fieldStatus;
-    @outlet CPTextField fieldJID;
-    @outlet CPTextField fieldLocality;
-    @outlet CPTextField fieldOwner;
     @outlet CPTextField fieldUnit;
+    @outlet CPTextField labelCategories;
     @outlet CPTextField labelCompany;
     @outlet CPTextField labelHypervisor;
     @outlet CPTextField labelLocality;
     @outlet CPTextField labelName;
+    @outlet CPTextField labelOwner;
     @outlet CPTextField labelServer;
     @outlet CPTextField labelStatus;
     @outlet CPTextField labelUnit;
-    @outlet CPTextField labelOwner;
 }
 
 
@@ -73,11 +75,13 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [fieldStatus setHidden:shouldHide];
     [fieldName setHidden:shouldHide];
     [labelCompany setHidden:shouldHide];
+    [fieldCategories setHidden:shouldHide];
     [labelLocality setHidden:shouldHide];
     [labelStatus setHidden:shouldHide];
     [labelName setHidden:shouldHide];
     [labelUnit setHidden:shouldHide];
     [labelOwner setHidden:shouldHide];
+    [labelCategories setHidden:shouldHide];
 }
 
 #pragma mark -
@@ -100,6 +104,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
         [fieldCompany setStringValue:[[[aContact vCard] firstChildWithName:@"ORGNAME"] text]];
         [fieldUnit setStringValue:[[[aContact vCard] firstChildWithName:@"ORGUNIT"] text]];
         [fieldOwner setStringValue:[[[aContact vCard] firstChildWithName:@"USERID"] text]];
+        [fieldCategories setStringValue:[[[aContact vCard] firstChildWithName:@"CATEGORIES"] text]];
         [fieldNickName setStringValue:[aContact nickname]];
         [fieldStatus setStringValue:[aContact XMPPStatus]];
         [imageAvatar setImage:[aContact avatar]];
@@ -126,16 +131,18 @@ var TNVirtualMachineDataViewAvatarUnknown;
 
     if (self)
     {
+        fieldCategories = [aCoder decodeObjectForKey:@"fieldCategories"];
         fieldCompany = [aCoder decodeObjectForKey:@"fieldCompany"];
         fieldHypervisor = [aCoder decodeObjectForKey:@"fieldHypervisor"];
+        fieldJID = [aCoder decodeObjectForKey:@"fieldJID"];
         fieldLocality = [aCoder decodeObjectForKey:@"fieldLocality"];
-        fieldUnit = [aCoder decodeObjectForKey:@"fieldUnit"];
-        fieldOwner = [aCoder decodeObjectForKey:@"fieldOwner"];
         fieldName = [aCoder decodeObjectForKey:@"fieldName"];
         fieldNickName = [aCoder decodeObjectForKey:@"fieldNickName"];
+        fieldOwner = [aCoder decodeObjectForKey:@"fieldOwner"];
         fieldServer = [aCoder decodeObjectForKey:@"fieldServer"];
         fieldStatus = [aCoder decodeObjectForKey:@"fieldStatus"];
-        fieldJID = [aCoder decodeObjectForKey:@"fieldJID"];
+        fieldUnit = [aCoder decodeObjectForKey:@"fieldUnit"];
+        labelCategories = [aCoder decodeObjectForKey:@"labelCategories"];
         labelCompany = [aCoder decodeObjectForKey:@"labelCompany"];
         labelHypervisor = [aCoder decodeObjectForKey:@"labelHypervisor"];
         labelLocality = [aCoder decodeObjectForKey:@"labelLocality"];
@@ -156,24 +163,26 @@ var TNVirtualMachineDataViewAvatarUnknown;
 {
     [super encodeWithCoder:aCoder];
 
+    [aCoder encodeObject:fieldCategories forKey:@"fieldCategories"];
     [aCoder encodeObject:fieldCompany forKey:@"fieldCompany"];
     [aCoder encodeObject:fieldHypervisor forKey:@"fieldHypervisor"];
-    [aCoder encodeObject:fieldUnit forKey:@"fieldUnit"];
-    [aCoder encodeObject:fieldOwner forKey:@"fieldOwner"];
+    [aCoder encodeObject:fieldJID forKey:@"fieldJID"];
     [aCoder encodeObject:fieldLocality forKey:@"fieldLocality"];
     [aCoder encodeObject:fieldName forKey:@"fieldName"];
     [aCoder encodeObject:fieldNickName forKey:@"fieldNickName"];
+    [aCoder encodeObject:fieldOwner forKey:@"fieldOwner"];
     [aCoder encodeObject:fieldServer forKey:@"fieldServer"];
     [aCoder encodeObject:fieldStatus forKey:@"fieldStatus"];
-    [aCoder encodeObject:fieldJID forKey:@"fieldJID"];
+    [aCoder encodeObject:fieldUnit forKey:@"fieldUnit"];
+    [aCoder encodeObject:imageAvatar forKey:@"imageAvatar"];
+    [aCoder encodeObject:imageStatusIcon forKey:@"imageStatusIcon"];
+    [aCoder encodeObject:labelCategories forKey:@"labelCategories"];
     [aCoder encodeObject:labelCompany forKey:@"labelCompany"];
     [aCoder encodeObject:labelHypervisor forKey:@"labelHypervisor"];
     [aCoder encodeObject:labelLocality forKey:@"labelLocality"];
     [aCoder encodeObject:labelName forKey:@"labelName"];
     [aCoder encodeObject:labelServer forKey:@"labelServer"];
     [aCoder encodeObject:labelStatus forKey:@"labelStatus"];
-    [aCoder encodeObject:imageStatusIcon forKey:@"imageStatusIcon"];
-    [aCoder encodeObject:imageAvatar forKey:@"imageAvatar"];
 }
 
 @end
