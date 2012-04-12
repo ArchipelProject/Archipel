@@ -449,3 +449,9 @@
 /* Class = "NSTextFieldCell"; title = "Scrollers"; ObjectID = "1633"; */
 "1633.title" = "Scrollers";
 
+/* Class = "NSTextFieldCell"; title = "Unit"; ObjectID = "1638"; */
+"1638.title" = "Unit";
+
+/* Class = "NSTextFieldCell"; title = "unit"; ObjectID = "1639"; */
+"1639.title" = "unit";
+
