@@ -805,6 +805,16 @@ class TNArchipelEntity (object):
                     node.setData(value)
                     payload.append(node)
 
+            if self.vCard:
+                if self.vCard.getTag("ORGNAME"):
+                    payload.append(self.vCard.getTag("ORGNAME"))
+                if self.vCard.getTag("ORGUNIT"):
+                    payload.append(self.vCard.getTag("ORGUNIT"))
+                if self.vCard.getTag("LOCALITY"):
+                    payload.append(self.vCard.getTag("LOCALITY"))
+                if self.vCard.getTag("USERID"):
+                   payload.append(self.vCard.getTag("USERID"))
+
             if self.name:
                 name_node = xmpp.Node(tag="FN")
                 name_node.setData(self.name)
