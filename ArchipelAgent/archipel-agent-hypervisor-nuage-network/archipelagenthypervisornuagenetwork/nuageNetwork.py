@@ -143,12 +143,20 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
             if not interface.getAttr("type") == "nuage":
                 continue
-
             network_name = interface.getAttr("name")
             mac_address = interface.getTag("mac").getAttr("address")
             network_item = hypervisor_nuage_plugin.get_network(network_name)
-            network_name_XML = network_item.getTag("nuage").getTag("nuage_network")
+            network_name_XML = xmpp.Node(node=network_item.getTag("nuage").getTag("nuage_network")) # copy
             network_name_XML.addChild("interface_mac", attrs={"address": mac_address})
+
+            ## Now we reconfigure the nic to be a bridge
+            interface.setAttr("type", "bridge")
+            if interface.getAttr("name"):
+                interface.delAttr("name")
+            if interface.getTag("source"):
+                interface.delChild("source")
+            interface.addChild("source", attrs={"bridge": "wathever-bridge0"})
+
             app_node.addChild(node=network_name_XML)
 
         vm_xml_node.getTag("metadata").addChild(node=nuage_node)
@@ -187,8 +195,11 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @rtype: xmpp.Node
         @return: the pubsub item
         """
-        ticket = self.get_ticket_from_network_name(network_name)
-        return self.pubsub_nuage_networks.get_item(ticket)
+        try:
+            ticket = self.get_ticket_from_network_name(network_name)
+            return self.pubsub_nuage_networks.get_item(ticket)
+        except:
+            raise Exception("There is no Nuage network with name %s" % network_name)
 
     def get_ticket_from_network_name(self, identifier):
         """
