@@ -104,13 +104,13 @@
 /* Class = "NSTextFieldCell"; title = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f"; ObjectID = "282"; */
 "282.title" = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f";
 
-/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "283"; */
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "283"; */
 "283.title" = "Nickname";
 
-/* Class = "NSTextFieldCell"; title = "hypervisor"; ObjectID = "288"; */
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "288"; */
 "288.title" = "hypervisor";
 
-/* Class = "NSTextFieldCell"; title = "mydomain.com"; ObjectID = "289"; */
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "289"; */
 "289.title" = "mydomain.com";
 
 /* Class = "NSTextFieldCell"; title = "Hypervisor:"; ObjectID = "290"; */
@@ -119,19 +119,19 @@
 /* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "291"; */
 "291.title" = "Domain:";
 
-/* Class = "NSTextFieldCell"; title = "company"; ObjectID = "294"; */
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "294"; */
 "294.title" = "company";
 
 /* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "295"; */
 "295.title" = "Company:";
 
-/* Class = "NSTextFieldCell"; title = "Running"; ObjectID = "327"; */
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "327"; */
 "327.title" = "Running";
 
-/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "328"; */
+/* Class = "NSTextFieldCell"; title = "Status:"; ObjectID = "328"; */
 "328.title" = "Status";
 
-/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "329"; */
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "329"; */
 "329.title" = "Status";
 
 /* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "330"; */
@@ -187,4 +187,40 @@
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "478"; */
 "478.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Organization:"; ObjectID = "500"; */
+"500.title" = "Organization:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Archipel Corp."; ObjectID = "501"; */
+"501.placeholderString" = "Archipel Corp.";
+
+/* Class = "NSTextFieldCell"; title = "Unit:"; ObjectID = "505"; */
+"505.title" = "Unit:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Sales"; ObjectID = "506"; */
+"506.placeholderString" = "Sales";
+
+/* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "516"; */
+"516.title" = "Locality:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "San Francisco"; ObjectID = "517"; */
+"517.placeholderString" = "San Francisco";
+
+/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "521"; */
+"521.title" = "Owner:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "John Doe"; ObjectID = "522"; */
+"522.placeholderString" = "John Doe";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "528"; */
+"528.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "Unit:"; ObjectID = "529"; */
+"529.title" = "Unit:";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "532"; */
+"532.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "533"; */
+"533.title" = "Owner:";
 
