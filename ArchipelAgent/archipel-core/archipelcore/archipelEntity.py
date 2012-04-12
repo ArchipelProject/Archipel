@@ -814,6 +814,8 @@ class TNArchipelEntity (object):
                     payload.append(self.vCard.getTag("LOCALITY"))
                 if self.vCard.getTag("USERID"):
                    payload.append(self.vCard.getTag("USERID"))
+                if self.vCard.getTag("CATEGORIES"):
+                   payload.append(self.vCard.getTag("CATEGORIES"))
 
             if self.name:
                 name_node = xmpp.Node(tag="FN")
