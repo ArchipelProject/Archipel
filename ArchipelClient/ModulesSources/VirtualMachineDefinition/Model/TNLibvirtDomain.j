@@ -67,6 +67,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     TNLibvirtDomainMemoryBacking    _memoryBacking      @accessors(property=memoryBacking);
     TNLibvirtDomainMemoryTune       _memoryTuning       @accessors(property=memoryTuning);
     TNLibvirtDomainOS               _OS                 @accessors(property=OS);
+    TNLibvirtDomainMetadata         _metadata           @accessors(property=metadata);
 }
 
 #pragma mark -
@@ -130,6 +131,9 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] initWithXMLNode:[aNode firstChildWithName:@"memoryBacking"]];
         _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] initWithXMLNode:[aNode firstChildWithName:@"memtune"]];
         _OS             = [[TNLibvirtDomainOS alloc] initWithXMLNode:[aNode firstChildWithName:@"os"]];
+
+        if ([aNode firstChildWithName:@"metadata"])
+            _metadata = [[TNLibvirtDomainMetadata alloc] initWithXMLNode:[aNode firstChildWithName:@"metadata"]]
     }
 
     return self;
@@ -236,6 +240,11 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     if (_memoryTuning)
     {
         [node addNode:[_memoryTuning XMLNode]];
+        [node up];
+    }
+    if (_metadata)
+    {
+        [node addNode:[_metadata XMLNode]];
         [node up];
     }
 
