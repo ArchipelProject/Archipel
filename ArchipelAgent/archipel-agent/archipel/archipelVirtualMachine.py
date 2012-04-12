@@ -137,6 +137,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 self.vcard_infos["USERID"] = organizationInfo["userid"]
             if  organizationInfo["locality"]:
                 self.vcard_infos["LOCALITY"] = organizationInfo["locality"]
+            if  organizationInfo["categories"]:
+                self.vcard_infos["CATEGORIES"] = organizationInfo["categories"]
 
         self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 

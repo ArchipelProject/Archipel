@@ -147,7 +147,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         self.vcard_infos                = {}
         if (self.configuration.has_section("VCARD")):
-            for key in ("orgname", "orgunit", "userid", "locality", "url"):
+            for key in ("orgname", "orgunit", "userid", "locality", "url", "categories"):
                 if self.configuration.has_option("VCARD", key):
                     self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key)
         self.vcard_infos["TITLE"] = "Hypervisor (%s)" % self.current_hypervisor()
@@ -697,6 +697,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             organizationInfo["orgunit"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
             organizationInfo["locality"] = iq.getTag("query").getTag("archipel").getAttr("locality")
             organizationInfo["userid"] = iq.getTag("query").getTag("archipel").getAttr("userid")
+            organizationInfo["categories"] = iq.getTag("query").getTag("archipel").getAttr("categories")
 
             if not organizationInfo["orgname"] or organizationInfo["orgname"] == "":
                 organizationInfo["orgname"] = self.vcard_infos["ORGNAME"]
@@ -706,6 +707,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 organizationInfo["locality"] = self.vcard_infos["LOCALITY"]
             if not organizationInfo["userid"] or organizationInfo["userid"] == "":
                 organizationInfo["userid"] = self.vcard_infos["USERID"]
+            if not organizationInfo["categories"] or organizationInfo["categories"] == "":
+                organizationInfo["categories"] = self.vcard_infos["CATEGORIES"]
 
             domainXML = None
             if iq.getTag("query").getTag("archipel").getTag("domain"):
