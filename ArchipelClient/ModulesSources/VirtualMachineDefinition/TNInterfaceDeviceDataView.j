@@ -25,6 +25,7 @@
 
 
 var TNInterfaceDeviceDataViewIconNetwork,
+    TNInterfaceDeviceDataViewIconNuage,
     TNInterfaceDeviceDataViewIconUser,
     TNInterfaceDeviceDataViewIconBridge,
     TNInterfaceDeviceDataViewIconDirect;
@@ -67,6 +68,7 @@ var TNInterfaceDeviceDataViewIconNetwork,
     TNInterfaceDeviceDataViewIconUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_user.png"]];
     TNInterfaceDeviceDataViewIconBridge = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_bridge.png"]];
     TNInterfaceDeviceDataViewIconDirect = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_direct.png"]];
+    TNInterfaceDeviceDataViewIconNuage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_nuage.png"]];
 }
 
 
@@ -82,6 +84,9 @@ var TNInterfaceDeviceDataViewIconNetwork,
 
     switch ([_currentInterface type])
     {
+        case TNLibvirtDeviceInterfaceTypeNuage:
+            [imageIcon setImage:TNInterfaceDeviceDataViewIconNuage];
+            break;
         case TNLibvirtDeviceInterfaceTypeNetwork:
             [imageIcon setImage:TNInterfaceDeviceDataViewIconNetwork];
             break;
@@ -97,7 +102,10 @@ var TNInterfaceDeviceDataViewIconNetwork,
     }
 
     [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString]];
-    [fieldType setStringValue:[_currentInterface type]];
+    if ([_currentInterface type] == TNLibvirtDeviceInterfaceTypeNuage)
+        [fieldType setStringValue:[[_currentInterface type] capitalizedString] + @" (" + [_currentInterface nuageNetworkName] + ")"];
+    else
+        [fieldType setStringValue:[_currentInterface type]];
     [fieldModel setStringValue:[_currentInterface model]];
     [fieldSource setStringValue:[[_currentInterface source] sourceObject]];
     [fieldFilter setStringValue:[[_currentInterface filterref] name] || @"None"];

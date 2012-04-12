@@ -47,27 +47,30 @@ TNLibvirtDeviceInterfaceModels          = [ TNLibvirtDeviceInterfaceModelNE2KISA
                                             TNLibvirtDeviceInterfaceModelVIRTIO];
 
 TNLibvirtDeviceInterfaceTypeNetwork     = @"network";
+TNLibvirtDeviceInterfaceTypeNuage       = @"nuage";
 TNLibvirtDeviceInterfaceTypeBridge      = @"bridge";
 TNLibvirtDeviceInterfaceTypeUser        = @"user";
 TNLibvirtDeviceInterfaceTypeDirect      = @"direct";
 TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
                                             TNLibvirtDeviceInterfaceTypeBridge,
                                             TNLibvirtDeviceInterfaceTypeUser,
-                                            TNLibvirtDeviceInterfaceTypeDirect];
+                                            TNLibvirtDeviceInterfaceTypeDirect,
+                                            TNLibvirtDeviceInterfaceTypeNuage];
 
 /*! @ingroup virtualmachinedefinition
     Model for inteface
 */
 @implementation TNLibvirtDeviceInterface : TNLibvirtBase
 {
-    CPString                            _MAC            @accessors(property=MAC);
-    CPString                            _model          @accessors(property=model);
-    CPString                            _script         @accessors(property=script);
-    CPString                            _type           @accessors(property=type);
-    TNLibvirtDeviceInterfaceBandwidth   _bandwidth      @accessors(property=bandwidth);
-    TNLibvirtDeviceInterfaceFilterRef   _filterref      @accessors(property=filterref);
-    TNLibvirtDeviceInterfaceSource      _source         @accessors(property=source);
-    TNLibvirtDeviceInterfaceTarget      _target         @accessors(property=target);
+    CPString                            _MAC                @accessors(property=MAC);
+    CPString                            _model              @accessors(property=model);
+    CPString                            _script             @accessors(property=script);
+    CPString                            _type               @accessors(property=type);
+    CPString                            _nuageNetworkName   @accessors(property=nuageNetworkName);
+    TNLibvirtDeviceInterfaceBandwidth   _bandwidth          @accessors(property=bandwidth);
+    TNLibvirtDeviceInterfaceFilterRef   _filterref          @accessors(property=filterref);
+    TNLibvirtDeviceInterfaceSource      _source             @accessors(property=source);
+    TNLibvirtDeviceInterfaceTarget      _target             @accessors(property=target);
 }
 
 
@@ -99,10 +102,11 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
         if ([aNode name] != @"interface")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid interface"];
 
-        _MAC    = [[aNode firstChildWithName:@"mac"] valueForAttribute:@"address"];
-        _model  = [[aNode firstChildWithName:@"model"] valueForAttribute:@"type"];
-        _script = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
-        _type   = [aNode valueForAttribute:@"type"];
+        _MAC                = [[aNode firstChildWithName:@"mac"] valueForAttribute:@"address"];
+        _model              = [[aNode firstChildWithName:@"model"] valueForAttribute:@"type"];
+        _script             = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
+        _type               = [aNode valueForAttribute:@"type"];
+        _nuageNetworkName   = [aNode valueForAttribute:@"nuage_network_name"];
 
         _bandwidth  = [[TNLibvirtDeviceInterfaceBandwidth alloc] initWithXMLNode:[aNode firstChildWithName:@"bandwidth"]];
         _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] initWithXMLNode:[aNode firstChildWithName:@"filterref"]];
@@ -161,6 +165,10 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     {
         [node addNode:[_bandwidth XMLNode]];
         [node up];
+    }
+    if (_nuageNetworkName)
+    {
+        [node setValue:_nuageNetworkName forAttribute:@"nuage_network_name"];
     }
 
     return node;
