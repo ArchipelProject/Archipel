@@ -34,6 +34,7 @@ ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_CREATE   = -12001
 ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_DELETE   = -12002
 ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_UPDATE   = -12003
 ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GET      = -12004
+ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GETNAMES = -12005
 
 # This is a sample of the definition of a nuage network
 # <nuage_network name="blabla" type="ipv4" >
@@ -62,6 +63,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
         # permissions
         self.entity.permission_center.create_permission("nuagenetwork_get", "Authorizes user to get the existing Nuage networks", False)
+        self.entity.permission_center.create_permission("nuagenetwork_getnames", "Authorizes user to get a Nuage network", False)
 
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.permission_center.create_permission("nuagenetwork_create", "Authorizes user to create a Nuage network", False)
@@ -143,7 +145,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
             if not interface.getAttr("type") == "nuage":
                 continue
-            network_name = interface.getAttr("name")
+            network_name = interface.getAttr("nuage_network_name")
             mac_address = interface.getTag("mac").getAttr("address")
             network_item = hypervisor_nuage_plugin.get_network(network_name)
             network_name_XML = xmpp.Node(node=network_item.getTag("nuage").getTag("nuage_network")) # copy
@@ -257,6 +259,24 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         ret.sort(sorting)
         return ret
 
+    def get_names(self):
+        """
+        Returns a list of all Nuage Networks names
+        @rtype: List
+        @return: List of names
+        """
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            items = self.entity.hypervisor.get_plugin("hypervisor_nuage_network").pubsub_nuage_networks.get_items()
+        else:
+            items = self.pubsub_nuage_networks.get_items()
+
+        ret = []
+        for item in items:
+            ret.append(item.getTag("nuage").getTag("nuage_network").getAttr("name"))
+        ret.sort()
+        return ret
+
+
     def delete(self, network_name):
         """
         delete the network with given identifier
@@ -360,6 +380,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             reply = self.iq_update(iq)
         elif action == "get":
             reply = self.iq_get(iq)
+        elif action == "getnames":
+            reply = self.iq_getnames(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -379,6 +401,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         self.entity.check_perm(conn, iq, action, -1, prefix="nuagenetwork_")
         if action == "get":
             reply = self.iq_get(iq)
+        elif action == "getnames":
+            reply = self.iq_getnames(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -452,4 +476,23 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GET)
+        return reply
+
+    def iq_getnames(self, iq):
+        """
+        Get list of all Nuage networks names.
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            networks = self.get_names()
+            nodes = []
+            for network_name in networks:
+                nodes.append(xmpp.Node("network", attrs={"name": network_name}))
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GETNAMES)
         return reply
