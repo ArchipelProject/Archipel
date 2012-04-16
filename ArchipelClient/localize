@@ -118,6 +118,7 @@ def merge(merged_fname, old_fname, new_fname, encoding='utf_8'):
         print 'Error: input files have invalid format. %s' % ex
 
 STRINGS_FILE = 'Localizable.strings'
+DEFAULT_LANGUAGE = 'en'
 
 def localize(path, routine):
     languages = [name for name in os.listdir(path) if name.endswith('.lproj') and os.path.isdir(path)]
@@ -139,21 +140,17 @@ def localize(path, routine):
             os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
         os.system("plutil -convert xml1 %s/Localizable.strings -o %s/Localizable.xstrings" % (language, language))
 
-        base_xib = [name for name in os.listdir("Resources/") if name.endswith('.xib')]
-
-        if len(base_xib) > 0:
-            base_xib = "Resources/%s" % base_xib[0]
-        else:
-            base_xib = [name for name in os.listdir("Resources/en.lproj") if name.endswith('.xib')]
-            if len(base_xib):
-                base_xib = "Resources/en.lproj/%s" % base_xib[0]
-
         xibs = [name for name in os.listdir(language) if name.endswith('.xib')]
         xibs = map(lambda x: "%s/%s" % (language, x), xibs)
         for xib in xibs:
             print " * working on %s" % xib
             bname = os.path.basename(xib);
             bname_noext = os.path.splitext(bname)[0];
+            
+            base_xib = os.path.join("Resources", bname)
+
+            if not os.path.isfile(base_xib):
+                base_xib = os.path.join("Resources", "%s.lproj" % DEFAULT_LANGUAGE, bname)
 
             xib_original = xib_merged = language + os.path.sep + bname_noext + ".strings"
             xib_old = xib_original + '.old'
@@ -163,8 +160,7 @@ def localize(path, routine):
                 os.rename(xib_original, xib_old)
                 os.system('ibtool --generate-strings-file %s/%s.strings %s' % (language, bname_noext, base_xib))
                 os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (xib_original, xib_new))
-                if not language == "Resources/en.lproj":
-                    merge(xib_merged, xib_old, xib_new)
+                merge(xib_merged, xib_old, xib_new)
             else:
                 os.system('ibtool --generate-strings-file %s/%s.strings %s' % (language, bname_noext, base_xib))
                 os.rename(xib_original, xib_old)
