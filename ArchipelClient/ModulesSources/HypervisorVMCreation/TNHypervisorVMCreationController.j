@@ -224,7 +224,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesParkedDatasource setTable:tableVirtualMachinesParked];
-    [_virtualMachinesParkedDatasource setSearchableKeyPaths:[@"JID"]];
+    [_virtualMachinesParkedDatasource setSearchableKeyPaths:[@"name", @"UUID", @"parker"]];
 
     [fieldFilterVMParked setTarget:_virtualMachinesParkedDatasource];
     [fieldFilterVMParked setAction:@selector(filterObjects:)];
