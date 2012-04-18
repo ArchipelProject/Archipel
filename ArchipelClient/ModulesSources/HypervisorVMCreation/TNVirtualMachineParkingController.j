@@ -35,7 +35,6 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 {
     CPString name       @accessors;
     CPString UUID       @accessors;
-    CPString parkingID  @accessors;
     CPString date       @accessors;
     CPString parker     @accessors;
     TNXMLNode domain    @accessors;
@@ -201,7 +200,6 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
             [data setUUID:[[vm firstChildWithName:@"uuid"] text]];
             [data setDate:[vm valueForAttribute:@"date"]];
             [data setParker:[vm valueForAttribute:@"parker"]];
-            [data setParkingID:[vm valueForAttribute:@"itemid"]];
             [data setDomain:[vm firstChildWithName:@"domain"]];
 
             [datasource addObject:data];
@@ -283,7 +281,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm parkingID], "start": shouldStart ? @"yes" : @"no"}];
+        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm UUID], "start": shouldStart ? @"yes" : @"no"}];
         [stanza up];
     }
 
@@ -314,7 +312,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorParking}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorParkingUpdateXML,
-        "identifier": [_currentItem parkingID]}];
+        "identifier": [_currentItem UUID]}];
 
     [stanza addNode:aNewDefinition];
     _currentItem = nil;
@@ -350,7 +348,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm parkingID]}];
+        [stanza addChildWithName:@"item" andAttributes:{"identifier": [vm UUID]}];
         [stanza up];
     }
 
