@@ -1604,7 +1604,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         newDriveTarget = [[TNLibvirtDeviceDiskTarget alloc] init],
         newDriveDriver = [[TNLibvirtDeviceDiskDriver alloc] init];
 
-    [newDriveDriver setCache:TNLibvirtDeviceDiskDriverCacheNone];
+    [newDriveDriver setCache:TNLibvirtDeviceDiskDriverCacheDefault];
 
     [newDriveTarget setBus:TNLibvirtDeviceDiskTargetBusIDE];
     [newDriveTarget setDevice:nil];
