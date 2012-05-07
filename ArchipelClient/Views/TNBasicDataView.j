@@ -22,11 +22,10 @@
 
 @implementation TNBasicDataView : CPView
 {
-    CPColor         _backgroundTopColor;
-    CPColor         _backgroundBottomColor;
-    CPColor         _backgroundTopColorSelected;
-    CPColor         _backgroundBottomColorSelected;
-    CPDictionary    _subviewsColorsRegistry;
+    CPColor _backgroundTopColor;
+    CPColor _backgroundBottomColor;
+    CPColor _backgroundTopColorSelected;
+    CPColor _backgroundBottomColorSelected;
 
 }
 
@@ -40,48 +39,6 @@
 
     return self;
 }
-
-- (void)setThemeState:(CPThemeState)aThemeState
-{
-    [super setThemeState:aThemeState];
-    if (aThemeState == CPThemeStateSelectedDataView)
-    {
-        _subviewsColorsRegistry = [CPDictionary dictionary];
-        for (var i = 0; i < [[self subviews] count]; i++)
-        {
-            var view = [[self subviews] objectAtIndex:i];
-            if ([view isKindOfClass:CPTextField])
-            {
-                [_subviewsColorsRegistry setObject:[view textColor] forKey:[view description]];
-                [view setTextColor:[CPColor whiteColor]];
-            }
-
-        }
-        [self applyShadow:[CPColor colorWithHexString:@"2F5288"] offset:CPSizeMake(-1.0, -1.0)];
-    }
-}
-
-- (void)unsetThemeState:(CPThemeState)aThemeState
-{
-    [super unsetThemeState:aThemeState];
-
-    if (aThemeState == CPThemeStateSelectedDataView)
-    {
-        for (var i = 0; i < [[self subviews] count]; i++)
-        {
-            var view = [[self subviews] objectAtIndex:i];
-            if ([view isKindOfClass:CPTextField])
-            {
-                if (_subviewsColorsRegistry)
-                    [view setTextColor:[_subviewsColorsRegistry objectForKey:[view description]]];
-            }
-
-        }
-        [self applyShadow];
-    }
-
-}
-
 
 - (void)drawRect:(CGRect)aRect
 {
@@ -117,13 +74,16 @@
     {
         _backgroundTopColor = [CPColor colorWithHexString:@"FBFBFB"];
         _backgroundBottomColor = [CPColor colorWithHexString:@"F9F9F9"];
-        _backgroundTopColorSelected = [CPColor colorWithHexString:@"5F83B9"];
-        _backgroundBottomColorSelected = [CPColor colorWithHexString:@"2D5086"];
+        _backgroundTopColorSelected = [CPColor colorWithHexString:@"E7E7E7"];
+        _backgroundBottomColorSelected = [CPColor colorWithHexString:@"F4F4F4"];
 
         [self applyShadow];
     }
 
     return self;
 }
+
+@end
+
 
 @end
