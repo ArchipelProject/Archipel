@@ -35,7 +35,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     @outlet CPButton        buttonAlloc;
     @outlet CPPopover       mainPopover;
+    @outlet CPTextField     fieldNewVMRequestedCategories;
+    @outlet CPTextField     fieldNewVMRequestedLocality;
     @outlet CPTextField     fieldNewVMRequestedName;
+    @outlet CPTextField     fieldNewVMRequestedOrganization;
+    @outlet CPTextField     fieldNewVMRequestedOrganizationUnit;
+    @outlet CPTextField     fieldNewVMRequestedOwner;
 
     id                      _delegate   @accessors(property=delegate);
 }
@@ -50,6 +55,11 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (IBAction)openWindow:(id)aSender
 {
     [fieldNewVMRequestedName setStringValue:@""];
+    [fieldNewVMRequestedOrganization setStringValue:@""];
+    [fieldNewVMRequestedOrganizationUnit setStringValue:@""];
+    [fieldNewVMRequestedLocality setStringValue:@""];
+    [fieldNewVMRequestedOwner setStringValue:@""];
+    [fieldNewVMRequestedCategories setStringValue:@""];
 
     [mainPopover close];
     [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
@@ -88,7 +98,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlAlloc,
-        "name": [fieldNewVMRequestedName stringValue]}];
+        "name": [fieldNewVMRequestedName stringValue],
+        "orgname": [fieldNewVMRequestedOrganization stringValue],
+        "orgunit": [fieldNewVMRequestedOrganizationUnit stringValue],
+        "locality": [fieldNewVMRequestedLocality stringValue],
+        "userid": [fieldNewVMRequestedOwner stringValue],
+        "categories": [fieldNewVMRequestedCategories stringValue]}];
 
     [_delegate sendStanza:stanza andRegisterSelector:@selector(_didAllocVirtualMachine:) ofObject:self];
 }

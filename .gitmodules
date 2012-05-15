@@ -1,21 +1,21 @@
 [submodule "ArchipelClient/Libraries/Cappuccino"]
 	path = ArchipelClient/Libraries/Cappuccino
-	url = git://github.com/primalmotion/cappuccino.git
+	url = https://github.com/primalmotion/cappuccino.git
 [submodule "ArchipelClient/Libraries/GrowlCappuccino"]
 	path = ArchipelClient/Libraries/GrowlCappuccino
-	url = git://github.com/primalmotion/GrowlCappuccino.git
+	url = https://github.com/primalmotion/GrowlCappuccino.git
 [submodule "ArchipelClient/Libraries/StropheCappuccino"]
 	path = ArchipelClient/Libraries/StropheCappuccino
-	url = git://github.com/primalmotion/StropheCappuccino.git
+	url = https://github.com/primalmotion/StropheCappuccino.git
 [submodule "ArchipelClient/Libraries/VNCCappuccino"]
 	path = ArchipelClient/Libraries/VNCCappuccino
-	url = git://github.com/primalmotion/VNCCappuccino.git
+	url = https://github.com/primalmotion/VNCCappuccino.git
 [submodule "ArchipelClient/Libraries/LPKit"]
 	path = ArchipelClient/Libraries/LPKit
-	url = git://github.com/primalmotion/LPKit.git
+	url = https://github.com/primalmotion/LPKit.git
 [submodule "ArchipelClient/Libraries/TNKit"]
 	path = ArchipelClient/Libraries/TNKit
-	url = git://github.com/primalmotion/TNKit.git
+	url = https://github.com/primalmotion/TNKit.git
 [submodule "ArchipelAgent/ANSOS"]
 	path = ArchipelAgent/ANSOS
-	url = git://github.com/primalmotion/Node.git
+	url = https://github.com/primalmotion/Node.git

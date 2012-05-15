@@ -224,7 +224,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesParkedDatasource setTable:tableVirtualMachinesParked];
-    [_virtualMachinesParkedDatasource setSearchableKeyPaths:[@"JID"]];
+    [_virtualMachinesParkedDatasource setSearchableKeyPaths:[@"name", @"UUID", @"parker"]];
 
     [fieldFilterVMParked setTarget:_virtualMachinesParkedDatasource];
     [fieldFilterVMParked setAction:@selector(filterObjects:)];
@@ -272,8 +272,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     if (![super willLoad])
         return NO;
 
-    // [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
-    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
+    [self registerSelector:@selector(_didReceiveParkPush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
 
     [[CPNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(_reload:)
@@ -390,7 +389,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 /*! called when an Archipel push is recieved
     @param somePushInfo CPDictionary containing the push information
 */
-- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
+- (BOOL)_didReceiveParkPush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -523,7 +522,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)populateVirtualMachinesTable
 {
     if ([self currentEntityHasPermission:@"rostervm"])
+    {
         [self getHypervisorRoster];
+    }
     else
     {
         [_virtualMachinesDatasource removeAllObjects];
@@ -873,7 +874,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
         [_virtualMachinesDatasource removeAllObjects];
         [_virtualMachinesNotManagedDatasource removeAllObjects];
-
         for (var i = 0; i < [queryItems count]; i++)
         {
             var JID = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]];
@@ -882,14 +882,26 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             // but for the moment, keep compatibility with older version of Agent
             if (![[queryItems objectAtIndex:i] valueForAttribute:@"managed"] || [[queryItems objectAtIndex:i] valueForAttribute:@"managed"] == "True")
             {
-                var entry   = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
-
+                var entry = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
                 if (entry)
                 {
                    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
                    {
+                       // Remove any vcard obeserver here
+                       [[CPNotificationCenter defaultCenter] removeObserver:self
+                                                                    name:TNStropheContactVCardReceivedNotification
+                                                                  object:entry];
+
                        [_virtualMachinesDatasource addObject:entry];
                        [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
+                   }
+                   else
+                   {
+                       // Maybe it's a VM and it's still configuring its VCARD
+                       [[CPNotificationCenter defaultCenter] addObserver:self
+                                                                selector:@selector(populateVirtualMachinesTable:)
+                                                                    name:TNStropheContactVCardReceivedNotification
+                                                                  object:entry];
                    }
                 }
                 else

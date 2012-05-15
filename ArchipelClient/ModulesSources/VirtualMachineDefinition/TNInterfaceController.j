@@ -24,43 +24,46 @@
 
 @import <TNKit/TNAttachedWindow.j>
 
-var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
-    TNArchipelTypeHypervisorNetworkGetNames     = @"getnames",
-    TNArchipelTypeHypervisorNetworkBridges      = @"bridges",
-    TNArchipelTypeHypervisorNetworkNICs         = @"getnics",
-    TNArchipelTypeHypervisorNetworkGetNWFilters = @"getnwfilters";
+var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:network",
+    TNArchipelTypeHypervisorNuageNetwork            = @"archipel:hypervisor:nuage:network",
+    TNArchipelTypeHypervisorNetworkGetNames         = @"getnames",
+    TNArchipelTypeHypervisorNetworkBridges          = @"bridges",
+    TNArchipelTypeHypervisorNetworkNICs             = @"getnics",
+    TNArchipelTypeHypervisorNetworkGetNWFilters     = @"getnwfilters",
+    TNArchipelTypeHypervisorNuageNetworkGetNames    = @"getnames";
 
 /*! @ingroup virtualmachinedefinition
     this is the virtual nic editor
 */
 @implementation TNInterfaceController : CPObject
 {
-    @outlet CPButton        buttonOK;
-    @outlet CPButtonBar     buttonBarNetworkParameters;
-    @outlet CPCheckBox      checkBoxBandwidthInbound;
-    @outlet CPCheckBox      checkBoxBandwidthOutbound;
-    @outlet CPPopover       mainPopover;
-    @outlet CPPopUpButton   buttonModel;
-    @outlet CPPopUpButton   buttonNetworkFilter;
-    @outlet CPPopUpButton   buttonSource;
-    @outlet CPPopUpButton   buttonType;
-    @outlet CPTableView     tableViewNetworkFilterParameters;
-    @outlet CPTextField     fieldBandwidthInboundAverage;
-    @outlet CPTextField     fieldBandwidthInboundBurst;
-    @outlet CPTextField     fieldBandwidthInboundPeak;
-    @outlet CPTextField     fieldBandwidthOutboundAverage;
-    @outlet CPTextField     fieldBandwidthOutboundBurst;
-    @outlet CPTextField     fieldBandwidthOutboundPeak;
-    @outlet CPTextField     fieldErrorMessage;
-    @outlet CPTextField     fieldMac;
-    @outlet CPView          viewNWFilterParametersContainer;
+    @outlet CPButton            buttonOK;
+    @outlet CPButtonBar         buttonBarNetworkParameters;
+    @outlet CPCheckBox          checkBoxBandwidthInbound;
+    @outlet CPCheckBox          checkBoxBandwidthOutbound;
+    @outlet CPPopover           mainPopover;
+    @outlet CPPopUpButton       buttonModel;
+    @outlet CPPopUpButton       buttonNetworkFilter;
+    @outlet CPPopUpButton       buttonSource;
+    @outlet CPPopUpButton       buttonType;
+    @outlet CPTableView         tableViewNetworkFilterParameters;
+    @outlet CPTextField         fieldBandwidthInboundAverage;
+    @outlet CPTextField         fieldBandwidthInboundBurst;
+    @outlet CPTextField         fieldBandwidthInboundPeak;
+    @outlet CPTextField         fieldBandwidthOutboundAverage;
+    @outlet CPTextField         fieldBandwidthOutboundBurst;
+    @outlet CPTextField         fieldBandwidthOutboundPeak;
+    @outlet CPTextField         fieldErrorMessage;
+    @outlet CPTextField         fieldMac;
+    @outlet CPView              viewNWFilterParametersContainer;
 
-    id                      _delegate   @accessors(property=delegate);
-    CPTableView             _table      @accessors(property=table);
-    TNNetworkInterface      _nic        @accessors(property=nic);
-    TNStropheContact        _entity     @accessors(property=entity);
+    id                          _delegate   @accessors(property=delegate);
+    CPTableView                 _table      @accessors(property=table);
+    TNLibvirtDeviceInterface    _nic        @accessors(property=nic);
+    TNLibvirtDomainMetadata     _metadata   @accessors(property=metadata);
+    TNStropheContact            _entity     @accessors(property=entity);
 
-    TNTableViewDataSource   _datasourceNWFilterParameters;
+    TNTableViewDataSource       _datasourceNWFilterParameters;
 }
 
 #pragma mark -
@@ -194,6 +197,14 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     // type
     switch ([_nic type])
     {
+        case TNLibvirtDeviceInterfaceTypeNuage:
+            [[_nic source] setNetwork:nil];
+            [[_nic source] setBridge:@"auto"];
+            [[_nic source] setDevice:nil];
+            [[_nic source] setMode:nil];
+            [_nic setNuageNetworkName:[buttonSource title]];
+            break;
+
         case TNLibvirtDeviceInterfaceTypeNetwork:
             [[_nic source] setNetwork:[buttonSource title]];
             [[_nic source] setBridge:nil];
@@ -299,6 +310,12 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     switch (nicType)
     {
+        case TNLibvirtDeviceInterfaceTypeNuage:
+            [buttonSource removeAllItems];
+            [self getHypervisorNuageNetworks];
+            [buttonSource setEnabled:YES];
+            break;
+
         case TNLibvirtDeviceInterfaceTypeNetwork:
             [buttonSource removeAllItems];
             if ([_delegate currentEntityHasPermission:@"network_getnames"])
@@ -352,10 +369,9 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     if ([aSender isKindOfClass:CPTableView])
     {
         var rect = [aSender rectOfRow:[aSender selectedRow]];
-        rect.origin.y += rect.size.height;
+        rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        var point = [[aSender superview] convertPoint:rect.origin toView:nil];
-        [mainPopover showRelativeToRect:CPRectMake(point.x, point.y, 10, 10) ofView:nil preferredEdge:CPMaxYEdge];
+        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
@@ -459,6 +475,50 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
         }
 
         [buttonSource selectItemWithTitle:[[_nic source] network]];
+
+        if (![buttonSource selectedItem])
+            [buttonSource selectItemAtIndex:0];
+    }
+    else
+    {
+        [_delegate handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+
+
+/*! ask hypervisor for its nuage networks
+*/
+- (void)getHypervisorNuageNetworks
+{
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNuageNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNuageNetworkGetNames}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorNuageNetworks:) ofObject:self];
+}
+
+/*! compute hypervisor nuage networks
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveHypervisorNuageNetworks:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var names = [aStanza childrenWithName:@"network"];
+
+        for (var i = 0; i < [names count]; i++)
+        {
+            var name = [[names objectAtIndex:i] valueForAttribute:@"name"];
+
+            [buttonSource addItemWithTitle:name];
+        }
+
+        [buttonSource selectItemWithTitle:[_nic nuageNetworkName]];
 
         if (![buttonSource selectedItem])
             [buttonSource selectItemAtIndex:0];

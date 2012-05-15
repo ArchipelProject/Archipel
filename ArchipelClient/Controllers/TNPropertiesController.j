@@ -58,11 +58,12 @@
     @outlet CPTextField             labelType;
     @outlet CPTextField             labelVCard;
     @outlet CPTextField             labelVCardCompany;
+    @outlet CPTextField             labelVCardCompanyUnit;
     @outlet CPTextField             labelVCardEmail;
     @outlet CPTextField             labelVCardFN;
     @outlet CPTextField             labelVCardLocality;
     @outlet CPTextField             labelVCardRole;
-    @outlet CPTextField             labelVCardWebiste;
+    @outlet CPTextField             labelVCardCategory;
     @outlet CPView                  viewVCard;
     @outlet CPView                  viewXMPPInfos;
     @outlet CPView                  viewNicknameContainer;
@@ -178,11 +179,12 @@
     [buttonViewVCardSwipe setValue:imageArrowLeftPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
     [labelVCardCompany setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardCompanyUnit setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardEmail setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardFN setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardLocality setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardRole setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardWebiste setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardCategory setLineBreakMode:CPLineBreakByTruncatingTail];
 }
 
 
@@ -353,9 +355,10 @@
         [labelVCardFN setStringValue:@""];
         [labelVCardLocality setStringValue:@""];
         [labelVCardCompany setStringValue:@""];
+        [labelVCardCompanyUnit setStringValue:@""];
         [labelVCardRole setStringValue:@""];
         [labelVCardEmail setStringValue:@""]
-        [labelVCardWebiste setStringValue:@""];
+        [labelVCardCategory setStringValue:@""];
         [imageViewVCardPhoto setImage:nil];
 
         if ([_entity vCard])
@@ -367,9 +370,10 @@
             [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
             [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
             [labelVCardCompany setStringValue:[[[vCard firstChildWithName:@"ORGNAME"] text] capitalizedString]];
+            [labelVCardCompanyUnit setStringValue:[[[vCard firstChildWithName:@"ORGUNIT"] text] capitalizedString]];
             [labelVCardRole setStringValue:[[[vCard firstChildWithName:@"TITLE"] text] capitalizedString]];
             [labelVCardEmail setStringValue:[[vCard firstChildWithName:@"USERID"] text]]
-            [labelVCardWebiste setStringValue:[[vCard firstChildWithName:@"URL"] text]];
+            [labelVCardCategory setStringValue:[[vCard firstChildWithName:@"CATEGORIES"] text]];
             [imageViewVCardPhoto setImage:[_entity avatar] || _unknownUserImage];
         }
 

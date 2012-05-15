@@ -40,6 +40,8 @@
     @outlet CPTextField     newContactName;
 
     TNPubSubController      _pubsubController   @accessors(property=pubSubController);
+
+    CPDictionary            _localAvatars;
 }
 
 #pragma mark -
@@ -47,9 +49,16 @@
 
 - (void)awakeFromCib
 {
+    _localAvatars = [CPDictionary dictionary];
+
+    var bundle = [CPBundle mainBundle];
+
+    [_localAvatars setObject:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Avatars/RemoteAvatars/defaultvm.png"]] forKey:@"vm"];
+    [_localAvatars setObject:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Avatars/RemoteAvatars/defaulthypervisor.png"]] forKey:@"hypervisor"];
+
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterUpdated:) name:TNStropheRosterPushUpdatedContactNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterUpdated:) name:TNStropheRosterPushUpdatedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didRecieveContactVCard:) name:TNStropheContactVCardReceivedNotification object:nil];
 
     [newContactName setToolTip:CPLocalizedString(@"The display name of the new contact", @"The display name of the new contact")];
@@ -272,6 +281,25 @@
 - (void)performRefuse:(TNStropheStanza)aRequestStanza
 {
     [[[TNStropheIMClient defaultClient] roster] answerAuthorizationRequest:aRequestStanza answer:NO];
+}
+
+/*! TNRoster Delegate
+*/
+- (CPImage)avatarForContact:(TNStropheContact)aContact
+{
+    var entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[aContact vCard]];
+
+    switch (entityType)
+    {
+        case TNArchipelEntityTypeVirtualMachine:
+            return [_localAvatars objectForKey:@"vm"];
+            break;
+        case TNArchipelEntityTypeHypervisor:
+            return [_localAvatars objectForKey:@"hypervisor"];
+            break;
+        default:
+            return nil;
+    }
 }
 
 @end

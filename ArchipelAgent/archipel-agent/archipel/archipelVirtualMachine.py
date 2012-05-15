@@ -96,7 +96,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
     This class needs to already have .... end of story ? TODO fix the details
     """
 
-    def __init__(self, jid, password, hypervisor, configuration, name):
+    def __init__(self, jid, password, hypervisor, configuration, name, organizationInfo=None):
         """
         Contructor of the class.
         """
@@ -118,6 +118,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.libvirt_event_callback_id  = None
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+        self.vm_will_define_hooks       = []
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
@@ -126,10 +127,19 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.connect_libvirt()
 
         self.vcard_infos = {}
-        if (self.configuration.has_section("VCARD")):
-            for key in ("orgname", "userid", "locality", "url"):
-                if self.configuration.has_option("VCARD", key):
-                    self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key)
+
+        if organizationInfo:
+            if organizationInfo["orgname"]:
+                self.vcard_infos["ORGNAME"] = organizationInfo["orgname"]
+            if  organizationInfo["orgunit"]:
+                self.vcard_infos["ORGUNIT"] = organizationInfo["orgunit"]
+            if  organizationInfo["userid"]:
+                self.vcard_infos["USERID"] = organizationInfo["userid"]
+            if  organizationInfo["locality"]:
+                self.vcard_infos["LOCALITY"] = organizationInfo["locality"]
+            if  organizationInfo["categories"]:
+                self.vcard_infos["CATEGORIES"] = organizationInfo["categories"]
+
         self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 
         # create VM folders if not exists
@@ -266,6 +276,18 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
+
+    def add_vm_definition_hook(self, method):
+        """
+        Add a new definition hook. Methods registered here will
+        be executed (random order) in order to let modules a chance to
+        edit the XML description. The method will get the root <domain/>
+        XML node and *MUST* return it.
+        @type method: function
+        @param method: the method to run before defining the VM
+        """
+        if not method in self.vm_will_define_hooks:
+            self.vm_will_define_hooks.append(method)
 
     def register_handlers(self):
         """
@@ -557,7 +579,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             reply = self.iq_undefine(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
-
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -778,7 +799,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             descnode.delChild("description")
         return descnode
 
-    def define(self, xmldesc):
+    def define(self, xmldesc, sender=None):
         """
         Define the domain from given XML description.
         @type xmldesc: xmpp.Node
@@ -786,6 +807,11 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Node
         @return: the XML description
         """
+
+        # Call Definition hooks to update XML if needed from modules
+        for m in self.vm_will_define_hooks:
+            xmldesc = m(sender, xmldesc)
+
         if self.configuration.has_option("VIRTUALMACHINE", "enable_block_device_access"):
             if not self.configuration.getboolean("VIRTUALMACHINE", "enable_block_device_access"):
                 if xmldesc.getTag("devices"):
@@ -947,6 +973,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_VM_FREE")
         self.hypervisor.free(self.jid)
 
+    def setowner(self, organization_name, organization_unit):
+        """
+        Set the vCard fields for the organization
+        """
+        ## NEED UPDATE
+        self.vcard_infos["ORGNAME"] = organization_name
+        self.vcard_infos["ORGUNIT"] = organization_unit
+        self.set_vcard()
 
     ### Other stuffs
 
@@ -1317,7 +1351,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             if domain_uuid != self.jid.getNode():
                 raise Exception('IncorrectUUID', "Given UUID %s doesn't match JID %s" % (domain_uuid, self.jid.getNode()))
 
-            self.define(domain_node)
+            self.define(domain_node, iq.getFrom())
             self.log.info("Virtual machine XML is defined.")
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)

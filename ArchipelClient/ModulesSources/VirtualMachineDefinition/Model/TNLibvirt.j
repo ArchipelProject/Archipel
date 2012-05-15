@@ -54,5 +54,6 @@
 @import "TNLibvirtDomainFeatures.j"
 @import "TNLibvirtDomainMemoryBacking.j"
 @import "TNLibvirtDomainMemoryTune.j"
+@import "TNLibvirtDomainMetadata.j"
 @import "TNLibvirtDomainOS.j"
 @import "TNLibvirtDomainOSType.j"

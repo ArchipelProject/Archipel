@@ -93,10 +93,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if ([aSender isKindOfClass:CPTableView])
     {
         var rect = [aSender rectOfRow:[aSender selectedRow]];
-        rect.origin.y += rect.size.height
+        rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        var point = [[aSender superview] convertPoint:rect.origin toView:nil];
-        [mainPopover showRelativeToRect:CPRectMake(point.x, point.y, 10, 19) ofView:nil preferredEdge:CPMaxYEdge];
+        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];

@@ -257,16 +257,16 @@
 /* Class = "NSTextFieldCell"; title = "Role"; ObjectID = "1118"; */
 "1118.title" = "Rolle";
 
-/* Class = "NSTextFieldCell"; title = "Website"; ObjectID = "1123"; */
+/* Class = "NSTextFieldCell"; title = "Category"; ObjectID = "1123"; */
 "1123.title" = "Webseite";
 
-/* Class = "NSTextFieldCell"; title = "website"; ObjectID = "1124"; */
+/* Class = "NSTextFieldCell"; title = "categorie"; ObjectID = "1124"; */
 "1124.title" = "webseite";
 
-/* Class = "NSTextFieldCell"; title = "EMail"; ObjectID = "1125"; */
+/* Class = "NSTextFieldCell"; title = "Owner"; ObjectID = "1125"; */
 "1125.title" = "E-Mail";
 
-/* Class = "NSTextFieldCell"; title = "email"; ObjectID = "1126"; */
+/* Class = "NSTextFieldCell"; title = "owner"; ObjectID = "1126"; */
 "1126.title" = "e-mail";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Archipel!"; ObjectID = "1133"; */
@@ -448,4 +448,10 @@
 
 /* Class = "NSTextFieldCell"; title = "Scrollers"; ObjectID = "1633"; */
 "1633.title" = "Scrollers";
+
+/* Class = "NSTextFieldCell"; title = "Unit"; ObjectID = "1638"; */
+"1638.title" = "Unit";
+
+/* Class = "NSTextFieldCell"; title = "unit"; ObjectID = "1639"; */
+"1639.title" = "unit";
 

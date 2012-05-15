@@ -1288,6 +1288,32 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [labelVirtualMachineIsRunning setHidden:shouldEnableGUI];
 }
 
+/*! Configure the Nuage Networking if needed
+    according to the current _libvirtDomain
+*/
+- (void)_configureNuageIfNeeded
+{
+    if ([_libvirtDomain metadata] && [[[_libvirtDomain metadata] content] firstChildWithName:@"nuage"])
+    {
+        var nuageNetworks = [[[[_libvirtDomain metadata] content] firstChildWithName:@"nuage"] childrenWithName:@"nuage_network"];
+        for (var i = 0; i < [nuageNetworks count]; i++)
+        {
+            var nuageNetwork = [nuageNetworks objectAtIndex:i],
+                interface_mac = [[nuageNetwork firstChildWithName:@"interface_mac"] valueForAttribute:@"address"];
+
+            for (var j = 0; j < [[[_libvirtDomain devices] interfaces] count]; j++)
+            {
+                var nic = [[[_libvirtDomain devices] interfaces] objectAtIndex:j];
+                if ([[nic MAC] uppercaseString] == [interface_mac uppercaseString])
+                {
+                    [nic setType:TNLibvirtDeviceInterfaceTypeNuage];
+                    [nic setNuageNetworkName:[nuageNetwork valueForAttribute:@"name"]];
+                }
+            }
+        }
+    }
+}
+
 #pragma mark -
 #pragma mark Actions
 
@@ -1504,6 +1530,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newNic setMAC:[self generateMacAddr]];
     [newNic setSource:newNicSource];
     [interfaceController setNic:newNic];
+    if ([_libvirtDomain metadata])
+        [interfaceController setMetadata:[_libvirtDomain metadata]];
     [interfaceController openWindow:_plusButtonNics];
 
     [self makeDefinitionEdited:YES];
@@ -1526,6 +1554,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var nicObject = [_nicsDatasource objectAtIndex:[tableInterfaces selectedRow]];
 
     [interfaceController setNic:nicObject];
+    if ([_libvirtDomain metadata])
+        [interfaceController setMetadata:[_libvirtDomain metadata]];
 
     if ([aSender isKindOfClass:CPMenuItem])
         aSender = _editButtonNics;
@@ -1574,7 +1604,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         newDriveTarget = [[TNLibvirtDeviceDiskTarget alloc] init],
         newDriveDriver = [[TNLibvirtDeviceDiskDriver alloc] init];
 
-    [newDriveDriver setCache:TNLibvirtDeviceDiskDriverCacheNone];
+    [newDriveDriver setCache:TNLibvirtDeviceDiskDriverCacheDefault];
 
     [newDriveTarget setBus:TNLibvirtDeviceDiskTargetBusIDE];
     [newDriveTarget setDevice:nil];
@@ -2134,6 +2164,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives reloadData];
 
     // NICS
+
+    // Nuage hook
+    [self _configureNuageIfNeeded];
     [_nicsDatasource setContent:[[_libvirtDomain devices] interfaces]];
     [tableInterfaces reloadData];
 
@@ -2192,7 +2225,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [fieldBlockIOTuningWeight setStringValue:@""];
 
     // MANUAL
-    _stringXMLDesc  = [[aStanza firstChildWithName:@"domain"] stringValue];
+    _stringXMLDesc = [[aStanza firstChildWithName:@"domain"] stringValue];
     [fieldStringXMLDesc setStringValue:@""];
     if (_stringXMLDesc)
     {
