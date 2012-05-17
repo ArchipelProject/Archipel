@@ -58,7 +58,7 @@ TNLibvirtDeviceDiskDriverCaches                     = [ TNLibvirtDeviceDiskDrive
         if ([aNode name] != @"driver")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid disk driver"];
 
-        _cache  = [aNode valueForAttribute:@"cache"];
+        _cache  = [aNode valueForAttribute:@"cache"] || TNLibvirtDeviceDiskDriverCacheDefault;
         _IO     = [aNode valueForAttribute:@"IO"];
         _name   = [aNode valueForAttribute:@"name"];
         _type   = [aNode valueForAttribute:@"type"];
