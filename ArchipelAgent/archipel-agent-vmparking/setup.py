@@ -76,8 +76,5 @@ setup(name=NAME,
       install_requires=[
           "archipel-core>=0.5.0beta"
       ],
-      entry_points=ENTRY_POINTS,
-      scripts = [
-        'install/bin/archipel-vmparkingnode',
-      ]
+      entry_points=ENTRY_POINTS
       )
