@@ -97,7 +97,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [tableViewNetworks setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_datasourceNetworks setTable:tableViewNetworks];
-    [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"UUID", @"bridgeName"]];
+    [_datasourceNetworks setSearchableKeyPaths:[@"name", @"UUID", @"bridge.name"]];
     [tableViewNetworks setDataSource:_datasourceNetworks];
     [tableViewNetworks setDelegate:self];
     [networkController setDelegate:self];
