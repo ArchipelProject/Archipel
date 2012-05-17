@@ -954,7 +954,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Perform the migration.
         """
         ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
-        flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
+        try: # libvirt 0.9.10+
+            flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE | libvirt.VIR_MIGRATE_UNSAFE
+        except:
+            flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
         try:
             self.log.info("MIGRATION: starting to migrate domain %s" % remote_hypervisor_uri)
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
