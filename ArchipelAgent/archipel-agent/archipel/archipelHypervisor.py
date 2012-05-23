@@ -649,7 +649,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             name = wanted_name
 
-        newvm_thread = self.alloc(requester, requested_name=name, start=False)
+        newvm_thread = self.alloc(requester, requested_name=name, start=False, organizationInfo=self.vcard_infos)
         newvm = newvm_thread.get_instance()
         newvm.register_hook("HOOK_VM_INITIALIZE",
                             method=newvm.clone,
@@ -693,22 +693,22 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             organizationInfo = {}
             requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
 
-            organizationInfo["orgname"] = iq.getTag("query").getTag("archipel").getAttr("orgname")
-            organizationInfo["orgunit"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
-            organizationInfo["locality"] = iq.getTag("query").getTag("archipel").getAttr("locality")
-            organizationInfo["userid"] = iq.getTag("query").getTag("archipel").getAttr("userid")
-            organizationInfo["categories"] = iq.getTag("query").getTag("archipel").getAttr("categories")
+            organizationInfo["ORGNAME"] = iq.getTag("query").getTag("archipel").getAttr("orgname")
+            organizationInfo["ORGUNIT"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
+            organizationInfo["LOCALITY"] = iq.getTag("query").getTag("archipel").getAttr("locality")
+            organizationInfo["USERID"] = iq.getTag("query").getTag("archipel").getAttr("userid")
+            organizationInfo["CATEGORIES"] = iq.getTag("query").getTag("archipel").getAttr("categories")
 
-            if not organizationInfo["orgname"] or organizationInfo["orgname"] == "":
-                organizationInfo["orgname"] = self.vcard_infos["ORGNAME"]
-            if not organizationInfo["orgunit"] or organizationInfo["orgunit"] == "":
-                organizationInfo["orgunit"] = self.vcard_infos["ORGUNIT"]
-            if not organizationInfo["locality"] or organizationInfo["locality"] == "":
-                organizationInfo["locality"] = self.vcard_infos["LOCALITY"]
-            if not organizationInfo["userid"] or organizationInfo["userid"] == "":
-                organizationInfo["userid"] = self.vcard_infos["USERID"]
-            if not organizationInfo["categories"] or organizationInfo["categories"] == "":
-                organizationInfo["categories"] = self.vcard_infos["CATEGORIES"]
+            if not organizationInfo["ORGNAME"] or organizationInfo["ORGNAME"] == "":
+                organizationInfo["ORGNAME"] = self.vcard_infos["ORGNAME"]
+            if not organizationInfo["ORGUNIT"] or organizationInfo["ORGUNIT"] == "":
+                organizationInfo["ORGUNIT"] = self.vcard_infos["ORGUNIT"]
+            if not organizationInfo["LOCALITY"] or organizationInfo["LOCALITY"] == "":
+                organizationInfo["LOCALITY"] = self.vcard_infos["LOCALITY"]
+            if not organizationInfo["USERID"] or organizationInfo["USERID"] == "":
+                organizationInfo["USERID"] = self.vcard_infos["USERID"]
+            if not organizationInfo["CATEGORIES"] or organizationInfo["CATEGORIES"] == "":
+                organizationInfo["CATEGORIES"] = self.vcard_infos["CATEGORIES"]
 
             domainXML = None
             if iq.getTag("query").getTag("archipel").getTag("domain"):
