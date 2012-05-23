@@ -1,0 +1,38 @@
+{
+    "folders":
+    [
+        {
+            "path": "/Users/Tonio/Documents/Dev/Archipel/Sources/ArchipelClient",
+            "folder_exclude_patterns": ["Build", "Frameworks", ".xCodeSupport", "Cappuccino", "Modules"],
+            "file_exclude_patterns" : [".tm_properties", ".xcodecapp-ignore", "*.sublime-workspace"]
+
+        }
+    ]
+}
+
+
+// {
+//     "folders":
+//     [
+//         {
+//             "path": "src",
+//             "folder_exclude_patterns": ["backup"]
+//         },
+//         {
+//             "path": "docs",
+//             "name": "Documentation",
+//             "file_exclude_patterns": ["*.css"]
+//         }
+//     ],
+//     "settings":
+//     {
+//         "tab_size": 8
+//     },
+//     "build_systems":
+//     [
+//         {
+//             "name": "List",
+//             "cmd": ["ls"]
+//         }
+//     ]
+// }
