@@ -150,6 +150,7 @@ class TNArchipelEntity (object):
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
             self.create_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")
+            self.create_hook("HOOK_ARCHIPELENTITY_VCARD_READY")
 
             ## recover/create pubsub after connection
             self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.recover_pubsubs)
@@ -860,6 +861,7 @@ class TNArchipelEntity (object):
             node_photo_sha1.setData(photo_hash)
         node_presence.addChild(name="x", namespace='vcard-temp:x:update')
         self.xmppclient.send(node_presence)
+        self.perform_hooks("HOOK_ARCHIPELENTITY_VCARD_READY")
         self.log.info("vCard update presence sent.")
 
 

@@ -129,16 +129,16 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.vcard_infos = {}
 
         if organizationInfo:
-            if organizationInfo["orgname"]:
-                self.vcard_infos["ORGNAME"] = organizationInfo["orgname"]
-            if  organizationInfo["orgunit"]:
-                self.vcard_infos["ORGUNIT"] = organizationInfo["orgunit"]
-            if  organizationInfo["userid"]:
-                self.vcard_infos["USERID"] = organizationInfo["userid"]
-            if  organizationInfo["locality"]:
-                self.vcard_infos["LOCALITY"] = organizationInfo["locality"]
-            if  organizationInfo["categories"]:
-                self.vcard_infos["CATEGORIES"] = organizationInfo["categories"]
+            if organizationInfo["ORGNAME"]:
+                self.vcard_infos["ORGNAME"] = organizationInfo["ORGNAME"]
+            if  organizationInfo["ORGUNIT"]:
+                self.vcard_infos["ORGUNIT"] = organizationInfo["ORGUNIT"]
+            if  organizationInfo["USERID"]:
+                self.vcard_infos["USERID"] = organizationInfo["USERID"]
+            if  organizationInfo["LOCALITY"]:
+                self.vcard_infos["LOCALITY"] = organizationInfo["LOCALITY"]
+            if  organizationInfo["CATEGORIES"]:
+                self.vcard_infos["CATEGORIES"] = organizationInfo["CATEGORIES"]
 
         self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 
