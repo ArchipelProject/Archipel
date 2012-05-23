@@ -21,9 +21,11 @@
 
 import datetime
 import os
+import random
 import shutil
-import xmpp
 import sqlite3
+import string
+import xmpp
 
 from archipel.archipelHypervisor import TNArchipelHypervisor
 from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
@@ -31,11 +33,12 @@ from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.pubsub import TNPubSubNode
 from archipelcore.utils import build_error_iq, build_error_message
 
-ARCHIPEL_ERROR_CODE_VMPARK_LIST         = -11001
-ARCHIPEL_ERROR_CODE_VMPARK_PARK         = -11002
-ARCHIPEL_ERROR_CODE_VMPARK_UNPARK       = -11003
-ARCHIPEL_ERROR_CODE_VMPARK_DELETE       = -11004
-ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML    = -11004
+ARCHIPEL_ERROR_CODE_VMPARK_LIST             = -11001
+ARCHIPEL_ERROR_CODE_VMPARK_PARK             = -11002
+ARCHIPEL_ERROR_CODE_VMPARK_UNPARK           = -11003
+ARCHIPEL_ERROR_CODE_VMPARK_DELETE           = -11004
+ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML        = -11004
+ARCHIPEL_ERROR_CODE_VMPARK_CREATE_PARKED    = -11005
 
 ARCHIPEL_NS_HYPERVISOR_VMPARKING = "archipel:hypervisor:vmparking"
 ARCHIPEL_NS_VM_VMPARKING         = "archipel:vm:vmparking"
@@ -207,40 +210,6 @@ class TNVMParking (TNArchipelPlugin):
                     "configuration-tokens"      : plugin_configuration_tokens }
 
 
-
-    ### Pubsub management
-
-    # def manage_vmparking_node(self, origin, user_info, arguments):
-    #     """
-    #     Register to pubsub event node /archipel/platform/requests/in
-    #     and /archipel/platform/requests/out
-    #     @type origin: L{TNArchipelEnity}
-    #     @param origin: the origin of the hook
-    #     @type user_info: object
-    #     @param user_info: random user information
-    #     @type arguments: object
-    #     @param arguments: runtime argument
-    #     """
-    #     nodeVMParkingName = "/archipel/vmparking"
-    #     self.entity.log.info("VMPARKING: getting the pubsub node %s" % nodeVMParkingName)
-    #     self.pubsub_vmparking = TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, nodeVMParkingName)
-    #     self.pubsub_vmparking.recover(wait=True)
-    #     self.entity.log.info("VMPARKING: node %s recovered." % nodeVMParkingName)
-    #     self.pubsub_vmparking.subscribe(self.entity.jid, self._handle_request_event, wait=True)
-    #     self.entity.log.info("VMPARKING: entity %s is now subscribed to events from node %s" % (self.entity.jid, nodeVMParkingName))
-    #
-    # def _handle_request_event(self, event):
-    #     """
-    #     Triggered when a platform wide virtual machine request is received.
-    #     @type event: xmpp.Node
-    #     @param event: the push event
-    #     """
-    #     self.entity.log.debug("VMPARKING: received pubsub event")
-    #     if not self.inhibit_next_general_push:
-    #         self.entity.push_change("vmparking", "external-update")
-    #     self.inhibit_next_general_push = False
-
-
     ### Processing function
 
     def list(self):
@@ -389,6 +358,36 @@ class TNVMParking (TNArchipelPlugin):
         self.update_vm_domain_in_db(uuid, domain)
         self.entity.push_change("vmparking", "updated")
 
+    def create_parked(self, uuid, xmldesc, parker_jid, push=True):
+        """
+        Creates a VM directly into the parking.
+        @type uuid: String
+        @param uuid: The UUID of the VM to create and park
+        @type xmldesc: xmpp.simplexml.Node
+        @param xmldesc: The XML desc to park. The UUID inside must the same than UUID parameter
+        @type parker_jid: xmpp.protocol.JID
+        @param parker_jid: the JID of the parker
+        """
+        if self.is_vm_already_parked(uuid):
+            raise Exception("VM with UUID %s is already parked" % uuid)
+
+        vm = self.entity.get_vm_by_uuid(uuid)
+        if vm:
+            raise Exception("There is already a VM with UUID %s" % uuid)
+
+
+        if xmldesc.getTag("description"):
+            raise Exception("You cannot park a VM XML with a <description/> tag. Please remove it")
+        password = ''.join([random.choice(string.letters + string.digits) for i in range(32)])
+        xmldesc.addChild("description").setData("%s@%s::::%s" % (uuid, self.entity.jid.getDomain(), password))
+
+        vm_jid = xmpp.JID(xmldesc.getTag("description").getData().split("::::")[0])
+
+        self.add_vm_into_db(uuid, parker_jid, xmldesc)
+        self.entity.log.info("VMPARKING: New virtual machine %s as been parked" % uuid)
+        if push:
+            self.entity.push_change("vmparking", "parked")
+
 
     ### XMPP Management for hypervisors
 
@@ -398,6 +397,7 @@ class TNVMParking (TNArchipelPlugin):
         It understands IQ of type:
             - list
             - park
+            - create_parked
             - unpark
             - destroy
             - updatexml
@@ -419,6 +419,8 @@ class TNVMParking (TNArchipelPlugin):
             reply = self.iq_delete(iq)
         if action == "updatexml":
             reply = self.iq_updatexml(iq)
+        if action == "create_parked":
+            reply = self.iq_create_parked(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -596,6 +598,28 @@ class TNVMParking (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML)
         return reply
 
+    def iq_create_parked(self, iq):
+        """
+        Create a VM in directly into the parking
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            for item in items:
+                vm_uuid = item.getAttr("uuid")
+                if not vm_uuid:
+                    self.entity.log.error("VMPARKING: Unable to park vm: missing 'uuid' element.")
+                    raise Exception("You must must set the UUID of the vms you want to park")
+                vm_domain = item.getTag("domain")
+                self.create_parked(vm_uuid, vm_domain, iq.getFrom(), push=False)
+            self.entity.push_change("vmparking", "create_parked")
+            reply = iq.buildReply("result")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_CREATE_PARKED)
+        return reply
 
     ## XMPP Management for hypervisors
 
