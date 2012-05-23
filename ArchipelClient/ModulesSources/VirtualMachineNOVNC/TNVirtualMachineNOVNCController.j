@@ -419,7 +419,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Websocket error for VNC", @"Websocket error for VNC")
                           informative:CPBundleLocalizedString(@"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.", @"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.")
                                 style:CPCriticalAlertStyle];
-        CPLog.error("Websocket problem. unable to start noVNC subsystem.");
+        CPLog.error("Websocket problem. unable to start noVNC subsystem: " + e);
     }
 }
 
