@@ -24,6 +24,7 @@ import os
 import sqlite3
 import time
 import urllib
+import urllib2
 import vmcastmaker
 import xmpp
 from threading import Thread
@@ -330,8 +331,8 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid})
             content_nodes = []
             try:
-                urllib.urlcleanup()
-                f = urllib.urlopen(url)
+                req =  urllib2.Request(url, headers={"User-Agent": "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11", "Cache-control":  "no-cache"})
+                f = urllib2.urlopen(req)
             except Exception as ex:
                 continue
             try:
