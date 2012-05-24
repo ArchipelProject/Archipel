@@ -88,6 +88,7 @@ class TNApplianceDownloader (Thread):
         """
         try:
             self.logger.info("TNApplianceDownloader: starting to download appliance %s into %s" % (self.url, self.save_path))
+            urllib.urlcleanup()
             urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
             if self.error:
                 self.finish_callback(ARCHIPEL_DOWNLOAD_ERROR, self.uuid, None)
@@ -329,6 +330,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid})
             content_nodes = []
             try:
+                urllib.urlcleanup()
                 f = urllib.urlopen(url)
             except Exception as ex:
                 continue
@@ -344,6 +346,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             except Exception as ex:
                 self.entity.log.debug("TNHypervisorRepoManager: unable to update source because: " + str(ex))
                 pass
+
             for item in items:
                 name            = str(item.getTag("title").getCDATA())
                 description     = str(item.getTag("description").getCDATA()).replace("\n", "").replace("\t", "")
@@ -439,6 +442,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             if not url or url == "":
                 raise Exception("IncorrectStanza", "Stanza must have url: %s" % str(iq))
             try:
+                urllib.urlcleanup()
                 f = urllib.urlopen(url)
             except:
                 raise Exception("The given url doesn't exist. Can't register.")
