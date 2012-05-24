@@ -22,10 +22,11 @@
 @import "TNLibvirtBase.j"
 @import "TNLibvirtDeviceCharacter.j"
 @import "TNLibvirtDeviceDisk.j"
+@import "TNLibvirtDeviceFilesystem.j"
 @import "TNLibvirtDeviceGraphic.j"
+@import "TNLibvirtDeviceHostDev.j"
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
-@import "TNLibvirtDeviceHostDev.j"
 
 
 /*! @ingroup virtualmachinedefinition
@@ -35,6 +36,7 @@
 {
     CPArray                 _characters     @accessors(property=characters);
     CPArray                 _disks          @accessors(property=disks);
+    CPArray                 _filesystems    @accessors(property=filesystems);
     CPArray                 _graphics       @accessors(property=graphics);
     CPArray                 _hostdevs       @accessors(property=hostdevs);
     CPArray                 _inputs         @accessors(property=inputs);
@@ -52,12 +54,13 @@
 {
     if (self = [super init])
     {
-        _characters = [CPArray array];
-        _disks      = [CPArray array];
-        _graphics   = [CPArray array];
-        _hostdevs   = [CPArray array];
-        _inputs     = [CPArray array];
-        _interfaces = [CPArray array];
+        _characters  = [CPArray array];
+        _disks       = [CPArray array];
+        _filesystems = [CPArray array];
+        _graphics    = [CPArray array];
+        _hostdevs    = [CPArray array];
+        _inputs      = [CPArray array];
+        _interfaces  = [CPArray array];
     }
 
     return self;
@@ -73,13 +76,14 @@
         if ([aNode name] != @"devices")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid devices"];
 
-        _emulator   = [[aNode firstChildWithName:@"emulator"] text];
-        _characters = [CPArray array];
-        _disks      = [CPArray array];
-        _graphics   = [CPArray array];
-        _inputs     = [CPArray array];
-        _interfaces = [CPArray array];
-        _hostdevs   = [CPArray array];
+        _emulator    = [[aNode firstChildWithName:@"emulator"] text];
+        _characters  = [CPArray array];
+        _disks       = [CPArray array];
+        _filesystems = [CPArray array];
+        _graphics    = [CPArray array];
+        _hostdevs    = [CPArray array];
+        _inputs      = [CPArray array];
+        _interfaces  = [CPArray array];
 
         var diskNodes = [aNode ownChildrenWithName:@"disk"];
         for (var i = 0; i < [diskNodes count]; i++)
@@ -116,6 +120,10 @@
         var hostdevNodes = [aNode ownChildrenWithName:@"hostdev"];
         for (var i = 0; i < [hostdevNodes count]; i++)
             [_hostdevs addObject:[[TNLibvirtDeviceHostDev alloc] initWithXMLNode:[hostdevNodes objectAtIndex:i]]];
+
+        var filesystemNodes = [aNode ownChildrenWithName:@"filesystem"];
+        for (var i = 0; i < [filesystemNodes count]; i++)
+            [_filesystems addObject:[[TNLibvirtDeviceFilesystem alloc] initWithXMLNode:[filesystemNodes objectAtIndex:i]]];
 
         if  ([aNode firstChildWithName:@"video"])
             _video = [[TNLibvirtDeviceVideo alloc] initWithXMLNode:[aNode firstChildWithName:@"video"]];
@@ -175,6 +183,12 @@
     for (var i = 0; i < [_hostdevs count]; i++)
     {
         [node addNode:[[_hostdevs objectAtIndex:i] XMLNode]];
+        [node up];
+    }
+
+    for (var i = 0; i < [_filesystems count]; i++)
+    {
+        [node addNode:[[_filesystems objectAtIndex:i] XMLNode]];
         [node up];
     }
 
