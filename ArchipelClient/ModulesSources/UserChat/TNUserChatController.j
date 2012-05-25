@@ -179,7 +179,7 @@
         if ([stanza containsChildrenWithName:@"body"])
         {
             var from    = ([stanza valueForAttribute:@"from"] == @"me") ? @"me" : [_entity nickname],
-                message = TNStropheStripHTMLCharCode([[stanza firstChildWithName:@"body"] text]),
+                message = [[stanza firstChildWithName:@"body"] text],
                 color   = ([stanza valueForAttribute:@"from"] == @"me") ? [CPColor ] : [_entity nickname];
 
             [self appendMessageToBoard:message from:from];
@@ -234,7 +234,7 @@
 
         if ([stanza containsChildrenWithName:@"body"])
         {
-            var messageBody = TNStropheStripHTMLCharCode([[stanza firstChildWithName:@"body"] text]);
+            var messageBody = [[stanza firstChildWithName:@"body"] text];
 
             [imageSpinnerWriting setHidden:YES];
             [self appendMessageToBoard:messageBody from:[_entity nickname]];
