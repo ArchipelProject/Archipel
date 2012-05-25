@@ -590,6 +590,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Create the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.create()
         self.log.info("Virtual machine created.")
@@ -601,6 +603,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Shutdown the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.shutdown()
         if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
@@ -614,6 +618,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Destroy the domain.
         """
         self.lock()
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         ret = self.domain.destroy()
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
@@ -623,6 +629,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Reboot the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
         self.log.info("Virtual machine rebooted.")
@@ -631,6 +639,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Suspend (pause) the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.suspend()
         self.log.info("Virtual machine suspended.")
@@ -641,6 +651,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Resume (unpause) the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.resume()
         self.log.info("Virtual machine resumed.")
