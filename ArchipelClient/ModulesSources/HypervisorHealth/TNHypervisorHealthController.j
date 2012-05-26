@@ -43,6 +43,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     TNArchipelTypeHypervisorHealthLog           = @"logs",
     TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_";
 
+var TNHypervisorHealthControllerVMXImageEnabled,
+    TNHypervisorHealthControllerVMXImageDisabled;
+
+
 /*! @defgroup  hypervisorhealth Module Hypervisor Health
     @desc This module display statistics about the hypervisor health
 */
@@ -56,6 +60,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPImageView         imageDiskLoading;
     @outlet CPImageView         imageLoadLoading;
     @outlet CPImageView         imageMemoryLoading;
+    @outlet CPImageView         imageVMX;
     @outlet CPSearchField       filterLogField;
     @outlet CPTableView         tableLogs;
     @outlet CPTableView         tablePartitions;
@@ -123,6 +128,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"], @"TNArchipelHealthMaxLogEntry",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"], @"TNArchipelHealthAutoRefreshStats"
     ]];
+
+    TNHypervisorHealthControllerVMXImageEnabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-enabled.png"]];
+    TNHypervisorHealthControllerVMXImageDisabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-disabled.png"]];
+    [imageVMX setImage:TNHypervisorHealthControllerVMXImageDisabled];
 
     [imageCPULoading setImage:spinner];
     [imageMemoryLoading setImage:spinner];
@@ -474,6 +483,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [healthInfo setStringValue:someData.uname.os + " " + someData.uname.kname + " " + someData.uname.machine];
     [healthLibvirtVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s",someData.libvirt.major, someData.libvirt.minor, someData.libvirt.release]];
     [healthLibvirtDriverVersion setStringValue:[CPString stringWithFormat:@"%s.%s.%s", someData.driver.major, someData.driver.minor, someData.driver.release]];
+    [imageVMX setImage:someData.info.vmx == "True" ? TNHypervisorHealthControllerVMXImageEnabled : TNHypervisorHealthControllerVMXImageDisabled];
 }
 
 
