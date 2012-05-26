@@ -10,7 +10,8 @@ self.onmessage = function(e) {
         libvirt = {},
         driver = {},
         uname = {},
-        networks = {};
+        networks = {},
+        info = {};
 
     node = Xparse(raw)
     elems = node.contents[0].contents;
@@ -38,6 +39,9 @@ self.onmessage = function(e) {
                 break;
             case "uptime":
                 uptime["up"] = elem.attributes.up;
+                break;
+            case "info":
+                info["vmx"] = elem.attributes.vmx;
                 break;
             case "memory":
                 memory["total"] = elem.attributes.total
@@ -90,5 +94,6 @@ self.onmessage = function(e) {
                         "driver": driver,
                         "uname": uname,
                         "networks": networks,
+                        "info": info,
                         "raw": raw});
 }
