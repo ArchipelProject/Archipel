@@ -308,7 +308,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             string_jid, password, date, comment, name = vm
             jid = xmpp.JID(string_jid)
             jid.setResource(self.jid.getNode().lower())
-            vm_thread = self.create_threaded_vm(jid, password, name)
+            vm_thread = self.create_threaded_vm(jid, password, name, self.vcard_infos)
             self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
             vm_thread.start()
             self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())

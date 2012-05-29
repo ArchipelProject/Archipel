@@ -802,9 +802,10 @@ class TNArchipelEntity (object):
 
             if hasattr(self, "vcard_infos"):
                 for key, value in self.vcard_infos.items():
-                    node = xmpp.Node(tag=key.upper())
-                    node.setData(value)
-                    payload.append(node)
+                    if not self.vCard or not self.vCard.getTag(key.upper()):
+                        node = xmpp.Node(tag=key.upper())
+                        node.setData(value)
+                        payload.append(node)
 
             if self.vCard:
                 if self.vCard.getTag("ORGNAME"):
