@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import xmpp
+import archipelcore.xmpp as xmpp
 import sys
 
 from archipelcore import pubsub

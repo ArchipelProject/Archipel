@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import xmlrpclib
-import xmpp
+import archipelcore.xmpp as xmpp
 
 from archipelcore.utils import build_error_iq
 from xmppserver_base import TNXMPPServerControllerBase

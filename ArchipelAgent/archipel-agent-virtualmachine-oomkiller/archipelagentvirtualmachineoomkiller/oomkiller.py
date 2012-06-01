@@ -21,7 +21,7 @@
 
 import commands
 import sqlite3
-import xmpp
+import archipelcore.xmpp as xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq

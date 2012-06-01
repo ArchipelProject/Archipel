@@ -22,7 +22,7 @@
 
 import sqlite3
 import uuid
-import xmpp
+import archipelcore.xmpp as xmpp
 from apscheduler.scheduler import Scheduler
 
 from archipelcore.archipelPlugin import TNArchipelPlugin

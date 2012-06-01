@@ -41,7 +41,7 @@ except ImportError as ex:
     sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 try:
-    import xmpp
+    import archipelcore.xmpp as xmpp
 except ImportError as ex:
     error("Bad XMPPPY installation you need python-xmpp (xmpppy): %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
 
