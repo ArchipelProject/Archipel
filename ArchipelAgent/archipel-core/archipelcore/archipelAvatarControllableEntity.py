@@ -23,7 +23,7 @@ import base64
 import hashlib
 import glob
 import os
-import archipelcore.xmpp as xmpp
+import xmpp
 
 from archipelcore.utils import build_error_iq
 

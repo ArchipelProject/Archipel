@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import types
-import archipelcore.xmpp as xmpp
+import xmpp
 
 
 XMPP_PUBSUB_VAR_TITLE                                       = "pubsub#title"

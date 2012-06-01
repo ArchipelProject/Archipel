@@ -30,7 +30,7 @@ import inspect
 import logging
 import logging.handlers
 import os
-import archipelcore.xmpp as xmpp
+import xmpp
 
 
 # Namespaces

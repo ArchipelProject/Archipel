@@ -25,7 +25,7 @@ import random
 import shutil
 import sqlite3
 import string
-import archipelcore.xmpp as xmpp
+import xmpp
 
 from archipel.archipelHypervisor import TNArchipelHypervisor
 from archipel.archipelVirtualMachine import TNArchipelVirtualMachine

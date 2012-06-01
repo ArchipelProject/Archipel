@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import archipelcore.xmpp as xmpp
+import xmpp
 from optparse import OptionParser
 
 import archipelcore.pubsub

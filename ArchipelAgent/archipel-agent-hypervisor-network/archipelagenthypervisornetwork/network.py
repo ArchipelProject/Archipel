@@ -23,7 +23,7 @@
 import commands
 import libvirt
 import os
-import archipelcore.xmpp as xmpp
+import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message

@@ -22,7 +22,7 @@
 
 import commands
 import libvirt
-import archipelcore.xmpp as xmpp
+import xmpp
 import json
 
 from archipelcore.archipelPlugin import TNArchipelPlugin

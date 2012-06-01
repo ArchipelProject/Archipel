@@ -21,7 +21,7 @@
 
 import os
 import sqlite3
-import archipelcore.xmpp as xmpp
+import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING

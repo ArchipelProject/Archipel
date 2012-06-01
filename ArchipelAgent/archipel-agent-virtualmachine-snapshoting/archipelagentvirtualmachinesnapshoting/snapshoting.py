@@ -21,7 +21,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import libvirt
-import archipelcore.xmpp as xmpp
+import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
