@@ -26,7 +26,7 @@ import time
 import urllib
 import urllib2
 import vmcastmaker
-import xmpp
+import archipelcore.xmpp as xmpp
 from threading import Thread
 
 from archipelcore.archipelPlugin import TNArchipelPlugin

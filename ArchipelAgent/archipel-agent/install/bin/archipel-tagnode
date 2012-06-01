@@ -19,7 +19,7 @@
 
 
 import os
-import xmpp
+import archipelcore.xmpp as xmpp
 import sys
 from optparse import OptionParser
 import commands

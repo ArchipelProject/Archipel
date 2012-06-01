@@ -38,7 +38,7 @@ import libvirt
 import os
 import shutil
 import thread
-import xmpp
+import archipelcore.xmpp as xmpp
 import tempfile
 import base64
 from threading import Timer

@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import xmpp
+import archipelcore.xmpp as xmpp
 from pkg_resources import iter_entry_points
 
 from archipelcore.archipelPlugin import TNArchipelPlugin

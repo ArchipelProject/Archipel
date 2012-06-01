@@ -30,7 +30,7 @@ import socket
 import sys
 import time
 import traceback
-import xmpp
+import archipelcore.xmpp as xmpp
 from pkg_resources import iter_entry_points
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity

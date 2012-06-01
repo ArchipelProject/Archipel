@@ -24,7 +24,7 @@ import os
 import shutil
 import tarfile
 import tempfile
-import xmpp
+import archipelcore.xmpp as xmpp
 from gzip import GzipFile as gz
 from threading import Thread
 

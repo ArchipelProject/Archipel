@@ -31,7 +31,7 @@ import random
 import sqlite3
 import string
 import uuid as moduuid
-import xmpp
+import archipelcore.xmpp as xmpp
 from threading import Thread
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
