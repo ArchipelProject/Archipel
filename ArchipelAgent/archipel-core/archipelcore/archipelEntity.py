@@ -612,7 +612,8 @@ class TNArchipelEntity (object):
         """
         self.log.info("status change: %s show:%s" % (presence_status, presence_show))
         pres = xmpp.Presence(status=presence_status, show=presence_show)
-
+        xmpp.dispatcher.ID += 1
+        pres.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         def presence_callback(conn, resp):
             self.xmppstatus     = presence_status
             self.xmppstatusshow = presence_show
@@ -630,6 +631,8 @@ class TNArchipelEntity (object):
         """
         self.xmppstatus = presence_status
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        xmpp.dispatcher.ID += 1
+        pres.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         self.xmppclient.send(pres)
 
     def push_change(self, namespace, change, content_node=None):
@@ -707,6 +710,8 @@ class TNArchipelEntity (object):
         """
         self.log.info("%s is subscribing to jid %s" % (str(self.jid), str(jid)))
         presence = xmpp.Presence(to=jid, typ='subscribe')
+        xmpp.dispatcher.ID += 1
+        presence.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         if self.name:
             presence.addChild(name="nick", namespace="http://jabber.org/protocol/nick", payload=self.name)
         self.xmppclient.send(presence)
@@ -857,6 +862,9 @@ class TNArchipelEntity (object):
         @param photo_hash: the SHA-1 hash of the photo that changes (optionnal)
         """
         node_presence = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        xmpp.dispatcher.ID += 1
+        node_presence.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
+
         if photo_hash:
             node_photo_sha1 = xmpp.Node(tag="photo")
             node_photo_sha1.setData(photo_hash)
