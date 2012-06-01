@@ -60,6 +60,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.pubsub_nuage_networks = None;
+        self.nuageBridgeName = self.configuration.get("NUAGE", "nuage_bridge")
+
 
         # permissions
         self.entity.permission_center.create_permission("nuagenetwork_get", "Authorizes user to get the existing Nuage networks", False)
@@ -73,6 +75,14 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         # register to the node vmrequest
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_nuage_network_node)
+            self.entity.log.info("NUAGENETWORKS: Checking if general bridge %s exists." % self.nuageBridgeName)
+            if not os.system("brctl showmacs %s" % self.nuageBridgeName) == 0:
+                self.entity.log.info("NUAGENETWORKS: Nope. creating it...")
+                if os.system("brctl addbr %s" % self.nuageBridgeName):
+                    self.entity.log.error("NUAGENETWORKS: Unable to create bridge. Dying.")
+                    raise Exception("Unable to create the general bridge with name %s." % self.nuageBridgeName)
+                self.entity.log.info("NUAGENETWORKS: Bridge %s has been created." % self.nuageBridgeName)
+
 
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.add_vm_definition_hook(self.update_vm_xml_hook)
@@ -108,8 +118,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         plugin_friendly_name           = "Hypervisor Nuage Networks"
         plugin_identifier              = "hypervisor_nuage_network"
-        plugin_configuration_section   = None
-        plugin_configuration_tokens    = []
+        plugin_configuration_section   = "NUAGE"
+        plugin_configuration_tokens    = ["nuage_bridge"]
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -126,6 +136,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type vm_xml_node: xmpp.Node
         @param vm_xml_node: The VM's XML description
         """
+        if not self.entity.vCard:
+            return vm_xml_node
+
         if not vm_xml_node.getTag("metadata"):
             vm_xml_node.addChild("metadata")
         if vm_xml_node.getTag("metadata").getTag("nuage"):
@@ -134,10 +147,10 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         hypervisor_nuage_plugin = self.entity.hypervisor.get_plugin("hypervisor_nuage_network")
 
         nuage_node = xmpp.Node("nuage", attrs={"xmlns": "alcatel-lucent.com/nuage/cna"})
-        nuage_node.addChild("user", attrs={"name": senderJID.getStripped()})
-        nuage_node.addChild("group", attrs={"name": "Group A"})
-        nuage_node.addChild("enterprise", attrs={"name": "Enterprise 1"})
-        app_node = nuage_node.addChild("application", attrs={"name": "LAMP"})
+        nuage_node.addChild("enterprise", attrs={"name": self.entity.vCard.getTag("ORGNAME").getData()})
+        nuage_node.addChild("group", attrs={"name": self.entity.vCard.getTag("ORGUNIT").getData()})
+        nuage_node.addChild("user", attrs={"name": self.entity.vCard.getTag("USERID").getData()})
+        app_node = nuage_node.addChild("application", attrs={"name": self.entity.vCard.getTag("CATEGORIES").getData()})
 
         interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
 
@@ -149,6 +162,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             mac_address = interface.getTag("mac").getAttr("address")
             network_item = hypervisor_nuage_plugin.get_network(network_name)
             network_name_XML = xmpp.Node(node=network_item.getTag("nuage").getTag("nuage_network")) # copy
+            strXML = str(network_name_XML).replace('xmlns="archipel:hypervisor:nuage:network" ', '')
+            network_name_XML = xmpp.simplexml.NodeBuilder(data=strXML).getDom()
             network_name_XML.addChild("interface_mac", attrs={"address": mac_address})
 
             ## Now we reconfigure the nic to be a bridge
@@ -157,9 +172,13 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
                 interface.delAttr("name")
             if interface.getTag("source"):
                 interface.delChild("source")
-            interface.addChild("source", attrs={"bridge": "wathever-bridge0"})
+            interface.addChild("source", attrs={"bridge": self.nuageBridgeName})
 
-            app_node.addChild(node=network_name_XML)
+            if interface.getTag("target"):
+                interface.delChild("target")
+            interface.addChild("target", attrs={"dev": mac_address.replace(":", "")})
+
+            nuage_node.addChild(node=network_name_XML)
 
         vm_xml_node.getTag("metadata").addChild(node=nuage_node)
         return vm_xml_node
