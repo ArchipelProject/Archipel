@@ -297,7 +297,6 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         del self.download_queue[uuid]
         self.entity.change_status(self.old_entity_status)
 
-
     def getFeed(self, data):
         """
         Get the feed.
@@ -306,11 +305,11 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         @rtype: tupple
         @return: tupple that contains info on the feed
         """
-        feed_content        = xmpp.simplexml.NodeBuilder(data=str(data)).getDom()
-        feed_uuid           = feed_content.getTag("channel").getTag("uuid").getCDATA()
-        feed_description    = feed_content.getTag("channel").getTag("description").getCDATA()
-        feed_name           = feed_content.getTag("channel").getTag("title").getCDATA()
-        items               = feed_content.getTag("channel").getTags("item")
+        feed_content = xmpp.simplexml.NodeBuilder(data=str(data)).getDom()
+        feed_uuid = feed_content.getTag("channel").getTag("uuid").getCDATA()
+        feed_description = feed_content.getTag("channel").getTag("description").getCDATA()
+        feed_name = feed_content.getTag("channel").getTag("title").getCDATA()
+        items = feed_content.getTag("channel").getTags("item")
         return (feed_content, feed_uuid, feed_description, feed_name, items)
 
     def parseRSS(self):
@@ -331,7 +330,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid})
             content_nodes = []
             try:
-                req =  urllib2.Request(url, headers={"User-Agent": "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11", "Cache-control":  "no-cache"})
+                req = urllib2.Request(url, headers={"User-Agent": "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11", "Cache-control":  "no-cache"})
                 f = urllib2.urlopen(req)
             except Exception as ex:
                 continue
@@ -349,13 +348,13 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
                 pass
 
             for item in items:
-                name            = str(item.getTag("title").getCDATA())
-                description     = str(item.getTag("description").getCDATA()).replace("\n", "").replace("\t", "")
-                url             = str(item.getTag("enclosure").getAttr("url"))
-                size            = str(item.getTag("enclosure").getAttr("length"))
-                pubdate         = str(item.getTag("pubDate").getCDATA())
-                uuid            = str(item.getTag("uuid").getCDATA())
-                status          = ARCHIPEL_APPLIANCES_NOT_INSTALLED
+                name = str(item.getTag("title").getCDATA())
+                description = str(item.getTag("description").getCDATA()).replace("\n", "").replace("\t", "")
+                url = str(item.getTag("enclosure").getAttr("url"))
+                size = str(item.getTag("enclosure").getAttr("length"))
+                pubdate = str(item.getTag("pubDate").getCDATA())
+                uuid = str(item.getTag("uuid").getCDATA())
+                status = ARCHIPEL_APPLIANCES_NOT_INSTALLED
                 try:
                     tmp_cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'))
                     self.database_connection.commit()
@@ -499,7 +498,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             name, description, url, uuid, status, source, path = self.cursor.fetchone()
             downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.entity.log, self.on_download_complete)
             self.download_queue[uuid] = downloader
-            downloader.daemon  = True
+            downloader.daemon = True
             downloader.start()
             self.entity.change_status("Downloading appliance...")
         except Exception as ex:
