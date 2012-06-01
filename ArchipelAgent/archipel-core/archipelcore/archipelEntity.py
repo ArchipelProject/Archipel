@@ -614,8 +614,9 @@ class TNArchipelEntity (object):
         pres = xmpp.Presence(status=presence_status, show=presence_show)
         xmpp.dispatcher.ID += 1
         pres.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
+
         def presence_callback(conn, resp):
-            self.xmppstatus     = presence_status
+            self.xmppstatus = presence_status
             self.xmppstatusshow = presence_show
             self.log.debug("PRESENCE : I just set change presence. The result is %s" % resp)
             if callback:
@@ -629,11 +630,7 @@ class TNArchipelEntity (object):
         @type presence_status: string
         @param presence_status: the value of the XMPP status
         """
-        self.xmppstatus = presence_status
-        pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
-        xmpp.dispatcher.ID += 1
-        pres.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
-        self.xmppclient.send(pres)
+        self.change_presence(self.xmppstatusshow, presence_status)
 
     def push_change(self, namespace, change, content_node=None):
         """
