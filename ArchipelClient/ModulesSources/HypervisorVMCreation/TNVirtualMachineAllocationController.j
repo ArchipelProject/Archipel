@@ -25,7 +25,8 @@
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlAlloc        = @"alloc",
-    TNArchipelTypeHypervisorControlFree         = @"free";
+    TNArchipelTypeHypervisorControlFree         = @"free",
+    TNArchipelTypeHypervisorControlSetOrgInfo   = "setorginfo";
 
 
 /*! @ingroup hypervisorvmcreation
@@ -42,7 +43,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPTextField     fieldNewVMRequestedOrganizationUnit;
     @outlet CPTextField     fieldNewVMRequestedOwner;
 
-    id                      _delegate   @accessors(property=delegate);
+    TNStropheContact        _virtualMachine     @accessors(property=virtualMachine);
+    id                      _delegate           @accessors(property=delegate);
 }
 
 
@@ -54,18 +56,43 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openWindow:(id)aSender
 {
-    [fieldNewVMRequestedName setStringValue:@""];
-    [fieldNewVMRequestedOrganization setStringValue:@""];
-    [fieldNewVMRequestedOrganizationUnit setStringValue:@""];
-    [fieldNewVMRequestedLocality setStringValue:@""];
-    [fieldNewVMRequestedOwner setStringValue:@""];
-    [fieldNewVMRequestedCategories setStringValue:@""];
+    var vCard = [_virtualMachine vCard];
 
-    [mainPopover close];
-    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [fieldNewVMRequestedName setStringValue:[[vCard firstChildWithName:@"FN"] text] || @""];
+    [fieldNewVMRequestedOrganization setStringValue:[[vCard firstChildWithName:@"ORGNAME"] text] ||@""];
+    [fieldNewVMRequestedOrganizationUnit setStringValue:[[vCard firstChildWithName:@"ORGUNIT"] text] || @""];
+    [fieldNewVMRequestedLocality setStringValue:[[vCard firstChildWithName:@"LOCALITY"] text] || @""];
+    [fieldNewVMRequestedOwner setStringValue:[[vCard firstChildWithName:@"USERID"] text] || @""];
+    [fieldNewVMRequestedCategories setStringValue:[[vCard firstChildWithName:@"CATEGORIES"] text] || @""];
+
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+    }
+    else
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil]
+
     [mainPopover makeFirstResponder:fieldNewVMRequestedName];
     [mainPopover setDefaultButton:buttonAlloc];
+
+    if (_virtualMachine)
+    {
+        [buttonAlloc setStringValue:@"Update"];
+        [buttonAlloc setAction:@selector(update:)];
+        [fieldNewVMRequestedName setEnabled:NO];
+    }
+    else
+    {
+        [buttonAlloc setStringValue:@"Create"];
+        [buttonAlloc setAction:@selector(alloc:)];
+        [fieldNewVMRequestedName setEnabled:YES];
+    }
 }
+
 
 /*! close the window
     @param aSender the sender
@@ -82,6 +109,15 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     [mainPopover close];
     [self alloc];
+}
+
+/*! alloc a new virtual machine
+    @param aSender the sender
+*/
+- (IBAction)update:(id)aSender
+{
+    [mainPopover close];
+    [self update];
 }
 
 
@@ -128,6 +164,62 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     return NO;
 }
+
+- (void)update
+{
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorControlSetOrgInfo,
+        "target": [[_virtualMachine JID] node]}];
+
+    [stanza addChildWithName:"ORGNAME"];
+    [stanza addTextNode:[fieldNewVMRequestedOrganization stringValue]];
+    [stanza up];
+
+    [stanza addChildWithName:"ORGUNIT"];
+    [stanza addTextNode:[fieldNewVMRequestedOrganizationUnit stringValue]];
+    [stanza up];
+
+    [stanza addChildWithName:"LOCALITY"];
+    [stanza addTextNode:[fieldNewVMRequestedLocality stringValue]];
+    [stanza up];
+
+    [stanza addChildWithName:"USERID"];
+    [stanza addTextNode:[fieldNewVMRequestedOwner stringValue]];
+    [stanza up];
+
+    [stanza addChildWithName:"CATEGORIES"];
+    [stanza addTextNode:[fieldNewVMRequestedCategories stringValue]];
+    [stanza up];
+
+    [_delegate sendStanza:stanza andRegisterSelector:@selector(_didUpdateVirtualMachine:) ofObject:self];
+}
+
+/*! compute the answer of the hypervisor about its allocing a VM
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (BOOL)_didUpdateVirtualMachine:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
+        CPLog.info(@"sucessfully create a virtual machine");
+
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+                                                         message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + vmJID + CPBundleLocalizedString(@" has been updated", @" has been updated")];
+
+        [_delegate getHypervisorRoster];
+    }
+    else
+    {
+        [_delegate handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
 
 /*! delete a virtual machine. but ask user if he is sure before
 */
