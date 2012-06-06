@@ -66,6 +66,7 @@ class TNVMParking (TNArchipelPlugin):
             self.entity.permission_center.create_permission("vmparking_unpark", "Authorizes user to unpark a virtual machines", False)
             self.entity.permission_center.create_permission("vmparking_delete", "Authorizes user to delete parked virtual machines", False)
             self.entity.permission_center.create_permission("vmparking_updatexml", "Authorizes user to delete parked virtual machines", False)
+            self.entity.permission_center.create_permission("vmparking_create_parked", "Authorizes user to create a new VM in parking", False)
 
         # vocabulary
         if isinstance(self.entity, TNArchipelHypervisor):
