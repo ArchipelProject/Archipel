@@ -126,20 +126,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
         self.connect_libvirt()
 
-        self.vcard_infos = {}
-
-        if organizationInfo:
-            if organizationInfo["ORGNAME"]:
-                self.vcard_infos["ORGNAME"] = organizationInfo["ORGNAME"]
-            if  organizationInfo["ORGUNIT"]:
-                self.vcard_infos["ORGUNIT"] = organizationInfo["ORGUNIT"]
-            if  organizationInfo["USERID"]:
-                self.vcard_infos["USERID"] = organizationInfo["USERID"]
-            if  organizationInfo["LOCALITY"]:
-                self.vcard_infos["LOCALITY"] = organizationInfo["LOCALITY"]
-            if  organizationInfo["CATEGORIES"]:
-                self.vcard_infos["CATEGORIES"] = organizationInfo["CATEGORIES"]
-
+        self.set_organization_info(organizationInfo, publish=False)
         self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 
         # create VM folders if not exists
@@ -579,6 +566,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             reply = self.iq_undefine(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
+
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -988,14 +976,27 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_VM_FREE")
         self.hypervisor.free(self.jid)
 
-    def setowner(self, organization_name, organization_unit):
+    def set_organization_info(self, organizationInfo, publish=True, force_update=False):
         """
         Set the vCard fields for the organization
         """
-        ## NEED UPDATE
-        self.vcard_infos["ORGNAME"] = organization_name
-        self.vcard_infos["ORGUNIT"] = organization_unit
-        self.set_vcard()
+        if not organizationInfo:
+            return;
+
+        if "ORGNAME" in organizationInfo:
+            self.vcard_infos["ORGNAME"] = organizationInfo["ORGNAME"]
+        if "ORGUNIT" in organizationInfo:
+            self.vcard_infos["ORGUNIT"] = organizationInfo["ORGUNIT"]
+        if "USERID" in organizationInfo:
+            self.vcard_infos["USERID"] = organizationInfo["USERID"]
+        if "LOCALITY" in organizationInfo:
+            self.vcard_infos["LOCALITY"] = organizationInfo["LOCALITY"]
+        if "CATEGORIES" in organizationInfo:
+            self.vcard_infos["CATEGORIES"] = organizationInfo["CATEGORIES"]
+
+        if publish:
+            self.set_vcard(force_update=force_update)
+
 
     ### Other stuffs
 

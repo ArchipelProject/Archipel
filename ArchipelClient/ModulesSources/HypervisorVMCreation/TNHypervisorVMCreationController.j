@@ -128,7 +128,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachines setTarget:self];
-    [tableVirtualMachines setDoubleAction:@selector(didManagedTableDoubleClick:)];
+    [tableVirtualMachines setDoubleAction:@selector(openEditVirtualMachineWindow:)];
     [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
     [tableVirtualMachines setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableVirtualMachines setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
@@ -556,31 +556,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 /*! add double clicked vm to roster if not present or go to virtual machine
     @param sender the sender of the action
 */
-- (IBAction)didManagedTableDoubleClick:(id)aSender
-{
-    if ([tableVirtualMachines numberOfSelectedRows] <= 0)
-        return;
-
-    var vm = [_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]];
-
-    if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
-    {
-        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Adding contact", @"Adding contact")
-                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [vm nickname] + CPBundleLocalizedString(@" to your roster", @" to your roster")
-                                     target:self
-                                     actions:[[CPBundleLocalizedString(@"Add contact", @"Add contact"), @selector(performAddToRoster:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
-        [alert setUserInfo:vm];
-        [alert runModal];
-    }
-    else
-    {
-        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewSelectItemNotification object:self userInfo:vm];
-    }
-}
-
-/*! add double clicked vm to roster if not present or go to virtual machine
-    @param sender the sender of the action
-*/
 - (IBAction)didNotManagedTableDoubleClick:(id)aSender
 {
     [self manageVirtualMachine:aSender];
@@ -784,15 +759,35 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [VMCloneController openWindow:_cloneButton];
 }
 
-/*! open the add subscription window
+/*! open the add virtual machine window
     @param sender the sender of the action
 */
 - (IBAction)openNewVirtualMachineWindow:(id)aSender
 {
     [self requestVisible];
+
     if ([self isVisible])
+    {
+        [VMAllocationController setVirtualMachine:nil];
         [VMAllocationController openWindow:_plusButton];
+    }
 }
+
+/*! open the edit virtual machine window
+    @param sender the sender of the action
+*/
+- (IBAction)openEditVirtualMachineWindow:(id)aSender
+{
+    [self requestVisible];
+
+    if ([self isVisible])
+    {
+        var vm = [_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]];
+        [VMAllocationController setVirtualMachine:vm];
+        [VMAllocationController openWindow:aSender];
+    }
+}
+
 
 /*! open the add subscription window
     @param sender the sender of the action

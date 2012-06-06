@@ -58,6 +58,7 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_CAPABILITIES     = -9009
 ARCHIPEL_ERROR_CODE_HYPERVISOR_MANAGE           = -9010
 ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE         = -9011
 ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO   = -9012
+ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO     = -9013
 
 # Namespace
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
@@ -145,7 +146,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         # libvirt connection
         self.connect_libvirt()
 
-        self.vcard_infos                = {}
         if (self.configuration.has_section("VCARD")):
             for key in ("orgname", "orgunit", "userid", "locality", "url", "categories"):
                 if self.configuration.has_option("VCARD", key):
@@ -291,6 +291,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False)
         self.permission_center.create_permission("manage", "Authorizes users make Archipel able to manage external virtual machines", False)
         self.permission_center.create_permission("unmanage", "Authorizes users to make Archipel able to unmanage virtual machines", False)
+        self.permission_center.create_permission("setorginfo", "Authorizes users to change VM Organization information of virtual machines", False)
 
     def manage_persistance(self):
         """
@@ -429,6 +430,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             - capabilities
             - manage
             - unmanage
+            - setorginfo
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -461,7 +463,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = self.iq_manage(iq)
         elif action == "unmanage":
             reply = self.iq_unmanage(iq)
-
+        elif action == "setorginfo":
+            reply = self.iq_set_organization_info(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -1054,4 +1057,38 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.update_presence()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE)
+        return reply
+
+    def iq_set_organization_info(self, iq):
+        """
+        Updates the VM organization info
+        """
+        try:
+            reply = iq.buildReply("result")
+            archipel_tag = iq.getTag("query").getTag("archipel")
+            target_uuid = archipel_tag.getAttr("target")
+            target_vm = self.get_vm_by_uuid(target_uuid)
+
+            if not target_vm:
+                raise Exception("No VM with UUID %s" % target_uuid);
+
+            info = {}
+            if archipel_tag.getTag("ORGNAME"):
+                info["ORGNAME"] = archipel_tag.getTag("ORGNAME").getData()
+            if archipel_tag.getTag("ORGUNIT"):
+                info["ORGUNIT"] = archipel_tag.getTag("ORGUNIT").getData()
+            if archipel_tag.getTag("USERID"):
+                info["USERID"] = archipel_tag.getTag("USERID").getData()
+            if archipel_tag.getTag("LOCALITY"):
+                info["LOCALITY"] = archipel_tag.getTag("LOCALITY").getData()
+            if archipel_tag.getTag("CATEGORIES"):
+                info["CATEGORIES"] = archipel_tag.getTag("CATEGORIES").getData()
+
+            target_vm.set_organization_info(info, force_update=True)
+
+            if target_vm.definition:
+                target_vm.define(target_vm.definition)
+
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)
         return reply

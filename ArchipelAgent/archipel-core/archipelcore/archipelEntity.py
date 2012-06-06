@@ -130,6 +130,7 @@ class TNArchipelEntity (object):
         self.permission_db_file     = "permissions.sqlite3"
         self.permission_admin_names = dict(map(lambda x: ("STATIC_%s" % x, x), self.configuration.get("GLOBAL", "archipel_root_admins").split()))
         self.permission_center      = TNArchipelPermissionCenter(root_admins=self.permission_admin_names)
+        self.vcard_infos            = {}
 
         if isinstance(self, TNHookableEntity):
             TNHookableEntity.__init__(self, self.log)
@@ -787,7 +788,7 @@ class TNArchipelEntity (object):
         self.log.info("Own vcard retrieved")
         self.set_vcard()
 
-    def set_vcard(self, params={}):
+    def set_vcard(self, params={}, force_update=False):
         """
         Allows to define a vCard type for the entry.
         set the vcard of the entity
@@ -802,12 +803,11 @@ class TNArchipelEntity (object):
             type_node.setData(self.entity_type)
             payload.append(type_node)
 
-            if hasattr(self, "vcard_infos"):
-                for key, value in self.vcard_infos.items():
-                    if not self.vCard or not self.vCard.getTag(key.upper()):
-                        node = xmpp.Node(tag=key.upper())
-                        node.setData(value)
-                        payload.append(node)
+            for key, value in self.vcard_infos.items():
+                if force_update or not self.vCard or not self.vCard.getTag(key.upper()):
+                    node = xmpp.Node(tag=key.upper())
+                    node.setData(value)
+                    payload.append(node)
 
             if self.vCard:
                 if self.vCard.getTag("ORGNAME"):
