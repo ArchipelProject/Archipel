@@ -136,7 +136,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type vm_xml_node: xmpp.Node
         @param vm_xml_node: The VM's XML description
         """
-        if not self.entity.vCard:
+        if not self.entity.vcard_infos:
             return vm_xml_node
 
         if not vm_xml_node.getTag("metadata"):
@@ -147,10 +147,10 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         hypervisor_nuage_plugin = self.entity.hypervisor.get_plugin("hypervisor_nuage_network")
 
         nuage_node = xmpp.Node("nuage", attrs={"xmlns": "alcatel-lucent.com/nuage/cna"})
-        nuage_node.addChild("enterprise", attrs={"name": self.entity.vCard.getTag("ORGNAME").getData()})
-        nuage_node.addChild("group", attrs={"name": self.entity.vCard.getTag("ORGUNIT").getData()})
-        nuage_node.addChild("user", attrs={"name": self.entity.vCard.getTag("USERID").getData()})
-        app_node = nuage_node.addChild("application", attrs={"name": self.entity.vCard.getTag("CATEGORIES").getData()})
+        nuage_node.addChild("enterprise", attrs={"name": self.entity.vcard_infos["ORGNAME"]})
+        nuage_node.addChild("group", attrs={"name": self.entity.vcard_infos["ORGUNIT"]})
+        nuage_node.addChild("user", attrs={"name": self.entity.vcard_infos["USERID"]})
+        app_node = nuage_node.addChild("application", attrs={"name":self.entity.vcard_infos["CATEGORIES"]})
 
         interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
 
