@@ -81,13 +81,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     if (_virtualMachine)
     {
-        [buttonAlloc setStringValue:@"Update"];
+        [buttonAlloc setTitle:@"Update"];
         [buttonAlloc setAction:@selector(update:)];
         [fieldNewVMRequestedName setEnabled:NO];
     }
     else
     {
-        [buttonAlloc setStringValue:@"Create"];
+        [buttonAlloc setTitle:@"Create"];
         [buttonAlloc setAction:@selector(alloc:)];
         [fieldNewVMRequestedName setEnabled:YES];
     }
