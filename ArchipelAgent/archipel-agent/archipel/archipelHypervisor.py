@@ -137,6 +137,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.entity_type                = "hypervisor"
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None
+        self.vcard_infos                = {}
 
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
@@ -189,6 +190,39 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
+
+
+    ### Overrides
+
+    def set_custom_vcard_information(self, vCard):
+        """
+        Put custom information in vCard
+        """
+        vCard.append(xmpp.Node("TITLE", payload=self.vcard_infos["TITLE"]))
+        vCard.append(xmpp.Node("ORGNAME", payload=self.vcard_infos["ORGNAME"]))
+        vCard.append(xmpp.Node("ORGUNIT", payload=self.vcard_infos["ORGUNIT"]))
+        vCard.append(xmpp.Node("LOCALITY", payload=self.vcard_infos["LOCALITY"]))
+        vCard.append(xmpp.Node("USERID", payload=self.vcard_infos["USERID"]))
+        vCard.append(xmpp.Node("CATEGORIES", payload=self.vcard_infos["CATEGORIES"]))
+
+    def get_custom_vcard_information(self, vCard):
+        """
+        Read custom info from vCard
+        """
+        if vCard.getTag("TITLE"):
+            self.vcard_infos["TITLE"] = vCard.getTag("TITLE").getData()
+        if vCard.getTag("ORGNAME"):
+            self.vcard_infos["ORGNAME"] = vCard.getTag("ORGNAME").getData()
+        if vCard.getTag("ORGUNIT"):
+            self.vcard_infos["ORGUNIT"] = vCard.getTag("ORGUNIT").getData()
+        if vCard.getTag("LOCALITY"):
+            self.vcard_infos["LOCALITY"] = vCard.getTag("LOCALITY").getData()
+        if vCard.getTag("USERID"):
+            self.vcard_infos["USERID"] = vCard.getTag("USERID").getData()
+        if vCard.getTag("CATEGORIES"):
+            self.vcard_infos["CATEGORIES"] = vCard.getTag("CATEGORIES").getData()
+
+    ### Utilities
 
     def update_presence(self, origin=None, user_info=None, parameters=None):
         """
@@ -1084,7 +1118,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if archipel_tag.getTag("CATEGORIES"):
                 info["CATEGORIES"] = archipel_tag.getTag("CATEGORIES").getData()
 
-            target_vm.set_organization_info(info, force_update=True)
+            target_vm.set_organization_info(info)
 
             if target_vm.definition:
                 target_vm.define(target_vm.definition)

@@ -119,6 +119,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         self.vm_will_define_hooks       = []
+        self.vcard_infos                = {}
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
@@ -127,7 +128,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.connect_libvirt()
 
         self.set_organization_info(organizationInfo, publish=False)
-        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 
         # create VM folders if not exists
         if not os.path.isdir(self.folder):
@@ -166,6 +166,37 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         # modules
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.virtualmachine')
+
+
+    ### Overrides
+
+    def set_custom_vcard_information(self, vCard):
+        """
+        Put custom information in vCard
+        """
+        vCard.append(xmpp.Node("TITLE", payload=self.vcard_infos["TITLE"]))
+        vCard.append(xmpp.Node("ORGNAME", payload=self.vcard_infos["ORGNAME"]))
+        vCard.append(xmpp.Node("ORGUNIT", payload=self.vcard_infos["ORGUNIT"]))
+        vCard.append(xmpp.Node("LOCALITY", payload=self.vcard_infos["LOCALITY"]))
+        vCard.append(xmpp.Node("USERID", payload=self.vcard_infos["USERID"]))
+        vCard.append(xmpp.Node("CATEGORIES", payload=self.vcard_infos["CATEGORIES"]))
+
+    def get_custom_vcard_information(self, vCard):
+        """
+        Read custom info from vCard
+        """
+        if vCard.getTag("TITLE"):
+            self.vcard_infos["TITLE"] = vCard.getTag("TITLE").getData()
+        if vCard.getTag("ORGNAME"):
+            self.vcard_infos["ORGNAME"] = vCard.getTag("ORGNAME").getData()
+        if vCard.getTag("ORGUNIT"):
+            self.vcard_infos["ORGUNIT"] = vCard.getTag("ORGUNIT").getData()
+        if vCard.getTag("LOCALITY"):
+            self.vcard_infos["LOCALITY"] = vCard.getTag("LOCALITY").getData()
+        if vCard.getTag("USERID"):
+            self.vcard_infos["USERID"] = vCard.getTag("USERID").getData()
+        if vCard.getTag("CATEGORIES"):
+            self.vcard_infos["CATEGORIES"] = vCard.getTag("CATEGORIES").getData()
 
 
     ### Utilities
@@ -976,7 +1007,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_VM_FREE")
         self.hypervisor.free(self.jid)
 
-    def set_organization_info(self, organizationInfo, publish=True, force_update=False):
+    def set_organization_info(self, organizationInfo, publish=True):
         """
         Set the vCard fields for the organization
         """
@@ -994,8 +1025,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if "CATEGORIES" in organizationInfo:
             self.vcard_infos["CATEGORIES"] = organizationInfo["CATEGORIES"]
 
+        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
+
         if publish:
-            self.set_vcard(force_update=force_update)
+            self.set_vcard()
 
 
     ### Other stuffs

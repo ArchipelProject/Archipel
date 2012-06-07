@@ -130,7 +130,6 @@ class TNArchipelEntity (object):
         self.permission_db_file     = "permissions.sqlite3"
         self.permission_admin_names = dict(map(lambda x: ("STATIC_%s" % x, x), self.configuration.get("GLOBAL", "archipel_root_admins").split()))
         self.permission_center      = TNArchipelPermissionCenter(root_admins=self.permission_admin_names)
-        self.vcard_infos            = {}
 
         if isinstance(self, TNHookableEntity):
             TNHookableEntity.__init__(self, self.log)
@@ -773,7 +772,7 @@ class TNArchipelEntity (object):
         """
         Retrieve vCard from server.
         """
-        self.log.info("Asking for own vCard.")
+        self.log.info("VCARD: Asking for own vCard.")
         node_iq = xmpp.Iq(typ='get')
         node_iq.addChild(name="vCard", namespace="vcard-temp")
         self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)
@@ -783,48 +782,38 @@ class TNArchipelEntity (object):
         Callback of manage_vcard()
         """
         self.vCard = vcard.getTag("vCard")
-        if self.use_avatar and  self.vCard and self.vCard.getTag("PHOTO"):
-            self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
-        self.log.info("Own vcard retrieved")
-        self.set_vcard()
 
-    def set_vcard(self, params={}, force_update=False):
+        if self.vCard:
+            self.log.info("VCARD: I already have a vCard.")
+            if self.use_avatar and self.vCard.getTag("PHOTO"):
+                self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
+            self.get_custom_vcard_information(self.vCard)
+        else:
+            self.log.info("VCARD: I don't have any vCard. Creating new one.")
+            self.set_vcard()
+
+    def set_vcard(self, params={}):
         """
-        Allows to define a vCard type for the entry.
+        Allows to define a vCard t ype for the entry.
         set the vcard of the entity
         @type params: dict
         @param params: the parameters of the vCard
         """
         try:
-            self.log.info("vCard making started.")
-            node_iq     = xmpp.Iq(typ='set', xmlns=None)
-            payload     = []
-            type_node   = xmpp.Node(tag="ROLE")
+            self.log.info("VCARD: vCard making started.")
+            node_iq = xmpp.Iq(typ='set', xmlns=None)
+            payload = []
+            type_node = xmpp.Node(tag="ROLE")
             type_node.setData(self.entity_type)
             payload.append(type_node)
 
-            for key, value in self.vcard_infos.items():
-                if force_update or not self.vCard or not self.vCard.getTag(key.upper()):
-                    node = xmpp.Node(tag=key.upper())
-                    node.setData(value)
-                    payload.append(node)
-
-            if self.vCard:
-                if self.vCard.getTag("ORGNAME"):
-                    payload.append(self.vCard.getTag("ORGNAME"))
-                if self.vCard.getTag("ORGUNIT"):
-                    payload.append(self.vCard.getTag("ORGUNIT"))
-                if self.vCard.getTag("LOCALITY"):
-                    payload.append(self.vCard.getTag("LOCALITY"))
-                if self.vCard.getTag("USERID"):
-                   payload.append(self.vCard.getTag("USERID"))
-                if self.vCard.getTag("CATEGORIES"):
-                   payload.append(self.vCard.getTag("CATEGORIES"))
+            self.set_custom_vcard_information(payload)
 
             if self.name:
                 name_node = xmpp.Node(tag="FN")
                 name_node.setData(self.name)
                 payload.append(name_node)
+
             if self.use_avatar:
                 if not self.b64Avatar:
                     if params and params["filename"]:
@@ -839,12 +828,14 @@ class TNArchipelEntity (object):
                 payload.append(node_photo)
 
             node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
-            ## updating internal representation of the vCard
+
+            # updating internal representation of the vCard
             self.vCard = node_iq.getTag("vCard")
+
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
-            self.log.info("vCard information sent with type: %s" % self.entity_type)
+            self.log.info("VCARD: vCard information sent with type: %s" % self.entity_type)
         except Exception as ex:
-            self.log.error("Error during setting vCard (set_vcard) using stanza: %s EXCEPTION IS: %s" % (str(node_iq), str(ex)))
+            self.log.error("VCARD: Error during setting vCard (set_vcard) using stanza: %s EXCEPTION IS: %s" % (str(node_iq), str(ex)))
 
     def send_update_vcard(self, conn, presence, photo_hash=None):
         """
@@ -870,6 +861,17 @@ class TNArchipelEntity (object):
         self.perform_hooks("HOOK_ARCHIPELENTITY_VCARD_READY")
         self.log.info("vCard update presence sent.")
 
+    def set_custom_vcard_information(self, vCard):
+        """
+        Overide this to set custom info in vCard
+        """
+        pass
+
+    def get_custom_vcard_information(self, vCard):
+        """
+        Override this to update anything relative to current vCard
+        """
+        pass
 
     ### Inband registration management
 
