@@ -686,7 +686,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             name = wanted_name
 
-        newvm_thread = self.alloc(requester, requested_name=name, start=False, organizationInfo=self.vcard_infos)
+        newvm_thread = self.alloc(requester, requested_name=name, start=False, organizationInfo=xmppvm.vcard_infos)
         newvm = newvm_thread.get_instance()
         newvm.register_hook("HOOK_VM_INITIALIZE",
                             method=newvm.clone,
