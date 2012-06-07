@@ -1106,6 +1106,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if not target_vm:
                 raise Exception("No VM with UUID %s" % target_uuid);
 
+            dominfo = xmppvm.domain.info()
+            if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
+                raise Exception('The VM has to be stopped in order to change its information.')
+
             info = {}
             if archipel_tag.getTag("ORGNAME"):
                 info["ORGNAME"] = archipel_tag.getTag("ORGNAME").getData()
