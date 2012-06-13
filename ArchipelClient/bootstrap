@@ -307,7 +307,7 @@ def client_build_vnccappuccino():
 def client_build_lpkit():
     print " * Building LPKit";
     s = Spinner();
-    ret = os.system("cd ./Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build %s && export CONFIGURATION=Debug && jake -f myJakeFile build %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/LPKit && export CAPP_BUILD=./Build && export CONFIGURATION=Release && jake build %s && export CONFIGURATION=Debug && jake build %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build LPKit\033[0m"
