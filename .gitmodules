@@ -1,6 +1,6 @@
 [submodule "ArchipelClient/Libraries/Cappuccino"]
 	path = ArchipelClient/Libraries/Cappuccino
-	url = https://github.com/primalmotion/cappuccino.git
+	url = https://github.com/cappuccino/cappuccino.git
 [submodule "ArchipelClient/Libraries/GrowlCappuccino"]
 	path = ArchipelClient/Libraries/GrowlCappuccino
 	url = https://github.com/primalmotion/GrowlCappuccino.git
