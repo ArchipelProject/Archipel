@@ -18,12 +18,11 @@
 
 @import <Foundation/Foundation.j>
 
-@import <StropheCappuccino/TNBase64Image.j>
 
 /*! @ingroup archipelcore
-    Simple TNBase64Image subclass that add a string to get the avatar filename
+    Simple CPImage subclass that add a string to get the avatar filename
 */
-@implementation TNAvatarImage: TNBase64Image
+@implementation TNAvatarImage: CPImage
 {
     CPString _avatarFilename @accessors(property=avatarFilename);
 }

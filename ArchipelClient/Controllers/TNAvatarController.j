@@ -183,10 +183,9 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
         {
             var avatar      = [avatars objectAtIndex:i],
                 file        = [avatar valueForAttribute:@"name"],
-                ctype       = [avatar valueForAttribute:@"content-type"],
                 cacheKey    = [avatar valueForAttribute:@"hash"] || data, // @TODO: remove the || data later
                 data        = [avatar text],
-                img         = [[TNAvatarImage alloc] init];
+                img;
 
             if ([_rawAvatarDataCache containsKey:cacheKey])
             {
@@ -195,8 +194,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
             }
             else
             {
-                [img setBase64EncodedData:data];
-                [img setContentType:ctype];
+                img = [[TNAvatarImage alloc] initWithData:[CPData dataWithBase64:data]];
                 [img setSize:TNArchipelAvatarManagerThumbSize];
                 [img setAvatarFilename:file];
                 [img load];
