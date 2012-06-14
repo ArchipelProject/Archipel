@@ -24,7 +24,6 @@
 @import <AppKit/CPMenu.j>
 @import <AppKit/CPMenuItem.j>
 
-@import <StropheCappuccino/TNBase64Image.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
@@ -74,7 +73,7 @@
     for (var i = 0; i < [avatarsArray count]; i++)
     {
         var avatarInfo  = [avatarsArray objectAtIndex:i],
-            image       = [[TNBase64Image alloc] initWithContentsOfFile:[bundle pathForResource:[avatarInfo objectForKey:@"path"]] size:TNUserAvatarSize];
+            image       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:[avatarInfo objectForKey:@"path"]] size:TNUserAvatarSize];
 
         [_avatars setObject:image forKey:[avatarInfo objectForKey:@"name"]];
 
@@ -107,12 +106,12 @@
 #pragma mark XMPP
 
 /*! set the avatar
-    @param anAvatarImage a TNBase64Image image
+    @param anAvatarImage a CPImage image
     @param anAvatarName the name of the avatar
 */
 - (void)setAvatarImage:(CPImage)anAvatarImage withName:(CPString)anAvatarName
 {
-    var base64Avatar    = [anAvatarImage base64EncodedData],
+    var base64Avatar    = [[anAvatarImage data] base64],
         vCard           = [TNXMLNode nodeWithName:@"vCard" andAttributes:{@"xmlns": @"vcard-temp"}];
 
     [vCard addChildWithName:@"PHOTO"];
@@ -129,7 +128,7 @@
     @param aStanza the response stanza
     @param anImage the actual avatar image that will be displayed on the toolbar
 */
-- (void)_didSetAvatar:(TNStropheStanza)aStanza image:(TNBase64Image)anImage
+- (void)_didSetAvatar:(TNStropheStanza)aStanza image:(CPImage)anImage
 {
     if ([aStanza type] == @"result")
     {

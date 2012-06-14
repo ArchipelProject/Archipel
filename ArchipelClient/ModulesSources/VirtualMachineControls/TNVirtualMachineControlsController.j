@@ -32,7 +32,6 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
-@import <StropheCappuccino/TNBase64Image.j>
 
 @import "TNExtendedContactObject.j"
 
@@ -942,8 +941,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         }
 
         var base64Data = [dataNode text],
-            cType = [[aStanza firstChildWithName:@"screenshot"] valueForAttribute:@"mime"],
-            screenshot = [TNBase64Image base64ImageWithContentType:cType data:base64Data delegate:self];
+            screenshot = [[CPImage alloc] initWithData:[CPData dataWithBase64:base64Data]];
+
+        [screenshot setDelegate:self];
 
         if (_screenshotTimer)
         {
@@ -982,10 +982,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             return NO;
 
         var base64Data = [dataNode text],
-            mime = [dataNode valueForAttribute:@"mime"],
             screenshotWidth = [dataNode valueForAttribute:@"width"],
             screenshotHeight = [dataNode valueForAttribute:@"height"],
-            screenshot = [TNBase64Image base64ImageWithContentType:mime data:base64Data delegate:nil];
+            screenshot = [[CPImage alloc] initWithData:[CPData dataWithBase64:base64Data]];
 
         [_imageViewFullScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
         [_attachedWindowScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
@@ -1580,7 +1579,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         [_migrateButton setEnabled:NO];
 }
 
-- (void)imageDidLoad:(TNBase64Image)anImage
+- (void)imageDidLoad:(CPImage)anImage
 {
     [buttonScreenshot setImage:anImage];
 

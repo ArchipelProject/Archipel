@@ -1408,9 +1408,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     if (photoNode = [vCard firstChildWithName:@"PHOTO"])
     {
-        var contentType     = [[photoNode firstChildWithName:@"TYPE"] text],
-            data            = [[photoNode firstChildWithName:@"BINVAL"] text],
-            currentAvatar   = [TNBase64Image base64ImageWithContentType:contentType data:data delegate:self];
+        var data            = [[photoNode firstChildWithName:@"BINVAL"] text],
+            currentAvatar   = [[CPImage alloc] initWithData:[CPData dataWithBase64:data]];
+
+        [currentAvatar setDelegate:self];
 
         [currentAvatar setSize:TNUserAvatarSize];
         [_userAvatarButton setImage:currentAvatar];
