@@ -100,6 +100,11 @@ var __defaultPushCenter;
 {
     CPLog.debug("PUSH CENTER: Raw pubsub event received from " + [aStanza from]);
 
+    // Debugging code waiting for a crash report.
+    // If this case happens, it will crash later anyway.
+    if (![[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"])
+        [CPException raise:@"DebugException" reason:@"there is not 'node' attribute in the items. stanza is " + [aStanza stringValue]];
+
     var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
         pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
         pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"],

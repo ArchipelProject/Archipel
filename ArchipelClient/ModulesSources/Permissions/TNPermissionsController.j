@@ -33,6 +33,9 @@
 
 @import "TNPermissionUserFetcher.j"
 @import "TNRolesController.j"
+@import "TNPermissionDataView.j"
+@import "TNPermission.j"
+
 
 var TNArchipelTypePermissions                   = @"archipel:permissions",
     TNArchipelTypePermissionsList               = @"list",
@@ -65,6 +68,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     @outlet CPTextField             labelFecthingUsers;
     @outlet CPTextField             labelNoUserSelected;
     @outlet CPView                  viewTableContainer;
+    @outlet TNPermissionDataView    permissionDataViewPrototype;
     @outlet TNRolesController       rolesController;
 
     TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
@@ -103,6 +107,8 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [_datasourcePermissions setTable:tablePermissions];
     [_datasourcePermissions setSearchableKeyPaths:[@"name", @"description"]];
     [tablePermissions setDataSource:_datasourcePermissions];
+    [[tablePermissions tableColumnWithIdentifier:@"self"] setDataView:[permissionDataViewPrototype duplicate]];
+    [tablePermissions setIntercellSpacing:CPSizeMakeZero()];
 
     _saveButton = [CPButtonBar plusButton];
     [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
@@ -313,7 +319,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     for (var j = 0; j < [_datasourcePermissions count]; j++)
     {
         var perm = [_datasourcePermissions objectAtIndex:j];
-        [perm setValue:CPOffState forKey:@"state"];
+        [perm setState:NO];
     }
 
     [self addPermissions:somePermissions];
@@ -331,9 +337,9 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         for (var j = 0; j < [_datasourcePermissions count]; j++)
         {
             var perm = [_datasourcePermissions objectAtIndex:j];
-            if ([perm valueForKey:@"name"] == [permTemplate valueForAttribute:@"permission_name"])
+            if ([perm name] == [permTemplate valueForAttribute:@"permission_name"])
             {
-                [perm setValue:CPOnState forKey:@"state"];
+                [perm setState:YES];
                 break;
             }
         }
@@ -354,9 +360,9 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
         for (var j = 0; j < [_datasourcePermissions count]; j++)
         {
             var perm = [_datasourcePermissions objectAtIndex:j];
-            if ([perm valueForKey:@"name"] == [permTemplate valueForAttribute:@"permission_name"])
+            if ([perm name] == [permTemplate valueForAttribute:@"permission_name"])
             {
-                [perm setValue:CPOffState forKey:@"state"];
+                [perm setState:NO];
                 break;
             }
         }
@@ -472,8 +478,12 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
             var permission      = [permissions objectAtIndex:i],
                 name            = [permission valueForAttribute:@"name"],
                 description     = [permission valueForAttribute:@"description"],
-                state           = [_currentUserPermissions containsObject:name] ? CPOnState : CPOffState;
-            var newPermission = [CPDictionary dictionaryWithObjectsAndKeys:name, @"name", description, @"description", state, "state"];
+                state           = [_currentUserPermissions containsObject:name] ? CPOnState : CPOffState,
+                newPermission   = [[TNPermission alloc] init];
+
+            [newPermission setName:name];
+            [newPermission setDescription:description];
+            [newPermission setState:state];
             [_datasourcePermissions addObject:newPermission];
         }
 
@@ -562,11 +572,12 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     for (var i = 0; i < [_datasourcePermissions count]; i++)
     {
         var perm = [_datasourcePermissions objectAtIndex:i];
+
         [stanza addChildWithName:@"permission" andAttributes:{
             @"permission_target": permissionTarget,
             @"permission_type": @"user",
-            @"permission_name": [perm objectForKey:@"name"],
-            @"permission_value": ([perm valueForKey:@"state"] === CPOnState),
+            @"permission_name": [perm name],
+            @"permission_value": [perm state]
         }];
         [stanza up];
     }
@@ -598,7 +609,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     try
     {
         if ([aView isKindOfClass:CPCheckBox])
-            [aView setState:[[_datasourcePermissions objectAtIndex:aRow] objectForKey:@"state"]]; // I guess there is bug in Capp here
+            [aView setState:[[_datasourcePermissions objectAtIndex:aRow] state]]; // I guess there is bug in Capp here
     }
     catch (e)
     {

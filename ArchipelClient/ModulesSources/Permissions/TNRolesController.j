@@ -205,17 +205,18 @@
     for (var i = 0; i < [[_delegate datasourcePermissions] count]; i++)
     {
         var perm = [[_delegate datasourcePermissions] objectAtIndex:i];
-        if ([perm valueForKey:@"state"] === CPOnState)
+        if ([perm state])
         {
             [template addChildWithName:@"permission" andAttributes:{
                 @"permission_target": @"template",
                 @"permission_type": @"user",
-                @"permission_name": [perm objectForKey:@"name"],
+                @"permission_name": [perm name],
                 @"permission_value": @"true",
             }];
             [template up];
         }
     }
+
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRole:) name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRoleFail:) name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
     [_nodeRolesTemplates publishItem:template];
@@ -247,19 +248,16 @@
 */
 - (CPArray)buildPermissionsArray
 {
-    var permissions = [CPArray array];
+    var permissions = [CPArray array],
+        selectedRoles = [_datasourceRoles objectsAtIndexes:[tableRoles selectedRowIndexes]];
 
-    for (var i = 0; i < [_datasourceRoles count]; i++)
+    for (var i = 0; i < [selectedRoles count]; i++)
     {
-        var datasourceObject    = [_datasourceRoles objectAtIndex:i];
+        var role = [selectedRoles objectAtIndex:i],
+            currentPerms = [[role valueForKey:@"role"] childrenWithName:@"permission"];
 
-        if ([datasourceObject valueForKey:@"state"] === CPOnState)
-        {
-            var currentPerms = [[datasourceObject valueForKey:@"role"] childrenWithName:@"permission"];
-            [permissions addObjectsFromArray:currentPerms];
-        }
+        [permissions addObjectsFromArray:currentPerms];
     }
-
     return permissions;
 }
 
