@@ -301,7 +301,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     var roster                  = [[TNStropheIMClient defaultClient] roster],
         defaults                = [CPUserDefaults standardUserDefaults],
         currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem],
-        identifier              = [roster analyseVCard:[_entity vCard]],
+        identifier              = [_entity isKindOfClass:TNStropheContact] ? [roster analyseVCard:[_entity vCard]] : @"Group",
         memid                   = @"selectedTabIndexFor" + identifier;
 
     if (currentSelectedIndex == [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid])
@@ -320,7 +320,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     var roster              = [[TNStropheIMClient defaultClient] roster],
         defaults            = [CPUserDefaults standardUserDefaults],
-        identifier          = [roster analyseVCard:[_entity vCard]],
+        identifier          = [_entity isKindOfClass:TNStropheContact] ? [roster analyseVCard:[_entity vCard]] : @"Group",
         memid               = @"selectedTabIndexFor" + identifier,
         oldSelectedIndex    = [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid] || -1,
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
