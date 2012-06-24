@@ -58,6 +58,7 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_CAPABILITIES     = -9009
 ARCHIPEL_ERROR_CODE_HYPERVISOR_MANAGE           = -9010
 ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE         = -9011
 ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO   = -9012
+ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO     = -9013
 
 # Namespace
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
@@ -136,6 +137,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.entity_type                = "hypervisor"
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None
+        self.vcard_infos                = {}
 
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
@@ -145,7 +147,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         # libvirt connection
         self.connect_libvirt()
 
-        self.vcard_infos                = {}
         if (self.configuration.has_section("VCARD")):
             for key in ("orgname", "orgunit", "userid", "locality", "url", "categories"):
                 if self.configuration.has_option("VCARD", key):
@@ -189,6 +190,39 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
+
+
+    ### Overrides
+
+    def set_custom_vcard_information(self, vCard):
+        """
+        Put custom information in vCard
+        """
+        vCard.append(xmpp.Node("TITLE", payload=self.vcard_infos["TITLE"]))
+        vCard.append(xmpp.Node("ORGNAME", payload=self.vcard_infos["ORGNAME"]))
+        vCard.append(xmpp.Node("ORGUNIT", payload=self.vcard_infos["ORGUNIT"]))
+        vCard.append(xmpp.Node("LOCALITY", payload=self.vcard_infos["LOCALITY"]))
+        vCard.append(xmpp.Node("USERID", payload=self.vcard_infos["USERID"]))
+        vCard.append(xmpp.Node("CATEGORIES", payload=self.vcard_infos["CATEGORIES"]))
+
+    def get_custom_vcard_information(self, vCard):
+        """
+        Read custom info from vCard
+        """
+        if vCard.getTag("TITLE"):
+            self.vcard_infos["TITLE"] = vCard.getTag("TITLE").getData()
+        if vCard.getTag("ORGNAME"):
+            self.vcard_infos["ORGNAME"] = vCard.getTag("ORGNAME").getData()
+        if vCard.getTag("ORGUNIT"):
+            self.vcard_infos["ORGUNIT"] = vCard.getTag("ORGUNIT").getData()
+        if vCard.getTag("LOCALITY"):
+            self.vcard_infos["LOCALITY"] = vCard.getTag("LOCALITY").getData()
+        if vCard.getTag("USERID"):
+            self.vcard_infos["USERID"] = vCard.getTag("USERID").getData()
+        if vCard.getTag("CATEGORIES"):
+            self.vcard_infos["CATEGORIES"] = vCard.getTag("CATEGORIES").getData()
+
+    ### Utilities
 
     def update_presence(self, origin=None, user_info=None, parameters=None):
         """
@@ -291,6 +325,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False)
         self.permission_center.create_permission("manage", "Authorizes users make Archipel able to manage external virtual machines", False)
         self.permission_center.create_permission("unmanage", "Authorizes users to make Archipel able to unmanage virtual machines", False)
+        self.permission_center.create_permission("setorginfo", "Authorizes users to change VM Organization information of virtual machines", False)
 
     def manage_persistance(self):
         """
@@ -308,7 +343,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             string_jid, password, date, comment, name = vm
             jid = xmpp.JID(string_jid)
             jid.setResource(self.jid.getNode().lower())
-            vm_thread = self.create_threaded_vm(jid, password, name)
+            vm_thread = self.create_threaded_vm(jid, password, name, self.vcard_infos)
             self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
             vm_thread.start()
             self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())
@@ -429,6 +464,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             - capabilities
             - manage
             - unmanage
+            - setorginfo
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -461,7 +497,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = self.iq_manage(iq)
         elif action == "unmanage":
             reply = self.iq_unmanage(iq)
-
+        elif action == "setorginfo":
+            reply = self.iq_set_organization_info(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -649,7 +686,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             name = wanted_name
 
-        newvm_thread = self.alloc(requester, requested_name=name, start=False)
+        newvm_thread = self.alloc(requester, requested_name=name, start=False, organizationInfo=xmppvm.vcard_infos)
         newvm = newvm_thread.get_instance()
         newvm.register_hook("HOOK_VM_INITIALIZE",
                             method=newvm.clone,
@@ -693,22 +730,22 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             organizationInfo = {}
             requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
 
-            organizationInfo["orgname"] = iq.getTag("query").getTag("archipel").getAttr("orgname")
-            organizationInfo["orgunit"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
-            organizationInfo["locality"] = iq.getTag("query").getTag("archipel").getAttr("locality")
-            organizationInfo["userid"] = iq.getTag("query").getTag("archipel").getAttr("userid")
-            organizationInfo["categories"] = iq.getTag("query").getTag("archipel").getAttr("categories")
+            organizationInfo["ORGNAME"] = iq.getTag("query").getTag("archipel").getAttr("orgname")
+            organizationInfo["ORGUNIT"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
+            organizationInfo["LOCALITY"] = iq.getTag("query").getTag("archipel").getAttr("locality")
+            organizationInfo["USERID"] = iq.getTag("query").getTag("archipel").getAttr("userid")
+            organizationInfo["CATEGORIES"] = iq.getTag("query").getTag("archipel").getAttr("categories")
 
-            if not organizationInfo["orgname"] or organizationInfo["orgname"] == "":
-                organizationInfo["orgname"] = self.vcard_infos["ORGNAME"]
-            if not organizationInfo["orgunit"] or organizationInfo["orgunit"] == "":
-                organizationInfo["orgunit"] = self.vcard_infos["ORGUNIT"]
-            if not organizationInfo["locality"] or organizationInfo["locality"] == "":
-                organizationInfo["locality"] = self.vcard_infos["LOCALITY"]
-            if not organizationInfo["userid"] or organizationInfo["userid"] == "":
-                organizationInfo["userid"] = self.vcard_infos["USERID"]
-            if not organizationInfo["categories"] or organizationInfo["categories"] == "":
-                organizationInfo["categories"] = self.vcard_infos["CATEGORIES"]
+            if not organizationInfo["ORGNAME"] or organizationInfo["ORGNAME"] == "":
+                organizationInfo["ORGNAME"] = self.vcard_infos["ORGNAME"]
+            if not organizationInfo["ORGUNIT"] or organizationInfo["ORGUNIT"] == "":
+                organizationInfo["ORGUNIT"] = self.vcard_infos["ORGUNIT"]
+            if not organizationInfo["LOCALITY"] or organizationInfo["LOCALITY"] == "":
+                organizationInfo["LOCALITY"] = self.vcard_infos["LOCALITY"]
+            if not organizationInfo["USERID"] or organizationInfo["USERID"] == "":
+                organizationInfo["USERID"] = self.vcard_infos["USERID"]
+            if not organizationInfo["CATEGORIES"] or organizationInfo["CATEGORIES"] == "":
+                organizationInfo["CATEGORIES"] = self.vcard_infos["CATEGORIES"]
 
             domainXML = None
             if iq.getTag("query").getTag("archipel").getTag("domain"):
@@ -1054,4 +1091,42 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.update_presence()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE)
+        return reply
+
+    def iq_set_organization_info(self, iq):
+        """
+        Updates the VM organization info
+        """
+        try:
+            reply = iq.buildReply("result")
+            archipel_tag = iq.getTag("query").getTag("archipel")
+            target_uuid = archipel_tag.getAttr("target")
+            target_vm = self.get_vm_by_uuid(target_uuid)
+
+            if not target_vm:
+                raise Exception("No VM with UUID %s" % target_uuid);
+
+            dominfo = target_vm.domain.info()
+            if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
+                raise Exception('The VM has to be stopped in order to change its information.')
+
+            info = {}
+            if archipel_tag.getTag("ORGNAME"):
+                info["ORGNAME"] = archipel_tag.getTag("ORGNAME").getData()
+            if archipel_tag.getTag("ORGUNIT"):
+                info["ORGUNIT"] = archipel_tag.getTag("ORGUNIT").getData()
+            if archipel_tag.getTag("USERID"):
+                info["USERID"] = archipel_tag.getTag("USERID").getData()
+            if archipel_tag.getTag("LOCALITY"):
+                info["LOCALITY"] = archipel_tag.getTag("LOCALITY").getData()
+            if archipel_tag.getTag("CATEGORIES"):
+                info["CATEGORIES"] = archipel_tag.getTag("CATEGORIES").getData()
+
+            target_vm.set_organization_info(info)
+
+            if target_vm.definition:
+                target_vm.define(target_vm.definition)
+
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)
         return reply

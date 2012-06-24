@@ -96,8 +96,17 @@
 
 - (void)addContact
 {
-    var JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
-        name    = [newContactName stringValue];
+    var name = [newContactName stringValue],
+        JID;
+
+    try
+    {
+          JID = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]]
+    }
+    catch (e)
+    {
+        JID = nil;
+    }
 
     if (![JID node] || ![JID domain] || [JID resource])
     {

@@ -76,7 +76,7 @@ stop() {
     fi
 
     echo -ne " * Stopping $PROGNAME:\\r"
-    killall -9 $PROG
+    killall -w $PROG
     retval=$?
     rm -f $lockfile
     echo -ne " * Stopping $PROGNAME: \\033[32m[OK]\\033[0m\\n"

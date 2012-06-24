@@ -77,7 +77,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
 
     [tableVirtualMachines setTarget:self];
-    [tableVirtualMachines setDoubleAction:@selector(virtualMachineDoubleClick:)];
     [_datasourceGroupVM setTable:tableVirtualMachines];
     [_datasourceGroupVM setSearchableKeyPaths:[@"nickname", @"JID"]];
     [tableVirtualMachines setDataSource:_datasourceGroupVM];
@@ -217,19 +216,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 #pragma mark -
 #pragma mark Actions
 
-/*! Action that is sent when user double click on a machine
-    it will show the content of this virtual machine
-    @param sender the sender of the action
-*/
-- (IBAction)virtualMachineDoubleClick:(id)aSender
-{
-    var selectedIndexes = [tableVirtualMachines selectedRowIndexes],
-        contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]],
-        row             = [[[[TNStropheIMClient defaultClient] roster] mainOutlineView] rowForItem:contact],
-        indexes         = [CPIndexSet indexSetWithIndex:row];
-
-    [[[[TNStropheIMClient defaultClient] roster] mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
-}
 
 /*! Action that is sent when user click the create button
     it will show the content of this virtual machine

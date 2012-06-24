@@ -364,8 +364,15 @@
     if ([checkBoxSTPEnabled state] == CPOnState)
     {
         if (![_network bridge])
-            [_network setBridge:[[TNLibvirtNetworkBridge alloc] init]]
+            [_network setBridge:[[TNLibvirtNetworkBridge alloc] init]];
+        [[_network bridge] setName:[fieldBridgeName stringValue]];
         [[_network bridge] setEnableSTP:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
+    }
+
+    if ([_network bridge] && ([[_network bridge] name] == @"" || ![[_network bridge] name]))
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must set a name for the bridge", @"You must set a name for the bridge")];
+        return;
     }
 
     if ([checkBoxBandwidthInbound state] == CPOnState)

@@ -1,5 +1,5 @@
 
-/* Class = "NSTextFieldCell"; title = "Set the different permissions and roles you give to users for thus entity."; ObjectID = "6"; */
+/* Class = "NSTextFieldCell"; title = "Set the different permissions and roles you give to users for this entity."; ObjectID = "6"; */
 "6.title" = "Set the different permissions and roles you give to users for thus entity.";
 
 /* Class = "NSTextFieldCell"; title = "Permissions"; ObjectID = "7"; */
@@ -53,17 +53,11 @@
 /* Class = "NSTextFieldCell"; placeholderString = "A great role for great guys"; ObjectID = "82"; */
 "82.placeholderString" = "A great role for great guys";
 
-/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "123"; */
+/* Class = "NSTableColumn"; headerCell.title = "Permissions"; ObjectID = "123"; */
 "123.headerCell.title" = "Name";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "124"; */
 "124.title" = "Text Cell";
-
-/* Class = "NSTableColumn"; headerCell.title = "Description"; ObjectID = "126"; */
-"126.headerCell.title" = "Description";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "127"; */
-"127.title" = "Text Cell";
 
 /* Class = "NSTableColumn"; headerCell.title = "Description"; ObjectID = "135"; */
 "135.headerCell.title" = "Description";
@@ -94,4 +88,10 @@
 
 /* Class = "NSTextFieldCell"; title = "Fetching users..."; ObjectID = "384"; */
 "384.title" = "Fetching users...";
+
+/* Class = "NSTextFieldCell"; title = "Permission name"; ObjectID = "390"; */
+"390.title" = "Permission name";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "399"; */
+"399.title" = "Label";
 

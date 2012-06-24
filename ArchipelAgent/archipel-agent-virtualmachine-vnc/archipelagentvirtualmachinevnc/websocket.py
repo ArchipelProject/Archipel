@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Python WebSocket library with support for "wss://" encryption.
 Copyright 2011 Joel Martin
@@ -15,49 +17,55 @@ as taken from http://docs.python.org/dev/library/ssl.html#certificates
 '''
 
 import os, sys, time, errno, signal, socket, traceback, select
-import struct, array
+import array, struct
 from cgi import parse_qsl
 from threading import Thread
 from base64 import b64encode, b64decode
 
 # Imports that vary by python version
+
+# python 3.0 differences
 if sys.hexversion > 0x3000000:
-    # python >= 3.0
-    from io import StringIO
-    from http.server import SimpleHTTPRequestHandler
-    from urllib.parse import urlsplit
     b2s = lambda buf: buf.decode('latin_1')
     s2b = lambda s: s.encode('latin_1')
     s2a = lambda s: s
 else:
-    # python 2.X
-    from cStringIO import StringIO
-    from SimpleHTTPServer import SimpleHTTPRequestHandler
-    from urlparse import urlsplit
-    # No-ops
-    b2s = lambda buf: buf
-    s2b = lambda s: s
+    b2s = lambda buf: buf  # No-op
+    s2b = lambda s: s      # No-op
     s2a = lambda s: [ord(c) for c in s]
+try:    from io import StringIO
+except: from cStringIO import StringIO
+try:    from http.server import SimpleHTTPRequestHandler
+except: from SimpleHTTPServer import SimpleHTTPRequestHandler
+try:    from urllib.parse import urlsplit
+except: from urlparse import urlsplit
 
-if sys.hexversion >= 0x2060000:
-    # python >= 2.6
-    from multiprocessing import Process
-    from hashlib import md5, sha1
-else:
-    # python < 2.6
-    Process = None
-    from md5 import md5
-    from sha import sha as sha1
+# python 2.6 differences
+try:    from hashlib import md5, sha1
+except: from md5 import md5; from sha import sha as sha1
+
+# python 2.5 differences
+try:
+    from struct import pack, unpack_from
+except:
+    from struct import pack
+    def unpack_from(fmt, buf, offset=0):
+        slice = buffer(buf, offset, struct.calcsize(fmt))
+        return struct.unpack(fmt, slice)
 
 # Degraded functionality if these imports are missing
-for mod, sup in [('numpy', 'HyBi protocol'),
-        ('ssl', 'TLS/SSL/wss'), ('resource', 'daemonizing')]:
+for mod, sup in [('numpy', 'HyBi protocol'), ('ssl', 'TLS/SSL/wss'),
+        ('multiprocessing', 'Multi-Processing'),
+        ('resource', 'daemonizing')]:
     try:
         globals()[mod] = __import__(mod)
     except ImportError:
         globals()[mod] = None
-        print("WARNING: no '%s' module, %s decode may be slower" % (
+        print("WARNING: no '%s' module, %s is slower or disabled" % (
             mod, sup))
+if multiprocessing and sys.platform == 'win32':
+    # make sockets pickle-able/inheritable
+    import multiprocessing.reduction
 
 
 class WebSocketServer(Thread):
@@ -85,7 +93,12 @@ Sec-WebSocket-Accept: %s\r
 
     policy_response = """<cross-domain-policy><allow-access-from domain="*" to-ports="*" /></cross-domain-policy>\n"""
 
+    # An exception before the WebSocket connection was established
     class EClose(Exception):
+        pass
+
+    # An exception while the WebSocket client was connected
+    class CClose(Exception):
         pass
 
     def __init__(self, listen_host='', listen_port=None, source_is_ipv6=False,
@@ -230,11 +243,11 @@ Sec-WebSocket-Accept: %s\r
         b1 = 0x80 | (opcode & 0x0f) # FIN + opcode
         payload_len = len(buf)
         if payload_len <= 125:
-            header = struct.pack('>BB', b1, payload_len)
+            header = pack('>BB', b1, payload_len)
         elif payload_len > 125 and payload_len < 65536:
-            header = struct.pack('>BBH', b1, 126, payload_len)
+            header = pack('>BBH', b1, 126, payload_len)
         elif payload_len >= 65536:
-            header = struct.pack('>BBQ', b1, 127, payload_len)
+            header = pack('>BBQ', b1, 127, payload_len)
 
         #print("Encoded: %s" % repr(header + buf))
 
@@ -262,8 +275,8 @@ Sec-WebSocket-Accept: %s\r
              'length'       : 0,
              'payload'      : None,
              'left'         : 0,
-             'close_code'   : None,
-             'close_reason' : None}
+             'close_code'   : 1000,
+             'close_reason' : ''}
 
         blen = len(buf)
         f['left'] = blen
@@ -271,7 +284,7 @@ Sec-WebSocket-Accept: %s\r
         if blen < f['hlen']:
             return f # Incomplete frame header
 
-        b1, b2 = struct.unpack_from(">BB", buf)
+        b1, b2 = unpack_from(">BB", buf)
         f['opcode'] = b1 & 0x0f
         f['fin'] = (b1 & 0x80) >> 7
         has_mask = (b2 & 0x80) >> 7
@@ -282,12 +295,12 @@ Sec-WebSocket-Accept: %s\r
             f['hlen'] = 4
             if blen < f['hlen']:
                 return f # Incomplete frame header
-            (f['length'],) = struct.unpack_from('>xxH', buf)
+            (f['length'],) = unpack_from('>xxH', buf)
         elif f['length'] == 127:
             f['hlen'] = 10
             if blen < f['hlen']:
                 return f # Incomplete frame header
-            (f['length'],) = struct.unpack_from('>xxQ', buf)
+            (f['length'],) = unpack_from('>xxQ', buf)
 
         full_len = f['hlen'] + has_mask * 4 + f['length']
 
@@ -316,7 +329,7 @@ Sec-WebSocket-Accept: %s\r
 
         if f['opcode'] == 0x08:
             if f['length'] >= 2:
-                f['close_code'] = struct.unpack_from(">H", f['payload'])
+                f['close_code'] = unpack_from(">H", f['payload'])[0]
             if f['length'] > 3:
                 f['close_reason'] = f['payload'][2:]
 
@@ -346,7 +359,7 @@ Sec-WebSocket-Accept: %s\r
         num1 = int("".join([c for c in key1 if c.isdigit()])) / spaces1
         num2 = int("".join([c for c in key2 if c.isdigit()])) / spaces2
 
-        return b2s(md5(struct.pack('>II8s',
+        return b2s(md5(pack('>II8s',
             int(num1), int(num2), key3)).digest())
 
     #
@@ -429,7 +442,7 @@ Sec-WebSocket-Accept: %s\r
 
         buf = self.client.recv(self.buffer_size)
         if len(buf) == 0:
-            closed = "Client closed abruptly"
+            closed = {'code': 1000, 'reason': "Client closed abruptly"}
             return bufs, closed
 
         if self.recv_part:
@@ -451,14 +464,14 @@ Sec-WebSocket-Accept: %s\r
                     break
                 else:
                     if frame['opcode'] == 0x8: # connection close
-                        closed = "Client closed, reason: %s - %s" % (
-                                frame['close_code'],
-                                frame['close_reason'])
+                        closed = {'code': frame['close_code'],
+                                  'reason': frame['close_reason']}
                         break
 
             else:
                 if buf[0:2] == s2b('\xff\x00'):
-                    closed = "Client sent orderly close frame"
+                    closed = {'code': 1000,
+                              'reason': "Client sent orderly close frame"}
                     break
 
                 elif buf[0:2] == s2b('\x00\xff'):
@@ -491,13 +504,11 @@ Sec-WebSocket-Accept: %s\r
 
         return bufs, closed
 
-    def send_close(self, code=None, reason=''):
+    def send_close(self, code=1000, reason=''):
         """ Send a WebSocket orderly close frame. """
 
         if self.version.startswith("hybi"):
-            msg = s2b('')
-            if code != None:
-                msg = struct.pack(">H%ds" % (len(reason)), code)
+            msg = pack(">H%ds" % len(reason), code, reason)
 
             buf, h, t = self.encode_hybi(msg, opcode=0x08, base64=False)
             self.client.send(buf)
@@ -545,7 +556,7 @@ Sec-WebSocket-Accept: %s\r
             sock.send(s2b(self.policy_response))
             raise self.EClose("Sending flash policy response")
 
-        elif handshake[0] in ("\x16", "\x80"):
+        elif handshake[0] in ("\x16", "\x80", 22, 128):
             # SSL wrap the connection
             if not ssl:
                 raise self.EClose("SSL connection but no 'ssl' module")
@@ -562,7 +573,10 @@ Sec-WebSocket-Accept: %s\r
             except ssl.SSLError:
                 _, x, _ = sys.exc_info()
                 if x.args[0] == ssl.SSL_ERROR_EOF:
-                    raise self.EClose("")
+                    if len(x.args) > 1:
+                        raise self.EClose(x.args[1])
+                    else:
+                        raise self.EClose("Got SSL_ERROR_EOF")
                 else:
                     raise
 
@@ -718,6 +732,11 @@ Sec-WebSocket-Accept: %s\r
 
                 self.ws_connection = True
                 self.new_client()
+            except self.CClose:
+                # Close the client
+                _, exc, _ = sys.exc_info()
+                if self.client:
+                    self.send_close(exc.args[0], exc.args[1])
             except self.EClose:
                 _, exc, _ = sys.exc_info()
                 # Connection was not a WebSockets connection
@@ -734,6 +753,8 @@ Sec-WebSocket-Accept: %s\r
                 self.rec.close()
 
             if self.client and self.client != startsock:
+                # Close the SSL wrapped socket
+                # Original socket closed by caller
                 self.client.close()
 
     def new_client(self):
@@ -793,9 +814,10 @@ Sec-WebSocket-Accept: %s\r
                             self.msg('%s: exiting due to --run-once'
                                     % address[0])
                             break
-                    elif Process:
+                    elif multiprocessing:
                         self.vmsg('%s: new handler Process' % address[0])
-                        p = Process(target=self.top_new_client,
+                        p = multiprocessing.Process(
+                                target=self.top_new_client,
                                 args=(startsock, address))
                         p.start()
                         # child will not return
@@ -871,3 +893,4 @@ class WSRequestHandler(SimpleHTTPRequestHandler):
     def log_message(self, f, *args):
         # Save instead of printing
         self.last_message = f % args
+

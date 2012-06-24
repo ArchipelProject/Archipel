@@ -150,6 +150,7 @@ class TNArchipelEntity (object):
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
             self.create_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")
+            self.create_hook("HOOK_ARCHIPELENTITY_VCARD_READY")
 
             ## recover/create pubsub after connection
             self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.recover_pubsubs)
@@ -611,9 +612,11 @@ class TNArchipelEntity (object):
         """
         self.log.info("status change: %s show:%s" % (presence_status, presence_show))
         pres = xmpp.Presence(status=presence_status, show=presence_show)
+        xmpp.dispatcher.ID += 1
+        pres.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
 
         def presence_callback(conn, resp):
-            self.xmppstatus     = presence_status
+            self.xmppstatus = presence_status
             self.xmppstatusshow = presence_show
             self.log.debug("PRESENCE : I just set change presence. The result is %s" % resp)
             if callback:
@@ -627,9 +630,7 @@ class TNArchipelEntity (object):
         @type presence_status: string
         @param presence_status: the value of the XMPP status
         """
-        self.xmppstatus = presence_status
-        pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
-        self.xmppclient.send(pres)
+        self.change_presence(self.xmppstatusshow, presence_status)
 
     def push_change(self, namespace, change, content_node=None):
         """
@@ -706,6 +707,8 @@ class TNArchipelEntity (object):
         """
         self.log.info("%s is subscribing to jid %s" % (str(self.jid), str(jid)))
         presence = xmpp.Presence(to=jid, typ='subscribe')
+        xmpp.dispatcher.ID += 1
+        presence.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         if self.name:
             presence.addChild(name="nick", namespace="http://jabber.org/protocol/nick", payload=self.name)
         self.xmppclient.send(presence)
@@ -769,7 +772,7 @@ class TNArchipelEntity (object):
         """
         Retrieve vCard from server.
         """
-        self.log.info("Asking for own vCard.")
+        self.log.info("VCARD: Asking for own vCard.")
         node_iq = xmpp.Iq(typ='get')
         node_iq.addChild(name="vCard", namespace="vcard-temp")
         self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)
@@ -779,48 +782,38 @@ class TNArchipelEntity (object):
         Callback of manage_vcard()
         """
         self.vCard = vcard.getTag("vCard")
-        if self.use_avatar and  self.vCard and self.vCard.getTag("PHOTO"):
-            self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
-        self.log.info("Own vcard retrieved")
-        self.set_vcard()
+
+        if self.vCard:
+            self.log.info("VCARD: I already have a vCard.")
+            if self.use_avatar and self.vCard.getTag("PHOTO"):
+                self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
+            self.get_custom_vcard_information(self.vCard)
+        else:
+            self.log.info("VCARD: I don't have any vCard. Creating new one.")
+            self.set_vcard()
 
     def set_vcard(self, params={}):
         """
-        Allows to define a vCard type for the entry.
+        Allows to define a vCard t ype for the entry.
         set the vcard of the entity
         @type params: dict
         @param params: the parameters of the vCard
         """
         try:
-            self.log.info("vCard making started.")
-            node_iq     = xmpp.Iq(typ='set', xmlns=None)
-            payload     = []
-            type_node   = xmpp.Node(tag="ROLE")
+            self.log.info("VCARD: vCard making started.")
+            node_iq = xmpp.Iq(typ='set', xmlns=None)
+            payload = []
+            type_node = xmpp.Node(tag="ROLE")
             type_node.setData(self.entity_type)
             payload.append(type_node)
 
-            if hasattr(self, "vcard_infos"):
-                for key, value in self.vcard_infos.items():
-                    node = xmpp.Node(tag=key.upper())
-                    node.setData(value)
-                    payload.append(node)
-
-            if self.vCard:
-                if self.vCard.getTag("ORGNAME"):
-                    payload.append(self.vCard.getTag("ORGNAME"))
-                if self.vCard.getTag("ORGUNIT"):
-                    payload.append(self.vCard.getTag("ORGUNIT"))
-                if self.vCard.getTag("LOCALITY"):
-                    payload.append(self.vCard.getTag("LOCALITY"))
-                if self.vCard.getTag("USERID"):
-                   payload.append(self.vCard.getTag("USERID"))
-                if self.vCard.getTag("CATEGORIES"):
-                   payload.append(self.vCard.getTag("CATEGORIES"))
+            self.set_custom_vcard_information(payload)
 
             if self.name:
                 name_node = xmpp.Node(tag="FN")
                 name_node.setData(self.name)
                 payload.append(name_node)
+
             if self.use_avatar:
                 if not self.b64Avatar:
                     if params and params["filename"]:
@@ -835,12 +828,14 @@ class TNArchipelEntity (object):
                 payload.append(node_photo)
 
             node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
-            ## updating internal representation of the vCard
+
+            # updating internal representation of the vCard
             self.vCard = node_iq.getTag("vCard")
+
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
-            self.log.info("vCard information sent with type: %s" % self.entity_type)
+            self.log.info("VCARD: vCard information sent with type: %s" % self.entity_type)
         except Exception as ex:
-            self.log.error("Error during setting vCard (set_vcard) using stanza: %s EXCEPTION IS: %s" % (str(node_iq), str(ex)))
+            self.log.error("VCARD: Error during setting vCard (set_vcard) using stanza: %s EXCEPTION IS: %s" % (str(node_iq), str(ex)))
 
     def send_update_vcard(self, conn, presence, photo_hash=None):
         """
@@ -855,13 +850,28 @@ class TNArchipelEntity (object):
         @param photo_hash: the SHA-1 hash of the photo that changes (optionnal)
         """
         node_presence = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        xmpp.dispatcher.ID += 1
+        node_presence.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
+
         if photo_hash:
             node_photo_sha1 = xmpp.Node(tag="photo")
             node_photo_sha1.setData(photo_hash)
         node_presence.addChild(name="x", namespace='vcard-temp:x:update')
         self.xmppclient.send(node_presence)
+        self.perform_hooks("HOOK_ARCHIPELENTITY_VCARD_READY")
         self.log.info("vCard update presence sent.")
 
+    def set_custom_vcard_information(self, vCard):
+        """
+        Overide this to set custom info in vCard
+        """
+        pass
+
+    def get_custom_vcard_information(self, vCard):
+        """
+        Override this to update anything relative to current vCard
+        """
+        pass
 
     ### Inband registration management
 

@@ -902,7 +902,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)didReceiveUserMessage:(CPNotification)aNotification
 {
     var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
-        message         = TNStropheStripHTMLCharCode([[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text]),
+        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
         bundle          = [CPBundle bundleForClass:[self class]],
         customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
         currentContact  = [aNotification object];
@@ -1242,7 +1242,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)openWiki:(id)sender
 {
-    window.open("http://github.org/primalmotion/archipel/wiki");
+    window.open("https://github.com/primalmotion/archipel/wiki");
 }
 
 /*! Opens the archipel commit line
@@ -1250,7 +1250,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)openReleaseNotes:(id)sender
 {
-    window.open("http://github.com/primalmotion/Archipel/commits/master");
+    window.open("https://github.com/primalmotion/Archipel/commits/master");
 }
 
 /*! Opens the donation website in a new window
@@ -1266,7 +1266,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)openBugTracker:(id)sender
 {
-    window.open("http://github.org/primalmotion/archipel/issues/");
+    window.open("https://github.com/primalmotion/archipel/issues/");
 }
 
 /*! hide or show the main menu
@@ -1408,9 +1408,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     if (photoNode = [vCard firstChildWithName:@"PHOTO"])
     {
-        var contentType     = [[photoNode firstChildWithName:@"TYPE"] text],
-            data            = [[photoNode firstChildWithName:@"BINVAL"] text],
-            currentAvatar   = [TNBase64Image base64ImageWithContentType:contentType data:data delegate:self];
+        var data            = [[photoNode firstChildWithName:@"BINVAL"] text],
+            currentAvatar   = [[CPImage alloc] initWithData:[CPData dataWithBase64:data]];
+
+        [currentAvatar setDelegate:self];
 
         [currentAvatar setSize:TNUserAvatarSize];
         [_userAvatarButton setImage:currentAvatar];

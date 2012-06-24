@@ -133,7 +133,7 @@ else
 
         if ([stanza containsChildrenWithName:@"body"])
         {
-            var messageBody = TNStropheStripHTMLCharCode([[stanza firstChildWithName:@"body"] text]);
+            var messageBody = [[stanza firstChildWithName:@"body"] text];
 
             [self appendMessageToBoard:messageBody from:[_entity nickname]];
         }

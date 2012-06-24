@@ -203,7 +203,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
         case TNStropheContactStatusDND:
             if ([_mainTabView selectedTabViewItem])
-                [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
+                [self rememberSelectedIndexForItem:[_mainTabView selectedTabViewItem]];
             [self _removeAllTabsFromModulesTabView];
             infoText = @"Entity does not want to be disturbed";
             break;
@@ -285,9 +285,9 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 #pragma mark Storage
 
 /*! set wich item tab to remember
-    @param anItem: the TNTabView item to remember
+    @param anItem the tab view item to save
 */
-- (void)rememberSelectedIndexOfItem:(id)anItem
+- (void)rememberSelectedIndexForItem:(CPTabViewItem)anItem
 {
     if (_deactivateModuleTabItemPositionStorage)
         return;
@@ -298,9 +298,10 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     if ([_mainTabView numberOfTabViewItems] <= 0)
         return;
 
-    var defaults                = [CPUserDefaults standardUserDefaults],
+    var roster                  = [[TNStropheIMClient defaultClient] roster],
+        defaults                = [CPUserDefaults standardUserDefaults],
         currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem],
-        identifier              = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
+        identifier              = [_entity isKindOfClass:TNStropheContact] ? [roster analyseVCard:[_entity vCard]] : @"Group",
         memid                   = @"selectedTabIndexFor" + identifier;
 
     if (currentSelectedIndex == [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid])
@@ -314,19 +315,22 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 */
 - (void)recoverFromLastSelectedIndex
 {
-    var defaults            = [CPUserDefaults standardUserDefaults],
-        identifier          = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
+    if (!_entity)
+        return;
+
+    var roster              = [[TNStropheIMClient defaultClient] roster],
+        defaults            = [CPUserDefaults standardUserDefaults],
+        identifier          = [_entity isKindOfClass:TNStropheContact] ? [roster analyseVCard:[_entity vCard]] : @"Group",
         memid               = @"selectedTabIndexFor" + identifier,
-        oldSelectedIndex    = [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid] || 0,
+        oldSelectedIndex    = [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid] || -1,
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
-    if (!(_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1)))
+    if (oldSelectedIndex == -1)
         return;
 
     CPLog.info("recovering last selected tab index " + oldSelectedIndex);
 
-    if ([_mainTabView selectedTabViewIndex] != oldSelectedIndex)
-        [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
+    [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
 
@@ -704,6 +708,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     var currentModule = [_tabModules objectForKey:[[_mainTabView selectedTabViewItem] identifier]];
     [currentModule setCurrentSelectedIndex:YES];
+
     if ([[TNPermissionsCenter defaultCenter] arePermissionsCachedForEntity:_entity])
         [currentModule willShow];
 }
@@ -778,7 +783,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         [oldModule willHide];
         [oldModule setCurrentSelectedIndex:NO];
 
-        [self rememberSelectedIndexOfItem:anItem];
+        [self rememberSelectedIndexForItem:anItem];
     }
 
     var newModule = [anItem module];

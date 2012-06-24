@@ -119,6 +119,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         self.vm_will_define_hooks       = []
+        self.vcard_infos                = {}
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
@@ -126,21 +127,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
         self.connect_libvirt()
 
-        self.vcard_infos = {}
-
-        if organizationInfo:
-            if organizationInfo["orgname"]:
-                self.vcard_infos["ORGNAME"] = organizationInfo["orgname"]
-            if  organizationInfo["orgunit"]:
-                self.vcard_infos["ORGUNIT"] = organizationInfo["orgunit"]
-            if  organizationInfo["userid"]:
-                self.vcard_infos["USERID"] = organizationInfo["userid"]
-            if  organizationInfo["locality"]:
-                self.vcard_infos["LOCALITY"] = organizationInfo["locality"]
-            if  organizationInfo["categories"]:
-                self.vcard_infos["CATEGORIES"] = organizationInfo["categories"]
-
-        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
+        self.set_organization_info(organizationInfo, publish=False)
 
         # create VM folders if not exists
         if not os.path.isdir(self.folder):
@@ -179,6 +166,37 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         # modules
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.virtualmachine')
+
+
+    ### Overrides
+
+    def set_custom_vcard_information(self, vCard):
+        """
+        Put custom information in vCard
+        """
+        vCard.append(xmpp.Node("TITLE", payload=self.vcard_infos["TITLE"]))
+        vCard.append(xmpp.Node("ORGNAME", payload=self.vcard_infos["ORGNAME"]))
+        vCard.append(xmpp.Node("ORGUNIT", payload=self.vcard_infos["ORGUNIT"]))
+        vCard.append(xmpp.Node("LOCALITY", payload=self.vcard_infos["LOCALITY"]))
+        vCard.append(xmpp.Node("USERID", payload=self.vcard_infos["USERID"]))
+        vCard.append(xmpp.Node("CATEGORIES", payload=self.vcard_infos["CATEGORIES"]))
+
+    def get_custom_vcard_information(self, vCard):
+        """
+        Read custom info from vCard
+        """
+        if vCard.getTag("TITLE"):
+            self.vcard_infos["TITLE"] = vCard.getTag("TITLE").getData()
+        if vCard.getTag("ORGNAME"):
+            self.vcard_infos["ORGNAME"] = vCard.getTag("ORGNAME").getData()
+        if vCard.getTag("ORGUNIT"):
+            self.vcard_infos["ORGUNIT"] = vCard.getTag("ORGUNIT").getData()
+        if vCard.getTag("LOCALITY"):
+            self.vcard_infos["LOCALITY"] = vCard.getTag("LOCALITY").getData()
+        if vCard.getTag("USERID"):
+            self.vcard_infos["USERID"] = vCard.getTag("USERID").getData()
+        if vCard.getTag("CATEGORIES"):
+            self.vcard_infos["CATEGORIES"] = vCard.getTag("CATEGORIES").getData()
 
 
     ### Utilities
@@ -579,6 +597,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             reply = self.iq_undefine(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
+
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -590,6 +609,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Create the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.create()
         self.log.info("Virtual machine created.")
@@ -601,6 +622,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Shutdown the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.shutdown()
         if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
@@ -614,6 +637,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Destroy the domain.
         """
         self.lock()
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         ret = self.domain.destroy()
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
@@ -623,6 +648,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Reboot the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
         self.log.info("Virtual machine rebooted.")
@@ -631,6 +658,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Suspend (pause) the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.suspend()
         self.log.info("Virtual machine suspended.")
@@ -641,6 +670,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Resume (unpause) the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.lock()
         ret = self.domain.resume()
         self.log.info("Virtual machine resumed.")
@@ -954,7 +985,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Perform the migration.
         """
         ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
-        flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
+        try: # libvirt 0.9.10+
+            flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE | libvirt.VIR_MIGRATE_UNSAFE
+        except:
+            flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
         try:
             self.log.info("MIGRATION: starting to migrate domain %s" % remote_hypervisor_uri)
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
@@ -973,14 +1007,29 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_VM_FREE")
         self.hypervisor.free(self.jid)
 
-    def setowner(self, organization_name, organization_unit):
+    def set_organization_info(self, organizationInfo, publish=True):
         """
         Set the vCard fields for the organization
         """
-        ## NEED UPDATE
-        self.vcard_infos["ORGNAME"] = organization_name
-        self.vcard_infos["ORGUNIT"] = organization_unit
-        self.set_vcard()
+        if not organizationInfo:
+            return;
+
+        if "ORGNAME" in organizationInfo:
+            self.vcard_infos["ORGNAME"] = organizationInfo["ORGNAME"]
+        if "ORGUNIT" in organizationInfo:
+            self.vcard_infos["ORGUNIT"] = organizationInfo["ORGUNIT"]
+        if "USERID" in organizationInfo:
+            self.vcard_infos["USERID"] = organizationInfo["USERID"]
+        if "LOCALITY" in organizationInfo:
+            self.vcard_infos["LOCALITY"] = organizationInfo["LOCALITY"]
+        if "CATEGORIES" in organizationInfo:
+            self.vcard_infos["CATEGORIES"] = organizationInfo["CATEGORIES"]
+
+        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
+
+        if publish:
+            self.set_vcard()
+
 
     ### Other stuffs
 

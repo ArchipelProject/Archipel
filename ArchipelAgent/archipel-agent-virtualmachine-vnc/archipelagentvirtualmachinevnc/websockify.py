@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 A WebSocket to TCP socket proxy with support for "wss://" encryption.
 Copyright 2011 Joel Martin
@@ -121,7 +123,7 @@ Traffic Legend:
                 else:
                     self.run_wrap_cmd()
 
-    #
+    # 
     # Routines above this point are run in the master listener
     # process.
     #
@@ -188,7 +190,8 @@ Traffic Legend:
             if target in ins:
                 # Receive target data, encode it and queue for client
                 buf = target.recv(self.buffer_size)
-                if len(buf) == 0: raise self.EClose("Target closed")
+                if len(buf) == 0:
+                    raise self.CClose(1000, "Target closed")
 
                 cqueue.append(buf)
                 self.traffic("{")

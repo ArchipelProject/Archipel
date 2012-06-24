@@ -112,6 +112,21 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
 
+    ### Utilities
+
+    def get_basic_info(self):
+        """
+        Returns some info about the hypervisor
+        @rtype: Dict
+        @return: Dictionary containing information
+        """
+        info = {}
+
+        f = open("/proc/cpuinfo")
+        cpuinfo = f.read()
+        info["vmx"] = "vmx" in cpuinfo
+        return info
+
 
     ### HOOK
 
@@ -251,6 +266,11 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     nodes.append(driverversion_node)
                 except Exception as ex:
                     raise Exception("Unable to append driverversion_node node.", ex)
+                try:
+                    basic_info = xmpp.Node("info", attrs=self.get_basic_info())
+                    nodes.append(basic_info)
+                except Exception as ex:
+                    raise Exception("Unable to append basic_info node.", ex)
                 reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)
