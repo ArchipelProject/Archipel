@@ -30,7 +30,9 @@ guest os and user (or other modules). module transforms every messages starting 
 !exec to guest-agent (using xmpp) to run on guest os, so if user runs !exec ls the ls\
 command will run on guest os and result of it will be sent back to user as message."
 ENTRY_POINTS        = { 'archipel.plugin.virtualmachine' : [
-                            'factory=archipelvirtualmachineagent:make_archipel_plugin']}
+                            'factory=archipelvirtualmachineagent:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'factory=archipelvirtualmachineagent:version']}
 
 RPM_REQUIRED_DEPS   = "archipel-core"
 
