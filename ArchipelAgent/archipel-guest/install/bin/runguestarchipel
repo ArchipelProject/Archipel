@@ -1,0 +1,224 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
+#
+# runarchipel
+#
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright (C) 2012 Parspooyesh - Behrooz Shabani <everplays@gmail.com>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import commands
+import optparse
+import os, sys
+import socket
+import subprocess
+import re
+import hashlib
+import uuid as moduuid
+
+## Error codes
+ARCHIPEL_INIT_SUCCESS                   = 0
+ARCHIPEL_INIT_ERROR_NO_CONFIG           = 1
+ARCHIPEL_INIT_ERROR_NO_MODULE           = 2
+ARCHIPEL_INIT_ERROR_BAD_LIBVIRT         = 3
+ARCHIPEL_INIT_ERROR_UNKNOWN             = 4
+ARCHIPEL_INIT_ERROR_CONNECTION          = 5
+ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION   = 6
+ARCHIPEL_INIT_ERROR_STATELESS_MODE      = 7
+
+# Import and check essential modules
+try:
+    from archipelcore.scriptutils import error, msg, warn, success
+except ImportError as ex:
+    print "FATAL: you need to install archipel-core"
+    sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+try:
+    import xmpp
+except ImportError as ex:
+    error("Bad XMPPPY installation you need python-xmpp (xmpppy): %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+try:
+    from archipelcore.utils import init_conf, init_log
+    from archipelguest.archipelGuest import TNArchipelGuest
+except ImportError as ex:
+    error("Bad archipel installation. You need archipel-core and archipel-guest: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+def format_version(info):
+    """
+    Format the version info
+    @type info: list
+    @param info: plugin informations
+    """
+    if len(info) == 2:
+        print " - %s: %s" % (info[0], info[1])
+    else:
+        print " - %s: %s" % (info[0], info[1])
+        for p in info[2]:
+            print "     + %s" % p["identifier"]
+
+def help():
+    """
+    Display help
+    """
+    print ARCHIPEL_CMD_HELP
+    sys.exit(ARCHIPEL_INIT_SUCCESS)
+
+def versions(option, opt, value, parser):
+    """
+    Display all the versions
+    """
+    import pkg_resources
+    """print versions of all installed modules"""
+    print "* Archipel Guest version :"
+    format_version(("archipelguest", pkg_resources.get_distribution("archipel-guest").version))
+    print "\n* Installed plugins versions :"
+    for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
+        try:
+            method  = version_method.load()
+            format_version(method())
+        except Exception as ex:
+            error("unable to get the version of one plugin: %s" % ex, exit=False)
+    sys.exit(ARCHIPEL_INIT_SUCCESS)
+
+def initialize_config(paths, prepare_only=False):
+    """
+    Initialize the ConfigParser object
+    @type paths: list
+    @param paths: list of the path of the config files
+    @type cmdline_path: string
+    @param cmdline_path: the path of kernel param file
+    @type prepare_only: Boolean
+    @param prepare_only: if True, we will exit after preparing the config.
+    @rtype: ConfigParser
+    @return: ready to use config object
+    """
+    # Read the local config file(s)
+    try:
+        config = init_conf(paths)
+    except Exception as ex:
+        error("Unable to read local configuration file(s) %s : %s" % (str(paths), str(ex)), code=ARCHIPEL_INIT_ERROR_NO_CONFIG)
+    return config
+
+
+def main(config):
+    """
+    main function of Archipel
+    @type config: ConfigParser
+    @param config: the configuration
+    """
+    # we don't want that user sets jid and other stuff for each guest
+    # we need a drop-in working package, so we gonna get uuid of vm
+    # and hostname of guest os.
+    # hostname of guest os should be something like:
+    #           vm-name.hypervisorhostname
+    # and jid of vm is:
+    #           uuid-of-vm@hypervisorhostname
+    # we gonna use following jid:
+    #           uuid-of-vm-agent@hypervisorhostname
+    # we can get uuid of vm from dmi info
+    dmiPopen = subprocess.Popen('dmidecode', stdout=subprocess.PIPE)
+    dmiout, stderr = dmiPopen.communicate()
+    uuidMatch = re.search("\W+UUID: (.*)", dmiout)
+    uuid = uuidMatch.group(1)
+    # first check if we have a subdomain thing on hostname of guest os
+    # if not, try to use hostname
+    hostnameMatch = re.search('[^\.]+-dot-(.*)|(.*)', socket.gethostname())
+    hostname = hostnameMatch.group(1)
+    if hostname==None:
+        hostname = hostnameMatch.group(0)
+    jid = xmpp.JID(uuid+'-agent@'+hostname)
+    jid.setResource('guestagent')
+
+    # we gonna generate a random password and use it for future
+    try:
+        passwordFile = open('/etc/archipel/archipel.passwd')
+        password = passwordFile.readline().strip()
+        passwordFile.close()
+    except:
+        if not os.path.exists('/etc/archipel'):
+            os.mkdir('/etc/archipel/')
+        passwordFile = open('/etc/archipel/archipel.passwd', 'w+')
+        password = hashlib.md5(str(moduuid.uuid1())).hexdigest()
+        passwordFile.write(password)
+        passwordFile.close()
+        password = hashlib.md5(uuid).hexdigest()
+        try:
+            os.fchmod('/etc/archipel/archipel.passwd', 0400)
+        except:
+            pass
+
+    # Create the archipel guest instance
+    guest = TNArchipelGuest(jid, password, config)
+
+    # Try to connect to XMPP
+    try:
+        guest.connect()
+    except Exception as ex:
+        error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)), code=ARCHIPEL_INIT_ERROR_CONNECTION)
+
+    # Main runloop
+    try:
+        guest.loop()
+    except Exception as ex:
+        if guest.xmppclient.isConnected():
+            guest.xmppclient.disconnect()
+        error("Exception has stopped the guest main loop: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
+
+
+if __name__ == "__main__":
+    """
+    Main loop of the program
+    """
+    parser = optparse.OptionParser()
+    parser.add_option("-c", "--config",
+                        dest="config",
+                        help="the config file to use",
+                        metavar="CONFIG",
+                        default="/etc/archipel/archipel.conf")
+    parser.add_option("-v", "--version",
+                        action="callback",
+                        help="display the version of all components",
+                        callback=versions)
+    parser.add_option("-n", "--nofork",
+                        action="store_true",
+                        dest="nofork",
+                        help="do not fork. For testing purpose")
+
+    options, args = parser.parse_args()
+
+    # Read configuration
+    config = initialize_config(options.config.split(","))
+
+    # Initialize logger
+    init_log(config)
+
+    # fork
+    if not options.nofork:
+        try:
+            pid = os.fork()
+            if pid > 0: sys.exit(0)
+        except Exception as e:
+            error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
+        os.chdir("/")
+        os.setsid()
+        os.umask(0)
+        try:
+            pid = os.fork()
+            if pid > 0: sys.exit(0)
+        except Exception as e:
+            error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
+
+    # Start the daemon main loop
+    main(config)
