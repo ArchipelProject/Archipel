@@ -106,8 +106,8 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity, TNTaggableEntity):
     def iq_exec(self, iq):
         self.log.info('processing: '+str(iq))
         response = 'direct execution is not allowed'
-        if str(self.jid).replace('-agent', '').replace('/guestagent', '').find(iq.getFrom())==0:
-            p = subprocess.Popen(iq.getTag("query").getTag("archipel").getCData(), stdout=subprocess.PIPE)
+        if iq.getFrom().getStripped().lower()==self.jid.getStripped().replace('-agent', '').lower():
+            p = subprocess.Popen(iq.getTag("query").getTag("archipel").getData(), stdout=subprocess.PIPE)
             response, stderr = p.communicate()
         result = iq.buildReply('result')
         result.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL)
@@ -116,6 +116,6 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity, TNTaggableEntity):
         archipel.setAttr('action', 'exec')
         archipel.setAttr('executor', iq.getTag("query").getTag("archipel").getAttr("executor"))
         archipel.addData(response)
-        self.log('responsing: '+str(result))
+        self.log.info('responsing: '+str(result))
         return result
 
