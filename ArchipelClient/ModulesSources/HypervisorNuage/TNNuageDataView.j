@@ -29,21 +29,19 @@ var TNNuageDataViewIcon;
 */
 @implementation TNNuageDataView : TNBasicDataView
 {
-    @outlet CPTextField         fieldName;
+    @outlet CPImageView         imageIcon;
     @outlet CPTextField         fieldAddress;
-    @outlet CPTextField         fieldNetmask;
+    @outlet CPTextField         fieldDomain;
     @outlet CPTextField         fieldGateway;
     @outlet CPTextField         fieldInLimit;
+    @outlet CPTextField         fieldName;
+    @outlet CPTextField         fieldNetmask;
     @outlet CPTextField         fieldOutLimit;
     @outlet CPTextField         fieldType;
-    @outlet CPImageView         imageIcon;
+    @outlet CPTextField         fieldZone;
 
-    @outlet CPTextField         labelAddress;
-    @outlet CPTextField         labelNetmask;
-    @outlet CPTextField         labelGateway;
     @outlet CPTextField         labelInLimit;
     @outlet CPTextField         labelOutLimit;
-    @outlet CPTextField         labelType;
 
     TNNuage                     _nuage;
 }
@@ -68,10 +66,13 @@ var TNNuageDataViewIcon;
     [imageIcon setImage:TNNuageDataViewIcon];
 
     [fieldName setStringValue:[_nuage name]];
-    [fieldType setStringValue:[_nuage type]];
+    [fieldType setStringValue:[_nuage type] || @""];
+    [fieldDomain setStringValue:[_nuage domain] || @""];
+    [fieldZone setStringValue:[_nuage zone]];
     [fieldAddress setStringValue:[[_nuage IP] address] || @"No IP"];
     [fieldNetmask setStringValue:[[_nuage IP] netmask] || @"No Netmask"];
     [fieldGateway setStringValue:[[_nuage IP] gateway] || @"No Netmask"];
+
 
     [fieldInLimit setHidden:YES];
     [labelInLimit setHidden:YES];
@@ -119,10 +120,9 @@ var TNNuageDataViewIcon;
         fieldGateway = [aCoder decodeObjectForKey:@"fieldGateway"];
         fieldInLimit = [aCoder decodeObjectForKey:@"fieldInLimit"];
         fieldOutLimit = [aCoder decodeObjectForKey:@"fieldOutLimit"];
+        fieldDomain = [aCoder decodeObjectForKey:@"fieldDomain"];
+        fieldZone = [aCoder decodeObjectForKey:@"fieldZone"];
 
-        labelAddress = [aCoder decodeObjectForKey:@"labelAddress"];
-        labelNetmask = [aCoder decodeObjectForKey:@"labelNetmask"];
-        labelGateway = [aCoder decodeObjectForKey:@"labelBridgeNetmask"];
         labelInLimit = [aCoder decodeObjectForKey:@"labelInLimit"];
         labelOutLimit = [aCoder decodeObjectForKey:@"labelOutLimit"];
     }
@@ -145,10 +145,9 @@ var TNNuageDataViewIcon;
     [aCoder encodeObject:fieldGateway forKey:@"fieldGateway"];
     [aCoder encodeObject:fieldInLimit forKey:@"fieldInLimit"];
     [aCoder encodeObject:fieldOutLimit forKey:@"fieldOutLimit"];
+    [aCoder encodeObject:fieldDomain forKey:@"fieldDomain"];
+    [aCoder encodeObject:fieldZone forKey:@"fieldZone"];
 
-    [aCoder encodeObject:labelAddress forKey:@"labelAddress"];
-    [aCoder encodeObject:labelNetmask forKey:@"labelNetmask"];
-    [aCoder encodeObject:labelGateway forKey:@"labelGateway"];
     [aCoder encodeObject:labelInLimit forKey:@"labelInLimit"];
     [aCoder encodeObject:labelOutLimit forKey:@"labelOutLimit"];
 }

@@ -37,7 +37,7 @@ ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GET      = -12004
 ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GETNAMES = -12005
 
 # This is a sample of the definition of a nuage network
-# <nuage_network name="blabla" type="ipv4" >
+# <nuage_network name="blabla" type="ipv4" domain="domain1" zone="zone2">
 #     <bandwidth>
 #         <inbound average='1000' peak='5000' burst='5120' />
 #         <outbound average='1000' peak='5000' burst='5120' />

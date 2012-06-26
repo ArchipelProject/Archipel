@@ -51,10 +51,12 @@
     @outlet CPTextField         fieldBandwidthOutboundAverage;
     @outlet CPTextField         fieldBandwidthOutboundBurst;
     @outlet CPTextField         fieldBandwidthOutboundPeak;
+    @outlet CPTextField         fieldDomain;
     @outlet CPTextField         fieldErrorMessage;
     @outlet CPTextField         fieldGateway;
     @outlet CPTextField         fieldName;
     @outlet CPTextField         fieldNetmask;
+    @outlet CPTextField         fieldZone;
 
     BOOL                        _isNewNuage @accessors(setter=setIsNewNuage:);
     id                          _delegate   @accessors(property=delegate);
@@ -75,6 +77,8 @@
     [fieldAddress setToolTip:CPBundleLocalizedString(@"The IP address to the Nuage network", @"The IP address to the Nuage network")];
     [fieldNetmask setToolTip:CPBundleLocalizedString(@"The netmask to use for Nuage network", @"The netmask to use for the Nuage network")];
     [fieldGateway setToolTip:CPBundleLocalizedString(@"The gateway to use for Nuage network", @"The gateway to use for the Nuage network")];
+    [fieldDomain setToolTip:CPBundleLocalizedString(@"The network domain", @"The network domain")];
+    [fieldZone setToolTip:CPBundleLocalizedString(@"The network zone", @"The network zone")];
 }
 
 
@@ -91,6 +95,8 @@
     [fieldAddress setStringValue:[[_nuage IP] address] || @""];
     [fieldNetmask setStringValue:[[_nuage IP] netmask] || @""];
     [fieldGateway setStringValue:[[_nuage IP] gateway] || @""];
+    [fieldDomain setStringValue:[_nuage domain] || @""];
+    [fieldZone setStringValue:[_nuage zone] || @""];
 
     [buttonNuageType selectItemWithTitle:[_nuage type]];
 
@@ -122,8 +128,22 @@
         return;
     }
 
+    if (![fieldDomain stringValue] || [fieldDomain stringValue] == @"")
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid domain name", @"You must enter a valid domain name")];
+        return;
+    }
+
+    if (![fieldZone stringValue] || [fieldZone stringValue] == @"")
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid zone name", @"You must enter a valid zone name")];
+        return;
+    }
+
     [_nuage setName:[fieldName stringValue]];
     [_nuage setType:[buttonNuageType title]];
+    [_nuage setDomain:[fieldDomain stringValue]];
+    [_nuage setZone:[fieldZone stringValue]];
 
     if (![_nuage IP])
         [_nuage setIP:[[TNNuageNetworkIP alloc] init]];

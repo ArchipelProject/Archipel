@@ -32,6 +32,8 @@ TNNuageNetworkTypes     = [TNNuageNetworkTypeIPV4, TNNuageNetworkTypeIPV6];
 {
     CPString                    _name               @accessors(property=name);
     CPString                    _type               @accessors(property=type);
+    CPString                    _domain             @accessors(property=domain);
+    CPString                    _zone               @accessors(property=zone);
     TNNuageNetworkBandwidth     _bandwidth          @accessors(property=bandwidth);
     TNNuageNetworkIP            _IP                 @accessors(property=IP);
 }
@@ -64,8 +66,10 @@ TNNuageNetworkTypes     = [TNNuageNetworkTypeIPV4, TNNuageNetworkTypeIPV6];
         if ([aNode name] != @"nuage_network")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid nuage_network"];
 
-        _name = [aNode valueForAttribute:@"name"];
-        _type = [aNode valueForAttribute:@"type"];
+        _name   = [aNode valueForAttribute:@"name"];
+        _type   = [aNode valueForAttribute:@"type"];
+        _domain = [aNode valueForAttribute:@"domain"];
+        _zone   = [aNode valueForAttribute:@"zone"];
 
         if ([aNode firstChildWithName:@"ip"])
             _IP = [[TNNuageNetworkIP alloc] initWithXMLNode:[aNode firstChildWithName:@"ip"]];
@@ -89,8 +93,12 @@ TNNuageNetworkTypes     = [TNNuageNetworkTypeIPV4, TNNuageNetworkTypeIPV6];
         [CPException raise:@"Missing name" reason:@"name is required"];
     if (!_type)
         [CPException raise:@"Missing type" reason:@"type is required"];
+    if (!_domain)
+        [CPException raise:@"Missing domain" reason:@"domain is required"];
+    if (!_zone)
+        [CPException raise:@"Missing zone" reason:@"zone is required"];
 
-    var node = [TNXMLNode nodeWithName:@"nuage_network" andAttributes:{"name": _name, "type": _type}];
+    var node = [TNXMLNode nodeWithName:@"nuage_network" andAttributes:{"name": _name, "type": _type, "domain": _domain, "zone": _zone}];
 
     if (_IP)
     {
