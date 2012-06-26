@@ -57,20 +57,30 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                 commandline = xmldesc.addChild(name='qemu:commandline', attrs={
                     "xmlns:qemu": 'http://libvirt.org/schemas/domain/qemu/1.0'})
             else:
-                # if we have commandline tag, check for args
+                # if we have commandline tag, check for args to be like:
+                # 0: -net
+                # 1: nic,model=virtio
+                # 2: -net
+                # 3: user,hostname=...
                 hasSwitchs = 0
                 for arg in commandline.getTags('arg', namespace='qemu') :
-                    if arg.getAttr('value')=='-net' and hasSwitchs==0 :
-                        hasSwitchs = 1
+                    if arg.getAttr('value')=='-net' and (hasSwitchs==0 or hasSwitchs==2) :
+                        hasSwitchs += 1
+                        continue
                     if hasSwitchs==1 :
+                        if arg.getAttr('value')=='nic,model=virtio' :
+                            hasSwitchs += 1
+                            continue
+                    if hasSwitchs==3 :
                         if arg.getAttr('value')==hostname :
-                            hasSwitchs = 2
+                            hasSwitchs += 1
                             break
-                        else:
-                            hasSwitchs = 0
-                if hasSwitchs<2 :
+                    hasSwitchs = 0
+                if hasSwitchs<4 :
                     shouldBeAdded = True
             if shouldBeAdded :
+                commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
+                commandline.addChild(name='qemu:arg', attrs={'value': 'nic,model=virtio'})
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
                 commandline.addChild(name='qemu:arg', attrs={'value': hostname })
         return xmldesc
