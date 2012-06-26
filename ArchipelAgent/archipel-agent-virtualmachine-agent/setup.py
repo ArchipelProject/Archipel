@@ -26,8 +26,8 @@ LICENSE             = 'AGPL'
 NAME                = 'archipel-agent-virtualmachine-guest'
 SHORTDESCRIPTION    = "This module enables user to execute commands on guest os"
 LONGDESCRIPTION     = "This module works as a tunnel between guest-agent running on \
-guest os and user (or other modules). module transforms every messages starting with\
-!exec to guest-agent (using xmpp) to run on guest os, so if user runs !exec ls the ls\
+guest os and user (or other modules). module transforms every messages starting with \
+!exec to guest-agent (using xmpp) to run on guest os, so if user runs !exec ls the ls \
 command will run on guest os and result of it will be sent back to user as message."
 ENTRY_POINTS        = { 'archipel.plugin.virtualmachine' : [
                             'factory=archipelvirtualmachineagent:make_archipel_plugin'],
@@ -53,7 +53,7 @@ setup(name=NAME,
       description=SHORTDESCRIPTION,
       long_description=LONGDESCRIPTION,
       classifiers=[
-        'Development Status :: 0 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: No Input/Output (Daemon)',
         'Intended Audience :: Developers',
