@@ -134,7 +134,7 @@ def main(config):
     uuid = uuidMatch.group(1)
     # first check if we have a subdomain thing on hostname of guest os
     # if not, try to use hostname
-    hostnameMatch = re.search('[^\.]+-dot-(.*)|(.*)', socket.gethostname())
+    hostnameMatch = re.search('[^\.]+\.(.*)|(.*)', socket.gethostname())
     hostname = hostnameMatch.group(1)
     if hostname==None:
         hostname = hostnameMatch.group(0)
