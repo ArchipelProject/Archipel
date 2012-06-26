@@ -40,6 +40,40 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
+        self.entity.add_vm_definition_hook(self.add_net_switch_to_definition)
+
+    def add_net_switch_to_definition(self, sender, xmldesc):
+        self.entity.log.info('GUEST.enabled: '+str(self.configuration.getboolean("GUEST", "enabled")))
+        if self.configuration.getboolean("GUEST", "enabled"):
+            shouldBeAdded = False
+            name = xmldesc.getTag('name').getData()
+            hostname = 'user,hostname=%s.%s' % (name, self.entity.jid.getDomain())
+            # check if we already have added switch
+            commandline = xmldesc.getTag('commandline', namespace='qemu')
+            self.entity.log.info(str(commandline))
+            if commandline==None :
+                # add commandline tag, if we don't have any
+                shouldBeAdded = True
+                commandline = xmldesc.addChild(name='qemu:commandline', attrs={
+                    "xmlns:qemu": 'http://libvirt.org/schemas/domain/qemu/1.0'})
+            else:
+                # if we have commandline tag, check for args
+                hasSwitchs = 0
+                for arg in commandline.getTags('arg', namespace='qemu') :
+                    if arg.getAttr('value')=='-net' and hasSwitchs==0 :
+                        hasSwitchs = 1
+                    if hasSwitchs==1 :
+                        if arg.getAttr('value')==hostname :
+                            hasSwitchs = 2
+                            break
+                        else:
+                            hasSwitchs = 0
+                if hasSwitchs<2 :
+                    shouldBeAdded = True
+            if shouldBeAdded :
+                commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
+                commandline.addChild(name='qemu:arg', attrs={'value': hostname })
+        return xmldesc
 
     def register_handlers(self):
         TNArchipelPlugin.register_handlers(self)
@@ -60,8 +94,8 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         """
         return {    "common-name"               : "Virtual Machine Agent",
                     "identifier"                : "virtualmachineguestagent",
-                    "configuration-section"     : None,
-                    "configuration-tokens"      : []}
+                    "configuration-section"     : 'GUEST',
+                    "configuration-tokens"      : ['enabled']}
 
     def process_iq(self, conn, iq):
         self.entity.log.info(str(iq.getFrom()).lower()+'=='+(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent').lower())
