@@ -23,7 +23,7 @@ AUTHOR              = 'Behrooz Shabani'
 MAIL                = 'everplays@gmail.com'
 URL                 = 'http://archipelproject.org'
 LICENSE             = 'AGPL'
-NAME                = 'archipel-guest-virtualmachine-agent'
+NAME                = 'archipel-agent-virtualmachine-guest'
 SHORTDESCRIPTION    = "This module enables user to execute commands on guest os"
 LONGDESCRIPTION     = "This module works as a tunnel between guest-agent running on \
 guest os and user (or other modules). module transforms every messages starting with\

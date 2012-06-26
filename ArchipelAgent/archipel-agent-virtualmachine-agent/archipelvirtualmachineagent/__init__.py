@@ -46,4 +46,5 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-guest-agent").version, [virtualmachineagent.TNVirtualMachineAgent.plugin_info()])
+    return (__name__, pkg_resources.get_distribution("archipel-agent-virtualmachine-guest").version, [virtualmachineagent.TNVirtualMachineAgent.plugin_info()])
+
