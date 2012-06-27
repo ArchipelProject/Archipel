@@ -65,7 +65,6 @@ ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
-ARCHIPEL_XMPP_SHOW_ONLINE_NO_VMX                = "Online (no virtualization extensions)"
 
 
 class TNThreadedVirtualMachine (Thread):
@@ -92,9 +91,6 @@ class TNThreadedVirtualMachine (Thread):
         self.jid = jid
         self.password = password
         self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration, name, organizationInfo)
-        f = open("/proc/cpuinfo")
-        cpuinfo = f.read()
-        self.vmx = "vmx" in cpuinfo
 
     def get_instance(self):
         """
@@ -142,6 +138,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None
         self.vcard_infos                = {}
+
+        # VMX extensions check
+        f = open("/proc/cpuinfo")
+        cpuinfo = f.read()
+        f.close()
+        self.has_vmx = False #"vmx" in cpuinfo
 
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
@@ -239,11 +241,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param parameters: runtime arguments
         """
         count   = len(self.virtualmachines)
-        if self.vmx:
-            status = ARCHIPEL_XMPP_SHOW_ONLINE
+        if self.has_vmx:
+            status  = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
         else:
-            status = ARCHIPEL_XMPP_SHOW_ONLINE_NO_VMX
-        status  = status + " (" + str(count) + ")"
+            status  = "%s (%d) — no VMX" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+
         self.change_presence(self.xmppstatusshow, status)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
