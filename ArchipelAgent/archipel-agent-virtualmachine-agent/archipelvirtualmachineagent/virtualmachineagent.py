@@ -43,6 +43,15 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         self.entity.add_vm_definition_hook(self.add_net_switch_to_definition)
 
     def add_net_switch_to_definition(self, sender, xmldesc):
+        """
+        adds network switches if GUEST.enabled configuration is true
+        @type sender: xmpp.JID
+        @param sender: the jid that edited definition
+        @type xmldesc: xmpp.Node
+        @param xmldesc: xml definition that is going to be sent to libvirt
+        @rtype: xmpp.Node
+        @return: xml definition
+        """
         self.entity.log.info('GUEST.enabled: '+str(self.configuration.getboolean("GUEST", "enabled")))
         if self.configuration.getboolean("GUEST", "enabled"):
             shouldBeAdded = False
@@ -86,11 +95,17 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         return xmldesc
 
     def register_handlers(self):
+        """
+        lets register our stanza handlers
+        """
         TNArchipelPlugin.register_handlers(self)
         self.entity.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
 
     def unregister_handlers(self):
+        """
+        hmm, seems we have to unregister our handlers
+        """
         TNArchipelEntity.unregister_handlers(self)
         self.entity.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
         self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
@@ -108,24 +123,79 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                     "configuration-tokens"      : ['enabled']}
 
     def process_iq(self, conn, iq):
-        self.entity.log.info(str(iq.getFrom()).lower()+'=='+(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent').lower())
+        """
+        processes iq messages with archipel:guest:control
+        @type conn: xmpp.Dispatcher
+        @param conn: instance of connection that sent message
+        @type iq: xmpp.Protocol.Iq
+        @param iq: received Iq stanza
+        """
+        reply = None
+        action = self.check_acp(conn, iq)
+
+        if(action=='exec')
+            reply = self.exec_iq(iq)
+        if(reply)
+            conn.send(reply)
+            raise xmpp.NodeProcessed
+
+    def exec_iq(iq):
+        """
+        processes iq with exec type and returns the stanza that should be sent
+        @type id: xmpp.Protocol.Iq
+        @param id: received iq
+        @rtype: xmpp.Protocol
+        @return: the stanza that should be sent or None if we've not processes the stanza
+        """
+        # if we've received iq from agent running in guest os it has to be result of
+        # a executed command, so tunnel result back to user as message
+        # TODO: if we received an Iq from agent running in guest and jid has permission
+        # to send us Iq, we should tunnel his/her command to agent and sent it back as Iq
+        # when we received result Iq
         if str(iq.getFrom()).lower()==(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent').lower():
             archipel = iq.getTag("query").getTag("archipel")
             msg = xmpp.protocol.Message(archipel.getAttr('executor'), archipel.getData())
-            conn.send(msg)
-            raise xmpp.NodeProcessed
+            return msg
+        return None
 
     def process_message(self, conn, msg):
+        """
+        processes messages that start with !exec as command that should be run on guest os
+        @type conn: xmpp.Dispatcher
+        @param conn: instance of connection that sent message
+        @type msg: xmpp.Protocol.Message
+        @param msg: received message stanza
+        """
         body = str(msg.getBody())
         if body.find('!exec')==0 and self.entity.permission_center.check_permission(str(msg.getFrom().getStripped()), "message"):
-            command = body.replace('!exec', '').strip()
-            executor = msg.getFrom()
-            runIq = self.execute(command, executor)
-            self.entity.log.info('sending: '+str(runIq ))
+            runIq = self.exec_msg(msg)
+            self.entity.log.info('sending: '+str(runIq))
             conn.send(runIq)
             raise xmpp.NodeProcessed
 
+    def exec_msg(self, msg):
+        """
+        makes an Iq stanza to agent running on guest to run the command
+        @type msg: xmpp.Protocol.Message
+        @param msg: message that starts with !exec
+        @rtype: xmpp.Protocol
+        @return: the stanza that must be sent
+        """
+        body = msg.getBody()
+        command = body.replace('!exec', '').strip()
+        executor = msg.getFrom()
+        return self.execute(command, executor)
+
     def execute(self, command, executor):
+        """
+        generates an Iq get to agent running on guest
+        @type command: String
+        @param command: the command that should be executed on guest machine
+        @type executor: String
+        @param executor: the jid that sent the command (will be used for sending result back)
+        @rtype: xmpp.protocol.Iq
+        @return: generated Iq stanza
+        """
         to = xmpp.JID(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent')
         iq = xmpp.protocol.Iq(typ='get', to=to)
         iq.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL);
