@@ -65,6 +65,7 @@ ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
+ARCHIPEL_XMPP_SHOW_ONLINE_NO_VMX                = "Online (no virtualization extensions)"
 
 
 class TNThreadedVirtualMachine (Thread):
@@ -91,6 +92,9 @@ class TNThreadedVirtualMachine (Thread):
         self.jid = jid
         self.password = password
         self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration, name, organizationInfo)
+        f = open("/proc/cpuinfo")
+        cpuinfo = f.read()
+        self.vmx = "vmx" in cpuinfo
 
     def get_instance(self):
         """
@@ -235,7 +239,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param parameters: runtime arguments
         """
         count   = len(self.virtualmachines)
-        status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
+        if self.vmx:
+            status = ARCHIPEL_XMPP_SHOW_ONLINE
+        else:
+            status = ARCHIPEL_XMPP_SHOW_ONLINE_NO_VMX
+        status  = status + " (" + str(count) + ")"
         self.change_presence(self.xmppstatusshow, status)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
