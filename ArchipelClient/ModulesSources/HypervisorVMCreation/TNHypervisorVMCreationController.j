@@ -87,6 +87,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     CPButton                                        _parkDeleteButton;
     CPButton                                        _plusButton;
     CPButton                                        _removeSubscriptionButton;
+    CPButton                                        _jumpButton;
     CPButton                                        _unmanageButton;
     CPButton                                        _unparkButton;
     TNTableViewDataSource                           _virtualMachinesDatasource;
@@ -186,7 +187,15 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_parkButton setEnabled:NO];
     [_parkButton setToolTip:CPLocalizedString(@"Ask hypervisor to park this virtual machine", @"Ask hypervisor to park this virtual machine")];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton, _parkButton]];
+    _jumpButton = [CPButtonBar plusButton];
+    [_jumpButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"jump.png"] size:CPSizeMake(16, 16)]];
+    [_jumpButton setTarget:self];
+    [_jumpButton setAction:@selector(addSelectedVMToRoster:)];
+    [_jumpButton setEnabled:NO];
+    [_jumpButton setToolTip:CPLocalizedString(@"Add the virtual machine in your roster if not already present", @"Add the virtual machine in your roster if not already present")];
+
+
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton, _parkButton, _jumpButton]];
 
     // Not managed VM Table View
     _virtualMachinesNotManagedDatasource = [[TNTableViewDataSource alloc] init];
@@ -252,7 +261,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_parkDeleteButton setToolTip:CPLocalizedString(@"Delete parked virtual machines", @"Delete parked virtual machines")];
 
     [buttonBarParkedVMControl setButtons:[_unparkButton, _editParkedXMLButton, _parkDeleteButton]];
-
 
     [VMAllocationController setDelegate:self];
     [VMSubscriptionController setDelegate:self];
@@ -355,6 +363,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
     [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:tableManagedCondition];
     [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:tableManagedCondition];
+
+    [_jumpButton setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
 
     if (![self currentEntityHasPermission:@"alloc"])
         [VMAllocationController closeWindow:nil];
@@ -487,6 +497,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             [_parkButton setEnabled:NO];
             [_addSubscriptionButton setEnabled:NO];
             [_removeSubscriptionButton setEnabled:NO];
+            [_jumpButton setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
+
             var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
             [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:condition];
             [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:condition];
@@ -552,6 +564,31 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 #pragma mark -
 #pragma mark Actions
+
+/*! add double clicked vm to roster if not present or go to virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)addSelectedVMToRoster:(id)aSender
+{
+    if ([tableVirtualMachines numberOfSelectedRows] <= 0)
+        return;
+
+    var vm = [_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]];
+
+    if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
+    {
+        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Adding contact", @"Adding contact")
+                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [vm nickname] + CPBundleLocalizedString(@" to your roster", @" to your roster")
+                                     target:self
+                                     actions:[[CPBundleLocalizedString(@"Add contact", @"Add contact"), @selector(performAddToRoster:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
+        [alert setUserInfo:vm];
+        [alert runModal];
+    }
+    else
+    {
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewSelectItemNotification object:self userInfo:vm];
+    }
+}
 
 /*! add double clicked vm to roster if not present or go to virtual machine
     @param sender the sender of the action
@@ -904,7 +941,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                     var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil],
                         name = [[queryItems objectAtIndex:i] valueForAttribute:@"name"];
 
-                    [contact setNickname:name + @" (Double click to add in your roster)"];
+                    [contact setNickname:name];
                     [_virtualMachinesDatasource addObject:contact];
                 }
             }

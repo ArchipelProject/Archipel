@@ -111,7 +111,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     }
     else
     {
-        [fieldNickName setStringValue:[aContact nickname] || @"This machine is not in your roster. Double click to add it."];
+        [fieldNickName setStringValue:[aContact nickname] || @"This machine is not in your roster"];
         [imageAvatar setImage:TNVirtualMachineDataViewAvatarUnknown];
         [self shouldHideLabels:YES];
     }
