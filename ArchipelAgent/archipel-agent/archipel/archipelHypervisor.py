@@ -143,7 +143,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         f = open("/proc/cpuinfo")
         cpuinfo = f.read()
         f.close()
-        self.has_vmx = False #"vmx" in cpuinfo
+        self.has_vmx = "vmx" in cpuinfo or "svm" in cpuinfo
 
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
@@ -244,7 +244,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         if self.has_vmx:
             status  = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
         else:
-            status  = "%s (%d) — no VMX" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+            status  = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
 
         self.change_presence(self.xmppstatusshow, status)
 
