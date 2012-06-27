@@ -68,7 +68,7 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
             else:
                 # if we have commandline tag, check for args to be like:
                 # 0: -net
-                # 1: nic,model=virtio
+                # 1: nic,model=virtio,addr=0xf
                 # 2: -net
                 # 3: user,hostname=...
                 hasSwitchs = 0
@@ -77,7 +77,7 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                         hasSwitchs += 1
                         continue
                     if hasSwitchs==1 :
-                        if arg.getAttr('value')=='nic,model=virtio' :
+                        if arg.getAttr('value')=='nic,model=virtio,addr=0xf' :
                             hasSwitchs += 1
                             continue
                     if hasSwitchs==3 :
@@ -89,7 +89,7 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                     shouldBeAdded = True
             if shouldBeAdded :
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
-                commandline.addChild(name='qemu:arg', attrs={'value': 'nic,model=virtio'})
+                commandline.addChild(name='qemu:arg', attrs={'value': 'nic,model=virtio,addr=0xf'})
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
                 commandline.addChild(name='qemu:arg', attrs={'value': hostname })
         return xmldesc
