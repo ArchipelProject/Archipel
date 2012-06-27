@@ -131,15 +131,15 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         @param iq: received Iq stanza
         """
         reply = None
-        action = self.check_acp(conn, iq)
+        action = self.entity.check_acp(conn, iq)
 
-        if(action=='exec')
+        if(action=='exec'):
             reply = self.exec_iq(iq)
-        if(reply)
+        if(reply):
             conn.send(reply)
             raise xmpp.NodeProcessed
 
-    def exec_iq(iq):
+    def exec_iq(self, iq):
         """
         processes iq with exec type and returns the stanza that should be sent
         @type id: xmpp.Protocol.Iq
