@@ -130,9 +130,9 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         iq = xmpp.protocol.Iq(typ='get', to=to)
         iq.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL);
         query = iq.getTag("query");
-        archipel = query.addChild('archipel');
-        archipel.setAttr('executor', executor)
-        archipel.setAttr('action', 'exec')
+        archipel = query.addChild('archipel', attrs={
+            "executor": executor,
+            "action": "exec"});
         archipel.addData(command)
         return iq
 
