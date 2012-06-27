@@ -50,10 +50,8 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity, TNTaggableEntity):
         @param jid: the jid of the hypervisor
         @type password: string
         @param password: the password associated to the JID
-        @type name: string
-        @param name: the name of the hypervisor
-        @type database_file: string
-        @param database_file: the sqlite3 file to store existing VM for persistance
+        @type configuration: ConfigParser
+        @param configuration: configuration object
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, 'auto')
         self.log.info("starting archipel-agent")
@@ -70,14 +68,14 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity, TNTaggableEntity):
 
     def register_handlers(self):
         """
-        This method overrides the defaut register_handler of the super class.
+        lets register our iq handler
         """
         TNArchipelEntity.register_handlers(self)
         self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
 
     def unregister_handlers(self):
         """
-        Unregister the handlers.
+        hmm, seems that we must unregister our iq handler
         """
         TNArchipelEntity.unregister_handlers(self)
         self.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
