@@ -19,7 +19,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION             = '0.0.1'
+VERSION             = '0.5.0'
 
 DESCRIPTION="""\
 ** Archipel Guest Agent **
@@ -59,7 +59,7 @@ setup(name='archipel-guest',
       description="The guest's agent part of Archipel",
       long_description=DESCRIPTION,
       classifiers=[
-        'Development Status :: 0 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: No Input/Output (Daemon)',
         'Intended Audience :: Developers',
