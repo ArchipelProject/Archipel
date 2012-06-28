@@ -26,9 +26,9 @@
 #              xmpp server.
 ### END INIT INFO
 
-ARCHIPEL=`which runguestarchipel`
+ARCHIPEL=`which runarchipelguest`
 if [ $? -eq 1 ]; then
-  ARCHIPEL=/usr/local/bin/runguestarchipel
+  ARCHIPEL=/usr/local/bin/runarchipelguest
   if [ ! -e "$ARCHIPEL" ]; then
     echo 'Archipel exe not found !'
     exit 1

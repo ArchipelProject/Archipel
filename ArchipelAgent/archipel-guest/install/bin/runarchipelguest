@@ -1,7 +1,7 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
 # -*- coding: utf-8 -*-
 #
-# runarchipel
+# runarchipelguest
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # Copyright (C) 2012 Parspooyesh - Behrooz Shabani <everplays@gmail.com>
