@@ -70,21 +70,21 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                 # 1: nic,model=virtio,addr=0xf
                 # 2: -net
                 # 3: user,hostname=...
-                hasSwitchs = 0
+                hasSwitches = 0
                 for arg in commandline.getTags('arg', namespace='qemu'):
-                    if arg.getAttr('value') == '-net' and (hasSwitchs == 0 or hasSwitchs == 2):
-                        hasSwitchs += 1
+                    if arg.getAttr('value') == '-net' and (hasSwitches == 0 or hasSwitches == 2):
+                        hasSwitches += 1
                         continue
-                    if hasSwitchs == 1:
+                    if hasSwitches == 1:
                         if arg.getAttr('value')=='nic,model=virtio,addr=0xf':
-                            hasSwitchs += 1
+                            hasSwitches += 1
                             continue
-                    if hasSwitchs == 3:
+                    if hasSwitches == 3:
                         if arg.getAttr('value')==hostname:
-                            hasSwitchs += 1
+                            hasSwitches += 1
                             break
-                    hasSwitchs = 0
-                if hasSwitchs < 4:
+                    hasSwitches = 0
+                if hasSwitches < 4:
                     shouldBeAdded = True
             if shouldBeAdded:
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
