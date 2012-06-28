@@ -59,7 +59,7 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
             hostname = 'user,hostname=%s.%s' % (name, self.entity.jid.getDomain())
             # check if we already have added switch
             commandline = xmldesc.getTag('commandline', namespace='qemu')
-            if commandline==None :
+            if commandline == None:
                 # add commandline tag, if we don't have any
                 shouldBeAdded = True
                 commandline = xmldesc.addChild(name='qemu:commandline', attrs={
@@ -71,22 +71,22 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                 # 2: -net
                 # 3: user,hostname=...
                 hasSwitchs = 0
-                for arg in commandline.getTags('arg', namespace='qemu') :
-                    if arg.getAttr('value')=='-net' and (hasSwitchs==0 or hasSwitchs==2) :
+                for arg in commandline.getTags('arg', namespace='qemu'):
+                    if arg.getAttr('value') == '-net' and (hasSwitchs == 0 or hasSwitchs == 2):
                         hasSwitchs += 1
                         continue
-                    if hasSwitchs==1 :
-                        if arg.getAttr('value')=='nic,model=virtio,addr=0xf' :
+                    if hasSwitchs == 1:
+                        if arg.getAttr('value')=='nic,model=virtio,addr=0xf':
                             hasSwitchs += 1
                             continue
-                    if hasSwitchs==3 :
-                        if arg.getAttr('value')==hostname :
+                    if hasSwitchs == 3:
+                        if arg.getAttr('value')==hostname:
                             hasSwitchs += 1
                             break
                     hasSwitchs = 0
-                if hasSwitchs<4 :
+                if hasSwitchs < 4:
                     shouldBeAdded = True
-            if shouldBeAdded :
+            if shouldBeAdded:
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
                 commandline.addChild(name='qemu:arg', attrs={'value': 'nic,model=virtio,addr=0xf'})
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
@@ -132,9 +132,9 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         reply = None
         action = self.entity.check_acp(conn, iq)
 
-        if(action=='exec'):
+        if action == "exec":
             reply = self.exec_iq(iq)
-        if(reply):
+        if reply:
             conn.send(reply)
             raise xmpp.NodeProcessed
 
@@ -151,7 +151,7 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         # TODO: if we received an Iq from agent running in guest and jid has permission
         # to send us Iq, we should tunnel his/her command to agent and sent it back as Iq
         # when we received result Iq
-        if str(iq.getFrom()).lower()==(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent').lower():
+        if str(iq.getFrom()).lower() == (self.entity.uuid+"-agent@"+self.entity.jid.getDomain()+"/guestagent").lower():
             archipel = iq.getTag("query").getTag("archipel")
             msg = xmpp.protocol.Message(archipel.getAttr('executor'), archipel.getData())
             return msg
@@ -166,7 +166,7 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         @param msg: received message stanza
         """
         body = str(msg.getBody())
-        if body.find('!exec')==0 and self.entity.permission_center.check_permission(str(msg.getFrom().getStripped()), "message"):
+        if body.find("!exec") == 0 and self.entity.permission_center.check_permission(str(msg.getFrom().getStripped()), "message"):
             runIq = self.exec_msg(msg)
             self.entity.log.info('sending: '+str(runIq))
             conn.send(runIq)
