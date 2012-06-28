@@ -91,7 +91,7 @@ setup(name='archipel-guest',
         # -*- Entry points: -*-
         """,
       scripts = [
-        'install/bin/runguestarchipel'
+        'install/bin/runarchipelguest'
         ],
       data_files=[
         ('install/etc/init.d'              , ['install/etc/init.d/archipel']),
