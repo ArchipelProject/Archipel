@@ -119,14 +119,14 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         """
         self.log.info('processing: '+str(iq))
         response = 'direct execution is not allowed'
-        if iq.getFrom().getStripped().lower()==self.jid.getStripped().replace('-agent', '').lower():
+        if iq.getFrom().getStripped().lower() == self.jid.getStripped().replace("-agent", '').lower():
             command = iq.getTag("query").getTag("archipel").getData()
             response = self.execute_command(command)
         result = iq.buildReply('result')
         query = result.getTag("query")
-        archipel = query.addChild('archipel')
-        archipel.setAttr('action', 'exec')
-        archipel.setAttr('executor', iq.getTag("query").getTag("archipel").getAttr("executor"))
+        archipel = query.addChild("archipel", attrs={
+            "action": "exec",
+            "executor", iq.getTag("query").getTag("archipel").getAttr("executor")})
         archipel.addData(response)
         self.log.info('responsing: '+str(result))
         return result
