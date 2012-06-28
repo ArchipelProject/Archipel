@@ -27,7 +27,7 @@ ARCHIPEL_NS_GUEST_CONTROL                  = "archipel:guest:control"
 
 class TNVirtualMachineAgent(TNArchipelPlugin):
     """
-    This plugin allows to create scheduled actions.
+    this module enables user to send commands to archipelguest running on guest os
     """
     def __init__(self, configuration, entity, entry_point_group):
         """
