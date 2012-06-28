@@ -193,12 +193,12 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         """
         body = str(msg.getBody())
         if body.find("!exec") == 0 and self.entity.permission_center.check_permission(str(msg.getFrom().getStripped()), "message"):
-            runIq = self.exec_msg(msg)
+            runIq = self.msg_exec(msg)
             self.entity.log.info('sending: '+str(runIq))
             conn.send(runIq)
             raise xmpp.NodeProcessed
 
-    def exec_msg(self, msg):
+    def msg_exec(self, msg):
         """
         makes an Iq stanza to agent running on guest to run the command
         @type msg: xmpp.Protocol.Message
