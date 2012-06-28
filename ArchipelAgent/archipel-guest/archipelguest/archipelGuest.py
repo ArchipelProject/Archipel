@@ -123,7 +123,6 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
             command = iq.getTag("query").getTag("archipel").getData()
             response = self.execute_command(command)
         result = iq.buildReply('result')
-        result.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL)
         query = result.getTag("query")
         archipel = query.addChild('archipel')
         archipel.setAttr('action', 'exec')
