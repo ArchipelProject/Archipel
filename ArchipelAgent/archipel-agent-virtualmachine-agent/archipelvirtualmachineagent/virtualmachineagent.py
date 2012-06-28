@@ -54,8 +54,8 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         """
         return {    "common-name"               : "Virtual Machine Agent",
                     "identifier"                : "virtualmachineguestagent",
-                    "configuration-section"     : 'GUEST',
-                    "configuration-tokens"      : ['enabled']}
+                    "configuration-section"     : None,
+                    "configuration-tokens"      : []}
 
     def register_handlers(self):
         """
@@ -103,45 +103,43 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         @rtype: xmpp.Node
         @return: xml definition
         """
-        self.entity.log.info('GUEST.enabled: '+str(self.configuration.getboolean("GUEST", "enabled")))
-        if self.configuration.getboolean("GUEST", "enabled"):
-            shouldBeAdded = False
-            name = xmldesc.getTag('name').getData()
-            hostname = 'user,hostname=%s.%s' % (name, self.entity.jid.getDomain())
-            # check if we already have added switch
-            commandline = xmldesc.getTag('commandline', namespace='qemu')
-            if commandline == None:
-                # add commandline tag, if we don't have any
-                shouldBeAdded = True
-                commandline = xmldesc.addChild(name='qemu:commandline', attrs={
-                    "xmlns:qemu": 'http://libvirt.org/schemas/domain/qemu/1.0'})
-            else:
-                # if we have commandline tag, check for args to be like:
-                # 0: -net
-                # 1: nic,model=virtio,addr=0xf
-                # 2: -net
-                # 3: user,hostname=...
-                hasSwitches = 0
-                for arg in commandline.getTags('arg', namespace='qemu'):
-                    if arg.getAttr('value') == '-net' and (hasSwitches == 0 or hasSwitches == 2):
+        shouldBeAdded = False
+        name = xmldesc.getTag('name').getData()
+        hostname = 'user,hostname=%s.%s' % (name, self.entity.jid.getDomain())
+        # check if we already have added switch
+        commandline = xmldesc.getTag('commandline', namespace='qemu')
+        if commandline == None:
+            # add commandline tag, if we don't have any
+            shouldBeAdded = True
+            commandline = xmldesc.addChild(name='qemu:commandline', attrs={
+                "xmlns:qemu": 'http://libvirt.org/schemas/domain/qemu/1.0'})
+        else:
+            # if we have commandline tag, check for args to be like:
+            # 0: -net
+            # 1: nic,model=virtio,addr=0xf
+            # 2: -net
+            # 3: user,hostname=...
+            hasSwitches = 0
+            for arg in commandline.getTags('arg', namespace='qemu'):
+                if arg.getAttr('value') == '-net' and (hasSwitches == 0 or hasSwitches == 2):
+                    hasSwitches += 1
+                    continue
+                if hasSwitches == 1:
+                    if arg.getAttr('value')=='nic,model=virtio,addr=0xf':
                         hasSwitches += 1
                         continue
-                    if hasSwitches == 1:
-                        if arg.getAttr('value')=='nic,model=virtio,addr=0xf':
-                            hasSwitches += 1
-                            continue
-                    if hasSwitches == 3:
-                        if arg.getAttr('value')==hostname:
-                            hasSwitches += 1
-                            break
-                    hasSwitches = 0
-                if hasSwitches < 4:
-                    shouldBeAdded = True
-            if shouldBeAdded:
-                commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
-                commandline.addChild(name='qemu:arg', attrs={'value': 'nic,model=virtio,addr=0xf'})
-                commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
-                commandline.addChild(name='qemu:arg', attrs={'value': hostname })
+                if hasSwitches == 3:
+                    if arg.getAttr('value')==hostname:
+                        hasSwitches += 1
+                        break
+                hasSwitches = 0
+            if hasSwitches < 4:
+                shouldBeAdded = True
+        if shouldBeAdded:
+            commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
+            commandline.addChild(name='qemu:arg', attrs={'value': 'nic,model=virtio,addr=0xf'})
+            commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
+            commandline.addChild(name='qemu:arg', attrs={'value': hostname })
         return xmldesc
 
     def process_iq(self, conn, iq):
