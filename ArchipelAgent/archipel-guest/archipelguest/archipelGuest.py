@@ -56,12 +56,12 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         self.log.info("starting archipel-agent")
 
         self.xmppserveraddr             = self.jid.getDomain()
-        self.entity_type                = "guest"
+        self.entity_type                = "vmguest"
 
         self.log.info("Server address defined as %s" % self.xmppserveraddr)
 
         # module inits
-        self.initialize_modules('archipel.plugin.guest')
+        self.initialize_modules('archipel.plugin.vmguest')
 
     ### Utilities
 
