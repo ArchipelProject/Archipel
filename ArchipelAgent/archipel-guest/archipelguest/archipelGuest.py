@@ -79,6 +79,16 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         TNArchipelEntity.unregister_handlers(self)
         self.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
 
+    def execute_command(command):
+        """
+        executes given command using subprocess module
+        @type command: String
+        @param command: command to be executed
+        """
+        p = subprocess.Popen(command, stdout=subprocess.PIPE)
+        response, stderr = p.communicate()
+        return response
+
     ### XMPP Processing
 
     def process_iq(self, conn, iq):
@@ -110,8 +120,8 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         self.log.info('processing: '+str(iq))
         response = 'direct execution is not allowed'
         if iq.getFrom().getStripped().lower()==self.jid.getStripped().replace('-agent', '').lower():
-            p = subprocess.Popen(iq.getTag("query").getTag("archipel").getData(), stdout=subprocess.PIPE)
-            response, stderr = p.communicate()
+            command = iq.getTag("query").getTag("archipel").getData()
+            response = self.execute_command(command)
         result = iq.buildReply('result')
         result.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL)
         query = result.getTag("query")
