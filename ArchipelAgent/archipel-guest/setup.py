@@ -54,7 +54,7 @@ def create_avatar_list(folder):
         ret.append("%s%s" % (folder, avatar))
     return ret
 
-setup(name='archipel-guest-agent',
+setup(name='archipel-guest',
       version=VERSION,
       description="The guest's agent part of Archipel",
       long_description=DESCRIPTION,

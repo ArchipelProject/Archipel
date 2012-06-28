@@ -53,7 +53,7 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         @param configuration: configuration object
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, 'auto')
-        self.log.info("starting archipel-agent")
+        self.log.info("starting archipel-guest")
 
         self.xmppserveraddr             = self.jid.getDomain()
         self.entity_type                = "vmguest"
