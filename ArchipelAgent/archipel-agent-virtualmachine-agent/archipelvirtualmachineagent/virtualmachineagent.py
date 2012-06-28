@@ -59,7 +59,6 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
             hostname = 'user,hostname=%s.%s' % (name, self.entity.jid.getDomain())
             # check if we already have added switch
             commandline = xmldesc.getTag('commandline', namespace='qemu')
-            self.entity.log.info(str(commandline))
             if commandline==None :
                 # add commandline tag, if we don't have any
                 shouldBeAdded = True
