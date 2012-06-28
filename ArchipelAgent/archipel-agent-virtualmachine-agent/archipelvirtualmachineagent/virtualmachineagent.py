@@ -21,6 +21,9 @@
 
 import xmpp
 from archipelcore.archipelPlugin import TNArchipelPlugin
+from archipelcore.utils import build_error_iq
+
+ARCHIPEL_ERROR_CODE_VIRTUALMACHINEAGENT_EXEC = -10001
 
 # Namespace
 ARCHIPEL_NS_GUEST_CONTROL                  = "archipel:guest:control"
@@ -133,12 +136,12 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         action = self.entity.check_acp(conn, iq)
 
         if action == "exec":
-            reply = self.exec_iq(iq)
+            reply = self.iq_exec(iq)
         if reply:
             conn.send(reply)
             raise xmpp.NodeProcessed
 
-    def exec_iq(self, iq):
+    def iq_exec(self, iq):
         """
         processes iq with exec type and returns the stanza that should be sent
         @type id: xmpp.Protocol.Iq
@@ -151,11 +154,14 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         # TODO: if we received an Iq from agent running in guest and jid has permission
         # to send us Iq, we should tunnel his/her command to agent and sent it back as Iq
         # when we received result Iq
-        if str(iq.getFrom()).lower() == (self.entity.uuid+"-agent@"+self.entity.jid.getDomain()+"/guestagent").lower():
-            archipel = iq.getTag("query").getTag("archipel")
-            msg = xmpp.protocol.Message(archipel.getAttr('executor'), archipel.getData())
-            return msg
-        return None
+        reply = None
+        try:
+            if str(iq.getFrom()).lower() == (self.entity.uuid+"-agent@"+self.entity.jid.getDomain()+"/guestagent").lower():
+                archipel = iq.getTag("query").getTag("archipel")
+                reply = xmpp.protocol.Message(archipel.getAttr('executor'), archipel.getData())
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VIRTUALMACHINEAGENT_EXEC)
+        return reply
 
     def process_message(self, conn, msg):
         """
