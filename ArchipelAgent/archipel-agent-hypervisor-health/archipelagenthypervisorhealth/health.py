@@ -121,10 +121,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
         @return: Dictionary containing information
         """
         info = {}
-
-        f = open("/proc/cpuinfo")
-        cpuinfo = f.read()
-        info["vmx"] = "vmx" in cpuinfo
+        info["vmx"] = self.entity.has_vmx
         return info
 
 
