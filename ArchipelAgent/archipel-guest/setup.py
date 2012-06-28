@@ -95,6 +95,6 @@ setup(name='archipel-guest',
         ],
       data_files=[
         ('install/etc/init.d'              , ['install/etc/init.d/archipel']),
-        ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
+        ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf'])
         ]
       )
