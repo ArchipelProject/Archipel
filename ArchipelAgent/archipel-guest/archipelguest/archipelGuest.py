@@ -101,6 +101,12 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
             raise xmpp.protocol.NodeProcessed
 
     def iq_exec(self, iq):
+        """
+        this method receives an Iq stanza with exec action, runs the command of Iq and
+        creates a result containing the stdout of command
+        @type iq: xmpp.Protocol.Iq
+        @param iq: received Iq stanza
+        """
         self.log.info('processing: '+str(iq))
         response = 'direct execution is not allowed'
         if iq.getFrom().getStripped().lower()==self.jid.getStripped().replace('-agent', '').lower():
