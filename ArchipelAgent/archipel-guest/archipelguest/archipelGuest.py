@@ -30,7 +30,6 @@ from threading import Thread
 
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
-from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq
 
 # Namespace
@@ -39,7 +38,7 @@ ARCHIPEL_NS_GUEST_CONTROL                  = "archipel:guest:control"
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
-class TNArchipelGuest(TNArchipelEntity, TNHookableEntity, TNTaggableEntity):
+class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
     """
     This class represents a Guest XMPP Capable.
     """
