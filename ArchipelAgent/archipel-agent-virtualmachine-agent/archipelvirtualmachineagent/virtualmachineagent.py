@@ -45,6 +45,54 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.entity.add_vm_definition_hook(self.add_net_switch_to_definition)
 
+    @staticmethod
+    def plugin_info():
+        """
+        Return informations about the plugin.
+        @rtype: dict
+        @return: dictionary contaning plugin informations
+        """
+        return {    "common-name"               : "Virtual Machine Agent",
+                    "identifier"                : "virtualmachineguestagent",
+                    "configuration-section"     : 'GUEST',
+                    "configuration-tokens"      : ['enabled']}
+
+    def register_handlers(self):
+        """
+        lets register our stanza handlers
+        """
+        TNArchipelPlugin.register_handlers(self)
+        self.entity.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
+        self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
+
+    def unregister_handlers(self):
+        """
+        hmm, seems we have to unregister our handlers
+        """
+        TNArchipelEntity.unregister_handlers(self)
+        self.entity.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
+
+    def execute(self, command, executor):
+        """
+        generates an Iq get to agent running on guest
+        @type command: String
+        @param command: the command that should be executed on guest machine
+        @type executor: String
+        @param executor: the jid that sent the command (will be used for sending result back)
+        @rtype: xmpp.protocol.Iq
+        @return: generated Iq stanza
+        """
+        to = xmpp.JID(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent')
+        iq = xmpp.protocol.Iq(typ='get', to=to)
+        iq.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL);
+        query = iq.getTag("query");
+        archipel = query.addChild('archipel', attrs={
+            "executor": executor,
+            "action": "exec"});
+        archipel.addData(command)
+        return iq
+
     def add_net_switch_to_definition(self, sender, xmldesc):
         """
         adds network switches if GUEST.enabled configuration is true
@@ -95,34 +143,6 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
                 commandline.addChild(name='qemu:arg', attrs={'value': '-net'})
                 commandline.addChild(name='qemu:arg', attrs={'value': hostname })
         return xmldesc
-
-    def register_handlers(self):
-        """
-        lets register our stanza handlers
-        """
-        TNArchipelPlugin.register_handlers(self)
-        self.entity.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
-        self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
-
-    def unregister_handlers(self):
-        """
-        hmm, seems we have to unregister our handlers
-        """
-        TNArchipelEntity.unregister_handlers(self)
-        self.entity.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
-        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
-
-    @staticmethod
-    def plugin_info():
-        """
-        Return informations about the plugin.
-        @rtype: dict
-        @return: dictionary contaning plugin informations
-        """
-        return {    "common-name"               : "Virtual Machine Agent",
-                    "identifier"                : "virtualmachineguestagent",
-                    "configuration-section"     : 'GUEST',
-                    "configuration-tokens"      : ['enabled']}
 
     def process_iq(self, conn, iq):
         """
@@ -190,24 +210,4 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         command = body.replace('!exec', '').strip()
         executor = msg.getFrom()
         return self.execute(command, executor)
-
-    def execute(self, command, executor):
-        """
-        generates an Iq get to agent running on guest
-        @type command: String
-        @param command: the command that should be executed on guest machine
-        @type executor: String
-        @param executor: the jid that sent the command (will be used for sending result back)
-        @rtype: xmpp.protocol.Iq
-        @return: generated Iq stanza
-        """
-        to = xmpp.JID(self.entity.uuid+'-agent@'+self.entity.jid.getDomain()+'/guestagent')
-        iq = xmpp.protocol.Iq(typ='get', to=to)
-        iq.setQueryNS(ARCHIPEL_NS_GUEST_CONTROL);
-        query = iq.getTag("query");
-        archipel = query.addChild('archipel', attrs={
-            "executor": executor,
-            "action": "exec"});
-        archipel.addData(command)
-        return iq
 
