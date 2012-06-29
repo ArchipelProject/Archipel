@@ -126,7 +126,7 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         query = result.getTag("query")
         archipel = query.addChild("archipel", attrs={
             "action": "exec",
-            "executor", iq.getTag("query").getTag("archipel").getAttr("executor")})
+            "executor": iq.getTag("query").getTag("archipel").getAttr("executor")})
         archipel.addData(response)
         self.log.info('responsing: '+str(result))
         return result
