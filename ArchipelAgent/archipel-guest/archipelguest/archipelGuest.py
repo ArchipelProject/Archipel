@@ -79,7 +79,7 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         TNArchipelEntity.unregister_handlers(self)
         self.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
 
-    def execute_command(command):
+    def execute_command(self, command):
         """
         executes given command using subprocess module
         @type command: String
