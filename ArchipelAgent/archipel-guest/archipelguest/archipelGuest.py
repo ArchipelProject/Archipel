@@ -26,6 +26,7 @@ Contains L{TNArchipelGuest}, singleton entity for guest os
 """
 import xmpp
 import subprocess
+import os
 from threading import Thread
 
 from archipelcore.archipelEntity import TNArchipelEntity
@@ -119,9 +120,19 @@ class TNArchipelGuest(TNArchipelEntity, TNHookableEntity):
         """
         self.log.info('processing: '+str(iq))
         response = 'direct execution is not allowed'
+        # just run commands received from jid of vm
         if iq.getFrom().getStripped().lower() == self.jid.getStripped().replace("-agent", '').lower():
             command = iq.getTag("query").getTag("archipel").getData()
-            response = self.execute_command(command)
+            # if we're in safe mode just run scripts that we've provided along archipel
+            if self.configuration.getboolean("GUEST", "safemode"):
+                command = os.path.join(self.configuration.get("DEFAULT", "archipel_folder_lib"), "bin", command)
+                self.log.info("going to execute: "+command)
+                if not os.path.exists(command):
+                    response = "there's no such command available"
+                else:
+                    response = self.execute_command(command)
+            else:
+                response = self.execute_command(command)
         result = iq.buildReply('result')
         query = result.getTag("query")
         archipel = query.addChild("archipel", attrs={
