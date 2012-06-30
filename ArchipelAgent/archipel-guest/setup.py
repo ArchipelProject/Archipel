@@ -84,8 +84,7 @@ setup(name='archipel-guest',
       zip_safe=False,
       provides=["archipel"],
       install_requires=[
-        "archipel-core>=0.5.0beta",
-        "PIL"
+        "archipel-core>=0.5.0beta"
       ],
       entry_points="""
         # -*- Entry points: -*-
