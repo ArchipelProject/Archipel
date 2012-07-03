@@ -74,7 +74,6 @@
 @import "Views/TNSwitch.j"
 
 
-
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -296,7 +295,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [splitViewMain setIsPaneSplitter:NO];
     [splitViewMain setDelegate:self];
-
 
     /* tags split views */
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
