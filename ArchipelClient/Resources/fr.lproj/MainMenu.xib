@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.SystemVersion">11E2620</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
 		<string key="IBDocument.AppKitVersion">1138.47</string>
 		<string key="IBDocument.HIToolboxVersion">569.00</string>
@@ -139,7 +139,7 @@
 												<object class="NSSearchField" id="1003698998">
 													<reference key="NSNextResponder" ref="724709012"/>
 													<int key="NSvFlags">266</int>
-													<string key="NSFrame">{{7, 6}, {188, 22}}</string>
+													<string key="NSFrame">{{7, 5}, {188, 22}}</string>
 													<reference key="NSSuperview" ref="724709012"/>
 													<reference key="NSNextKeyView" ref="514451280"/>
 													<bool key="NSEnabled">YES</bool>
@@ -9316,8 +9316,6 @@
 							<string>changeKnob:</string>
 							<string>chooseFolder:</string>
 							<string>clearErrors:</string>
-							<string>click2:</string>
-							<string>click:</string>
 							<string>collapseAllGroups:</string>
 							<string>collapseGroup:</string>
 							<string>deleteEntities:</string>
@@ -9405,8 +9403,6 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -9421,8 +9417,6 @@
 							<string>changeKnob:</string>
 							<string>chooseFolder:</string>
 							<string>clearErrors:</string>
-							<string>click2:</string>
-							<string>click:</string>
 							<string>collapseAllGroups:</string>
 							<string>collapseGroup:</string>
 							<string>deleteEntities:</string>
@@ -9494,14 +9488,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">clearErrors:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">click2:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">click:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -9665,7 +9651,6 @@
 							<string>XMPPAccountController</string>
 							<string>aboutWindow</string>
 							<string>avatarController</string>
-							<string>box1</string>
 							<string>buttonBarLeft</string>
 							<string>buttonPreferencesAPIMode</string>
 							<string>checkBoxPreferencesReactMode</string>
@@ -9720,7 +9705,6 @@
 							<string>TNXMPPAccountController</string>
 							<string>NSPanel</string>
 							<string>TNAvatarController</string>
-							<string>NSBox</string>
 							<string>CPButtonBar</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
@@ -9748,7 +9732,7 @@
 							<string>NSMenuItem</string>
 							<string>TNModuleController</string>
 							<string>TNNotificationHistoryController</string>
-							<string>NSUserDefaultsController</string>
+							<string>TNPreferencesController</string>
 							<string>NSProgressIndicator</string>
 							<string>TNPropertiesController</string>
 							<string>TNFlipView</string>
@@ -9778,7 +9762,6 @@
 							<string>XMPPAccountController</string>
 							<string>aboutWindow</string>
 							<string>avatarController</string>
-							<string>box1</string>
 							<string>buttonBarLeft</string>
 							<string>buttonPreferencesAPIMode</string>
 							<string>checkBoxPreferencesReactMode</string>
@@ -9841,10 +9824,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">avatarController</string>
 								<string key="candidateClassName">TNAvatarController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">box1</string>
-								<string key="candidateClassName">NSBox</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarLeft</string>
@@ -9956,7 +9935,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">preferencesController</string>
-								<string key="candidateClassName">NSUserDefaultsController</string>
+								<string key="candidateClassName">TNPreferencesController</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">progressIndicatorModulesLoading</string>
