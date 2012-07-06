@@ -332,6 +332,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
     [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
+    [_outlineScrollView setDelegate:_rosterOutlineView];
 
     /* left view */
     [leftView setFrontView:_outlineScrollView];
