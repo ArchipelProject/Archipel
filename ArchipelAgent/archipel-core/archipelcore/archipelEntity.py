@@ -39,7 +39,7 @@ from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
-from archipelcore.utils import TNArchipelLogger, build_error_iq
+from archipelcore.utils import TNArchipelLogger, build_error_iq, get_default_gateway_interface
 
 import archipelcore.archipelPermissionCenter
 import archipelcore.pubsub
@@ -160,6 +160,8 @@ class TNArchipelEntity (object):
         ip_conf = self.configuration.get("GLOBAL", "machine_ip")
         if ip_conf == "auto":
             self.ipaddr = socket.gethostbyname(socket.gethostname())
+        elif ip_conf == "gateway_interface":
+            self.ipaddr = get_default_gateway_interface()
         else:
             self.ipaddr = ip_conf
 
