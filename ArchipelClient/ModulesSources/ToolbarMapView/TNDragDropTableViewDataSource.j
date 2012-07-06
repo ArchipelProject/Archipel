@@ -43,8 +43,6 @@ var TNDragTypeMigration = @"TNDragTypeMigration";
 
 - (CPDragOperation)tableView:(CPTableView)aTableView validateDrop:(id)info proposedRow:(CPInteger)row proposedDropOperation:(CPTableViewDropOperation)operation
 {
-    alert("BIDREL");
-
     // if ([info draggingSource] !== aTableView)
     //     return CPDragOperationNone;
 
