@@ -133,6 +133,14 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 #pragma mark -
 #pragma mark TNModule overrides
 
+/*! Called when all modules are ready
+*/
+- (void)allModulesLoaded
+{
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNVirtualMachineVMCreationAddFieldDelegateNotification
+                                                        object:self];
+}
+
 /*! called when module is loaded
 */
 - (BOOL)willLoad
@@ -504,9 +512,8 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 {
     for (var i = 0; i < [someNuages count]; i++)
     {
-        var nuageObject = [someNuages objectAtIndex:i];
-
-        var stanza = [TNStropheStanza iqWithType:@"get"];
+        var nuageObject = [someNuages objectAtIndex:i],
+            stanza = [TNStropheStanza iqWithType:@"get"];
 
         [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNuage}];
         [stanza addChildWithName:@"archipel" andAttributes:{
@@ -543,6 +550,13 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [popoverXMLString close];
     [nuageController closeWindow:nil];
     [self setUIAccordingToPermissions];
+}
+
+/*! Virtual Machine Creation Delegate
+*/
+- (CPArray)completionForFieldWithName:(CPString)aName value:(id)aValue
+{
+    return ["hello", "world", "coucou", "ca roule?"];
 }
 
 @end
