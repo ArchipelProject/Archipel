@@ -40,7 +40,6 @@
                         eventNumber:0
                         clickCount:1
                         pressure:1];
-
     [CPMenu popUpContextMenu:[self menu] withEvent:fake forView:self];
 }
 

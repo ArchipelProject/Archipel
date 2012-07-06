@@ -75,11 +75,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [center addObserver:self selector:@selector(didTagsNodeReady:) name:TNTagsControllerNodeReadyNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterContactRemovedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterGroupAddedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactVCardReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterGroupRenamedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterGroupRemovedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterPushNotification object:nil];
@@ -128,7 +125,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     if (_reloadGraceTimer)
         [_reloadGraceTimer invalidate];
 
-    _reloadGraceTimer = [CPTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(_performUpdateOutlineView:) userInfo:nil repeats:NO];
+    _reloadGraceTimer = [CPTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(_performUpdateOutlineView:) userInfo:nil repeats:NO];
 }
 
 - (void)_performUpdateOutlineView:(CPTimer)aTimer

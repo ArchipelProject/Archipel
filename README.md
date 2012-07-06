@@ -1,10 +1,10 @@
 # What is Archipel ?
 
-Archipel is an Open Source project that aims to bring push notifications to 
+Archipel is an Open Source project that aims to bring push notifications to
 virtualization orchestration using XMPP.
 
-Archipel relies on open source technologies like python, ejabberd, cappuccino, 
-strophe, nginx, libvirt, KVM and even more. All of these  technologies are mixed 
+Archipel relies on open source technologies like python, ejabberd, cappuccino,
+strophe, nginx, libvirt, KVM and even more. All of these  technologies are mixed
 together to create a real time orchestration solution for virtualization.
 
 Thanks to Archipel you are be able to :
@@ -28,15 +28,15 @@ Thanks to Archipel you are be able to :
 * Test application : <http://app.archipelproject.org>
 * Mailing list : <http://groups.google.com/group/archipelproject>
 * IRC : <irc://irc.freenode.net/#archipel>
-* Sources : <https://github.com/primalmotion/archipel>
-* Wiki : <https://github.com/primalmotion/archipel/wiki>
-* Bugtracker : <https://github.com/primalmotion/archipel/issues>
-* FAQ : <https://github.com/primalmotion/Archipel/wiki/Faq>
+* Sources : <https://github.com/archipelproject/archipel>
+* Wiki : <https://github.com/archipelproject/archipel/wiki>
+* Bugtracker : <https://github.com/archipelproject/archipel/issues>
+* FAQ : <https://github.com/archipelproject/Archipel/wiki/Faq>
 
 
 # Installation
 
-The complete installation procedure can be found at <https://github.com/primalmotion/archipel/wiki>.
+The complete installation procedure can be found at <https://github.com/archipelproject/archipel/wiki>.
 If you find some errors, please feel free to correct them.
 
 

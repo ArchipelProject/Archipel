@@ -34,6 +34,7 @@ TNLibvirtDeviceGraphicVNCKeymapDE           = @"de";
 TNLibvirtDeviceGraphicVNCKeymapES           = @"es";
 TNLibvirtDeviceGraphicVNCKeymapNO           = @"no";
 TNLibvirtDeviceGraphicVNCKeymapHU           = @"hu";
+TNLibvirtDeviceGraphicVNCKeymapIT           = @"it";
 
 TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
                                             TNLibvirtDeviceGraphicVNCKeymapEN_GB,
@@ -41,7 +42,8 @@ TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapEN_US
                                             TNLibvirtDeviceGraphicVNCKeymapDE,
                                             TNLibvirtDeviceGraphicVNCKeymapES,
                                             TNLibvirtDeviceGraphicVNCKeymapNO,
-                                            TNLibvirtDeviceGraphicVNCKeymapHU];
+                                            TNLibvirtDeviceGraphicVNCKeymapHU,
+                                            TNLibvirtDeviceGraphicVNCKeymapIT];
 
 
 /*! @ingroup virtualmachinedefinition

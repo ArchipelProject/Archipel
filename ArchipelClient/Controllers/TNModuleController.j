@@ -159,11 +159,10 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     if ([_entity isKindOfClass:TNStropheContact])
     {
-        if (_moduleType != TNArchipelEntityTypeGeneral)
-        {
-            [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-            [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
-        }
+
+        [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+        [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
+
         [self _removeAllTabsFromModulesTabView];
         [self updateUIAccordingToPresence:_entity]
     }
@@ -240,9 +239,10 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 */
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
-    var vCard = [[aNotification object] vCard];
+    var vCard = [[aNotification object] vCard],
+        moduleType = [vCard firstChildWithName:@"ROLE"] ? [[vCard firstChildWithName:@"ROLE"] text] : nil;
 
-    if ([vCard text] != [[_entity vCard] text])
+    if (moduleType != _moduleType)
     {
         _moduleType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
 

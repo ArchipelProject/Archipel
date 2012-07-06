@@ -141,7 +141,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
         cert = self.configuration.get("VNC", "vnc_certificate_file")
         if cert.lower() in ("none", "no", "false"):
-            cert = None
+            cert = ""
         self.entity.log.info("Virtual machine vnc proxy is using certificate %s" % str(cert))
         onlyssl = self.configuration.getboolean("VNC", "vnc_only_ssl")
         self.entity.log.info("Virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))

@@ -139,6 +139,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.libvirt_event_callback_id  = None
         self.vcard_infos                = {}
 
+        # VMX extensions check
+        f = open("/proc/cpuinfo")
+        cpuinfo = f.read()
+        f.close()
+        self.has_vmx = "vmx" in cpuinfo or "svm" in cpuinfo
+
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
         self.permission_center.start(database_file=self.permission_db_file)
@@ -235,7 +241,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param parameters: runtime arguments
         """
         count   = len(self.virtualmachines)
-        status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
+        if self.has_vmx:
+            status  = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+        else:
+            status  = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+
         self.change_presence(self.xmppstatusshow, status)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):

@@ -231,7 +231,6 @@
     if (oldEntity && [oldEntity isKindOfClass:TNStropheContact])
     {
         [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:oldEntity];
-        [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:oldEntity];
     }
 
     _entity = anEntity;
@@ -239,7 +238,6 @@
     if (_entity && ([_entity isKindOfClass:TNStropheContact]))
     {
         [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:_entity];
-        [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     }
 }
 
@@ -310,12 +308,12 @@
 
         [buttonEventSubscription setHidden:NO];
 
-        [entryStatusIcon setImage:[_entity statusIcon]];
-        [entryName setStringValue:[_entity nickname]];
-        [entryDomain setStringValue:[[_entity JID] domain]];
-        [entryResource setStringValue:[[_entity resources] lastObject]];
-        [entryStatus setStringValue:[_entity XMPPStatus]];
-        [entryNode setStringValue:[[_entity JID] node]];
+        [entryStatusIcon bind:@"image" toObject:_entity withKeyPath:@"statusIcon" options:nil];
+        [entryName bind:@"objectValue" toObject:_entity withKeyPath:@"nickname" options:nil];
+        [entryDomain bind:@"objectValue" toObject:_entity withKeyPath:@"JID.domain" options:nil];
+        [entryResource bind:@"objectValue" toObject:_entity withKeyPath:@"resources" options:nil];
+        [entryStatus bind:@"objectValue" toObject:_entity withKeyPath:@"XMPPStatus" options:nil];
+        [entryNode bind:@"objectValue" toObject:_entity withKeyPath:@"JID.node" options:nil];
 
         // Query the custom entity types registered by the modules
         var entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]],

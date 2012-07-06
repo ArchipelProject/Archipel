@@ -148,17 +148,11 @@ var TNRosterDataViewContactImageUnknownUser,
 
     _contact = aContact;
 
-    [_name setStringValue:[aContact nickname]];
-    [_status setStringValue:[aContact XMPPStatus]];
-    [_statusIcon setImage:[aContact statusIcon]];
+    [_name bind:@"objectValue" toObject:aContact withKeyPath:@"nickname" options:nil];
+    [_status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];
+    [_statusIcon bind:@"image" toObject:aContact withKeyPath:@"statusIcon" options:nil];
 
-    if (_shouldDisplayAvatar)
-    {
-        if ([aContact avatar])
-            [_avatar setImage:[aContact avatar]];
-        else
-            [_avatar setImage:TNRosterDataViewContactImageUnknownUser];
-    }
+    [_avatar bind:@"image" toObject:aContact withKeyPath:@"avatar" options:nil];
 
     if ([aContact numberOfEvents] > 0)
     {
