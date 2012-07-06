@@ -177,8 +177,9 @@ def build_error_message(originclass, ex, msg):
     return str(ex)
 
 def get_default_gateway_interface():
-    """Reads the ip address of default gateway interface"""
-
+    """
+    Reads the ip address of default gateway interface
+    """
     with open("/proc/net/route") as fh:
         for line in fh:
             fields = line.strip().split()
