@@ -1,9 +1,9 @@
 # What is Archipel Agent ?
 
-Archipel Agent is the small piece of software you need to install on each of 
-your hypervisors. It will perform bridging between XMPP and Libvirt, and 
+Archipel Agent is the small piece of software you need to install on each of
+your hypervisors. It will perform bridging between XMPP and Libvirt, and
 allows to add extensions. It willcreate a thread for the hypervisor and each
-virtual machines you run on the hypervisor. It it distribute under python 
+virtual machines you run on the hypervisor. It it distribute under python
 setuptools package. See <Installation>.
 
 
@@ -24,10 +24,10 @@ Please, read this document completely before typing anything!
 * Test application : <http://app.archipelproject.org>
 * Mailing list : <http://groups.google.com/group/archipelproject>
 * IRC : <irc://irc.freenode.net/#archipel>
-* Sources : <https://github.com/primalmotion/archipel>
-* Wiki : <https://github.com/primalmotion/archipel/wiki>
-* Bugtracker : <https://github.com/primalmotion/archipel/issues>
-* FAQ : <https://github.com/primalmotion/Archipel/wiki/Faq>
+* Sources : <https://github.com/archipelproject/archipel>
+* Wiki : <https://github.com/archipelproject/archipel/wiki>
+* Bugtracker : <https://github.com/archipelproject/archipel/issues>
+* FAQ : <https://github.com/archipelproject/Archipel/wiki/Faq>
 
 
 # Installation
@@ -66,7 +66,7 @@ Now, to install archipel from the source or the nightlies, please type:
 
     # sudo ./buildAgent --devinstall
 
-It will "symlinks" (sort of) the eggs to the python's site-packages folder. to 
+It will "symlinks" (sort of) the eggs to the python's site-packages folder. to
 update you just have to git pull, no needs for further installation of the eggs.
 
 > Note that after running this command you MUST NOT move the ArchipelAgent folder. If you do so, you will nee
