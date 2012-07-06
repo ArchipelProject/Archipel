@@ -26,6 +26,8 @@ functionalities or others common stuffs
 """
 
 import ConfigParser
+import socket
+import struct
 import inspect
 import logging
 import logging.handlers
@@ -173,3 +175,15 @@ def build_error_message(originclass, ex, msg):
     caller = inspect.stack()[3][3]
     log.error("%s: exception raised is: '%s' triggered by message:\n %s" % (caller, str(ex), str(msg)))
     return str(ex)
+
+def get_default_gateway_interface():
+    """
+    Reads the ip address of default gateway interface
+    """
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                continue
+
+            return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))

@@ -39,7 +39,7 @@ from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
-from archipelcore.utils import TNArchipelLogger, build_error_iq
+from archipelcore.utils import TNArchipelLogger, build_error_iq, get_default_gateway_interface
 
 import archipelcore.archipelPermissionCenter
 import archipelcore.pubsub
@@ -160,6 +160,8 @@ class TNArchipelEntity (object):
         ip_conf = self.configuration.get("GLOBAL", "machine_ip")
         if ip_conf == "auto":
             self.ipaddr = socket.gethostbyname(socket.gethostname())
+        elif ip_conf == "gateway_interface":
+            self.ipaddr = get_default_gateway_interface()
         else:
             self.ipaddr = ip_conf
 
@@ -478,6 +480,7 @@ class TNArchipelEntity (object):
         self.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.RegisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
+        self.xmppclient.RegisterHandler('iq', self.process_ping_iq, typ="get", ns="urn:xmpp:ping")
         for plugin in self.plugins:
             self.log.info("PLUGIN: registering stanza handler for plugin %s" % plugin["info"]["identifier"])
             plugin["plugin"].register_handlers()
@@ -499,6 +502,7 @@ class TNArchipelEntity (object):
         self.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.UnregisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.UnregisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
+        self.xmppclient.UnregisterHandler('iq', self.process_ping_iq, typ="get", ns="urn:xmpp:ping")
         for plugin in self.plugins:
             self.log.info("PLUGIN: unregistering stanza handler for plugin %s" % plugin["info"]["identifier"])
             plugin["plugin"].unregister_handlers()
@@ -564,6 +568,19 @@ class TNArchipelEntity (object):
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+
+    def process_ping_iq(self, conn, iq):
+        """
+        check the iq, if we've got a ping then pong it. for more info
+        take a look at: http://xmpp.org/extensions/xep-0199.html
+        @type conn: xmpp.Dispatcher
+        @param conn: the instance of xmpp connection
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ stanza
+        """
+        rep = iq.buildReply(typ="result")
+        conn.send(rep)
+        raise xmpp.protocol.NodeProcessed
 
     def iq_add_subscription(self, iq):
         """
