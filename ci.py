@@ -82,6 +82,7 @@ def buildArchipel(export_dir, build):
     rev = commands.getoutput("git rev-parse --short HEAD");
     builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
     os.system("rm -rf ./ArchipelClient/Build")
+    os.system("cd ./ArchipelClient && capp gen -fl --force .")
     os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=%s" % CONFIGURATION)
     if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=%s" % CONFIGURATION):
         os.system("echo \* unable to build ArchipelClient. end of line.")
