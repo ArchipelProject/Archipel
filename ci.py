@@ -51,7 +51,7 @@ def buildGrowlCappuccino():
 
 def buildLPKit():
     os.system("echo \* Starting to build LPKit")
-    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build  && export CONFIGURATION=Debug && jake -f myJakeFile build"):
+    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CAPP_BUILD=./Build && export CONFIGURATION=Release && jake build  && export CONFIGURATION=Debug && jake build"):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
 
