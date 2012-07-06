@@ -29,6 +29,11 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     TNArchipelTypeHypervisorControlSetOrgInfo   = "setorginfo";
 
 
+/*! Send this notification from anywhere to register a field completion delegate
+*/
+TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCreationAddFieldDelegateNotification";
+
+
 /*! @ingroup hypervisorvmcreation
     This object allow to create new virtual machine
 */
@@ -36,20 +41,70 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     @outlet CPButton        buttonAlloc;
     @outlet CPPopover       mainPopover;
-    @outlet CPTextField     fieldNewVMRequestedCategories;
-    @outlet CPTextField     fieldNewVMRequestedLocality;
-    @outlet CPTextField     fieldNewVMRequestedName;
-    @outlet CPTextField     fieldNewVMRequestedOrganization;
-    @outlet CPTextField     fieldNewVMRequestedOrganizationUnit;
-    @outlet CPTextField     fieldNewVMRequestedOwner;
+    @outlet CPComboBox      fieldNewVMRequestedCategories;
+    @outlet CPComboBox      fieldNewVMRequestedLocality;
+    @outlet CPComboBox      fieldNewVMRequestedName;
+    @outlet CPComboBox      fieldNewVMRequestedOrganization;
+    @outlet CPComboBox      fieldNewVMRequestedOrganizationUnit;
+    @outlet CPComboBox      fieldNewVMRequestedOwner;
 
     TNStropheContact        _virtualMachine     @accessors(property=virtualMachine);
     id                      _delegate           @accessors(property=delegate);
+    CPArray                 _fieldsDelegates;
 }
 
 
 #pragma mark -
 #pragma mark Action
+
+- (void)awakeFromCib
+{
+    _fieldsDelegates = [CPArray array];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didReceiveNewFieldDelegateRequest:)
+                                                 name:TNVirtualMachineVMCreationAddFieldDelegateNotification
+                                               object:nil];
+}
+
+#pragma mark -
+#pragma mark Notification Handlers
+
+/*! add a notification as a fields delegate
+    @param aNotification the notification
+*/
+- (void)_didReceiveNewFieldDelegateRequest:(CPNotification)aNotification
+{
+    var requester = [aNotification object];
+
+    if (![_fieldsDelegates containsObject:requester]
+        && [requester respondsToSelector:@selector(completionForFieldWithName:value:)])
+        [_fieldsDelegates addObject:requester];
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+- (IBAction)requestCompletion:(id)aSender
+{
+    var completions = [CPArray array];
+
+    for (var i = 0; i < [_fieldsDelegates count]; i++)
+    {
+        var currentDelegate = [_fieldsDelegates objectAtIndex:i],
+            additionalCompletions = [currentDelegate completionForFieldWithName:[aSender tag] value:[aSender objectValue]];
+
+        if (additionalCompletions && [additionalCompletions count])
+            [completions addObjectsFromArray:additionalCompletions];
+    }
+
+    if ([completions count])
+    {
+        [aSender setContentValues:completions];
+    }
+}
+
 
 /*! open the window
     @param aSender the sender
@@ -92,7 +147,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [fieldNewVMRequestedName setEnabled:YES];
     }
 }
-
 
 /*! close the window
     @param aSender the sender
@@ -300,7 +354,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     return NO;
 }
-
 
 @end
 
