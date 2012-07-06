@@ -571,6 +571,15 @@ var TNModuleStatusImageReady,
     // flush all datasources, etc..
 }
 
+/*! This message will be sent when all other modules are loaded
+    You can safelu communicate with other modules from here
+*/
+- (void)allModulesLoaded
+{
+    // do stuff
+}
+
+
 #pragma mark -
 #pragma mark GUI utilities
 
