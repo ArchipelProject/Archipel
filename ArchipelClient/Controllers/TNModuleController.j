@@ -636,6 +636,20 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         if ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
             [_delegate moduleLoaderLoadingComplete:self];
         [self _insertModulesMenuItems];
+
+        // run post-loading method if any
+        var idx = [[_tabModules allValues] count];
+        for (var i = 0; i < idx; i++)
+        {
+            var module = [[_tabModules allValues] objectAtIndex:i];
+            [module allModulesLoaded];
+        }
+        idx = [[_toolbarModules allValues] count];
+        for (var i = 0; i < idx; i++)
+        {
+            var module = [[_toolbarModules allValues] objectAtIndex:i];
+            [module allModulesLoaded];
+        }
     }
     else
     {
