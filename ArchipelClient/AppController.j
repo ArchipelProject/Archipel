@@ -181,6 +181,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNUpdateController                  updateController;
     @outlet TNUserAvatarController              userAvatarController;
     @outlet TNXMPPAccountController             XMPPAccountController;
+    @outlet TNRosterDataViewContact             rosterDataViewForContacts;
+    @outlet TNRosterDataViewGroup               rosterDataViewForGroups;
 
     BOOL                                        _tagsVisible;
     CPButton                                    _hideButton;
@@ -205,8 +207,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPWindow                                    _helpWindow;
     TNOutlineViewRoster                         _rosterOutlineView;
     TNPubSubController                          _pubSubController;
-    TNRosterDataViewContact                     _rosterDataViewForContacts;
-    TNRosterDataViewGroup                       _rosterDataViewForGroups;
     TNStropheGroup                              _stropheGroupSelection;
     TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
@@ -468,12 +468,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [fieldVersion setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [fieldVersion setSelectable:YES];
     [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
-
-
-    /* dataviews for roster */
-    _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] initWithFrame:CPRectMake(0, 0, 100, 50)];
-    _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
-
 
     /* Placing the connection window */
     [connectionController showWindow:nil];
@@ -1471,9 +1465,22 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     switch ([anItem class])
     {
         case TNStropheGroup:
-            return _rosterDataViewForGroups;
+            return rosterDataViewForGroups;
         case TNStropheContact:
-            return _rosterDataViewForContacts;
+            return rosterDataViewForContacts;
+    }
+}
+
+/*! called the roster outlineView to ask the height of row for given item
+*/
+- (int)outlineView:(CPOutlineView)outlineView heightOfRowByItem:(id)anItem
+{
+    switch ([anItem class])
+    {
+        case TNStropheGroup:
+            return [rosterDataViewForGroups frameSize].height;
+        case TNStropheContact:
+            return [rosterDataViewForContacts frameSize].height;
     }
 }
 

@@ -50,8 +50,7 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     {
         var columnLabel     = [[CPTableColumn alloc] initWithIdentifier:"nickname"],
             columnOutline   = [[CPTableColumn alloc] initWithIdentifier:"outline"],
-            rosterLayout    = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
-            rowHeight       = [rosterLayout objectForKey:@"TNOutlineViewRosterRowHeight"];
+            rosterLayout    = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"];
 
         [columnLabel setWidth:aFrame.size.width];
         [columnOutline setWidth:12.0];
@@ -65,7 +64,6 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:nil];
-        [self setRowHeight:rowHeight];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];
