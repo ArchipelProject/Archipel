@@ -30,6 +30,7 @@
 
 @import "TNNuageEditionController.j"
 @import "TNNuageDataView.j"
+@import "TNCNACommunicator.j"
 
 @import "Model/TNNuage.j"
 
@@ -52,20 +53,25 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 {
     @outlet CPButton                    buttonDefineXMLString;
     @outlet CPButtonBar                 buttonBarControl;
+    @outlet CPPopover                   popoverXMLString;
     @outlet CPSearchField               fieldFilterNuage;
     @outlet CPTableView                 tableViewNuage;
+    @outlet CPTextField                 fieldPreferencesBaseURL;
+    @outlet CPTextField                 fieldPreferencesCompany;
+    @outlet CPTextField                 fieldPreferencesToken;
+    @outlet CPTextField                 fieldPreferencesUserName;
     @outlet CPView                      viewTableContainer;
     @outlet LPMultiLineTextField        fieldXMLString;
     @outlet TNNuageDataView             nuageDataViewPrototype;
     @outlet TNNuageEditionController    nuageController;
-    @outlet CPPopover                   popoverXMLString;
 
     CPButton                            _editButton;
+    CPButton                            _editXMLButton;
     CPButton                            _minusButton;
     CPButton                            _plusButton;
-    CPButton                            _editXMLButton;
-    TNTableViewDataSource               _datasourceNuages;
     CPDictionary                        _nuagesRAW;
+    TNCNACommunicator                   _CNACommunicator;
+    TNTableViewDataSource               _datasourceNuages;
 }
 
 #pragma mark -
@@ -78,6 +84,19 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     _nuagesRAW = [CPDictionary dictionary];
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+
+    /* Preferences */
+
+    var bundle = [CPBundle bundleForClass:[self class]],
+        defaults = [CPUserDefaults standardUserDefaults];
+
+    // register defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"TNArchipelNuageURL"], @"TNArchipelNuageURL",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelNuageUserName"], @"TNArchipelNuageUserName",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelNuageCompany"], @"TNArchipelNuageCompany",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelNuageToken"], @"TNArchipelNuageToken"
+    ]];
 
     /* VM table view */
     _datasourceNuages     = [[TNTableViewDataSource alloc] init];
@@ -127,6 +146,10 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
     [fieldXMLString setTextColor:[CPColor blackColor]];
     [fieldXMLString setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
+
+    // CNA Communicator
+    var URLString = [defaults objectForKey:@"TNArchipelNuageURL"];
+    [self _initCNACommunicatorWithURLString:URLString];
 }
 
 
@@ -216,6 +239,32 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [tableViewNuage reloadData];
 }
 
+/*! called when user saves preferences
+*/
+- (void)savePreferences
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    [defaults setObject:[fieldPreferencesCompany stringValue] forKey:@"TNArchipelNuageCompany"];
+    [defaults setObject:[fieldPreferencesUserName stringValue] forKey:@"TNArchipelNuageUserName"];
+    [defaults setObject:[fieldPreferencesToken stringValue] forKey:@"TNArchipelNuageToken"];
+    [defaults setObject:[fieldPreferencesBaseURL stringValue] forKey:@"TNArchipelNuageURL"];
+
+    [self _initCNACommunicatorWithURLString:[fieldPreferencesBaseURL stringValue]];
+}
+
+/*! called when user gets preferences
+*/
+- (void)loadPreferences
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    [fieldPreferencesCompany setStringValue:[defaults objectForKey:@"TNArchipelNuageCompany"]];
+    [fieldPreferencesUserName setStringValue:[defaults objectForKey:@"TNArchipelNuageUserName"]];
+    [fieldPreferencesToken setStringValue:[defaults objectForKey:@"TNArchipelNuageToken"]];
+    [fieldPreferencesBaseURL setStringValue:[defaults objectForKey:@"TNArchipelNuageURL"]];
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -249,6 +298,18 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     return [dA + "." + dB + ".0.0", dA + "." + dB + ".0.1"] ;
 }
 
+
+- (void)_initCNACommunicatorWithURLString:(CPString)anURL
+{
+    if (anURL)
+    {
+        var anURL = [CPURL URLWithString:anURL];
+
+        _CNACommunicator = [[TNCNACommunicator alloc] initWithBaseURL:anURL];
+    }
+    else
+        _CNACommunicator = nil;
+}
 
 #pragma mark -
 #pragma mark Action
@@ -554,9 +615,26 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
 /*! Virtual Machine Creation Delegate
 */
-- (CPArray)completionForFieldWithName:(CPString)aName value:(id)aValue
+- (CPArray)completionForField:(CPComboBox)aComboBox value:(id)aValue
 {
-    return ["hello", "world", "coucou", "ca roule?"];
+    if (!_CNACommunicator)
+        return;
+
+    switch ([aComboBox tag])
+    {
+        case @"organization":
+            [_CNACommunicator fetchOrganizationsAndSetCompletionForComboBox:aComboBox];
+            break;
+        case @"unit":
+            [_CNACommunicator fetchGroupsAndSetCompletionForComboBox:aComboBox];
+            break;
+        case @"owner":
+            [_CNACommunicator fetchUsersAndSetCompletionForComboBox:aComboBox];
+            break;
+        case @"category":
+            [_CNACommunicator fetchApplicationsAndSetCompletionForComboBox:aComboBox];
+            break;
+    }
 }
 
 @end
