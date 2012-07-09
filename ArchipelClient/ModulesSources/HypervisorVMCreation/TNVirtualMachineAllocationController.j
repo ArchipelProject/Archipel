@@ -87,11 +87,11 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     var requester = [aNotification object];
 
     if (![_fieldsDelegates containsObject:requester]
-        && [requester respondsToSelector:@selector(completionForFieldWithName:value:)])
+        && [requester respondsToSelector:@selector(completionForField:value:)])
         [_fieldsDelegates addObject:requester];
 }
 
-- (void)controlTextDidChange:(CPNotification)aNotification
+- (void)controlTextDidFocus:(CPNotification)aNotification
 {
     if (![_fieldsNeedCompletion containsObject:[[aNotification object] tag]])
         [self _requestCompletion:[aNotification object]];
@@ -108,14 +108,8 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     for (var i = 0; i < [_fieldsDelegates count]; i++)
     {
         var currentDelegate = [_fieldsDelegates objectAtIndex:i],
-            additionalCompletions = [currentDelegate completionForFieldWithName:[aSender tag] value:[aSender objectValue]];
-
-        if (additionalCompletions && [additionalCompletions count])
-            [completions addObjectsFromArray:additionalCompletions];
+            additionalCompletions = [currentDelegate completionForField:aSender value:[aSender objectValue]];
     }
-
-    if ([completions count])
-        [aSender setContentValues:completions];
 
     [_fieldsNeedCompletion addObject:[aSender tag]];
 }
