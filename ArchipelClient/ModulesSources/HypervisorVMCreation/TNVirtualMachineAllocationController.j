@@ -50,6 +50,8 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
 
     TNStropheContact        _virtualMachine     @accessors(property=virtualMachine);
     id                      _delegate           @accessors(property=delegate);
+
+    CPArray                 _fieldsNeedCompletion;
     CPArray                 _fieldsDelegates;
 }
 
@@ -65,7 +67,14 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
                                              selector:@selector(_didReceiveNewFieldDelegateRequest:)
                                                  name:TNVirtualMachineVMCreationAddFieldDelegateNotification
                                                object:nil];
+
+    [fieldNewVMRequestedCategories setDelegate:self];
+    [fieldNewVMRequestedLocality setDelegate:self];
+    [fieldNewVMRequestedOrganization setDelegate:self];
+    [fieldNewVMRequestedOrganizationUnit setDelegate:self];
+    [fieldNewVMRequestedOwner setDelegate:self];
 }
+
 
 #pragma mark -
 #pragma mark Notification Handlers
@@ -82,11 +91,17 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
         [_fieldsDelegates addObject:requester];
 }
 
+- (void)controlTextDidChange:(CPNotification)aNotification
+{
+    if (![_fieldsNeedCompletion containsObject:[[aNotification object] tag]])
+        [self _requestCompletion:[aNotification object]];
+}
+
 
 #pragma mark -
-#pragma mark Actions
+#pragma mark Utilities
 
-- (IBAction)requestCompletion:(id)aSender
+- (void)_requestCompletion:(CPComboxBox)aSender
 {
     var completions = [CPArray array];
 
@@ -100,17 +115,22 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     }
 
     if ([completions count])
-    {
         [aSender setContentValues:completions];
-    }
+
+    [_fieldsNeedCompletion addObject:[aSender tag]];
 }
 
+
+#pragma mark -
+#pragma mark Actions
 
 /*! open the window
     @param aSender the sender
 */
 - (IBAction)openWindow:(id)aSender
 {
+    _fieldsNeedCompletion = [CPArray array];
+
     var vCard = [_virtualMachine vCard];
 
     [fieldNewVMRequestedName setStringValue:[[vCard firstChildWithName:@"FN"] text] || @""];
