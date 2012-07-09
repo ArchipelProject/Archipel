@@ -191,26 +191,14 @@
 /* Class = "NSTextFieldCell"; title = "Organization:"; ObjectID = "500"; */
 "500.title" = "Organization:";
 
-/* Class = "NSTextFieldCell"; placeholderString = "Archipel Corp."; ObjectID = "501"; */
-"501.placeholderString" = "Archipel Corp.";
-
 /* Class = "NSTextFieldCell"; title = "Unit:"; ObjectID = "505"; */
 "505.title" = "Unit:";
-
-/* Class = "NSTextFieldCell"; placeholderString = "Sales"; ObjectID = "506"; */
-"506.placeholderString" = "Sales";
 
 /* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "516"; */
 "516.title" = "Locality:";
 
-/* Class = "NSTextFieldCell"; placeholderString = "San Francisco"; ObjectID = "517"; */
-"517.placeholderString" = "San Francisco";
-
 /* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "521"; */
 "521.title" = "Owner:";
-
-/* Class = "NSTextFieldCell"; placeholderString = "John Doe"; ObjectID = "522"; */
-"522.placeholderString" = "John Doe";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "528"; */
 "528.title" = "...";
@@ -233,6 +221,18 @@
 /* Class = "NSTextFieldCell"; title = "Category:"; ObjectID = "546"; */
 "546.title" = "Category:";
 
-/* Class = "NSTextFieldCell"; placeholderString = "LAMP Stack 1"; ObjectID = "547"; */
-"547.placeholderString" = "LAMP Stack 1";
+/* Class = "NSComboBoxCell"; placeholderString = "San Francisco"; ObjectID = "558"; */
+"558.placeholderString" = "San Francisco";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Archipel Corp"; ObjectID = "560"; */
+"560.placeholderString" = "Archipel Corp";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Engineering"; ObjectID = "562"; */
+"562.placeholderString" = "Engineering";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Joe Smith"; ObjectID = "564"; */
+"564.placeholderString" = "Joe Smith";
+
+/* Class = "NSComboBoxCell"; placeholderString = "LAMP Stack"; ObjectID = "566"; */
+"566.placeholderString" = "LAMP Stack";
 

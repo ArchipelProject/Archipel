@@ -4,6 +4,8 @@
 <dict>
 	<key> has been created</key>
 	<string> has been created</string>
+	<key> has been updated</key>
+	<string> has been updated</string>
 	<key> to your roster</key>
 	<string> to your roster</string>
 	<key>Add a user subscription</key>
