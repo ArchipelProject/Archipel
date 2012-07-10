@@ -55,9 +55,6 @@
     [fieldNewPassword setNeedsLayout];
     [fieldNewPasswordConfirm setSecure:YES];
     [fieldNewPasswordConfirm setNeedsLayout];
-
-    [fieldNewPassword setToolTip:CPLocalizedString(@"Enter the new password for your account. You will need to enter this password at the next connection", @"Enter the new password for your account. You will need to enter this password at the next connection")];
-    [fieldNewPasswordConfirm setToolTip:CPLocalizedString(@"Retype the password", @"Retype the password")];
 }
 
 

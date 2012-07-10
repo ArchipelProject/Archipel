@@ -155,14 +155,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [boxAdvancedCommands setCornerRadius:3.0];
 
     [sliderMemory setContinuous:YES];
-    [sliderMemory setToolTip:CPBundleLocalizedString(@"Adjust the maximum amout of memory of the VM (only when running)", @"Adjust the maximum amout of memory of the VM (only when running)")];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
     [stepperCPU setMinValue:1];
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
-    [stepperCPU setToolTip:CPBundleLocalizedString(@"Adjust the number of virtual CPUs of the VM (only when running)", @"Adjust the number of virtual CPUs of the VM (only when running)")];
 
     _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
     _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
@@ -180,7 +178,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(16, 16)];
     _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-selected.png"] size:CGSizeMake(16, 16)];
 
-    [buttonBarTransport setToolTip:CPBundleLocalizedString(@"Control the virtual machine", @"Control the virtual machine")];
     [buttonBarTransport setSegmentCount:5];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Play", @"Play") forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
@@ -217,36 +214,23 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
     [_migrateButton setEnabled:NO];
-    [_migrateButton setToolTip:CPBundleLocalizedString(@"Trigger a live migration from current hypervisor to selected one", @"Trigger a live migration from current hypervisor to selected one")];
 
     [buttonBarMigration setButtons:[_migrateButton]];
 
     [switchAutoStart setTarget:self];
     [switchAutoStart setAction:@selector(setAutostart:)];
-    [switchAutoStart setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine will start with hypervisor", @"If ON, the virtual machine will start with hypervisor")];
 
     [switchPreventOOMKiller setTarget:self];
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
-    [switchPreventOOMKiller setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine process will never been destroyed by OOM killer", @"If ON, the virtual machine process will never been destroyed by OOM killer")];
 
     // screenshot image
     _imageScreenShutDown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdown.png"] size:CGSizeMake(216, 162)];
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
-    [buttonScreenshot setToolTip:CPLocalizedString(@"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot", @"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot")];
 
     _attachedWindowScreenshot = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 800.0, 620.0) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
     _imageViewFullScreenshot = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 20.0, 800.0, 600.0)],
     [[_attachedWindowScreenshot contentView] addSubview:_imageViewFullScreenshot];
-
-    [fieldInfoMem setToolTip:CPBundleLocalizedString(@"Current amount of memory", @"Current amount of memory")];
-    [fieldInfoConsumedCPU setToolTip:CPBundleLocalizedString(@"Total of consumed physical CPU time", @"Total of consumed physical CPU time")];
-    [fieldInfoState setToolTip:CPBundleLocalizedString(@"Current state of the virtual machine", @"Current state of the virtual machine")];
-    [fieldOOMScore setToolTip:CPBundleLocalizedString(@"Current OOM score for the virtual machine", @"Current OOM score for the virtual machine")];
-    [fieldOOMAdjust setToolTip:CPBundleLocalizedString(@"Current OOM adjust value of the virtual machine", @"Current OOM adjust value of the virtual machine")];
-    [buttonKill setToolTip:CPBundleLocalizedString(@"Will definitly delete the virtual machine, and all it's informations", @"Will definitly delete the virtual machine, and all it's informations")];
-    [buttonPark setToolTip:CPLocalizedString(@"Ask virtual machine's hypervisor to park it", @"Ask virtual machine's hypervisor to park it")];
-    [fieldPreferencesScreenshotRefresh setToolTip:CPLocalizedString(@"Set the delay between two virtual machine screenshots", @"Set the delay between two virtual machine screenshots")];
 }
 
 

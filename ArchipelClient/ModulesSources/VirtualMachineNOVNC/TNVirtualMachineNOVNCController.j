@@ -136,18 +136,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [sliderScaling setMinValue:1];
     [sliderScaling setMaxValue:200];
 
-    [buttonGetPasteBoard setToolTip:CPBundleLocalizedString(@"Get the distant pasteboard (not implemented)", @"Get the distant pasteboard (not implemented)")];
-    [buttonSendPasteBoard setToolTip:CPBundleLocalizedString(@"Send local pasteboard to the distant one (not implemented)", @"Send local pasteboard to the distant one (not implemented)")];
-    [buttonSendCtrlAtlDel setToolTip:CPBundleLocalizedString(@"Send the CTRL+ALT+DEL key combinaison", @"Send the CTRL+ALT+DEL key combinaison")];
-    [buttonExternalWindow setToolTip:CPBundleLocalizedString(@"Open the virtual screen in a new window", @"Open the virtual screen in a new window")];
-    [buttonZoomFitToWindow setToolTip:CPBundleLocalizedString(@"Make the screen fit the current window", @"Make the screen fit the current window")];
-    [buttonZoomReset setToolTip:CPBundleLocalizedString(@"Reset the zoom", @"Reset the zoom")];
-    [sliderScaling setToolTip:CPBundleLocalizedString(@"Adjust zoom", @"Adjust zoom")];
-
-    [fieldPreferencesCheckRate setToolTip:CPBundleLocalizedString(@"Set the VNC check rate value", @"Set the VNC check rate value")];
-    [fieldPreferencesFBURefreshRate setToolTip:CPBundleLocalizedString(@"Set the VNC FBU refresg rate value", @"Set the VNC FBU refresg rate value")];
-    [switchPreferencesPreferSSL setToolTip:CPBundleLocalizedString(@"Prefer SSL connection if possible", @"Prefer SSL connection if possible")];
-
     [[self view] applyShadow];
 }
 

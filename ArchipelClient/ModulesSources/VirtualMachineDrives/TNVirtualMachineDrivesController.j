@@ -101,20 +101,17 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     _plusButton  = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewDiskWindow:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new virtual drive", @"Create a new virtual drive")];
 
     _minusButton  = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(removeDisk:)];
     [_minusButton setEnabled:NO];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected virtual drives", @"Delete selected virtual drives")];
 
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(openEditWindow:)];
     [_editButton setEnabled:NO];
-    [_editButton setToolTip:CPBundleLocalizedString(@"Edit selected virtual drive", @"Edit selected virtual drive")];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
 

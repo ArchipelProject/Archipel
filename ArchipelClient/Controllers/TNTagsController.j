@@ -100,8 +100,6 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRetrieveSubscriptions:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:nil];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
-
-    [_buttonSave setToolTip:@"Send the current tags to the entity"];
 }
 
 

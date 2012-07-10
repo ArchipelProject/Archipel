@@ -60,8 +60,6 @@
     [fieldLoading setValue:[CPColor colorWithHexString:@"eee"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [fieldLoading setValue:CGSizeMake(0.0, -1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
     [fieldLoading setTextColor:[CPColor colorWithHexString:@"929292"]];
-
-    [fieldPreferencesWelcomePageUrl setToolTip:CPBundleLocalizedString(@"The URL of the welcome page", @"The URL of the welcome page")];
 }
 
 #pragma mark -

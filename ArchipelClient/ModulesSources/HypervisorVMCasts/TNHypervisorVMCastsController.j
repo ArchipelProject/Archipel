@@ -135,31 +135,25 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewVMCastURLWindow:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Register to a new VMCast feed", @"Register to a new VMCast feed")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(remove:)];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Unregister from a VMCast feed", @"Unregister from a VMCast feed")];
 
     _downloadButton = [CPButtonBar plusButton];
     [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CPSizeMake(16, 16)]];
     [_downloadButton setTarget:self];
     [_downloadButton setAction:@selector(download:)];
-    [_downloadButton setToolTip:CPBundleLocalizedString(@"Start to download selected appliance", @"Start to download selected appliance")];
 
     _downloadQueueButton = [CPButtonBar plusButton];
     [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CPSizeMake(16, 16)]];
     [_downloadQueueButton setTarget:self];
     [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
-    [_downloadQueueButton setToolTip:CPBundleLocalizedString(@"Show all current downloads", @"Show all current downloads")];
 
     [_minusButton setEnabled:NO];
     [_downloadButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
-
-    [checkBoxOnlyInstalled setToolTip:CPBundleLocalizedString(@"If checked, it will only displayed installed appliances", @"If checked, it will only displayed installed appliances")];
 
     [VMCastRegistrationController setDelegate:self];
     [downloadQueueController setDelegate:self];
@@ -640,13 +634,11 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
             [self setControl:_downloadButton enabledAccordingToPermission:@"vmcasting_downloadappliance" specialCondition:conditionNotInstalled];
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance" specialCondition:conditionInstalled];
-            [_minusButton setToolTip:CPBundleLocalizedString(@"Delete the selected appliance from the hypervisor repository", @"Delete the selected appliance from the hypervisor repository")];
         }
         else if ([object isKindOfClass:TNVMCastSource])
         {
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_unregister"];
             [_downloadButton setEnabled:NO]
-            [_minusButton setToolTip:CPBundleLocalizedString(@"Unregister from a VMCast feed", @"Unregister from a VMCast feed")];
         }
     }
 }
