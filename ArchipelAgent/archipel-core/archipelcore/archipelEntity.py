@@ -476,14 +476,14 @@ class TNArchipelEntity (object):
             TNRosterQueryableEntity.register_handlers(self)
         if isinstance(self, TNFileTransferCapableEntity):
             TNFileTransferCapableEntity.register_handlers(self)
+        for plugin in self.plugins:
+            self.log.info("PLUGIN: registering stanza handler for plugin %s" % plugin["info"]["identifier"])
+            plugin["plugin"].register_handlers()
         self.xmppclient.RegisterHandler('presence', self.process_presence)
         self.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.RegisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
         self.xmppclient.RegisterHandler('iq', self.process_ping_iq, typ="get", ns="urn:xmpp:ping")
-        for plugin in self.plugins:
-            self.log.info("PLUGIN: registering stanza handler for plugin %s" % plugin["info"]["identifier"])
-            plugin["plugin"].register_handlers()
         self.log.info("handlers registred")
 
     def unregister_handlers(self):

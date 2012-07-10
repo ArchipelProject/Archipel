@@ -1,0 +1,5 @@
+include LICENSE setup.py setup.cfg
+recursive-include archipelguest *
+recursive-include install/bin *
+recursive-include install/etc/init.d *
+recursive-include install/etc/archipel *

@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+# Copyright 2010-2011, Antoine Mercadal (antoine.mercadal@trivialdev.com) - TrivialDev
+# Copyright 2011, Franck Villaume (franck.villaume@trivialdev.com) - TrivialDev
+# chkconfig: - 99 01
+# description: Archipel Agent Daemon
+# processname: runarchipel.py
+# config: /etc/archipel/archipel.conf
+# pidfile: /var/run/archipel.pid
+#
+# archipel - this script starts and stops the archipel daemon
+
+# the following is the LSB init header see
+# http://www.linux-foundation.org/spec//booksets/LSB-Core-generic/LSB-Core-generic.html#INITSCRCOMCONV
+#
+### BEGIN INIT INFO
+# Provides: archipel
+# Required-Start: $network libvirtd
+# Required-Stop: $network
+# Should-Stop: libvirtd
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description:  daemon for archipel orchestrator suite
+# Description: This is a daemon for managing hypervisor
+#              thru libvirtd. The agent is a bridge between libvirtd and
+#              xmpp server.
+### END INIT INFO
+
+ARCHIPEL=`which runarchipelguest`
+if [ $? -eq 1 ]; then
+  ARCHIPEL=/usr/local/bin/runarchipelguest
+  if [ ! -e "$ARCHIPEL" ]; then
+    echo 'Archipel exe not found !'
+    exit 1
+  fi
+fi
+PROG=$(basename $ARCHIPEL)
+PROGNAME="Archipel"
+ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
+
+if [[ -d /var/lock/subsys ]]; then
+    lockfile=/var/lock/subsys/archipel
+elif [[ -d /var/lock/ ]]; then
+    lockfile=/var/lock/archipel
+else
+    lockfile=/tmp/.lock-archipel
+fi
+
+start() {
+    [[ -x $ARCHIPEL ]] || exit 5
+
+    if [[ -f $lockfile ]]; then
+        echo -ne " * $PROGNAME already running: \\033[31m[ERROR]\\033[0m\\n"
+        exit 6
+    fi
+
+    echo -ne " * Starting $PROGNAME:\\r"
+    $ARCHIPEL --config="$ARCHIPEL_CONF_FILE" >> /var/log/archipel-startup.log 2>&1
+    retval=$?
+
+    if [[ $retval == 0 ]]; then
+        touch $lockfile
+        echo $! > $lockfile
+        echo -ne " * Starting $PROGNAME: \\033[32m[OK]\\033[0m\\n"
+    else
+        echo -ne " * Starting $PROGNAME: \\033[31m[ERROR]\\033[0m\\n"
+    fi
+
+    return $retval
+}
+
+stop() {
+    if [[ ! -f $lockfile ]]; then
+        echo -ne " * $PROGNAME is not running: \\033[31m[ERROR]\\033[0m\\n"
+        return 6
+    fi
+
+    echo -ne " * Stopping $PROGNAME:\\r"
+    killall -w $PROG
+    retval=$?
+    rm -f $lockfile
+    echo -ne " * Stopping $PROGNAME: \\033[32m[OK]\\033[0m\\n"
+
+    return $retval
+}
+
+restart() {
+    stop
+    start
+}
+
+status() {
+    if [[ -f $lockfile ]]; then
+        echo -ne " * $PROGNAME state: \\033[32m[RUNNING]\\033[0m\\n"
+        exit 0
+    else
+        echo -ne " * $PROGNAME state: \\033[31m[STOPPED]\\033[0m\\n"
+        exit 0
+    fi
+
+}
+
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    status)
+        $1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|status}"
+        exit 2
+esac
