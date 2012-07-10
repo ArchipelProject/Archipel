@@ -38,7 +38,7 @@ def updateSubmodules():
 
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake release && jake debug"):
+    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clobber-theme && jake release && jake debug"):
         if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clean && jake release && jake debug"):
             sys.exit(-1)
 
