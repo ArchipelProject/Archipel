@@ -83,10 +83,6 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
     [buttonModel addItemsWithTitles:TNLibvirtDeviceInterfaceModels];
     [buttonType addItemsWithTitles: TNLibvirtDeviceInterfaceTypes];
 
-    [buttonSource setToolTip:CPBundleLocalizedString(@"Set the source to use", @"Set the source to use")];
-    [buttonModel setToolTip:CPBundleLocalizedString(@"Set the model of the card", @"Set the model of the card")];
-    [fieldMac setToolTip:CPBundleLocalizedString(@"Set the MAC address of the card", @"Set the MAC address of the card")];
-
     var addButton  = [CPButtonBar plusButton];
     [addButton setTarget:self];
     [addButton setAction:@selector(addNWFilterParameter:)];

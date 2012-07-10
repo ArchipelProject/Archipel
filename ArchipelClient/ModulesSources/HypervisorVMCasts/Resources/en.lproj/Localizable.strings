@@ -31,9 +31,6 @@
 /* Delete appliance */
 "Delete appliance" = "Delete appliance";
 
-/* Delete the selected appliance from the hypervisor repository */
-"Delete the selected appliance from the hypervisor repository" = "Delete the selected appliance from the hypervisor repository";
-
 /* Delete VMCast */
 "Delete VMCast" = "Delete VMCast";
 
@@ -46,12 +43,6 @@
 /* Download selected appliance */
 "Download selected appliance" = "Download selected appliance";
 
-/* If checked, it will only displayed installed appliances */
-"If checked, it will only displayed installed appliances" = "If checked, it will only displayed installed appliances";
-
-/* Register to a new VMCast feed */
-"Register to a new VMCast feed" = "Register to a new VMCast feed";
-
 /* Register to a new VMCasts */
 "Register to a new VMCasts" = "Register to a new VMCasts";
 
@@ -61,23 +52,14 @@
 /* Show activity monitor */
 "Show activity monitor" = "Show activity monitor";
 
-/* Show all current downloads */
-"Show all current downloads" = "Show all current downloads";
-
 /* Size */
 "Size" = "Size";
-
-/* Start to download selected appliance */
-"Start to download selected appliance" = "Start to download selected appliance";
 
 /* Status */
 "Status" = "Status";
 
 /* Unregister */
 "Unregister" = "Unregister";
-
-/* Unregister from a VMCast feed */
-"Unregister from a VMCast feed" = "Unregister from a VMCast feed";
 
 /* Unregister from selected VMCast */
 "Unregister from selected VMCast" = "Unregister from selected VMCast";

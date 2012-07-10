@@ -4,8 +4,6 @@
 <dict>
 	<key> MB</key>
 	<string> MB</string>
-	<key>Activate the statistics auto fetching</key>
-	<string>Activate the statistics auto fetching</string>
 	<key>Available: </key>
 	<string>Available: </string>
 	<key>Charts</key>
@@ -14,12 +12,6 @@
 	<string>GB</string>
 	<key>Logs</key>
 	<string>Logs</string>
-	<key>Set the delay between asking hypervisor statistics</key>
-	<string>Set the delay between asking hypervisor statistics</string>
-	<key>Set the max number of log item to fetch</key>
-	<string>Set the max number of log item to fetch</string>
-	<key>Set the max number of statistic entries to fetch</key>
-	<string>Set the max number of statistic entries to fetch</string>
 	<key>Used: </key>
 	<string>Used: </string>
 </dict>

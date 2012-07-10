@@ -4,8 +4,6 @@
 <dict>
 	<key> MB</key>
 	<string> Mo</string>
-	<key>Activate the statistics auto fetching</key>
-	<string>Active la récupération dynamique des statistiques</string>
 	<key>Available: </key>
 	<string>Disponible: </string>
 	<key>Charts</key>
@@ -14,12 +12,6 @@
 	<string>Go</string>
 	<key>Logs</key>
 	<string>Logs</string>
-	<key>Set the delay between asking hypervisor statistics</key>
-	<string>Définit l'intervale entre deux collecte de statistiques</string>
-	<key>Set the max number of log item to fetch</key>
-	<string>Définit le nombre maximum d'entrées de log à récupérer</string>
-	<key>Set the max number of statistic entries to fetch</key>
-	<string>Définit le nombre maximum d'entrées de statistiques à récupérer</string>
 	<key>Used: </key>
 	<string>Utilisé: </string>
 </dict>

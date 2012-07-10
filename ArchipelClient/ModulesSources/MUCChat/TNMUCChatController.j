@@ -126,9 +126,6 @@
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultService"], @"TNArchipelMUCDefaultService",
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultRoom"], @"TNArchipelMUCDefaultRoom"
     ]];
-
-    [fieldPreferencesDefaultService setToolTip:CPBundleLocalizedString(@"Set the conference server to use", @"Set the conference server to use")];
-    [fieldPreferencesDefaultRoom setToolTip:CPBundleLocalizedString(@"Set the room to connect to", @"Set the room to connect to")];
 }
 
 

@@ -2,13 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Clear all the content of the chat history</key>
-	<string>Clear all the content of the chat history</string>
 	<key>Clear history</key>
 	<string>Clear history</string>
-	<key>Open chat in a new window</key>
-	<string>Open chat in a new window</string>
-	<key>Set the max number of message to store. High value can decrease performances</key>
-	<string>Set the max number of message to store. High value can decrease performances</string>
 </dict>
 </plist>

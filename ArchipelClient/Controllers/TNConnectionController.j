@@ -97,14 +97,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
 
-    [JID setToolTip:CPLocalizedString(@"The JID to use to connect. It is always formatted like user@domain.com", @"The JID to use to connect. It is always formatted like user@domain.com")];
-    [password setToolTip:CPLocalizedString(@"The password associated to your XMPP account", @"The password associated to your XMPP account")];
-    [boshService setToolTip:CPLocalizedString(@"The service BOSH (XMPP over HTTP) to use", @"The service BOSH (XMPP over HTTP) to use")];
-    [credentialRemember setToolTip:CPLocalizedString(@"CREDENTIAL_REMEMBER_TOOLTIP", @"Turn this ON to remember your credential and connect automatically. Note that "
-        + @"all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to "
-        + @"at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials "
-        + @"from the history, just be sure to have entered your JID and switch down the button.                \n")];
-
     [connectButton setBezelStyle:CPRoundedBezelStyle];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didJIDChange:) name:CPControlTextDidChangeNotification object:JID];

@@ -4,23 +4,14 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Choose the format of the virtual drive */
-"Choose the format of the virtual drive" = "Choose the format of the virtual drive";
-
 /* Create a drive */
 "Create a drive" = "Create a drive";
-
-/* Create a new virtual drive */
-"Create a new virtual drive" = "Create a new virtual drive";
 
 /* Delete */
 "Delete" = "Delete";
 
 /* Delete selected drive */
 "Delete selected drive" = "Delete selected drive";
-
-/* Delete selected virtual drives */
-"Delete selected virtual drives" = "Delete selected virtual drives";
 
 /* Delete to drive */
 "Delete to drive" = "Delete to drive";
@@ -40,35 +31,14 @@
 /* Edit selected drive */
 "Edit selected drive" = "Edit selected drive";
 
-/* Edit selected virtual drive */
-"Edit selected virtual drive" = "Edit selected virtual drive";
-
 /* Error */
 "Error" = "Error";
 
 /* GB */
 "GB" = "GB";
 
-/* If checked, the drive will not be in sparse mode */
-"If checked, the drive will not be in sparse mode" = "If checked, the drive will not be in sparse mode";
-
 /* MB */
 "MB" = "MB";
-
-/* Set the format of the new virtual drive */
-"Set the format of the new virtual drive" = "Set the format of the new virtual drive";
-
-/* Set the name of the new virtual drive */
-"Set the name of the new virtual drive" = "Set the name of the new virtual drive";
-
-/* Set the name of the virtual drive */
-"Set the name of the virtual drive" = "Set the name of the virtual drive";
-
-/* Set the size of the new virtual drive */
-"Set the size of the new virtual drive" = "Set the size of the new virtual drive";
-
-/* Set the unit of size for the new virtual drive */
-"Set the unit of size for the new virtual drive" = "Set the unit of size for the new virtual drive";
 
 /* You can't edit disks of a running virtual machine */
 "You can't edit disks of a running virtual machine" = "You can't edit disks of a running virtual machine";

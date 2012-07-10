@@ -74,13 +74,11 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CPSizeMake(16, 16)]];
     [_buttonSchedule setTarget:self];
     [_buttonSchedule setAction:@selector(openNewJobWindow:)];
-    [_buttonSchedule setToolTip:CPBundleLocalizedString(@"Add a new scheduled action", @"Add a new scheduled action")];
 
     _buttonUnschedule  = [CPButtonBar plusButton];
     [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
     [_buttonUnschedule setTarget:schedulerController];
     [_buttonUnschedule setAction:@selector(unschedule:)];
-    [_buttonUnschedule setToolTip:CPBundleLocalizedString(@"Remove selected scheduled action", @"Remove selected scheduled action")];
 
     [buttonBarJobs setButtons:[_buttonSchedule, _buttonUnschedule]];
 

@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Adjust zoom</key>
-	<string>Adjust zoom</string>
 	<key>Cannot connect to the VNC screen at </key>
 	<string>Cannot connect to the VNC screen at </string>
 	<key>Ctrl Alt Del</key>
@@ -14,34 +12,16 @@
 	<string>Full Screen</string>
 	<key>Get Clipboard</key>
 	<string>Get Clipboard</string>
-	<key>Get the distant pasteboard (not implemented)</key>
-	<string>Get the distant pasteboard (not implemented)</string>
 	<key>It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.</key>
 	<string>It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.</string>
-	<key>Make the screen fit the current window</key>
-	<string>Make the screen fit the current window</string>
 	<key>Open external VNC program</key>
 	<string>Open external VNC program</string>
-	<key>Open the virtual screen in a new window</key>
-	<string>Open the virtual screen in a new window</string>
-	<key>Prefer SSL connection if possible</key>
-	<string>Prefer SSL connection if possible</string>
-	<key>Reset the zoom</key>
-	<string>Reset the zoom</string>
 	<key>Reset zoom</key>
 	<string>Reset zoom</string>
 	<key>Screen for </key>
 	<string>Screen for </string>
 	<key>Send Clipboard</key>
 	<string>Send Clipboard</string>
-	<key>Send local pasteboard to the distant one (not implemented)</key>
-	<string>Send local pasteboard to the distant one (not implemented)</string>
-	<key>Send the CTRL+ALT+DEL key combinaison</key>
-	<string>Send the CTRL+ALT+DEL key combinaison</string>
-	<key>Set the VNC FBU refresg rate value</key>
-	<string>Set the VNC FBU refresg rate value</string>
-	<key>Set the VNC check rate value</key>
-	<string>Set the VNC check rate value</string>
 	<key>Websocket error for VNC</key>
 	<string>Websocket error for VNC</string>
 	<key>Your browser does not support javascript fullscreen</key>

@@ -1,9 +1,3 @@
-/* Adjust the maximum amout of memory of the VM (only when running) */
-"Adjust the maximum amout of memory of the VM (only when running)" = "Adjust the maximum amout of memory of the VM (only when running)";
-
-/* Adjust the number of virtual CPUs of the VM (only when running) */
-"Adjust the number of virtual CPUs of the VM (only when running)" = "Adjust the number of virtual CPUs of the VM (only when running)";
-
 /* Are you sure you want to migrate this virtual machine ? */
 "Are you sure you want to migrate this virtual machine ?" = "Are you sure you want to migrate this virtual machine ?";
 
@@ -16,35 +10,14 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Control the virtual machine */
-"Control the virtual machine" = "Control the virtual machine";
-
 /* Crashed */
 "Crashed" = "Crashed";
-
-/* Current amount of memory */
-"Current amount of memory" = "Current amount of memory";
-
-/* Current OOM adjust value of the virtual machine */
-"Current OOM adjust value of the virtual machine" = "Current OOM adjust value of the virtual machine";
-
-/* Current OOM score for the virtual machine */
-"Current OOM score for the virtual machine" = "Current OOM score for the virtual machine";
-
-/* Current state of the virtual machine */
-"Current state of the virtual machine" = "Current state of the virtual machine";
 
 /* Destroy */
 "Destroy" = "Destroy";
 
 /* Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer. */
 "Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer." = "Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.";
-
-/* If ON, the virtual machine process will never been destroyed by OOM killer */
-"If ON, the virtual machine process will never been destroyed by OOM killer" = "If ON, the virtual machine process will never been destroyed by OOM killer";
-
-/* If ON, the virtual machine will start with hypervisor */
-"If ON, the virtual machine will start with hypervisor" = "If ON, the virtual machine will start with hypervisor";
 
 /* Kill */
 "Kill" = "Kill";
@@ -109,12 +82,6 @@
 /* Stop */
 "Stop" = "Stop";
 
-/* Total of consumed physical CPU time */
-"Total of consumed physical CPU time" = "Total of consumed physical CPU time";
-
-/* Trigger a live migration from current hypervisor to selected one */
-"Trigger a live migration from current hypervisor to selected one" = "Trigger a live migration from current hypervisor to selected one";
-
 /* Unplug */
 "Unplug" = "Unplug";
 
@@ -144,9 +111,6 @@
 
 /* Virtual machine was resumed. */
 "Virtual machine was resumed." = "Virtual machine was resumed.";
-
-/* Will definitly delete the virtual machine, and all it's informations */
-"Will definitly delete the virtual machine, and all it's informations" = "Will definitly delete the virtual machine, and all it's informations";
 
 /* You can't migrate to the initial virtual machine's hypervisor. */
 "You can't migrate to the initial virtual machine's hypervisor." = "You can't migrate to the initial virtual machine's hypervisor.";

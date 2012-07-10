@@ -52,9 +52,6 @@
 
     [buttonType addItemsWithTitles:TNLibvirtDeviceInputTypes];
     [buttonBus addItemsWithTitles:TNLibvirtDeviceInputBuses];
-
-    [buttonBus setToolTip:CPLocalizedString(@"Set the bus of the input device", @"Set the bus of the input device")];
-    [buttonType setToolTip:CPLocalizedString(@"Set the type of the input device", @"Set the type of the input device")];
 }
 
 

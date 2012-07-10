@@ -66,7 +66,6 @@
     [buttonDelete setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
     [buttonDelete setTarget:self];
     [buttonDelete setAction:@selector(deleteSelectedRole:)];
-    [buttonDelete setToolTip:CPBundleLocalizedString(@"Delete the selected role", @"Delete the selected role")];
 
     [buttonBar setButtons:[buttonDelete]];
 

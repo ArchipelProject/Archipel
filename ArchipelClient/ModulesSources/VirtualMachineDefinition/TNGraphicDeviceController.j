@@ -54,16 +54,9 @@
 
     [buttonKeymap removeAllItems];
     [buttonKeymap addItemsWithTitles:TNLibvirtDeviceGraphicVNCKeymaps];
-    [buttonKeymap setToolTip:CPLocalizedString(@"Select the keymap to use", @"Select the keymap to use")];
 
     [buttonType removeAllItems];
     [buttonType addItemsWithTitles:[TNLibvirtDeviceGraphicTypeVNC, TNLibvirtDeviceGraphicTypeRDP, TNLibvirtDeviceGraphicTypeSPICE]];
-    [buttonType setToolTip:CPLocalizedString(@"Set the graphic type", @"Set the graphic type")];
-
-    [fieldPassword setToolTip:CPBundleLocalizedString(@"Set the VNC password (no password if blank)", @"Set the VNC password (no password if blank)")];
-    [fieldListenAddress setToolTip:CPLocalizedString(@"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)", @"Set the real VNC Server (not the websocket proxy) listen addr. Leave blank for qemu default (127.0.0.1)")];
-    [fieldListenPort setToolTip:CPLocalizedString(@"Set the real VNC server listen port. leave it to blank for autoport", @"Set the real VNC server listen port. leave it to blank for autoport")];
-
 }
 
 

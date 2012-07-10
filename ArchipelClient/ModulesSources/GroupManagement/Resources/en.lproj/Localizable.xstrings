@@ -10,30 +10,16 @@
 	<string> to the selected hypervisor</string>
 	<key>Cannot migrate virtual machine </key>
 	<string>Cannot migrate virtual machine </string>
-	<key>Destroy all selected virtual machines</key>
-	<string>Destroy all selected virtual machines</string>
 	<key>Destroy selected virtual machines</key>
 	<string>Destroy selected virtual machines</string>
-	<key>Migrate all selected virtual machines</key>
-	<string>Migrate all selected virtual machines</string>
-	<key>Pause all selected virtual machines</key>
-	<string>Pause all selected virtual machines</string>
 	<key>Pause selected virtual machines</key>
 	<string>Pause selected virtual machines</string>
-	<key>Reboot all selected virtual machines (not supported by all hypervisors)</key>
-	<string>Reboot all selected virtual machines (not supported by all hypervisors)</string>
 	<key>Reboot selected virtual machines</key>
 	<string>Reboot selected virtual machines</string>
-	<key>Resume all selected virtual machines</key>
-	<string>Resume all selected virtual machines</string>
 	<key>Resume selected virtual machines</key>
 	<string>Resume selected virtual machines</string>
-	<key>Shutdown all selected virtual machines</key>
-	<string>Shutdown all selected virtual machines</string>
 	<key>Shutdown selected virtual machines</key>
 	<string>Shutdown selected virtual machines</string>
-	<key>Start all selected virtual machines</key>
-	<string>Start all selected virtual machines</string>
 	<key>Start selected virtual machines</key>
 	<string>Start selected virtual machines</string>
 	<key>Virtual machine </key>

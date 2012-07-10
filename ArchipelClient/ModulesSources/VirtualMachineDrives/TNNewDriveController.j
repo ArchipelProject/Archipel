@@ -61,14 +61,6 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
 
     [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     [fieldNewDiskSize setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
-
-    [fieldNewDiskName setToolTip:CPBundleLocalizedString(@"Set the name of the new virtual drive", @"Set the name of the new virtual drive")];
-    [fieldNewDiskSize setToolTip:CPBundleLocalizedString(@"Set the size of the new virtual drive", @"Set the size of the new virtual drive")];
-    [buttonNewDiskFormat setToolTip:CPBundleLocalizedString(@"Set the format of the new virtual drive", @"Set the format of the new virtual drive")];
-    [buttonNewDiskSizeUnit setToolTip:CPBundleLocalizedString(@"Set the unit of size for the new virtual drive", @"Set the unit of size for the new virtual drive")];
-    [checkBoxUseQCOW2Preallocation setToolTip:CPBundleLocalizedString(@"If checked, the drive will not be in sparse mode", @"If checked, the drive will not be in sparse mode")];
-    [checkBoxUseMasterDrive setToolTip:CPLocalizedString(@"Use a golden QCOW2 file for this drive", @"Use a golden QCOW2 file for this drive")];
-    [buttonGoldenDrive setToolTip:CPLocalizedString(@"Select the golden drive you want to use", @"Select the golden drive you want to use")];
 }
 
 

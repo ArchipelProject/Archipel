@@ -88,35 +88,29 @@
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
-    [_plusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Create a new DHCP reservation", @"Create a new DHCP reservation")];
 
     _minusButtonDHCPHosts= [CPButtonBar minusButton];
     [_minusButtonDHCPHosts setTarget:self];
     [_minusButtonDHCPHosts setAction:@selector(removeDHCPHost:)];
-    [_minusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Remove selected DHCP reservation", @"Remove selected DHCP reservation")];
 
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
 
     _plusButtonDHCPRanges = [CPButtonBar plusButton];
     [_plusButtonDHCPRanges setTarget:self];
     [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];
-    [_plusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Create a new DHCP range", @"Create a new DHCP range")];
 
     _minusButtonDHCPRanges = [CPButtonBar minusButton];
     [_minusButtonDHCPRanges setTarget:self];
     [_minusButtonDHCPRanges setAction:@selector(removeDHCPRange:)];
-    [_minusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Remove selected DHCP range", @"Remove selected DHCP range")];
 
     [buttonBarControlDHCPRanges setButtons:[_plusButtonDHCPRanges, _minusButtonDHCPRanges]];
 
     [buttonForwardMode removeAllItems];
     [buttonForwardMode addItemsWithTitles:TNLibvirtNetworkForwardModes];
-    [buttonForwardMode setToolTip:CPBundleLocalizedString(@"Choose the forward mode for this virtual network", @"Choose the forward mode for this virtual network")];
     [buttonForwardMode setTarget:self];
     [buttonForwardMode setAction:@selector(forwardModeChanged:)];
 
     [buttonForwardDevice removeAllItems];
-    [buttonForwardDevice setToolTip:CPBundleLocalizedString(@"Select the hypervisor network card you want to use for this virtual network", @"Select the hypervisor network card you want to use for this virtual network")];
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
@@ -152,15 +146,6 @@
     [tabViewDHCPHostsItem setView:viewHostsConf];
     [tabViewDHCPHostsItem setLabel:CPBundleLocalizedString(@"DHCP Hosts", @"DHCP Hosts")];
     [tabViewDHCP addTabViewItem:tabViewDHCPHostsItem];
-
-    [fieldNetworkName setToolTip:CPBundleLocalizedString(@"Enter the name of the virtual network", @"Enter the name of the virtual network")];
-    [fieldBridgeName setToolTip:CPBundleLocalizedString(@"Enter the name of the bridge to create when this network is activated", @"Enter the name of the bridge to create when this network is activated")];
-    [fieldBridgeDelay setToolTip:CPBundleLocalizedString(@"Enter the value of delay for the bridge", @"Enter the value of delay for the bridge")];
-    [fieldBridgeIP setToolTip:CPBundleLocalizedString(@"The IP address to assign to the bridge", @"The IP address to assign to the bridge")];
-    [fieldBridgeNetmask setToolTip:CPBundleLocalizedString(@"The netmask to use for the bridge", @"The netmask to use for the bridge")];
-    [checkBoxSTPEnabled setToolTip:CPBundleLocalizedString(@"Activate or deactivate Spanning Tree Protocol for the bridge", @"Activate or deactivate Spanning Tree Protocol for the bridge")];
-    [checkBoxDHCPEnabled setToolTip:CPBundleLocalizedString(@"Enable DHCP for this virtual network", @"Enable DHCP for this virtual network")];
-    [checkBoxAutostart setToolTip:CPLocalizedString(@"Define if network should start with host", @"Define if network should start with host")];
 }
 
 

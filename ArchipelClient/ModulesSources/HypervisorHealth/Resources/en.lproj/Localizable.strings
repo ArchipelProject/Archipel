@@ -1,9 +1,6 @@
 /*  MB */
 " MB" = " MB";
 
-/* Activate the statistics auto fetching */
-"Activate the statistics auto fetching" = "Activate the statistics auto fetching";
-
 /* Available:  */
 "Available: " = "Available: ";
 
@@ -15,15 +12,6 @@
 
 /* Logs */
 "Logs" = "Logs";
-
-/* Set the delay between asking hypervisor statistics */
-"Set the delay between asking hypervisor statistics" = "Set the delay between asking hypervisor statistics";
-
-/* Set the max number of log item to fetch */
-"Set the max number of log item to fetch" = "Set the max number of log item to fetch";
-
-/* Set the max number of statistic entries to fetch */
-"Set the max number of statistic entries to fetch" = "Set the max number of statistic entries to fetch";
 
 /* Used:  */
 "Used: " = "Used: ";

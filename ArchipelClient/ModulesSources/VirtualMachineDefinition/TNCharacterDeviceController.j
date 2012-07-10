@@ -60,30 +60,18 @@
 {
     [buttonKind removeAllItems];
     [buttonKind addItemsWithTitles:TNLibvirtDeviceCharacterKinds];
-    [buttonKind setToolTip:CPLocalizedString(@"Choose the kind of the character device", @"Choose the kind of the character device")];
 
     [buttonType removeAllItems];
     [buttonType addItemsWithTitles:TNLibvirtDeviceCharacterTypes];
-    [buttonType setToolTip:CPLocalizedString(@"Choose the type of the character device", @"Choose the type of the character device")];
 
     [buttonSourceMode removeAllItems];
     [buttonSourceMode addItemsWithTitles:TNLibvirtDeviceCharacterSourceModes];
-    [buttonSourceMode setToolTip:CPLocalizedString(@"Choose the mode of the source", @"Choose the mode of the source")];
 
     [buttonTargetType removeAllItems];
     [buttonTargetType addItemsWithTitles:TNLibvirtDeviceConsoleTargetTypes];
-    [buttonTargetType setToolTip:CPLocalizedString(@"Choose the target type", @"Choose the target type")];
 
     [buttonProtocolType removeAllItems];
     [buttonProtocolType addItemsWithTitles:TNLibvirtDeviceCharacterProtocolTypes];
-    [buttonProtocolType setToolTip:CPLocalizedString(@"Choose the protocol type", @"Choose the protocol type")];
-
-    [fieldSourceHost setToolTip:CPLocalizedString(@"Set the source host", @"Set the source host")];
-    [fieldSourcePath setToolTip:CPLocalizedString(@"Set the source path", @"Set the source path")];
-    [fieldSourceService setToolTip:CPLocalizedString(@"Set the source service", @"Set the source service")];
-    [fieldTargetAddress setToolTip:CPLocalizedString(@"Set the target address", @"Set the target address")];
-    [fieldTargetName setToolTip:CPLocalizedString(@"Set the target name", @"Set the target name")];
-    [fieldTargetPort setToolTip:CPLocalizedString(@"Set the target port", @"Set the target port")];
 }
 
 

@@ -22,20 +22,10 @@
 	<string>Are you sure you want to completely remove this virtual machine ?</string>
 	<key>Are you sure you want to remove the subscription for this user ?</key>
 	<string>Are you sure you want to remove the subscription for this user ?</string>
-	<key>Ask hypervisor to completely destroy all selected virtual machine</key>
-	<string>Ask hypervisor to completely destroy all selected virtual machine</string>
-	<key>Ask hypervisor to create a new virtual machine</key>
-	<string>Ask hypervisor to create a new virtual machine</string>
-	<key>Ask the virtual machine to add in its contact a user</key>
-	<string>Ask the virtual machine to add in its contact a user</string>
-	<key>Ask the virtual machine to remove a user from its contact</key>
-	<string>Ask the virtual machine to remove a user from its contact</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Clone this virtual machine</key>
 	<string>Clone this virtual machine</string>
-	<key>Create a clone virtual machine from the selected one</key>
-	<string>Create a clone virtual machine from the selected one</string>
 	<key>Create new virtual machine</key>
 	<string>Create new virtual machine</string>
 	<key>Delete</key>

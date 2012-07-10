@@ -13,12 +13,6 @@
 /* Nickname */
 "Nickname" = "Surnom";
 
-/* Set the conference server to use */
-"Set the conference server to use" = "Définit le serveur de conférence à utiliser";
-
-/* Set the room to connect to */
-"Set the room to connect to" = "Définit à quelle salle se connecter";
-
 /* Would you like to add  */
 "Would you like to add " = "Voulez-vous ajouter ";
 

@@ -35,16 +35,13 @@ var TNRosterDataViewContactImageUnknownUser,
 */
 @implementation TNRosterDataViewContact : CPView
 {
-    CPImageView         _avatar         @accessors(property=avatar);
-    CPImageView         _statusIcon     @accessors(property=statusIcon);
-    CPTextField         _events         @accessors(property=events);
-    CPTextField         _name           @accessors(property=name);
-    CPTextField         _status         @accessors(property=status);
+    @outlet     CPImageView         avatar         @accessors;
+    @outlet     CPImageView         statusIcon     @accessors;
+    @outlet     CPTextField         events         @accessors;
+    @outlet     CPTextField         name           @accessors;
+    @outlet     CPTextField         status         @accessors;
 
-    CPString            _entityType;
-    BOOL                _shouldDisplayAvatar;
-    TNStropheContact    _contact;
-    TNAttachedWindow    _quickActionWindow;
+    TNStropheContact                _contact;
 }
 
 
@@ -59,81 +56,30 @@ var TNRosterDataViewContactImageUnknownUser,
     TNRosterDataViewContactImageSelectedCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
 }
 
-/*! initialize the class
-    @return a initialized instance of TNRosterDataViewContact
+/*! initialize the custom theme
 */
-- (id)initWithFrame:(CPRect)aFrame
+- (void)_initTheme
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        var bundle                  = [CPBundle mainBundle],
-            rosterLayout            = [bundle objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
-            contactFontSizeName     = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeName"],
-            contactFontSizeStatus   = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeStatus"],
-            contactPlacementOffset  = [rosterLayout objectForKey:@"TNRosterDataViewContactPlacementOffset"],
-            contactImageSizeAvatar  = CPSizeMake([[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeAvatar"] objectForKey:@"width"],
-                                                 [[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeAvatar"] objectForKey:@"height"]),
-            contactImageSizeStatus  = CPSizeMake([[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeStatus"] objectForKey:@"width"],
-                                                 [[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeStatus"] objectForKey:@"height"]);
+    [events setBackgroundColor:TNRosterDataViewContactImageNormalCartoucheColor];
+    [events setVerticalAlignment:CPCenterVerticalTextAlignment];
+    [events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+    [events setValue:TNRosterDataViewContactImageNormalCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
+    [events setValue:TNRosterDataViewContactImageSelectedCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
+    [events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"content-inset"];
+    [events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
+    [events setHidden:YES];
 
-        _shouldDisplayAvatar            = !![rosterLayout objectForKey:@"TNOutlineViewRosterDisplayAvatar"],
-        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(35 + contactPlacementOffset, 1, 16, 16)];
-        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 1, aFrame.size.width - (54 + contactPlacementOffset), 15)];
-        _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(35 + contactPlacementOffset, 16, aFrame.size.width - (39 + contactPlacementOffset), 15)];
-        _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(CPRectGetMaxX(aFrame) - 25, 10, 23, 14)];
+    [name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [name setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
+    [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+    [name setValue:CGSizeMake(0.0, .0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
 
-        if (_shouldDisplayAvatar)
-        {
-            _avatar = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
-            [_avatar setFrameSize:contactImageSizeAvatar];
-        }
-
-        [_events setBackgroundColor:TNRosterDataViewContactImageNormalCartoucheColor];
-        [_events setAlignment:CPCenterTextAlignment];
-        [_events setAutoresizingMask:CPViewMinXMargin];
-        [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
-        [_events setFont:[CPFont systemFontOfSize:11]];
-        [_events setTextColor:[CPColor whiteColor]];
-        [_events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_events setValue:TNRosterDataViewContactImageNormalCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
-        [_events setValue:TNRosterDataViewContactImageSelectedCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
-        [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"content-inset"];
-        [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
-        [_events setHidden:YES];
-
-        [_name setFont:[CPFont systemFontOfSize:contactFontSizeName]];
-        [_name setAutoresizingMask:CPViewWidthSizable];
-        [_name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [_name setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
-        [_name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_name setValue:CGSizeMake(0.0, .0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
-        [_name setValue:[CPFont boldSystemFontOfSize:contactFontSizeName] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
-        [_name setLineBreakMode:CPLineBreakByTruncatingTail];
-
-        [_status setFont:[CPFont systemFontOfSize:contactFontSizeStatus]];
-        [_status setAutoresizingMask:CPViewWidthSizable];
-        [_status setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [_status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
-        [_status setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
-        [_status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
-        [_status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView]
-        [_status setLineBreakMode:CPLineBreakByTruncatingTail];
-
-        var actionImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction.png"] size:CPSizeMake(14.0, 14.0)],
-            actionImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction-pressed.png"] size:CPSizeMake(14.0, 14.0)];
-
-        [self addSubview:_statusIcon];
-        [self addSubview:_name];
-        [self addSubview:_events];
-        [self addSubview:_status];
-
-        if (_shouldDisplayAvatar)
-            [self addSubview:_avatar];
-    }
-    return self;
+    [status setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
+    [status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
+    [status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+    [status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView]
 }
-
 
 #pragma mark -
 #pragma mark Overrides
@@ -148,20 +94,19 @@ var TNRosterDataViewContactImageUnknownUser,
 
     _contact = aContact;
 
-    [_name bind:@"objectValue" toObject:aContact withKeyPath:@"nickname" options:nil];
-    [_status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];
-    [_statusIcon bind:@"image" toObject:aContact withKeyPath:@"statusIcon" options:nil];
-
-    [_avatar bind:@"image" toObject:aContact withKeyPath:@"avatar" options:nil];
+    [name bind:@"objectValue" toObject:aContact withKeyPath:@"nickname" options:nil];
+    [status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];
+    [statusIcon bind:@"image" toObject:aContact withKeyPath:@"statusIcon" options:nil];
+    [avatar bind:@"image" toObject:aContact withKeyPath:@"avatar" options:nil];
 
     if ([aContact numberOfEvents] > 0)
     {
-        [_events setHidden:NO];
-        [_events setStringValue:[aContact numberOfEvents]];
+        [events setHidden:NO];
+        [events setStringValue:[aContact numberOfEvents]];
     }
     else
     {
-        [_events setHidden:YES];
+        [events setHidden:YES];
     }
 }
 
@@ -175,9 +120,9 @@ var TNRosterDataViewContactImageUnknownUser,
 {
     [super setThemeState:aState];
 
-    [_name setThemeState:aState];
-    [_status setThemeState:aState];
-    [_events setThemeState:aState];
+    [name setThemeState:aState];
+    [status setThemeState:aState];
+    [events setThemeState:aState];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -186,35 +131,113 @@ var TNRosterDataViewContactImageUnknownUser,
 {
     [super unsetThemeState:aState];
 
-    [_name unsetThemeState:aState];
-    [_status unsetThemeState:aState];
-    [_events unsetThemeState:aState];
+    [name unsetThemeState:aState];
+    [status unsetThemeState:aState];
+    [events unsetThemeState:aState];
+}
+
+#pragma mark -
+#pragma mark CPCoding compliance
+
+/*! CPCoder compliance
+*/
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    self = [super initWithCoder:aCoder];
+
+    if (self)
+    {
+        _contact    = [aCoder decodeObjectForKey:@"_contact"];
+        name        = [aCoder decodeObjectForKey:@"name"];
+        status      = [aCoder decodeObjectForKey:@"status"];
+        statusIcon  = [aCoder decodeObjectForKey:@"statusIcon"];
+        events      = [aCoder decodeObjectForKey:@"events"];
+        avatar      = [aCoder decodeObjectForKey:@"avatar"];
+
+        [self _initTheme];
+    }
+
+    return self;
+}
+
+/*! CPCoder compliance
+*/
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];
+
+    [aCoder encodeObject:_contact forKey:@"_contact"];
+    [aCoder encodeObject:name forKey:@"name"];
+    [aCoder encodeObject:status forKey:@"status"];
+    [aCoder encodeObject:statusIcon forKey:@"statusIcon"];
+    [aCoder encodeObject:events forKey:@"events"];
+    [aCoder encodeObject:avatar forKey:@"avatar"];
+}
+
+@end
+
+
+
+
+/*! this is a simple subclass of CPTextField that configure itself to
+    be sexy for CPOutlineView groups
+*/
+@implementation TNRosterDataViewGroup : CPView
+{
+    @outlet name @accessors;
 }
 
 
 #pragma mark -
-#pragma mark Actions
+#pragma mark Initialization
 
-/*! open the quick action view
-    @param aSender the sender of the actiob
+/*! initialize the class
+    @return a initialized instance of TNRosterDataViewGroup
 */
-- (void)openQuickActionWindow:(id)aSender
+- (id)_initTheme
 {
-    if (!_quickActionWindow)
-    {
-        _quickActionWindow  = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
-        var label = [CPTextField labelWithTitle:@"I'm sure you wanna know\nwhat's this, right?"];
-
-        [label setFont:[CPFont boldSystemFontOfSize:11.0]];
-        [label sizeToFit];
-        [label setFrameOrigin:CPPointMake(60, 60)];
-        [label setTextColor:[CPColor whiteColor]];
-        [[_quickActionWindow contentView] addSubview:label];
-        [_quickActionWindow setAlphaValue:0.95];
+        [name setTextColor:[CPColor colorWithHexString:@"5F676F"]];
+        [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [name setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+        [name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [name setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
+        [name setVerticalAlignment:CPCenterVerticalTextAlignment];
     }
 
-    [_quickActionWindow positionRelativeToView:self gravity:TNAttachedWindowGravityRight];
+    return self;
 }
+
+
+#pragma mark -
+#pragma mark Data View compliance
+
+- (void)setObjectValue:(TNStropheGroup)aGroup
+{
+    [name bind:@"objectValue" toObject:aGroup withKeyPath:@"name" options:nil];
+}
+
+
+#pragma mark -
+#pragma mark Theming
+
+/*! implement theming in order to allow change color of selected item
+*/
+- (void)setThemeState:(id)aState
+{
+    [super setThemeState:aState];
+
+    [name setThemeState:aState];
+}
+
+/*! implement theming in order to allow change color of selected item
+*/
+- (void)unsetThemeState:(id)aState
+{
+    [super unsetThemeState:aState];
+
+    [name unsetThemeState:aState];
+}
+
 
 
 #pragma mark -
@@ -228,13 +251,8 @@ var TNRosterDataViewContactImageUnknownUser,
 
     if (self)
     {
-        _shouldDisplayAvatar    = [aCoder decodeObjectForKey:@"_shouldDisplayAvatar"];
-        _contact                = [aCoder decodeObjectForKey:@"_contact"];
-        _name                   = [aCoder decodeObjectForKey:@"_name"];
-        _status                 = [aCoder decodeObjectForKey:@"_status"];
-        _statusIcon             = [aCoder decodeObjectForKey:@"_statusIcon"];
-        _events                 = [aCoder decodeObjectForKey:@"_events"];
-        _avatar                 = [aCoder decodeObjectForKey:@"_avatar"];
+        name = [aCoder decodeObjectForKey:@"name"];
+        [self _initTheme];
     }
 
     return self;
@@ -246,48 +264,7 @@ var TNRosterDataViewContactImageUnknownUser,
 {
     [super encodeWithCoder:aCoder];
 
-    [aCoder encodeObject:_shouldDisplayAvatar forKey:@"_shouldDisplayAvatar"];
-    [aCoder encodeObject:_contact forKey:@"_contact"];
-    [aCoder encodeObject:_name forKey:@"_name"];
-    [aCoder encodeObject:_status forKey:@"_status"];
-    [aCoder encodeObject:_statusIcon forKey:@"_statusIcon"];
-    [aCoder encodeObject:_events forKey:@"_events"];
-    [aCoder encodeObject:_avatar forKey:@"_avatar"];
-}
-
-@end
-
-/*! this is a simple subclass of CPTextField that configure itself to
-    be sexy for CPOutlineView groups
-*/
-@implementation TNRosterDataViewGroup : CPTextField
-
-#pragma mark -
-#pragma mark Initialization
-
-/*! initialize the class
-    @return a initialized instance of TNRosterDataViewGroup
-*/
-- (id)init
-{
-    if (self = [super init])
-    {
-        var rosterLayout            = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
-            contactFontSizeGroup    = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeGroup"];
-
-        [self setFont:[CPFont boldSystemFontOfSize:contactFontSizeGroup]];
-        [self setTextColor:[CPColor colorWithHexString:@"5F676F"]];
-        [self setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [self setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
-        [self setAutoresizingMask: CPViewWidthSizable];
-        [self setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-        [self setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [self setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
-        [self setVerticalAlignment:CPCenterVerticalTextAlignment];
-        [self setLineBreakMode:CPLineBreakByTruncatingTail];
-    }
-
-    return self;
+    [aCoder encodeObject:name forKey:@"name"];
 }
 
 @end

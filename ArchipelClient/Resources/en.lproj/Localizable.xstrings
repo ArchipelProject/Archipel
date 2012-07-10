@@ -22,8 +22,6 @@
 	<string>Add a contact</string>
 	<key>Add a group</key>
 	<string>Add a group</string>
-	<key>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</key>
-	<string>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</string>
 	<key>Add contact</key>
 	<string>Add contact</string>
 	<key>Add group</key>
@@ -46,18 +44,10 @@
 	<string>B</string>
 	<key>Busy</key>
 	<string>Busy</string>
-	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
-	<string>Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Cannot save your preferences to the XMPP server</key>
 	<string>Cannot save your preferences to the XMPP server</string>
-	<key>Change your current avatar. This picture will be visible by all your contacts</key>
-	<string>Change your current avatar. This picture will be visible by all your contacts</string>
-	<key>Click here to change the displayed named of the current contact or group</key>
-	<string>Click here to change the displayed named of the current contact or group</string>
-	<key>Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)</key>
-	<string>Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)</string>
 	<key>Collapse all groups</key>
 	<string>Collapse all groups</string>
 	<key>Collapse group</key>
@@ -80,8 +70,6 @@
 	<string>Cut</string>
 	<key>Decline</key>
 	<string>Decline</string>
-	<key>Delay before loading a module. This avoid to load server with stanzas</key>
-	<string>Delay before loading a module. This avoid to load server with stanzas</string>
 	<key>Delete</key>
 	<string>Delete</string>
 	<key>Delete contact</key>
@@ -90,14 +78,10 @@
 	<string>Delete group</string>
 	<key>Delete items</key>
 	<string>Delete items</string>
-	<key>Display or hide the properties view</key>
-	<string>Display or hide the properties view</string>
 	<key>Do not disturb</key>
 	<string>Do not disturb</string>
 	<key>Edit</key>
 	<string>Edit</string>
-	<key>Enter the new password for your account. You will need to enter this password at the next connection</key>
-	<string>Enter the new password for your account. You will need to enter this password at the next connection</string>
 	<key>Error</key>
 	<string>Error</string>
 	<key>Error while getting your preferences from the XMPP Server</key>
@@ -106,8 +90,6 @@
 	<string>Expand all groups</string>
 	<key>Expand group</key>
 	<string>Expand group</string>
-	<key>Filter contacts by name or tags</key>
-	<string>Filter contacts by name or tags</string>
 	<key>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</key>
 	<string>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</string>
 	<key>Full JID required</key>
@@ -180,8 +162,6 @@
 	<string>Release note</string>
 	<key>Remove subscribtion</key>
 	<string>Remove subscribtion</string>
-	<key>Remove the selected contact. It will only remove it from your roster.</key>
-	<string>Remove the selected contact. It will only remove it from your roster.</string>
 	<key>Rename contact</key>
 	<string>Rename contact</string>
 	<key>Rename group</key>
@@ -192,8 +172,6 @@
 	<string>Reset</string>
 	<key>Resource</key>
 	<string>Resource</string>
-	<key>Retype the password</key>
-	<string>Retype the password</string>
 	<key>Search entity</key>
 	<string>Search entity</string>
 	<key>Select a contact</key>
@@ -210,8 +188,6 @@
 	<string>Select previous entity</string>
 	<key>Select previous module</key>
 	<string>Select previous module</string>
-	<key>Set the log level of the client. The more verbose, the less performance.</key>
-	<string>Set the log level of the client. The more verbose, the less performance.</string>
 	<key>Status</key>
 	<string>Status</string>
 	<key>Subscription request</key>
@@ -220,46 +196,14 @@
 	<string>TB</string>
 	<key>Tags</key>
 	<string>Tags</string>
-	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
-	<string>The JID to use to connect. It is always formatted like user@domain.com</string>
-	<key>The XMPP JID of the contact</key>
-	<string>The XMPP JID of the contact</string>
-	<key>The current logged account</key>
-	<string>The current logged account</string>
-	<key>The current status of the contact</key>
-	<string>The current status of the contact</string>
-	<key>The display name of the new contact</key>
-	<string>The display name of the new contact</string>
-	<key>The domain (XMPP server) of the contact</key>
-	<string>The domain (XMPP server) of the contact</string>
 	<key>The group has been removed</key>
 	<string>The group has been removed</string>
 	<key>The group must be empty</key>
 	<string>The group must be empty</string>
-	<key>The name of the new group</key>
-	<string>The name of the new group</string>
-	<key>The password associated to your XMPP account</key>
-	<string>The password associated to your XMPP account</string>
 	<key>The passwords you entered don't match.</key>
 	<string>The passwords you entered don't match.</string>
-	<key>The resource of the contact</key>
-	<string>The resource of the contact</string>
-	<key>The resource to use</key>
-	<string>The resource to use</string>
-	<key>The service BOSH (XMPP over HTTP) to use</key>
-	<string>The service BOSH (XMPP over HTTP) to use</string>
-	<key>The type of contact (hypervisor, virtual machine or user)</key>
-	<string>The type of contact (hypervisor, virtual machine or user)</string>
-	<key>This LED is ON when XMPP data are received</key>
-	<string>This LED is ON when XMPP data are received</string>
-	<key>This LED is ON when XMPP data are sent</key>
-	<string>This LED is ON when XMPP data are sent</string>
 	<key>Toggle tag view</key>
 	<string>Toggle tag view</string>
-	<key>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</key>
-	<string>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</string>
-	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
-	<string>Turn this ON to activate eye candy animation. Turn it off to gain performances</string>
 	<key>Unable to grant admin rights to users. See log</key>
 	<string>Unable to grant admin rights to users. See log</string>
 	<key>Unable to revoke admin rights to users. See log</key>
@@ -268,8 +212,6 @@
 	<string>Unable to update your password</string>
 	<key>Undo</key>
 	<string>Undo</string>
-	<key>Update your current XMPP status</key>
-	<string>Update your current XMPP status</string>
 	<key>User</key>
 	<string>User</string>
 	<key>User admin rights successfully granted</key>
@@ -280,10 +222,6 @@
 	<string>Virtual machine</string>
 	<key>XMPP Account</key>
 	<string>XMPP Account</string>
-	<key>You are not registred to the entity events.</key>
-	<string>You are not registred to the entity events.</string>
-	<key>You are registred to the entity events.</key>
-	<string>You are registred to the entity events.</string>
 	<key>You can't assign tags here</key>
 	<string>You can't assign tags here</string>
 	<key>You have to enter a valid group name.</key>

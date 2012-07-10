@@ -1,9 +1,3 @@
-/* Activate or deactivate Spanning Tree Protocol for the bridge */
-"Activate or deactivate Spanning Tree Protocol for the bridge" = "Activate or deactivate Spanning Tree Protocol for the bridge";
-
-/* Activate selected networks */
-"Activate selected networks" = "Activate selected networks";
-
 /* Activate this network */
 "Activate this network" = "Activate this network";
 
@@ -22,18 +16,6 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Choose the forward mode for this virtual network */
-"Choose the forward mode for this virtual network" = "Choose the forward mode for this virtual network";
-
-/* Create a new DHCP range */
-"Create a new DHCP range" = "Create a new DHCP range";
-
-/* Create a new DHCP reservation */
-"Create a new DHCP reservation" = "Create a new DHCP reservation";
-
-/* Create a new network */
-"Create a new network" = "Create a new network";
-
 /* Create new virtual network */
 "Create new virtual network" = "Create new virtual network";
 
@@ -42,9 +24,6 @@
 
 /* Deactivate Network */
 "Deactivate Network" = "Deactivate Network";
-
-/* Deactivate selected networks */
-"Deactivate selected networks" = "Deactivate selected networks";
 
 /* Deactivate this network */
 "Deactivate this network" = "Deactivate this network";
@@ -58,9 +37,6 @@
 /* Delete selected network */
 "Delete selected network" = "Delete selected network";
 
-/* Delete selected networks */
-"Delete selected networks" = "Delete selected networks";
-
 /* DHCP Hosts */
 "DHCP Hosts" = "DHCP Hosts";
 
@@ -72,18 +48,6 @@
 
 /* Edit selected network */
 "Edit selected network" = "Edit selected network";
-
-/* Enable DHCP for this virtual network */
-"Enable DHCP for this virtual network" = "Enable DHCP for this virtual network";
-
-/* Enter the name of the bridge to create when this network is activated */
-"Enter the name of the bridge to create when this network is activated" = "Enter the name of the bridge to create when this network is activated";
-
-/* Enter the name of the virtual network */
-"Enter the name of the virtual network" = "Enter the name of the virtual network";
-
-/* Enter the value of delay for the bridge */
-"Enter the value of delay for the bridge" = "Enter the value of delay for the bridge";
 
 /* Error */
 "Error" = "Error";
@@ -97,26 +61,8 @@
 /* Network status has changed */
 "Network status has changed" = "Network status has changed";
 
-/* Open configuration panel for selected network */
-"Open configuration panel for selected network" = "Open configuration panel for selected network";
-
 /* Remove */
 "Remove" = "Remove";
-
-/* Remove selected DHCP range */
-"Remove selected DHCP range" = "Remove selected DHCP range";
-
-/* Remove selected DHCP reservation */
-"Remove selected DHCP reservation" = "Remove selected DHCP reservation";
-
-/* Select the hypervisor network card you want to use for this virtual network */
-"Select the hypervisor network card you want to use for this virtual network" = "Select the hypervisor network card you want to use for this virtual network";
-
-/* The IP address to assign to the bridge */
-"The IP address to assign to the bridge" = "The IP address to assign to the bridge";
-
-/* The netmask to use for the bridge */
-"The netmask to use for the bridge" = "The netmask to use for the bridge";
 
 /* You can't edit a running network */
 "You can't edit a running network" = "You can't edit a running network";

@@ -12,10 +12,6 @@
 	<string>Cancel</string>
 	<key>Nickname</key>
 	<string>Nickname</string>
-	<key>Set the conference server to use</key>
-	<string>Set the conference server to use</string>
-	<key>Set the room to connect to</key>
-	<string>Set the room to connect to</string>
 	<key>Would you like to add </key>
 	<string>Would you like to add </string>
 </dict>

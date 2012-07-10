@@ -31,9 +31,6 @@
 /* Delete appliance */
 "Delete appliance" = "Supprimer l'appliance";
 
-/* Delete the selected appliance from the hypervisor repository */
-"Delete the selected appliance from the hypervisor repository" = "Supprimer l'appliance sélectionnée du répértoire de l'hyperviseur.";
-
 /* Delete VMCast */
 "Delete VMCast" = "Supprimer VMCast";
 
@@ -46,12 +43,6 @@
 /* Download selected appliance */
 "Download selected appliance" = "Télécharge l'appliance sélectionnée.";
 
-/* If checked, it will only displayed installed appliances */
-"If checked, it will only displayed installed appliances" = "Afficher uniquement les appliances téléchargées si cette case est cochée.";
-
-/* Register to a new VMCast feed */
-"Register to a new VMCast feed" = "S'abonner à un flux VMCast";
-
 /* Register to a new VMCasts */
 "Register to a new VMCasts" = "S'abonner à un nouveau VMCasts";
 
@@ -61,23 +52,14 @@
 /* Show activity monitor */
 "Show activity monitor" = "Ouvrir le moniteur de téléchargements.";
 
-/* Show all current downloads */
-"Show all current downloads" = "Afficher tous les téléchargements en cours";
-
 /* Size */
 "Size" = "Taille";
-
-/* Start to download selected appliance */
-"Start to download selected appliance" = "Commence le téléchargement de l'appliance sélectionnée.";
 
 /* Status */
 "Status" = "Statut";
 
 /* Unregister */
 "Unregister" = "Désabonnement";
-
-/* Unregister from a VMCast feed */
-"Unregister from a VMCast feed" = "Se désabonner d'un flux VMCast.";
 
 /* Unregister from selected VMCast */
 "Unregister from selected VMCast" = "Se désabonner du flux VMCast sélectionné.";

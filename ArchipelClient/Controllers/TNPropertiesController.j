@@ -125,7 +125,6 @@
     [entryName setTextColor:[CPColor colorWithHexString:@"576066"]];
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
-    [entryName setToolTip:CPLocalizedString(@"Click here to change the displayed named of the current contact or group", @"Click here to change the displayed named of the current contact or group")];
     [entryName setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
     [entryName setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
     [entryName setLineBreakMode:CPLineBreakByTruncatingTail];
@@ -143,17 +142,10 @@
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
     [entryAvatar setImage:_unknownUserImage];
-    [entryAvatar setToolTip:CPLocalizedString(@"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)", @"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)")];
 
-    [buttonEventSubscription setToolTip:@"Click on avatar to change it."];
     [buttonEventSubscription setBordered:NO];
     [buttonEventSubscription setImageScaling:CPScaleProportionally];
     [buttonEventSubscription setHidden:YES];
-
-    [entryResource setToolTip:CPLocalizedString(@"The resource of the contact", @"The resource of the contact")];
-    [entryDomain setToolTip:CPLocalizedString(@"The domain (XMPP server) of the contact", @"The domain (XMPP server) of the contact")];
-    [entryStatus setToolTip:CPLocalizedString(@"The current status of the contact", @"The current status of the contact")];
-    [entryType setToolTip:CPLocalizedString(@"The type of contact (hypervisor, virtual machine or user)", @"The type of contact (hypervisor, virtual machine or user)")];
 
     [imageViewVCardPhoto setImageScaling:CPScaleProportionally];
 
@@ -340,15 +332,9 @@
             [_avatarManager setEntity:_entity];
 
         if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
-        {
             [buttonEventSubscription setImage:_pubsubImage];
-            [buttonEventSubscription setToolTip:CPLocalizedString(@"You are registred to the entity events.", @"You are registred to the entity events.")];
-        }
         else
-        {
             [buttonEventSubscription setImage:_pubsubDisabledImage];
-            [buttonEventSubscription setToolTip:CPLocalizedString(@"You are not registred to the entity events.", @"You are not registred to the entity events.")];
-        }
 
         [labelVCardFN setStringValue:@""];
         [labelVCardLocality setStringValue:@""];

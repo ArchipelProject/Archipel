@@ -24,16 +24,12 @@
 	<string>Revert to selected drive</string>
 	<key>Revert to snapshot</key>
 	<string>Revert to snapshot</string>
-	<key>Revert virtual machine to the state stored in selected snapshot</key>
-	<string>Revert virtual machine to the state stored in selected snapshot</string>
 	<key>Snapshot deleted</key>
 	<string>Snapshot deleted</string>
 	<key>Snapshot sucessfully reverted</key>
 	<string>Snapshot sucessfully reverted</string>
 	<key>Snapshoting sucessfull</key>
 	<string>Snapshoting sucessfull</string>
-	<key>Take a new snapshot</key>
-	<string>Take a new snapshot</string>
 	<key>Take a snapshot</key>
 	<string>Take a snapshot</string>
 	<key>There is no snapshot for this virtual machine</key>

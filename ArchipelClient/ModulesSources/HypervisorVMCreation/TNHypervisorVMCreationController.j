@@ -144,30 +144,25 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewVirtualMachineWindow:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Ask hypervisor to create a new virtual machine", @"Ask hypervisor to create a new virtual machine")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(deleteVirtualMachine:)];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Ask hypervisor to completely destroy all selected virtual machine", @"Ask hypervisor to completely destroy all selected virtual machine")];
 
     _addSubscriptionButton = [CPButtonBar plusButton];
     [_addSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-add.png"] size:CPSizeMake(16, 16)]];
     [_addSubscriptionButton setTarget:self];
     [_addSubscriptionButton setAction:@selector(openAddSubscriptionWindow:)];
-    [_addSubscriptionButton setToolTip:CPBundleLocalizedString(@"Ask the virtual machine to add in its contact a user", @"Ask the virtual machine to add in its contact a user")];
 
     _removeSubscriptionButton = [CPButtonBar plusButton];
     [_removeSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-remove.png"] size:CPSizeMake(16, 16)]];
     [_removeSubscriptionButton setTarget:self];
     [_removeSubscriptionButton setAction:@selector(openRemoveSubscriptionWindow:)];
-    [_removeSubscriptionButton setToolTip:CPBundleLocalizedString(@"Ask the virtual machine to remove a user from its contact", @"Ask the virtual machine to remove a user from its contact")];
 
     _cloneButton = [CPButtonBar minusButton];
     [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/branch.png"] size:CPSizeMake(16, 16)]];
     [_cloneButton setTarget:self];
     [_cloneButton setAction:@selector(openCloneVirtualMachineWindow:)];
-    [_cloneButton setToolTip:CPBundleLocalizedString(@"Create a clone virtual machine from the selected one", @"Create a clone virtual machine from the selected one")];
 
     [_minusButton setEnabled:NO];
     [_addSubscriptionButton setEnabled:NO];
@@ -177,7 +172,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_unmanageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unmanage.png"] size:CPSizeMake(16, 16)]];
     [_unmanageButton setTarget:self];
     [_unmanageButton setAction:@selector(unmanageVirtualMachine:)];
-    [_unmanageButton setToolTip:CPLocalizedString("Unmanage the virtual machine", "Unmanage the virtual machine")];
     [_unmanageButton setEnabled:NO];
 
     _parkButton = [CPButtonBar plusButton];
@@ -185,14 +179,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_parkButton setTarget:self];
     [_parkButton setAction:@selector(parkVirtualMachines:)];
     [_parkButton setEnabled:NO];
-    [_parkButton setToolTip:CPLocalizedString(@"Ask hypervisor to park this virtual machine", @"Ask hypervisor to park this virtual machine")];
 
     _jumpButton = [CPButtonBar plusButton];
     [_jumpButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"jump.png"] size:CPSizeMake(16, 16)]];
     [_jumpButton setTarget:self];
     [_jumpButton setAction:@selector(addSelectedVMToRoster:)];
     [_jumpButton setEnabled:NO];
-    [_jumpButton setToolTip:CPLocalizedString(@"Add the virtual machine in your roster if not already present", @"Add the virtual machine in your roster if not already present")];
 
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton, _parkButton, _jumpButton]];
@@ -218,7 +210,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_manageButton setTarget:self];
     [_manageButton setAction:@selector(manageVirtualMachine:)];
     [_manageButton setEnabled:NO];
-    [_manageButton setToolTip:CPLocalizedString(@"Ask hypervisor to manage this virtual machine", @"Ask hypervisor to manage this virtual machine")];
 
     [buttonBarNotManagedVMControl setButtons:[_manageButton]];
 
@@ -245,20 +236,17 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_unparkButton setTarget:self];
     [_unparkButton setAction:@selector(unparkVirtualMachines:)];
     [_unparkButton setEnabled:NO];
-    [_unparkButton setToolTip:CPLocalizedString(@"Unpark selected virtual machines on this hypervisor", @"Unpark selected virtual machines on this hypervisor")];
 
     _editParkedXMLButton = [CPButtonBar plusButton];
     [_editParkedXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
     [_editParkedXMLButton setTarget:self];
     [_editParkedXMLButton setAction:@selector(openParkedXMLEditor:)];
     [_editParkedXMLButton setEnabled:NO];
-    [_editParkedXMLButton setToolTip:CPLocalizedString(@"Edit the XML of the parked virtual machine", @"Edit the XML of the parked virtual machine")];
 
     _parkDeleteButton = [CPButtonBar minusButton];
     [_parkDeleteButton setTarget:self];
     [_parkDeleteButton setAction:@selector(deleteParkedVirtualMachines:)];
     [_parkDeleteButton setEnabled:NO];
-    [_parkDeleteButton setToolTip:CPLocalizedString(@"Delete parked virtual machines", @"Delete parked virtual machines")];
 
     [buttonBarParkedVMControl setButtons:[_unparkButton, _editParkedXMLButton, _parkDeleteButton]];
 

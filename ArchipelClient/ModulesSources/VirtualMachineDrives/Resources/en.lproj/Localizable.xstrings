@@ -6,18 +6,12 @@
 	<string>Are you sure you want to destroy this drive ? this is not reversible.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Choose the format of the virtual drive</key>
-	<string>Choose the format of the virtual drive</string>
 	<key>Create a drive</key>
 	<string>Create a drive</string>
-	<key>Create a new virtual drive</key>
-	<string>Create a new virtual drive</string>
 	<key>Delete</key>
 	<string>Delete</string>
 	<key>Delete selected drive</key>
 	<string>Delete selected drive</string>
-	<key>Delete selected virtual drives</key>
-	<string>Delete selected virtual drives</string>
 	<key>Delete to drive</key>
 	<string>Delete to drive</string>
 	<key>Disk has been converted</key>
@@ -30,26 +24,12 @@
 	<string>Disk has been renamed</string>
 	<key>Edit selected drive</key>
 	<string>Edit selected drive</string>
-	<key>Edit selected virtual drive</key>
-	<string>Edit selected virtual drive</string>
 	<key>Error</key>
 	<string>Error</string>
 	<key>GB</key>
 	<string>GB</string>
-	<key>If checked, the drive will not be in sparse mode</key>
-	<string>If checked, the drive will not be in sparse mode</string>
 	<key>MB</key>
 	<string>MB</string>
-	<key>Set the format of the new virtual drive</key>
-	<string>Set the format of the new virtual drive</string>
-	<key>Set the name of the new virtual drive</key>
-	<string>Set the name of the new virtual drive</string>
-	<key>Set the name of the virtual drive</key>
-	<string>Set the name of the virtual drive</string>
-	<key>Set the size of the new virtual drive</key>
-	<string>Set the size of the new virtual drive</string>
-	<key>Set the unit of size for the new virtual drive</key>
-	<string>Set the unit of size for the new virtual drive</string>
 	<key>You can't edit disks of a running virtual machine</key>
 	<string>You can't edit disks of a running virtual machine</string>
 	<key>You can't edit multiple disk</key>
