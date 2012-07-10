@@ -12,10 +12,6 @@
 	<string>Annuler</string>
 	<key>Nickname</key>
 	<string>Surnom</string>
-	<key>Set the conference server to use</key>
-	<string>Définit le serveur de conférence à utiliser</string>
-	<key>Set the room to connect to</key>
-	<string>Définit à quelle salle se connecter</string>
 	<key>Would you like to add </key>
 	<string>Voulez-vous ajouter </string>
 </dict>

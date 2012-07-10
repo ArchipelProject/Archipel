@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Adjust the maximum amout of memory of the VM (only when running)</key>
-	<string>Adjust the maximum amout of memory of the VM (only when running)</string>
-	<key>Adjust the number of virtual CPUs of the VM (only when running)</key>
-	<string>Adjust the number of virtual CPUs of the VM (only when running)</string>
 	<key>Are you sure you want to migrate this virtual machine ?</key>
 	<string>Are you sure you want to migrate this virtual machine ?</string>
 	<key>Autostart has been set.</key>
@@ -14,26 +10,12 @@
 	<string>Autostart has been unset.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Control the virtual machine</key>
-	<string>Control the virtual machine</string>
 	<key>Crashed</key>
 	<string>Crashed</string>
-	<key>Current OOM adjust value of the virtual machine</key>
-	<string>Current OOM adjust value of the virtual machine</string>
-	<key>Current OOM score for the virtual machine</key>
-	<string>Current OOM score for the virtual machine</string>
-	<key>Current amount of memory</key>
-	<string>Current amount of memory</string>
-	<key>Current state of the virtual machine</key>
-	<string>Current state of the virtual machine</string>
 	<key>Destroy</key>
 	<string>Destroy</string>
 	<key>Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.</key>
 	<string>Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.</string>
-	<key>If ON, the virtual machine process will never been destroyed by OOM killer</key>
-	<string>If ON, the virtual machine process will never been destroyed by OOM killer</string>
-	<key>If ON, the virtual machine will start with hypervisor</key>
-	<string>If ON, the virtual machine will start with hypervisor</string>
 	<key>Kill</key>
 	<string>Kill</string>
 	<key>Kill virtual machine?</key>
@@ -76,10 +58,6 @@
 	<string>Start</string>
 	<key>Stop</key>
 	<string>Stop</string>
-	<key>Total of consumed physical CPU time</key>
-	<string>Total of consumed physical CPU time</string>
-	<key>Trigger a live migration from current hypervisor to selected one</key>
-	<string>Trigger a live migration from current hypervisor to selected one</string>
 	<key>Unplug</key>
 	<string>Unplug</string>
 	<key>Unplug %@?</key>
@@ -100,8 +78,6 @@
 	<string>Virtual machine killed.</string>
 	<key>Virtual machine was resumed.</key>
 	<string>Virtual machine was resumed.</string>
-	<key>Will definitly delete the virtual machine, and all it's informations</key>
-	<string>Will definitly delete the virtual machine, and all it's informations</string>
 	<key>You can't migrate to the initial virtual machine's hypervisor.</key>
 	<string>You can't migrate to the initial virtual machine's hypervisor.</string>
 	<key>You may continue to use this machine while migrating</key>

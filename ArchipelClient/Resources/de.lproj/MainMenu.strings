@@ -464,3 +464,6 @@
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1652"; */
 "1652.title" = "Label";
 
+/* Class = "NSTextFieldCell"; title = "Group Name"; ObjectID = "1666"; */
+"1666.title" = "Group Name";
+

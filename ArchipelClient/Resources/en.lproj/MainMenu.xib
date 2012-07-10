@@ -4215,7 +4215,7 @@
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
 			<object class="NSCustomView" id="719030386">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4224,8 +4224,6 @@
 						<int key="NSvFlags">297</int>
 						<string key="NSFrame">{{211, 7}, {23, 14}}</string>
 						<reference key="NSSuperview" ref="719030386"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="541728380">
@@ -4244,7 +4242,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{28, 0}, {183, 17}}</string>
 						<reference key="NSSuperview" ref="719030386"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="160232522"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
 						<bool key="NSEnabled">YES</bool>
@@ -4267,7 +4264,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{41, 10}, {168, 22}}</string>
 						<reference key="NSSuperview" ref="719030386"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="337216726"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
 						<bool key="NSEnabled">YES</bool>
@@ -4303,7 +4299,6 @@
 						</object>
 						<string key="NSFrame">{{2, 2}, {25, 25}}</string>
 						<reference key="NSSuperview" ref="719030386"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="263515117"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -4335,7 +4330,6 @@
 						</object>
 						<string key="NSFrame">{{29, 13}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="719030386"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="82496288"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -4352,14 +4346,12 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{240, 29}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="963518082"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="NSClassName">TNRosterDataViewContact</string>
 			</object>
 			<object class="NSCustomView" id="341505398">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4368,8 +4360,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{2, 0}, {241, 22}}</string>
 						<reference key="NSSuperview" ref="341505398"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="263310713">
@@ -4385,8 +4375,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{240, 22}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="876563167"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="NSClassName">TNRosterDataViewGroup</string>

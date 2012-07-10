@@ -28,26 +28,11 @@
 /* Are you sure you want to remove the subscription for this user ? */
 "Are you sure you want to remove the subscription for this user ?" = "Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?";
 
-/* Ask hypervisor to completely destroy all selected virtual machine */
-"Ask hypervisor to completely destroy all selected virtual machine" = "Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles sélectionnées.";
-
-/* Ask hypervisor to create a new virtual machine */
-"Ask hypervisor to create a new virtual machine" = "Demande à l'hypervisor de créer une nouvelle machine virtuelle.";
-
-/* Ask the virtual machine to add in its contact a user */
-"Ask the virtual machine to add in its contact a user" = "Demande à la machine virtuelle d'ajouter un contact à son roster.";
-
-/* Ask the virtual machine to remove a user from its contact */
-"Ask the virtual machine to remove a user from its contact" = "Demande à la machine virtuelle de supprimer un contact de son roster.";
-
 /* Cancel */
 "Cancel" = "Annuler";
 
 /* Clone this virtual machine */
 "Clone this virtual machine" = "Cloner cette machine virtuelle";
-
-/* Create a clone virtual machine from the selected one */
-"Create a clone virtual machine from the selected one" = "Crée un clone de la machine virtuelle sélectionnée.";
 
 /* Create new virtual machine */
 "Create new virtual machine" = "Créer une nouvelle machine virtuelle";

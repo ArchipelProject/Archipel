@@ -31,9 +31,6 @@
 /* Revert to snapshot */
 "Revert to snapshot" = "Revert to snapshot";
 
-/* Revert virtual machine to the state stored in selected snapshot */
-"Revert virtual machine to the state stored in selected snapshot" = "Revert virtual machine to the state stored in selected snapshot";
-
 /* Snapshot deleted */
 "Snapshot deleted" = "Snapshot deleted";
 
@@ -42,9 +39,6 @@
 
 /* Snapshoting sucessfull */
 "Snapshoting sucessfull" = "Snapshoting sucessfull";
-
-/* Take a new snapshot */
-"Take a new snapshot" = "Take a new snapshot";
 
 /* Take a snapshot */
 "Take a snapshot" = "Take a snapshot";

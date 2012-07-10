@@ -22,9 +22,6 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Create a package from the virtual machine and publish it into the hypervisor's VMCast feed */
-"Create a package from the virtual machine and publish it into the hypervisor's VMCast feed" = "Create a package from the virtual machine and publish it into the hypervisor's VMCast feed";
-
 /* Create appliance from this virtual machine */
 "Create appliance from this virtual machine" = "Create appliance from this virtual machine";
 
@@ -49,14 +46,8 @@
 /* Packaging successful. */
 "Packaging successful." = "Packaging successful.";
 
-/* Stop using selected appliance for this virtual machine (it will allow to change appliance) */
-"Stop using selected appliance for this virtual machine (it will allow to change appliance)" = "Stop using selected appliance for this virtual machine (it will allow to change appliance)";
-
 /* Unable to create package. Check agent logs */
 "Unable to create package. Check agent logs" = "Unable to create package. Check agent logs";
-
-/* Use the selected appliance for this virtual machine */
-"Use the selected appliance for this virtual machine" = "Use the selected appliance for this virtual machine";
 
 /* Virtual machine must not be running to package it. */
 "Virtual machine must not be running to package it." = "Virtual machine must not be running to package it.";

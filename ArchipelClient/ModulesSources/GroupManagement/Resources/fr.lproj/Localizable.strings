@@ -10,41 +10,20 @@
 /* Cannot migrate virtual machine  */
 "Cannot migrate virtual machine " = "Impossible de migrer la VM ";
 
-/* Destroy all selected virtual machines */
-"Destroy all selected virtual machines" = "Détruire toutes les VMs sélectionnées";
-
 /* Destroy selected virtual machines */
 "Destroy selected virtual machines" = "Détruire la VM sélectionnée";
-
-/* Migrate all selected virtual machines */
-"Migrate all selected virtual machines" = "Migrer toutes les VMs sélectionnées";
-
-/* Pause all selected virtual machines */
-"Pause all selected virtual machines" = "Mettre en pause toutes les VMs sélectionnées";
 
 /* Pause selected virtual machines */
 "Pause selected virtual machines" = "Mettre en pause la VM sélectionnée";
 
-/* Reboot all selected virtual machines (not supported by all hypervisors) */
-"Reboot all selected virtual machines (not supported by all hypervisors)" = "Redémarrer toutes les VMs sélectionnées (ceci n'est pas supporté par tous les hyperviseurs)";
-
 /* Reboot selected virtual machines */
 "Reboot selected virtual machines" = "Redémarrer toutes les VMs sélectionnées";
-
-/* Resume all selected virtual machines */
-"Resume all selected virtual machines" = "Reprendre l'exécution de toutes les VMs sélectionnées";
 
 /* Resume selected virtual machines */
 "Resume selected virtual machines" = "Reprendre l'exécution de la VM sélectionnée";
 
-/* Shutdown all selected virtual machines */
-"Shutdown all selected virtual machines" = "Eteindre toutes les VMs sélectionnées";
-
 /* Shutdown selected virtual machines */
 "Shutdown selected virtual machines" = "Eteindre la VM sélectionnée";
-
-/* Start all selected virtual machines */
-"Start all selected virtual machines" = "Démarrer la VM sélectionnée";
 
 /* Start selected virtual machines */
 "Start selected virtual machines" = "Démarrer toutes les VMs sélectionnées";

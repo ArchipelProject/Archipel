@@ -1,17 +1,5 @@
-/* Delete the selected role */
-"Delete the selected role" = "Delete the selected role";
-
 /* Permission for selected user has been saved. */
 "Permission for selected user has been saved." = "Permission for selected user has been saved.";
-
-/* Save the current set of permissions */
-"Save the current set of permissions" = "Save the current set of permissions";
-
-/* Save the current set of permissions as a role */
-"Save the current set of permissions as a role" = "Save the current set of permissions as a role";
-
-/* Select a role as permissions template */
-"Select a role as permissions template" = "Select a role as permissions template";
 
 /* Your role cannot be deleted. */
 "Your role cannot be deleted." = "Your role cannot be deleted.";
