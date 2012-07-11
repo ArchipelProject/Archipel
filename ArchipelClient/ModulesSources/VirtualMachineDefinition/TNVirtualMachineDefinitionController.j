@@ -519,8 +519,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
 
-    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];
-    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16.0, 16.0)];
+    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(8.0, 8.0)];
     [buttonDefine setEnabled:NO];
 
     [viewParametersStandard applyShadow];

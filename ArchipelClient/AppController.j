@@ -397,9 +397,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* traffic LEDs */
     CPLog.trace(@"Initializing the traffic status LED");
-    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-in.png"]];
-    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
-    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
+    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CPSizeMake(8.0, 8.0)];
 
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
@@ -637,19 +637,19 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/available.png"]]];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)]];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/away.png"]]];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)]];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/busy.png"]]];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)]];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/dnd.png"]]];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black.png"] size:CPSizeMake(8.0, 8.0)]];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CPSizeMake(123.0, 24.0)];
@@ -714,8 +714,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         minusButton             = [CPButtonBar minusButton];
 
     _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(16, 16)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(16, 16)];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(20, 20)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(20, 20)];
 
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
@@ -723,13 +723,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(20, 20)]];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"];
     [_plusButton setMenu:plusMenu];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(20, 20)]];
     [minusButton setAction:@selector(deleteEntities:)];
 
     [_hideButton setTarget:self];

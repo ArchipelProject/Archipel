@@ -30,6 +30,33 @@ var TNRosterDataViewContactImageUnknownUser,
     TNRosterDataViewContactImageSelectedCartoucheColor,
     TNRosterDataViewContactImageNormalCartoucheColor;
 
+
+@implementation TNNoAvatarValueTransformer: CPValueTransformer
+
++ (void)initialize
+{
+    var bundle  = [CPBundle mainBundle];
+
+    TNRosterDataViewContactImageUnknownUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+}
+
++ (Class)transformedValueClass
+{
+    return [CPImage class];
+}
+
++ (BOOL)allowsReverseTransformation
+{
+    return NO;
+}
+
+- (id)transformedValue:(id)value
+{
+    return !value ? TNRosterDataViewContactImageUnknownUser : value;
+}
+@end
+
+
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
 */
@@ -51,9 +78,11 @@ var TNRosterDataViewContactImageUnknownUser,
 + (void)initialize
 {
     var bundle  = [CPBundle mainBundle];
-    TNRosterDataViewContactImageUnknownUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+
     TNRosterDataViewContactImageNormalCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
     TNRosterDataViewContactImageSelectedCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
+
+    [CPValueTransformer setValueTransformer:[[TNNoAvatarValueTransformer alloc] init] forName:@"TNNoAvatarValueTransformer"];
 }
 
 /*! initialize the custom theme
@@ -78,7 +107,7 @@ var TNRosterDataViewContactImageUnknownUser,
     [status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
     [status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
     [status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-    [status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView]
+    [status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
 }
 
 #pragma mark -
@@ -94,10 +123,12 @@ var TNRosterDataViewContactImageUnknownUser,
 
     _contact = aContact;
 
+    var opts = [CPDictionary dictionaryWithObjectsAndKeys:@"TNNoAvatarValueTransformer", CPValueTransformerNameBindingOption];
+
     [name bind:@"objectValue" toObject:aContact withKeyPath:@"nickname" options:nil];
     [status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];
-    [statusIcon bind:@"image" toObject:aContact withKeyPath:@"statusIcon" options:nil];
-    [avatar bind:@"image" toObject:aContact withKeyPath:@"avatar" options:nil];
+    [statusIcon bind:@"objectValue" toObject:aContact withKeyPath:@"statusIcon" options:nil];
+    [avatar bind:@"objectValue" toObject:aContact withKeyPath:@"avatar" options:opts];
 
     if ([aContact numberOfEvents] > 0)
     {
