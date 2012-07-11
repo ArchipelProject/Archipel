@@ -73,8 +73,8 @@ var TNNetworkDataViewStatusImageActive,
 + (void)initialize
 {
     var bundle  = [CPBundle bundleForClass:TNNetworkDataView];
-    TNNetworkDataViewStatusImageActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
-    TNNetworkDataViewStatusImageUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
+    TNNetworkDataViewStatusImageActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"] size:CPSizeMake(8.0, 8.0)];
+    TNNetworkDataViewStatusImageUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"] size:CPSizeMake(8.0, 8.0)];
 }
 
 - (void)initWithFrame:(CPRect)aFrame

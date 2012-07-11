@@ -44,10 +44,10 @@ var TNCellApplianceStatusIconInstalled,
 {
     var bundle  = [CPBundle bundleForClass:TNCellApplianceStatus];
 
-    TNCellApplianceStatusIconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"]];
-    TNCellApplianceStatusIconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]];
-    TNCellApplianceStatusIconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"notinstalled.png"]];
-    TNCellApplianceStatusIconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"error.png"]];
+    TNCellApplianceStatusIconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"notinstalled.png"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"error.png"] size:CPSizeMake(8.0, 8.0)];
 }
 
 
@@ -57,8 +57,8 @@ var TNCellApplianceStatusIconInstalled,
 {
     if (self = [super init])
     {
-        _imageStatus = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 16, 16)];
-        _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 5, 200, 100)];
+        _imageStatus = [[CPImageView alloc] initWithFrame:CGRectMake(0, 8, 8, 8)];
+        _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 200, 100)];
 
         [self addSubview:_imageStatus];
         [self addSubview:_fieldStatus];

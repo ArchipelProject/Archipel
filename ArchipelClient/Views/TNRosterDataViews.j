@@ -107,7 +107,7 @@ var TNRosterDataViewContactImageUnknownUser,
     [status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
     [status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
     [status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-    [status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView]
+    [status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
 }
 
 #pragma mark -
@@ -127,8 +127,8 @@ var TNRosterDataViewContactImageUnknownUser,
 
     [name bind:@"objectValue" toObject:aContact withKeyPath:@"nickname" options:nil];
     [status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];
-    [statusIcon bind:@"image" toObject:aContact withKeyPath:@"statusIcon" options:nil];
-    [avatar bind:@"image" toObject:aContact withKeyPath:@"avatar" options:opts];
+    [statusIcon bind:@"objectValue" toObject:aContact withKeyPath:@"statusIcon" options:nil];
+    [avatar bind:@"objectValue" toObject:aContact withKeyPath:@"avatar" options:opts];
 
     if ([aContact numberOfEvents] > 0)
     {
