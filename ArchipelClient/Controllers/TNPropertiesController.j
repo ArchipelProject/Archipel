@@ -79,7 +79,6 @@
     TNStropheContact                _entity             @accessors(getter=entity);
 
     CPImage                         _groupUserImage;
-    CPImage                         _pubsubDisabledImage;
     CPImage                         _pubsubImage;
     CPImage                         _unknownUserImage;
     CPNumber                        _height;
@@ -101,7 +100,6 @@
     _unknownUserImage       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
     _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CPSizeMake(16,16)];
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
-    _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
     [mainSwipeView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
     [viewVCard setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
@@ -334,7 +332,7 @@
         if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
             [buttonEventSubscription setImage:_pubsubImage];
         else
-            [buttonEventSubscription setImage:_pubsubDisabledImage];
+            [buttonEventSubscription setImage:nil];
 
         [labelVCardFN setStringValue:@""];
         [labelVCardLocality setStringValue:@""];
