@@ -42,12 +42,12 @@ var TNCellApplianceStatusIconInstalled,
 
 + (void)initialize
 {
-    var bundle  = [CPBundle bundleForClass:TNCellApplianceStatus];
+    var bundle  = [CPBundle mainBundle];
 
-    TNCellApplianceStatusIconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"] size:CPSizeMake(8.0, 8.0)];
-    TNCellApplianceStatusIconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"] size:CPSizeMake(8.0, 8.0)];
-    TNCellApplianceStatusIconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"notinstalled.png"] size:CPSizeMake(8.0, 8.0)];
-    TNCellApplianceStatusIconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"error.png"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)];
+    TNCellApplianceStatusIconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.png"] size:CPSizeMake(8.0, 8.0)];
 }
 
 

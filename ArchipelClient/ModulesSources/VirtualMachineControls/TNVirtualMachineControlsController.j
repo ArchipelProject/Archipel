@@ -113,19 +113,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     CPButton                        _migrateButton;
     CPImage                         _imageDestroy;
-    CPImage                         _imageDestroyDisabled;
     CPImage                         _imagePause;
-    CPImage                         _imagePauseDisabled;
     CPImage                         _imagePlay;
-    CPImage                         _imagePlayDisabled;
-    CPImage                         _imagePlaySelected;
     CPImage                         _imageReboot;
-    CPImage                         _imageRebootDisabled;
     CPImage                         _imageResume;
     CPImage                         _imageScreenShutDown;
     CPImage                         _imageStop;
-    CPImage                         _imageStopDisabled;
-    CPImage                         _imageStopSelected;
     CPImageView                     _imageViewFullScreenshot;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
@@ -162,21 +155,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
 
-    _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
-    _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
-    _imageDestroy           = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CGSizeMake(16, 16)];
-    _imagePause             = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(16, 16)];
-    _imageReboot            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CGSizeMake(16, 16)];
-
-    _imagePlayDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-disabled.png"] size:CGSizeMake(16, 16)];
-    _imageStopDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-disabled.png"] size:CGSizeMake(16, 16)];
-    _imageDestroyDisabled   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug-disabled.png"] size:CGSizeMake(16, 16)];
-    _imagePauseDisabled     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-disabled.png"] size:CGSizeMake(16, 16)];
-    _imageRebootDisabled    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart-disabled.png"] size:CGSizeMake(16, 16)];
-
-    _imagePlaySelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-selected.png"] size:CGSizeMake(16, 16)];
-    _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(16, 16)];
-    _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-selected.png"] size:CGSizeMake(16, 16)];
+    _imagePlay      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
+    _imageStop      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
+    _imageDestroy   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/destroy.png"] size:CGSizeMake(16, 16)];
+    _imagePause     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(16, 16)];
+    _imageReboot    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reboot.png"] size:CGSizeMake(16, 16)];
 
     [buttonBarTransport setSegmentCount:5];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Play", @"Play") forSegment:TNArchipelTransportBarPlay];
@@ -546,15 +529,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
-    [buttonBarTransport setImage:_imagePlaySelected forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
-
-    var imagePause  = _imagePause;
-    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
-
     [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
 
@@ -571,12 +545,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Resume", @"Resume") forSegment:TNArchipelTransportBarPause];
-
-    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imageResume forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
 
     [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
@@ -596,12 +564,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
-    [buttonBarTransport setImage:_imagePlay forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStopSelected forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
-
     [switchPreventOOMKiller setEnabled:NO]
 }
 
@@ -620,12 +582,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
-
-    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStopDisabled forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
 
     [switchPreventOOMKiller setEnabled:NO];
 }

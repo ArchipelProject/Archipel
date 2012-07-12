@@ -97,7 +97,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
 
-    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CPSizeMake(16, 16)]];
+    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/destroy.png"] size:CPSizeMake(16, 16)]];
     [destroyButton setTarget:self];
     [destroyButton setAction:@selector(destroy:)];
 
@@ -109,7 +109,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
 
-    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CPSizeMake(16, 16)]];
+    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reboot.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
 
