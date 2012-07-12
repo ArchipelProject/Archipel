@@ -44,16 +44,16 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "44"; */
 "44.title" = "Cancel";
 
-/* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "45"; */
+/* Class = "NSTextFieldCell"; title = "Username"; ObjectID = "45"; */
 "45.title" = "Username:";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "49"; */
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "49"; */
 "49.title" = "Password:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Desired password"; ObjectID = "50"; */
 "50.placeholderString" = "Desired password";
 
-/* Class = "NSTextFieldCell"; title = "Confirm:"; ObjectID = "53"; */
+/* Class = "NSTextFieldCell"; title = "Confirm"; ObjectID = "53"; */
 "53.title" = "Confirm:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Password confirmation"; ObjectID = "54"; */
@@ -74,7 +74,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "117"; */
 "117.title" = "Box";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "124"; */
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "124"; */
 "124.title" = "Name:";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "125"; */
@@ -95,7 +95,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Awesome group is awesome"; ObjectID = "130"; */
 "130.placeholderString" = "Awesome group is awesome";
 
-/* Class = "NSTextFieldCell"; title = "Description:"; ObjectID = "131"; */
+/* Class = "NSTextFieldCell"; title = "Description"; ObjectID = "131"; */
 "131.title" = "Description:";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "144"; */

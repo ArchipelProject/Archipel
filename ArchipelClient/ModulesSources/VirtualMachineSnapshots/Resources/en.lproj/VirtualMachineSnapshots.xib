@@ -377,7 +377,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="596488420">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">UUID:</string>
+							<string key="NSContents">UUID</string>
 							<object class="NSFont" key="NSSupport" id="995127444">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -391,14 +391,14 @@
 					<object class="NSTextField" id="588375577">
 						<reference key="NSNextResponder" ref="958189303"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{11, 208}, {85, 17}}</string>
+						<string key="NSFrame">{{14, 208}, {82, 17}}</string>
 						<reference key="NSSuperview" ref="958189303"/>
 						<reference key="NSNextKeyView" ref="349759923"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="319185169">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Description:</string>
+							<string key="NSContents">Description</string>
 							<reference key="NSSupport" ref="995127444"/>
 							<reference key="NSControlView" ref="588375577"/>
 							<reference key="NSBackgroundColor" ref="281828944"/>
@@ -408,7 +408,7 @@
 					<object class="NSTextField" id="303253771">
 						<reference key="NSNextResponder" ref="958189303"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{98, 236}, {361, 20}}</string>
+						<string key="NSFrame">{{98, 235}, {361, 20}}</string>
 						<reference key="NSSuperview" ref="958189303"/>
 						<reference key="NSNextKeyView" ref="588375577"/>
 						<bool key="NSEnabled">YES</bool>
@@ -942,14 +942,6 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">LPMultiLineTextField</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/LPMultiLineTextField.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNModule</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -1076,7 +1068,6 @@
 							<string>popoverNewSnapshot</string>
 							<string>scrollViewSnapshots</string>
 							<string>viewTableContainer</string>
-							<string>windowNewSnapshot</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1089,7 +1080,6 @@
 							<string>NSPopover</string>
 							<string>NSScrollView</string>
 							<string>NSView</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -1105,7 +1095,6 @@
 							<string>popoverNewSnapshot</string>
 							<string>scrollViewSnapshots</string>
 							<string>viewTableContainer</string>
-							<string>windowNewSnapshot</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1144,10 +1133,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>
 								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowNewSnapshot</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>

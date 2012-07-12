@@ -74,6 +74,8 @@
 @import "Views/TNSwitch.j"
 
 
+CPFontDefaultSystemFontFace = @"Courier";
+
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -692,7 +694,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         userAvatar          = [[CPMenuItem alloc] init],
         userAvatarMenu      = [[CPMenu alloc] init];
 
-    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
+    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
 
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];

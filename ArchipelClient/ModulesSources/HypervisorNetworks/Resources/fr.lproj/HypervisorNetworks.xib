@@ -1032,7 +1032,7 @@
 					<object class="NSTextField" id="280132104">
 						<reference key="NSNextResponder" ref="1064896233"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{612, 108}, {307, 14}}</string>
+						<string key="NSFrame">{{612, 110}, {314, 14}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="331373945"/>
 						<string key="NSReuseIdentifierKey">_NS:3946</string>
@@ -5909,14 +5909,6 @@
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBPartialClassDescription">
-					<string key="className">LPMultiLineTextField</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/LPMultiLineTextField.h</string>
-					</object>
-				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">TNBasicDataView</string>
 					<string key="superclassName">NSView</string>

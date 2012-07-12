@@ -8,7 +8,7 @@
 /* Class = "NSTextFieldCell"; title = "You can create recursive scheduled action."; ObjectID = "14"; */
 "14.title" = "You can create recursive scheduled action.";
 
-/* Class = "NSTextFieldCell"; title = "Year:"; ObjectID = "17"; */
+/* Class = "NSTextFieldCell"; title = "Year"; ObjectID = "17"; */
 "17.title" = "Year:";
 
 /* Class = "NSButtonCell"; title = "Every"; ObjectID = "19"; */
@@ -17,31 +17,31 @@
 /* Class = "NSButtonCell"; title = "Every"; ObjectID = "23"; */
 "23.title" = "Every";
 
-/* Class = "NSTextFieldCell"; title = "Month:"; ObjectID = "24"; */
+/* Class = "NSTextFieldCell"; title = "Month"; ObjectID = "24"; */
 "24.title" = "Month:";
 
 /* Class = "NSButtonCell"; title = "Every"; ObjectID = "28"; */
 "28.title" = "Every";
 
-/* Class = "NSTextFieldCell"; title = "Day:"; ObjectID = "29"; */
+/* Class = "NSTextFieldCell"; title = "Day"; ObjectID = "29"; */
 "29.title" = "Day:";
 
 /* Class = "NSButtonCell"; title = "Every"; ObjectID = "39"; */
 "39.title" = "Every";
 
-/* Class = "NSTextFieldCell"; title = "Second:"; ObjectID = "40"; */
+/* Class = "NSTextFieldCell"; title = "Second"; ObjectID = "40"; */
 "40.title" = "Second:";
 
 /* Class = "NSButtonCell"; title = "Every"; ObjectID = "41"; */
 "41.title" = "Every";
 
-/* Class = "NSTextFieldCell"; title = "Minute:"; ObjectID = "42"; */
+/* Class = "NSTextFieldCell"; title = "Minute"; ObjectID = "42"; */
 "42.title" = "Minute:";
 
 /* Class = "NSButtonCell"; title = "Every"; ObjectID = "43"; */
 "43.title" = "Every";
 
-/* Class = "NSTextFieldCell"; title = "Hour:"; ObjectID = "44"; */
+/* Class = "NSTextFieldCell"; title = "Hour"; ObjectID = "44"; */
 "44.title" = "Hour:";
 
 /* Class = "NSTextFieldCell"; title = "You can create a one time scheduled action."; ObjectID = "98"; */
@@ -59,7 +59,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "125"; */
 "125.title" = "Box";
 
-/* Class = "NSTextFieldCell"; title = "Action:"; ObjectID = "132"; */
+/* Class = "NSTextFieldCell"; title = "Action"; ObjectID = "132"; */
 "132.title" = "Action:";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "133"; */
@@ -74,7 +74,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "My scheduled action"; ObjectID = "138"; */
 "138.placeholderString" = "My scheduled action";
 
-/* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "139"; */
+/* Class = "NSTextFieldCell"; title = "Comment"; ObjectID = "139"; */
 "139.title" = "Comment:";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "199"; */
