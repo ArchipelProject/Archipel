@@ -618,9 +618,25 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [theWindow setToolbar:_mainToolbar];
 
     // ok the next following line is a terrible awfull hack.
-    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:CPLocalizedString(@"Log out", @"Log out") icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:CPLocalizedString(@"Tags", @"Tags") icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
+    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE"
+                                  label:@"              "/* incredible huh ?*/
+                                   view:nil
+                                 target:nil
+                                 action:nil];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout
+                                  label:CPLocalizedString(@"Log out", @"Log out")
+                                   icon:[bundle pathForResource:@"IconsToolbar/logout.png"]
+                                   altIcon:[bundle pathForResource:@"IconsToolbar/logout-alt.png"]
+                                 target:self action:@selector(toolbarItemLogoutClick:)
+                                toolTip:@"Log out from the application"];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags
+                                  label:CPLocalizedString(@"Tags", @"Tags")
+                                   icon:[bundle pathForResource:@"IconsToolbar/tags.png"]
+                                   altIcon:[bundle pathForResource:@"IconsToolbar/tags-alt.png"]
+                                 target:self action:@selector(toolbarItemTagsClick:)
+                                toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
