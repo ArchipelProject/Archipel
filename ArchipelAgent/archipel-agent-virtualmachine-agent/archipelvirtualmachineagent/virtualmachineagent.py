@@ -61,7 +61,6 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         """
         lets register our stanza handlers
         """
-        TNArchipelPlugin.register_handlers(self)
         self.entity.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
 
@@ -69,7 +68,6 @@ class TNVirtualMachineAgent(TNArchipelPlugin):
         """
         hmm, seems we have to unregister our handlers
         """
-        TNArchipelEntity.unregister_handlers(self)
         self.entity.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
         self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_GUEST_CONTROL)
 
