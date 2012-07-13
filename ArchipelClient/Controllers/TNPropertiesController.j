@@ -409,19 +409,4 @@
     [[mainSwipeView window] makeFirstResponder:[entryName previousResponder]];
 }
 
-/*! subscribe (unsubscribe) to (from) the entity pubsub if any
-    @param aSender the sender
-*/
-- (IBAction)manageContactSubscription:(id)aSender
-{
-    // this should be completely useless now.
-    // if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
-    //     [contactsController unsubscribeToPubSubNodeOfContactWithJID:[_entity JID]];
-    // else
-    //     [contactsController subscribeToPubSubNodeOfContactWithJID:[_entity JID]];
-    //
-    // [self reload];
-}
-
-
 @end
