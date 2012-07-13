@@ -150,7 +150,6 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     var server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[[TNStropheIMClient defaultClient] JID] domain]],
         nodeName = @"/archipel/tags";
 
-    alert([_pubsubController nodes])
     _pubsubTagsNode = [_pubsubController nodeWithName:nodeName];
 
     if (!_pubsubTagsNode)
