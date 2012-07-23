@@ -164,6 +164,7 @@ class TNArchipelEntity (object):
             try:
                 self.ipaddr = get_default_gateway_interface()
             except:
+                self.log.warning("Configuration set to 'gateway_interface' but unable to find IP. Falling back in auto mode")
                 self.ipaddr = socket.gethostbyname(socket.gethostname())
         else:
             self.ipaddr = ip_conf
