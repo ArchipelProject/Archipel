@@ -44,7 +44,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     @outlet CPView      mainView            @accessors(readonly);
 
-    TNPubSubController  _pubsubController   @accessors(property=pubSubController);
+    TNPubSubController  _pubsubController   @accessors(getter=pubSubController);
     TNPubSubNode        _pubsubTagsNode;
 
     BOOL                _alreadyReady;
@@ -53,6 +53,22 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     id                  _currentRosterItem;
 }
 
+
+#pragma mark -
+#pragma mark Setters
+
+- (void)setPubSubController:(TNPubSubController)aController
+{
+    if (aController === _pubsubController)
+        return;
+
+    _pubsubController = aController;
+
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didRetrieveSubscriptions:)
+                                                 name:TNStrophePubSubSubscriptionsRetrievedNotification
+                                               object:_pubsubController];
+}
 
 #pragma mark -
 #pragma mark Initialization
@@ -97,7 +113,6 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [mainView addSubview:_buttonSave];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRetrieveSubscriptions:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:nil];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }

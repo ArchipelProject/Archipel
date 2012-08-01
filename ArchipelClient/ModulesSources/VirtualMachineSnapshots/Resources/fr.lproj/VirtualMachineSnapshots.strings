@@ -8,7 +8,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "20"; */
 "20.title" = "Box";
 
-/* Class = "NSTextFieldCell"; title = "UUID:"; ObjectID = "27"; */
+/* Class = "NSTextFieldCell"; title = "UUID"; ObjectID = "27"; */
 "27.title" = "UUID:";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "28"; */
@@ -20,7 +20,7 @@
 /* Class = "NSTextFieldCell"; title = "New snapshot"; ObjectID = "30"; */
 "30.title" = "New snapshot";
 
-/* Class = "NSTextFieldCell"; title = "Description:"; ObjectID = "34"; */
+/* Class = "NSTextFieldCell"; title = "Description"; ObjectID = "34"; */
 "34.title" = "Description:";
 
 /* Class = "NSTextFieldCell"; title = "XXX-XXX-XXX-XXXX-XXXX"; ObjectID = "39"; */

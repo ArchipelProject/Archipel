@@ -1423,7 +1423,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="90781970">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Username:</string>
+							<string key="NSContents">Username</string>
 							<object class="NSFont" key="NSSupport" id="573017428">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -1463,7 +1463,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="828597074">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Password:</string>
+							<string key="NSContents">Password</string>
 							<reference key="NSSupport" ref="573017428"/>
 							<reference key="NSControlView" ref="418600957"/>
 							<reference key="NSBackgroundColor" ref="439272691"/>
@@ -1499,7 +1499,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="155374258">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Confirm:</string>
+							<string key="NSContents">Confirm</string>
 							<reference key="NSSupport" ref="573017428"/>
 							<reference key="NSControlView" ref="884412912"/>
 							<reference key="NSBackgroundColor" ref="439272691"/>
@@ -1663,7 +1663,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="886971166">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Name:</string>
+							<string key="NSContents">Name</string>
 							<reference key="NSSupport" ref="573017428"/>
 							<reference key="NSControlView" ref="525317731"/>
 							<reference key="NSBackgroundColor" ref="439272691"/>
@@ -1699,7 +1699,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="19341594">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Description:</string>
+							<string key="NSContents">Description</string>
 							<reference key="NSSupport" ref="573017428"/>
 							<reference key="NSControlView" ref="704440083"/>
 							<reference key="NSBackgroundColor" ref="439272691"/>

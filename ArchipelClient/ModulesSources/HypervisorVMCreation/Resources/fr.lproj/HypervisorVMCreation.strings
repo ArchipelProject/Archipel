@@ -65,7 +65,7 @@
 /* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "58"; */
 "58.title" = "JID :";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "60"; */
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "60"; */
 "60.title" = "Nom :";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "102"; */
@@ -188,16 +188,16 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "478"; */
 "478.title" = "Cancel";
 
-/* Class = "NSTextFieldCell"; title = "Organization:"; ObjectID = "500"; */
+/* Class = "NSTextFieldCell"; title = "Organization"; ObjectID = "500"; */
 "500.title" = "Organization:";
 
-/* Class = "NSTextFieldCell"; title = "Unit:"; ObjectID = "505"; */
+/* Class = "NSTextFieldCell"; title = "Unit"; ObjectID = "505"; */
 "505.title" = "Unit:";
 
-/* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "516"; */
+/* Class = "NSTextFieldCell"; title = "Locality"; ObjectID = "516"; */
 "516.title" = "Locality:";
 
-/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "521"; */
+/* Class = "NSTextFieldCell"; title = "Owner"; ObjectID = "521"; */
 "521.title" = "Owner:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "528"; */
@@ -218,7 +218,7 @@
 /* Class = "NSTextFieldCell"; title = "Category:"; ObjectID = "541"; */
 "541.title" = "Category:";
 
-/* Class = "NSTextFieldCell"; title = "Category:"; ObjectID = "546"; */
+/* Class = "NSTextFieldCell"; title = "Category"; ObjectID = "546"; */
 "546.title" = "Category:";
 
 /* Class = "NSComboBoxCell"; placeholderString = "San Francisco"; ObjectID = "558"; */

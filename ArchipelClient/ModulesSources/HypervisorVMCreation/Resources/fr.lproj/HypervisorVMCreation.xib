@@ -453,7 +453,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="642696251">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
+							<int key="NSCellFlags2">67109888</int>
 							<string key="NSContents">Nom :</string>
 							<object class="NSFont" key="NSSupport" id="888678750">
 								<string key="NSName">LucidaGrande-Bold</string>
@@ -474,7 +474,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="228296869">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
+							<int key="NSCellFlags2">67109888</int>
 							<string key="NSContents">Organization:</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="750595858"/>
@@ -485,13 +485,13 @@
 					<object class="NSTextField" id="481009592">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 201}, {59, 17}}</string>
+						<string key="NSFrame">{{17, 201}, {95, 17}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="872659149"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="46632462">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
+							<int key="NSCellFlags2">67109888</int>
 							<string key="NSContents">Locality:</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="481009592"/>
@@ -508,7 +508,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="228353353">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
+							<int key="NSCellFlags2">67109888</int>
 							<string key="NSContents">Unit:</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="427669467"/>
@@ -525,7 +525,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="609306354">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
+							<int key="NSCellFlags2">67109888</int>
 							<string key="NSContents">Owner:</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="693107011"/>
@@ -542,7 +542,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="857778651">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">268436480</int>
+							<int key="NSCellFlags2">67109888</int>
 							<string key="NSContents">Category:</string>
 							<reference key="NSSupport" ref="888678750"/>
 							<reference key="NSControlView" ref="166442030"/>
@@ -1472,8 +1472,8 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSTextField" id="761680405">
 						<reference key="NSNextResponder" ref="323930993"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{98, 24}, {369, 17}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{98, 24}, {284, 17}}</string>
 						<reference key="NSSuperview" ref="323930993"/>
 						<reference key="NSNextKeyView" ref="255767364"/>
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
@@ -1495,8 +1495,8 @@
 					</object>
 					<object class="NSTextField" id="255767364">
 						<reference key="NSNextResponder" ref="323930993"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{98, 9}, {369, 17}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{98, 9}, {284, 17}}</string>
 						<reference key="NSSuperview" ref="323930993"/>
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
 						<bool key="NSEnabled">YES</bool>
@@ -1556,7 +1556,7 @@
 					<object class="NSTextField" id="694528081">
 						<reference key="NSNextResponder" ref="323930993"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{10, 49}, {800, 17}}</string>
+						<string key="NSFrame">{{10, 49}, {372, 17}}</string>
 						<reference key="NSSuperview" ref="323930993"/>
 						<reference key="NSNextKeyView" ref="692903145"/>
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
@@ -1578,7 +1578,7 @@
 					<object class="NSTextField" id="688018738">
 						<reference key="NSNextResponder" ref="323930993"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{8, 62}, {782, 23}}</string>
+						<string key="NSFrame">{{10, 62}, {372, 23}}</string>
 						<reference key="NSSuperview" ref="323930993"/>
 						<reference key="NSNextKeyView" ref="694528081"/>
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
@@ -1602,7 +1602,7 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{874, 90}</string>
+				<string key="NSFrameSize">{399, 90}</string>
 				<reference key="NSNextKeyView" ref="688018738"/>
 				<string key="NSReuseIdentifierKey">_NS:499</string>
 				<string key="NSClassName">TNVirtualMachineParkedDataView</string>
@@ -5836,6 +5836,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addSelectedVMToRoster:</string>
 							<string>deleteParkedVirtualMachines:</string>
 							<string>deleteVirtualMachine:</string>
 							<string>didNotManagedTableDoubleClick:</string>
@@ -5852,6 +5853,7 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -5871,6 +5873,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addSelectedVMToRoster:</string>
 							<string>deleteParkedVirtualMachines:</string>
 							<string>deleteVirtualMachine:</string>
 							<string>didNotManagedTableDoubleClick:</string>
@@ -5887,6 +5890,10 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">addSelectedVMToRoster:</string>
+								<string key="candidateClassName">id</string>
+							</object>
 							<object class="IBActionInfo">
 								<string key="name">deleteParkedVirtualMachines:</string>
 								<string key="candidateClassName">id</string>

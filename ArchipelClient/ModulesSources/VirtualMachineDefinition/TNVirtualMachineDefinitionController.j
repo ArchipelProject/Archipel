@@ -212,7 +212,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
      var inset = CGInsetMake(2, 2, 2, 5);
     [buttonUndefine setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"undefine.png"] size:CPSizeMake(16, 16)]];
     [buttonUndefine setValue:inset forThemeAttribute:@"content-inset"];
-    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"editxml.png"] size:CPSizeMake(16, 16)]];
+    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
     // paramaters tabView
@@ -519,8 +519,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
 
-    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(8.0, 8.0)];
-    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(8.0, 8.0)];
+    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(8.0, 8.0)];
     [buttonDefine setEnabled:NO];
 
     [viewParametersStandard applyShadow];

@@ -26,7 +26,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "888"; */
 "888.title" = "Box";
 
-/* Class = "NSTextFieldCell"; placeholderString = "john@doe.com"; ObjectID = "889"; */
+/* Class = "NSTextFieldCell"; placeholderString = "john.doe@archipel.com"; ObjectID = "889"; */
 "889.placeholderString" = "john@doe.com";
 
 /* Class = "NSTextFieldCell"; title = "Enter the JID of the virtual machine, hypervisor or user."; ObjectID = "890"; */
@@ -122,7 +122,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "988"; */
 "988.title" = "Box";
 
-/* Class = "NSTextFieldCell"; placeholderString = "user@domain.com"; ObjectID = "989"; */
+/* Class = "NSTextFieldCell"; placeholderString = "john.doe@archipel.com"; ObjectID = "989"; */
 "989.placeholderString" = "user@domain.com";
 
 /* Class = "NSTextFieldCell"; title = "Logon"; ObjectID = "991"; */
@@ -224,14 +224,8 @@
 /* Class = "NSTextFieldCell"; title = "Permission denied"; ObjectID = "1086"; */
 "1086.title" = "Zugriff verweigert";
 
-/* Class = "NSTextFieldCell"; title = "You do not seem to have the minimal required permissions"; ObjectID = "1088"; */
+/* Class = "NSTextFieldCell"; title = "You do not seem to have the minimal required permissions to display this module. You can ask your administrator to increase your permissions if you really need it. "; ObjectID = "1088"; */
 "1088.title" = "Sie scheinen nicht die minimal benötigten Rechte zu besitzen";
-
-/* Class = "NSTextFieldCell"; title = "to display this module. You can ask your administrator to"; ObjectID = "1090"; */
-"1090.title" = "Um das Modul anzuzeigen. Fragen Sie Ihren Administrator";
-
-/* Class = "NSTextFieldCell"; title = "increase your permissions if you really need it."; ObjectID = "1092"; */
-"1092.title" = "Erhöhen Sie Ihre Rechte nur wenn wirklich nötig";
 
 /* Class = "NSTextFieldCell"; title = "vCard"; ObjectID = "1108"; */
 "1108.title" = "vCard";

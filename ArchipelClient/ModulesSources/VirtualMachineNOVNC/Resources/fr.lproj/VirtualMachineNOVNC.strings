@@ -26,7 +26,7 @@
 /* Class = "NSButtonCell"; title = "Authentify"; ObjectID = "46"; */
 "46.title" = "Authentify";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "48"; */
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "48"; */
 "48.title" = "Password:";
 
 /* Class = "NSButtonCell"; title = "Remember"; ObjectID = "51"; */
@@ -44,7 +44,7 @@
 /* Class = "NSTextFieldCell"; title = "Pasteboard"; ObjectID = "65"; */
 "65.title" = "Pasteboard";
 
-/* Class = "NSTextFieldCell"; title = "FBU refresh rate:"; ObjectID = "74"; */
+/* Class = "NSTextFieldCell"; title = "FBU refresh rate"; ObjectID = "74"; */
 "74.title" = "FBU refresh rate:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Refresh rate"; ObjectID = "75"; */
@@ -59,10 +59,10 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Check rate"; ObjectID = "80"; */
 "80.placeholderString" = "Check rate";
 
-/* Class = "NSTextFieldCell"; title = "Check rate:"; ObjectID = "81"; */
+/* Class = "NSTextFieldCell"; title = "Check rate"; ObjectID = "81"; */
 "81.title" = "Check rate:";
 
-/* Class = "NSTextFieldCell"; title = "Prefer SSL:"; ObjectID = "83"; */
+/* Class = "NSTextFieldCell"; title = "Prefer SSL"; ObjectID = "83"; */
 "83.title" = "Prefer SSL:";
 
 /* Class = "NSTextFieldCell"; title = "Please copy in the following area what you want to send to virtual machine's clipboard."; ObjectID = "86"; */

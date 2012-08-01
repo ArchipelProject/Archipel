@@ -4,6 +4,11 @@
 <dict>
     <key>CPBundleLocale</key>
     <string>en</string>
+
+    <key>CPSystemFontFace</key>
+    <string>Asap</string>
+
+
     <key>ArchipelCheckNodeAdminAccount</key>
     <integer>1</integer>
     <key>ArchipelDefaultAdminAccounts</key>

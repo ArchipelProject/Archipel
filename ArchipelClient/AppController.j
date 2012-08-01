@@ -74,6 +74,8 @@
 @import "Views/TNSwitch.j"
 
 
+CPFontDefaultSystemFontFace = @"Courier";
+
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -618,9 +620,25 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [theWindow setToolbar:_mainToolbar];
 
     // ok the next following line is a terrible awfull hack.
-    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:CPLocalizedString(@"Log out", @"Log out") icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:CPLocalizedString(@"Tags", @"Tags") icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
+    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE"
+                                  label:@"              "/* incredible huh ?*/
+                                   view:nil
+                                 target:nil
+                                 action:nil];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout
+                                  label:CPLocalizedString(@"Log out", @"Log out")
+                                   icon:[bundle pathForResource:@"IconsToolbar/logout.png"]
+                                   altIcon:[bundle pathForResource:@"IconsToolbar/logout-alt.png"]
+                                 target:self action:@selector(toolbarItemLogoutClick:)
+                                toolTip:@"Log out from the application"];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags
+                                  label:CPLocalizedString(@"Tags", @"Tags")
+                                   icon:[bundle pathForResource:@"IconsToolbar/tags.png"]
+                                   altIcon:[bundle pathForResource:@"IconsToolbar/tags-alt.png"]
+                                 target:self action:@selector(toolbarItemTagsClick:)
+                                toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
@@ -637,19 +655,19 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)]];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)]];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)]];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black.png"] size:CPSizeMake(8.0, 8.0)]];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CPSizeMake(123.0, 24.0)];
@@ -676,7 +694,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         userAvatar          = [[CPMenuItem alloc] init],
         userAvatarMenu      = [[CPMenu alloc] init];
 
-    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
+    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
 
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
@@ -884,11 +902,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 - (void)didReceiveUserMessage:(CPNotification)aNotification
 {
-    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
-        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
-        bundle          = [CPBundle bundleForClass:[self class]],
-        customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
-        currentContact  = [aNotification object];
+    // var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
+    //     message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
+    //     bundle          = [CPBundle bundleForClass:[self class]],
+    //     customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
+    //     currentContact  = [aNotification object];
 
     [_rosterOutlineView reloadData];
 }

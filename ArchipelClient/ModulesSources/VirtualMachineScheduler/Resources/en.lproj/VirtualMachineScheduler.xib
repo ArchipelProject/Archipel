@@ -598,7 +598,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1059072120">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Action:</string>
+							<string key="NSContents">Action</string>
 							<object class="NSFont" key="NSSupport" id="673151101">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -636,14 +636,14 @@
 					<object class="NSTextField" id="416819945">
 						<reference key="NSNextResponder" ref="155689248"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{15, 375}, {72, 17}}</string>
+						<string key="NSFrame">{{18, 375}, {69, 17}}</string>
 						<reference key="NSSuperview" ref="155689248"/>
 						<reference key="NSNextKeyView" ref="266563233"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="660008268">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Comment:</string>
+							<string key="NSContents">Comment</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="416819945"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -786,7 +786,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="937682270">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Second:</string>
+							<string key="NSContents">Second</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="777533224"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -835,7 +835,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="294763095">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Minute:</string>
+							<string key="NSContents">Minute</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="628779469"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -884,7 +884,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="528807300">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Hour:</string>
+							<string key="NSContents">Hour</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="223512618"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -933,7 +933,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="940270759">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Day:</string>
+							<string key="NSContents">Day</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="780306623"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -982,7 +982,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="119423000">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Month:</string>
+							<string key="NSContents">Month</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="311193293"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -1031,7 +1031,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="587532093">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Year:</string>
+							<string key="NSContents">Year</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="996807419"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -2432,14 +2432,6 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">LPCalendarView</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/LPCalendarView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNCalendarView</string>
 					<string key="superclassName">LPCalendarView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -2750,25 +2742,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNSchedulerController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNTextFieldStepper</string>
-					<string key="superclassName">NSStepper</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">_didTextFieldEdit:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">_didTextFieldEdit:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">_didTextFieldEdit:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNTextFieldStepper.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
