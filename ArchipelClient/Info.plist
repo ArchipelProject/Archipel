@@ -5,9 +5,9 @@
     <key>CPBundleLocale</key>
     <string>en</string>
 
-<!--     <key>CPSystemFontFace</key>
-    <string>Lucida Grande</string>
- -->
+    <key>CPSystemFontFace</key>
+    <string>Asap</string>
+
 
     <key>ArchipelCheckNodeAdminAccount</key>
     <integer>1</integer>
