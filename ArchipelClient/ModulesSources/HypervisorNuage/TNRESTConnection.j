@@ -17,20 +17,24 @@
  */
 
 @import <Foundation/CPURLConnection.j>
+@import "TNRESTLoginController.j"
+
+TNRESTConnectionUnauthorizedNotification = @"NURESTConnectionUnauthorizedNotification";
 
 
 /*! Enhanced version of CPURLConnection
 */
 @implementation TNRESTConnection : CPObject
 {
-    CPData          _responseData       @accessors(getter=responseData);
-    CPURLRequest    _request            @accessors(property=request);
-    id              _target             @accessors(property=target);
-    id              _userInfo           @accessors(property=userInfo);
-    id              _internalUserInfo   @accessors(property=internalUserInfo);
-    int             _responseCode       @accessors(getter=responseCode);
-    SEL             _selector           @accessors(property=selector);
-    CPString        _errorMessage       @accessors(property=errorMessage);
+    CPData          _responseData           @accessors(getter=responseData);
+    CPURLRequest    _request                @accessors(property=request);
+    id              _target                 @accessors(property=target);
+    id              _userInfo               @accessors(property=userInfo);
+    id              _internalUserInfo       @accessors(property=internalUserInfo);
+    int             _responseCode           @accessors(getter=responseCode);
+    SEL             _selector               @accessors(property=selector);
+    CPString        _errorMessage           @accessors(property=errorMessage);
+    BOOL            _usesAuthentication     @accessors(property=usesAuthentication);
 
     BOOL            _isCanceled;
     HTTPRequest     _HTTPRequest;
@@ -45,7 +49,7 @@
     @param anObject a random object that is the target of the result events
     @param aSuccessSelector the selector to send to anObject in case of success
     @param anErrorSelector the selector to send to anObject in case of error
-    @return TNRESTConnection fully ready NURESTConnection
+    @return TNRESTConnection fully ready TNRESTConnection
 */
 + (TNRESTConnection)connectionWithRequest:(CPURLRequest)aRequest
                                   target:(CPObject)anObject
@@ -57,6 +61,7 @@
 
     return connection;
 }
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -70,8 +75,8 @@
     {
         _request = aRequest;
         _isCanceled = NO;
+        _usesAuthentication = YES;
         _HTTPRequest = new CFHTTPRequest();
-
     }
 
     return self;
@@ -85,6 +90,7 @@
 
     try
     {
+
         _HTTPRequest.open([_request HTTPMethod], [[_request URL] absoluteString], YES);
 
         _HTTPRequest.onreadystatechange = function() { [self _readyStateDidChange]; }
@@ -95,6 +101,9 @@
 
         while (key = [keys nextObject])
             _HTTPRequest.setRequestHeader(key, [fields objectForKey:key]);
+
+        if (_usesAuthentication)
+            _HTTPRequest.setRequestHeader("Authorization", [[TNRESTLoginController defaultController] authString]);
 
         _HTTPRequest.send([_request HTTPBody]);
     }
@@ -130,22 +139,28 @@
     if (_HTTPRequest.readyState() === CFHTTPRequest.CompleteState)
     {
         _responseCode = _HTTPRequest.status()
-        if (_responseCode == 200)
-        {
-            _responseData = [CPData dataWithRawString:_HTTPRequest.responseText()];
-            if (_target && _selector)
-                [_target performSelector:_selector withObject:self];
-        }
-        else
-        {
-            if (_responseCode == 0)
-                _errorMessage = @"It seems that the endpoint is not available";
-            if (_target && _selector)
-                [_target performSelector:_selector withObject:self];
-        }
-    }
 
-    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+        switch (_responseCode)
+        {
+            case 200:
+                _responseData = [CPData dataWithRawString:_HTTPRequest.responseText()];
+                break;
+
+            case 401:
+                [[CPNotificationCenter defaultCenter] postNotificationName:TNRESTConnectionUnauthorizedNotification
+                                                                object:self
+                                                              userInfo:nil];
+                 break;
+
+            case 0:
+                CPLog.error("Error code 0 man! fix this!")
+        }
+
+        if (_target && _selector)
+            [_target performSelector:_selector withObject:self];
+
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+    }
 }
 
 @end

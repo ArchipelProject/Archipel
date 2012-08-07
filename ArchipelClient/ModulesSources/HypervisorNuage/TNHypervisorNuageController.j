@@ -95,7 +95,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
             [bundle objectForInfoDictionaryKey:@"TNArchipelNuageURL"], @"TNArchipelNuageURL",
             [bundle objectForInfoDictionaryKey:@"TNArchipelNuageUserName"], @"TNArchipelNuageUserName",
             [bundle objectForInfoDictionaryKey:@"TNArchipelNuageCompany"], @"TNArchipelNuageCompany",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelNuageToken"], @"TNArchipelNuageToken"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelNuagePassword"], @"TNArchipelNuagePassword"
     ]];
 
     /* VM table view */
@@ -247,7 +247,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
     [defaults setObject:[fieldPreferencesCompany stringValue] forKey:@"TNArchipelNuageCompany"];
     [defaults setObject:[fieldPreferencesUserName stringValue] forKey:@"TNArchipelNuageUserName"];
-    [defaults setObject:[fieldPreferencesToken stringValue] forKey:@"TNArchipelNuageToken"];
+    [defaults setObject:[fieldPreferencesToken stringValue] forKey:@"TNArchipelNuagePassword"];
     [defaults setObject:[fieldPreferencesBaseURL stringValue] forKey:@"TNArchipelNuageURL"];
 
     [self _initCNACommunicatorWithURLString:[fieldPreferencesBaseURL stringValue]];
@@ -261,7 +261,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
     [fieldPreferencesCompany setStringValue:[defaults objectForKey:@"TNArchipelNuageCompany"]];
     [fieldPreferencesUserName setStringValue:[defaults objectForKey:@"TNArchipelNuageUserName"]];
-    [fieldPreferencesToken setStringValue:[defaults objectForKey:@"TNArchipelNuageToken"]];
+    [fieldPreferencesToken setStringValue:[defaults objectForKey:@"TNArchipelNuagePassword"]];
     [fieldPreferencesBaseURL setStringValue:[defaults objectForKey:@"TNArchipelNuageURL"]];
 }
 

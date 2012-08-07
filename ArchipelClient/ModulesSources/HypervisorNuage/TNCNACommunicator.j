@@ -48,8 +48,20 @@
 #pragma mark -
 #pragma mark Communication
 
+- (void)_prepareLogin
+{
+    var defaults = [CPUserDefaults standardUserDefaults],
+        username = [defaults objectForKey:@"TNArchipelNuageUserName"] + "-" + [defaults objectForKey:@"TNArchipelNuageCompany"],
+        password = [defaults objectForKey:@"TNArchipelNuagePassword"];
+
+    [[TNRESTLoginController defaultController] setUser:username];
+    [[TNRESTLoginController defaultController] setPassword:password];
+}
+
 - (void)fetchOrganizationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
+    [self _prepareLogin];
+
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
@@ -60,6 +72,8 @@
 
 - (void)fetchGroupsAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
+    [self _prepareLogin];
+
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"groups" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
@@ -70,6 +84,8 @@
 
 - (void)fetchUsersAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
+    [self _prepareLogin];
+
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"users" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
@@ -80,6 +96,8 @@
 
 - (void)fetchApplicationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
+    [self _prepareLogin];
+
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"apps" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
@@ -101,7 +119,7 @@
 
     var JSONObj = [[aConnection responseData] JSONObject],
         completions = [CPArray array],
-        RESTToken = [aConnection internalUserInfo];
+        RESTToken = [aConnection internalUserInfo],
         comboBox = [aConnection userInfo];
 
     for (var i = 0; i < JSONObj.entities.length; i++)
