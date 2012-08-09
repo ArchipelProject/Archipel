@@ -323,13 +323,9 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     if (![self isVisible])
         return;
 
-    var ip = [self generateIPForNewNetwork],
-        newNuage = [TNNuageNetwork defaultNetworkWithName:@"" type:TNNuageNetworkTypeIPV4];
+    var newNuage = [TNNuageNetwork defaultNetworkWithName:@"" type:TNNuageNetworkTypeIPV4];
 
     [newNuage setIP:[[TNNuageNetworkIP alloc] init]];
-    [[newNuage IP] setAddress:ip[0]];
-    [[newNuage IP] setNetmask:@"255.255.0.0"];
-    [[newNuage IP] setGateway:ip[1]];
 
     [nuageController setIsNewNuage:YES];
     [nuageController setNuage:newNuage];
