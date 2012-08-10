@@ -282,7 +282,7 @@ class TNVMParking (TNArchipelPlugin):
         @param push: if False, do not push changes
         """
         if not self.is_vm_already_parked(uuid):
-            raise Exception("There is no virtual machine parked with ticket %s" % uuid)
+            raise Exception("There is no virtual machine parked with uuid %s" % uuid)
 
         vm_item = self.get_vm_by_uuid_from_db(uuid)
 
@@ -312,7 +312,7 @@ class TNVMParking (TNArchipelPlugin):
         @param push: if False, do not push changes
         """
         if not self.is_vm_already_parked(uuid):
-            raise Exception("There is no virtual machine parked with ticket %s" % ticket)
+            raise Exception("There is no virtual machine parked with uuid %s" % uuid)
 
         vm_item = self.get_vm_by_uuid_from_db(uuid)
         self.remove_vm_from_db(uuid)
@@ -334,7 +334,7 @@ class TNVMParking (TNArchipelPlugin):
         @param domain: the new XML description
         """
         if not self.is_vm_already_parked(uuid):
-            raise Exception("There is no virtual machine parked with ticket %s" % ticket)
+            raise Exception("There is no virtual machine parked with uuid %s" % uuid)
 
         vm_item = self.get_vm_by_uuid_from_db(uuid)
 
