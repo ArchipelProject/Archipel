@@ -231,11 +231,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [[tableLogs tableColumnWithIdentifier:@"self"] setDataView:[logDataViewPrototype duplicate]];
     [tableLogs setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
 
-    [fieldPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Set the delay between asking hypervisor statistics", @"Set the delay between asking hypervisor statistics")];
-    [fieldPreferencesMaxItems setToolTip:CPBundleLocalizedString(@"Set the max number of statistic entries to fetch", @"Set the max number of statistic entries to fetch")];
-    [fieldPreferencesMaxLogEntries setToolTip:CPBundleLocalizedString(@"Set the max number of log item to fetch", @"Set the max number of log item to fetch")];
-    [switchPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Activate the statistics auto fetching", @"Activate the statistics auto fetching")];
-
     // Workers
     _statsHistoryWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsHistoryWorker.js"]]];
     _statsWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsWorker.js"]]];

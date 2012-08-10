@@ -95,8 +95,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     var imageBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];
     [viewBottom setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
-
-    [buttonHypervisors setToolTip:CPBundleLocalizedString(@"Select the hypervisor to use. It will configure its own XMPP server", @"Select the hypervisor to use. It will configure its own XMPP server")];
 }
 
 #pragma mark -

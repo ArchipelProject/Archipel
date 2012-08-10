@@ -227,12 +227,6 @@
 /* Class = "NSTextFieldCell"; title = "You do not seem to have the minimal required permissions"; ObjectID = "1088"; */
 "1088.title" = "Vous n'avez pas le niveau minimum de permission";
 
-/* Class = "NSTextFieldCell"; title = "to display this module. You can ask your administrator to"; ObjectID = "1090"; */
-"1090.title" = "Pour afficher ce module. Vous pouvez contacter un administrateur";
-
-/* Class = "NSTextFieldCell"; title = "increase your permissions if you really need it."; ObjectID = "1092"; */
-"1092.title" = "pour augmenter vos permissions si vous en avez besoin.";
-
 /* Class = "NSTextFieldCell"; title = "vCard"; ObjectID = "1108"; */
 "1108.title" = "vCard";
 
@@ -454,4 +448,16 @@
 
 /* Class = "NSTextFieldCell"; title = "unit"; ObjectID = "1639"; */
 "1639.title" = "unit";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1650"; */
+"1650.title" = "Label";
+
+/* Class = "NSTextFieldCell"; title = "99"; ObjectID = "1651"; */
+"1651.title" = "99";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1652"; */
+"1652.title" = "Label";
+
+/* Class = "NSTextFieldCell"; title = "Group Name"; ObjectID = "1666"; */
+"1666.title" = "Group Name";
 

@@ -23,7 +23,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Name of appliance"; ObjectID = "31"; */
 "31.placeholderString" = "Name of appliance";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "32"; */
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "32"; */
 "32.title" = "Name:";
 
 /* Class = "NSTextFieldCell"; title = "It will be published to the local VMCast of the virtual machine's hypervisor."; ObjectID = "37"; */
@@ -35,7 +35,7 @@
 /* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to manage the appliances."; ObjectID = "52"; */
 "52.title" = "You need to stop the virtual machine to be able to manage the appliances.";
 
-/* Class = "NSTextFieldCell"; title = "Compress:"; ObjectID = "66"; */
+/* Class = "NSTextFieldCell"; title = "Compress"; ObjectID = "66"; */
 "66.title" = "Compress:";
 
 /* Class = "NSButtonCell"; title = "Use GZIP compression for drives"; ObjectID = "68"; */

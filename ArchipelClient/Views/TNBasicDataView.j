@@ -26,7 +26,6 @@
     CPColor _backgroundBottomColor;
     CPColor _backgroundTopColorSelected;
     CPColor _backgroundBottomColorSelected;
-
 }
 
 - (id)initWithRect:(CPRect)aRect

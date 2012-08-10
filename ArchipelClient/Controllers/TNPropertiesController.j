@@ -79,7 +79,6 @@
     TNStropheContact                _entity             @accessors(getter=entity);
 
     CPImage                         _groupUserImage;
-    CPImage                         _pubsubDisabledImage;
     CPImage                         _pubsubImage;
     CPImage                         _unknownUserImage;
     CPNumber                        _height;
@@ -101,7 +100,6 @@
     _unknownUserImage       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
     _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CPSizeMake(16,16)];
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
-    _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
     [mainSwipeView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
     [viewVCard setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
@@ -125,7 +123,6 @@
     [entryName setTextColor:[CPColor colorWithHexString:@"576066"]];
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
-    [entryName setToolTip:CPLocalizedString(@"Click here to change the displayed named of the current contact or group", @"Click here to change the displayed named of the current contact or group")];
     [entryName setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
     [entryName setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
     [entryName setLineBreakMode:CPLineBreakByTruncatingTail];
@@ -143,17 +140,10 @@
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
     [entryAvatar setImage:_unknownUserImage];
-    [entryAvatar setToolTip:CPLocalizedString(@"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)", @"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)")];
 
-    [buttonEventSubscription setToolTip:@"Click on avatar to change it."];
     [buttonEventSubscription setBordered:NO];
     [buttonEventSubscription setImageScaling:CPScaleProportionally];
     [buttonEventSubscription setHidden:YES];
-
-    [entryResource setToolTip:CPLocalizedString(@"The resource of the contact", @"The resource of the contact")];
-    [entryDomain setToolTip:CPLocalizedString(@"The domain (XMPP server) of the contact", @"The domain (XMPP server) of the contact")];
-    [entryStatus setToolTip:CPLocalizedString(@"The current status of the contact", @"The current status of the contact")];
-    [entryType setToolTip:CPLocalizedString(@"The type of contact (hypervisor, virtual machine or user)", @"The type of contact (hypervisor, virtual machine or user)")];
 
     [imageViewVCardPhoto setImageScaling:CPScaleProportionally];
 
@@ -231,7 +221,6 @@
     if (oldEntity && [oldEntity isKindOfClass:TNStropheContact])
     {
         [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:oldEntity];
-        [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:oldEntity];
     }
 
     _entity = anEntity;
@@ -239,7 +228,6 @@
     if (_entity && ([_entity isKindOfClass:TNStropheContact]))
     {
         [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:_entity];
-        [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     }
 }
 
@@ -310,12 +298,12 @@
 
         [buttonEventSubscription setHidden:NO];
 
-        [entryStatusIcon setImage:[_entity statusIcon]];
-        [entryName setStringValue:[_entity nickname]];
-        [entryDomain setStringValue:[[_entity JID] domain]];
-        [entryResource setStringValue:[[_entity resources] lastObject]];
-        [entryStatus setStringValue:[_entity XMPPStatus]];
-        [entryNode setStringValue:[[_entity JID] node]];
+        [entryStatusIcon bind:@"image" toObject:_entity withKeyPath:@"statusIcon" options:nil];
+        [entryName bind:@"objectValue" toObject:_entity withKeyPath:@"nickname" options:nil];
+        [entryDomain bind:@"objectValue" toObject:_entity withKeyPath:@"JID.domain" options:nil];
+        [entryResource bind:@"objectValue" toObject:_entity withKeyPath:@"resources" options:nil];
+        [entryStatus bind:@"objectValue" toObject:_entity withKeyPath:@"XMPPStatus" options:nil];
+        [entryNode bind:@"objectValue" toObject:_entity withKeyPath:@"JID.node" options:nil];
 
         // Query the custom entity types registered by the modules
         var entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]],
@@ -342,15 +330,9 @@
             [_avatarManager setEntity:_entity];
 
         if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
-        {
             [buttonEventSubscription setImage:_pubsubImage];
-            [buttonEventSubscription setToolTip:CPLocalizedString(@"You are registred to the entity events.", @"You are registred to the entity events.")];
-        }
         else
-        {
-            [buttonEventSubscription setImage:_pubsubDisabledImage];
-            [buttonEventSubscription setToolTip:CPLocalizedString(@"You are not registred to the entity events.", @"You are not registred to the entity events.")];
-        }
+            [buttonEventSubscription setImage:nil];
 
         [labelVCardFN setStringValue:@""];
         [labelVCardLocality setStringValue:@""];
@@ -426,20 +408,5 @@
 {
     [[mainSwipeView window] makeFirstResponder:[entryName previousResponder]];
 }
-
-/*! subscribe (unsubscribe) to (from) the entity pubsub if any
-    @param aSender the sender
-*/
-- (IBAction)manageContactSubscription:(id)aSender
-{
-    // this should be completely useless now.
-    // if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
-    //     [contactsController unsubscribeToPubSubNodeOfContactWithJID:[_entity JID]];
-    // else
-    //     [contactsController subscribeToPubSubNodeOfContactWithJID:[_entity JID]];
-    //
-    // [self reload];
-}
-
 
 @end

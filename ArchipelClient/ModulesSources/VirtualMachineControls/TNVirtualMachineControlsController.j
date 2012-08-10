@@ -113,19 +113,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     CPButton                        _migrateButton;
     CPImage                         _imageDestroy;
-    CPImage                         _imageDestroyDisabled;
     CPImage                         _imagePause;
-    CPImage                         _imagePauseDisabled;
     CPImage                         _imagePlay;
-    CPImage                         _imagePlayDisabled;
-    CPImage                         _imagePlaySelected;
     CPImage                         _imageReboot;
-    CPImage                         _imageRebootDisabled;
     CPImage                         _imageResume;
     CPImage                         _imageScreenShutDown;
     CPImage                         _imageStop;
-    CPImage                         _imageStopDisabled;
-    CPImage                         _imageStopSelected;
     CPImageView                     _imageViewFullScreenshot;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
@@ -155,32 +148,19 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [boxAdvancedCommands setCornerRadius:3.0];
 
     [sliderMemory setContinuous:YES];
-    [sliderMemory setToolTip:CPBundleLocalizedString(@"Adjust the maximum amout of memory of the VM (only when running)", @"Adjust the maximum amout of memory of the VM (only when running)")];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
     [stepperCPU setMinValue:1];
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
-    [stepperCPU setToolTip:CPBundleLocalizedString(@"Adjust the number of virtual CPUs of the VM (only when running)", @"Adjust the number of virtual CPUs of the VM (only when running)")];
 
-    _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
-    _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
-    _imageDestroy           = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CGSizeMake(16, 16)];
-    _imagePause             = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(16, 16)];
-    _imageReboot            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CGSizeMake(16, 16)];
+    _imagePlay      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
+    _imageStop      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
+    _imageDestroy   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/destroy.png"] size:CGSizeMake(16, 16)];
+    _imagePause     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(16, 16)];
+    _imageReboot    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reboot.png"] size:CGSizeMake(16, 16)];
 
-    _imagePlayDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-disabled.png"] size:CGSizeMake(16, 16)];
-    _imageStopDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-disabled.png"] size:CGSizeMake(16, 16)];
-    _imageDestroyDisabled   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug-disabled.png"] size:CGSizeMake(16, 16)];
-    _imagePauseDisabled     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-disabled.png"] size:CGSizeMake(16, 16)];
-    _imageRebootDisabled    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart-disabled.png"] size:CGSizeMake(16, 16)];
-
-    _imagePlaySelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-selected.png"] size:CGSizeMake(16, 16)];
-    _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(16, 16)];
-    _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-selected.png"] size:CGSizeMake(16, 16)];
-
-    [buttonBarTransport setToolTip:CPBundleLocalizedString(@"Control the virtual machine", @"Control the virtual machine")];
     [buttonBarTransport setSegmentCount:5];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Play", @"Play") forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
@@ -217,36 +197,23 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
     [_migrateButton setEnabled:NO];
-    [_migrateButton setToolTip:CPBundleLocalizedString(@"Trigger a live migration from current hypervisor to selected one", @"Trigger a live migration from current hypervisor to selected one")];
 
     [buttonBarMigration setButtons:[_migrateButton]];
 
     [switchAutoStart setTarget:self];
     [switchAutoStart setAction:@selector(setAutostart:)];
-    [switchAutoStart setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine will start with hypervisor", @"If ON, the virtual machine will start with hypervisor")];
 
     [switchPreventOOMKiller setTarget:self];
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
-    [switchPreventOOMKiller setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine process will never been destroyed by OOM killer", @"If ON, the virtual machine process will never been destroyed by OOM killer")];
 
     // screenshot image
     _imageScreenShutDown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdown.png"] size:CGSizeMake(216, 162)];
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
-    [buttonScreenshot setToolTip:CPLocalizedString(@"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot", @"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot")];
 
     _attachedWindowScreenshot = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 800.0, 620.0) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
     _imageViewFullScreenshot = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 20.0, 800.0, 600.0)],
     [[_attachedWindowScreenshot contentView] addSubview:_imageViewFullScreenshot];
-
-    [fieldInfoMem setToolTip:CPBundleLocalizedString(@"Current amount of memory", @"Current amount of memory")];
-    [fieldInfoConsumedCPU setToolTip:CPBundleLocalizedString(@"Total of consumed physical CPU time", @"Total of consumed physical CPU time")];
-    [fieldInfoState setToolTip:CPBundleLocalizedString(@"Current state of the virtual machine", @"Current state of the virtual machine")];
-    [fieldOOMScore setToolTip:CPBundleLocalizedString(@"Current OOM score for the virtual machine", @"Current OOM score for the virtual machine")];
-    [fieldOOMAdjust setToolTip:CPBundleLocalizedString(@"Current OOM adjust value of the virtual machine", @"Current OOM adjust value of the virtual machine")];
-    [buttonKill setToolTip:CPBundleLocalizedString(@"Will definitly delete the virtual machine, and all it's informations", @"Will definitly delete the virtual machine, and all it's informations")];
-    [buttonPark setToolTip:CPLocalizedString(@"Ask virtual machine's hypervisor to park it", @"Ask virtual machine's hypervisor to park it")];
-    [fieldPreferencesScreenshotRefresh setToolTip:CPLocalizedString(@"Set the delay between two virtual machine screenshots", @"Set the delay between two virtual machine screenshots")];
 }
 
 
@@ -562,15 +529,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
-    [buttonBarTransport setImage:_imagePlaySelected forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
-
-    var imagePause  = _imagePause;
-    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
-
     [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
 
@@ -587,12 +545,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Resume", @"Resume") forSegment:TNArchipelTransportBarPause];
-
-    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imageResume forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
 
     [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
@@ -612,12 +564,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
-    [buttonBarTransport setImage:_imagePlay forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStopSelected forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
-
     [switchPreventOOMKiller setEnabled:NO]
 }
 
@@ -636,12 +582,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
-
-    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStopDisabled forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
 
     [switchPreventOOMKiller setEnabled:NO];
 }

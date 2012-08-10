@@ -10,30 +10,16 @@
 	<string> vers l'hyperviseur sélectionné</string>
 	<key>Cannot migrate virtual machine </key>
 	<string>Impossible de migrer la VM </string>
-	<key>Destroy all selected virtual machines</key>
-	<string>Détruire toutes les VMs sélectionnées</string>
 	<key>Destroy selected virtual machines</key>
 	<string>Détruire la VM sélectionnée</string>
-	<key>Migrate all selected virtual machines</key>
-	<string>Migrer toutes les VMs sélectionnées</string>
-	<key>Pause all selected virtual machines</key>
-	<string>Mettre en pause toutes les VMs sélectionnées</string>
 	<key>Pause selected virtual machines</key>
 	<string>Mettre en pause la VM sélectionnée</string>
-	<key>Reboot all selected virtual machines (not supported by all hypervisors)</key>
-	<string>Redémarrer toutes les VMs sélectionnées (ceci n'est pas supporté par tous les hyperviseurs)</string>
 	<key>Reboot selected virtual machines</key>
 	<string>Redémarrer toutes les VMs sélectionnées</string>
-	<key>Resume all selected virtual machines</key>
-	<string>Reprendre l'exécution de toutes les VMs sélectionnées</string>
 	<key>Resume selected virtual machines</key>
 	<string>Reprendre l'exécution de la VM sélectionnée</string>
-	<key>Shutdown all selected virtual machines</key>
-	<string>Eteindre toutes les VMs sélectionnées</string>
 	<key>Shutdown selected virtual machines</key>
 	<string>Eteindre la VM sélectionnée</string>
-	<key>Start all selected virtual machines</key>
-	<string>Démarrer la VM sélectionnée</string>
 	<key>Start selected virtual machines</key>
 	<string>Démarrer toutes les VMs sélectionnées</string>
 	<key>Virtual machine </key>

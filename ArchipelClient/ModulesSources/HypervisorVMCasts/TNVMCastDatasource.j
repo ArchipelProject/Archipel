@@ -31,7 +31,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 @implementation TNVMCastSource : CPObject
 {
     CPArray     _content         @accessors(property=content);
-    CPString    _comment         @accessors(property=comment);
+    CPString    _comment         @accessors(setter=setComment:);
     CPString    _name            @accessors(property=name);
     CPString    _UUID            @accessors(property=UUID);
     CPURL       _URL             @accessors(property=URL);
@@ -68,6 +68,11 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
     return _name;
 }
 
+- (CPString)comment
+{
+    return _comment.replace(/^\s*/g, "");
+}
+
 @end
 
 
@@ -76,7 +81,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 */
 @implementation TNVMCast : CPObject
 {
-    CPString    _comment         @accessors(property=comment);
+    CPString    _comment         @accessors(setter=setComment:);
     CPString    _name            @accessors(property=name);
     CPString    _pubDate         @accessors(property=pubDate);
     CPString    _size            @accessors(property=size);
@@ -109,6 +114,12 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 {
     return @"" + Math.round(parseInt(_size) / 1024 / 1024) + @" Mo";
 }
+
+- (CPString)comment
+{
+    return _comment.replace(/^\s*/g, "");
+}
+
 @end
 
 /*! @ingroup hypervisorvmcasts

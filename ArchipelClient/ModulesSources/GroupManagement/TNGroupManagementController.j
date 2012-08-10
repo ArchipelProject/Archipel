@@ -92,38 +92,30 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
-    [createButton setToolTip:CPBundleLocalizedString(@"Start all selected virtual machines", @"Start all selected virtual machines")];
 
     [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CPSizeMake(16, 16)]];
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
-    [shutdownButton setToolTip:CPBundleLocalizedString(@"Shutdown all selected virtual machines", @"Shutdown all selected virtual machines")];
 
-    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CPSizeMake(16, 16)]];
+    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/destroy.png"] size:CPSizeMake(16, 16)]];
     [destroyButton setTarget:self];
     [destroyButton setAction:@selector(destroy:)];
-    [destroyButton setToolTip:CPBundleLocalizedString(@"Destroy all selected virtual machines", @"Destroy all selected virtual machines")];
 
     [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CPSizeMake(16, 16)]];
     [suspendButton setTarget:self];
     [suspendButton setAction:@selector(suspend:)];
-    [suspendButton setToolTip:CPBundleLocalizedString(@"Pause all selected virtual machines", @"Pause all selected virtual machines")];
 
     [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/resume.png"] size:CPSizeMake(16, 16)]];
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
-    [resumeButton setToolTip:CPBundleLocalizedString(@"Resume all selected virtual machines", @"Resume all selected virtual machines")];
 
-    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CPSizeMake(16, 16)]];
+    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reboot.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
-    [rebootButton setToolTip:CPBundleLocalizedString(@"Reboot all selected virtual machines (not supported by all hypervisors)", @"Reboot all selected virtual machines (not supported by all hypervisors)")];
 
     [migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
     [migrateButton setTarget:self];
     [migrateButton setAction:@selector(migrate:)];
-    [migrateButton setToolTip:CPBundleLocalizedString(@"Migrate all selected virtual machines", @"Migrate all selected virtual machines")];
-
 
     [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton, migrateButton]];
 

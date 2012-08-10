@@ -41,17 +41,6 @@
 
 
 #pragma mark -
-#pragma mark Initialization
-
-/*! called at cib awakening
-*/
-- (void)awakeFromCib
-{
-    [newGroupName setToolTip:CPLocalizedString(@"The name of the new group", @"The name of the new group")];
-}
-
-
-#pragma mark -
 #pragma mark Utilities
 
 /*! will ask for deleting the selected group

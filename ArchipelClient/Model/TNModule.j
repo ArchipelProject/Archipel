@@ -124,9 +124,9 @@ var TNModuleStatusImageReady,
 {
     var mainBundle = [CPBundle mainBundle];
 
-    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/ready.png"] size:CPSizeMake(16.0, 16.0)];
-    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/waiting.png"] size:CPSizeMake(16.0, 16.0)];
-    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/error.png"] size:CPSizeMake(16.0, 16.0)];
+    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
+    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
+    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)];
 }
 
 - (BOOL)initializeModule
@@ -570,6 +570,15 @@ var TNModuleStatusImageReady,
 {
     // flush all datasources, etc..
 }
+
+/*! This message will be sent when all other modules are loaded
+    You can safelu communicate with other modules from here
+*/
+- (void)allModulesLoaded
+{
+    // do stuff
+}
+
 
 #pragma mark -
 #pragma mark GUI utilities

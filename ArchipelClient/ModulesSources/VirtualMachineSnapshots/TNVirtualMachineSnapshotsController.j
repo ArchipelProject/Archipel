@@ -148,20 +148,17 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_plusButton setTarget:self];
     [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CPSizeMake(14, 14)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Take a new snapshot", @"Take a new snapshot")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CPSizeMake(14, 14)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected snapshot", @"Delete selected snapshot")];
     [_minusButton setEnabled:NO];
 
     _revertButton = [CPButtonBar minusButton];
     [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CPSizeMake(14, 14)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
-    [_revertButton setToolTip:CPBundleLocalizedString(@"Revert virtual machine to the state stored in selected snapshot", @"Revert virtual machine to the state stored in selected snapshot")];
     [_revertButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _revertButton]];

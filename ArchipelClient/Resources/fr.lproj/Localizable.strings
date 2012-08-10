@@ -28,9 +28,6 @@
 /* Add a group */
 "Add a group" = "Ajouter un groupe";
 
-/* Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user. */
-"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user." = "Ajouter un nouveau contact ou un groupe. Les contacts peuvent être un hyperviseur, une machine virtuelle ou un utilisateur";
-
 /* Add contact */
 "Add contact" = "Ajouter le contact";
 
@@ -70,23 +67,14 @@
 /* Busy */
 "Busy" = "Occupé";
 
-/* cancel */
-"cancel" = "Annuler";
-
 /* Cancel */
 "Cancel" = "Annuler";
 
+/* cancel */
+"cancel" = "Annuler";
+
 /* Cannot save your preferences to the XMPP server */
 "Cannot save your preferences to the XMPP server" = "Impossible de sauvegarder les préférences dans le serveur XMPP.";
-
-/* Change your current avatar. This picture will be visible by all your contacts */
-"Change your current avatar. This picture will be visible by all your contacts" = "Changer votre avatar. Cette image sera visible par tous vos contacts";
-
-/* Click here to change the displayed named of the current contact or group */
-"Click here to change the displayed named of the current contact or group" = "Cliquez ici pour changer le nom du contact ou du groupe";
-
-/* Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users) */
-"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)" = "Cliquez ici pour changer l'avatar du contact (seulement pour les contacts Archipel. Pas les utilisateurs)";
 
 /* Collapse all groups */
 "Collapse all groups" = "Réduire tous les groupes";
@@ -124,9 +112,6 @@
 /* Copy */
 "Copy" = "Copier";
 
-/* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "Activer ce boutton pour enregistrer vos identifiants. Notez que tous les mots de passes sont stockés en clair dans le stockage local de votre navigateur et qu'ils sont très facile à récupérer. Utilisez cette fonctionnalitée à vos risques et périls. Toutefois, cette fonctionnalité vous facilite la vie. Si vous désirer effacer vos identifiants du stockage local, entrez les, puis placer ce bouton en position Off.";
-
 /* Current Selection */
 "Current Selection" = "Current Selection";
 
@@ -135,9 +120,6 @@
 
 /* Decline */
 "Decline" = "Refuser";
-
-/* Delay before loading a module. This avoid to load server with stanzas */
-"Delay before loading a module. This avoid to load server with stanzas" = "Delai de chargement des modules. Cela évite de surcharger le serveur XMPP.";
 
 /* Delete */
 "Delete" = "Supprimer";
@@ -158,17 +140,11 @@
 /* disconnecting */
 "disconnecting" = "Deconnexion...";
 
-/* Display or hide the properties view */
-"Display or hide the properties view" = "Affiche les proprietés.";
-
 /* Do not disturb */
 "Do not disturb" = "Ne pas déranger";
 
 /* Edit */
 "Edit" = "Editer";
-
-/* Enter the new password for your account. You will need to enter this password at the next connection */
-"Enter the new password for your account. You will need to enter this password at the next connection" = "Entrez vore nouveau mot de passe. Vous devrez utiliser ce mot de passe lors de la prochaine connexion";
 
 /* Error */
 "Error" = "Erreur";
@@ -181,9 +157,6 @@
 
 /* Expand group */
 "Expand group" = "Etendre le groupe";
-
-/* Filter contacts by name or tags */
-"Filter contacts by name or tags" = "Filtrer par nom ou par étiquette";
 
 /* For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them */
 "For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them" = "For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them";
@@ -296,9 +269,6 @@
 /* Remove subscribtion */
 "Remove subscribtion" = "Remove subscribtion";
 
-/* Remove the selected contact. It will only remove it from your roster. */
-"Remove the selected contact. It will only remove it from your roster." = "Supprime le contact de votre roster";
-
 /* Rename contact */
 "Rename contact" = "Renommer le contact";
 
@@ -313,9 +283,6 @@
 
 /* Resource */
 "Resource" = "Resource";
-
-/* Retype the password */
-"Retype the password" = "Retapez votre mot de passe";
 
 /* Search entity */
 "Search entity" = "Rechercher une entité";
@@ -341,9 +308,6 @@
 /* Select previous module */
 "Select previous module" = "Select previous module";
 
-/* Set the log level of the client. The more verbose, the less performance. */
-"Set the log level of the client. The more verbose, the less performance." = "Configure le niveau de log du client. Un niveau de log trop élevé entraine une baisse des performances";
-
 /* Status */
 "Status" = "Statut";
 
@@ -356,65 +320,17 @@
 /* TB */
 "TB" = "TB";
 
-/* The current logged account */
-"The current logged account" = "Le compte courrant";
-
-/* The current status of the contact */
-"The current status of the contact" = "Le status courrant du contact";
-
-/* The display name of the new contact */
-"The display name of the new contact" = "Le nom du contact";
-
-/* The domain (XMPP server) of the contact */
-"The domain (XMPP server) of the contact" = "Le domaine (serveur XMPP) du contact";
-
 /* The group has been removed */
 "The group has been removed" = "Le groupe a été supprimé";
 
 /* The group must be empty */
 "The group must be empty" = "Le groupe doit être vide";
 
-/* The JID to use to connect. It is always formatted like user@domain.com */
-"The JID to use to connect. It is always formatted like user@domain.com" = "Le JID à utiliser. Il est toujours formaté de la sorte: utilisateur@domaine.com";
-
-/* The name of the new group */
-"The name of the new group" = "Le nom du nouveau groupe";
-
-/* The password associated to your XMPP account */
-"The password associated to your XMPP account" = "Le mot de passe associé au compte XMPP";
-
 /* The passwords you entered don't match. */
 "The passwords you entered don't match." = "Les mots de passes ne concordent pas.";
 
-/* The resource of the contact */
-"The resource of the contact" = "La ressource du contact";
-
-/* The resource to use */
-"The resource to use" = "La ressource à utiliser";
-
-/* The service BOSH (XMPP over HTTP) to use */
-"The service BOSH (XMPP over HTTP) to use" = "Le service BOSH (XMPP sur HTTP) à utiliser";
-
-/* The type of contact (hypervisor, virtual machine or user) */
-"The type of contact (hypervisor, virtual machine or user)" = "Le type du contact (hyperviseur, machine virtuelle or utilisateur)";
-
-/* The XMPP JID of the contact */
-"The XMPP JID of the contact" = "Le JID du contact";
-
-/* This LED is ON when XMPP data are received */
-"This LED is ON when XMPP data are received" = "Cette LED est allumée lors de la reception de donnnées XMPP";
-
-/* This LED is ON when XMPP data are sent */
-"This LED is ON when XMPP data are sent" = "Cette LED est allumée lors de l'envoi de donnnées XMPP";
-
 /* Toggle tag view */
 "Toggle tag view" = "Toggle tag view";
-
-/* Turn this ON to activate eye candy animation. Turn it off to gain performances */
-"Turn this ON to activate eye candy animation. Turn it off to gain performances" = "Active les animations. Les animations réduisent les performances";
-
-/* Turn this ON to activate XMPP monitoring. Turn it off to gain performances */
-"Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Active la surveillance XMPP. La surveillance XMPP réduit les performances";
 
 /* Unable to grant admin rights to users. See log */
 "Unable to grant admin rights to users. See log" = "Unable to grant admin rights to users. See log";
@@ -431,9 +347,6 @@
 /* unknown-error */
 "unknown-error" = "Erreur inconnue";
 
-/* Update your current XMPP status */
-"Update your current XMPP status" = "Mettre à jour le statut XMPP";
-
 /* User */
 "User" = "Utilisateur";
 
@@ -448,12 +361,6 @@
 
 /* XMPP Account */
 "XMPP Account" = "Compte XMPP";
-
-/* You are not registred to the entity events. */
-"You are not registred to the entity events." = "Vous n'êtes pas abonné aux evenements de cette entité.";
-
-/* You are registred to the entity events. */
-"You are registred to the entity events." = "Vous êtes abonné aux evenements de cette entité.";
 
 /* You can't assign tags here */
 "You can't assign tags here" = "Vous ne pouvez pas assigner d'étiquettes ici.";

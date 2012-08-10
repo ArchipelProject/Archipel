@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Add users into selected shared group</key>
-	<string>Add users into selected shared group</string>
 	<key>Are you sure you want to unregister selected user(s) ?</key>
 	<string>Are you sure you want to unregister selected user(s) ?</string>
 	<key>Bad JID</key>
@@ -14,20 +12,8 @@
 	<string>Cancel</string>
 	<key>Confirm</key>
 	<string>Confirm</string>
-	<key>Create a new shared group</key>
-	<string>Create a new shared group</string>
-	<key>Create a new user account</key>
-	<string>Create a new user account</string>
-	<key>Delete selected shared group</key>
-	<string>Delete selected shared group</string>
-	<key>Delete selected user accounts</key>
-	<string>Delete selected user accounts</string>
 	<key>Password doesn't match</key>
 	<string>Password doesn't match</string>
-	<key>Remove users from selected shared group</key>
-	<string>Remove users from selected shared group</string>
-	<key>Select the hypervisor to use. It will configure its own XMPP server</key>
-	<string>Select the hypervisor to use. It will configure its own XMPP server</string>
 	<key>Shared Groups</key>
 	<string>Shared Groups</string>
 	<key>The password is too short. it must be at least 8 characters</key>

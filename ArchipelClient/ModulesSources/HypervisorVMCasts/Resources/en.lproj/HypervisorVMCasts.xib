@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.SystemVersion">11E2620</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
 		<string key="IBDocument.AppKitVersion">1138.47</string>
 		<string key="IBDocument.HIToolboxVersion">569.00</string>
@@ -491,6 +491,7 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{0, 255}, {480, 15}}</string>
 								<reference key="NSSuperview" ref="746320793"/>
+								<reference key="NSNextKeyView" ref="726042136"/>
 								<string key="NSReuseIdentifierKey">_NS:1216</string>
 								<int key="NSsFlags">1</int>
 								<reference key="NSTarget" ref="746320793"/>
@@ -529,6 +530,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 260}, {450, 26}}</string>
 						<reference key="NSSuperview" ref="401679258"/>
+						<reference key="NSNextKeyView" ref="746320793"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="141425314">
 							<int key="NSCellFlags">68288064</int>
@@ -548,6 +550,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {484, 5}}</string>
 						<reference key="NSSuperview" ref="401679258"/>
+						<reference key="NSNextKeyView" ref="967070361"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67239424</int>
@@ -592,7 +595,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 306}</string>
-				<reference key="NSNextKeyView" ref="746320793"/>
+				<reference key="NSNextKeyView" ref="631636219"/>
 			</object>
 			<object class="NSCustomObject" id="976891823">
 				<string key="NSClassName">TNVMCastRegistrationController</string>
@@ -1590,7 +1593,6 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addNewVMCast:</string>
 							<string>clickOnFilterCheckBox:</string>
 							<string>download:</string>
 							<string>fieldFilterDidChange:</string>
@@ -1602,7 +1604,6 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1617,7 +1618,6 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addNewVMCast:</string>
 							<string>clickOnFilterCheckBox:</string>
 							<string>download:</string>
 							<string>fieldFilterDidChange:</string>
@@ -1629,10 +1629,6 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">addNewVMCast:</string>
-								<string key="candidateClassName">id</string>
-							</object>
 							<object class="IBActionInfo">
 								<string key="name">clickOnFilterCheckBox:</string>
 								<string key="candidateClassName">id</string>
@@ -1673,29 +1669,21 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>VMCastRegistrationController</string>
 							<string>buttonBarControl</string>
-							<string>buttonNewVMCast</string>
 							<string>checkBoxOnlyInstalled</string>
 							<string>downloadQueueController</string>
 							<string>fieldFilter</string>
-							<string>fieldNewURL</string>
 							<string>mainScrollView</string>
 							<string>viewTableContainer</string>
-							<string>windowDownloadQueue</string>
-							<string>windowNewCastURL</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>TNVMCastRegistrationController</string>
 							<string>CPButtonBar</string>
-							<string>NSButton</string>
 							<string>CPCheckBox</string>
 							<string>TNDownloadQueueController</string>
 							<string>NSSearchField</string>
-							<string>NSTextField</string>
 							<string>NSScrollView</string>
 							<string>NSView</string>
-							<string>NSWindow</string>
-							<string>NSWindow</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -1704,15 +1692,11 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>VMCastRegistrationController</string>
 							<string>buttonBarControl</string>
-							<string>buttonNewVMCast</string>
 							<string>checkBoxOnlyInstalled</string>
 							<string>downloadQueueController</string>
 							<string>fieldFilter</string>
-							<string>fieldNewURL</string>
 							<string>mainScrollView</string>
 							<string>viewTableContainer</string>
-							<string>windowDownloadQueue</string>
-							<string>windowNewCastURL</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1723,10 +1707,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarControl</string>
 								<string key="candidateClassName">CPButtonBar</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonNewVMCast</string>
-								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">checkBoxOnlyInstalled</string>
@@ -1741,24 +1721,12 @@
 								<string key="candidateClassName">NSSearchField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">fieldNewURL</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">mainScrollView</string>
 								<string key="candidateClassName">NSScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>
 								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowDownloadQueue</string>
-								<string key="candidateClassName">NSWindow</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">windowNewCastURL</string>
-								<string key="candidateClassName">NSWindow</string>
 							</object>
 						</object>
 					</object>

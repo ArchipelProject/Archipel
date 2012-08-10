@@ -80,7 +80,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)awakeFromCib
 {
-    _mainWindow = [[CPWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 631.0, 543.0) styleMask:CPDocModalWindowMask];
+    _mainWindow = [[CPWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 700.0, 543.0) styleMask:CPDocModalWindowMask];
     [_mainWindow setContentView:viewContentWindowPreferences];
 
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
@@ -111,12 +111,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToGetInXMPPServer:) name:TNStrophePrivateStorageGetErrorNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(saveToFromXMPPServer:) name:TNPreferencesControllerSavePreferencesRequestNotification object:nil];
     [_mainWindow setDefaultButton:buttonSave];
-
-    [fieldBOSHResource setToolTip:CPLocalizedString(@"The resource to use", @"The resource to use")];
-    [fieldModuleLoadingDelay setToolTip:CPLocalizedString(@"Delay before loading a module. This avoid to load server with stanzas", @"Delay before loading a module. This avoid to load server with stanzas")];
-    [switchUseAnimations setToolTip:CPLocalizedString(@"Turn this ON to activate eye candy animation. Turn it off to gain performances", @"Turn this ON to activate eye candy animation. Turn it off to gain performances")];
-    [switchUseXMPPMonitoring setToolTip:CPLocalizedString(@"Turn this ON to activate XMPP monitoring. Turn it off to gain performances", @"Turn this ON to activate XMPP monitoring. Turn it off to gain performances")];
-    [buttonDebugLevel setToolTip:CPLocalizedString(@"Set the log level of the client. The more verbose, the less performance.", @"Set the log level of the client. The more verbose, the less performance.")]
 
     _excludedTokens = [CPDictionary dictionary];
 

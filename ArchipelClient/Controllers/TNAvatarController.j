@@ -19,7 +19,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPGeometry.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPCollectionView.j>
 @import <AppKit/CPImageView.j>

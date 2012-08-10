@@ -50,8 +50,7 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     {
         var columnLabel     = [[CPTableColumn alloc] initWithIdentifier:"nickname"],
             columnOutline   = [[CPTableColumn alloc] initWithIdentifier:"outline"],
-            rosterLayout    = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
-            rowHeight       = [rosterLayout objectForKey:@"TNOutlineViewRosterRowHeight"];
+            rosterLayout    = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"];
 
         [columnLabel setWidth:aFrame.size.width];
         [columnOutline setWidth:12.0];
@@ -65,7 +64,6 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:nil];
-        [self setRowHeight:rowHeight];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];
@@ -103,6 +101,7 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     }
 
     [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
+    [self getVCardsForVisibleEntitiesIfNeeded];
 }
 
 /*! called when TNArchipelRosterOutlineViewDeselectAll is received.
@@ -140,6 +139,21 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     var rowIndex = [self rowForItem:[aNotification userInfo]];
     if (rowIndex !== CPNotFound)
         [self selectRowIndexes:[CPIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+}
+
+#pragma mark -
+#pragma mark Utilities
+
+- (void)getVCardsForVisibleEntitiesIfNeeded
+{
+    var visibleRange = [self rowsInRect:[self visibleRect]];
+
+    for (var i = visibleRange.location; i < (visibleRange.location + visibleRange.length); i++)
+    {
+        var item = [self itemAtRow:i];
+        if ([item isKindOfClass:TNStropheContact] && ![item vCard])
+            [item getVCard];
+    }
 }
 
 #pragma mark -
@@ -259,6 +273,14 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
         default:
             [super keyDown:anEvent];
     }
+}
+
+#pragma mark -
+#pragma mark Scroll View delegates
+
+- (void)scrollViewDidScroll:(CPScrollView)aView
+{
+    [self getVCardsForVisibleEntitiesIfNeeded];
 }
 
 @end

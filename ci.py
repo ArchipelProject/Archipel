@@ -38,7 +38,7 @@ def updateSubmodules():
 
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake release && jake debug"):
+    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clobber-theme && jake release && jake debug"):
         if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clean && jake release && jake debug"):
             sys.exit(-1)
 
@@ -51,7 +51,7 @@ def buildGrowlCappuccino():
 
 def buildLPKit():
     os.system("echo \* Starting to build LPKit")
-    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build  && export CONFIGURATION=Debug && jake -f myJakeFile build"):
+    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CAPP_BUILD=./Build && export CONFIGURATION=Release && jake build  && export CONFIGURATION=Debug && jake build"):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
 
@@ -82,6 +82,7 @@ def buildArchipel(export_dir, build):
     rev = commands.getoutput("git rev-parse --short HEAD");
     builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
     os.system("rm -rf ./ArchipelClient/Build")
+    os.system("cd ./ArchipelClient && capp gen -fl --force .")
     os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=%s" % CONFIGURATION)
     if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=%s" % CONFIGURATION):
         os.system("echo \* unable to build ArchipelClient. end of line.")

@@ -55,9 +55,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     [buttonEditDiskFormat removeAllItems];
     [buttonEditDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
-
-    [fieldEditDiskName setToolTip:CPBundleLocalizedString(@"Set the name of the virtual drive", @"Set the name of the virtual drive")];
-    [buttonEditDiskFormat setToolTip:CPBundleLocalizedString(@"Choose the format of the virtual drive", @"Choose the format of the virtual drive")];
 }
 
 

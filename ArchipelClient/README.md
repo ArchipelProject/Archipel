@@ -14,10 +14,10 @@ else than a decent HTML5 capable web browser.
 * Test application : <http://app.archipelproject.org>
 * Mailing list : <http://groups.google.com/group/archipelproject>
 * IRC : <irc://irc.freenode.net/#archipel>
-* Sources : <https://github.com/primalmotion/archipel>
-* Wiki : <https://github.com/primalmotion/archipel/wiki>
-* Bugtracker : <https://github.com/primalmotion/archipel/issues>
-* FAQ : <https://github.com/primalmotion/Archipel/wiki/Faq>
+* Sources : <https://github.com/archipelproject/archipel>
+* Wiki : <https://github.com/archipelproject/archipel/wiki>
+* Bugtracker : <https://github.com/archipelproject/archipel/issues>
+* FAQ : <https://github.com/archipelproject/Archipel/wiki/Faq>
 
 
 # Installation

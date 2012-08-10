@@ -107,12 +107,12 @@
 
     _toolbarItemImages = [
         [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-1.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-2.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-3.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-4.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-5.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-5more.png"] size:CPSizeMake(32,32)]
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)]
     ];
 
     _numberOfNotices = 0;
@@ -126,9 +126,6 @@
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultService"], @"TNArchipelMUCDefaultService",
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultRoom"], @"TNArchipelMUCDefaultRoom"
     ]];
-
-    [fieldPreferencesDefaultService setToolTip:CPBundleLocalizedString(@"Set the conference server to use", @"Set the conference server to use")];
-    [fieldPreferencesDefaultRoom setToolTip:CPBundleLocalizedString(@"Set the room to connect to", @"Set the room to connect to")];
 }
 
 

@@ -4,6 +4,11 @@
 <dict>
     <key>CPBundleLocale</key>
     <string>en</string>
+
+    <key>CPSystemFontFace</key>
+    <string>Asap</string>
+
+
     <key>ArchipelCheckNodeAdminAccount</key>
     <integer>1</integer>
     <key>ArchipelDefaultAdminAccounts</key>
@@ -42,35 +47,6 @@
     <integer>0</integer>
     <key>TNHideOfflineContacts</key>
     <integer>0</integer>
-    <key>TNArchipelRosterLayout</key>
-    <dict>
-        <key>TNOutlineViewRosterDisplayAvatar</key>
-        <integer>1</integer>
-        <key>TNOutlineViewRosterRowHeight</key>
-        <real>30</real>
-        <key>TNRosterDataViewContactFontSizeGroup</key>
-        <real>11</real>
-        <key>TNRosterDataViewContactFontSizeName</key>
-        <real>11</real>
-        <key>TNRosterDataViewContactFontSizeStatus</key>
-        <real>-10</real>
-        <key>TNRosterDataViewContactImageSizeAvatar</key>
-        <dict>
-            <key>height</key>
-            <real>24</real>
-            <key>width</key>
-            <real>24</real>
-        </dict>
-        <key>TNRosterDataViewContactImageSizeStatus</key>
-        <dict>
-            <key>height</key>
-            <real>16</real>
-            <key>width</key>
-            <real>16</real>
-        </dict>
-        <key>TNRosterDataViewContactPlacementOffset</key>
-        <real>-10</real>
-    </dict>
     <key>TNArchipelUpdateServerURL</key>
     <string>http://updates.archipelproject.org</string>
     <key>TNArchipelUseAnimations</key>

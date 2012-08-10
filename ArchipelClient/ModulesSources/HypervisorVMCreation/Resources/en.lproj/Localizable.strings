@@ -1,6 +1,9 @@
 /*  has been created */
 " has been created" = " has been created";
 
+/*  has been updated */
+" has been updated" = " has been updated";
+
 /*  to your roster */
 " to your roster" = " to your roster";
 
@@ -25,26 +28,11 @@
 /* Are you sure you want to remove the subscription for this user ? */
 "Are you sure you want to remove the subscription for this user ?" = "Are you sure you want to remove the subscription for this user ?";
 
-/* Ask hypervisor to completely destroy all selected virtual machine */
-"Ask hypervisor to completely destroy all selected virtual machine" = "Ask hypervisor to completely destroy all selected virtual machine";
-
-/* Ask hypervisor to create a new virtual machine */
-"Ask hypervisor to create a new virtual machine" = "Ask hypervisor to create a new virtual machine";
-
-/* Ask the virtual machine to add in its contact a user */
-"Ask the virtual machine to add in its contact a user" = "Ask the virtual machine to add in its contact a user";
-
-/* Ask the virtual machine to remove a user from its contact */
-"Ask the virtual machine to remove a user from its contact" = "Ask the virtual machine to remove a user from its contact";
-
 /* Cancel */
 "Cancel" = "Cancel";
 
 /* Clone this virtual machine */
 "Clone this virtual machine" = "Clone this virtual machine";
-
-/* Create a clone virtual machine from the selected one */
-"Create a clone virtual machine from the selected one" = "Create a clone virtual machine from the selected one";
 
 /* Create new virtual machine */
 "Create new virtual machine" = "Create new virtual machine";

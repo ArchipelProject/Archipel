@@ -84,7 +84,7 @@ ARCHIPEL_XMPP_SHOW_PAUSED                       = "Paused"
 ARCHIPEL_XMPP_SHOW_SHUTDOWN                     = "Off"
 ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN                 = "Shutting down..."
 ARCHIPEL_XMPP_SHOW_BLOCKED                      = "Blocked"
-ARCHIPEL_XMPP_SHOW_SHUTOFF                      = "Shutted off"
+ARCHIPEL_XMPP_SHOW_SHUTOFF                      = "Shut off"
 ARCHIPEL_XMPP_SHOW_ERROR                        = "Error"
 ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
 ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
@@ -120,6 +120,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         self.vm_will_define_hooks       = []
         self.vcard_infos                = {}
+        self.is_freeing                 = False
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
@@ -525,6 +526,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @param iq: the received IQ
         """
         reply = None
+        if self.is_freeing:
+            raise xmpp.protocol.NodeProcessed
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
         if not self.libvirt_connection:
@@ -583,6 +586,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @param iq: the received IQ
         """
         reply = None
+        if self.is_freeing:
+            raise xmpp.protocol.NodeProcessed
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
 
@@ -1004,6 +1009,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Will run the hypervisor to free virtual machine.
         """
+        self.is_freeing = True
         self.perform_hooks("HOOK_VM_FREE")
         self.hypervisor.free(self.jid)
 

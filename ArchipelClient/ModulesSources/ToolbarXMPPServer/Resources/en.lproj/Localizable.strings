@@ -1,6 +1,3 @@
-/* Add users into selected shared group */
-"Add users into selected shared group" = "Add users into selected shared group";
-
 /* Are you sure you want to unregister selected user(s) ? */
 "Are you sure you want to unregister selected user(s) ?" = "Are you sure you want to unregister selected user(s) ?";
 
@@ -16,26 +13,8 @@
 /* Confirm */
 "Confirm" = "Confirm";
 
-/* Create a new shared group */
-"Create a new shared group" = "Create a new shared group";
-
-/* Create a new user account */
-"Create a new user account" = "Create a new user account";
-
-/* Delete selected shared group */
-"Delete selected shared group" = "Delete selected shared group";
-
-/* Delete selected user accounts */
-"Delete selected user accounts" = "Delete selected user accounts";
-
 /* Password doesn't match */
 "Password doesn't match" = "Password doesn't match";
-
-/* Remove users from selected shared group */
-"Remove users from selected shared group" = "Remove users from selected shared group";
-
-/* Select the hypervisor to use. It will configure its own XMPP server */
-"Select the hypervisor to use. It will configure its own XMPP server" = "Select the hypervisor to use. It will configure its own XMPP server";
 
 /* Shared Groups */
 "Shared Groups" = "Shared Groups";

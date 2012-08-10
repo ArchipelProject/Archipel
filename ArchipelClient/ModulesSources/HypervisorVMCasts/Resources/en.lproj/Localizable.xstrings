@@ -26,36 +26,24 @@
 	<string>Delete VMCast</string>
 	<key>Delete appliance</key>
 	<string>Delete appliance</string>
-	<key>Delete the selected appliance from the hypervisor repository</key>
-	<string>Delete the selected appliance from the hypervisor repository</string>
 	<key>Download</key>
 	<string>Download</string>
 	<key>Download queue for </key>
 	<string>Download queue for </string>
 	<key>Download selected appliance</key>
 	<string>Download selected appliance</string>
-	<key>If checked, it will only displayed installed appliances</key>
-	<string>If checked, it will only displayed installed appliances</string>
-	<key>Register to a new VMCast feed</key>
-	<string>Register to a new VMCast feed</string>
 	<key>Register to a new VMCasts</key>
 	<string>Register to a new VMCasts</string>
 	<key>Remove selected appliance</key>
 	<string>Remove selected appliance</string>
 	<key>Show activity monitor</key>
 	<string>Show activity monitor</string>
-	<key>Show all current downloads</key>
-	<string>Show all current downloads</string>
 	<key>Size</key>
 	<string>Size</string>
-	<key>Start to download selected appliance</key>
-	<string>Start to download selected appliance</string>
 	<key>Status</key>
 	<string>Status</string>
 	<key>Unregister</key>
 	<string>Unregister</string>
-	<key>Unregister from a VMCast feed</key>
-	<string>Unregister from a VMCast feed</string>
 	<key>Unregister from selected VMCast</key>
 	<string>Unregister from selected VMCast</string>
 	<key>VMCasts</key>

@@ -74,6 +74,7 @@
 @import "Views/TNSwitch.j"
 
 
+CPFontDefaultSystemFontFace = @"Courier";
 
 /*! @global
     @group TNArchipelEntityType
@@ -182,6 +183,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNUpdateController                  updateController;
     @outlet TNUserAvatarController              userAvatarController;
     @outlet TNXMPPAccountController             XMPPAccountController;
+    @outlet TNRosterDataViewContact             rosterDataViewForContacts;
+    @outlet TNRosterDataViewGroup               rosterDataViewForGroups;
 
     BOOL                                        _tagsVisible;
     CPButton                                    _hideButton;
@@ -206,8 +209,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPWindow                                    _helpWindow;
     TNOutlineViewRoster                         _rosterOutlineView;
     TNPubSubController                          _pubSubController;
-    TNRosterDataViewContact                     _rosterDataViewForContacts;
-    TNRosterDataViewGroup                       _rosterDataViewForGroups;
     TNStropheGroup                              _stropheGroupSelection;
     TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
@@ -297,7 +298,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewMain setIsPaneSplitter:NO];
     [splitViewMain setDelegate:self];
 
-
     /* tags split views */
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
@@ -334,6 +334,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
     [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
+    [_outlineScrollView setDelegate:_rosterOutlineView];
 
     /* left view */
     [leftView setFrontView:_outlineScrollView];
@@ -391,7 +392,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]]]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
-    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
 
     /* Growl */
     CPLog.trace(@"initializing Growl");
@@ -399,12 +399,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* traffic LEDs */
     CPLog.trace(@"Initializing the traffic status LED");
-    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-in.png"]];
-    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
-    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
-    [ledOut setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are sent", @"This LED is ON when XMPP data are sent")];
-    [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
-
+    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CPSizeMake(8.0, 8.0)];
 
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
@@ -460,7 +457,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"353535"]];
     [labelCurrentUser setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
-    [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
 
     [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
     [fieldVersion setStringValue:@""];
@@ -469,12 +465,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [fieldVersion setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [fieldVersion setSelectable:YES];
     [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
-
-
-    /* dataviews for roster */
-    _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] initWithFrame:CPRectMake(0, 0, 100, 50)];
-    _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
-
 
     /* Placing the connection window */
     [connectionController showWindow:nil];
@@ -630,9 +620,25 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [theWindow setToolbar:_mainToolbar];
 
     // ok the next following line is a terrible awfull hack.
-    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:CPLocalizedString(@"Log out", @"Log out") icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:CPLocalizedString(@"Tags", @"Tags") icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
+    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE"
+                                  label:@"              "/* incredible huh ?*/
+                                   view:nil
+                                 target:nil
+                                 action:nil];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout
+                                  label:CPLocalizedString(@"Log out", @"Log out")
+                                   icon:[bundle pathForResource:@"IconsToolbar/logout.png"]
+                                   altIcon:[bundle pathForResource:@"IconsToolbar/logout-alt.png"]
+                                 target:self action:@selector(toolbarItemLogoutClick:)
+                                toolTip:@"Log out from the application"];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags
+                                  label:CPLocalizedString(@"Tags", @"Tags")
+                                   icon:[bundle pathForResource:@"IconsToolbar/tags.png"]
+                                   altIcon:[bundle pathForResource:@"IconsToolbar/tags-alt.png"]
+                                 target:self action:@selector(toolbarItemTagsClick:)
+                                toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
@@ -648,21 +654,20 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNArchipelStatusBusyLabel       = CPLocalizedString(@"Busy", @"Busy"),
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
-    [statusSelector setToolTip:CPLocalizedString(@"Update your current XMPP status", @"Update your current XMPP status")];
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/available.png"]]];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/away.png"]]];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/busy.png"]]];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/dnd.png"]]];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CPSizeMake(123.0, 24.0)];
@@ -689,9 +694,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         userAvatar          = [[CPMenuItem alloc] init],
         userAvatarMenu      = [[CPMenu alloc] init];
 
-    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
+    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
 
-    [_userAvatarButton setToolTip:CPLocalizedString(@"Change your current avatar. This picture will be visible by all your contacts", @"Change your current avatar. This picture will be visible by all your contacts")];
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
     [_userAvatarButton setBackgroundColor:[CPColor blackColor]];
@@ -728,8 +732,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         minusButton             = [CPButtonBar minusButton];
 
     _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(16, 16)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(16, 16)];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(20, 20)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(20, 20)];
 
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
@@ -737,21 +741,18 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(20, 20)]];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"];
     [_plusButton setMenu:plusMenu];
-    [_plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(20, 20)]];
     [minusButton setAction:@selector(deleteEntities:)];
-    [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
 
     [_hideButton setTarget:self];
     [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
-    [_hideButton setToolTip:CPLocalizedString(@"Display or hide the properties view", @"Display or hide the properties view")];
 
     var buttons = [CPArray array];
 
@@ -901,11 +902,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 - (void)didReceiveUserMessage:(CPNotification)aNotification
 {
-    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
-        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
-        bundle          = [CPBundle bundleForClass:[self class]],
-        customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
-        currentContact  = [aNotification object];
+    // var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
+    //     message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
+    //     bundle          = [CPBundle bundleForClass:[self class]],
+    //     customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
+    //     currentContact  = [aNotification object];
 
     [_rosterOutlineView reloadData];
 }
@@ -1472,9 +1473,22 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     switch ([anItem class])
     {
         case TNStropheGroup:
-            return _rosterDataViewForGroups;
+            return rosterDataViewForGroups;
         case TNStropheContact:
-            return _rosterDataViewForContacts;
+            return rosterDataViewForContacts;
+    }
+}
+
+/*! called the roster outlineView to ask the height of row for given item
+*/
+- (int)outlineView:(CPOutlineView)outlineView heightOfRowByItem:(id)anItem
+{
+    switch ([anItem class])
+    {
+        case TNStropheGroup:
+            return [rosterDataViewForGroups frameSize].height;
+        case TNStropheContact:
+            return [rosterDataViewForContacts frameSize].height;
     }
 }
 

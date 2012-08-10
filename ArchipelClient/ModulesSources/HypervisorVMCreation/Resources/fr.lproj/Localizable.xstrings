@@ -4,6 +4,8 @@
 <dict>
 	<key> has been created</key>
 	<string> a été créée</string>
+	<key> has been updated</key>
+	<string> has been updated</string>
 	<key> to your roster</key>
 	<string> à votre roster.</string>
 	<key>Add a user subscription</key>
@@ -20,20 +22,10 @@
 	<string>Etes-vous sûr de vouloir supprimer la machine virtuelle sélectionnée ?</string>
 	<key>Are you sure you want to remove the subscription for this user ?</key>
 	<string>Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?</string>
-	<key>Ask hypervisor to completely destroy all selected virtual machine</key>
-	<string>Demande à l'hyperviseur de supprimer totalement toutes les machines virtuelles sélectionnées.</string>
-	<key>Ask hypervisor to create a new virtual machine</key>
-	<string>Demande à l'hypervisor de créer une nouvelle machine virtuelle.</string>
-	<key>Ask the virtual machine to add in its contact a user</key>
-	<string>Demande à la machine virtuelle d'ajouter un contact à son roster.</string>
-	<key>Ask the virtual machine to remove a user from its contact</key>
-	<string>Demande à la machine virtuelle de supprimer un contact de son roster.</string>
 	<key>Cancel</key>
 	<string>Annuler</string>
 	<key>Clone this virtual machine</key>
 	<string>Cloner cette machine virtuelle</string>
-	<key>Create a clone virtual machine from the selected one</key>
-	<string>Crée un clone de la machine virtuelle sélectionnée.</string>
 	<key>Create new virtual machine</key>
 	<string>Créer une nouvelle machine virtuelle</string>
 	<key>Delete</key>

@@ -212,7 +212,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
      var inset = CGInsetMake(2, 2, 2, 5);
     [buttonUndefine setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"undefine.png"] size:CPSizeMake(16, 16)]];
     [buttonUndefine setValue:inset forThemeAttribute:@"content-inset"];
-    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"editxml.png"] size:CPSizeMake(16, 16)]];
+    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
     // paramaters tabView
@@ -311,20 +311,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonDrives = [CPButtonBar plusButton];
     [_plusButtonDrives setTarget:self];
     [_plusButtonDrives setAction:@selector(addDrive:)];
-    [_plusButtonDrives setToolTip:CPBundleLocalizedString(@"Add a virtual drive", @"Add a virtual drive")];
 
     _minusButtonDrives = [CPButtonBar minusButton];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
     [_minusButtonDrives setEnabled:NO];
-    [_minusButtonDrives setToolTip:CPBundleLocalizedString(@"Delete selected drives", @"Delete selected drives")];
 
     _editButtonDrives = [CPButtonBar plusButton];
     [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_editButtonDrives setEnabled:NO];
-    [_editButtonDrives setToolTip:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")];
 
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
     [driveController setTable:tableDrives];
@@ -350,20 +347,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonNics = [CPButtonBar plusButton];
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
-    [_plusButtonNics setToolTip:CPBundleLocalizedString(@"Add a virtual network card", @"Add a virtual network card")];
 
     _minusButtonNics = [CPButtonBar minusButton];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
     [_minusButtonNics setEnabled:NO];
-    [_minusButtonNics setToolTip:CPBundleLocalizedString(@"Remove selected virtual network card", @"Remove selected virtual network card")];
 
     _editButtonNics = [CPButtonBar plusButton];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editInterface:)];
     [_editButtonNics setEnabled:NO];
-    [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected virtual network card", @"Edit selected virtual network card")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
     [interfaceController setTable:tableInterfaces];
@@ -383,18 +377,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonInputs = [CPButtonBar plusButton];
     [_plusButtonInputs setTarget:self];
     [_plusButtonInputs setAction:@selector(addInputDevice:)];
-    [_plusButtonInputs setToolTip:CPLocalizedString(@"Add a new input device", @"Add a new input device")];
 
     _minusButtonInputDevice = [CPButtonBar minusButton];
     [_minusButtonInputDevice setTarget:self];
     [_minusButtonInputDevice setAction:@selector(deleteInputDevice:)];
-    [_minusButtonInputDevice setToolTip:CPLocalizedString(@"Remove the selected input device", @"Remove the selected input device")];
 
     _editButtonInputDevice = [CPButtonBar plusButton];
     [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonInputDevice setTarget:self];
     [_editButtonInputDevice setAction:@selector(editInputDevice:)];
-    [_editButtonInputDevice setToolTip:CPLocalizedString(@"Edit the current selected input device", @"Edit the current selected input device")];
 
     [buttonBarInputDevices setButtons:[_plusButtonInputs, _minusButtonInputDevice, _editButtonInputDevice]];
 
@@ -416,18 +407,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonGraphics = [CPButtonBar plusButton];
     [_plusButtonGraphics setTarget:self];
     [_plusButtonGraphics setAction:@selector(addGraphicDevice:)];
-    [_plusButtonGraphics setToolTip:CPLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
 
     _minusButtonGraphicDevice = [CPButtonBar minusButton];
     [_minusButtonGraphicDevice setTarget:self];
     [_minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
-    [_minusButtonGraphicDevice setToolTip:CPLocalizedString(@"Remove the selected graphic device", @"Remove the selected graphic device")];
 
     _editButtonGraphicDevice = [CPButtonBar plusButton];
     [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonGraphicDevice setTarget:self];
     [_editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
-    [_editButtonGraphicDevice setToolTip:CPLocalizedString(@"Edit the current selected graphic device", @"Edit the current selected graphic device")];
 
     [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, _minusButtonGraphicDevice, _editButtonGraphicDevice]];
     [graphicDeviceController setDelegate:self];
@@ -456,18 +444,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonCharacter = [CPButtonBar plusButton];
     [_plusButtonCharacter setTarget:self];
     [_plusButtonCharacter setAction:@selector(addCharacterDevice:)];
-    [_plusButtonCharacter setToolTip:CPLocalizedString(@"Add a new character device", @"Add a new character device")];
 
     _minusButtonCharacterDevice = [CPButtonBar minusButton];
     [_minusButtonCharacterDevice setTarget:self];
     [_minusButtonCharacterDevice setAction:@selector(deleteCharacterDevice:)];
-    [_minusButtonCharacterDevice setToolTip:CPLocalizedString(@"Remove the selected character device", @"Remove the character graphic device")];
 
     _editButtonCharacterDevice = [CPButtonBar plusButton];
     [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonCharacterDevice setTarget:self];
     [_editButtonCharacterDevice setAction:@selector(editCharacterDevice:)];
-    [_editButtonCharacterDevice setToolTip:CPLocalizedString(@"Edit the current selected character device", @"Edit the current selected character device")];
 
     [buttonBarCharacterDevices setButtons:[_plusButtonCharacter, _minusButtonCharacterDevice, _editButtonCharacterDevice]];
 
@@ -526,8 +511,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchPAE setOn:NO animated:YES sendAction:NO];
     [switchAPIC setOn:NO animated:YES sendAction:NO];
     [switchACPI setOn:NO animated:YES sendAction:NO];
-    [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable or disable PAE", @"Enable or disable PAE")];
-    [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
 
     //CPUStepper
     [stepperNumberCPUs setMaxValue:[defaults integerForKey:@"TNDescMaxNumberCPU"]];
@@ -535,41 +518,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setDoubleValue:1];
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
-    [stepperNumberCPUs setToolTip:CPBundleLocalizedString(@"Set the number of virtual CPUs", @"Set the number of virtual CPUs")];
 
-    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];
-    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16.0, 16.0)];
+    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(8.0, 8.0)];
     [buttonDefine setEnabled:NO];
-    [buttonDefine setToolTip:CPBundleLocalizedString(@"Save changes", @"Save changes")];
-
-    [buttonXMLEditor setToolTip:CPBundleLocalizedString(@"Open the XML editor", @"Open the XML editor")];
-    [buttonBoot setToolTip:CPBundleLocalizedString(@"Set boot origin", @"Set boot origin")];
-    [buttonClocks setToolTip:CPBundleLocalizedString(@"Set the mode of the virtual machine clock", @"Set the mode of the virtual machine clock")];
-    [buttonDomainType setToolTip:CPBundleLocalizedString(@"Set the domain type", @"Set the domain type")];
-    [buttonGuests setToolTip:CPBundleLocalizedString(@"Set the guest type", @"Set the guest type")];
-    [buttonMachines setToolTip:CPBundleLocalizedString(@"Set the domain machine type", @"Set the domain machine type")];
-    [buttonOnCrash setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine crashes", @"Set what to do when virtual machine crashes")];
-    [buttonOnPowerOff setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is stopped", @"Set what to do when virtual machine is stopped")];
-    [buttonOnReboot setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is rebooted", @"Set what to do when virtual machine is rebooted")];
-    [buttonUndefine setToolTip:CPBundleLocalizedString(@"Undefine the domain", @"Undefine the domain")];
-    [switchPAE setToolTip:CPBundleLocalizedString(@"Enable usage of PAE", @"Enable usage of PAE")];
-    [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable usage of APIC", @"Enable usage of APIC")];
-    [switchACPI setToolTip:CPBundleLocalizedString(@"Enable usage of ACPI (allow to use 'shutdown' control)", @"Enable usage of ACPI (allow to use 'shutdown' control)")];
-    [fieldMemory setToolTip:CPBundleLocalizedString(@"Set amount of memort (in Mb)", @"Set amount of memort (in Mb)")];
-    [buttonPreferencesBoot setToolTip:CPBundleLocalizedString(@"Set the default boot device for new domains", @"Set the default boot device for new domains")];
-    [buttonPreferencesClockOffset setToolTip:CPBundleLocalizedString(@"Set the default clock offset for new domains", @"Set the default clock offset for new domains")];
-    [buttonPreferencesInput setToolTip:CPBundleLocalizedString(@"Set the default input type for new domains", @"Set the default input type for new domains")];
-    [buttonPreferencesNumberOfCPUs setToolTip:CPBundleLocalizedString(@"Set the default number of CPUs for new domains", @"Set the default number of CPUs for new domains")];
-    [buttonPreferencesOnCrash setToolTip:CPBundleLocalizedString(@"Set the default behaviour on crash for new domains", @"Set the default behaviour on crash for new domains")];
-    [buttonPreferencesOnPowerOff setToolTip:CPBundleLocalizedString(@"Set the default behaviour on power off for new domains", @"Set the default behaviour on power off for new domains")];
-    [buttonPreferencesOnReboot setToolTip:CPBundleLocalizedString(@"Set the default behaviour on reboot for new domains", @"Set the default behaviour on reboot for new domains")];
-    [buttonPreferencesVNCKeyMap setToolTip:CPBundleLocalizedString(@"Set the default VNC keymap for new domains", @"Set the default VNC keymap for new domains")];
-    [buttonPreferencesDriveCache setToolTip:CPBundleLocalizedString(@"Set the default drive cache for new drives", @"Set the default drive cache for new drives")];
-    [fieldPreferencesDomainType setToolTip:CPBundleLocalizedString(@"Set the default domain type for new domains", @"Set the default domain type for new domains")];
-    [fieldPreferencesGuest setToolTip:CPBundleLocalizedString(@"Set the default guest for new domains", @"Set the default guest for new domains")];
-    [fieldPreferencesMachine setToolTip:CPBundleLocalizedString(@"Set the default machine type for new domains", @"Set the default machine type for new domains")];
-    [fieldPreferencesMemory setToolTip:CPBundleLocalizedString(@"Set the default amount of memory for new domains", @"Set the default amount of memory for new domains")];
-    [switchPreferencesHugePages setToolTip:CPBundleLocalizedString(@"Set the default usage of huge pages for new domains", @"Set the default usage of huge pages for new domains")];
 
     [viewParametersStandard applyShadow];
     [viewParametersAdvanced applyShadow];

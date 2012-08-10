@@ -71,14 +71,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevices];
     [buttonTargetBus addItemsWithTitles:TNLibvirtDeviceDiskTargetBuses];
     [buttonDriverCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
-
-    [buttonTargetBus setToolTip:CPBundleLocalizedString(@"Set the bus to use for the drive", @"Set the bus to use for the drive")];
-    [buttonSourcePath setToolTip:CPBundleLocalizedString(@"Set the source to use for the drive", @"Set the source to use for the drive")];
-    [buttonTargetDevice setToolTip:CPBundleLocalizedString(@"Set the target to use for the drive", @"Set the target to use for the drive")];
-    [buttonDriverCache setToolTip:CPBundleLocalizedString(@"Set the cache mode the drive", @"Set the cache mode the drive")];
-    [checkBoxTransient setToolTip:CPLocalizedString(@"If checked, all modifications to the drive will be lost when VM is shut down", @"If checked, all modifications to the drive will be lost when VM is shut down")];
-    [checkBoxShareable setToolTip:CPLocalizedString(@"If checked, drive can be shared bewteen VMs", @"If checked, drive can be shared bewteen VMs")];
-    [checkBoxReadOnly setToolTip:CPLocalizedString(@"If checked, drive is mounted as read only", @"If checked, drive is mounted as read only")];
 }
 
 
