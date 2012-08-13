@@ -29,11 +29,11 @@
 /* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
 "62.title" = "Bridge address:";
 
-/* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "64"; */
-"64.placeholderString" = "127.0.0.1";
+/* Class = "NSTextFieldCell"; placeholderString = "127.0.0.1"; ObjectID = "64"; */
+"64.placeholderString" = "auto";
 
-/* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "67"; */
-"67.placeholderString" = "255.255.0.0";
+/* Class = "NSTextFieldCell"; placeholderString = "255.255.0.0"; ObjectID = "67"; */
+"67.placeholderString" = "auto";
 
 /* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
 "68.title" = "Netmask:";
@@ -161,8 +161,8 @@
 /* Class = "NSTextFieldCell"; title = "IPV4"; ObjectID = "705"; */
 "705.title" = "IPV4";
 
-/* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "712"; */
-"712.placeholderString" = "10.42.0.1";
+/* Class = "NSTextFieldCell"; placeholderString = "10.42.0.1"; ObjectID = "712"; */
+"712.placeholderString" = "auto";
 
 /* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "713"; */
 "713.title" = "Gateway:";

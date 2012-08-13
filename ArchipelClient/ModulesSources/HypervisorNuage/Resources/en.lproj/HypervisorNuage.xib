@@ -988,7 +988,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">127.0.0.1</string>
+							<string key="NSPlaceholderString">auto</string>
 							<reference key="NSControlView" ref="884205983"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -1026,7 +1026,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">255.255.0.0</string>
+							<string key="NSPlaceholderString">auto</string>
 							<reference key="NSControlView" ref="784852908"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -1064,7 +1064,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">10.42.0.1</string>
+							<string key="NSPlaceholderString">auto</string>
 							<reference key="NSControlView" ref="188495116"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
