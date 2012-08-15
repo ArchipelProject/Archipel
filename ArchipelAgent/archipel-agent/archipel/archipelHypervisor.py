@@ -1140,3 +1140,26 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)
         return reply
+
+    def libvirt_failure(self, failure):
+        """
+        sets entities to dnd status if lose connection to libvirt
+        @type failure: Bool
+        @param failure: true if libvirt connection failed and false if we've
+        recovered the connection
+        """
+        if failure:
+            status = "dnd"
+            message = "trying to recover libvirt connection"
+            self.change_presence(status, message)
+            for uuid, vm in self.virtualmachines.iteritems():
+                vm.change_presence(status, message)
+        else:
+            self.xmppstatusshow = ""
+            self.update_presence()
+            for uuid, vm in self.virtualmachines.iteritems():
+                vm.connect_libvirt()
+                vm.domain = None
+                vm.connect_domain()
+                vm.set_presence_according_to_libvirt_info()
+

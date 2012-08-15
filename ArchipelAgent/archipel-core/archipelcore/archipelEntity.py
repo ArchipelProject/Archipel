@@ -1215,6 +1215,8 @@ class TNArchipelEntity (object):
         """
         This is the main loop of the client.
         """
+        if self.__class__.__name__ == "TNArchipelHypervisor":
+            self.libvirt_disconnected = False
         while not self.loop_status == ARCHIPEL_XMPP_LOOP_OFF:
             try:
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_REMOVE_USER:
@@ -1222,6 +1224,26 @@ class TNArchipelEntity (object):
                     return
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
                     if self.xmppclient.isConnected():
+                        if self.__class__.__name__ == "TNArchipelHypervisor":
+                            try:
+                                # check if we've still connected to libvirt
+                                self.libvirt_connection.getVersion()
+                                if self.libvirt_disconnected:
+                                    # update status of entities if we were disconnected
+                                    self.libvirt_failure(False)
+                                self.libvirt_disconnected = False
+                            except:
+                                # hmm, it seems that we've lost the connection to libvirt
+                                if not self.libvirt_disconnected:
+                                    # update status of entities if we are disconnected
+                                    self.libvirt_failure(True)
+                                self.libvirt_disconnected = True
+                                try:
+                                    # try to reconnect
+                                    self.connect_libvirt()
+                                except:
+                                    # we'll retry again after some time
+                                    time.sleep(1.0)
                         self.xmppclient.Process(3)
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
                     if self.xmppclient.isConnected():
