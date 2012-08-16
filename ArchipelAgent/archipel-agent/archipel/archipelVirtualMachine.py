@@ -35,7 +35,6 @@ fail.
 """
 
 import libvirt
-import time
 import os
 import shutil
 import thread
@@ -1633,29 +1632,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
     def on_xmpp_loop_tick(self):
         """
-        check libvirt connection in each execution of main loop
+        trigger that will be called in each execution of run loop
         """
-        try:
-            # check if we're still connected to libvirt
-            self.libvirt_connection.getVersion()
-            if not self.libvirt_connected:
-                # update status of entity if we were disconnected
-                # and now we're connected back
-                self.libvirt_failure(False)
-                self.libvirt_connected = True
-        except:
-            # hmm, it seems that we've lost the connection to libvirt
-            if self.libvirt_connected:
-                # update status of entity if we are disconnected
-                # and we were connected previously
-                self.libvirt_failure(True)
-            try:
-                # try to reconnect
-                self.connect_libvirt()
-            except:
-                # we'll retry again after some time
-                time.sleep(1.0)
-            # we need to override libvirt_connected after connect_libvirt
-            # as we need to have control over it
-            self.libvirt_connected = False
-
+        self.check_libvirt_connection()
