@@ -1629,3 +1629,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SCREENSHOT)
         return reply
+
+    def on_xmpp_loop_tick(self):
+        """
+        trigger that will be called in each execution of run loop
+        """
+        self.check_libvirt_connection()
