@@ -26,6 +26,7 @@ Contains L{TNArchipelHypervisor}, the entities uses for hypervisor
 This provides the possibility to instanciate TNArchipelVirtualMachines
 """
 import datetime
+import time
 import libvirt
 import random
 import sqlite3
@@ -152,7 +153,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         # libvirt connection
         self.connect_libvirt()
-        self.libvirt_disconnected = False
 
         if (self.configuration.has_section("VCARD")):
             for key in ("orgname", "orgunit", "userid", "locality", "url", "categories"):
@@ -1142,51 +1142,31 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)
         return reply
 
-    def custom_xmpp_connection(self):
+    def on_xmpp_loop_tick(self):
         """
         check libvirt connection in each execution of main loop
         """
         try:
             # check if we're still connected to libvirt
             self.libvirt_connection.getVersion()
-            if self.libvirt_disconnected:
-                # update status of entities if we were disconnected
+            if not self.libvirt_connected:
+                # update status of entity if we were disconnected
                 # and now we're connected back
                 self.libvirt_failure(False)
-            self.libvirt_disconnected = False
+                self.libvirt_connected = True
         except:
             # hmm, it seems that we've lost the connection to libvirt
-            if not self.libvirt_disconnected:
-                # update status of entities if we are disconnected
+            if self.libvirt_connected:
+                # update status of entity if we are disconnected
                 # and we were connected previously
                 self.libvirt_failure(True)
-            self.libvirt_disconnected = True
             try:
                 # try to reconnect
                 self.connect_libvirt()
             except:
                 # we'll retry again after some time
                 time.sleep(1.0)
-
-    def libvirt_failure(self, failure):
-        """
-        sets entities to dnd status if lose connection to libvirt
-        @type failure: Bool
-        @param failure: true if libvirt connection failed and false if we've
-        recovered the connection
-        """
-        if failure:
-            status = "dnd"
-            message = "trying to recover libvirt connection"
-            self.change_presence(status, message)
-            for uuid, vm in self.virtualmachines.iteritems():
-                vm.change_presence(status, message)
-        else:
-            self.xmppstatusshow = ""
-            self.update_presence()
-            for uuid, vm in self.virtualmachines.iteritems():
-                vm.connect_libvirt()
-                vm.domain = None
-                vm.connect_domain()
-                vm.set_presence_according_to_libvirt_info()
+            # we need override of libvirt_connected after connect_libvirt
+            # as we need to have control over it
+            self.libvirt_connected = False
 
