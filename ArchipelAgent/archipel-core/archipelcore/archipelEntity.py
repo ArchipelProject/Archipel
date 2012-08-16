@@ -1222,6 +1222,7 @@ class TNArchipelEntity (object):
                     return
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
                     if self.xmppclient.isConnected():
+                        self.on_xmpp_loop_tick()
                         self.xmppclient.Process(3)
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
                     if self.xmppclient.isConnected():
@@ -1245,3 +1246,10 @@ class TNArchipelEntity (object):
 
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
+
+    def on_xmpp_loop_tick(self):
+        """
+        override it in subclass if you want to do something
+        in each executiong of run loop
+        """
+        pass

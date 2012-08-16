@@ -21,6 +21,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import libvirt
+import time
 import random
 import sys
 
@@ -84,6 +85,7 @@ class TNArchipelLibvirtEntity (object):
             if self.libvirt_connection == None:
                 self.log.error("Unable to connect libvirt.")
                 sys.exit(-42)
+        self.libvirt_connected = True
         self.log.info("Connected to libvirt uri %s" % self.local_libvirt_uri)
 
     def libvirt_credential_callback(self, creds, cbdata):
@@ -136,3 +138,52 @@ class TNArchipelLibvirtEntity (object):
                                      "minor": drivernumber / 1000,
                                      "release": drivernumber % 1000}
         return self._driver_version
+
+    def libvirt_failure(self, failure):
+        """
+        sets entities to dnd status if lose connection to libvirt
+        @type failure: Bool
+        @param failure: true if libvirt connection failed and false if we've
+        recovered the connection
+        """
+        if failure:
+            status = "dnd"
+            message = "trying to recover libvirt connection"
+            self.change_presence(status, message)
+        else:
+            if hasattr(self, 'set_presence_according_to_libvirt_info'):
+                self.connect_libvirt()
+                self.domain = None
+                self.connect_domain()
+                self.set_presence_according_to_libvirt_info()
+            else:
+                self.xmppstatusshow = ""
+                self.update_presence()
+
+    def check_libvirt_connection(self):
+        """
+        check libvirt connection in each execution of main loop
+        """
+        try:
+            # check if we're still connected to libvirt
+            self.libvirt_connection.getVersion()
+            if not self.libvirt_connected:
+                # update status of entity if we were disconnected
+                # and now we're connected back
+                self.libvirt_failure(False)
+                self.libvirt_connected = True
+        except:
+            # hmm, it seems that we've lost the connection to libvirt
+            if self.libvirt_connected:
+                # update status of entity if we are disconnected
+                # and we were connected previously
+                self.libvirt_failure(True)
+            try:
+                # try to reconnect
+                self.connect_libvirt()
+            except:
+                # we'll retry again after some time
+                time.sleep(1.0)
+            # we need override of libvirt_connected after connect_libvirt
+            # as we need to have control over it
+            self.libvirt_connected = False
