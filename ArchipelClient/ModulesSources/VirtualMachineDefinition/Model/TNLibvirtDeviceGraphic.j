@@ -28,6 +28,7 @@ TNLibvirtDeviceGraphicTypeSPICE         = @"spice";
 TNLibvirtDeviceGraphicTypeDESKTOP       = @"desktop";
 
 TNLibvirtDeviceGraphicVNCKeymapFR           = @"fr";
+TNLibvirtDeviceGraphicVNCKeymapFR_CH        = @"fr-ch";
 TNLibvirtDeviceGraphicVNCKeymapEN_US        = @"en-us";
 TNLibvirtDeviceGraphicVNCKeymapEN_GB        = @"en-gb";
 TNLibvirtDeviceGraphicVNCKeymapDE           = @"de";
@@ -40,6 +41,7 @@ TNLibvirtDeviceGraphicVNCKeymapNL_BE        = @"nl-be";
 TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
                                             TNLibvirtDeviceGraphicVNCKeymapEN_GB,
                                             TNLibvirtDeviceGraphicVNCKeymapFR,
+                                            TNLibvirtDeviceGraphicVNCKeymapFR_CH,
                                             TNLibvirtDeviceGraphicVNCKeymapDE,
                                             TNLibvirtDeviceGraphicVNCKeymapES,
                                             TNLibvirtDeviceGraphicVNCKeymapNO,
