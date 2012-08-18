@@ -1425,7 +1425,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [popoverXMLEditor close];
     [popoverXMLEditor showRelativeToRect:nil ofView:buttonXMLEditor preferredEdge:nil];
-    [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
     [fieldStringXMLDesc setNeedsDisplay:YES];
 }
 
