@@ -2234,12 +2234,22 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [popoverXMLEditor close];
         return;
     }
-    var stanza      = [TNStropheStanza iqWithType:@"get"],
-        descNode    = [TNXMLNode nodeWithXMLNode:desc];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-    [stanza addNode:descNode];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+    try
+    {
+        var descNode = [TNXMLNode nodeWithXMLNode:desc];
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+        [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+        [stanza addNode:descNode];
+    }
+    catch (e)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")+("\n"+e)
+                          style:CPCriticalAlertStyle];
+        [popoverXMLEditor close];
+        return;
+    }
 
     [buttonDefine setImage:_imageDefining];
     [self enableGUI:NO];
