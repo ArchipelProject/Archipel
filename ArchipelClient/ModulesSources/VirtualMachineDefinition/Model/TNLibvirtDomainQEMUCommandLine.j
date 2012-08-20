@@ -28,7 +28,7 @@
 */
 @implementation TNLibvirtDomainQEMUCommandLine : TNLibvirtBase
 {
-    CPArray                         _args @accessors(property=args);
+    CPArray    _arguments @accessors(property=args);
 }
 
 
@@ -41,7 +41,7 @@
 {
     if (self = [super init])
     {
-        _args = [CPArray array];
+        _arguments = [CPArray array];
     }
 
     return self;
@@ -57,10 +57,10 @@
         if ([aNode name] != @"commandline")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid commandline"];
 
-        _args        = [CPArray array];
+        _arguments   = [CPArray array];
         var argNodes = [aNode childrenWithName:@"arg"];
         for (var i = 0; i < [argNodes count]; i++)
-            [_args addObject:[[TNLibvirtDomainQEMUCommandLineArgument alloc] initWithXMLNode:[argNodes objectAtIndex:i]]];
+            [_arguments addObject:[[TNLibvirtDomainQEMUCommandLineArgument alloc] initWithXMLNode:[argNodes objectAtIndex:i]]];
     }
 
     return self;
@@ -79,9 +79,9 @@
 
     [node setNamespace:"http://libvirt.org/schemas/domain/qemu/1.0"];
 
-    for (var i = 0; i < [_args count]; i++)
+    for (var i = 0; i < [_arguments count]; i++)
     {
-        [node addNode:[[_args objectAtIndex:i] XMLNode]];
+        [node addNode:[[_arguments objectAtIndex:i] XMLNode]];
         [node up];
     }
 

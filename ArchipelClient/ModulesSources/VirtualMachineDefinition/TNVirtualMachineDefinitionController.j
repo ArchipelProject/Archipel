@@ -2233,7 +2233,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
                           informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")
-                          style:CPCriticalAlertStyle];
+                                style:CPCriticalAlertStyle];
         [popoverXMLEditor close];
         return;
     }
@@ -2249,7 +2249,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
                           informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")+("\n"+e)
-                          style:CPCriticalAlertStyle];
+                                style:CPCriticalAlertStyle];
         [popoverXMLEditor close];
         return;
     }
