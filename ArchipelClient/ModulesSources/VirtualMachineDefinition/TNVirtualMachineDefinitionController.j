@@ -215,6 +215,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
+    // set theme of buttonXMLEditorDefine to default
+    [buttonXMLEditorDefine setThemeState:CPThemeStateDefault];
+
     // paramaters tabView
     var mainBundle = [CPBundle mainBundle],
         imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
