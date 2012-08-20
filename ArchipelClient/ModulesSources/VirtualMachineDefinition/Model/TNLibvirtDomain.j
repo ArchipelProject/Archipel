@@ -124,7 +124,6 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _onReboot       = [[aNode firstChildWithName:@"on_reboot"] text];
         _UUID           = [[aNode firstChildWithName:@"uuid"] text];
         _vcpu           = [[[aNode firstChildWithName:@"vcpu"] text] intValue];
-        _commandLine    = [aNode childrenWithName:@"commandline"];
 
         _blkiotune      = [[TNLibvirtDomainBlockIOTune alloc] initWithXMLNode:[aNode firstChildWithName:@"blkiotune"]];
         _clock          = [[TNLibvirtDomainClock alloc] initWithXMLNode:[aNode firstChildWithName:@"clock"]];
@@ -133,6 +132,11 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] initWithXMLNode:[aNode firstChildWithName:@"memoryBacking"]];
         _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] initWithXMLNode:[aNode firstChildWithName:@"memtune"]];
         _OS             = [[TNLibvirtDomainOS alloc] initWithXMLNode:[aNode firstChildWithName:@"os"]];
+
+        _commandLine    = [CPArray array];
+        var clNodes     = [aNode childrenWithName:@"commandline"];
+        for (var i = 0; i < [clNodes count]; i++)
+            [_commandLine addObject:[[TNLibvirtDomainQEMUCommandLine alloc] initWithXMLNode:[clNodes objectAtIndex:i]]];
 
         if ([aNode firstChildWithName:@"metadata"])
             _metadata = [[TNLibvirtDomainMetadata alloc] initWithXMLNode:[aNode firstChildWithName:@"metadata"]]
@@ -251,9 +255,9 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     }
     if (_commandLine)
     {
-        for (var i = 0; i<[_commandLine count]; i++)
+        for (var i = 0; i < [_commandLine count]; i++)
         {
-            [node addNode:[_commandLine objectAtIndex:i]];
+            [node addNode:[[_commandLine objectAtIndex:i] XMLNode]];
             [node up];
         }
     }
