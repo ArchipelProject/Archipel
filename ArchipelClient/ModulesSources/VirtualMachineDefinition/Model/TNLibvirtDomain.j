@@ -60,7 +60,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     CPString                        _currentMemory      @accessors(property=currentMemory);
     CPString                        _memory             @accessors(property=memory);
     CPString                        _vcpu               @accessors(property=VCPU);
-    CPArray                         _commandline        @accessors(property=commandline);
+    CPArray                         _commandLine        @accessors(property=commandLine);
     TNLibvirtDevices                _devices            @accessors(property=devices);
     TNLibvirtDomainBlockIOTune      _blkiotune          @accessors(property=blkiotune);
     TNLibvirtDomainClock            _clock              @accessors(property=clock);
@@ -124,7 +124,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _onReboot       = [[aNode firstChildWithName:@"on_reboot"] text];
         _UUID           = [[aNode firstChildWithName:@"uuid"] text];
         _vcpu           = [[[aNode firstChildWithName:@"vcpu"] text] intValue];
-        _commandline    = [aNode childrenWithName:@"commandline"];
+        _commandLine    = [aNode childrenWithName:@"commandline"];
 
         _blkiotune      = [[TNLibvirtDomainBlockIOTune alloc] initWithXMLNode:[aNode firstChildWithName:@"blkiotune"]];
         _clock          = [[TNLibvirtDomainClock alloc] initWithXMLNode:[aNode firstChildWithName:@"clock"]];
@@ -249,11 +249,11 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         [node addNode:[_metadata XMLNode]];
         [node up];
     }
-    if (_commandline && _commandline.length)
+    if (_commandLine)
     {
-        for (var i=0, len=_commandline.length; i<len; i++)
+        for (var i = 0; i<[_commandLine count]; i++)
         {
-            [node addNode:_commandline[i]];
+            [node addNode:[_commandLine objectAtIndex:i]];
             [node up];
         }
     }
