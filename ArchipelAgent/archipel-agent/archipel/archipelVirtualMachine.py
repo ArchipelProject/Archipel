@@ -621,6 +621,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.log.info("Virtual machine created.")
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STARTED, libvirt.VIR_DOMAIN_EVENT_STARTED_BOOTED, None)
+        self.unlock()
         return str(self.domain.ID())
 
     def shutdown(self):
@@ -635,6 +636,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN)
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
+        self.unlock()
         self.log.info("Virtual machine shut down.")
 
     def destroy(self):
@@ -647,6 +649,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         ret = self.domain.destroy()
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
+        self.unlock()
         self.log.info("Virtual machine destroyed.")
 
     def reboot(self):
@@ -657,6 +660,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             raise Exception("You need to first define the virtual machine")
         self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
+        self.unlock()
         self.log.info("Virtual machine rebooted.")
 
     def suspend(self):
@@ -670,6 +674,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.log.info("Virtual machine suspended.")
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_SUSPENDED, libvirt.VIR_DOMAIN_EVENT_SUSPENDED_PAUSED, None)
+        self.unlock()
 
     def resume(self):
         """
@@ -682,6 +687,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.log.info("Virtual machine resumed.")
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED, None)
+        self.unlock()
 
     def screenshot(self, thumbnail=True):
         """
