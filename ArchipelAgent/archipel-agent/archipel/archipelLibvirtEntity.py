@@ -67,12 +67,6 @@ class TNArchipelLibvirtEntity (object):
         else:
             self.need_auth = None
 
-    def manage_vcard_hook(self, origin, user_info, parameters):
-        """
-        Hook to manage VCard.
-        """
-        self.manage_vcard()
-
     def connect_libvirt(self):
         """
         Connect to the libvirt according to parameters in configuration.
@@ -123,7 +117,7 @@ class TNArchipelLibvirtEntity (object):
         """
         if not self._libvirt_version:
             libvirtnumber = libvirt.getVersion()
-            self._libvirt_version = { "major": libvirtnumber / 1000000,
+            self._libvirt_version = {"major": libvirtnumber / 1000000,
                                      "minor": libvirtnumber / 1000,
                                      "release": libvirtnumber % 1000}
         return self._libvirt_version
@@ -134,9 +128,9 @@ class TNArchipelLibvirtEntity (object):
         """
         if not self._driver_version:
             drivernumber = self.libvirt_connection.getVersion()
-            self._driver_version = { "major": drivernumber / 1000000,
-                                     "minor": drivernumber / 1000,
-                                     "release": drivernumber % 1000}
+            self._driver_version = {"major": drivernumber / 1000000,
+                                    "minor": drivernumber / 1000,
+                                    "release": drivernumber % 1000}
         return self._driver_version
 
     def libvirt_failure(self, failure):
