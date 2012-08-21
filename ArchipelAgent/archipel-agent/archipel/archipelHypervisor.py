@@ -190,6 +190,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 self.log.error("We are sorry. But your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry.")
         else:
             self.log.warning("Your hypervisor doesn't support libvirt eventing. Using fake event loop.")
+
         self.capabilities = self.get_capabilities()
 
         # action on auth
@@ -240,11 +241,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        count   = len(self.virtualmachines)
+        count = len(self.virtualmachines)
         if self.has_vmx:
-            status  = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+            status = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
         else:
-            status  = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+            status = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
 
         self.change_presence(self.xmppstatusshow, status)
 
@@ -445,19 +446,23 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
-                desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
+                desc = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
                 if desc.getTag("uuid").getData() in self.virtualmachines:
                     self.log.error("MIGRATION: soft allocation canceled. virtual machine is already here. This is mostly due a failed migration.")
                     return
-                vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
-                vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
-                vmname  = desc.getTag(name="name").getCDATA()
+                vmjid = desc.getTag(name="description").getCDATA().split("::::")[0]
+                vmpass = desc.getTag(name="description").getCDATA().split("::::")[1]
+                vmname = desc.getTag(name="name").getCDATA()
                 self.log.info("MIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
                 self.soft_alloc(xmpp.JID(vmjid), vmname, vmpass)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid)
             except Exception as ex:
                 self.log.warning("MIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
-
+        else:
+            # Otherwise, we transfer the event to the vm if we manage it
+            vm = self.get_vm_by_uuid(dom.UUIDString())
+            if vm:
+                vm.on_domain_event(event, detail)
 
     ### XMPP Processing
 
@@ -667,11 +672,20 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         vm.undefine_and_disconnect()
 
-        self.log.info("Unregistering the VM from hypervisor's database.")
-        self.database.execute("delete from virtualmachines where jid='%s'" % vm.jid.getStripped())
-        self.database.commit()
-        del self.virtualmachines[uuid]
+        try:
+            self.log.info("Unregistering the VM from hypervisor's database.")
+            self.database.execute("delete from virtualmachines where jid='%s'" % vm.jid.getStripped())
+            self.database.commit()
+        except Exception as ex:
+            self.log.error("Unable to remove VM from database: %s" % str(ex))
+        try:
+            del self.virtualmachines[uuid]
+        except Exception as ex:
+            self.log.error("Unable to remove VM from internal list: %s" % str(ex))
+
         self.update_presence()
+
+        self.log.info("Virtual machine has been sucessfully soft freed.")
 
     def clone(self, uuid, requester, wanted_name=None):
         """
@@ -846,10 +860,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         try:
             tokens = msg.getBody().split(None, 1)
-            if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            if not len(tokens) == 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help"
             identifier = tokens[1]
             vm = self.get_vm_by_identifier(identifier)
-            if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
+            if not vm:
+                return "It seems that vm with identifer %s doesn't exists." % identifier
             self.free(vm.jid)
             return "Archipel VM with JID %s has been freed." % (vm.jid)
         except Exception as ex:

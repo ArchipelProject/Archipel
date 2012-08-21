@@ -54,43 +54,43 @@ from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR, generate_ma
 import archipelLibvirtEntity
 
 
-ARCHIPEL_ERROR_CODE_VM_CREATE                   = -1001
-ARCHIPEL_ERROR_CODE_VM_SUSPEND                  = -1002
-ARCHIPEL_ERROR_CODE_VM_RESUME                   = -1003
-ARCHIPEL_ERROR_CODE_VM_DESTROY                  = -1004
-ARCHIPEL_ERROR_CODE_VM_SHUTDOWN                 = -1005
-ARCHIPEL_ERROR_CODE_VM_REBOOT                   = -1006
-ARCHIPEL_ERROR_CODE_VM_DEFINE                   = -1007
-ARCHIPEL_ERROR_CODE_VM_UNDEFINE                 = -1008
-ARCHIPEL_ERROR_CODE_VM_INFO                     = -1009
-ARCHIPEL_ERROR_CODE_VM_XMLDESC                  = -1011
-ARCHIPEL_ERROR_CODE_VM_LOCKED                   = -1012
-ARCHIPEL_ERROR_CODE_VM_MIGRATE                  = -1013
-ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING             = -1014
-ARCHIPEL_ERROR_CODE_VM_AUTOSTART                = -1015
-ARCHIPEL_ERROR_CODE_VM_MEMORY                   = -1016
-ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
-ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
-ARCHIPEL_ERROR_CODE_VM_FREE                     = -1020
-ARCHIPEL_ERROR_CODE_VM_SCREENSHOT               = -1021
-ARCHIPEL_ERROR_CODE_VM_MIGRATING                = -43
+ARCHIPEL_ERROR_CODE_VM_CREATE = -1001
+ARCHIPEL_ERROR_CODE_VM_SUSPEND = -1002
+ARCHIPEL_ERROR_CODE_VM_RESUME = -1003
+ARCHIPEL_ERROR_CODE_VM_DESTROY = -1004
+ARCHIPEL_ERROR_CODE_VM_SHUTDOWN = -1005
+ARCHIPEL_ERROR_CODE_VM_REBOOT = -1006
+ARCHIPEL_ERROR_CODE_VM_DEFINE = -1007
+ARCHIPEL_ERROR_CODE_VM_UNDEFINE = -1008
+ARCHIPEL_ERROR_CODE_VM_INFO = -1009
+ARCHIPEL_ERROR_CODE_VM_XMLDESC = -1011
+ARCHIPEL_ERROR_CODE_VM_LOCKED = -1012
+ARCHIPEL_ERROR_CODE_VM_MIGRATE = -1013
+ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING = -1014
+ARCHIPEL_ERROR_CODE_VM_AUTOSTART = -1015
+ARCHIPEL_ERROR_CODE_VM_MEMORY = -1016
+ARCHIPEL_ERROR_CODE_VM_NETWORKINFO = -1017
+ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES = -1019
+ARCHIPEL_ERROR_CODE_VM_FREE = -1020
+ARCHIPEL_ERROR_CODE_VM_SCREENSHOT = -1021
+ARCHIPEL_ERROR_CODE_VM_MIGRATING = -43
 
-ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
-ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
+ARCHIPEL_NS_VM_CONTROL = "archipel:vm:control"
+ARCHIPEL_NS_VM_DEFINITION = "archipel:vm:definition"
 
 # XMPP shows
-ARCHIPEL_XMPP_SHOW_RUNNING                      = "Running"
-ARCHIPEL_XMPP_SHOW_PAUSED                       = "Paused"
-ARCHIPEL_XMPP_SHOW_SHUTDOWN                     = "Off"
-ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN                 = "Shutting down..."
-ARCHIPEL_XMPP_SHOW_BLOCKED                      = "Blocked"
-ARCHIPEL_XMPP_SHOW_SHUTOFF                      = "Shut off"
-ARCHIPEL_XMPP_SHOW_ERROR                        = "Error"
-ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
-ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
+ARCHIPEL_XMPP_SHOW_RUNNING = "Running"
+ARCHIPEL_XMPP_SHOW_PAUSED = "Paused"
+ARCHIPEL_XMPP_SHOW_SHUTDOWN = "Off"
+ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN = "Shutting down..."
+ARCHIPEL_XMPP_SHOW_BLOCKED = "Blocked"
+ARCHIPEL_XMPP_SHOW_SHUTOFF = "Shut off"
+ARCHIPEL_XMPP_SHOW_ERROR = "Error"
+ARCHIPEL_XMPP_SHOW_NOT_DEFINED = "Not defined"
+ARCHIPEL_XMPP_SHOW_CRASHED = "Crashed"
 
 
-class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity, TNRosterQueryableEntity):
+class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity, TNRosterQueryableEntity):
     """
     This class represents an Virtual Machine, XMPP Capable.
     This class needs to already have .... end of story ? TODO fix the details
@@ -101,32 +101,28 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Contructor of the class.
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
-        archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
 
-        self.hypervisor                 = hypervisor
-        self.libvirt_status             = libvirt.VIR_DOMAIN_SHUTDOWN
-        self.domain                     = None
-        self.definition                 = None
-        self.uuid                       = self.jid.getNode()
-        self.vm_disk_base_path          = self.configuration.get("VIRTUALMACHINE", "vm_base_path")
-        self.folder                     = "%s/%s" % (self.vm_disk_base_path, self.uuid)
-        self.vm_perm_base_path          = self.vm_disk_base_path
-        self.locked                     = False
-        self.lock_timer                 = None
-        self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
-        self.is_migrating               = False
-        self.libvirt_event_callback_id  = None
-        self.entity_type                = "virtualmachine"
-        self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
-        self.vm_will_define_hooks       = []
-        self.vcard_infos                = {}
-        self.is_freeing                 = False
+        self.hypervisor = hypervisor
+        self.libvirt_status = libvirt.VIR_DOMAIN_SHUTDOWN
+        self.domain = None
+        self.definition = None
+        self.uuid = self.jid.getNode()
+        self.vm_disk_base_path = self.configuration.get("VIRTUALMACHINE", "vm_base_path")
+        self.folder = "%s/%s" % (self.vm_disk_base_path, self.uuid)
+        self.vm_perm_base_path = self.vm_disk_base_path
+        self.lock_timer = None
+        self.maximum_lock_time = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
+        self.is_migrating = False
+        self.libvirt_event_callback_id = -1
+        self.entity_type = "virtualmachine"
+        self.default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+        self.vm_will_define_hooks = []
+        self.vcard_infos = {}
+        self.is_freeing = False
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
-            self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
+            self.vm_perm_base_path = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
         self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
-
-        self.connect_libvirt()
 
         self.set_organization_info(organizationInfo, publish=False)
 
@@ -201,18 +197,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
 
     ### Utilities
-
-    def lock(self):
-        self.log.info("acquiring lock")
-        self.locked = True
-        self.lock_timer = Timer(self.maximum_lock_time, self.unlock)
-        self.lock_timer.start()
-
-    def unlock(self):
-        self.log.info("releasing lock")
-        self.locked = False
-        if self.lock_timer:
-            self.lock_timer.cancel()
 
     def init_vocabulary(self):
         """
@@ -383,40 +367,39 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Exit on any error.
         """
         if self.domain:
-            self.log.info("Already connected to domain. Ignoring.")
+            self.log.error("Already connected to domain.")
             return
+
         try:
-            self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
+            self.domain = self.hypervisor.libvirt_connection.lookupByUUIDString(self.uuid)
         except:
-            self.log.warning("Can't connect to domain with UUID %s" % self.uuid)
+            self.log.warning("LIBVIRT: Can't connect to domain with UUID %s" % self.uuid)
+            self.domain = None
             self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
             self.perform_hooks("HOOK_VM_INITIALIZE")
             return
+
         try:
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
-            self.log.info("Successfully connect to domain uuid %s" % self.uuid)
-            self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
-            self.set_presence_according_to_libvirt_info()
+            self.log.info("LIBVIRT: Successfully connect to domain uuid %s" % self.uuid)
         except Exception as ex:
-            self.log.error("Exception while connecting to domain : %s" % str(ex))
+            self.log.error("LIBVIRT: Exception while connecting to domain : %s" % str(ex))
 
-    def on_domain_event(self, conn, dom, event, detail, opaque):
+        self.set_presence_according_to_libvirt_info()
+
+    def on_domain_event(self, event, detail):
         """
         Called when a libvirt event is triggered.
         @type conn: libvirt.connection
         @param conn: the libvirt connection
-        @type dom: libvirt.domain
-        @param dom: the domain that has triggered the event
         @type event: int
         @param event: the event
         @type detail: int
         @param detail: the detail associated to the event
-        @type opaque: ?
-        @param opaque: so opaque that I don't know
         """
-        self.log.info("Libvirt event received: %d with detail %s" % (event, detail))
+        self.log.info("LIBVIRTEVENT: Libvirt event received: %d with detail %s" % (event, detail))
         if self.is_migrating:
-            self.log.info("Event received but virtual machine is migrating. Ignoring.")
+            self.log.info("LIBVIRTEVENT: Event received but virtual machine is migrating. Ignoring.")
             return
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
@@ -449,7 +432,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 self.perform_hooks("HOOK_VM_UNDEFINE")
                 self.domain = None
                 self.description = None
-                self.remove_libvirt_handler()
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
                 self.push_change("virtualmachine:definition", "defined")
@@ -461,27 +443,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 try:
                     self.libvirt_status = self.info()["state"]
                 except:
-                    pass # the VM has been freed.
-            self.unlock()
-
-    def remove_libvirt_handler(self):
-        """
-        Remove the libvirt event listener handler.
-        """
-        if not self.libvirt_event_callback_id is None:
-            self.log.info("Removing the libvirt event listener for %s" % self.jid)
-            self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
-            self.libvirt_event_callback_id = None
-
-    def disconnect_libvirt(self):
-        """
-        Disconnect everything from libvirt
-        """
-        self.log.info("%s is disconnecting from libvirt" % self.jid)
-        self.remove_libvirt_handler()
-        if self.libvirt_connection:
-            self.libvirt_connection.close()
-            self.libvirt_connection = None
+                    pass  # the VM has been freed.
 
     def add_jid_hook(self, origin=None, user_info=None, arguments=None):
         """
@@ -530,7 +492,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             raise xmpp.protocol.NodeProcessed
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
-        if not self.libvirt_connection:
+        if not self.hypervisor.libvirt_connection:
             self.log.info("Control action required but no libvirt connection.")
             raise xmpp.protocol.NodeProcessed
         if self.is_migrating and (not action in ("info", "xmldesc", "networkinfo")):
@@ -616,12 +578,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-        self.lock()
-        ret = self.domain.create()
+        self.domain.create()
         self.log.info("Virtual machine created.")
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STARTED, libvirt.VIR_DOMAIN_EVENT_STARTED_BOOTED, None)
-        self.unlock()
         return str(self.domain.ID())
 
     def shutdown(self):
@@ -630,26 +588,18 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-        self.lock()
-        ret = self.domain.shutdown()
+        self.domain.shutdown()
         if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
             self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN)
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
-        self.unlock()
         self.log.info("Virtual machine shut down.")
 
     def destroy(self):
         """
         Destroy the domain.
         """
-        self.lock()
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-        ret = self.domain.destroy()
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
-        self.unlock()
+        self.domain.destroy()
         self.log.info("Virtual machine destroyed.")
 
     def reboot(self):
@@ -658,9 +608,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-        self.lock()
-        self.domain.reboot(0) # flags not used in libvirt but required.
-        self.unlock()
+        self.domain.reboot(0)  # flags not used in libvirt but required.
         self.log.info("Virtual machine rebooted.")
 
     def suspend(self):
@@ -669,12 +617,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-        self.lock()
-        ret = self.domain.suspend()
+        self.domain.suspend()
         self.log.info("Virtual machine suspended.")
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_SUSPENDED, libvirt.VIR_DOMAIN_EVENT_SUSPENDED_PAUSED, None)
-        self.unlock()
 
     def resume(self):
         """
@@ -682,12 +626,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-        self.lock()
-        ret = self.domain.resume()
+        self.domain.resume()
         self.log.info("Virtual machine resumed.")
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED, None)
-        self.unlock()
 
     def screenshot(self, thumbnail=True):
         """
@@ -701,6 +641,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if self.configuration.has_option("VIRTUALMACHINE", "disable_screenshot"):
             if self.configuration.getboolean("VIRTUALMACHINE", "disable_screenshot"):
                 return (None, (0, 0))
+
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
+
         state = self.domain.info()[0]
         if hasattr(self.domain, "screenshot") and (state == libvirt.VIR_DOMAIN_PAUSED or state == libvirt.VIR_DOMAIN_RUNNING):
             try:
@@ -736,6 +680,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Return info of a domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
+
         dominfo = self.domain.info()
         try:
             autostart = self.domain.autostart()
@@ -755,13 +702,16 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Get network statistics on the domain.
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
+
         desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
         interfaces_nodes = desc.getTag("devices").getTags("interface")
         netstats = []
         for nic in interfaces_nodes:
-            name    = nic.getTag("alias").getAttr("name")
-            target  = nic.getTag("target").getAttr("dev")
-            stats   = self.domain.interfaceStats(target)
+            name = nic.getTag("alias").getAttr("name")
+            target = nic.getTag("target").getAttr("dev")
+            stats = self.domain.interfaceStats(target)
             netstats.append({
                 "name": name,
                 "rx_bytes": stats[0],
@@ -781,6 +731,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @type value: int
         @param value: the new amount of memory
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         value = long(value)
         if value < 10:
             value = 10
@@ -810,16 +762,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @type value: int
         @param value: number of CPU to use
         """
-        self.lock()
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         if value > self.domain.maxVcpus():
             raise Exception("Maximum vCPU is %d" % self.domain.maxVcpus())
         self.domain.setVcpus(int(value))
-        self.unlock()
 
     # def setCPUsPin(self, vcpu, cpumap):
-    #     self.lock()
     #     self.domain.pinVcpu(int(value)) # no no non
-    #     self.unlock()
 
     def setAutostart(self, flag):
         """
@@ -827,6 +777,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @type flag: int
         @param flag: the value of autostart (1 or 0)
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         self.domain.setAutostart(flag)
 
     def xmldesc(self, mask_description=True):
@@ -835,6 +787,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Node
         @return: the XML description
         """
+        if not self.domain:
+            raise Exception("You need to first define the virtual machine")
         xmldesc = self.domain.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
         descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         if mask_description and descnode.getTag("description"):
@@ -860,15 +814,16 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                     for disk in xmldesc.getTag("devices").getTags("disk"):
                         if disk.getAttr("type") == "block":
                             raise Exception("The agent policy doesn't allow to use block devices.")
-        ret = self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+
+        self.hypervisor.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+        self.definition = xmldesc
+
         if not self.domain:
             self.connect_domain()
             # in that case no event handler will be triggered as we are
-            # not connected to the domain, so force push
+            # not connected to the domain, so force push and hook
+            self.perform_hooks("HOOK_VM_DEFINE")
             self.push_change("virtualmachine:definition", "defined")
-        self.definition = xmldesc
-        if ret and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_DEFINED, 0, None)
 
         return xmldesc
 
@@ -879,25 +834,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if not self.domain:
             self.log.warning("Virtual machine is already undefined.")
             return
-        ret = self.domain.undefine()
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
-            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_UNDEFINED, 0, None)
+        self.domain.undefine()
         self.log.info("Virtual machine undefined.")
 
     def undefine_and_disconnect(self):
         """
         Undefine the domain and disconnect from XMPP.
         """
-        self.remove_libvirt_handler()
-        try:
-            self.log.info("undefining virtual machine.")
-            self.domain.undefine()
-        except:
-            self.log.info("Virtual machine is already undefined.")
-            pass
-        self.definition = None
-        self.unlock()
-        self.disconnect_libvirt()
+        self.undefine()
         self.disconnect()
         self.log.info("Virtual machine undefined and disconnected.")
 
@@ -948,7 +892,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         libvirt uri.
         """
         ### Sanity checks
-        if not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if not self.hypervisor.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             raise Exception('Archipel only supports Live migration for QEMU/KVM domains at the moment.')
         if self.is_migrating:
             raise Exception('Virtual machine is already migrating.')
@@ -1037,7 +981,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if "CATEGORIES" in organizationInfo:
             self.vcard_infos["CATEGORIES"] = organizationInfo["CATEGORIES"]
 
-        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
+        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.hypervisor.current_hypervisor()
 
         if publish:
             self.set_vcard()
@@ -1070,7 +1014,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @param clean_files: if True, remove the permission file and folder
         """
         self.perform_hooks("HOOK_VM_TERMINATE")
-        self.disconnect_libvirt()
         self.permission_center.close_database()
         if clean_files:
             os.unlink(self.permission_db_file)
@@ -1103,20 +1046,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if self.locked:
-            self.log.error("Virtual machine is locked, can't do anything.")
-            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything."), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
-
         try:
             domid = self.create()
             reply = iq.buildReply("result")
             payload = xmpp.Node("domain", attrs={"id": domid})
             reply.setQueryPayload([payload])
         except libvirt.libvirtError as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_CREATE)
         return reply
 
@@ -1142,17 +1079,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if self.locked:
-            self.log.error("Virtual machine is locked, can't do anything.")
-            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything."), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         try:
             self.shutdown()
             reply = iq.buildReply("result")
         except libvirt.libvirtError as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SHUTDOWN)
         return reply
 
@@ -1178,17 +1110,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if self.locked:
-            self.log.error("Virtual machine is locked, can't do anything.")
-            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything."), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         try:
             self.destroy()
             reply = iq.buildReply("result")
         except libvirt.libvirtError as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_DESTROY)
         return reply
 
@@ -1214,17 +1141,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if self.locked:
-            self.log.error("Virtual machine is locked, can't do anything.")
-            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything."), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         try:
             self.reboot()
             reply = iq.buildReply("result")
         except libvirt.libvirtError as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ex.get_error_code())
         except Exception as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_REBOOT)
         return reply
 
@@ -1250,17 +1172,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if self.locked:
-            self.log.error("Virtual machine is locked, can't do anything.")
-            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything."), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         try:
             self.suspend()
             reply = iq.buildReply("result")
         except libvirt.libvirtError as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SUSPEND)
         return reply
 
@@ -1286,17 +1203,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if self.locked:
-            self.log.error("Virtual machine is locked, can't do anything.")
-            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything."), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         try:
             self.resume()
             reply = iq.buildReply("result")
         except libvirt.libvirtError as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.unlock()
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_RESUME)
         return reply
 
@@ -1372,7 +1284,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         reply = iq.buildReply("result")
         try:
             if not self.domain:
-                reply.setQueryPayload([xmpp.Node("not-defined")]);
+                reply.setQueryPayload([xmpp.Node("not-defined")])
                 return reply
             xmldescnode = self.xmldesc()
             reply.setQueryPayload([xmldescnode])
@@ -1635,9 +1547,3 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SCREENSHOT)
         return reply
-
-    def on_xmpp_loop_tick(self):
-        """
-        trigger that will be called in each execution of run loop
-        """
-        self.check_libvirt_connection()
