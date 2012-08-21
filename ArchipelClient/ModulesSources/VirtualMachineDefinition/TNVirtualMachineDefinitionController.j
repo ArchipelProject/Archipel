@@ -2063,6 +2063,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         _definitionRecovered = YES;
 
         [self handleDefinitionEdition:([fieldMemory stringValue] != @"")];
+        [self enableGUI:YES];
         return;
     }
 
