@@ -1140,3 +1140,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)
         return reply
+
+    def on_xmpp_loop_tick(self):
+        """
+        trigger that will be called in each execution of run loop
+        """
+        self.check_libvirt_connection()

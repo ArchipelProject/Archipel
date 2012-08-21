@@ -215,6 +215,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
+    // set theme of buttonXMLEditorDefine to default
+    [buttonXMLEditorDefine setThemeState:CPThemeStateDefault];
+
     // paramaters tabView
     var mainBundle = [CPBundle mainBundle],
         imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
@@ -1425,7 +1428,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [popoverXMLEditor close];
     [popoverXMLEditor showRelativeToRect:nil ofView:buttonXMLEditor preferredEdge:nil];
-    [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
     [fieldStringXMLDesc setNeedsDisplay:YES];
 }
 
@@ -2231,16 +2233,26 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
                           informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")
-                          style:CPCriticalAlertStyle];
+                                style:CPCriticalAlertStyle];
         [popoverXMLEditor close];
         return;
     }
-    var stanza      = [TNStropheStanza iqWithType:@"get"],
-        descNode    = [TNXMLNode nodeWithXMLNode:desc];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-    [stanza addNode:descNode];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+    try
+    {
+        var descNode = [TNXMLNode nodeWithXMLNode:desc];
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+        [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+        [stanza addNode:descNode];
+    }
+    catch (e)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")+("\n"+e)
+                                style:CPCriticalAlertStyle];
+        [popoverXMLEditor close];
+        return;
+    }
 
     [buttonDefine setImage:_imageDefining];
     [self enableGUI:NO];
