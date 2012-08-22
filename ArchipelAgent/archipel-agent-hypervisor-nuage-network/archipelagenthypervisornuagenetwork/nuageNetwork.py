@@ -200,8 +200,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type name: String
         @param name: The name of the network
         """
-        rows = self.database.execute("select * from nuagenetworks where name=?", (name,))
-        return xmpp.simplexml.NodeBuilder(data=rows.fetchone()[1]).getDom()
+        rows = self.database.execute("select network from nuagenetworks where name=? LIMIT 1", (name,))
+        return xmpp.simplexml.NodeBuilder(data=rows.fetchone()[0]).getDom()
 
     def get_all_networks(self):
         """
