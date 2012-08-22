@@ -250,6 +250,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTargetBusIDE:
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesIDE];
             break;
+        case TNLibvirtDeviceDiskTargetBusSATA:
         case TNLibvirtDeviceDiskTargetBusSCSI:
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesSCSI];
             break;
