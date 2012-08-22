@@ -96,7 +96,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
     This class needs to already have .... end of story ? TODO fix the details
     """
 
-    def __init__(self, jid, password, hypervisor, configuration, name, organizationInfo=None):
+    def __init__(self, jid, password, hypervisor, configuration, name, organizationInfo):
         """
         Contructor of the class.
         """

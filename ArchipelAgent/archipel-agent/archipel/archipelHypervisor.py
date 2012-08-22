@@ -131,13 +131,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.log.info("starting archipel-agent")
         archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
 
-        self.virtualmachines            = {}
-        self.database_file              = database_file
-        self.xmppserveraddr             = self.jid.getDomain()
-        self.entity_type                = "hypervisor"
-        self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
-        self.libvirt_event_callback_id  = None
-        self.vcard_infos                = {}
+        self.virtualmachines = {}
+        self.database_file = database_file
+        self.xmppserveraddr = self.jid.getDomain()
+        self.entity_type = "hypervisor"
+        self.default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
+        self.libvirt_event_callback_id = None
+        self.vcard_infos = {}
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -1081,7 +1081,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 vm = self.libvirt_connection.lookupByUUIDString(uuid)
                 xmldesc = vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
                 descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode)
+                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode, organizationInfo=self.vcard_infos)
                 self.log.info("manage new virtual machine with UUID: %s" % uuid)
             self.push_change("hypervisor", "manage")
         except Exception as ex:
