@@ -108,7 +108,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [tableViewNuage setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_datasourceNuages setTable:tableViewNuage];
-    [_datasourceNuages setSearchableKeyPaths:[@"name", @"type", @"IP.address", @"IP.netmask", @"IP.gateway"]];
+    [_datasourceNuages setSearchableKeyPaths:[@"name", @"type"]];
     [tableViewNuage setDataSource:_datasourceNuages];
     [tableViewNuage setDelegate:self];
     [nuageController setDelegate:self];
