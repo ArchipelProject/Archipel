@@ -193,7 +193,6 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         self.database.row_factory = sqlite3.Row
         self.database.execute("create table if not exists nuagenetworks (name text unique, network string)")
         self.database.commit()
-        self.cursor = self.database.cursor()
 
     def get_network_by_name(self, name):
         """
@@ -201,17 +200,16 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type name: String
         @param name: The name of the network
         """
-        self.cursor.execute("select * from nuagenetworks where name=?", (name,))
-        row = self.cursor.fetchone()
-        return xmpp.simplexml.NodeBuilder(data=row[1]).getDom()
+        rows = self.database.execute("select * from nuagenetworks where name=?", (name,))
+        return xmpp.simplexml.NodeBuilder(data=rows.fetchone()[1]).getDom()
 
     def get_all_networks(self):
         """
         Return all networks
         """
-        self.cursor.execute("select * from nuagenetworks")
+        rows = self.database.execute("select * from nuagenetworks")
         ret = []
-        for row in self.cursor.fetchall():
+        for row in rows:
             ret.append({"name": row[0], "network": xmpp.simplexml.NodeBuilder(data=row[1]).getDom()})
         return ret
 
@@ -222,9 +220,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         plugin = self
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             plugin = self.entity.hypervisor.get_plugin("hypervisor_nuage_network")
-        plugin.cursor.execute("select name from nuagenetworks")
+        rows = plugin.database.execute("select name from nuagenetworks")
         ret = []
-        for row in plugin.cursor.fetchall():
+        for row in rows:
             ret.append(row[0])
         return ret
 
@@ -236,7 +234,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type network: xmpp.Node
         @param network: the XML node representing the network
         """
-        self.cursor.execute("insert into nuagenetworks values(?, ?)", (name, str(network).replace('xmlns=\"archipel:hypervisor:nuage:network\"', '')))
+        self.database.execute("insert into nuagenetworks values(?, ?)", (name, str(network).replace('xmlns=\"archipel:hypervisor:nuage:network\"', '')))
         self.database.commit()
         self.entity.push_change("nuagenetwork", "created")
 
@@ -244,23 +242,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         Remove a network from the db
         """
-        self.cursor.execute("delete from nuagenetworks where name=?", (name,))
+        self.database.execute("delete from nuagenetworks where name=?", (name,))
         self.database.commit()
         self.entity.push_change("nuagenetwork", "deleted")
-
-    def is_network_in_db(self, name):
-        """
-        Check if network with given name is already in DB
-        @type name: String
-        @param name: the name of the network
-        @rtype: Boolean
-        @return: True is vm is already in park
-        """
-        self.cursor.execute("select name from nuagenetworks where name=?", (name,))
-        n = self.cursor.fetchone()
-        if n and n[0] > 1:
-            return True
-        return False
 
     def update_network(self, name, new_network):
         """
@@ -270,7 +254,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         @type network: xmpp.Node
         @param network: the XML node representing the new network
         """
-        self.cursor.execute("update nuagenetworks set network=? where name=?", (str(new_network).replace('xmlns=\"archipel:hypervisor:nuage:network\"', ''), name))
+        self.database.execute("update nuagenetworks set network=? where name=?", (str(new_network).replace('xmlns=\"archipel:hypervisor:nuage:network\"', ''), name))
         self.database.commit()
         self.entity.push_change("nuagenetwork", "updated")
 
