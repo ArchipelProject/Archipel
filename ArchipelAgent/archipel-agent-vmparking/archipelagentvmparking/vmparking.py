@@ -58,7 +58,6 @@ class TNVMParking (TNArchipelPlugin):
         @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-        self.pubsub_vmparking = None;
 
         # creates permissions
         self.entity.permission_center.create_permission("vmparking_park", "Authorizes user to park a virtual machines", False)
