@@ -48,6 +48,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
     TNLibvirtDeviceDisk     _drive          @accessors(property=drive);
+    TNLibvirtDeviceDisk     _otherDrives    @accessors(property=otherDrives);
     TNStropheContact        _entity         @accessors(property=entity);
 }
 
@@ -73,6 +74,23 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonDriverCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 }
 
+#pragma mark -
+#pragma mark Getters and Setters
+
+- (void)disableAlreadyUsedTargetDevices
+{
+    for (var i = 0; i < [[buttonTargetDevice itemArray] count]; i++)
+        [[[buttonTargetDevice itemArray] objectAtIndex:i] setEnabled:YES];
+
+    for (var i = 0; i < [_otherDrives count]; i++)
+    {
+        var dev = [[[_otherDrives objectAtIndex:i] target] device],
+            item = [buttonTargetDevice itemWithTitle:dev];
+
+        if (item && [[_drive target] device] != dev)
+            [item setEnabled:NO];
+    }
+}
 
 #pragma mark -
 #pragma mark Utilities
@@ -245,13 +263,29 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevices];
     }
 
+    [self disableAlreadyUsedTargetDevices];
+
     switch ([buttonDevice title])
     {
         case TNLibvirtDeviceDiskDeviceDisk:
-            [buttonTargetDevice selectItemAtIndex:0];
+            for (var i = 0; i < [[buttonTargetDevice itemArray] count]; i++)
+            {
+                if ([[buttonTargetDevice itemAtIndex:i] isEnabled])
+                {
+                    [buttonTargetDevice selectItemAtIndex:i];
+                    break;
+                }
+            }
             break;
         case  TNLibvirtDeviceDiskDeviceCDROM:
-            [buttonTargetDevice selectItemAtIndex:2];
+            for (var i = 2; i < [[buttonTargetDevice itemArray] count]; i++)
+            {
+                if ([[buttonTargetDevice itemAtIndex:i] isEnabled])
+                {
+                    [buttonTargetDevice selectItemAtIndex:i];
+                    break;
+                }
+            }
             break;
         default:
             [buttonTargetDevice selectItemAtIndex:0];
@@ -259,6 +293,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     if ([[buttonTargetDevice itemTitles] containsObject:[[_drive target] device]])
         [buttonTargetDevice selectItemWithTitle:[[_drive target] device]];
+
 }
 
 /*! show the main window

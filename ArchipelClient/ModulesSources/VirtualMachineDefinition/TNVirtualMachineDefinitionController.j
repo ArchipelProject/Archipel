@@ -1572,6 +1572,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newDrive setDriver:newDriveDriver];
     [driveController setDrive:newDrive];
 
+    if ([_libvirtDomain devices])
+        [driveController setOtherDrives:[[_libvirtDomain devices] disks]];
+    else
+        [driveController setOtherDrives:nil];
+
     [driveController openWindow:_plusButtonDrives];
     [self makeDefinitionEdited:YES];
 }
@@ -1593,6 +1598,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var driveObject = [_drivesDatasource objectAtIndex:[tableDrives selectedRow]];
 
     [driveController setDrive:driveObject];
+
+    if ([_libvirtDomain devices])
+        [driveController setOtherDrives:[[_libvirtDomain devices] disks]];
+    else
+        [driveController setOtherDrives:nil];
 
     if ([aSender isKindOfClass:CPMenuItem])
         aSender = _minusButtonDrives;
