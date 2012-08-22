@@ -77,8 +77,4 @@ setup(name=NAME,
           "archipel-core>=0.5.0beta"
       ],
       entry_points=ENTRY_POINTS,
-      scripts = [
-        'install/bin/archipel-nuagenetworksnode',
-      ]
-
       )
