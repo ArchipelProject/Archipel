@@ -21,6 +21,13 @@
 
 @import "TNLibvirtBase.j";
 
+TNLibvirtDeviceDiskSourceProtocolSheepdog = @"sheepdog";
+TNLibvirtDeviceDiskSourceProtocolNBD = @"nbd";
+TNLibvirtDeviceDiskSourceProtocolRBD = @"rbd";
+
+TNLibvirtDeviceDiskSourceProtocols = [  TNLibvirtDeviceDiskSourceProtocolSheepdog,
+                                        TNLibvirtDeviceDiskSourceProtocolNBD,
+                                        TNLibvirtDeviceDiskSourceProtocolRBD];
 
 /*! @ingroup virtualmachinedefinition
     Model for disk sources
@@ -112,9 +119,10 @@
     if (_name)
         [node setValue:_name forAttribute:@"name"];
 
-    for (var i = 0; [_hosts count]; i++)
+
+    for (var i = 0; i < [_hosts count]; i++)
     {
-        [node addNode:[[hosts objectAtIndex:i] XMLNode]];
+        [node addNode:[[_hosts objectAtIndex:i] XMLNode]];
         [node up];
     }
 

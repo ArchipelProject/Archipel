@@ -48,6 +48,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
     TNLibvirtDeviceDisk     _drive          @accessors(property=drive);
+    TNLibvirtDeviceDisk     _otherDrives    @accessors(property=otherDrives);
     TNStropheContact        _entity         @accessors(property=entity);
 }
 
@@ -73,6 +74,23 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonDriverCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 }
 
+#pragma mark -
+#pragma mark Getters and Setters
+
+- (void)disableAlreadyUsedTargetDevices
+{
+    for (var i = 0; i < [[buttonTargetDevice itemArray] count]; i++)
+        [[[buttonTargetDevice itemArray] objectAtIndex:i] setEnabled:YES];
+
+    for (var i = 0; i < [_otherDrives count]; i++)
+    {
+        var dev = [[[_otherDrives objectAtIndex:i] target] device],
+            item = [buttonTargetDevice itemWithTitle:dev];
+
+        if (item && [[_drive target] device] != dev)
+            [item setEnabled:NO];
+    }
+}
 
 #pragma mark -
 #pragma mark Utilities
@@ -135,11 +153,34 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTypeBlock:
             [[_drive source] setDevice:[fieldDevicePath stringValue]];
             [[_drive source] setFile:nil];
+            [[_drive source] setHost:nil];
+            [[_drive source] setProtocol:nil];
+            [[_drive source] setName:nil];
+            break;
+
+        case TNLibvirtDeviceDiskTypeNetwork:
+            var host = [[TNLibvirtDeviceDiskSourceHost alloc] init],
+                hostName = [fieldDevicePath stringValue].split("-")[0].split(":")[0],
+                hostPort = [fieldDevicePath stringValue].split("-")[0].split(":")[1],
+                hostProtocol = [fieldDevicePath stringValue].split("-")[1].split("/")[0],
+                hostProtocolName = [fieldDevicePath stringValue].split("-")[1].split("/")[1];
+
+            [host setName:hostName];
+            [host setPort:hostPort];
+            [[_drive source] setHosts:[]];
+            [[[_drive source] hosts] addObject:host];
+            [[_drive source] setDevice:nil];
+            [[_drive source] setFile:nil];
+            [[_drive source] setProtocol:hostProtocol];
+            [[_drive source] setName:hostProtocolName];
             break;
 
         case TNLibvirtDeviceDiskTypeFile:
             [[_drive source] setFile:[[buttonSourcePath selectedItem] stringValue]];
             [[_drive source] setDevice:nil];
+            [[_drive source] setHost:nil];
+            [[_drive source] setProtocol:nil];
+            [[_drive source] setName:nil];
             break;
     }
 
@@ -218,6 +259,27 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
         [fieldDevicePath setStringValue:@""];
     }
+    else if ([buttonType title] == TNLibvirtDeviceDiskTypeNetwork)
+    {
+        [fieldDevicePath setHidden:NO];
+        [fieldDevicePath setEnabled:YES];
+        [buttonSourcePath setHidden:YES];
+        [buttonSourcePath setEnabled:NO];
+
+        if (aSender)
+            [fieldDevicePath setStringValue:@"127.0.0.1:4242-sheepdog/myshare"];
+        else
+        {
+            var hostString = [[[[_drive source] hosts] firstObject] name]
+                                + @":"
+                                + [[[[_drive source] hosts] firstObject] port]
+                                + @"-"
+                                + [[_drive source] protocol]
+                                + @"/"
+                                + [[_drive source] name];
+            [fieldDevicePath setStringValue:hostString];
+        }
+    }
 }
 
 /*! Called when changing the bus type. It will update the targets
@@ -232,6 +294,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTargetBusIDE:
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesIDE];
             break;
+        case TNLibvirtDeviceDiskTargetBusSATA:
         case TNLibvirtDeviceDiskTargetBusSCSI:
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevicesSCSI];
             break;
@@ -245,13 +308,29 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             [buttonTargetDevice addItemsWithTitles:TNLibvirtDeviceDiskTargetDevices];
     }
 
+    [self disableAlreadyUsedTargetDevices];
+
     switch ([buttonDevice title])
     {
         case TNLibvirtDeviceDiskDeviceDisk:
-            [buttonTargetDevice selectItemAtIndex:0];
+            for (var i = 0; i < [[buttonTargetDevice itemArray] count]; i++)
+            {
+                if ([[buttonTargetDevice itemAtIndex:i] isEnabled])
+                {
+                    [buttonTargetDevice selectItemAtIndex:i];
+                    break;
+                }
+            }
             break;
         case  TNLibvirtDeviceDiskDeviceCDROM:
-            [buttonTargetDevice selectItemAtIndex:2];
+            for (var i = 2; i < [[buttonTargetDevice itemArray] count]; i++)
+            {
+                if ([[buttonTargetDevice itemAtIndex:i] isEnabled])
+                {
+                    [buttonTargetDevice selectItemAtIndex:i];
+                    break;
+                }
+            }
             break;
         default:
             [buttonTargetDevice selectItemAtIndex:0];
@@ -259,6 +338,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     if ([[buttonTargetDevice itemTitles] containsObject:[[_drive target] device]])
         [buttonTargetDevice selectItemWithTitle:[[_drive target] device]];
+
 }
 
 /*! show the main window
