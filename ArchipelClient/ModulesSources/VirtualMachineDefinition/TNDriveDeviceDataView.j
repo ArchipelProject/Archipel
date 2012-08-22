@@ -108,9 +108,19 @@ var TNDriveDeviceDataViewIconQCOW2,
         [imageIcon setImage:TNDriveDeviceDataViewIconCDROM];
 
     if ([_currentDisk source] && [[_currentDisk source] sourceObject] && [[_currentDisk source] sourceObject] != @"")
-        [fieldPath setStringValue:[[[_currentDisk source] sourceObject].split("/") lastObject]];
+    {
+        if ([[[_currentDisk source] sourceObject] isKindOfClass:CPArray])
+        {
+            var host = [[[_currentDisk source] sourceObject] firstObject],
+                others = [[[_currentDisk source] sourceObject] count] > 1 ? @" (and other sources)" : @"";
+
+            [fieldPath setStringValue:[host name] + @":" + [host port] + others];
+        }
+        else
+            [fieldPath setStringValue:[[[_currentDisk source] sourceObject].split("/") lastObject]];
+    }
     else
-        [fieldPath setStringValue:@"No source supplied"];
+        [fieldPath setStringValue:@"No source defined"];
 
     [fieldType setStringValue:[_currentDisk type]];
     [fieldDevice setStringValue:[_currentDisk device]];

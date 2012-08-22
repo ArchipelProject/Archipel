@@ -153,11 +153,34 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTypeBlock:
             [[_drive source] setDevice:[fieldDevicePath stringValue]];
             [[_drive source] setFile:nil];
+            [[_drive source] setHost:nil];
+            [[_drive source] setProtocol:nil];
+            [[_drive source] setName:nil];
+            break;
+
+        case TNLibvirtDeviceDiskTypeNetwork:
+            var host = [[TNLibvirtDeviceDiskSourceHost alloc] init],
+                hostName = [fieldDevicePath stringValue].split("-")[0].split(":")[0],
+                hostPort = [fieldDevicePath stringValue].split("-")[0].split(":")[1],
+                hostProtocol = [fieldDevicePath stringValue].split("-")[1].split("/")[0],
+                hostProtocolName = [fieldDevicePath stringValue].split("-")[1].split("/")[1];
+
+            [host setName:hostName];
+            [host setPort:hostPort];
+            [[_drive source] setHosts:[]];
+            [[[_drive source] hosts] addObject:host];
+            [[_drive source] setDevice:nil];
+            [[_drive source] setFile:nil];
+            [[_drive source] setProtocol:hostProtocol];
+            [[_drive source] setName:hostProtocolName];
             break;
 
         case TNLibvirtDeviceDiskTypeFile:
             [[_drive source] setFile:[[buttonSourcePath selectedItem] stringValue]];
             [[_drive source] setDevice:nil];
+            [[_drive source] setHost:nil];
+            [[_drive source] setProtocol:nil];
+            [[_drive source] setName:nil];
             break;
     }
 
@@ -235,6 +258,27 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [buttonSourcePath setEnabled:YES];
 
         [fieldDevicePath setStringValue:@""];
+    }
+    else if ([buttonType title] == TNLibvirtDeviceDiskTypeNetwork)
+    {
+        [fieldDevicePath setHidden:NO];
+        [fieldDevicePath setEnabled:YES];
+        [buttonSourcePath setHidden:YES];
+        [buttonSourcePath setEnabled:NO];
+
+        if (aSender)
+            [fieldDevicePath setStringValue:@"127.0.0.1:4242-sheepdog/myshare"];
+        else
+        {
+            var hostString = [[[[_drive source] hosts] firstObject] name]
+                                + @":"
+                                + [[[[_drive source] hosts] firstObject] port]
+                                + @"-"
+                                + [[_drive source] protocol]
+                                + @"/"
+                                + [[_drive source] name];
+            [fieldDevicePath setStringValue:hostString];
+        }
     }
 }
 
