@@ -46,14 +46,17 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
 
 
 #pragma mark -
-#pragma mark Intialization
+#pragma mark Initialization
 
 - (BOOL)willLoad
 {
     if (![super willLoad])
         return NO;
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didStropheConnected:) name:TNStropheConnectionStatusConnectedNotification object:nil];
+    if ([[[TNStropheIMClient defaultClient] connection] isConnected])
+        [self didStropheConnected:nil];
+    else
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didStropheConnected:) name:TNStropheConnectionStatusConnectedNotification object:nil];
 
     return YES;
 }
@@ -67,7 +70,7 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
 */
 - (void)didStropheConnected:(CPNotification)aNotification
 {
-    _connection         = [aNotification object];
+    _connection         = [[TNStropheIMClient defaultClient] connection];
     _currentRequests    = [CPDictionary dictionary];
 
     _pubSubRequestIn    = [TNPubSubNode pubSubNodeWithNodeName:TNArchipelNodeNamePlatformRequestIn connection:_connection pubSubServer:nil]

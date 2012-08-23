@@ -241,7 +241,7 @@ var TNModuleStatusImageReady,
 */
 - (void)_beforeWillLoad
 {
-    if (!_view)
+    if (_hasCIB && !_view)
         return;
 
     if ([self isCurrentEntityGranted])
