@@ -166,9 +166,9 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     [tableViewNuage setDelegate:nil];
@@ -198,18 +198,6 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new Nuage network", @"Create new Nuage network") action:@selector(addNuage:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected Nuage network", @"Edit selected Nuage network") action:@selector(editNuage:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected Nuage network", @"Delete selected Nuage network") action:@selector(delNuage:) keyEquivalent:@""] setTarget:self];
-}
-
-/*! called when permissions changes
-*/
-- (void)permissionsChanged
-{
-    [super permissionsChanged];
-    // Right, this is useless to reimplement it
-    // but this is just to explain that we don't
-    // reload anything else, because the permissions
-    // system of TNModule will replay _beforeWillLoad,
-    // and so refetch the data.
 }
 
 /*! called when the UI needs to be updated according to the permissions
