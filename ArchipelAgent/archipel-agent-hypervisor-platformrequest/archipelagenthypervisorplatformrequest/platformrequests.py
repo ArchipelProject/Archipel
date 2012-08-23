@@ -45,9 +45,9 @@ class TNPlatformRequests (TNArchipelPlugin):
         @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-        self.pubsub_request_in_node     = None
-        self.pubsub_request_out_node    = None
-        self.computing_unit             = None
+        self.pubsub_request_in_node = None
+        self.pubsub_request_out_node = None
+        self.computing_unit = None
         # get eventual computing unit plugin
         self.load_computing_unit()
         # creates permissions
@@ -78,14 +78,14 @@ class TNPlatformRequests (TNArchipelPlugin):
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
-        plugin_friendly_name           = "Hypervisor Platform Request"
-        plugin_identifier              = "platformrequest"
-        plugin_configuration_section   = None
-        plugin_configuration_tokens    = []
-        return {    "common-name"               : plugin_friendly_name,
-                    "identifier"                : plugin_identifier,
-                    "configuration-section"     : plugin_configuration_section,
-                    "configuration-tokens"      : plugin_configuration_tokens }
+        plugin_friendly_name = "Hypervisor Platform Request"
+        plugin_identifier = "platformrequest"
+        plugin_configuration_section = None
+        plugin_configuration_tokens = []
+        return {"common-name": plugin_friendly_name,
+                "identifier": plugin_identifier,
+                "configuration-section": plugin_configuration_section,
+                "configuration-tokens": plugin_configuration_tokens}
 
 
     ### Plugin loading
@@ -95,8 +95,8 @@ class TNPlatformRequests (TNArchipelPlugin):
         Loads the external computing unit.
         """
         for factory_method in iter_entry_points(group="archipel.plugin.platform.computingunit", name="factory"):
-            method              = factory_method.load()
-            plugin_content      = method()
+            method = factory_method.load()
+            plugin_content = method()
             self.computing_unit = plugin_content["plugin"]
             self.entity.log.info("PLATFORMREQ: loading computing unit %s" % plugin_content["info"]["common-name"])
             break
@@ -120,7 +120,7 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     ### Pubsub management
 
-    def manage_platform_vm_request(self, origin, user_info, arguments):
+    def manage_platform_vm_request(self, origin=None, user_info=None, parameters=None):
         """
         Register to pubsub event node /archipel/platform/requests/in
         and /archipel/platform/requests/out
@@ -155,7 +155,7 @@ class TNPlatformRequests (TNArchipelPlugin):
             try:
                 item_publisher = xmpp.JID(item.getAttr("publisher"))
             except Exception as ex:
-                self.entity.log.error("The pubsub node has not 'publisher' tag. This is a bug in ejabberd, not the fault of Archipel. You can find a patch here for ejabberd here https://support.process-one.net/browse/EJAB-1347")
+                self.entity.log.error("PLATFORMREQ: The pubsub node has not 'publisher' tag. This is a bug in ejabberd, not the fault of Archipel. You can find a patch here for ejabberd here https://support.process-one.net/browse/EJAB-1347")
                 continue
             if not item_publisher.getStripped() == self.entity.jid.getStripped():
                 try:
