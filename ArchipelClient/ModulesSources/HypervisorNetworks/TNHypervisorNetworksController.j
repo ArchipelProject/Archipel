@@ -151,9 +151,9 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     [tableViewNetworks setDelegate:nil];

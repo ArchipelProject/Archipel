@@ -263,9 +263,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     [self registerSelector:@selector(_didReceiveParkPush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
@@ -302,13 +302,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [VMAllocationController closeWindow:nil];
 
     [super willHide];
-}
-
-/*! called when module is unloaded
-*/
-- (void)willUnload
-{
-    [super willUnload];
 }
 
 /*! called when MainMenu is ready

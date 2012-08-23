@@ -547,9 +547,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![super willLoad])
         return NO;
 
-    _definitionRecovered = NO;
-    [self handleDefinitionEdition:NO];
-
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
@@ -574,14 +571,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setDefaultValues];
 
     [fieldStringXMLDesc setStringValue:@""];
-
-    [self getCapabilities];
-
-    // seems to be necessary
-    [tableDrives reloadData];
-    [tableInterfaces reloadData];
-
-    return YES;
 }
 
 /*! called when module is unloaded
@@ -599,6 +588,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![super willShow])
         return NO;
+
+    _definitionRecovered = NO;
+    [self handleDefinitionEdition:NO];
+
+    [self getCapabilities];
+
+    // seems to be necessary
+    [tableDrives reloadData];
+    [tableInterfaces reloadData];
 
     [self checkIfRunning];
     [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
