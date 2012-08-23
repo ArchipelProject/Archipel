@@ -291,7 +291,7 @@ class TNVMParking (TNArchipelPlugin):
         ret.sort(sorting)
         return ret
 
-    def park(self, uuid, parker_jid, force=False, push=True):
+    def park(self, uuid, parker_jid, force=False):
         """
         Park a virtual machine
         @type uuid: String
@@ -322,10 +322,9 @@ class TNVMParking (TNArchipelPlugin):
 
         self.entity.log.info("VMPARKING: virtual machine %s has been parked" % uuid)
         self.entity.soft_free(vm_jid)
-        if push:
-            self.entity.push_change("vmparking", "parked")
+        self.entity.push_change("vmparking", "parked")
 
-    def unpark(self, uuid, start=False, push=True):
+    def unpark(self, uuid, start=False):
         """
         Unpark virtual machine
         @type uuid: String
@@ -340,7 +339,6 @@ class TNVMParking (TNArchipelPlugin):
 
         vm_item = self.get_vm_by_uuid_from_db(uuid)
 
-        # self.remove_vm_from_db(uuid)
         self.set_vm_status(uuid, ARCHIPEL_PARKING_STATUS_NOT_PARKED)
 
         domain = vm_item["domain"]
@@ -355,11 +353,11 @@ class TNVMParking (TNArchipelPlugin):
         if start:
             vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.control_create_hook, oneshot=True)
         vm_thread.start()
-        if push:
-            self.entity.push_change("vmparking", "unparked")
+
+        self.entity.push_change("vmparking", "unparked")
         self.entity.log.info("VMPARKING: successfully unparked %s" % str(vmjid))
 
-    def delete(self, uuid, push=True):
+    def delete(self, uuid):
         """
         Delete a parked virtual machine
         @type uuid: String
@@ -377,8 +375,7 @@ class TNVMParking (TNArchipelPlugin):
         if os.path.exists(vmfolder):
             shutil.rmtree(vmfolder)
         self.entity.get_plugin("xmppserver").users_unregister([vmjid])
-        if push:
-            self.entity.push_change("vmparking", "deleted")
+        self.entity.push_change("vmparking", "deleted")
         self.entity.log.info("VMPARKING: successfully deleted %s from parking" % str(vmjid))
 
     def updatexml(self, uuid, domain):
@@ -415,7 +412,7 @@ class TNVMParking (TNArchipelPlugin):
         self.update_vm_domain_in_db(uuid, domain)
         self.entity.push_change("vmparking", "updated")
 
-    def create_parked(self, uuid, xmldesc, parker_jid, push=True):
+    def create_parked(self, uuid, xmldesc, parker_jid):
         """
         Creates a VM directly into the parking.
         @type uuid: String
@@ -440,8 +437,7 @@ class TNVMParking (TNArchipelPlugin):
         self.register_vm_into_db(uuid, parker_jid, xmldesc, ARCHIPEL_PARKING_STATUS_PARKED)
 
         self.entity.log.info("VMPARKING: New virtual machine %s as been parked" % uuid)
-        if push:
-            self.entity.push_change("vmparking", "parked")
+        self.entity.push_change("vmparking", "parked")
 
 
     ### XMPP Management for hypervisors
@@ -544,8 +540,7 @@ class TNVMParking (TNArchipelPlugin):
                 force_destroy = False
                 if item.getAttr("force") and item.getAttr("force").lower() in ("yes", "y", "true", "1"):
                     force_destroy = True
-                self.park(vm_uuid, iq.getFrom(), force=force_destroy, push=False)
-            self.entity.push_change("vmparking", "parked")
+                self.park(vm_uuid, iq.getFrom(), force=force_destroy)
             reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_PARK)
@@ -589,8 +584,7 @@ class TNVMParking (TNArchipelPlugin):
                 autostart = False
                 if item.getAttr("start") and item.getAttr("start").lower() in ("yes", "y", "true", "1"):
                     autostart = True
-                self.unpark(identifier, start=autostart, push=False)
-            self.entity.push_change("vmparking", "unparked")
+                self.unpark(identifier, start=autostart)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UNPARK)
         return reply
@@ -630,8 +624,7 @@ class TNVMParking (TNArchipelPlugin):
             items = iq.getTag("query").getTag("archipel").getTags("item")
             for item in items:
                 identifier = item.getAttr("identifier")
-                self.delete(identifier, push=False)
-            self.entity.push_change("vmparking", "deleted")
+                self.delete(identifier)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_DELETE)
         return reply
@@ -669,8 +662,7 @@ class TNVMParking (TNArchipelPlugin):
                     self.entity.log.error("VMPARKING: Unable to park vm: missing 'uuid' element.")
                     raise Exception("You must must set the UUID of the vms you want to park")
                 vm_domain = item.getTag("domain")
-                self.create_parked(vm_uuid, vm_domain, iq.getFrom(), push=False)
-            self.entity.push_change("vmparking", "create_parked")
+                self.create_parked(vm_uuid, vm_domain, iq.getFrom())
             reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_CREATE_PARKED)
