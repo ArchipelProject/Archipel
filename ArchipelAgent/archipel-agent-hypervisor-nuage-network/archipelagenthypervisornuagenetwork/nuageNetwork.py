@@ -149,9 +149,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
         nuage_node = xmpp.Node("nuage", attrs={"xmlns": "alcatel-lucent.com/nuage/cna"})
         nuage_node.addChild("enterprise", attrs={"name": self.entity.vcard_infos["ORGNAME"]})
-        nuage_node.addChild("group", attrs={"name": self.entity.vcard_infos["ORGUNIT"]})
         nuage_node.addChild("user", attrs={"name": self.entity.vcard_infos["USERID"]})
-        nuage_node.addChild("application", attrs={"name":self.entity.vcard_infos["CATEGORIES"]})
+        nuage_node.addChild("application", attrs={"name": self.entity.vcard_infos["CATEGORIES"]})
 
         interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
 
