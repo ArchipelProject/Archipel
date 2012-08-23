@@ -295,9 +295,9 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 - (BOOL)_didUnparkVirtualMachine:(TNStropheStanza)aStanza
 {
     if ([aStanza type] != @"result")
-    {
         [_delegate handleIqErrorFromStanza:aStanza];
-    }
+
+    [[_delegate tableVirtualMachinesParked] deselectAll];
 
     return NO;
 }
@@ -363,9 +363,9 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 - (BOOL)_didDeleteParkedVirtualMachines:(TNStropheStanza)aStanza
 {
     if ([aStanza type] != @"result")
-    {
         [_delegate handleIqErrorFromStanza:aStanza];
-    }
+
+    [[_delegate tableVirtualMachinesParked] deselectAll];
 
     return NO;
 }
