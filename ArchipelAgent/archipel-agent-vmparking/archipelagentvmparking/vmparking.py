@@ -113,11 +113,12 @@ class TNVMParking (TNArchipelPlugin):
         Called when a VM definition occurs.
         This will insert the XML desc in the parking
         """
-        xmldesc = self.entity.xmldesc(mask_description=False)
         hypervisor_parking_plugin = self.entity.hypervisor.get_plugin("vmparking")
+        xmldesc = self.entity.xmldesc(mask_description=False)
 
         if not hypervisor_parking_plugin.is_vm_registered(self.entity.uuid):
-            hypervisor_parking_plugin.register_vm_into_db(self.entity.uuid, xmpp.JID("dummy@archipel.com"), xmldesc, ARCHIPEL_PARKING_STATUS_NOT_PARKED)
+            vms_info = [{"uuid": self.entity.uuid, "domain": xmldesc, "parker": "dummy@archipel.com", "status": ARCHIPEL_PARKING_STATUS_NOT_PARKED, "date": datetime.datetime.now()}]
+            hypervisor_parking_plugin.register_vms_into_db(vms_info)
         else:
             hypervisor_parking_plugin.update_vm_domain_in_db(self.entity.uuid, xmldesc)
 
@@ -130,7 +131,7 @@ class TNVMParking (TNArchipelPlugin):
 
         if hypervisor_parking_plugin.is_vm_registered(self.entity.uuid):
             if not hypervisor_parking_plugin.is_vm_parked(self.entity.uuid):
-                hypervisor_parking_plugin.unregister_vm_from_db(self.entity.uuid)
+                hypervisor_parking_plugin.unregister_vms_from_db([{"uuid": self.entity.uuid}])
 
     ### Plugin interface
 
@@ -200,18 +201,18 @@ class TNVMParking (TNArchipelPlugin):
             ret.append({"uuid": row[0], "parker": row[1], "date": row[2], "status": row[4], "domain": xmpp.simplexml.NodeBuilder(data=row[3]).getDom()})
         return ret
 
-    def register_vm_into_db(self, uuid, parker_jid, domain, status=ARCHIPEL_PARKING_STATUS_NOT_PARKED):
+    def register_vms_into_db(self, vm_informations):
         """
         Add a VM in the parking
         """
-        self.cursor.execute("insert into parking values(?, ?, ?, ?, ?)", (uuid, parker_jid.getStripped(), datetime.datetime.now(), str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', ''), status))
+        self.cursor.executemany("insert into parking values(:uuid, :parker, :creation_date, :domain, :status)",  vm_informations)
         self.database.commit()
 
-    def unregister_vm_from_db(self, uuid):
+    def unregister_vms_from_db(self, vms_uuid):
         """
         Add a VM in the parking
         """
-        self.cursor.execute("delete from parking where uuid=?", (uuid,))
+        self.cursor.executemany("delete from parking where uuid=:uuid", vms_uuid)
         self.database.commit()
 
     def is_vm_registered(self, uuid):
@@ -254,14 +255,14 @@ class TNVMParking (TNArchipelPlugin):
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
-        plugin_friendly_name           = "Virtual Machine Parking"
-        plugin_identifier              = "vmparking"
-        plugin_configuration_section   = "VMPARKING"
-        plugin_configuration_tokens    = ["database"]
-        return {    "common-name"               : plugin_friendly_name,
-                    "identifier"                : plugin_identifier,
-                    "configuration-section"     : plugin_configuration_section,
-                    "configuration-tokens"      : plugin_configuration_tokens }
+        plugin_friendly_name = "Virtual Machine Parking"
+        plugin_identifier = "vmparking"
+        plugin_configuration_section = "VMPARKING"
+        plugin_configuration_tokens = ["database"]
+        return {"common-name": plugin_friendly_name,
+                "identifier": plugin_identifier,
+                "configuration-section": plugin_configuration_section,
+                "configuration-tokens": plugin_configuration_tokens}
 
 
     ### Processing function
@@ -286,8 +287,10 @@ class TNVMParking (TNArchipelPlugin):
                             "parker": vm["parker"],
                             "date": vm["date"]},
                         "domain": vm["domain"]})
+
         def sorting(a, b):
             return cmp(a["domain"].getTag("name").getData(), b["domain"].getTag("name").getData())
+
         ret.sort(sorting)
         return ret
 
@@ -369,7 +372,7 @@ class TNVMParking (TNArchipelPlugin):
             raise Exception("There is no virtual machine parked with uuid %s" % uuid)
 
         vm_item = self.get_vm_by_uuid_from_db(uuid)
-        self.unregister_vm_from_db(uuid)
+        self.unregister_vms_from_db([{"uuid": uuid}])
         vmjid = xmpp.JID(vm_item["domain"].getTag("description").getData().split("::::")[0])
         vmfolder = "%s/%s" % (self.configuration.get("VIRTUALMACHINE", "vm_base_path"), vmjid.getNode())
         if os.path.exists(vmfolder):
@@ -412,31 +415,29 @@ class TNVMParking (TNArchipelPlugin):
         self.update_vm_domain_in_db(uuid, domain)
         self.entity.push_change("vmparking", "updated")
 
-    def create_parked(self, uuid, xmldesc, parker_jid):
+    def create_parked(self, vm_informations):
         """
         Creates a VM directly into the parking.
-        @type uuid: String
-        @param uuid: The UUID of the VM to create and park
-        @type xmldesc: xmpp.simplexml.Node
-        @param xmldesc: The XML desc to park. The UUID inside must the same than UUID parameter
-        @type parker_jid: xmpp.protocol.JID
-        @param parker_jid: the JID of the parker
+        @type vm_informations: list
+        @param vm_informations: list containing VM to park [{uuid: "xxx", domain: xmldesc, parker: JID, creation_date: date, status: status}]
         """
-        if self.is_vm_parked(uuid):
-            raise Exception("VM with UUID %s is already parked" % uuid)
+        for vm_info in vm_informations:
+            if self.is_vm_parked(vm_info["uuid"]):
+                raise Exception("VM with UUID %s is already parked" % vm_info["uuid"])
 
-        vm = self.entity.get_vm_by_uuid(uuid)
-        if vm:
-            raise Exception("There is already a VM with UUID %s" % uuid)
+            vm = self.entity.get_vm_by_uuid(vm_info["uuid"])
+            if vm:
+                raise Exception("There is already a VM with UUID %s" % vm_info["uuid"])
 
-        if xmldesc.getTag("description"):
-            raise Exception("You cannot park a VM XML with a <description/> tag. Please remove it")
-        password = ''.join([random.choice(string.letters + string.digits) for i in range(32)])
-        xmldesc.addChild("description").setData("%s@%s::::%s" % (uuid, self.entity.jid.getDomain(), password))
+            if vm_info["domain"].getTag("description"):
+                raise Exception("You cannot park a VM XML with a <description/> tag. Please remove it")
 
-        self.register_vm_into_db(uuid, parker_jid, xmldesc, ARCHIPEL_PARKING_STATUS_PARKED)
+            password = ''.join([random.choice(string.letters + string.digits) for i in range(32)])
+            vm_info["domain"].addChild("description").setData("%s@%s::::%s" % (vm_info["uuid"], self.entity.jid.getDomain(), password))
+            vm_info["domain"] = str(vm_info["domain"]).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
 
-        self.entity.log.info("VMPARKING: New virtual machine %s as been parked" % uuid)
+        self.register_vms_into_db(vm_informations)
+
         self.entity.push_change("vmparking", "parked")
 
 
@@ -568,6 +569,32 @@ class TNVMParking (TNArchipelPlugin):
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
+    def iq_create_parked(self, iq):
+        """
+        Create a VM in directly into the parking
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            items = iq.getTag("query").getTag("archipel").getTags("item")
+            vms_info = []
+            for item in items:
+                vm_uuid = item.getAttr("uuid")
+                if not vm_uuid:
+                    self.entity.log.error("VMPARKING: Unable to park vm: missing 'uuid' element.")
+                    raise Exception("You must must set the UUID of the vms you want to park")
+                vm_domain = item.getTag("domain")
+                vms_info.append({"uuid": vm_uuid, "domain": vm_domain, "parker": str(iq.getFrom()), "creation_date": datetime.datetime.now(), "status": ARCHIPEL_PARKING_STATUS_PARKED})
+
+            self.create_parked(vms_info)
+
+            reply = iq.buildReply("result")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_CREATE_PARKED)
+        return reply
+
     def iq_unpark(self, iq):
         """
         Unpark virtual machine
@@ -644,28 +671,6 @@ class TNVMParking (TNArchipelPlugin):
             self.updatexml(identifier, domain)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UPDATEXML)
-        return reply
-
-    def iq_create_parked(self, iq):
-        """
-        Create a VM in directly into the parking
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready to send IQ containing the result of the action
-        """
-        try:
-            items = iq.getTag("query").getTag("archipel").getTags("item")
-            for item in items:
-                vm_uuid = item.getAttr("uuid")
-                if not vm_uuid:
-                    self.entity.log.error("VMPARKING: Unable to park vm: missing 'uuid' element.")
-                    raise Exception("You must must set the UUID of the vms you want to park")
-                vm_domain = item.getTag("domain")
-                self.create_parked(vm_uuid, vm_domain, iq.getFrom())
-            reply = iq.buildReply("result")
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_CREATE_PARKED)
         return reply
 
     ## XMPP Management for hypervisors
