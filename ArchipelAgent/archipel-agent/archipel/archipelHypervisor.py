@@ -595,7 +595,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             return vm_thread
 
-    def soft_alloc(self, jid, name, password, start=True):
+    def soft_alloc(self, jid, name, password, start=True, organizationInfo=None):
         """
         Perform light allocation (no registration, no subscription).
         @type jid: xmpp.JID
@@ -609,7 +609,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         jid.setResource(self.jid.getNode().lower())
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
-        vm_thread = self.create_threaded_vm(jid, password, name)
+        vm_thread = self.create_threaded_vm(jid, password, name , organizationInfo)
         vm = vm_thread.get_instance()
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
