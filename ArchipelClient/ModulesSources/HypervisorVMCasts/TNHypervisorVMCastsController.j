@@ -166,9 +166,9 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     [_mainOutlineView setDelegate:nil];
@@ -183,22 +183,12 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
 /*! called when module is unloaded
 */
-- (void)willUnload
+- (void)willHide
 {
     [downloadQueueController closeWindow:nil];
     [VMCastRegistrationController closeWindow:nil];
 
     [_mainOutlineView deselectAll];
-
-    [super willUnload];
-}
-
-/*! called when module becomes unvisible
-*/
-- (void)willHide
-{
-    [VMCastRegistrationController closeWindow:nil];
-    [downloadQueueController closeWindow:nil];
 
     [super willHide];
 }

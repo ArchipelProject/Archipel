@@ -170,9 +170,9 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
@@ -196,26 +196,9 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_outlineViewSnapshots deselectAll];
     [_revertButton setEnabled:NO];
     [_minusButton setEnabled:NO];
+    [popoverNewSnapshot close];
 
     [super willUnload];
-}
-
-/*! called when module becomes visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    return YES;
-}
-
-/*! called when module becomes unvisible
-*/
-- (void)willHide
-{
-    [popoverNewSnapshot close];
-    [super willHide];
 }
 
 /*! called when MainMenu is ready

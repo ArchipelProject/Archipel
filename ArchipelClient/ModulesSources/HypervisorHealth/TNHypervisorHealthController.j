@@ -242,9 +242,9 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     var defaults    = [CPUserDefaults standardUserDefaults],
@@ -278,7 +278,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
 /*! called when module is unloaded
 */
-- (void)willUnload
+- (void)willHide
 {
     if (_timerStats)
     {
@@ -304,17 +304,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [_statsHistoryWorker setDelegate:nil];
     // [_logsWorker setDelegate:nil];
 
-    [super willUnload];
-}
-
-/*! called when module becomes visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    return YES;
+    [super willHide];
 }
 
 /*! called when user saves preferences
@@ -641,7 +631,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     var logEntry = [_datasourceLogs objectAtIndex:row],
         theWidth = [tableView frameSize].width - 34;
 
-    return [[logEntry message] sizeWithFont:[CPFont systemFontFace] inWidth:theWidth].height + 37;
+    return [[logEntry message] sizeWithFont:[CPFont systemFontFace] inWidth:theWidth].height + 45;
 }
 
 /*! CPTabViewDelegate
