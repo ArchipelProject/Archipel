@@ -433,7 +433,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.domain = None
                 self.description = None
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
-                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
+                self.set_presence_according_to_libvirt_info()
                 self.push_change("virtualmachine:definition", "defined")
                 self.perform_hooks("HOOK_VM_DEFINE")
         except Exception as ex:
