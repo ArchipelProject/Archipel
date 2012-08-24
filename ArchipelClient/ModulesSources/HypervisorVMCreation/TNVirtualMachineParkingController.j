@@ -216,9 +216,8 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 
 /*! Destroy if needed and park some virtual machines
     @param someVirtualMachines CPArray of virtual machine to park
-    @param shouldDestroy if True, the virtual machines will be destroyed if running
 */
-- (void)parkVirtualMachines:(CPArray)someVirtualMachines destroy:(BOOL)shouldDestroy
+- (void)parkVirtualMachines:(CPArray)someVirtualMachines
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -229,7 +228,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     for (var i = 0; i < [someVirtualMachines count]; i++)
     {
         var vm = [someVirtualMachines objectAtIndex:i];
-        [stanza addChildWithName:@"item" andAttributes:{"uuid": [[vm JID] node], "force": (shouldDestroy ? @"yes" : @"no")}];
+        [stanza addChildWithName:@"item" andAttributes:{"uuid": [[vm JID] node]}];
         [stanza up];
     }
 
@@ -237,33 +236,15 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     [_delegate sendStanza:stanza andRegisterSelector:@selector(_didParkVirtualMachine:) ofObject:self];
 }
 
-/*! park some virtual machines
-    @param someVirtualMachines CPArray of virtual machine to park
-*/
-- (void)parkVirtualMachines:(CPArray)someVirtualMachines
-{
-    [self parkVirtualMachines:someVirtualMachines destroy:NO];
-}
-
-/*! park some virtual machines
-    @param someVirtualMachines CPArray of virtual machine to park
-*/
-- (void)destroyAndParkVirtualMachines:(CPArray)someVirtualMachines
-{
-    [self parkVirtualMachines:someVirtualMachines destroy:YES];
-}
-
-
 /*! compute the answer of the hypervisor about its parking VMs
     @param aStanza TNStropheStanza containing hypervisor answer
 */
 - (BOOL)_didParkVirtualMachine:(TNStropheStanza)aStanza
 {
     if ([aStanza type] != @"result")
-    {
         [_delegate handleIqErrorFromStanza:aStanza];
-    }
 
+    [_delegate setModuleStatus:TNArchipelModuleStatusReady];
     return NO;
 }
 
@@ -298,6 +279,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
         [_delegate handleIqErrorFromStanza:aStanza];
 
     [[_delegate tableVirtualMachinesParked] deselectAll];
+    [_delegate setModuleStatus:TNArchipelModuleStatusReady];
 
     return NO;
 }
@@ -327,9 +309,9 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 - (BOOL)_didUpdateCurrentItemXML:(TNStropheStanza)aStanza
 {
     if ([aStanza type] != @"result")
-    {
         [_delegate handleIqErrorFromStanza:aStanza];
-    }
+
+    [_delegate setModuleStatus:TNArchipelModuleStatusReady];
 
     return NO;
 }
@@ -366,6 +348,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
         [_delegate handleIqErrorFromStanza:aStanza];
 
     [[_delegate tableVirtualMachinesParked] deselectAll];
+    [_delegate setModuleStatus:TNArchipelModuleStatusReady];
 
     return NO;
 }

@@ -275,11 +275,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                                                  name:TNStropheContactPresenceUpdatedNotification
                                                object:nil];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(populateVirtualMachinesTable:)
-                                                 name:TNStropheRosterPushNotification
-                                               object:nil];
-
     [tableVirtualMachines setDelegate:nil];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachinesNotManaged setDelegate:nil];
@@ -288,6 +283,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setDelegate:self];
 
     [self populateVirtualMachinesTable];
+    [VMParkingController listParkedVirtualMachines];
 
     return YES;
 }
@@ -413,27 +409,24 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
         case "parked":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Parked successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         case "unparked":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Unparked successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         case "deleted":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Deleted successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         case "updated":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Updated successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         default:
             [self populateVirtualMachinesTable];
     }
+    [VMParkingController listParkedVirtualMachines];
 
     return YES;
 }
@@ -537,9 +530,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
     }
-
-    if ([self currentEntityHasPermission:@"vmparking_list"])
-        [VMParkingController listParkedVirtualMachines];
 }
 
 
@@ -604,8 +594,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         alert = [TNAlert alertWithMessage:titleMessage
                                 informative:informativeMessage
                                  target:VMParkingController
-                                 actions:[[CPLocalizedString(@"Destroy and park", @"Destroy and park"), @selector(destroyAndParkVirtualMachines:)],
-                                          [CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)],
+                                 actions:[[CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)],
                                           [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert setUserInfo:vms];
     [alert runModal];

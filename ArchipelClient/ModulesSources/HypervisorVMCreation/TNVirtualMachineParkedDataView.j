@@ -22,10 +22,6 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
-
-var TNVirtualMachineDataViewAvatarUnknown;
-
-
 /*! @ingroup hypervisorvmcreation
     This class represent a virtual machine DataView
 */
@@ -37,16 +33,6 @@ var TNVirtualMachineDataViewAvatarUnknown;
     @outlet CPTextField fieldParker;
     @outlet CPTextField labelParker;
     @outlet CPTextField labelDate;
-}
-
-
-#pragma mark -
-#pragma mark Initialization
-
-+ (void)initialize
-{
-    // var bundle = [CPBundle mainBundle];
-    // TNVirtualMachineDataViewAvatarUnknown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
 }
 
 
