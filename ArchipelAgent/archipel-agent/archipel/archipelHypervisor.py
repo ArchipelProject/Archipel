@@ -438,31 +438,34 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
             try:
                 vmuuid = dom.UUIDString()
-                self.log.info("MIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmuuid)
+                self.log.info("EVENTMIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmuuid)
                 self.soft_free(vmuuid)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmuuid)
             except Exception as ex:
-                self.log.error("MIGRATION: Can't free softly this virtual machine: %s" % str(ex))
+                self.log.error("EVENTMIGRATION: Can't free softly this virtual machine: %s" % str(ex))
         elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
                 desc = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
                 if desc.getTag("uuid").getData() in self.virtualmachines:
-                    self.log.error("MIGRATION: soft allocation canceled. virtual machine is already here. This is mostly due a failed migration.")
+                    self.log.error("EVENTMIGRATION: soft allocation canceled. virtual machine is already here. This is mostly due a failed migration.")
                     return
                 vmjid = desc.getTag(name="description").getCDATA().split("::::")[0]
                 vmpass = desc.getTag(name="description").getCDATA().split("::::")[1]
                 vmname = desc.getTag(name="name").getCDATA()
-                self.log.info("MIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
+                self.log.info("EVENTMIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
                 self.soft_alloc(xmpp.JID(vmjid), vmname, vmpass)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid)
             except Exception as ex:
-                self.log.warning("MIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
+                self.log.warning("EVENTMIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
         else:
-            # Otherwise, we transfer the event to the vm if we manage it
-            vm = self.get_vm_by_uuid(dom.UUIDString())
-            if vm:
-                vm.on_domain_event(event, detail)
+            try:
+                # Otherwise, we transfer the event to the vm if we manage it
+                vm = self.get_vm_by_uuid(dom.UUIDString())
+                if vm:
+                    vm.on_domain_event(event, detail)
+            except Exception as ex:
+                self.log.error("EVENTVIRTUALMACHINE: Exception while running on_domain_event for vm %s: %s" % (dom.UUIDString(), str(ex)))
 
     ### XMPP Processing
 
@@ -935,7 +938,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = iq.buildReply("result")
             nodes = []
             managed_vm_uuids = []
-            not_managed_vm_uuids = []
             for uuid, vm in self.virtualmachines.iteritems():
                 n = xmpp.Node("item", attrs={"managed": "True", "name": vm.name})
                 n.addData(vm.jid.getStripped())
