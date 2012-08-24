@@ -308,19 +308,23 @@ class TNVMParking (TNArchipelPlugin):
         @type vm_informations: list
         @param vm_informations: list of dict like {"uuid": x, "status": y, "parker": z)}
         """
-        ## first check that everything is allright
+        vm_informations_cleaned = []
         for vm_info in vm_informations:
             if self.is_vm_parked(vm_info["uuid"]):
-                raise Exception("VM with UUID %s is already parked" % vm_info["uuid"])
+                self.entity.log.error("VMPARKING: VM with UUID %s is already parked" % vm_info["uuid"])
+                continue
 
             vm = self.entity.get_vm_by_uuid(vm_info["uuid"])
             if not vm:
-                raise Exception("No virtual machine with UUID %s" % vm_info["uuid"])
+                self.entity.log.error("VMPARKING: No virtual machine with UUID %s" % vm_info["uuid"])
+                continue
             if not vm.domain:
-                raise Exception("VM with UUID %s cannot be parked because it is not defined" % vm_info["uuid"])
+                self.entity.log.error("VMPARKING: VM with UUID %s cannot be parked because it is not defined" % vm_info["uuid"])
+                continue
+            vm_informations_cleaned.append(vm_info)
 
         # Now, perform operations
-        for vm_info in vm_informations:
+        for vm_info in vm_informations_cleaned:
             vm = self.entity.get_vm_by_uuid(vm_info["uuid"])
             if not vm.info()["state"] == 5:
                 vm.destroy()
@@ -336,13 +340,16 @@ class TNVMParking (TNArchipelPlugin):
         @type vm_informations: list
         @param vm_informations: list of dict like {"uuid": x, "status": y, "start": True|False, "parker": z}
         """
-        # First, check if everything is correct
+        vm_informations_cleaned = []
+        # First, check if everything is correct and cleanup bad items
         for vm_info in vm_informations:
-            if not self.is_vm_parked(vm_info["uuid"]):
-                raise Exception("There is no virtual machine parked with uuid %s" % vm_info["uuid"])
+            if self.is_vm_parked(vm_info["uuid"]):
+                vm_informations_cleaned.append(vm_info)
+            else:
+                self.entity.log.error("VMPARKING: There is no virtual machine parked with uuid %s" % vm_info["uuid"])
 
         # Now, perform operations
-        for vm_info in vm_informations:
+        for vm_info in vm_informations_cleaned:
             vm_item = self.get_vm_by_uuid_from_db(vm_info["uuid"])
             domain = vm_item["domain"]
             ret = str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
