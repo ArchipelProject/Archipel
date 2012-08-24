@@ -44,6 +44,7 @@ ARCHIPEL_NS_VM_VMPARKING = "archipel:vm:vmparking"
 
 ARCHIPEL_PARKING_STATUS_NOT_PARKED = 0
 ARCHIPEL_PARKING_STATUS_PARKED = 1
+ARCHIPEL_PARKING_STATUS_STATE_CHANGING = 2
 
 class TNVMParking (TNArchipelPlugin):
 
@@ -165,7 +166,6 @@ class TNVMParking (TNArchipelPlugin):
         self.database.row_factory = sqlite3.Row
         self.database.execute("create table if not exists parking (uuid text unique, parker string, creation_date date, domain string, status int)")
         self.database.commit()
-        self.cursor = self.database.cursor()
 
     def register_vms_into_db(self, vm_informations):
         """
@@ -173,7 +173,7 @@ class TNVMParking (TNArchipelPlugin):
         @type vm_informations: list
         @param vm_informations: list of dict containing {"uuid": x, "parker": y, "creation_date": z, "status": s}
         """
-        self.cursor.executemany("insert into parking values(:uuid, :parker, :creation_date, :domain, :status)",  vm_informations)
+        self.database.executemany("insert into parking values(:uuid, :parker, :creation_date, :domain, :status)",  vm_informations)
         self.database.commit()
 
     def unregister_vms_from_db(self, vms_uuid):
@@ -182,7 +182,7 @@ class TNVMParking (TNArchipelPlugin):
         @type vm_informations: list
         @param vm_informations: list of dict containing {"uuid": x}
         """
-        self.cursor.executemany("delete from parking where uuid=:uuid", vms_uuid)
+        self.database.executemany("delete from parking where uuid=:uuid", vms_uuid)
         self.database.commit()
 
     def is_vm_registered(self, uuid):
@@ -193,8 +193,8 @@ class TNVMParking (TNArchipelPlugin):
         @rtype: Boolean
         @return: True is vm is already in park
         """
-        self.cursor.execute("select uuid from parking where uuid=?", (uuid,))
-        n = self.cursor.fetchone()
+        rows = self.database.execute("select uuid from parking where uuid=?", (uuid,))
+        n = rows.fetchone()
         if n and n[0] > 1:
             return True
         return False
@@ -207,8 +207,8 @@ class TNVMParking (TNArchipelPlugin):
         @rtype: Boolean
         @return: True is vm is already in park
         """
-        self.cursor.execute("select uuid from parking where uuid=? and status=?", (uuid, ARCHIPEL_PARKING_STATUS_PARKED))
-        n = self.cursor.fetchone()
+        rows = self.database.execute("select uuid from parking where uuid=? and status=?", (uuid, ARCHIPEL_PARKING_STATUS_PARKED))
+        n = rows.fetchone()
         if n and n[0] > 1:
             return True
         return False
@@ -221,8 +221,10 @@ class TNVMParking (TNArchipelPlugin):
         @rtype: dict
         @return: dict like {"uuid": x, "parker": y, "date": z, "status": s, "domain": d}
         """
-        self.cursor.execute("select * from parking where uuid=?", (uuid,))
-        row = self.cursor.fetchone()
+        rows = self.database.execute("select * from parking where uuid=?", (uuid,))
+        if not rows:
+            return None
+        row = rows.fetchone()
         return {"uuid": row[0], "parker": row[1], "date": row[2], "status": row[4], "domain": xmpp.simplexml.NodeBuilder(data=row[3]).getDom()}
 
     def get_all_vms_from_db(self):
@@ -231,9 +233,9 @@ class TNVMParking (TNArchipelPlugin):
         @rtype: list
         @return: list containing dict like {"uuid": x, "parker": y, "date": z, "status": s, "domain": d}
         """
-        self.cursor.execute("select * from parking where status=?", (ARCHIPEL_PARKING_STATUS_PARKED,))
+        rows = self.database.execute("select * from parking where status=?", (ARCHIPEL_PARKING_STATUS_PARKED,))
         ret = []
-        for row in self.cursor.fetchall():
+        for row in rows:
             ret.append({"uuid": row[0], "parker": row[1], "date": row[2], "status": row[4], "domain": xmpp.simplexml.NodeBuilder(data=row[3]).getDom()})
         return ret
 
@@ -243,7 +245,7 @@ class TNVMParking (TNArchipelPlugin):
         @type uuid: string
         @param uuid: the UUID of the parked VM to update
         """
-        self.cursor.execute("update parking set domain=? where uuid=?", (str(new_domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', ''), uuid))
+        self.database.execute("update parking set domain=? where uuid=?", (str(new_domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', ''), uuid))
         self.database.commit()
 
     def set_vms_status(self, vm_informations):
@@ -252,7 +254,7 @@ class TNVMParking (TNArchipelPlugin):
         @type vm_informations: list
         @param vm_informations: list of dict containing {"uuid": x, "parker": y, "status": z}
         """
-        self.cursor.executemany("update parking set status=:status, parker=:parker where uuid=:uuid", vm_informations)
+        self.database.executemany("update parking set status=:status, parker=:parker where uuid=:uuid", vm_informations)
         self.database.commit()
 
 
@@ -317,25 +319,16 @@ class TNVMParking (TNArchipelPlugin):
             if not vm.domain:
                 raise Exception("VM with UUID %s cannot be parked because it is not defined" % vm_info["uuid"])
 
-        # Update DB and push
-        self.set_vms_status(vm_informations)
-        self.entity.push_change("vmparking", "parked")
-
         # Now, perform operations
         for vm_info in vm_informations:
-            try:
-                vm = self.entity.get_vm_by_uuid(vm_info["uuid"])
-                if not vm.info()["state"] == 5:
-                    vm.destroy()
-                domain = vm.xmldesc(mask_description=False)
-                vm_jid = xmpp.JID(domain.getTag("description").getData().split("::::")[0])
-                self.entity.soft_free(vm_jid)
-            except Exception as ex:
-                # reput the VM as not parked
-                vm_info["status"] = ARCHIPEL_PARKING_STATUS_NOT_PARKED
-                self.set_vms_status([vm_info])
-                self.entity.push_change("vmparking", "unparked")
-                self.entity.log.error("VMPARKING: Unable to park VM %s: %s" % (vm_info["uuid"], str(ex)))
+            vm = self.entity.get_vm_by_uuid(vm_info["uuid"])
+            if not vm.info()["state"] == 5:
+                vm.destroy()
+            domain = vm.xmldesc(mask_description=False)
+            vm_jid = xmpp.JID(domain.getTag("description").getData().split("::::")[0])
+            self.set_vms_status([vm_info])
+            self.entity.soft_free(vm_jid)
+        self.entity.push_change("vmparking", "parked")
 
     def unpark(self, vm_informations):
         """
@@ -348,33 +341,24 @@ class TNVMParking (TNArchipelPlugin):
             if not self.is_vm_parked(vm_info["uuid"]):
                 raise Exception("There is no virtual machine parked with uuid %s" % vm_info["uuid"])
 
-        # Update DB and push
-        self.set_vms_status(vm_informations)
-        self.entity.push_change("vmparking", "unparked")
-
         # Now, perform operations
         for vm_info in vm_informations:
-            try:
-                vm_item = self.get_vm_by_uuid_from_db(vm_info["uuid"])
-                domain = vm_item["domain"]
-                ret = str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
-                domain = xmpp.simplexml.NodeBuilder(data=ret).getDom()
-                vmjid = domain.getTag("description").getData().split("::::")[0]
-                vmpass = domain.getTag("description").getData().split("::::")[1]
-                vmname = domain.getTag("name").getData()
-                vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False, organizationInfo=self.entity.vcard_infos)
-                vm = vm_thread.get_instance()
-                vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
-                if vm_info["start"]:
-                    vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.control_create_hook, oneshot=True)
-                vm_thread.start()
-            except Exception as ex:
-                # reput the VM as parked
-                vm_info["status"] = ARCHIPEL_PARKING_STATUS_PARKED
-                self.set_vms_status([vm_info])
-                self.entity.push_change("vmparking", "parked")
-                self.entity.log.error("VMPARKING: Unable to unpark VM %s: %s" % (vm_info["uuid"], str(ex)))
+            vm_item = self.get_vm_by_uuid_from_db(vm_info["uuid"])
+            domain = vm_item["domain"]
+            ret = str(domain).replace('xmlns=\"archipel:hypervisor:vmparking\"', '')
+            domain = xmpp.simplexml.NodeBuilder(data=ret).getDom()
+            vmjid = domain.getTag("description").getData().split("::::")[0]
+            vmpass = domain.getTag("description").getData().split("::::")[1]
+            vmname = domain.getTag("name").getData()
+            vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False, organizationInfo=self.entity.vcard_infos)
+            vm = vm_thread.get_instance()
+            vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
+            if vm_info["start"]:
+                vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.control_create_hook, oneshot=True)
+            vm_thread.start()
+            self.set_vms_status([vm_info])
 
+        self.entity.push_change("vmparking", "unparked")
         self.entity.log.info("VMPARKING: successfully unparked %s" % str(vmjid))
 
     def delete(self, vm_uuids):
@@ -397,12 +381,9 @@ class TNVMParking (TNArchipelPlugin):
 
         # Then perfom cleanup operations
         for vm_jid in vm_jids:
-            try:
-                vmfolder = "%s/%s" % (self.configuration.get("VIRTUALMACHINE", "vm_base_path"), vm_jid.getNode())
-                if os.path.exists(vmfolder):
-                    shutil.rmtree(vmfolder)
-            except Exception as ex:
-                raise Exception("Critical error during parking deletion. Parking DB may be corrupted now: %s" % str(ex))
+            vmfolder = "%s/%s" % (self.configuration.get("VIRTUALMACHINE", "vm_base_path"), vm_jid.getNode())
+            if os.path.exists(vmfolder):
+                shutil.rmtree(vmfolder)
 
         # And remove the XMPP account
         self.entity.get_plugin("xmppserver").users_unregister(vm_jids)
