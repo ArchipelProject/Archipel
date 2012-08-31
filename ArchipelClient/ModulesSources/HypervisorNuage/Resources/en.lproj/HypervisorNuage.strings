@@ -1,0 +1,220 @@
+
+/* Class = "NSTextFieldCell"; title = "You can manage the hypervisor's network."; ObjectID = "9"; */
+"9.title" = "You can manage the hypervisor's network.";
+
+/* Class = "NSTextFieldCell"; title = "Manage hypervisor networks"; ObjectID = "10"; */
+"10.title" = "Manage hypervisor networks";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
+"19.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "Network basics"; ObjectID = "21"; */
+"21.title" = "Network basics";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Name of the network"; ObjectID = "23"; */
+"23.placeholderString" = "Name of the network";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "34"; */
+"34.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "36"; */
+"36.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "37"; */
+"37.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Forward device:"; ObjectID = "39"; */
+"39.title" = "Forward device:";
+
+/* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
+"62.title" = "Bridge address:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "127.0.0.1"; ObjectID = "64"; */
+"64.placeholderString" = "auto";
+
+/* Class = "NSTextFieldCell"; placeholderString = "255.255.0.0"; ObjectID = "67"; */
+"67.placeholderString" = "auto";
+
+/* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
+"68.title" = "Netmask:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "72"; */
+"72.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Save"; ObjectID = "74"; */
+"74.title" = "Save";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "76"; */
+"76.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Network name"; ObjectID = "206"; */
+"206.title" = "Network name";
+
+/* Class = "NSTextFieldCell"; title = "Name: "; ObjectID = "210"; */
+"210.title" = "Name: ";
+
+/* Class = "NSTextFieldCell"; title = "name"; ObjectID = "212"; */
+"212.title" = "name";
+
+/* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "215"; */
+"215.title" = "x.x.x.x";
+
+/* Class = "NSTextFieldCell"; title = "Device:"; ObjectID = "216"; */
+"216.title" = "Device:";
+
+/* Class = "NSTextFieldCell"; title = "IP:"; ObjectID = "232"; */
+"232.title" = "IP:";
+
+/* Class = "NSTextFieldCell"; title = "device"; ObjectID = "238"; */
+"238.title" = "device";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "317"; */
+"317.title" = "Text Cell";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "436"; */
+"436.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "IP configuration"; ObjectID = "456"; */
+"456.title" = "IP configuration";
+
+/* Class = "NSTextFieldCell"; title = "General informations"; ObjectID = "458"; */
+"458.title" = "General informations";
+
+/* Class = "NSTextFieldCell"; title = "Quality of service"; ObjectID = "464"; */
+"464.title" = "Quality of service";
+
+/* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "578"; */
+"578.title" = "Burst";
+
+/* Class = "NSTextFieldCell"; title = "Peak"; ObjectID = "579"; */
+"579.title" = "Peak";
+
+/* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "580"; */
+"580.title" = "Average";
+
+/* Class = "NSTextFieldCell"; title = "Outbound:"; ObjectID = "581"; */
+"581.title" = "Outbound:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "582"; */
+"582.placeholderString" = "100";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1500"; ObjectID = "583"; */
+"583.placeholderString" = "1500";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1000"; ObjectID = "584"; */
+"584.placeholderString" = "1000";
+
+/* Class = "NSTextFieldCell"; title = "Message"; ObjectID = "602"; */
+"602.title" = "Message";
+
+/* Class = "NSTextFieldCell"; title = "In limit:"; ObjectID = "615"; */
+"615.title" = "In limit:";
+
+/* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "616"; */
+"616.title" = "1000/1000/1000";
+
+/* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "617"; */
+"617.title" = "1000/1000/1000";
+
+/* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "618"; */
+"618.title" = "Out limit:";
+
+/* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "633"; */
+"633.title" = "Burst";
+
+/* Class = "NSTextFieldCell"; title = "Peak"; ObjectID = "634"; */
+"634.title" = "Peak";
+
+/* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "635"; */
+"635.title" = "Average";
+
+/* Class = "NSTextFieldCell"; title = "Inbound:"; ObjectID = "636"; */
+"636.title" = "Inbound:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "637"; */
+"637.placeholderString" = "100";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1500"; ObjectID = "638"; */
+"638.placeholderString" = "1500";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1000"; ObjectID = "639"; */
+"639.placeholderString" = "1000";
+
+/* Class = "NSTextFieldCell"; title = "Network XML"; ObjectID = "652"; */
+"652.title" = "Network XML";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "654"; */
+"654.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "657"; */
+"657.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Define"; ObjectID = "658"; */
+"658.title" = "Define";
+
+/* Class = "NSTextFieldCell"; title = "Manual edition of a network can be dangerous. Use with caution."; ObjectID = "672"; */
+"672.title" = "Manual edition of a network can be dangerous. Use with caution.";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "704"; */
+"704.title" = "Type:";
+
+/* Class = "NSTextFieldCell"; title = "IPV4"; ObjectID = "705"; */
+"705.title" = "IPV4";
+
+/* Class = "NSTextFieldCell"; placeholderString = "10.42.0.1"; ObjectID = "712"; */
+"712.placeholderString" = "auto";
+
+/* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "713"; */
+"713.title" = "Gateway:";
+
+/* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "745"; */
+"745.title" = "Domain";
+
+/* Class = "NSTextFieldCell"; title = "Domain Name"; ObjectID = "746"; */
+"746.title" = "Domain Name";
+
+/* Class = "NSTextFieldCell"; title = "Zone"; ObjectID = "747"; */
+"747.title" = "Zone";
+
+/* Class = "NSTextFieldCell"; title = "Zone name"; ObjectID = "748"; */
+"748.title" = "Zone name";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Enterprise Domain"; ObjectID = "753"; */
+"753.placeholderString" = "Enterprise Domain";
+
+/* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "754"; */
+"754.title" = "Domain:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Public Zone"; ObjectID = "757"; */
+"757.placeholderString" = "Public Zone";
+
+/* Class = "NSTextFieldCell"; title = "Zone:"; ObjectID = "758"; */
+"758.title" = "Zone:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "http://cna.com/cna-rest/rest/CloudMgmt/"; ObjectID = "772"; */
+"772.placeholderString" = "http://cna.com/cna-rest/rest/CloudMgmt/";
+
+/* Class = "NSTextFieldCell"; placeholderString = "joesmith"; ObjectID = "773"; */
+"773.placeholderString" = "joesmith";
+
+/* Class = "NSTextFieldCell"; title = "Nuage Preferences"; ObjectID = "775"; */
+"775.title" = "Nuage Preferences";
+
+/* Class = "NSTextFieldCell"; title = "You can configure preferences for the Nuage module."; ObjectID = "776"; */
+"776.title" = "You can configure preferences for the Nuage module.";
+
+/* Class = "NSTextFieldCell"; title = "CNA Base URL:"; ObjectID = "777"; */
+"777.title" = "CNA Base URL:";
+
+/* Class = "NSTextFieldCell"; title = "User name:"; ObjectID = "778"; */
+"778.title" = "User name:";
+
+/* Class = "NSTextFieldCell"; title = "API Token:"; ObjectID = "779"; */
+"779.title" = "API Token:";
+
+/* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "780"; */
+"780.title" = "Company:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Alcatel-Lucent"; ObjectID = "785"; */
+"785.placeholderString" = "Alcatel-Lucent";
+

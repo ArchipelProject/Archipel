@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Are you sure you want to destroy this Nuage network ?</key>
+	<string>Are you sure you want to destroy this Nuage network ?</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Create a new Nuage network</key>
+	<string>Create a new Nuage network</string>
+	<key>Create new Nuage network</key>
+	<string>Create new Nuage network</string>
+	<key>Delete</key>
+	<string>Delete</string>
+	<key>Delete Nuage Network</key>
+	<string>Delete Nuage Network</string>
+	<key>Delete selected Nuage network</key>
+	<string>Delete selected Nuage network</string>
+	<key>Delete selected Nuage networks</key>
+	<string>Delete selected Nuage networks</string>
+	<key>Edit selected Nuage network</key>
+	<string>Edit selected Nuage network</string>
+	<key>Enter the name of the Nuage network</key>
+	<string>Enter the name of the Nuage network</string>
+	<key>Nuage Network has been defined</key>
+	<string>Nuage Network has been defined</string>
+	<key>Nuage Network has been removed</key>
+	<string>Nuage Network has been removed</string>
+	<key>Nuage Network has been updated</key>
+	<string>Nuage Network has been updated</string>
+	<key>Open configuration panel for selected Nuage network</key>
+	<string>Open configuration panel for selected Nuage network</string>
+	<key>Select the Nuage Network type</key>
+	<string>Select the Nuage Network type</string>
+	<key>The IP address to the Nuage network</key>
+	<string>The IP address to the Nuage network</string>
+	<key>The gateway to use for Nuage network</key>
+	<string>The gateway to use for Nuage network</string>
+	<key>The netmask to use for Nuage network</key>
+	<string>The netmask to use for Nuage network</string>
+	<key>The network domain</key>
+	<string>The network domain</string>
+	<key>The network zone</key>
+	<string>The network zone</string>
+</dict>
+</plist>

@@ -1,0 +1,60 @@
+/* Are you sure you want to destroy this Nuage network ? */
+"Are you sure you want to destroy this Nuage network ?" = "Are you sure you want to destroy this Nuage network ?";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Create a new Nuage network */
+"Create a new Nuage network" = "Create a new Nuage network";
+
+/* Create new Nuage network */
+"Create new Nuage network" = "Create new Nuage network";
+
+/* Delete */
+"Delete" = "Delete";
+
+/* Delete Nuage Network */
+"Delete Nuage Network" = "Delete Nuage Network";
+
+/* Delete selected Nuage network */
+"Delete selected Nuage network" = "Delete selected Nuage network";
+
+/* Delete selected Nuage networks */
+"Delete selected Nuage networks" = "Delete selected Nuage networks";
+
+/* Edit selected Nuage network */
+"Edit selected Nuage network" = "Edit selected Nuage network";
+
+/* Enter the name of the Nuage network */
+"Enter the name of the Nuage network" = "Enter the name of the Nuage network";
+
+/* Nuage Network has been defined */
+"Nuage Network has been defined" = "Nuage Network has been defined";
+
+/* Nuage Network has been removed */
+"Nuage Network has been removed" = "Nuage Network has been removed";
+
+/* Nuage Network has been updated */
+"Nuage Network has been updated" = "Nuage Network has been updated";
+
+/* Open configuration panel for selected Nuage network */
+"Open configuration panel for selected Nuage network" = "Open configuration panel for selected Nuage network";
+
+/* Select the Nuage Network type */
+"Select the Nuage Network type" = "Select the Nuage Network type";
+
+/* The gateway to use for the Nuage network */
+"The gateway to use for Nuage network" = "The gateway to use for Nuage network";
+
+/* The IP address to the Nuage network */
+"The IP address to the Nuage network" = "The IP address to the Nuage network";
+
+/* The netmask to use for the Nuage network */
+"The netmask to use for Nuage network" = "The netmask to use for Nuage network";
+
+/* The network domain */
+"The network domain" = "The network domain";
+
+/* The network zone */
+"The network zone" = "The network zone";
+

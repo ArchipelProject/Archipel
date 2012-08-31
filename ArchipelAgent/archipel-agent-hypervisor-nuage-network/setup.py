@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
-import os
 
 VERSION             = '0.5.0'
 
@@ -24,20 +23,16 @@ AUTHOR              = 'Antoine Mercadal'
 MAIL                = 'antoine.mercadal@archipelproject.org'
 URL                 = 'http://archipelproject.org'
 LICENSE             = 'AGPL'
-NAME                = 'archipel-core'
-SHORTDESCRIPTION    = "Base framework of Archipel."
+NAME                = 'archipel-agent-hypervisor-nuage-network'
+SHORTDESCRIPTION    = "Manage libvirt networks"
 LONGDESCRIPTION     = ""
-ENTRY_POINTS        = {}
-
-RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy >= 0.6.6"
-
-# fix RPM generation on CentOS. Note your need the EPEL repo installed.
-if os.path.exists("/etc/rpm/macros.dist"):
-    f = open("/etc/rpm/macros.dist")
-    c = f.read()
-    f.close()
-    if "centos" in c:
-        RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy0.7"
+ENTRY_POINTS        = { 'archipel.plugin.hypervisor' : [
+                            'factory=archipelagenthypervisornuagenetwork:make_archipel_plugin'],
+                        'archipel.plugin.virtualmachine' : [
+                            'factory=archipelagenthypervisornuagenetwork:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagenthypervisornuagenetwork:version']}
+RPM_REQUIRED_DEPS   = "archipel-core"
 
 ## HACK FOR DEPS IN RPMS
 from setuptools.command.bdist_rpm import bdist_rpm
@@ -55,21 +50,21 @@ setup(name=NAME,
       description=SHORTDESCRIPTION,
       long_description=LONGDESCRIPTION,
       classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: No Input/Output (Daemon)',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Education',
-        'Intended Audience :: End Users/Desktop',
-        'Intended Audience :: Science/Research',
-        'Intended Audience :: System Administrators',
-        'Intended Audience :: Telecommunications Industry',
-        'License :: OSI Approved :: GNU Affero General Public License v3',
-        'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python',
-        'Topic :: Internet',
-        'Topic :: System :: Emulators',
-        'Topic :: System :: Operating System'],
+          'Development Status :: 4 - Beta',
+          'Environment :: Console',
+          'Environment :: No Input/Output (Daemon)',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Education',
+          'Intended Audience :: End Users/Desktop',
+          'Intended Audience :: Science/Research',
+          'Intended Audience :: System Administrators',
+          'Intended Audience :: Telecommunications Industry',
+          'License :: OSI Approved :: GNU Affero General Public License v3',
+          'Operating System :: POSIX :: Linux',
+          'Programming Language :: Python',
+          'Topic :: Internet',
+          'Topic :: System :: Emulators',
+          'Topic :: System :: Operating System'],
       keywords='archipel, virtualization, libvirt, orchestration',
       author=AUTHOR,
       author_email=MAIL,
@@ -79,7 +74,7 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "sqlalchemy>=0.6.6"
+          "archipel-core>=0.5.0beta"
       ],
-      entry_points=ENTRY_POINTS
+      entry_points=ENTRY_POINTS,
       )
