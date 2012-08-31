@@ -36,7 +36,7 @@ LABEL_WELCOME ="""\
 * If you encounter some errors during test, there are great chance that       *
 * Archipel won't work correctly. If so, please read carrefully :              *
 *                                                                             *
-* - https://github.com/primalmotion/Archipel/wiki/Preparing-Ejabberd          *
+* - https://github.com/ArchipelProject/Archipel/wiki/Installation-manual      *
 *                                                                             *
 * Copyright 2011 Antoine Mercadal                                             *
 *******************************************************************************
