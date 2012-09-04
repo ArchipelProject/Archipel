@@ -49,8 +49,7 @@ class TNOOMKiller (TNArchipelPlugin):
         self.database = sqlite3.connect(self.configuration.get("OOMKILLER", "database"), check_same_thread=False)
         self.database.execute("create table if not exists oomkiller (uuid text unique, adjust int)")
         self.database.commit()
-        self.cursor = self.database.cursor()
-        self.entity.log.info("module oom killer initialized")
+        self.entity.log.info("OOM: module oom killer initialized")
         # permissions
         self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False)
         self.entity.permission_center.create_permission("oom_setadjust", "Authorizes user to set OOM values", False)
@@ -100,9 +99,9 @@ class TNOOMKiller (TNArchipelPlugin):
         @param parameters: runtim argument
         """
         oom_info = self.get_oom_info()
-        self.entity.log.info("OOM value retrieved %s" % str(oom_info))
+        self.entity.log.info("OOM: value retrieved %s" % str(oom_info))
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
-        self.entity.log.info("OOM value for vm with uuid %s have been restored." % self.entity.uuid)
+        self.entity.log.info("OOM: value for vm with uuid %s have been restored." % self.entity.uuid)
 
     def vm_terminate(self, origin, user_info, parameters):
         """
@@ -114,11 +113,10 @@ class TNOOMKiller (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.cursor.execute("DELETE FROM oomkiller WHERE uuid=?", (self.entity.uuid, ))
+        self.database.execute("DELETE FROM oomkiller WHERE uuid=?", (self.entity.uuid, ))
         self.database.commit()
-        self.cursor.close()
         self.database.close()
-        self.entity.log.info("OOM information for vm with uuid %s has been removed." % self.entity.uuid)
+        self.entity.log.info("OOM: information for vm with uuid %s has been removed." % self.entity.uuid)
 
     def vm_initialized(self, origin, user_info, parameters):
         """
@@ -132,7 +130,7 @@ class TNOOMKiller (TNArchipelPlugin):
         """
         oom_info = self.get_oom_info()
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
-        self.entity.log.info("OOM information for vm with uuid %s have been removed." % self.entity.uuid)
+        self.entity.log.info("OOM: information for vm with uuid %s have been removed." % self.entity.uuid)
 
 
     ### OOM information management
@@ -145,8 +143,8 @@ class TNOOMKiller (TNArchipelPlugin):
         """
         adj_value = 0
         score_value = 0
-        self.cursor.execute("SELECT adjust FROM oomkiller WHERE uuid=?", (self.entity.uuid, ))
-        for values in self.cursor:
+        rows = self.database.execute("SELECT adjust FROM oomkiller WHERE uuid=?", (self.entity.uuid, ))
+        for values in rows:
             adj_value = values[0]
             score_value = 0
         return {"adjust": adj_value, "score": score_value}
@@ -165,12 +163,16 @@ class TNOOMKiller (TNArchipelPlugin):
             f.write(str(adjust))
             f.close()
         except Exception as ex:
-            self.entity.log.warning("No valid PID. storing value only on database: " + str(ex))
+            self.entity.log.warning("OOM: No valid PID. storing value only on database: " + str(ex))
         try:
-            self.cursor.execute("INSERT INTO oomkiller VALUES (?, ?)", (self.entity.uuid, int(adjust), ))
+            self.database.execute("INSERT INTO oomkiller VALUES (?, ?)", (self.entity.uuid, int(adjust)))
         except:
-            self.cursor.execute("UPDATE oomkiller SET adjust=? WHERE uuid=?", (int(adjust), self.entity.uuid, ))
-        self.database.commit()
+            self.database.execute("UPDATE oomkiller SET adjust=? WHERE uuid=?", (int(adjust), self.entity.uuid))
+        try:
+            self.database.commit()
+        except Exception as ex:
+            self.entity.log.warning("OOM: Unable to commit change in DB while setting OOM: " + str(ex))
+
 
 
     ### XMPP handlers
