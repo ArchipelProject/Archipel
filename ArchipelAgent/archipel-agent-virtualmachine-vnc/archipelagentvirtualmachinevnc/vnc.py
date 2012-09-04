@@ -134,7 +134,7 @@ class TNArchipelVNC (TNArchipelPlugin):
             self.entity.log.warning("Aborting the VNC proxy creation because the proxy is already active")
 
         if not self.entity.hypervisor.is_hypervisor((archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
-            self.entity.log.warning("Aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
+            self.entity.log.warning("Aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.hypervisor.libvirt_connection.getType())
             return
         infos = self.display()
         if not infos:
