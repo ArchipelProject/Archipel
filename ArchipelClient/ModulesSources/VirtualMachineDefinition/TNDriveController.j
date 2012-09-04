@@ -153,7 +153,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTypeBlock:
             [[_drive source] setDevice:[fieldDevicePath stringValue]];
             [[_drive source] setFile:nil];
-            [[_drive source] setHost:nil];
+            [[_drive source] setHosts:nil];
             [[_drive source] setProtocol:nil];
             [[_drive source] setName:nil];
             break;
@@ -178,7 +178,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         case TNLibvirtDeviceDiskTypeFile:
             [[_drive source] setFile:[[buttonSourcePath selectedItem] stringValue]];
             [[_drive source] setDevice:nil];
-            [[_drive source] setHost:nil];
+            [[_drive source] setHosts:nil];
             [[_drive source] setProtocol:nil];
             [[_drive source] setName:nil];
             break;
