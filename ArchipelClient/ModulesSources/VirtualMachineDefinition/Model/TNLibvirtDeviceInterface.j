@@ -24,6 +24,7 @@
 @import "TNLibvirtDeviceInterfaceFilterRef.j"
 @import "TNLibvirtDeviceInterfaceSource.j"
 @import "TNLibvirtDeviceInterfaceTarget.j"
+@import "TNLibvirtDeviceInterfaceVirtualPort.j"
 
 
 TNLibvirtDeviceInterfaceModelNE2KISA    = @"ne2k_isa";
@@ -71,6 +72,7 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     TNLibvirtDeviceInterfaceFilterRef   _filterref          @accessors(property=filterref);
     TNLibvirtDeviceInterfaceSource      _source             @accessors(property=source);
     TNLibvirtDeviceInterfaceTarget      _target             @accessors(property=target);
+    TNLibvirtDeviceInterfaceVirtualPort _virtualPort        @accessors(property=virtualPort);
 }
 
 
@@ -112,6 +114,9 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
         _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] initWithXMLNode:[aNode firstChildWithName:@"filterref"]];
         _source     = [[TNLibvirtDeviceInterfaceSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         _target     = [[TNLibvirtDeviceInterfaceTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
+
+        if ([aNode containsChildrenWithName:@"virtualport"])
+            _virtualPort = [[TNLibvirtDeviceInterfaceVirtualPort alloc] initWithXMLNode:[aNode firstChildWithName:@"virtualport"]];
     }
 
     return self;
@@ -169,6 +174,11 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     if (_nuageNetworkName)
     {
         [node setValue:_nuageNetworkName forAttribute:@"nuage_network_name"];
+    }
+    if (_virtualPort)
+    {
+        [node addNode:[_virtualPort XMLNode]];
+        [node up];
     }
 
     return node;
