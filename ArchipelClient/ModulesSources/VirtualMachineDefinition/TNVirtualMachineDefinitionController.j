@@ -1035,7 +1035,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     // strips Tables devices if using XEN
     if ([[domains firstObject] valueForAttribute:@"type"] == TNLibvirtDomainTypeXen)
     {
-        alert("OUAIS")
         var tablets = [];
         for (var i = 0; i < [[[_libvirtDomain devices] inputs] count]; i++)
         {
