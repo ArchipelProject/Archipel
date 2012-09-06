@@ -1329,6 +1329,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![_libvirtDomain devices])
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
+    if ([[[_libvirtDomain devices] graphics] count] != 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"You can only set one graphic device", @"You can only set one graphic device")];
+
+        return;
+    }
+
     [graphicDeviceController setGraphicDevice:graphicDevice];
     [graphicDeviceController openWindow:aSender];
 }
