@@ -28,7 +28,6 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "TNInstalledAppliancesObject.j";

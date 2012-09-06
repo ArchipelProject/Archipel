@@ -23,7 +23,6 @@
 @import <AppKit/CPWindow.j>
 @import <AppKit/CPTableView.j>
 
-@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 

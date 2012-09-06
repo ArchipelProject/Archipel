@@ -22,8 +22,6 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 
-@import <TNKit/TNAttachedWindow.j>
-
 
 /*! @ingroup virtualmachinedefinition
     this is the virtual graphic editor
