@@ -37,6 +37,9 @@
 /* Virtual Nics */
 "Virtual Nics" = "Virtual Nics";
 
+/* You can only set one graphic device */
+"You can only set one graphic device" = "You can only set one graphic device";
+
 /* You have made some changes in the virtual machine definition. Would you like save these changes? */
 "You have made some changes in the virtual machine definition. Would you like save these changes?" = "You have made some changes in the virtual machine definition. Would you like save these changes?";
 
