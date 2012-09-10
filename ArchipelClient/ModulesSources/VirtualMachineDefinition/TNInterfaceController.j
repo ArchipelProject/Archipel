@@ -22,8 +22,6 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 
-@import <TNKit/TNAttachedWindow.j>
-
 var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:network",
     TNArchipelTypeHypervisorNuageNetwork            = @"archipel:hypervisor:nuage:network",
     TNArchipelTypeHypervisorNetworkGetNames         = @"getnames",

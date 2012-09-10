@@ -1443,12 +1443,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     @param aNotification the received notification
 */
-- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+- (void)outlineViewItemDidExpand:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
+    [_rosterOutlineView getVCardsForVisibleEntitiesIfNeeded];
     [[defaults objectForKey:@"TNOutlineViewsExpandedGroups"] setObject:@"expanded" forKey:key];
 }
 
@@ -1457,7 +1458,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     @param aNotification the received notification
 */
-- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+- (void)outlineViewItemDidCollapse:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
         defaults    = [CPUserDefaults standardUserDefaults],

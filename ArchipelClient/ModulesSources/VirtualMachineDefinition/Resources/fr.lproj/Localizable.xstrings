@@ -28,6 +28,8 @@
 	<string>Virtual Nics</string>
 	<key>Virtual machine has been undefined</key>
 	<string>Virtual machine has been undefined</string>
+	<key>You can only set one graphic device</key>
+	<string>You can only set one graphic device</string>
 	<key>You have made some changes in the virtual machine definition. Would you like save these changes?</key>
 	<string>You have made some changes in the virtual machine definition. Would you like save these changes?</string>
 	<key>You must select a drive</key>
