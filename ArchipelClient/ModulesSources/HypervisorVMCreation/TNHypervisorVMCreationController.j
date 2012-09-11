@@ -124,6 +124,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tabViewVMs addTabViewItem:tabViewItemManagedVM];
     [tabViewVMs addTabViewItem:tabViewItemNotManagedVM];
     [tabViewVMs addTabViewItem:tabViewItemParkedVM];
+    [tabViewVMs setDelegate:self];
 
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
@@ -282,8 +283,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setDelegate:nil];
     [tableVirtualMachinesParked setDelegate:self];
 
-    [self populateVirtualMachinesTable];
-    [VMParkingController listParkedVirtualMachines];
+    // simulate a tab change
+    [self tabView:tabViewVMs didSelectTabViewItem:[tabViewVMs selectedTabViewItem]];
 
     return YES;
 }
@@ -424,9 +425,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             break;
 
         default:
-            [self populateVirtualMachinesTable];
+            if ([[tabViewVMs selectedTabViewItem] identifier] != @"tabViewItemParkedVM")
+                [self populateVirtualMachinesTable];
     }
-    [VMParkingController listParkedVirtualMachines];
+
+    if ([[tabViewVMs selectedTabViewItem] identifier] == @"tabViewItemParkedVM")
+        [VMParkingController listParkedVirtualMachines];
 
     return YES;
 }
@@ -437,7 +441,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)_reload:(CPNotification)aNotification
 {
     if ([_entity XMPPShow] != TNStropheContactStatusOffline)
-        [self populateVirtualMachinesTable];
+        if ([[tabViewVMs selectedTabViewItem] identifier] != @"tabViewItemParkedVM")
+            [self populateVirtualMachinesTable];
 }
 
 /*! reload the content of the table when a roster push is received
@@ -445,7 +450,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)populateVirtualMachinesTable:(CPNotification)aNotification
 {
-    [self populateVirtualMachinesTable];
+    if ([[tabViewVMs selectedTabViewItem] identifier] != @"tabViewItemParkedVM")
+        [self populateVirtualMachinesTable];
 }
 
 /*! reoload the table when a VM change it's status
@@ -942,6 +948,30 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)performRemoveFromRoster:(id)someUserInfo
 {
     [[[TNStropheIMClient defaultClient] roster] removeContact:someUserInfo];
+}
+
+
+#pragma mark -
+#pragma mark Delegates
+
+- (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    var tabViewItemManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemManagedVM"],
+        tabViewItemNotManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemNotManagedVM"],
+        tabViewItemParkedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemParkedVM"];
+
+
+    switch ([anItem identifier])
+    {
+        case @"tabViewItemManagedVM":
+        case @"tabViewItemNotManagedVM":
+            [self populateVirtualMachinesTable];
+            break;
+
+        case @"tabViewItemParkedVM":
+            [VMParkingController listParkedVirtualMachines];
+            break;
+    }
 }
 
 @end
