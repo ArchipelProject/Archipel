@@ -46,8 +46,11 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     @outlet TNXMPPSharedGroupsController    sharedGroupsController;
     @outlet TNXMPPUsersController           usersController;
 
-    BOOL        _pushRegistred;
-    CPImage     _defaultAvatar;
+    BOOL                                    _pushRegistred;
+    CPImage                                 _defaultAvatar;
+    CPTabViewItem                           _itemViewGroups;
+    CPTabViewItem                           _itemViewUser;
+
 }
 
 #pragma mark -
@@ -57,7 +60,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)awakeFromCib
 {
-
     var bundle = [CPBundle bundleForClass:[self class]],
         defaults = [CPUserDefaults standardUserDefaults];
 
@@ -68,25 +70,20 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     _defaultAvatar  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 
-    var itemViewUsers   = [[CPTabViewItem alloc] init],
-        itemViewGroups  = [[CPTabViewItem alloc] init];
+    _itemViewUsers   = [[CPTabViewItem alloc] initWithIdentifier:@"itemUsers"],
+    _itemViewGroups  = [[CPTabViewItem alloc] initWithIdentifier:@"itemGroups"];
 
-    [itemViewUsers setLabel:CPBundleLocalizedString(@"XMPP Users", @"XMPP Users")];
-    [itemViewUsers setView:[usersController mainView]];
+    [_itemViewUsers setLabel:CPBundleLocalizedString(@"XMPP Users", @"XMPP Users")];
+    [_itemViewUsers setView:[usersController mainView]];
 
-    [itemViewGroups setLabel:CPBundleLocalizedString(@"Shared Groups", @"Shared Groups")];
-    [itemViewGroups setView:[sharedGroupsController mainView]];
+    [_itemViewGroups setLabel:CPBundleLocalizedString(@"Shared Groups", @"Shared Groups")];
+    [_itemViewGroups setView:[sharedGroupsController mainView]];
 
-    [tabViewMain addTabViewItem:itemViewUsers];
-
-    if ([defaults integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-    {
-        [tabViewMain addTabViewItem:itemViewGroups];
-        [sharedGroupsController setDelegate:self];
-        [sharedGroupsController setUsersController:usersController];
-    }
+    [self manageToolbarItems];
 
     [usersController setDelegate:self];
+    [sharedGroupsController setDelegate:self];
+    [sharedGroupsController setUsersController:usersController];
 
     _pushRegistred = NO;
 
@@ -116,14 +113,8 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
         _pushRegistred = YES;
     }
 
-    [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [usersController reload];
-
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-    {
-        [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-        [sharedGroupsController reload];
-    }
+    // simulate tab view item change
+    [self tabView:tabViewMain didSelectTabViewItem:[tabViewMain selectedTabViewItem]];
 
     return YES;
 }
@@ -169,6 +160,8 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setBool:([checkBoxPreferencesUseSRG state] == CPOnState) forKey:@"TNArchipelUseEjabberdSharedRosterGroups"];
+
+    [self manageToolbarItems];
 }
 
 /*! called when user gets preferences
@@ -207,6 +200,27 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
 #pragma mark -
 #pragma mark Utilities
+
+- (void)manageToolbarItems
+{
+    [tabViewMain setDelegate:nil];
+
+    if (![[tabViewMain tabViewItems] containsObject:_itemViewUsers])
+        [tabViewMain addTabViewItem:_itemViewUsers];
+
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+    {
+        if (![[tabViewMain tabViewItems] containsObject:_itemViewGroups])
+            [tabViewMain addTabViewItem:_itemViewGroups];
+    }
+    else
+    {
+        [tabViewMain removeTabViewItem:_itemViewGroups];
+        [tabViewMain selectFirstTabViewItem:nil];
+    }
+
+    [tabViewMain setDelegate:self];
+}
 
 /*! populate the hypervisor pop up button according to roster
 */
@@ -267,6 +281,25 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [self permissionsChanged];
 }
 
+
+#pragma mark -
+#pragma mark Delegate
+
+- (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    switch ([anItem identifier])
+    {
+        case @"itemUsers":
+            [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+            [usersController reload];
+            break;
+
+        case @"itemGroups":
+            [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+            [sharedGroupsController reload];
+            break;
+    }
+}
 
 @end
 
