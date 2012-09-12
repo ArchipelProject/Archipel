@@ -50,6 +50,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
 @implementation TNLibvirtDomain : TNLibvirtBase
 {
     CPString                        _bootloader         @accessors(property=bootloader);
+    CPString                        _bootloaderArgs     @accessors(property=bootloaderArgs);
     CPString                        _description        @accessors(property=description);
     CPString                        _type               @accessors(property=type);
     CPString                        _name               @accessors(property=name);
@@ -113,7 +114,8 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         if ([aNode name] != @"domain")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid domain"];
 
-        _bootloader     = [[aNode firstChildWithName:@"bootloaded"] text];
+        _bootloader     = [[aNode firstChildWithName:@"bootloader"] text];
+        _bootloaderArgs = [[aNode firstChildWithName:@"bootloaderArgs"] text];
         _currentMemory  = [[[aNode firstChildWithName:@"currentMemory"] text] intValue];
         _description    = [[aNode firstChildWithName:@"description"] text];
         _type           = [aNode valueForAttribute:@"type"];
@@ -193,6 +195,12 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     {
         [node addChildWithName:@"bootloader"];
         [node addTextNode:_bootloader];
+        [node up];
+    }
+    if (_bootloaderArgs)
+    {
+        [node addChildWithName:@"bootloader_args"];
+        [node addTextNode:_bootloaderArgs];
         [node up];
     }
     if (_OS)
