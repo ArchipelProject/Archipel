@@ -956,11 +956,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 - (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
 {
-    var tabViewItemManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemManagedVM"],
-        tabViewItemNotManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemNotManagedVM"],
-        tabViewItemParkedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemParkedVM"];
-
-
     switch ([anItem identifier])
     {
         case @"tabViewItemManagedVM":
