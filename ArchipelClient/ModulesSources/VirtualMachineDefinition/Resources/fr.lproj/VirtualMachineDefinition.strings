@@ -1226,3 +1226,21 @@
 /* Class = "NSTextFieldCell"; title = "Direct kernel boot"; ObjectID = "1886"; */
 "1886.title" = "Direct kernel boot";
 
+/* Class = "NSTextFieldCell"; placeholderString = "/usr/bin/pygrub"; ObjectID = "1916"; */
+"1916.placeholderString" = "/usr/bin/pygrub";
+
+/* Class = "NSTextFieldCell"; title = "Bootloader"; ObjectID = "1917"; */
+"1917.title" = "Bootloader";
+
+/* Class = "NSTextFieldCell"; placeholderString = "-q"; ObjectID = "1918"; */
+"1918.placeholderString" = "-q";
+
+/* Class = "NSTextFieldCell"; title = "Arguments"; ObjectID = "1919"; */
+"1919.title" = "Arguments";
+
+/* Class = "NSTextFieldCell"; title = "You can configure the host bootl oader informations."; ObjectID = "1920"; */
+"1920.title" = "You can configure the host bootl oader informations.";
+
+/* Class = "NSTextFieldCell"; title = "Host boot loader"; ObjectID = "1921"; */
+"1921.title" = "Host boot loader";
+

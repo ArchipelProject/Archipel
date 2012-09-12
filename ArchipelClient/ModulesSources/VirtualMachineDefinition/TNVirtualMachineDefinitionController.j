@@ -121,6 +121,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
+    @outlet CPTextField                 fieldBootloader;
     @outlet CPTextField                 fieldPreferencesDomainType;
     @outlet CPTextField                 fieldPreferencesGuest;
     @outlet CPTextField                 fieldPreferencesMachine;
@@ -142,6 +143,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewParametersStandard;
     @outlet LPMultiLineTextField        fieldOSCommandLine;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
+    @outlet LPMultiLineTextField        fieldBootloaderArgs;
     @outlet TNCharacterDeviceController characterDeviceController;
     @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
     @outlet TNDriveController           driveController;
@@ -267,7 +269,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
-    [fieldOSCommandLine setTextColor:[CPColor blackColor]];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -749,6 +750,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:fieldOSKernel enabledAccordingToPermission:@"define"];
     [self setControl:fieldOSInitrd enabledAccordingToPermission:@"define"];
     [self setControl:fieldOSCommandLine enabledAccordingToPermission:@"define"];
+    [self setControl:fieldBootloader enabledAccordingToPermission:@"define"];
+    [self setControl:fieldBootloaderArgs enabledAccordingToPermission:@"define"];
 
     if (![self currentEntityHasPermission:@"define"])
     {
@@ -1201,6 +1204,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSKernel setEnabled:shouldEnableGUI];
     [fieldOSInitrd setEnabled:shouldEnableGUI];
     [fieldOSLoader setEnabled:shouldEnableGUI];
+    [fieldBootloader setEnabled:shouldEnableGUI];
+    [fieldBootloaderArgs setEnabled:shouldEnableGUI];
 
     [buttonBoot setNeedsDisplay:YES];
     [buttonClocks setNeedsDisplay:YES];
@@ -1224,6 +1229,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSKernel setNeedsDisplay:YES];
     [fieldOSInitrd setNeedsDisplay:YES];
     [fieldOSLoader setNeedsDisplay:YES];
+    [fieldBootloader setNeedsDisplay:YES];
+    [fieldBootloaderArgs setNeedsDisplay:YES];
 
     [fieldStringXMLDesc setNeedsDisplay:YES];
     [stepperNumberCPUs setNeedsDisplay:YES];
@@ -1741,6 +1748,26 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self makeDefinitionEdited:aSender];
 }
 
+/*! update the value for bootloader
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBootloader:(id)aSender
+{
+    [_libvirtDomain setBootloader:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+
+}
+
+/*! update the value for bootloaderArgs
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBootloaderArgs:(id)aSender
+{
+    [_libvirtDomain setBootloaderArgs:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+
+}
+
 /*! update the value for onPowerOff
     @param aSender the sender of the action
 */
@@ -2074,6 +2101,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeOSInitrd:fieldOSInitrd];
         [self didChangeOSLoader:fieldOSLoader];
         [self didChangeOSCommandLine:fieldOSCommandLine];
+        [self didChangeBootloader:fieldBootloader];
+        [self didChangeBootloaderArgs:fieldBootloaderArgs];
 
         [_inputDevicesDatasource setContent:[[_libvirtDomain devices] inputs]];
         [tableInputDevices reloadData];
@@ -2203,6 +2232,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [fieldOSLoader setStringValue:[[_libvirtDomain OS] loader]];
     else
         [fieldOSLoader setStringValue:@""];
+
+    // HOST BOOTLOADER
+    [fieldBootloader setStringValue:[_libvirtDomain bootloader]];
+    [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs]];
+
 
     // BLOCK IO TUNING
     if ([[_libvirtDomain blkiotune] weight])
