@@ -269,7 +269,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
-    [fieldOSCommandLine setTextColor:[CPColor blackColor]];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
