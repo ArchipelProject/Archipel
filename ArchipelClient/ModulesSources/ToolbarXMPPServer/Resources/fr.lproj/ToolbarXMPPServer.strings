@@ -167,7 +167,7 @@
 /* Class = "NSButtonCell"; title = "Enabled"; ObjectID = "355"; */
 "355.title" = "Enabled";
 
-/* Class = "NSTextFieldCell"; title = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode.\nAlso, note you need to reload the application after changing this."; ObjectID = "359"; */
+/* Class = "NSTextFieldCell"; title = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode."; ObjectID = "359"; */
 "359.title" = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode.\nAlso, note you need to reload the application after changing this.";
 
 /* Class = "NSTextFieldCell"; title = "Fetching users..."; ObjectID = "364"; */
