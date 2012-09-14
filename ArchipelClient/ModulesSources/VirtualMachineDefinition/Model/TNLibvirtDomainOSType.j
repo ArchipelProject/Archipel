@@ -52,6 +52,27 @@ TNLibvirtDomainOSTypeTypeHVM    = @"hvm";
         _architecture       = [aNode valueForAttribute:@"arch"];
         _machine            = [aNode valueForAttribute:@"machine"];
         _type               = [aNode text];
+
+        // We have to fake a good return from libvirt for Xen as some informations are missing
+        // For HVM if we set <type machine='xenfv' arch='x86_64|i686'>hvm</type> we dump <type>hvm</type>
+        // For PVM if we set <type machine='xenpv' arch='x86_64|i686'>xen</type> we dump <type>linux</type>
+        // No way to get the arch for Xen Guest domain as in HVM it boot's on 16bits real mode
+        // Regarding PVM, no way to know if we boot a kernel in 32/64b too
+
+        if (_type == TNLibvirtDomainOSTypeTypeLinux)
+        {
+            _architecture       = @"i686";
+            _machine            = @"xenpv";
+            _type               = @"xen";
+        }
+
+        if (_type == TNLibvirtDomainOSTypeTypeHVM)
+        {
+            _architecture       = @"i686";
+            _machine            = @"xenfv";
+            _type               = TNLibvirtDomainOSTypeTypeHVM;
+        }
+
     }
 
     return self;
