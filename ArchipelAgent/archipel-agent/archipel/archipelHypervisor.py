@@ -143,7 +143,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         f = open("/proc/cpuinfo")
         cpuinfo = f.read()
         f.close()
-        self.has_vmx = "vmx" in cpuinfo or "svm" in cpuinfo
+        self.has_vmx = "vmx" in cpuinfo or "svm" in cpuinfo    
 
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
@@ -152,6 +152,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         # libvirt connection
         self.connect_libvirt()
+
+        # If XEN host we have to look through xm to know if vt is supported
+        if ("hypervisor" in cpuinfo):
+            self.has_vmx = "hvm" in self.libvirt_connection.getCapabilities()
 
         if (self.configuration.has_section("VCARD")):
             for key in ("orgname", "orgunit", "userid", "locality", "url", "categories"):
