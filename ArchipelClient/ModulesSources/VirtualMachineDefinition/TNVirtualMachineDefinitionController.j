@@ -1252,8 +1252,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setNeedsDisplay:YES];
     [switchPAE setNeedsDisplay:YES];
 
-    // if (shouldEnableGUI)
-    //     [self buildGUIAccordingToCurrentGuest];
+    if (shouldEnableGUI)
+        [self buildGUIAccordingToCurrentGuest];
+
     [self handleDefinitionEdition:NO];
 
     [labelVirtualMachineIsRunning setHidden:shouldEnableGUI];
