@@ -1013,9 +1013,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)selectGuestWithType:(CPString)aType architecture:(CPString)anArch
 {
-    if ([_libvirtDomain type] == TNLibvirtDomainTypeXen && (aType == "linux"))
-        aType = "xen";
-
     var guests = [buttonGuests itemArray];
 
     for (var i = 0; i < [guests count]; i++)
