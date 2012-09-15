@@ -143,7 +143,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         f = open("/proc/cpuinfo")
         cpuinfo = f.read()
         f.close()
-        self.has_vmx = "vmx" in cpuinfo or "svm" in cpuinfo    
+        self.has_vmx = "vmx" in cpuinfo or "svm" in cpuinfo
 
         # start the permission center
         self.permission_db_file = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
