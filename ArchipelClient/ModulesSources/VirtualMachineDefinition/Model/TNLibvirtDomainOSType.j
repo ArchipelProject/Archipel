@@ -42,7 +42,7 @@ TNLibvirtDomainOSTypeTypeHVM    = @"hvm";
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
-- (id)initWithXMLNode:(TNXMLNode)aNode
+- (id)initWithXMLNode:(TNXMLNode)aNode domainType:(CPString)aDomainType
 {
     if (self = [super initWithXMLNode:aNode])
     {
@@ -58,19 +58,21 @@ TNLibvirtDomainOSTypeTypeHVM    = @"hvm";
         // For PVM if we set <type machine='xenpv' arch='x86_64|i686'>xen</type> we dump <type>linux</type>
         // No way to get the arch for Xen Guest domain as in HVM it boot's on 16bits real mode
         // Regarding PVM, no way to know if we boot a kernel in 32/64b too
-
-        if (_type == TNLibvirtDomainOSTypeTypeLinux)
+        if (aDomainType == TNLibvirtDomainTypeXen)
         {
-            _architecture       = @"i686";
-            _machine            = @"xenpv";
-            _type               = @"xen";
-        }
+            if (_type == TNLibvirtDomainOSTypeTypeLinux)
+            {
+                _architecture       = @"i686";
+                _machine            = @"xenpv";
+                _type               = @"xen";
+            }
 
-        if (_type == TNLibvirtDomainOSTypeTypeHVM)
-        {
-            _architecture       = @"i686";
-            _machine            = @"xenfv";
-            _type               = TNLibvirtDomainOSTypeTypeHVM;
+            if (_type == TNLibvirtDomainOSTypeTypeHVM)
+            {
+                _architecture       = @"i686";
+                _machine            = @"xenfv";
+                _type               = TNLibvirtDomainOSTypeTypeHVM;
+            }
         }
 
     }
