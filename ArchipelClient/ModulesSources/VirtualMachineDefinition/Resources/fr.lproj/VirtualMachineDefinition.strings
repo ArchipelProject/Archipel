@@ -1244,3 +1244,9 @@
 /* Class = "NSTextFieldCell"; title = "Host boot loader"; ObjectID = "1921"; */
 "1921.title" = "Host boot loader";
 
+/* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "1932"; */
+"1932.placeholderString" = "auto";
+
+/* Class = "NSTextFieldCell"; title = "IP Address"; ObjectID = "1933"; */
+"1933.title" = "IP Address";
+
