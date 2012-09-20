@@ -159,11 +159,14 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             if not interface.getAttr("type") == "nuage":
                 continue
             network_name = interface.getAttr("nuage_network_name")
+            ip_address = interface.getAttr("nuage_network_interface_ip")
             mac_address = interface.getTag("mac").getAttr("address")
             network_name_XML = hypervisor_nuage_plugin.get_network_by_name(network_name)
             strXML = str(network_name_XML).replace('xmlns="archipel:hypervisor:nuage:network" ', '')
             network_name_XML = xmpp.simplexml.NodeBuilder(data=strXML).getDom()
             network_name_XML.addChild("interface_mac", attrs={"address": mac_address})
+            if ip_address:
+                network_name_XML.addChild("interface_ip", attrs={"address": ip_address})
 
             ## Now we reconfigure the nic to be a bridge
             interface.setAttr("type", "bridge")
