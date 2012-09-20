@@ -101,11 +101,16 @@ var TNInterfaceDeviceDataViewIconNetwork,
             break;
     }
 
-    [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString]];
+    if ([_currentInterface type] == TNLibvirtDeviceInterfaceTypeNuage && [_currentInterface nuageNetworkInterfaceIP])
+        [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString] + @" ("+ [_currentInterface nuageNetworkInterfaceIP] +")"];
+    else
+        [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString]];
+
     if ([_currentInterface type] == TNLibvirtDeviceInterfaceTypeNuage)
         [fieldType setStringValue:[[_currentInterface type] capitalizedString] + @" (" + [_currentInterface nuageNetworkName] + ")"];
     else
         [fieldType setStringValue:[_currentInterface type]];
+
     [fieldModel setStringValue:[_currentInterface model]];
     [fieldSource setStringValue:[[_currentInterface source] sourceObject]];
     [fieldFilter setStringValue:[[_currentInterface filterref] name] || @"None"];

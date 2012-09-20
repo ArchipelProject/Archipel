@@ -35,7 +35,6 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
 */
 @implementation TNInterfaceController : CPObject
 {
-    @outlet CPButton            buttonOK;
     @outlet CPButtonBar         buttonBarNetworkParameters;
     @outlet CPCheckBox          checkBoxBandwidthInbound;
     @outlet CPCheckBox          checkBoxBandwidthOutbound;
@@ -53,7 +52,10 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
     @outlet CPTextField         fieldBandwidthOutboundPeak;
     @outlet CPTextField         fieldErrorMessage;
     @outlet CPTextField         fieldMac;
+    @outlet CPTextField         fieldNuageInterfaceIP;
+    @outlet CPTextField         labelNuageInterfaceIP;
     @outlet CPView              viewNWFilterParametersContainer;
+    @outlet CPButton            buttonOK;
 
     id                          _delegate   @accessors(property=delegate);
     CPTableView                 _table      @accessors(property=table);
@@ -197,6 +199,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             [[_nic source] setDevice:nil];
             [[_nic source] setMode:nil];
             [_nic setNuageNetworkName:[buttonSource title]];
+            [_nic setNuageNetworkInterfaceIP:[fieldNuageInterfaceIP stringValue]];
             break;
 
         case TNLibvirtDeviceInterfaceTypeNetwork:
@@ -308,9 +311,13 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             [buttonSource removeAllItems];
             [self getHypervisorNuageNetworks];
             [buttonSource setEnabled:YES];
+            [fieldNuageInterfaceIP setStringValue:@""];
+            [fieldNuageInterfaceIP setHidden:NO];
+            [labelNuageInterfaceIP setHidden:NO];
             break;
 
         case TNLibvirtDeviceInterfaceTypeNetwork:
+            [fieldNuageInterfaceIP setHidden:YES];
             [buttonSource removeAllItems];
             if ([_delegate currentEntityHasPermission:@"network_getnames"])
             {
@@ -322,6 +329,8 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             break;
 
         case TNLibvirtDeviceInterfaceTypeBridge:
+            [fieldNuageInterfaceIP setHidden:YES];
+            [labelNuageInterfaceIP setHidden:YES];
             if ([_delegate currentEntityHasPermission:@"network_bridges"])
             {
                 [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_bridges"];
@@ -333,6 +342,8 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             break;
 
         case TNLibvirtDeviceInterfaceTypeDirect:
+            [fieldNuageInterfaceIP setHidden:YES];
+            [labelNuageInterfaceIP setHidden:YES];
             [buttonSource removeAllItems];
             if ([_delegate currentEntityHasPermission:@"network_getnics"])
             {
@@ -344,6 +355,8 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             break;
 
         case TNLibvirtDeviceInterfaceTypeUser:
+            [fieldNuageInterfaceIP setHidden:YES];
+            [labelNuageInterfaceIP setHidden:YES];
             [buttonSource removeAllItems];
             [buttonSource setEnabled:NO];
             break;
@@ -513,6 +526,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
         }
 
         [buttonSource selectItemWithTitle:[_nic nuageNetworkName]];
+        [fieldNuageInterfaceIP setStringValue:[_nic nuageNetworkInterfaceIP]];
 
         if (![buttonSource selectedItem])
             [buttonSource selectItemAtIndex:0];
