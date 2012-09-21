@@ -1013,9 +1013,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)selectGuestWithType:(CPString)aType architecture:(CPString)anArch
 {
-    if ([_libvirtDomain type] == TNLibvirtDomainTypeXen && (aType == "linux"))
-        aType = "xen";
-
     var guests = [buttonGuests itemArray];
 
     for (var i = 0; i < [guests count]; i++)
@@ -1065,6 +1062,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [buttonDomainType selectItemWithTitle:defaultDomainType];
         else
             [buttonDomainType selectItemAtIndex:0];
+
         [self setControl:buttonDomainType enabledAccordingToPermission:@"define"];
         [buttonDomainType setEnabled:YES];
 
@@ -1142,11 +1140,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([[buttonMachines itemArray] count] == 0)
         [buttonMachines setEnabled:NO];
 
-    var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
-    if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
-        [buttonMachines selectItemWithTitle:defaultMachine];
+    if (_libvirtDomain && [[_libvirtDomain OS] type] && [[[_libvirtDomain OS] type] machine])
+    {
+        [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
+    }
     else
-        [buttonMachines selectItemAtIndex:0];
+    {
+        var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
+        if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
+            [buttonMachines selectItemWithTitle:defaultMachine];
+        else
+            [buttonMachines selectItemAtIndex:0];
+    }
 
     [self handleDefinitionEdition:YES];
 }
@@ -1255,8 +1260,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setNeedsDisplay:YES];
     [switchPAE setNeedsDisplay:YES];
 
-    // if (shouldEnableGUI)
-    //     [self buildGUIAccordingToCurrentGuest];
+    if (shouldEnableGUI)
+        [self buildGUIAccordingToCurrentGuest];
+
     [self handleDefinitionEdition:NO];
 
     [labelVirtualMachineIsRunning setHidden:shouldEnableGUI];
@@ -2254,6 +2260,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         _stringXMLDesc  = _stringXMLDesc.replace("\n  \n", "\n");
         _stringXMLDesc  = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
+        _stringXMLDesc  = _stringXMLDesc.replace("xmlns=\"http://www.gajim.org/xmlns/undeclared\" ", "");
         [fieldStringXMLDesc setStringValue:_stringXMLDesc];
     }
 
