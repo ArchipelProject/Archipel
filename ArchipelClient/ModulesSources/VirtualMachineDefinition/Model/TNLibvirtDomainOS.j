@@ -62,7 +62,7 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
-- (id)initWithXMLNode:(TNXMLNode)aNode
+- (id)initWithXMLNode:(TNXMLNode)aNode domainType:(CPString)aDomainType
 {
     if (self = [super initWithXMLNode:aNode])
     {
@@ -76,7 +76,7 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
         _kernel             = [[aNode firstChildWithName:@"kernel"] text];
         _loader             = [[aNode firstChildWithName:@"loader"] text];
 
-        _type               = [[TNLibvirtDomainOSType alloc] initWithXMLNode:[aNode firstChildWithName:@"type"]];
+        _type               = [[TNLibvirtDomainOSType alloc] initWithXMLNode:[aNode firstChildWithName:@"type"] domainType:aDomainType];
     }
 
     return self;
