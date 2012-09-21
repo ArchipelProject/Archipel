@@ -1062,6 +1062,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [buttonDomainType selectItemWithTitle:defaultDomainType];
         else
             [buttonDomainType selectItemAtIndex:0];
+
         [self setControl:buttonDomainType enabledAccordingToPermission:@"define"];
         [buttonDomainType setEnabled:YES];
 
@@ -1139,11 +1140,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([[buttonMachines itemArray] count] == 0)
         [buttonMachines setEnabled:NO];
 
-    var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
-    if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
-        [buttonMachines selectItemWithTitle:defaultMachine];
+    if (_libvirtDomain && [[_libvirtDomain OS] type] && [[[_libvirtDomain OS] type] machine])
+    {
+        [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
+    }
     else
-        [buttonMachines selectItemAtIndex:0];
+    {
+        var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
+        if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
+            [buttonMachines selectItemWithTitle:defaultMachine];
+        else
+            [buttonMachines selectItemAtIndex:0];
+    }
 
     [self handleDefinitionEdition:YES];
 }
@@ -2252,6 +2260,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         _stringXMLDesc  = _stringXMLDesc.replace("\n  \n", "\n");
         _stringXMLDesc  = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
+        _stringXMLDesc  = _stringXMLDesc.replace("xmlns=\"http://www.gajim.org/xmlns/undeclared\" ", "");
         [fieldStringXMLDesc setStringValue:_stringXMLDesc];
     }
 
