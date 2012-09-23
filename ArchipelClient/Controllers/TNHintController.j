@@ -81,7 +81,7 @@
 */
 - (IBAction)openDocumentation:(id)aSender
 {
-    window.open("https://github.com/primalmotion/archipel/wiki");
+    window.open("https://github.com/archipelproject/archipel/wiki");
 }
 
 @end

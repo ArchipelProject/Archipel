@@ -121,6 +121,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
+    @outlet CPTextField                 fieldBootloader;
     @outlet CPTextField                 fieldPreferencesDomainType;
     @outlet CPTextField                 fieldPreferencesGuest;
     @outlet CPTextField                 fieldPreferencesMachine;
@@ -142,6 +143,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewParametersStandard;
     @outlet LPMultiLineTextField        fieldOSCommandLine;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
+    @outlet LPMultiLineTextField        fieldBootloaderArgs;
     @outlet TNCharacterDeviceController characterDeviceController;
     @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
     @outlet TNDriveController           driveController;
@@ -215,6 +217,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
+    // set theme of buttonXMLEditorDefine to default
+    [buttonXMLEditorDefine setThemeState:CPThemeStateDefault];
+
     // paramaters tabView
     var mainBundle = [CPBundle mainBundle],
         imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
@@ -264,7 +269,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
-    [fieldOSCommandLine setTextColor:[CPColor blackColor]];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -544,9 +548,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![super willLoad])
         return NO;
 
-    _definitionRecovered = NO;
-    [self handleDefinitionEdition:NO];
-
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
@@ -571,14 +572,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setDefaultValues];
 
     [fieldStringXMLDesc setStringValue:@""];
-
-    [self getCapabilities];
-
-    // seems to be necessary
-    [tableDrives reloadData];
-    [tableInterfaces reloadData];
-
-    return YES;
 }
 
 /*! called when module is unloaded
@@ -596,6 +589,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![super willShow])
         return NO;
+
+    _definitionRecovered = NO;
+    [self handleDefinitionEdition:NO];
+
+    [self getCapabilities];
+
+    // seems to be necessary
+    [tableDrives reloadData];
+    [tableInterfaces reloadData];
 
     [self checkIfRunning];
     [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
@@ -748,6 +750,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:fieldOSKernel enabledAccordingToPermission:@"define"];
     [self setControl:fieldOSInitrd enabledAccordingToPermission:@"define"];
     [self setControl:fieldOSCommandLine enabledAccordingToPermission:@"define"];
+    [self setControl:fieldBootloader enabledAccordingToPermission:@"define"];
+    [self setControl:fieldBootloaderArgs enabledAccordingToPermission:@"define"];
 
     if (![self currentEntityHasPermission:@"define"])
     {
@@ -1009,9 +1013,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)selectGuestWithType:(CPString)aType architecture:(CPString)anArch
 {
-    if ([_libvirtDomain type] == TNLibvirtDomainTypeXen && (aType == "linux"))
-        aType = "xen";
-
     var guests = [buttonGuests itemArray];
 
     for (var i = 0; i < [guests count]; i++)
@@ -1031,6 +1032,20 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         capabilities            = [currentSelectedGuest XMLGuest],
         domains                 = [capabilities childrenWithName:@"domain"];
 
+    // strips Tables devices if using XEN
+    if ([[domains firstObject] valueForAttribute:@"type"] == TNLibvirtDomainTypeXen)
+    {
+        var tablets = [];
+        for (var i = 0; i < [[[_libvirtDomain devices] inputs] count]; i++)
+        {
+            var input = [[[_libvirtDomain devices] inputs] objectAtIndex:i];
+            if ([input type] == TNLibvirtDeviceInputTypesTypeTablet)
+                [tablets addObject:input];
+        }
+
+        [[[_libvirtDomain devices] inputs] removeObjectsInArray:tablets];
+    }
+
     if (domains && [domains count] > 0)
     {
         [buttonDomainType setEnabled:NO];
@@ -1047,6 +1062,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [buttonDomainType selectItemWithTitle:defaultDomainType];
         else
             [buttonDomainType selectItemAtIndex:0];
+
         [self setControl:buttonDomainType enabledAccordingToPermission:@"define"];
         [buttonDomainType setEnabled:YES];
 
@@ -1124,11 +1140,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([[buttonMachines itemArray] count] == 0)
         [buttonMachines setEnabled:NO];
 
-    var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
-    if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
-        [buttonMachines selectItemWithTitle:defaultMachine];
+    if (_libvirtDomain && [[_libvirtDomain OS] type] && [[[_libvirtDomain OS] type] machine])
+    {
+        [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
+    }
     else
-        [buttonMachines selectItemAtIndex:0];
+    {
+        var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
+        if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
+            [buttonMachines selectItemWithTitle:defaultMachine];
+        else
+            [buttonMachines selectItemAtIndex:0];
+    }
 
     [self handleDefinitionEdition:YES];
 }
@@ -1186,6 +1209,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSKernel setEnabled:shouldEnableGUI];
     [fieldOSInitrd setEnabled:shouldEnableGUI];
     [fieldOSLoader setEnabled:shouldEnableGUI];
+    [fieldBootloader setEnabled:shouldEnableGUI];
+    [fieldBootloaderArgs setEnabled:shouldEnableGUI];
 
     [buttonBoot setNeedsDisplay:YES];
     [buttonClocks setNeedsDisplay:YES];
@@ -1209,6 +1234,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSKernel setNeedsDisplay:YES];
     [fieldOSInitrd setNeedsDisplay:YES];
     [fieldOSLoader setNeedsDisplay:YES];
+    [fieldBootloader setNeedsDisplay:YES];
+    [fieldBootloaderArgs setNeedsDisplay:YES];
 
     [fieldStringXMLDesc setNeedsDisplay:YES];
     [stepperNumberCPUs setNeedsDisplay:YES];
@@ -1233,8 +1260,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setNeedsDisplay:YES];
     [switchPAE setNeedsDisplay:YES];
 
-    // if (shouldEnableGUI)
-    //     [self buildGUIAccordingToCurrentGuest];
+    if (shouldEnableGUI)
+        [self buildGUIAccordingToCurrentGuest];
+
     [self handleDefinitionEdition:NO];
 
     [labelVirtualMachineIsRunning setHidden:shouldEnableGUI];
@@ -1248,10 +1276,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([_libvirtDomain metadata] && [[[_libvirtDomain metadata] content] firstChildWithName:@"nuage"])
     {
         var nuageNetworks = [[[[_libvirtDomain metadata] content] firstChildWithName:@"nuage"] childrenWithName:@"nuage_network"];
+
         for (var i = 0; i < [nuageNetworks count]; i++)
         {
             var nuageNetwork = [nuageNetworks objectAtIndex:i],
                 interface_mac = [[nuageNetwork firstChildWithName:@"interface_mac"] valueForAttribute:@"address"];
+                interface_ip = [[nuageNetwork firstChildWithName:@"interface_ip"] valueForAttribute:@"address"];
 
             for (var j = 0; j < [[[_libvirtDomain devices] interfaces] count]; j++)
             {
@@ -1260,6 +1290,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                 {
                     [nic setType:TNLibvirtDeviceInterfaceTypeNuage];
                     [nic setNuageNetworkName:[nuageNetwork valueForAttribute:@"name"]];
+                    [nic setNuageNetworkInterfaceIP:interface_ip];
                 }
             }
         }
@@ -1327,6 +1358,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if (![_libvirtDomain devices])
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    if ([[[_libvirtDomain devices] graphics] count] != 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"You can only set one graphic device", @"You can only set one graphic device")];
+
+        return;
+    }
 
     [graphicDeviceController setGraphicDevice:graphicDevice];
     [graphicDeviceController openWindow:aSender];
@@ -1425,7 +1464,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [popoverXMLEditor close];
     [popoverXMLEditor showRelativeToRect:nil ofView:buttonXMLEditor preferredEdge:nil];
-    [popoverXMLEditor setDefaultButton:buttonXMLEditorDefine];
     [fieldStringXMLDesc setNeedsDisplay:YES];
 }
 
@@ -1570,6 +1608,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newDrive setDriver:newDriveDriver];
     [driveController setDrive:newDrive];
 
+    if ([_libvirtDomain devices])
+        [driveController setOtherDrives:[[_libvirtDomain devices] disks]];
+    else
+        [driveController setOtherDrives:nil];
+
     [driveController openWindow:_plusButtonDrives];
     [self makeDefinitionEdited:YES];
 }
@@ -1591,6 +1634,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var driveObject = [_drivesDatasource objectAtIndex:[tableDrives selectedRow]];
 
     [driveController setDrive:driveObject];
+
+    if ([_libvirtDomain devices])
+        [driveController setOtherDrives:[[_libvirtDomain devices] disks]];
+    else
+        [driveController setOtherDrives:nil];
 
     if ([aSender isKindOfClass:CPMenuItem])
         aSender = _minusButtonDrives;
@@ -1707,6 +1755,26 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setLoader:[aSender stringValue]];
     [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for bootloader
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBootloader:(id)aSender
+{
+    [_libvirtDomain setBootloader:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+
+}
+
+/*! update the value for bootloaderArgs
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBootloaderArgs:(id)aSender
+{
+    [_libvirtDomain setBootloaderArgs:[aSender stringValue]];
+    [self makeDefinitionEdited:aSender];
+
 }
 
 /*! update the value for onPowerOff
@@ -2017,6 +2085,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
+
         [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
         [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphic alloc] init]];
 
@@ -2041,6 +2110,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeOSInitrd:fieldOSInitrd];
         [self didChangeOSLoader:fieldOSLoader];
         [self didChangeOSCommandLine:fieldOSCommandLine];
+        [self didChangeBootloader:fieldBootloader];
+        [self didChangeBootloaderArgs:fieldBootloaderArgs];
 
         [_inputDevicesDatasource setContent:[[_libvirtDomain devices] inputs]];
         [tableInputDevices reloadData];
@@ -2061,6 +2132,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         _definitionRecovered = YES;
 
         [self handleDefinitionEdition:([fieldMemory stringValue] != @"")];
+        [self enableGUI:YES];
         return;
     }
 
@@ -2170,6 +2242,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     else
         [fieldOSLoader setStringValue:@""];
 
+    // HOST BOOTLOADER
+    [fieldBootloader setStringValue:[_libvirtDomain bootloader]];
+    [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs]];
+
+
     // BLOCK IO TUNING
     if ([[_libvirtDomain blkiotune] weight])
         [fieldBlockIOTuningWeight setIntValue:[[_libvirtDomain blkiotune] weight]];
@@ -2183,6 +2260,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         _stringXMLDesc  = _stringXMLDesc.replace("\n  \n", "\n");
         _stringXMLDesc  = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
+        _stringXMLDesc  = _stringXMLDesc.replace("xmlns=\"http://www.gajim.org/xmlns/undeclared\" ", "");
         [fieldStringXMLDesc setStringValue:_stringXMLDesc];
     }
 
@@ -2231,16 +2309,26 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
                           informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")
-                          style:CPCriticalAlertStyle];
+                                style:CPCriticalAlertStyle];
         [popoverXMLEditor close];
         return;
     }
-    var stanza      = [TNStropheStanza iqWithType:@"get"],
-        descNode    = [TNXMLNode nodeWithXMLNode:desc];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-    [stanza addNode:descNode];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+    try
+    {
+        var descNode = [TNXMLNode nodeWithXMLNode:desc];
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+        [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+        [stanza addNode:descNode];
+    }
+    catch (e)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Error", @"Error")
+                          informative:CPLocalizedString(@"Unable to parse the given XML", @"Unable to parse the given XML")+("\n"+e)
+                                style:CPCriticalAlertStyle];
+        [popoverXMLEditor close];
+        return;
+    }
 
     [buttonDefine setImage:_imageDefining];
     [self enableGUI:NO];

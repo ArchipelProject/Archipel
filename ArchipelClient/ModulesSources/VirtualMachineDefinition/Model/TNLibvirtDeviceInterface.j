@@ -24,6 +24,7 @@
 @import "TNLibvirtDeviceInterfaceFilterRef.j"
 @import "TNLibvirtDeviceInterfaceSource.j"
 @import "TNLibvirtDeviceInterfaceTarget.j"
+@import "TNLibvirtDeviceInterfaceVirtualPort.j"
 
 
 TNLibvirtDeviceInterfaceModelNE2KISA    = @"ne2k_isa";
@@ -62,15 +63,17 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
 */
 @implementation TNLibvirtDeviceInterface : TNLibvirtBase
 {
-    CPString                            _MAC                @accessors(property=MAC);
-    CPString                            _model              @accessors(property=model);
-    CPString                            _script             @accessors(property=script);
-    CPString                            _type               @accessors(property=type);
-    CPString                            _nuageNetworkName   @accessors(property=nuageNetworkName);
-    TNLibvirtDeviceInterfaceBandwidth   _bandwidth          @accessors(property=bandwidth);
-    TNLibvirtDeviceInterfaceFilterRef   _filterref          @accessors(property=filterref);
-    TNLibvirtDeviceInterfaceSource      _source             @accessors(property=source);
-    TNLibvirtDeviceInterfaceTarget      _target             @accessors(property=target);
+    CPString                            _MAC                        @accessors(property=MAC);
+    CPString                            _model                      @accessors(property=model);
+    CPString                            _script                     @accessors(property=script);
+    CPString                            _type                       @accessors(property=type);
+    CPString                            _nuageNetworkName           @accessors(property=nuageNetworkName);
+    CPString                            _nuageNetworkInterfaceIP    @accessors(property=nuageNetworkInterfaceIP);
+    TNLibvirtDeviceInterfaceBandwidth   _bandwidth                  @accessors(property=bandwidth);
+    TNLibvirtDeviceInterfaceFilterRef   _filterref                  @accessors(property=filterref);
+    TNLibvirtDeviceInterfaceSource      _source                     @accessors(property=source);
+    TNLibvirtDeviceInterfaceTarget      _target                     @accessors(property=target);
+    TNLibvirtDeviceInterfaceVirtualPort _virtualPort                @accessors(property=virtualPort);
 }
 
 
@@ -102,16 +105,20 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
         if ([aNode name] != @"interface")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid interface"];
 
-        _MAC                = [[aNode firstChildWithName:@"mac"] valueForAttribute:@"address"];
-        _model              = [[aNode firstChildWithName:@"model"] valueForAttribute:@"type"];
-        _script             = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
-        _type               = [aNode valueForAttribute:@"type"];
-        _nuageNetworkName   = [aNode valueForAttribute:@"nuage_network_name"];
+        _MAC                        = [[aNode firstChildWithName:@"mac"] valueForAttribute:@"address"];
+        _model                      = [[aNode firstChildWithName:@"model"] valueForAttribute:@"type"];
+        _script                     = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
+        _type                       = [aNode valueForAttribute:@"type"];
+        _nuageNetworkName           = [aNode valueForAttribute:@"nuage_network_name"];
+        _nuageNetworkInterfaceIP    = [aNode valueForAttribute:@"nuage_network_interface_ip"];
 
         _bandwidth  = [[TNLibvirtDeviceInterfaceBandwidth alloc] initWithXMLNode:[aNode firstChildWithName:@"bandwidth"]];
         _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] initWithXMLNode:[aNode firstChildWithName:@"filterref"]];
         _source     = [[TNLibvirtDeviceInterfaceSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         _target     = [[TNLibvirtDeviceInterfaceTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
+
+        if ([aNode containsChildrenWithName:@"virtualport"])
+            _virtualPort = [[TNLibvirtDeviceInterfaceVirtualPort alloc] initWithXMLNode:[aNode firstChildWithName:@"virtualport"]];
     }
 
     return self;
@@ -169,6 +176,17 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     if (_nuageNetworkName)
     {
         [node setValue:_nuageNetworkName forAttribute:@"nuage_network_name"];
+    }
+
+    if (_nuageNetworkInterfaceIP)
+    {
+        [node setValue:_nuageNetworkInterfaceIP forAttribute:@"nuage_network_interface_ip"];
+    }
+
+    if (_virtualPort)
+    {
+        [node addNode:[_virtualPort XMLNode]];
+        [node up];
     }
 
     return node;

@@ -145,8 +145,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [tableMedias setDelegate:nil];
     [tableMedias setDelegate:self];
 
-    [self getDisksInfo];
-
     return YES;
 }
 
@@ -157,6 +155,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     if (![super willShow])
         return NO;
 
+    [self getDisksInfo];
     [self checkIfRunning];
     [self getDisksInfo];
 

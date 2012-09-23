@@ -23,8 +23,6 @@
 @import <AppKit/CPTextField.j>
 
 @import <StropheCappuccino/TNStropheContact.j>
-@import <TNKit/TNAttachedWindow.j>
-
 
 var TNRosterDataViewContactImageUnknownUser,
     TNRosterDataViewContactImageSelectedCartoucheColor,

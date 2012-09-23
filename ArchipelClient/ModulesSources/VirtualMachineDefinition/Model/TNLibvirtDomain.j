@@ -50,6 +50,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
 @implementation TNLibvirtDomain : TNLibvirtBase
 {
     CPString                        _bootloader         @accessors(property=bootloader);
+    CPString                        _bootloaderArgs     @accessors(property=bootloaderArgs);
     CPString                        _description        @accessors(property=description);
     CPString                        _type               @accessors(property=type);
     CPString                        _name               @accessors(property=name);
@@ -60,6 +61,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     CPString                        _currentMemory      @accessors(property=currentMemory);
     CPString                        _memory             @accessors(property=memory);
     CPString                        _vcpu               @accessors(property=VCPU);
+    CPArray                         _commandLine        @accessors(property=commandLine);
     TNLibvirtDevices                _devices            @accessors(property=devices);
     TNLibvirtDomainBlockIOTune      _blkiotune          @accessors(property=blkiotune);
     TNLibvirtDomainClock            _clock              @accessors(property=clock);
@@ -112,7 +114,8 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         if ([aNode name] != @"domain")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid domain"];
 
-        _bootloader     = [[aNode firstChildWithName:@"bootloaded"] text];
+        _bootloader     = [[aNode firstChildWithName:@"bootloader"] text];
+        _bootloaderArgs = [[aNode firstChildWithName:@"bootloaderArgs"] text];
         _currentMemory  = [[[aNode firstChildWithName:@"currentMemory"] text] intValue];
         _description    = [[aNode firstChildWithName:@"description"] text];
         _type           = [aNode valueForAttribute:@"type"];
@@ -130,7 +133,12 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _features       = [[TNLibvirtDomainFeatures alloc] initWithXMLNode:[aNode firstChildWithName:@"features"]];
         _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] initWithXMLNode:[aNode firstChildWithName:@"memoryBacking"]];
         _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] initWithXMLNode:[aNode firstChildWithName:@"memtune"]];
-        _OS             = [[TNLibvirtDomainOS alloc] initWithXMLNode:[aNode firstChildWithName:@"os"]];
+        _OS             = [[TNLibvirtDomainOS alloc] initWithXMLNode:[aNode firstChildWithName:@"os"] domainType:[aNode valueForAttribute:@"type"]];
+
+        _commandLine    = [CPArray array];
+        var clNodes     = [aNode childrenWithName:@"commandline"];
+        for (var i = 0; i < [clNodes count]; i++)
+            [_commandLine addObject:[[TNLibvirtDomainQEMUCommandLine alloc] initWithXMLNode:[clNodes objectAtIndex:i]]];
 
         if ([aNode firstChildWithName:@"metadata"])
             _metadata = [[TNLibvirtDomainMetadata alloc] initWithXMLNode:[aNode firstChildWithName:@"metadata"]]
@@ -187,6 +195,12 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     {
         [node addChildWithName:@"bootloader"];
         [node addTextNode:_bootloader];
+        [node up];
+    }
+    if (_bootloaderArgs)
+    {
+        [node addChildWithName:@"bootloader_args"];
+        [node addTextNode:_bootloaderArgs];
         [node up];
     }
     if (_OS)
@@ -246,6 +260,14 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     {
         [node addNode:[_metadata XMLNode]];
         [node up];
+    }
+    if (_commandLine)
+    {
+        for (var i = 0; i < [_commandLine count]; i++)
+        {
+            [node addNode:[[_commandLine objectAtIndex:i] XMLNode]];
+            [node up];
+        }
     }
 
     return node;

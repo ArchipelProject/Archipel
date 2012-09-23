@@ -95,8 +95,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     @outlet TNSwitch            switchPreferencesAutoRefresh;
 
     BOOL                        _needReloadDataForCharts;
-    BOOL                        _needReloadDataForLogs;
-    CPTimer                     _timerLogs;
     CPTimer                     _timerStats;
     TNDatasourceChartView       _cpuDatasource;
     TNDatasourceChartView       _loadDatasource;
@@ -244,9 +242,9 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     var defaults    = [CPUserDefaults standardUserDefaults],
@@ -273,7 +271,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [_statsHistoryWorker setDelegate:self];
     // [_logsWorker setDelegate:self];
 
-    [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
 
     return YES;
@@ -281,20 +278,13 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
 /*! called when module is unloaded
 */
-- (void)willUnload
+- (void)willHide
 {
     if (_timerStats)
     {
         [_timerStats invalidate];
         CPLog.debug("timer for stats invalidated");
         _timerStats = nil;
-    }
-
-    if (_timerLogs)
-    {
-        [_timerLogs invalidate];
-        CPLog.debug("timer for logs invalidated");
-        _timerLogs = nil;
     }
 
     if (_cpuDatasource)
@@ -314,17 +304,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [_statsHistoryWorker setDelegate:nil];
     // [_logsWorker setDelegate:nil];
 
-    [super willUnload];
-}
-
-/*! called when module becomes visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    return YES;
+    [super willHide];
 }
 
 /*! called when user saves preferences
@@ -369,13 +349,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
             [_timerStats invalidate];
             CPLog.debug("timer for stats invalidated");
             _timerStats = nil;
-        }
-
-        if (_timerLogs)
-        {
-            [_timerLogs invalidate];
-            CPLog.debug("timer for logs invalidated");
-            _timerLogs = nil;
         }
     }
     else
@@ -500,13 +473,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
             CPLog.debug("timer for stats invalidated");
             _timerStats = nil;
         }
-
-        if (_timerLogs)
-        {
-            [_timerLogs invalidate];
-            CPLog.debug("timer for logs invalidated");
-            _timerLogs = nil;
-        }
     }
     else
     {
@@ -516,11 +482,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
         {
             _timerStats = [CPTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
             CPLog.debug("timer for stats started from switch action");
-        }
-        if (!_timerLogs)
-        {
-            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
-            CPLog.debug("timer for logs started from switch action");
         }
     }
 }
@@ -606,7 +567,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
 /*! get the hypervisor logs
 */
-- (void)getHypervisorLog:(CPTimer)aTimer
+- (void)getHypervisorLog
 {
     var stanza      = [TNStropheStanza iqWithType:@"get"],
         defaults    = [CPUserDefaults standardUserDefaults];
@@ -645,13 +606,8 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
             [_datasourceLogs addObject:logEntry];
         }
-        if ([[tabViewInfos selectedTabViewItem] identifier] == @"logs")
-        {
-            [tableLogs reloadData];
-            _needReloadDataForLogs = NO;
-        }
-        else
-            _needReloadDataForLogs = YES;
+
+        [tableLogs reloadData];
 
         CPLog.debug("logs recovered");
 
@@ -675,17 +631,17 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     var logEntry = [_datasourceLogs objectAtIndex:row],
         theWidth = [tableView frameSize].width - 34;
 
-    return [[logEntry message] sizeWithFont:[CPFont systemFontFace] inWidth:theWidth].height + 37;
+    return [[logEntry message] sizeWithFont:[CPFont systemFontFace] inWidth:theWidth].height + 45;
 }
 
 /*! CPTabViewDelegate
 */
 - (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
 {
-    if ([anItem identifier] == @"logs" && _needReloadDataForLogs)
+    if ([anItem identifier] == @"logs")
     {
+        [self getHypervisorLog];
         [tableLogs reloadData];
-        _needReloadDataForLogs = NO;
     }
 
     if ([anItem identifier] == @"charts" && _needReloadDataForCharts)

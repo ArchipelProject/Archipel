@@ -262,6 +262,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (IBAction)hideWindow:(id)aSender
 {
     [CPApp endSheet:_mainWindow];
+    [_mainWindow orderOut:aSender];
 }
 
 /*! When save button is pressed, saves all general preferences

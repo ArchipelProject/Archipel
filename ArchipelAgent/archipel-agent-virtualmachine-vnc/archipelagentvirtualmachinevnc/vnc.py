@@ -130,8 +130,11 @@ class TNArchipelVNC (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        if not self.entity.is_hypervisor((archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
-            self.entity.log.warning("Aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
+        if self.novnc_proxy:
+            self.entity.log.warning("Aborting the VNC proxy creation because the proxy is already active")
+
+        if not self.entity.hypervisor.is_hypervisor((archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
+            self.entity.log.warning("Aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.hypervisor.libvirt_connection.getType())
             return
         infos = self.display()
         if not infos:

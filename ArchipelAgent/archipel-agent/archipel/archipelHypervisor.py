@@ -131,13 +131,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.log.info("starting archipel-agent")
         archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
 
-        self.virtualmachines            = {}
-        self.database_file              = database_file
-        self.xmppserveraddr             = self.jid.getDomain()
-        self.entity_type                = "hypervisor"
-        self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
-        self.libvirt_event_callback_id  = None
-        self.vcard_infos                = {}
+        self.virtualmachines = {}
+        self.database_file = database_file
+        self.xmppserveraddr = self.jid.getDomain()
+        self.entity_type = "hypervisor"
+        self.default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
+        self.libvirt_event_callback_id = None
+        self.vcard_infos = {}
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -152,6 +152,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         # libvirt connection
         self.connect_libvirt()
+
+        # If XEN host we have to look through xm to know if vt is supported
+        if ("hypervisor" in cpuinfo):
+            self.has_vmx = "hvm" in self.libvirt_connection.getCapabilities()
 
         if (self.configuration.has_section("VCARD")):
             for key in ("orgname", "orgunit", "userid", "locality", "url", "categories"):
@@ -190,6 +194,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 self.log.error("We are sorry. But your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry.")
         else:
             self.log.warning("Your hypervisor doesn't support libvirt eventing. Using fake event loop.")
+
         self.capabilities = self.get_capabilities()
 
         # action on auth
@@ -240,11 +245,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        count   = len(self.virtualmachines)
+        count = len(self.virtualmachines)
         if self.has_vmx:
-            status  = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+            status = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
         else:
-            status  = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+            status = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
 
         self.change_presence(self.xmppstatusshow, status)
 
@@ -437,27 +442,34 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
             try:
                 vmuuid = dom.UUIDString()
-                self.log.info("MIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmuuid)
+                self.log.info("EVENTMIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmuuid)
                 self.soft_free(vmuuid)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmuuid)
             except Exception as ex:
-                self.log.error("MIGRATION: Can't free softly this virtual machine: %s" % str(ex))
+                self.log.error("EVENTMIGRATION: Can't free softly this virtual machine: %s" % str(ex))
         elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
-                desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
+                desc = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
                 if desc.getTag("uuid").getData() in self.virtualmachines:
-                    self.log.error("MIGRATION: soft allocation canceled. virtual machine is already here. This is mostly due a failed migration.")
+                    self.log.error("EVENTMIGRATION: soft allocation canceled. virtual machine is already here. This is mostly due a failed migration.")
                     return
-                vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
-                vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
-                vmname  = desc.getTag(name="name").getCDATA()
-                self.log.info("MIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
+                vmjid = desc.getTag(name="description").getCDATA().split("::::")[0]
+                vmpass = desc.getTag(name="description").getCDATA().split("::::")[1]
+                vmname = desc.getTag(name="name").getCDATA()
+                self.log.info("EVENTMIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
                 self.soft_alloc(xmpp.JID(vmjid), vmname, vmpass)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid)
             except Exception as ex:
-                self.log.warning("MIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
-
+                self.log.warning("EVENTMIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
+        else:
+            try:
+                # Otherwise, we transfer the event to the vm if we manage it
+                vm = self.get_vm_by_uuid(dom.UUIDString())
+                if vm:
+                    vm.on_domain_event(event, detail)
+            except Exception as ex:
+                self.log.error("EVENTVIRTUALMACHINE: Exception while running on_domain_event for vm %s: %s" % (dom.UUIDString(), str(ex)))
 
     ### XMPP Processing
 
@@ -590,7 +602,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             return vm_thread
 
-    def soft_alloc(self, jid, name, password, start=True):
+    def soft_alloc(self, jid, name, password, start=True, organizationInfo=None):
         """
         Perform light allocation (no registration, no subscription).
         @type jid: xmpp.JID
@@ -604,7 +616,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         jid.setResource(self.jid.getNode().lower())
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
-        vm_thread = self.create_threaded_vm(jid, password, name)
+        vm_thread = self.create_threaded_vm(jid, password, name , organizationInfo)
         vm = vm_thread.get_instance()
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
@@ -667,11 +679,20 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         vm.undefine_and_disconnect()
 
-        self.log.info("Unregistering the VM from hypervisor's database.")
-        self.database.execute("delete from virtualmachines where jid='%s'" % vm.jid.getStripped())
-        self.database.commit()
-        del self.virtualmachines[uuid]
+        try:
+            self.log.info("Unregistering the VM from hypervisor's database.")
+            self.database.execute("delete from virtualmachines where jid='%s'" % vm.jid.getStripped())
+            self.database.commit()
+        except Exception as ex:
+            self.log.error("Unable to remove VM from database: %s" % str(ex))
+        try:
+            del self.virtualmachines[uuid]
+        except Exception as ex:
+            self.log.error("Unable to remove VM from internal list: %s" % str(ex))
+
         self.update_presence()
+
+        self.log.info("Virtual machine has been sucessfully soft freed.")
 
     def clone(self, uuid, requester, wanted_name=None):
         """
@@ -846,10 +867,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         try:
             tokens = msg.getBody().split(None, 1)
-            if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            if not len(tokens) == 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help"
             identifier = tokens[1]
             vm = self.get_vm_by_identifier(identifier)
-            if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
+            if not vm:
+                return "It seems that vm with identifer %s doesn't exists." % identifier
             self.free(vm.jid)
             return "Archipel VM with JID %s has been freed." % (vm.jid)
         except Exception as ex:
@@ -919,7 +942,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = iq.buildReply("result")
             nodes = []
             managed_vm_uuids = []
-            not_managed_vm_uuids = []
             for uuid, vm in self.virtualmachines.iteritems():
                 n = xmpp.Node("item", attrs={"managed": "True", "name": vm.name})
                 n.addData(vm.jid.getStripped())
@@ -1065,7 +1087,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 vm = self.libvirt_connection.lookupByUUIDString(uuid)
                 xmldesc = vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
                 descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode)
+                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode, organizationInfo=self.vcard_infos)
                 self.log.info("manage new virtual machine with UUID: %s" % uuid)
             self.push_change("hypervisor", "manage")
         except Exception as ex:
@@ -1140,3 +1162,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)
         return reply
+
+    def on_xmpp_loop_tick(self):
+        """
+        trigger that will be called in each execution of run loop
+        """
+        self.check_libvirt_connection()

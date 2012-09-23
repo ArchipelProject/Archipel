@@ -26,13 +26,16 @@ TNLibvirtDeviceDiskTargetDevicesIDE     = [];
 TNLibvirtDeviceDiskTargetDevicesSCSI    = [];
 TNLibvirtDeviceDiskTargetDevicesXEN     = [];
 TNLibvirtDeviceDiskTargetDevicesVIRTIO  = [];
+TNLibvirtDeviceDiskTargetDevicesSATA    = [];
 
+TNLibvirtDeviceDiskTargetBusSATA        = @"sata";
 TNLibvirtDeviceDiskTargetBusIDE         = @"ide";
 TNLibvirtDeviceDiskTargetBusSCSI        = @"scsi";
 TNLibvirtDeviceDiskTargetBusUSB         = @"usb";
 TNLibvirtDeviceDiskTargetBusVIRTIO      = @"virtio";
 TNLibvirtDeviceDiskTargetBusXEN         = @"xen";
 TNLibvirtDeviceDiskTargetBuses          = [ TNLibvirtDeviceDiskTargetBusIDE,
+                                            TNLibvirtDeviceDiskTargetBusSATA,
                                             TNLibvirtDeviceDiskTargetBusSCSI,
                                             TNLibvirtDeviceDiskTargetBusVIRTIO,
                                             TNLibvirtDeviceDiskTargetBusUSB,

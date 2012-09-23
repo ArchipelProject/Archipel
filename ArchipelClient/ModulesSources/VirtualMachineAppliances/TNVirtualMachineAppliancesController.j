@@ -28,7 +28,6 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
-@import <TNKit/TNAttachedWindow.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "TNInstalledAppliancesObject.j";
@@ -131,16 +130,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [tableAppliances setDelegate:nil];
     [tableAppliances setDelegate:self]; // hum....
 
-    [self getInstalledAppliances];
-
     return YES;
-}
-
-/*! called when module is unloaded
-*/
-- (void)willUnload
-{
-    [super willUnload];
 }
 
 /*! called when module becomes visible
@@ -150,6 +140,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     if (![super willShow])
         return NO;
 
+    [self getInstalledAppliances];
     [self checkIfRunning];
 
     return YES;

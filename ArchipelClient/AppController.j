@@ -1243,7 +1243,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)openWiki:(id)sender
 {
-    window.open("https://github.com/primalmotion/archipel/wiki");
+    window.open("https://github.com/archipelproject/archipel/wiki");
 }
 
 /*! Opens the archipel commit line
@@ -1251,7 +1251,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)openReleaseNotes:(id)sender
 {
-    window.open("https://github.com/primalmotion/Archipel/commits/master");
+    window.open("https://github.com/archipelproject/Archipel/commits/master");
 }
 
 /*! Opens the donation website in a new window
@@ -1267,7 +1267,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)openBugTracker:(id)sender
 {
-    window.open("https://github.com/primalmotion/archipel/issues/");
+    window.open("https://github.com/archipelproject/archipel/issues/");
 }
 
 /*! hide or show the main menu
@@ -1443,12 +1443,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     @param aNotification the received notification
 */
-- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+- (void)outlineViewItemDidExpand:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
+    [_rosterOutlineView getVCardsForVisibleEntitiesIfNeeded];
     [[defaults objectForKey:@"TNOutlineViewsExpandedGroups"] setObject:@"expanded" forKey:key];
 }
 
@@ -1457,7 +1458,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     @param aNotification the received notification
 */
-- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+- (void)outlineViewItemDidCollapse:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
         defaults    = [CPUserDefaults standardUserDefaults],

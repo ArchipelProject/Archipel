@@ -61,3 +61,7 @@
 @import "TNLibvirtDomainMetadata.j"
 @import "TNLibvirtDomainOS.j"
 @import "TNLibvirtDomainOSType.j"
+@import "TNLibvirtDomainQEMUCommandLine.j"
+@import "TNLibvirtDomainQEMUCommandLineArgument.j"
+@import "TNLibvirtDeviceInterfaceVirtualPort.j"
+@import "TNLibvirtDeviceInterfaceVirtualPortParameters.j"

@@ -124,6 +124,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tabViewVMs addTabViewItem:tabViewItemManagedVM];
     [tabViewVMs addTabViewItem:tabViewItemNotManagedVM];
     [tabViewVMs addTabViewItem:tabViewItemParkedVM];
+    [tabViewVMs setDelegate:self];
 
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
@@ -263,9 +264,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 /*! called when module is loaded
 */
-- (BOOL)willLoad
+- (BOOL)willShow
 {
-    if (![super willLoad])
+    if (![super willShow])
         return NO;
 
     [self registerSelector:@selector(_didReceiveParkPush:) forPushNotificationType:TNArchipelPushNotificationHypervisorPark];
@@ -275,11 +276,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                                                  name:TNStropheContactPresenceUpdatedNotification
                                                object:nil];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(populateVirtualMachinesTable:)
-                                                 name:TNStropheRosterPushNotification
-                                               object:nil];
-
     [tableVirtualMachines setDelegate:nil];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachinesNotManaged setDelegate:nil];
@@ -287,7 +283,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setDelegate:nil];
     [tableVirtualMachinesParked setDelegate:self];
 
-    [self populateVirtualMachinesTable];
+    // simulate a tab change
+    [self tabView:tabViewVMs didSelectTabViewItem:[tabViewVMs selectedTabViewItem]];
 
     return YES;
 }
@@ -302,13 +299,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [VMAllocationController closeWindow:nil];
 
     [super willHide];
-}
-
-/*! called when module is unloaded
-*/
-- (void)willUnload
-{
-    [super willUnload];
 }
 
 /*! called when MainMenu is ready
@@ -420,27 +410,27 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
         case "parked":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Parked successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         case "unparked":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Unparked successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         case "deleted":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Deleted successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         case "updated":
             [growl pushNotificationWithTitle:@"Parking success" message:@"Updated successfully"];
-            [self populateVirtualMachinesTable];
             break;
 
         default:
-            [self populateVirtualMachinesTable];
+            if ([[tabViewVMs selectedTabViewItem] identifier] != @"tabViewItemParkedVM")
+                [self populateVirtualMachinesTable];
     }
+
+    if ([[tabViewVMs selectedTabViewItem] identifier] == @"tabViewItemParkedVM")
+        [VMParkingController listParkedVirtualMachines];
 
     return YES;
 }
@@ -451,7 +441,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)_reload:(CPNotification)aNotification
 {
     if ([_entity XMPPShow] != TNStropheContactStatusOffline)
-        [self populateVirtualMachinesTable];
+        if ([[tabViewVMs selectedTabViewItem] identifier] != @"tabViewItemParkedVM")
+            [self populateVirtualMachinesTable];
 }
 
 /*! reload the content of the table when a roster push is received
@@ -459,7 +450,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)populateVirtualMachinesTable:(CPNotification)aNotification
 {
-    [self populateVirtualMachinesTable];
+    if ([[tabViewVMs selectedTabViewItem] identifier] != @"tabViewItemParkedVM")
+        [self populateVirtualMachinesTable];
 }
 
 /*! reoload the table when a VM change it's status
@@ -544,9 +536,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
     }
-
-    if ([self currentEntityHasPermission:@"vmparking_list"])
-        [VMParkingController listParkedVirtualMachines];
 }
 
 
@@ -611,8 +600,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         alert = [TNAlert alertWithMessage:titleMessage
                                 informative:informativeMessage
                                  target:VMParkingController
-                                 actions:[[CPLocalizedString(@"Destroy and park", @"Destroy and park"), @selector(destroyAndParkVirtualMachines:)],
-                                          [CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)],
+                                 actions:[[CPLocalizedString(@"Park", @"Park"), @selector(parkVirtualMachines:)],
                                           [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert setUserInfo:vms];
     [alert runModal];
@@ -960,6 +948,25 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)performRemoveFromRoster:(id)someUserInfo
 {
     [[[TNStropheIMClient defaultClient] roster] removeContact:someUserInfo];
+}
+
+
+#pragma mark -
+#pragma mark Delegates
+
+- (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    switch ([anItem identifier])
+    {
+        case @"tabViewItemManagedVM":
+        case @"tabViewItemNotManagedVM":
+            [self populateVirtualMachinesTable];
+            break;
+
+        case @"tabViewItemParkedVM":
+            [VMParkingController listParkedVirtualMachines];
+            break;
+    }
 }
 
 @end

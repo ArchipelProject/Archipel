@@ -96,6 +96,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPButtonBar             buttonBarMigration;
     @outlet CPCheckBox              checkBoxAdvancedCommands;
     @outlet CPImageView             imageState;
+    @outlet CPImageView             imageViewFullScreenshot;
+    @outlet CPPopover               popoverWindowScreenshot;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
     @outlet CPSlider                sliderMemory;
@@ -119,11 +121,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     CPImage                         _imageResume;
     CPImage                         _imageScreenShutDown;
     CPImage                         _imageStop;
-    CPImageView                     _imageViewFullScreenshot;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
     CPTimer                         _screenshotTimer;
-    TNAttachedWindow                _attachedWindowScreenshot;
     TNStropheContact                _virtualMachineToFree;
     TNTableViewDataSource           _datasourceHypervisors;
 }
@@ -210,10 +210,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imageScreenShutDown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdown.png"] size:CGSizeMake(216, 162)];
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
-
-    _attachedWindowScreenshot = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 800.0, 620.0) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
-    _imageViewFullScreenshot = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 20.0, 800.0, 600.0)],
-    [[_attachedWindowScreenshot contentView] addSubview:_imageViewFullScreenshot];
 }
 
 
@@ -926,10 +922,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             screenshotHeight = [dataNode valueForAttribute:@"height"],
             screenshot = [[CPImage alloc] initWithData:[CPData dataWithBase64:base64Data]];
 
-        [_imageViewFullScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
-        [_attachedWindowScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
-        [_imageViewFullScreenshot setImage:screenshot];
-        [_attachedWindowScreenshot positionRelativeToView:buttonScreenshot gravity:TNAttachedWindowGravityAuto];
+        [imageViewFullScreenshot setImage:screenshot];
+        [popoverWindowScreenshot showRelativeToRect:nil ofView:buttonScreenshot preferredEdge:nil];
     }
     return NO;
 }

@@ -172,10 +172,16 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @return: a list containing networtks
         """
         ret = {}
+
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            libvirt_connection = self.entity.hypervisor.libvirt_connection
+        else:
+            libvirt_connection = self.entity.libvirt_connection
+
         if active:
-            ret["active"] = self.entity.libvirt_connection.listNetworks()
+            ret["active"] = libvirt_connection.listNetworks()
         if inactive:
-            ret["inactive"] = self.entity.libvirt_connection.listDefinedNetworks()
+            ret["inactive"] = libvirt_connection.listDefinedNetworks()
         return ret
 
     def create(self, identifier):
