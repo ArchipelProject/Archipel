@@ -43,7 +43,7 @@ ARCHIPEL_ERROR_CODE_NUAGE_NETWORKS_GETNAMES = -12005
 #         <inbound average='1000' peak='5000' burst='5120' />
 #         <outbound average='1000' peak='5000' burst='5120' />
 #     </bandwidth>
-#     <ip address="192.168.122.1" netmask="255.255.255.0" gateway="192.168.122.2" />
+#     <subnet address="192.168.122.1" netmask="255.255.255.0" gateway="192.168.122.2" />
 # </nuage_network>
 
 
@@ -164,9 +164,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             network_name_XML = hypervisor_nuage_plugin.get_network_by_name(network_name)
             strXML = str(network_name_XML).replace('xmlns="archipel:hypervisor:nuage:network" ', '')
             network_name_XML = xmpp.simplexml.NodeBuilder(data=strXML).getDom()
-            network_name_XML.addChild("interface_mac", attrs={"address": mac_address})
+            interface_node = network_name_XML.addChild("interface", attrs={"mac": mac_address})
             if ip_address:
-                network_name_XML.addChild("interface_ip", attrs={"address": ip_address})
+                interface_node.setAttr("address", ip_address)
 
             ## Now we reconfigure the nic to be a bridge
             interface.setAttr("type", "bridge")
