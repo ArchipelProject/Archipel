@@ -1280,8 +1280,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         for (var i = 0; i < [nuageNetworks count]; i++)
         {
             var nuageNetwork = [nuageNetworks objectAtIndex:i],
-                interface_mac = [[nuageNetwork firstChildWithName:@"interface_mac"] valueForAttribute:@"address"];
-                interface_ip = [[nuageNetwork firstChildWithName:@"interface_ip"] valueForAttribute:@"address"];
+                interface_mac = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"mac"];
+                interface_ip = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"address"];
 
             for (var j = 0; j < [[[_libvirtDomain devices] interfaces] count]; j++)
             {
