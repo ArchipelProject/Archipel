@@ -21,4 +21,4 @@
 @import "TNNuageNetworkBandwidthInbound.j"
 @import "TNNuageNetworkBandwidthOutbound.j"
 @import "TNNuageNetworkBase.j"
-@import "TNNuageNetworkIP.j"
+@import "TNNuageNetworkSubnet.j"

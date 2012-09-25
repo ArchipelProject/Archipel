@@ -1,5 +1,5 @@
 /*
- * TNNuageNetworkIP.j
+ * TNNuageNetworkSubnet.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 /*! @ingroup hypervisornetworks
     Model for network IP
 */
-@implementation TNNuageNetworkIP : TNNuageNetworkBase
+@implementation TNNuageNetworkSubnet : TNNuageNetworkBase
 {
     CPString                        _address        @accessors(property=address);
     CPString                        _netmask        @accessors(property=netmask);
@@ -34,9 +34,9 @@
 #pragma mark -
 #pragma mark Class Method
 
-+ (TNNuageNetworkIP)defaultNetworkIP
++ (TNNuageNetworkSubnet)defaultNetworkSubnet
 {
-    var IP = [[TNNuageNetworkIP alloc] init];
+    var IP = [[TNNuageNetworkSubnet alloc] init];
 
     return IP;
 }
@@ -52,8 +52,8 @@
 {
     if (self = [super initWithXMLNode:aNode])
     {
-        if ([aNode name] != @"ip")
-            [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid IP"];
+        if ([aNode name] != @"subnet")
+            [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid subnet"];
 
         _address    = [aNode valueForAttribute:@"address"];
         _netmask    = [aNode valueForAttribute:@"netmask"];
@@ -72,7 +72,7 @@
 */
 - (TNXMLNode)XMLNode
 {
-    var node = [TNXMLNode nodeWithName:@"ip"];
+    var node = [TNXMLNode nodeWithName:@"subnet"];
 
     if (_address)
         [node setValue:_address forAttribute:@"address"];

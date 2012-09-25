@@ -18,7 +18,7 @@
 
 
 @import "TNNuageNetworkBase.j"
-@import "TNNuageNetworkIP.j"
+@import "TNNuageNetworkSubnet.j"
 
 TNNuageNetworkTypeIPV4  = @"ipv4";
 TNNuageNetworkTypeIPV6  = @"ipv6";
@@ -35,7 +35,7 @@ TNNuageNetworkTypes     = [TNNuageNetworkTypeIPV4, TNNuageNetworkTypeIPV6];
     CPString                    _domain             @accessors(property=domain);
     CPString                    _zone               @accessors(property=zone);
     TNNuageNetworkBandwidth     _bandwidth          @accessors(property=bandwidth);
-    TNNuageNetworkIP            _IP                 @accessors(property=IP);
+    TNNuageNetworkSubnet        _subnet             @accessors(property=subnet);
 }
 
 
@@ -71,8 +71,8 @@ TNNuageNetworkTypes     = [TNNuageNetworkTypeIPV4, TNNuageNetworkTypeIPV6];
         _domain = [aNode valueForAttribute:@"domain"];
         _zone   = [aNode valueForAttribute:@"zone"];
 
-        if ([aNode firstChildWithName:@"ip"])
-            _IP = [[TNNuageNetworkIP alloc] initWithXMLNode:[aNode firstChildWithName:@"ip"]];
+        if ([aNode firstChildWithName:@"subnet"])
+            _subnet = [[TNNuageNetworkSubnet alloc] initWithXMLNode:[aNode firstChildWithName:@"subnet"]];
         if ([aNode firstChildWithName:@"bandwidth"])
             _bandwidth = [[TNNuageNetworkBandwidth alloc] initWithXMLNode:[aNode firstChildWithName:@"bandwidth"]];
     }
@@ -100,9 +100,9 @@ TNNuageNetworkTypes     = [TNNuageNetworkTypeIPV4, TNNuageNetworkTypeIPV6];
 
     var node = [TNXMLNode nodeWithName:@"nuage_network" andAttributes:{"name": _name, "type": _type, "domain": _domain, "zone": _zone}];
 
-    if (_IP)
+    if (_subnet)
     {
-        [node addNode:[_IP XMLNode]];
+        [node addNode:[_subnet XMLNode]];
         [node up];
     }
 
