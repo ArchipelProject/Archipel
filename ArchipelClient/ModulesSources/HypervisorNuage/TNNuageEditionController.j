@@ -92,9 +92,9 @@
     [fieldErrorMessage setStringValue:@""];
 
     [fieldName setStringValue:[_nuage name]];
-    [fieldAddress setStringValue:[[_nuage IP] address] || @""];
-    [fieldNetmask setStringValue:[[_nuage IP] netmask] || @""];
-    [fieldGateway setStringValue:[[_nuage IP] gateway] || @""];
+    [fieldAddress setStringValue:[[_nuage subnet] address] || @""];
+    [fieldNetmask setStringValue:[[_nuage subnet] netmask] || @""];
+    [fieldGateway setStringValue:[[_nuage subnet] gateway] || @""];
     [fieldDomain setStringValue:[_nuage domain] || @""];
     [fieldZone setStringValue:[_nuage zone] || @""];
 
@@ -145,15 +145,15 @@
     [_nuage setDomain:[fieldDomain stringValue]];
     [_nuage setZone:[fieldZone stringValue]];
 
-    if (![_nuage IP])
-        [_nuage setIP:[[TNNuageNetworkIP alloc] init]];
+    if (![_nuage subnet])
+        [_nuage setSubnet:[[TNNuageNetworkSubnet alloc] init]];
 
     if ([fieldAddress stringValue] != @"")
-        [[_nuage IP] setAddress:[fieldAddress stringValue]];
+        [[_nuage subnet] setAddress:[fieldAddress stringValue]];
     if ([fieldNetmask stringValue] != @"")
-        [[_nuage IP] setNetmask:[fieldNetmask stringValue]];
+        [[_nuage subnet] setNetmask:[fieldNetmask stringValue]];
     if ([fieldGateway stringValue] != @"")
-        [[_nuage IP] setGateway:[fieldGateway stringValue]];
+        [[_nuage subnet] setGateway:[fieldGateway stringValue]];
 
     if ([checkBoxBandwidthInbound state] == CPOnState)
     {

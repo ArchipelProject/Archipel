@@ -69,9 +69,9 @@ var TNNuageDataViewIcon;
     [fieldType setStringValue:[_nuage type] || @""];
     [fieldDomain setStringValue:[_nuage domain] || @""];
     [fieldZone setStringValue:[_nuage zone]];
-    [fieldAddress setStringValue:[[_nuage IP] address] || @"Auto"];
-    [fieldNetmask setStringValue:[[_nuage IP] netmask] || @"Auto"];
-    [fieldGateway setStringValue:[[_nuage IP] gateway] || @"Auto"];
+    [fieldAddress setStringValue:[[_nuage subnet] address] || @"Auto"];
+    [fieldNetmask setStringValue:[[_nuage subnet] netmask] || @"Auto"];
+    [fieldGateway setStringValue:[[_nuage subnet] gateway] || @"Auto"];
 
 
     [fieldInLimit setHidden:YES];
