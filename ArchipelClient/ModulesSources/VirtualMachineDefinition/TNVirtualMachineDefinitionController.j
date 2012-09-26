@@ -1348,7 +1348,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)addNestedVirtualization
 {
     var valueOfCPUArgument = [self getCommandLineArgumentOfCPU];
-    CPLog.info(valueOfCPUArgument);
+    CPLog.info("found cpu argument? " + valueOfCPUArgument);
     if (!valueOfCPUArgument)
     {
         // we don't have any -cpu argument let's create one
