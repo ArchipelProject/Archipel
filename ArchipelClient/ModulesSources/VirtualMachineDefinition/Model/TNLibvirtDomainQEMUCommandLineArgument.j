@@ -35,6 +35,15 @@
 #pragma mark -
 #pragma mark Initialization
 
+- (id)initWithValue:(CPString)aValue
+{
+    if (self = [super init])
+    {
+        _value = aValue;
+    }
+    return self;
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
