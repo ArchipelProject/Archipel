@@ -157,6 +157,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNSwitch                    switchACPI;
     @outlet TNSwitch                    switchAPIC;
     @outlet TNSwitch                    switchHugePages;
+    @outlet TNSwitch                    switchNestedVirtualization;
     @outlet TNSwitch                    switchPAE;
     @outlet TNSwitch                    switchPreferencesHugePages;
     @outlet TNTabView                   tabViewParameters;
@@ -731,6 +732,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:switchACPI enabledAccordingToPermission:@"define"];
     [self setControl:switchAPIC enabledAccordingToPermission:@"define"];
     [self setControl:switchHugePages enabledAccordingToPermission:@"define"];
+    [self setControl:switchNestedVirtualization enabledAccordingToPermission:@"define"];
     [self setControl:switchPAE enabledAccordingToPermission:@"define"];
     [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
     [self setControl:_editButtonNics enabledAccordingToPermission:@"define"];
@@ -915,6 +917,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         or          = [defaults objectForKey:@"TNDescDefaultOnReboot"],
         oc          = [defaults objectForKey:@"TNDescDefaultOnCrash"],
         hp          = [defaults boolForKey:@"TNDescDefaultHugePages"],
+        nv          = [defaults boolForKey:@"TNDescDefaultNestedVirtualization"],
         clock       = [defaults objectForKey:@"TNDescDefaultClockOffset"],
         pae         = [defaults boolForKey:@"TNDescDefaultPAE"],
         acpi        = [defaults boolForKey:@"TNDescDefaultACPI"],
@@ -933,6 +936,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
+    [switchNestedVirtualization setOn:((nv == 1) ? YES : NO) animated:YES sendAction:NO];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
 
@@ -1204,6 +1208,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchACPI setEnabled:shouldEnableGUI];
     [switchAPIC setEnabled:shouldEnableGUI];
     [switchHugePages setEnabled:shouldEnableGUI];
+    [switchNestedVirtualization setEnabled:shouldEnableGUI];
     [switchPAE setEnabled:shouldEnableGUI];
     [fieldOSCommandLine setEnabled:shouldEnableGUI];
     [fieldOSKernel setEnabled:shouldEnableGUI];
@@ -1258,6 +1263,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchACPI setNeedsDisplay:YES];
     [switchAPIC setNeedsDisplay:YES];
     [switchHugePages setNeedsDisplay:YES];
+    [switchNestedVirtualization setNeedsDisplay:YES];
     [switchPAE setNeedsDisplay:YES];
 
     if (shouldEnableGUI)
@@ -1292,6 +1298,137 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                     [nic setNuageNetworkName:[nuageNetwork valueForAttribute:@"name"]];
                     [nic setNuageNetworkInterfaceIP:interface_ip];
                 }
+            }
+        }
+    }
+}
+
+/*! returns the value of cpu argument (if any)
+*/
+- (id)getCommandLineArgumentOfCPU
+{
+    var commandLine             = [_libvirtDomain commandLine],
+        ValueOfCPUArgument      = nil,
+        isValueOfCPUArgument    = NO;
+    if (commandLine)
+    {
+        for (var i = 0; i < [commandLine count]; i++)
+        {
+            for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
+            {
+                var argumentValue = [[[commandLine objectAtIndex:i] args] objectAtIndex:j];
+                if ([argumentValue value] == "-cpu")
+                {
+                    isValueOfCPUArgument = YES;
+                    continue;
+                }
+                if (isValueOfCPUArgument)
+                {
+                    ValueOfCPUArgument   = argumentValue;
+                    isValueOfCPUArgument = NO;
+                }
+                // we want last values that get passed to last -cpu
+                // so don't stop iteration after finding one
+            }
+        }
+    }
+    return ValueOfCPUArgument;
+}
+
+/*! returns YES if finds vmx extension in cpu argument
+*/
+- (void)isNestedVirtualizationEnabled
+{
+    return (([[self getCommandLineArgumentOfCPU] value] || "").indexOf("+vmx") > -1);
+}
+
+/*! adds "+vmx" to cpu argument if finds any cpu argument, else will
+  create one like: -cpu qemu64,+vmx
+*/
+- (void)addNestedVirtualization
+{
+    var valueOfCPUArgument = [self getCommandLineArgumentOfCPU];
+    CPLog.info("found cpu argument? " + valueOfCPUArgument);
+    if (!valueOfCPUArgument)
+    {
+        // we don't have any -cpu argument let's create one
+        // first check the commandLine
+        var commandLineObjects = [_libvirtDomain commandLine],
+            commandLine        = nil;
+        if (!commandLineObjects || [commandLineObjects count] === 0)
+        {
+            // hmm, we need commandLine too
+            var tmpCommandLine = [CPArray array];
+            commandLine = [[TNLibvirtDomainQEMUCommandLine alloc] init];
+            [tmpCommandLine addObject:commandLine];
+            [_libvirtDomain setCommandLine:tmpCommandLine];
+        }
+        else
+            commandLine = [commandLineObjects objectAtIndex:0];
+        // get arguments
+        var theArguments = [commandLine args];
+        [theArguments addObject:[[TNLibvirtDomainQEMUCommandLineArgument alloc] initWithValue:"-cpu"]];
+        valueOfCPUArgument = [[TNLibvirtDomainQEMUCommandLineArgument alloc] initWithValue:"qemu64"];
+        [theArguments addObject:valueOfCPUArgument];
+    }
+    var theValue = [valueOfCPUArgument value];
+    if (theValue.indexOf("+vmx") == -1)
+    {
+        theValue += ",+vmx";
+        [valueOfCPUArgument setValue:theValue];
+    }
+}
+
+/*! removes any "+vmx" arguments that has been passed to value of -cpu argument
+  also removes if it can match exactly -cpu qemu64,+vmx
+*/
+- (void)removeNestedVirtualization
+{
+    var commandLine             = [_libvirtDomain commandLine],
+        isValueOfCPUArgument    = NO;
+    if (commandLine)
+    {
+        // remove any "+vmx"
+        for (var i = 0; i < [commandLine count]; i++)
+        {
+            var shouldBeRemoved = [CPArray array];
+            for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
+            {
+                var argumentValue = [[[commandLine objectAtIndex:i] args] objectAtIndex:j];
+                if ([argumentValue value] == "-cpu")
+                {
+                    isValueOfCPUArgument = YES;
+                    continue;
+                }
+                if (isValueOfCPUArgument)
+                {
+                    var tmpValue = [argumentValue value];
+                    // remove it, if it's exactly what we add
+                    if (tmpValue == "qemu64,+vmx")
+                    {
+                        [shouldBeRemoved addObject:j];
+                        [shouldBeRemoved addObject:(j - 1)];
+                    }
+                    // just remove +vmx
+                    else
+                    {
+                        tmpValue = tmpValue.replace(new RegExp(",?\\+vmx", 'g'), '');
+                        [argumentValue setValue:tmpValue];
+                        isValueOfCPUArgument = NO;
+                    }
+                }
+            }
+            if ([shouldBeRemoved count] > 0)
+            {
+                var tmpArguments = [CPArray array];
+                for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
+                {
+                    if ([shouldBeRemoved indexOfObject:j] !== CPNotFound)
+                        // skip it
+                        continue;
+                    [tmpArguments addObject:[[[commandLine objectAtIndex:i] args] objectAtIndex:j]];
+                }
+                [[commandLine objectAtIndex:i] setArgs:tmpArguments];
             }
         }
     }
@@ -1849,6 +1986,24 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self makeDefinitionEdited:aSender];
 }
 
+/*! update the value for nested virtualization
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeNestedVirtualization:(id)aSender
+{
+    if ([aSender isOn])
+    {
+        // adds nested virtualization argument as qemu commandline
+        [self addNestedVirtualization];
+    }
+    else
+    {
+        // removes any +vmx flags from value of -cpu qemu arguments
+        [self removeNestedVirtualization];
+    }
+    [self makeDefinitionEdited:aSender];
+}
+
 /*! update the value for clock
     @param aSender the sender of the action
 */
@@ -2097,6 +2252,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeACPI:switchACPI];
         [self didChangePAE:switchPAE];
         [self didChangeHugePages:switchHugePages];
+        [self didChangeNestedVirtualization:switchNestedVirtualization];
         [self didChangeClock:buttonClocks];
         [self didChangeOnCrash:buttonOnCrash];
         [self didChangeOnReboot:buttonOnReboot];
@@ -2178,6 +2334,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [switchHugePages setOn:NO animated:NO sendAction:NO];
     if ([_libvirtDomain memoryBacking] && [[_libvirtDomain memoryBacking] isUsingHugePages])
         [switchHugePages setOn:YES animated:NO sendAction:NO];
+
+    // nested virtualization
+    [switchNestedVirtualization setOn:NO animated:NO sendAction:NO];
+    if ([self isNestedVirtualizationEnabled])
+        [switchNestedVirtualization setOn:YES animated:NO sendAction:NO];
 
     //clock
     [self setControl:buttonClocks enabledAccordingToPermission:@"define"];
