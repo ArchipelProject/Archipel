@@ -1339,15 +1339,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)isNestedVirtualizationEnabled
 {
-    var valueOfCPUArgument = [self getCommandLineArgumentOfCPU];
-    if (valueOfCPUArgument)
-    {
-        if (([valueOfCPUArgument value]).indexOf("+vmx") > -1)
-        {
-            return YES;
-        }
-    }
-    return NO;
+    return ([[self getCommandLineArgumentOfCPU] value]).indexOf("+vmx") > -1);
 }
 
 /*! adds "+vmx" to cpu argument if finds any cpu argument, else will
