@@ -1339,15 +1339,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)isNestedVirtualizationEnabled
 {
-    var valueOfCPUArgument = [self getCommandLineArgumentOfCPU];
-    if (valueOfCPUArgument)
-    {
-        if (([valueOfCPUArgument value]).indexOf("+vmx") > -1)
-        {
-            return YES;
-        }
-    }
-    return NO;
+    return (([[self getCommandLineArgumentOfCPU] value] || "").indexOf("+vmx") > -1);
 }
 
 /*! adds "+vmx" to cpu argument if finds any cpu argument, else will
@@ -1356,7 +1348,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)addNestedVirtualization
 {
     var valueOfCPUArgument = [self getCommandLineArgumentOfCPU];
-    CPLog.info(valueOfCPUArgument);
+    CPLog.info("found cpu argument? " + valueOfCPUArgument);
     if (!valueOfCPUArgument)
     {
         // we don't have any -cpu argument let's create one
@@ -1414,8 +1406,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                     // remove it, if it's exactly what we add
                     if (tmpValue == "qemu64,+vmx")
                     {
-                        [shouldBeRemoved addObject:i];
-                        [shouldBeRemoved addObject:i-1];
+                        [shouldBeRemoved addObject:j];
+                        [shouldBeRemoved addObject:(j - 1)];
                     }
                     // just remove +vmx
                     else
@@ -1431,7 +1423,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                 var tmpArguments = [CPArray array];
                 for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
                 {
-                    if ([shouldBeRemoved indexOfObject:j])
+                    if ([shouldBeRemoved indexOfObject:j] !== CPNotFound)
                         // skip it
                         continue;
                     [tmpArguments addObject:[[[commandLine objectAtIndex:i] args] objectAtIndex:j]];
