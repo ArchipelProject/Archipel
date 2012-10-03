@@ -78,7 +78,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     @outlet CPButton                    buttonClocks;
     @outlet CPButton                    buttonDefine;
-    @outlet CPButton                    buttonDomainType;
     @outlet CPButton                    buttonOnCrash;
     @outlet CPButton                    buttonOnPowerOff;
     @outlet CPButton                    buttonOnReboot;
@@ -92,6 +91,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPButtonBar                 buttonBarInputDevices;
     @outlet CPPopover                   popoverXMLEditor;
     @outlet CPPopUpButton               buttonBoot;
+    @outlet CPPopUpButton               buttonDomainType;
     @outlet CPPopUpButton               buttonGuests;
     @outlet CPPopUpButton               buttonMachines;
     @outlet CPPopUpButton               buttonPreferencesBoot;
@@ -113,6 +113,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTableView                 tableInputDevices;
     @outlet CPTableView                 tableInterfaces;
     @outlet CPTextField                 fieldBlockIOTuningWeight;
+    @outlet CPTextField                 fieldBootloader;
     @outlet CPTextField                 fieldMemory;
     @outlet CPTextField                 fieldMemoryTuneGuarantee;
     @outlet CPTextField                 fieldMemoryTuneHardLimit;
@@ -121,7 +122,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
-    @outlet CPTextField                 fieldBootloader;
     @outlet CPTextField                 fieldPreferencesDomainType;
     @outlet CPTextField                 fieldPreferencesGuest;
     @outlet CPTextField                 fieldPreferencesMachine;
@@ -141,9 +141,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewParametersEffectTop;
     @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersStandard;
+    @outlet LPMultiLineTextField        fieldBootloaderArgs;
     @outlet LPMultiLineTextField        fieldOSCommandLine;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
-    @outlet LPMultiLineTextField        fieldBootloaderArgs;
     @outlet TNCharacterDeviceController characterDeviceController;
     @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
     @outlet TNDriveController           driveController;
@@ -1061,11 +1061,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [buttonDomainType addItemWithTitle:[domain valueForAttribute:@"type"]];
         }
 
-        var defaultDomainType = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDomainType"];
-        if (defaultDomainType && [buttonDomainType itemWithTitle:defaultDomainType])
-            [buttonDomainType selectItemWithTitle:defaultDomainType];
+        if (_libvirtDomain && [_libvirtDomain type])
+        {
+            [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
+        }
         else
-            [buttonDomainType selectItemAtIndex:0];
+        {
+            var defaultDomainType = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDomainType"];
+            if (defaultDomainType && [buttonDomainType itemWithTitle:defaultDomainType])
+                [buttonDomainType selectItemWithTitle:defaultDomainType];
+            else
+                [buttonDomainType selectItemAtIndex:0];
+        }
 
         [self setControl:buttonDomainType enabledAccordingToPermission:@"define"];
         [buttonDomainType setEnabled:YES];
