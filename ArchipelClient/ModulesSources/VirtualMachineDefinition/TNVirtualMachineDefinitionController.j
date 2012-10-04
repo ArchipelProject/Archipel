@@ -1298,8 +1298,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         for (var i = 0; i < [nuageNetworks count]; i++)
         {
             var nuageNetwork = [nuageNetworks objectAtIndex:i],
-                interface_mac = [[nuageNetwork firstChildWithName:@"interface_mac"] valueForAttribute:@"address"];
-                interface_ip = [[nuageNetwork firstChildWithName:@"interface_ip"] valueForAttribute:@"address"];
+                interface_mac = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"mac"];
+                interface_ip = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"address"];
 
             for (var j = 0; j < [[[_libvirtDomain devices] interfaces] count]; j++)
             {
@@ -2029,6 +2029,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [USBController setIndex:0] // Is that a good idea??
         [USBController setModel:TNLibvirtDeviceControllerModelNONE];
         [controllers addObject:USBController];
+
+        // and remove tablets if any
+        var devicesToRemove = [CPArray array];
+        for (var i = 0; i < [_inputDevicesDatasource count]; i++)
+        {
+            var inputDevice = [_inputDevicesDatasource objectAtIndex:i];
+            if ([inputDevice bus] == TNLibvirtDeviceInputBusUSB)
+                [devicesToRemove addObject:inputDevice];
+        }
+        [_inputDevicesDatasource removeObjectsInArray:devicesToRemove];
+        [tableInputDevices reloadData];
     }
 
     [self makeDefinitionEdited:aSender];
