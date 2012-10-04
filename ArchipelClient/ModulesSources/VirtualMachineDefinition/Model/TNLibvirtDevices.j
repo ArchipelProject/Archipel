@@ -27,7 +27,7 @@
 @import "TNLibvirtDeviceHostDev.j"
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
-
+@import "TNLibvirtDeviceController.j"
 
 /*! @ingroup virtualmachinedefinition
     Model for devices
@@ -41,6 +41,7 @@
     CPArray                 _hostdevs       @accessors(property=hostdevs);
     CPArray                 _inputs         @accessors(property=inputs);
     CPArray                 _interfaces     @accessors(property=interfaces);
+    CPArray                 _controllers    @accessors(property=controllers);
     CPString                _emulator       @accessors(property=emulator);
 
     TNLibvirtDeviceVideo    _video          @accessors(property=video);
@@ -61,6 +62,7 @@
         _hostdevs    = [CPArray array];
         _inputs      = [CPArray array];
         _interfaces  = [CPArray array];
+        _controllers = [CPArray array];
     }
 
     return self;
@@ -84,6 +86,7 @@
         _hostdevs    = [CPArray array];
         _inputs      = [CPArray array];
         _interfaces  = [CPArray array];
+        _controllers = [CPArray array];
 
         var diskNodes = [aNode ownChildrenWithName:@"disk"];
         for (var i = 0; i < [diskNodes count]; i++)
@@ -124,6 +127,10 @@
         var filesystemNodes = [aNode ownChildrenWithName:@"filesystem"];
         for (var i = 0; i < [filesystemNodes count]; i++)
             [_filesystems addObject:[[TNLibvirtDeviceFilesystem alloc] initWithXMLNode:[filesystemNodes objectAtIndex:i]]];
+
+        var controllerNodes = [aNode ownChildrenWithName:@"controller"];
+        for (var i = 0; i < [controllerNodes count]; i++)
+            [_controllers addObject:[[TNLibvirtDeviceController alloc] initWithXMLNode:[controllerNodes objectAtIndex:i]]];
 
         if  ([aNode firstChildWithName:@"video"])
             _video = [[TNLibvirtDeviceVideo alloc] initWithXMLNode:[aNode firstChildWithName:@"video"]];
@@ -189,6 +196,12 @@
     for (var i = 0; i < [_filesystems count]; i++)
     {
         [node addNode:[[_filesystems objectAtIndex:i] XMLNode]];
+        [node up];
+    }
+
+    for (var i = 0; i < [_controllers count]; i++)
+    {
+        [node addNode:[[_controllers objectAtIndex:i] XMLNode]];
         [node up];
     }
 
