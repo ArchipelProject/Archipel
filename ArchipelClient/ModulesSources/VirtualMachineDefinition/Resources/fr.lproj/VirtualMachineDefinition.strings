@@ -77,23 +77,11 @@
 /* Class = "NSTextFieldCell"; title = "Life cycle"; ObjectID = "80"; */
 "80.title" = "Life cycle";
 
-/* Class = "NSTextFieldCell"; title = "APIC"; ObjectID = "103"; */
-"103.title" = "APIC:";
-
-/* Class = "NSTextFieldCell"; title = "ACPI"; ObjectID = "104"; */
-"104.title" = "ACPI:";
-
-/* Class = "NSTextFieldCell"; title = "PAE"; ObjectID = "105"; */
-"105.title" = "PAE:";
-
 /* Class = "NSTextFieldCell"; title = "Configure advanced features of virtual machine"; ObjectID = "106"; */
 "106.title" = "Configure advanced features of virtual machine";
 
 /* Class = "NSTextFieldCell"; title = "Advanced features"; ObjectID = "107"; */
 "107.title" = "Advanced features";
-
-/* Class = "NSTextFieldCell"; title = "Huge pages"; ObjectID = "110"; */
-"110.title" = "Huge pages:";
 
 /* Class = "NSTextFieldCell"; title = "Clock"; ObjectID = "113"; */
 "113.title" = "Clock:";
@@ -1249,4 +1237,25 @@
 
 /* Class = "NSTextFieldCell"; title = "IP Address"; ObjectID = "1933"; */
 "1933.title" = "IP Address";
+
+/* Class = "NSButtonCell"; title = "Huge page"; ObjectID = "1953"; */
+"1953.title" = "Huge page";
+
+/* Class = "NSButtonCell"; title = "Nested"; ObjectID = "1956"; */
+"1956.title" = "Nested";
+
+/* Class = "NSButtonCell"; title = "USB"; ObjectID = "1958"; */
+"1958.title" = "USB";
+
+/* Class = "NSButtonCell"; title = "PAE"; ObjectID = "1960"; */
+"1960.title" = "PAE";
+
+/* Class = "NSButtonCell"; title = "ACPI"; ObjectID = "1962"; */
+"1962.title" = "ACPI";
+
+/* Class = "NSButtonCell"; title = "APIC"; ObjectID = "1964"; */
+"1964.title" = "APIC";
+
+/* Class = "NSButtonCell"; title = "Huge page"; ObjectID = "1971"; */
+"1971.title" = "Huge page";
 

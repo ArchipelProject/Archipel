@@ -154,12 +154,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNInputDeviceDataView       dataViewInputDevicePrototype;
     @outlet TNInterfaceController       interfaceController;
     @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
-    @outlet TNSwitch                    switchACPI;
-    @outlet TNSwitch                    switchAPIC;
-    @outlet TNSwitch                    switchHugePages;
-    @outlet TNSwitch                    switchNestedVirtualization;
-    @outlet TNSwitch                    switchPAE;
-    @outlet TNSwitch                    switchPreferencesHugePages;
+    @outlet CPCheckbox                  checkboxACPI;
+    @outlet CPCheckbox                  checkboxAPIC;
+    @outlet CPCheckbox                  checkboxHugePages;
+    @outlet CPCheckbox                  checkboxNestedVirtualization;
+    @outlet CPCheckbox                  checkboxPAE;
+    @outlet CPCheckbox                  checkboxPreferencesHugePages;
+    @outlet CPCheckbox                  checkboxEnableUSB;
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;
 
@@ -512,10 +513,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 
-    // switch
-    [switchPAE setOn:NO animated:YES sendAction:NO];
-    [switchAPIC setOn:NO animated:YES sendAction:NO];
-    [switchACPI setOn:NO animated:YES sendAction:NO];
+    // checkboxes
+    [checkboxPAE setState:CPOffState];
+    [checkboxAPIC setState:CPOffState];
+    [checkboxACPI setState:CPOffState];
 
     //CPUStepper
     [stepperNumberCPUs setMaxValue:[defaults integerForKey:@"TNDescMaxNumberCPU"]];
@@ -654,7 +655,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setBool:[switchPreferencesHugePages isOn] forKey:@"TNDescDefaultHugePages"];
+    [defaults setBool:[checkboxPreferencesHugePages state] forKey:@"TNDescDefaultHugePages"];
     [defaults setObject:[buttonPreferencesBoot title] forKey:@"TNDescDefaultBoot"];
     [defaults setObject:[buttonPreferencesClockOffset title] forKey:@"TNDescDefaultClockOffset"];
     [defaults setObject:[buttonPreferencesInput title] forKey:@"TNDescDefaultInputType"];
@@ -689,7 +690,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldPreferencesGuest setStringValue:[defaults objectForKey:@"TNDescDefaultGuest"]];
     [fieldPreferencesMachine setIntValue:[defaults objectForKey:@"TNDescDefaultMachine"]];
     [fieldPreferencesMemory setStringValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
-    [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
+    [checkboxPreferencesHugePages setState:[defaults boolForKey:@"TNDescDefaultHugePages"]];
 }
 
 /*! called when MainMenu is ready
@@ -729,11 +730,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:buttonXMLEditor enabledAccordingToPermission:@"define"];
     [self setControl:fieldMemory enabledAccordingToPermission:@"define"];
     [self setControl:stepperNumberCPUs enabledAccordingToPermission:@"define"];
-    [self setControl:switchACPI enabledAccordingToPermission:@"define"];
-    [self setControl:switchAPIC enabledAccordingToPermission:@"define"];
-    [self setControl:switchHugePages enabledAccordingToPermission:@"define"];
-    [self setControl:switchNestedVirtualization enabledAccordingToPermission:@"define"];
-    [self setControl:switchPAE enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxACPI enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxAPIC enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxHugePages enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxEnableUSB enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxNestedVirtualization enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxPAE enabledAccordingToPermission:@"define"];
     [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
     [self setControl:_editButtonNics enabledAccordingToPermission:@"define"];
     [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
@@ -932,11 +934,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnReboot selectItemWithTitle:or];
     [buttonOnCrash selectItemWithTitle:oc];
     [buttonClocks selectItemWithTitle:clock];
-    [switchPAE setOn:((pae == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchNestedVirtualization setOn:((nv == 1) ? YES : NO) animated:YES sendAction:NO];
+    [checkboxPAE setState:((pae == 1) ? CPOnState : CPOffState)];
+    [checkboxACPI setState:((acpi == 1) ? CPOnState : CPOffState)];
+    [checkboxAPIC setState:((apic == 1) ? CPOnState : CPOffState)];
+    [checkboxHugePages setState:((hp == 1) ? CPOnState : CPOnState)];
+    [checkboxEnableUSB setState:CPOnState];
+    [checkboxNestedVirtualization setState:((nv == 1) ? CPOnState : CPOnState)];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
 
@@ -1087,35 +1090,35 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         var features = [capabilities firstChildWithName:@"features"];
 
-        [switchPAE setEnabled:NO];
+        [checkboxPAE setEnabled:NO];
         if ([features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"] )
-            [switchPAE setEnabled:YES];
+            [checkboxPAE setEnabled:YES];
         if (![features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"])
-            [switchPAE setOn:YES animated:NO sendAction:NO];
+            [checkboxPAE setState:CPOnState];
         if ([features containsChildrenWithName:@"nonpae"] && ![features containsChildrenWithName:@"pae"])
-            [switchPAE setOn:NO animated:NO sendAction:NO];
+            [checkboxPAE setState:CPOffState];
 
-        [switchACPI setEnabled:NO];
+        [checkboxACPI setEnabled:NO];
         if ([features containsChildrenWithName:@"acpi"])
         {
-            var on = [[features firstChildWithName:@"acpi"] valueForAttribute:@"default"] == "on" ? YES : NO,
+            var on = [[features firstChildWithName:@"acpi"] valueForAttribute:@"default"] == "on" ? CPOnState : CPOffState,
                 toggle = [[features firstChildWithName:@"acpi"] valueForAttribute:@"toggle"] == "yes" ? YES : NO;
 
             if (toggle)
-                [switchACPI setEnabled:YES];
-            [switchACPI setOn:on animated:NO sendAction:NO];
+                [checkboxACPI setEnabled:YES];
+            [checkboxACPI setState:on];
         }
 
-        [switchAPIC setEnabled:NO];
+        [checkboxAPIC setEnabled:NO];
         if ([features containsChildrenWithName:@"apic"])
         {
-            var on = [[features firstChildWithName:@"apic"] valueForAttribute:@"default"] == "on" ? YES : NO,
+            var on = [[features firstChildWithName:@"apic"] valueForAttribute:@"default"] == "on" ? CPOnState : CPOffState,
                 toggle = [[features firstChildWithName:@"apic"] valueForAttribute:@"toggle"] == "yes" ? YES : NO;
 
             if (toggle)
-                [switchAPIC setEnabled:YES];
+                [checkboxAPIC setEnabled:YES];
 
-            [switchAPIC setOn:on animated:NO sendAction:NO];
+            [checkboxAPIC setState:on];
         }
     }
 }
@@ -1212,11 +1215,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_plusButtonInputs setEnabled:shouldEnableGUI];
     [_plusButtonNics setEnabled:shouldEnableGUI];
     [_plusButtonCharacter setEnabled:shouldEnableGUI];
-    [switchACPI setEnabled:shouldEnableGUI];
-    [switchAPIC setEnabled:shouldEnableGUI];
-    [switchHugePages setEnabled:shouldEnableGUI];
-    [switchNestedVirtualization setEnabled:shouldEnableGUI];
-    [switchPAE setEnabled:shouldEnableGUI];
+    [checkboxACPI setEnabled:shouldEnableGUI];
+    [checkboxAPIC setEnabled:shouldEnableGUI];
+    [checkboxHugePages setEnabled:shouldEnableGUI];
+    [checkboxEnableUSB setEnabled:shouldEnableGUI];
+    [checkboxNestedVirtualization setEnabled:shouldEnableGUI];
+    [checkboxPAE setEnabled:shouldEnableGUI];
     [fieldOSCommandLine setEnabled:shouldEnableGUI];
     [fieldOSKernel setEnabled:shouldEnableGUI];
     [fieldOSInitrd setEnabled:shouldEnableGUI];
@@ -1267,11 +1271,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_plusButtonGraphics setNeedsDisplay:YES];
     [_plusButtonInputs setNeedsDisplay:YES];
     [_plusButtonNics setNeedsDisplay:YES];
-    [switchACPI setNeedsDisplay:YES];
-    [switchAPIC setNeedsDisplay:YES];
-    [switchHugePages setNeedsDisplay:YES];
-    [switchNestedVirtualization setNeedsDisplay:YES];
-    [switchPAE setNeedsDisplay:YES];
+    [checkboxACPI setNeedsDisplay:YES];
+    [checkboxAPIC setNeedsDisplay:YES];
+    [checkboxHugePages setNeedsDisplay:YES];
+    [checkboxEnableUSB setNeedsDisplay:YES];
+    [checkboxNestedVirtualization setNeedsDisplay:YES];
+    [checkboxPAE setNeedsDisplay:YES];
 
     if (shouldEnableGUI)
         [self buildGUIAccordingToCurrentGuest];
@@ -1955,7 +1960,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [[_libvirtDomain features] setPAE:[aSender isOn]];
+    [[_libvirtDomain features] setPAE:[aSender state]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1966,7 +1971,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [[_libvirtDomain features] setACPI:[aSender isOn]];
+    [[_libvirtDomain features] setACPI:[aSender state]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1977,11 +1982,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [[_libvirtDomain features] setAPIC:[aSender isOn]];
+    [[_libvirtDomain features] setAPIC:[aSender state]];
     [self makeDefinitionEdited:aSender];
 }
 
-/*! update the value for hugae page
+/*! update the value for huge page
     @param aSender the sender of the action
 */
 - (IBAction)didChangeHugePages:(id)aSender
@@ -1989,7 +1994,43 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![_libvirtDomain memoryBacking])
         [_libvirtDomain setMemoryBacking:[TNLibvirtDomainMemoryBacking new]];
 
-    [[_libvirtDomain memoryBacking] setUseHugePages:[aSender isOn]];
+    [[_libvirtDomain memoryBacking] setUseHugePages:[aSender state]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for enable USB
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeEnableUSB:(id)aSender
+{
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    var USBController,
+        controllers = [[_libvirtDomain devices] controllers];
+
+    // first, let's find the USBController and remove it if any
+    for (var i = 0; i < [controllers count]; i++)
+    {
+        var type = [[controllers objectAtIndex:i] type],
+            model = [[controllers objectAtIndex:i] model];
+
+        if (type == TNLibvirtDeviceControllerTypeUSB)
+        {
+            [controllers removeObject:[controllers objectAtIndex:i]];
+            break;
+        }
+    }
+
+    if (![aSender state])
+    {
+        USBController = [[TNLibvirtDeviceController alloc] init];
+        [USBController setType:TNLibvirtDeviceControllerTypeUSB]
+        [USBController setIndex:0] // Is that a good idea??
+        [USBController setModel:TNLibvirtDeviceControllerModelNONE];
+        [controllers addObject:USBController];
+    }
+
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1998,7 +2039,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeNestedVirtualization:(id)aSender
 {
-    if ([aSender isOn])
+    if ([aSender state])
     {
         // adds nested virtualization argument as qemu commandline
         [self addNestedVirtualization];
@@ -2255,11 +2296,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeMemory:fieldMemory];
         [self didChangeGuest:buttonGuests];
         [self didChangeVCPU:stepperNumberCPUs];
-        [self didChangeAPIC:switchAPIC];
-        [self didChangeACPI:switchACPI];
-        [self didChangePAE:switchPAE];
-        [self didChangeHugePages:switchHugePages];
-        [self didChangeNestedVirtualization:switchNestedVirtualization];
+        [self didChangeAPIC:checkboxAPIC];
+        [self didChangeACPI:checkboxACPI];
+        [self didChangePAE:checkboxPAE];
+        [self didChangeHugePages:checkboxHugePages];
+        [self didChangeEnableUSB:checkboxEnableUSB];
+        [self didChangeNestedVirtualization:checkboxNestedVirtualization];
         [self didChangeClock:buttonClocks];
         [self didChangeOnCrash:buttonOnCrash];
         [self didChangeOnReboot:buttonOnReboot];
@@ -2326,26 +2368,45 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnCrash selectItemWithTitle:[_libvirtDomain onCrash]];
 
     // APIC
-    [switchAPIC setOn:NO animated:NO sendAction:NO];
-    [switchAPIC setOn:[[_libvirtDomain features] isAPIC] animated:NO sendAction:NO];
+    [checkboxAPIC setState:CPOffState];
+    [checkboxAPIC setState:[[_libvirtDomain features] isAPIC]];
 
     // ACPI
-    [switchACPI setOn:NO animated:NO sendAction:NO];
-    [switchACPI setOn:[[_libvirtDomain features] isACPI] animated:NO sendAction:NO];
+    [checkboxACPI setState:CPOffState]
+    [checkboxACPI setState:[[_libvirtDomain features] isACPI]];
 
     // PAE
-    [switchPAE setOn:NO animated:NO sendAction:NO];
-    [switchPAE setOn:[[_libvirtDomain features] isPAE] animated:NO sendAction:NO];
+    [checkboxPAE setState:CPOffState]
+    [checkboxPAE setState:[[_libvirtDomain features] isPAE]];
 
     // huge pages
-    [switchHugePages setOn:NO animated:NO sendAction:NO];
+    [checkboxHugePages setState:CPOffState]
     if ([_libvirtDomain memoryBacking] && [[_libvirtDomain memoryBacking] isUsingHugePages])
-        [switchHugePages setOn:YES animated:NO sendAction:NO];
+        [checkboxHugePages setState:YES];
+
+    // Enable USB
+    [checkboxEnableUSB setState:CPOnState]
+    if ([_libvirtDomain devices])
+    {
+        var controllers = [[_libvirtDomain devices] controllers];
+
+        for (var i = 0; i < [controllers count]; i++)
+        {
+            var type = [[controllers objectAtIndex:i] type],
+                model = [[controllers objectAtIndex:i] model];
+
+            if (type == TNLibvirtDeviceControllerTypeUSB && model == TNLibvirtDeviceControllerModelNONE)
+            {
+                [checkboxEnableUSB setState:CPOffState];
+                break;
+            }
+        }
+    }
 
     // nested virtualization
-    [switchNestedVirtualization setOn:NO animated:NO sendAction:NO];
+    [checkboxNestedVirtualization setState:CPOffState];
     if ([self isNestedVirtualizationEnabled])
-        [switchNestedVirtualization setOn:YES animated:NO sendAction:NO];
+        [checkboxNestedVirtualization setState:CPOnState];
 
     //clock
     [self setControl:buttonClocks enabledAccordingToPermission:@"define"];
