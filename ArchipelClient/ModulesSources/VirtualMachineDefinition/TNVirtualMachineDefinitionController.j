@@ -2029,6 +2029,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [USBController setIndex:0] // Is that a good idea??
         [USBController setModel:TNLibvirtDeviceControllerModelNONE];
         [controllers addObject:USBController];
+
+        // and remove tablets if any
+        var devicesToRemove = [CPArray array];
+        for (var i = 0; i < [_inputDevicesDatasource count]; i++)
+        {
+            var inputDevice = [_inputDevicesDatasource objectAtIndex:i];
+            if ([inputDevice bus] == TNLibvirtDeviceInputBusUSB)
+                [devicesToRemove addObject:inputDevice];
+        }
+        [_inputDevicesDatasource removeObjectsInArray:devicesToRemove];
+        [tableInputDevices reloadData];
     }
 
     [self makeDefinitionEdited:aSender];
