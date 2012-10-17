@@ -136,7 +136,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesDatasource setTable:tableVirtualMachines];
-    [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID"]];
+    [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
 
     [fieldFilterVM setTarget:_virtualMachinesDatasource];
     [fieldFilterVM setAction:@selector(filterObjects:)];
@@ -200,7 +200,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesNotManaged setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesNotManagedDatasource setTable:tableVirtualMachinesNotManaged];
-    [_virtualMachinesNotManagedDatasource setSearchableKeyPaths:[@"JID"]];
+    [_virtualMachinesNotManagedDatasource setSearchableKeyPaths:[@"JID.bare"]];
 
     [fieldFilterVMNotManaged setTarget:_virtualMachinesNotManagedDatasource];
     [fieldFilterVMNotManaged setAction:@selector(filterObjects:)];

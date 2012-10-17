@@ -139,7 +139,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     // Table users in roster
     _datasourceRosterUsers= [[TNTableViewDataSource alloc] init];
     [_datasourceRosterUsers setTable:tableRosterUsers];
-    [_datasourceRosterUsers setSearchableKeyPaths:[@"JID"]];
+    [_datasourceRosterUsers setSearchableKeyPaths:[@"JID.bare"]];
     [tableRosterUsers setDataSource:_datasourceRosterUsers];
 
     // Table users from server

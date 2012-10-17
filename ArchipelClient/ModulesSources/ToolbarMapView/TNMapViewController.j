@@ -112,14 +112,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     // VM origin table view
     _dataSourceVMOrigin = [[TNDragDropTableViewDataSource alloc] init];
     [_dataSourceVMOrigin setTable:tableVMOrigin];
-    [_dataSourceVMOrigin setSearchableKeyPaths:[@"nickname", @"JID"]];
+    [_dataSourceVMOrigin setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
     [filterFieldOrigin setTarget:_dataSourceVMOrigin];
     [filterFieldOrigin setAction:@selector(filterObjects:)];
 
     // VM Destination table view
     _dataSourceVMDestination = [[TNDragDropTableViewDataSource alloc] init];
     [_dataSourceVMDestination setTable:tableVMDestination];
-    [_dataSourceVMDestination setSearchableKeyPaths:[@"nickname", @"JID"]];
+    [_dataSourceVMDestination setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
     [filterFieldDestination setTarget:_dataSourceVMDestination];
     [filterFieldDestination setAction:@selector(filterObjects:)];
 
