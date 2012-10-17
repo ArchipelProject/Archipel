@@ -93,7 +93,7 @@
     [_tableViewPeople addTableColumn:columnNickname];
 
     [_peopleDatasource setTable:_tableViewPeople];
-    [_peopleDatasource setSearchableKeyPaths:[@"JID"]];
+    [_peopleDatasource setSearchableKeyPaths:[@"JID.bare"]];
     [_tableViewPeople setDataSource:_peopleDatasource];
 
     var bundle = [CPBundle bundleForClass:[self class]],

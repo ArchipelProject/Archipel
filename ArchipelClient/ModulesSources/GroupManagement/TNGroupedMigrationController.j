@@ -51,7 +51,7 @@
 {
     _datasourceHypervisors  = [[TNTableViewDataSource alloc] init];
     [_datasourceHypervisors setTable:tableHypervisors];
-    [_datasourceHypervisors setSearchableKeyPaths:[@"nickname", @"JID"]];
+    [_datasourceHypervisors setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
     [tableHypervisors setDataSource:_datasourceHypervisors];
 
     [searchFieldHypervisors setTarget:_datasourceHypervisors];
