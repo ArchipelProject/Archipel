@@ -51,11 +51,13 @@
 - (void)_prepareLogin
 {
     var defaults = [CPUserDefaults standardUserDefaults],
-        username = [defaults objectForKey:@"TNArchipelNuageUserName"] + "-" + [defaults objectForKey:@"TNArchipelNuageCompany"],
+        username = [defaults objectForKey:@"TNArchipelNuageUserName"],
+        company =  [defaults objectForKey:@"TNArchipelNuageCompany"],
         password = [defaults objectForKey:@"TNArchipelNuagePassword"];
 
     [[TNRESTLoginController defaultController] setUser:username];
     [[TNRESTLoginController defaultController] setPassword:password];
+    [[TNRESTLoginController defaultController] setCompany:company];
 }
 
 - (void)fetchOrganizationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
@@ -106,6 +108,8 @@
     [connection start];
 }
 
+
+
 - (void)_didFetchObjects:(TNRESTConnection)aConnection
 {
     if ([aConnection responseCode] !== 200)
@@ -117,13 +121,14 @@
         return;
     }
 
+    console.warn([[aConnection responseData] rawString]);
     var JSONObj = [[aConnection responseData] JSONObject],
         completions = [CPArray array],
         RESTToken = [aConnection internalUserInfo],
         comboBox = [aConnection userInfo];
 
-    for (var i = 0; i < JSONObj.entities.length; i++)
-        [completions addObject:[JSONObj.entities[i][RESTToken]]];
+    for (var i = 0; i < JSONObj.length; i++)
+        [completions addObject:[JSONObj[i][RESTToken]]];
 
     [comboBox setContentValues:completions];
 }

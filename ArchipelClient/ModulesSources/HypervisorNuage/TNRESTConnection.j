@@ -16,11 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/CPURLConnection.j>
 @import "TNRESTLoginController.j"
 
-TNRESTConnectionUnauthorizedNotification = @"NURESTConnectionUnauthorizedNotification";
+@import <Foundation/CPURLConnection.j>
 
+TNRESTConnectionResponseCodeZero = 0;
+TNRESTConnectionResponseCodeSuccess = 200;
+TNRESTConnectionResponseCodeCreated = 201;
+TNRESTConnectionResponseCodeEmpty = 204;
+TNRESTConnectionResponseCodeNotFound = 404;
+TNRESTConnectionResponseCodeConflict = 409;
+TNRESTConnectionResponseCodeInternalServerError = 500;
+TNRESTConnectionResponseCodeServiceUnavailable = 503;
+TNRESTConnectionResponseCodeUnauthorized = 401;
+TNRESTConnectionResponseCodePermissionDenied = 403;
+TNRESTConnectionResponseCodeMultipleChoices = 300;
 
 /*! Enhanced version of CPURLConnection
 */
@@ -90,7 +100,6 @@ TNRESTConnectionUnauthorizedNotification = @"NURESTConnectionUnauthorizedNotific
 
     try
     {
-
         _HTTPRequest.open([_request HTTPMethod], [[_request URL] absoluteString], YES);
 
         _HTTPRequest.onreadystatechange = function() { [self _readyStateDidChange]; }
@@ -103,7 +112,11 @@ TNRESTConnectionUnauthorizedNotification = @"NURESTConnectionUnauthorizedNotific
             _HTTPRequest.setRequestHeader(key, [fields objectForKey:key]);
 
         if (_usesAuthentication)
-            _HTTPRequest.setRequestHeader("Authorization", [[TNRESTLoginController defaultController] authString]);
+        {
+            _HTTPRequest.setRequestHeader("X-Nuage-Organization", [[TNRESTLoginController defaultController] company]);
+            _HTTPRequest.setRequestHeader("Authorization", [[TNRESTLoginController defaultController] RESTAuthString]);
+        }
+
 
         _HTTPRequest.send([_request HTTPBody]);
     }
@@ -138,23 +151,8 @@ TNRESTConnectionUnauthorizedNotification = @"NURESTConnectionUnauthorizedNotific
 {
     if (_HTTPRequest.readyState() === CFHTTPRequest.CompleteState)
     {
-        _responseCode = _HTTPRequest.status()
-
-        switch (_responseCode)
-        {
-            case 200:
-                _responseData = [CPData dataWithRawString:_HTTPRequest.responseText()];
-                break;
-
-            case 401:
-                [[CPNotificationCenter defaultCenter] postNotificationName:TNRESTConnectionUnauthorizedNotification
-                                                                object:self
-                                                              userInfo:nil];
-                 break;
-
-            case 0:
-                CPLog.error("Error code 0 man! fix this!")
-        }
+        _responseCode = _HTTPRequest.status();
+        _responseData = [CPData dataWithRawString:_HTTPRequest.responseText()];
 
         if (_target && _selector)
             [_target performSelector:_selector withObject:self];
