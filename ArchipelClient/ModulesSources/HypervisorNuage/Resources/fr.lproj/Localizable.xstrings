@@ -38,9 +38,5 @@
 	<string>The gateway to use for Nuage network</string>
 	<key>The netmask to use for Nuage network</key>
 	<string>The netmask to use for Nuage network</string>
-	<key>The network domain</key>
-	<string>The network domain</string>
-	<key>The network zone</key>
-	<string>The network zone</string>
 </dict>
 </plist>

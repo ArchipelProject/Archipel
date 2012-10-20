@@ -179,18 +179,6 @@
 /* Class = "NSTextFieldCell"; title = "Zone name"; ObjectID = "748"; */
 "748.title" = "Zone name";
 
-/* Class = "NSTextFieldCell"; placeholderString = "Enterprise Domain"; ObjectID = "753"; */
-"753.placeholderString" = "Enterprise Domain";
-
-/* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "754"; */
-"754.title" = "Domain:";
-
-/* Class = "NSTextFieldCell"; placeholderString = "Public Zone"; ObjectID = "757"; */
-"757.placeholderString" = "Public Zone";
-
-/* Class = "NSTextFieldCell"; title = "Zone:"; ObjectID = "758"; */
-"758.title" = "Zone:";
-
 /* Class = "NSTextFieldCell"; placeholderString = "http://cna.com/cna-rest/rest/CloudMgmt/"; ObjectID = "772"; */
 "772.placeholderString" = "http://cna.com/cna-rest/rest/CloudMgmt/";
 
@@ -217,4 +205,19 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "Alcatel-Lucent"; ObjectID = "785"; */
 "785.placeholderString" = "Alcatel-Lucent";
+
+/* Class = "NSTableColumn"; headerCell.title = "Domain name"; ObjectID = "806"; */
+"806.headerCell.title" = "Domain name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "809"; */
+"809.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Zone name"; ObjectID = "816"; */
+"816.headerCell.title" = "Zone name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "817"; */
+"817.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Domain and Zone configuration"; ObjectID = "820"; */
+"820.title" = "Domain and Zone configuration";
 

@@ -21,15 +21,29 @@
 
 @import "TNRESTConnection.j"
 
+var defaultTNCNACommunicator;
+
 
 @implementation TNCNACommunicator : CPObject
 {
-    CPURL       _baseURL    @accessors(property=baseURL);
-    CPString    _username   @accessors(property=username);
-    CPString    _company    @accessors(property=company);
-    CPString    _token      @accessors(property=token);
+    CPURL       _baseURL                @accessors(property=baseURL);
+    CPString    _username               @accessors(property=username);
+    CPString    _company                @accessors(property=company);
+    CPString    _token                  @accessors(property=token);
+
+    CPString    _currentOrganizationID  @accessors(property=currentOrganizationID);
+    CPString    _currentUserID          @accessors(property=currentUserID);
+
+    BOOL        _authenticated;
 }
 
++ (TNCNACommunicator)defaultCNACommunicator
+{
+    if (!defaultTNCNACommunicator)
+        defaultTNCNACommunicator = [[TNCNACommunicator alloc] init];
+
+    return defaultTNCNACommunicator;
+}
 
 #pragma mark -
 #pragma mark Initialization
@@ -55,14 +69,53 @@
         company =  [defaults objectForKey:@"TNArchipelNuageCompany"],
         password = [defaults objectForKey:@"TNArchipelNuagePassword"];
 
+    if (_username == username)
+        return;
+
+    _username = username;
+    _company = company;
+    _token = password;
+
     [[TNRESTLoginController defaultController] setUser:username];
     [[TNRESTLoginController defaultController] setPassword:password];
     [[TNRESTLoginController defaultController] setCompany:company];
 }
 
+- (void)fetchMe
+{
+    _authenticated = NO;
+    [self _prepareLogin];
+
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"me" relativeToURL:_baseURL]],
+        connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchMe:)];
+
+    [connection start];
+}
+
+- (void)_didFetchMe:(TNRESTConnection)aConnection
+{
+    if ([aConnection responseCode] !== 200)
+    {
+        var title = "CNA REST Login error",
+            informative = @"Unable to authenticate with CNA with given informations";
+
+        [TNAlert showAlertWithMessage:title informative:informative style:CPCriticalAlertStyle];
+        return;
+    }
+
+    var JSON = [[aConnection responseData] JSONObject];
+    _currentOrganizationID = JSON[0].enterpriseID;
+    _currentUserID = JSON[0].ID;
+    CPLog.error("Fetched REST user Nuage enterprise ID: " + _currentOrganizationID);
+    CPLog.error("Fetched REST user ID: " + _currentUserID);
+
+    _authenticated = YES;
+}
+
 - (void)fetchOrganizationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
-    [self _prepareLogin];
+    if (!_authenticated)
+        return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
@@ -74,9 +127,10 @@
 
 - (void)fetchGroupsAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
-    [self _prepareLogin];
+    if (!_authenticated)
+        return;
 
-    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"groups" relativeToURL:_baseURL]],
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + @"/groups" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
@@ -86,9 +140,10 @@
 
 - (void)fetchUsersAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
-    [self _prepareLogin];
+    if (!_authenticated)
+        return;
 
-    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"users" relativeToURL:_baseURL]],
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + @"/users" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
@@ -98,9 +153,10 @@
 
 - (void)fetchApplicationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
 {
-    [self _prepareLogin];
+    if (!_authenticated)
+        return;
 
-    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"apps" relativeToURL:_baseURL]],
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"users/" + _currentUserID + @"/apps" relativeToURL:_baseURL]],
         connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
@@ -108,11 +164,11 @@
     [connection start];
 }
 
-
-
 - (void)_didFetchObjects:(TNRESTConnection)aConnection
 {
-    if ([aConnection responseCode] !== 200)
+    console.warn([[aConnection responseData] rawString]);
+
+    if ([aConnection responseCode] !== 200 && [aConnection responseCode] !== 204)
     {
         var title = "An error occured while sending REST to " + _baseURL,
             informative = [aConnection errorMessage];
@@ -121,17 +177,42 @@
         return;
     }
 
-    console.warn([[aConnection responseData] rawString]);
     var JSONObj = [[aConnection responseData] JSONObject],
         completions = [CPArray array],
         RESTToken = [aConnection internalUserInfo],
         comboBox = [aConnection userInfo];
+
+    if (!JSONObj)
+        return;
 
     for (var i = 0; i < JSONObj.length; i++)
         [completions addObject:[JSONObj[i][RESTToken]]];
 
     [comboBox setContentValues:completions];
 }
+
+- (void)fetchDomainsAndCallSelector:(SEL)aSelector ofObject:(id)anObject
+{
+    if (!_authenticated)
+        return;
+
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + "/domains" relativeToURL:_baseURL]],
+        connection = [TNRESTConnection connectionWithRequest:request target:anObject selector:aSelector];
+
+    [connection start];
+}
+
+- (void)fetchZonesInDomainWithID:(CPString)aDomainID andCallSelector:(SEL)aSelector ofObject:(id)anObject
+{
+    if (!_authenticated)
+        return;
+
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"domains/" + aDomainID + "/zones" relativeToURL:_baseURL]],
+        connection = [TNRESTConnection connectionWithRequest:request target:anObject selector:aSelector];
+
+    [connection start];
+}
+
 
 @end
 

@@ -51,16 +51,19 @@
     @outlet CPTextField         fieldBandwidthOutboundAverage;
     @outlet CPTextField         fieldBandwidthOutboundBurst;
     @outlet CPTextField         fieldBandwidthOutboundPeak;
-    @outlet CPTextField         fieldDomain;
     @outlet CPTextField         fieldErrorMessage;
     @outlet CPTextField         fieldGateway;
     @outlet CPTextField         fieldName;
     @outlet CPTextField         fieldNetmask;
-    @outlet CPTextField         fieldZone;
+    @outlet CPTableView         tableViewDomains;
+    @outlet CPTableView         tableViewZones;
 
     BOOL                        _isNewNuage @accessors(setter=setIsNewNuage:);
     id                          _delegate   @accessors(property=delegate);
     TNNuage                     _nuage      @accessors(property=nuage);
+
+    TNTableViewDataSource       _dataSourceDomains;
+    TNTableViewDataSource       _dataSourceZones;
 }
 
 
@@ -77,8 +80,15 @@
     [fieldAddress setToolTip:CPBundleLocalizedString(@"The IP address to the Nuage network", @"The IP address to the Nuage network")];
     [fieldNetmask setToolTip:CPBundleLocalizedString(@"The netmask to use for Nuage network", @"The netmask to use for the Nuage network")];
     [fieldGateway setToolTip:CPBundleLocalizedString(@"The gateway to use for Nuage network", @"The gateway to use for the Nuage network")];
-    [fieldDomain setToolTip:CPBundleLocalizedString(@"The network domain", @"The network domain")];
-    [fieldZone setToolTip:CPBundleLocalizedString(@"The network zone", @"The network zone")];
+
+    _dataSourceDomains = [[TNTableViewDataSource alloc] init];
+    [_dataSourceDomains setTable:tableViewDomains];
+    [tableViewDomains setDataSource:_dataSourceDomains];
+    [tableViewDomains setDelegate:self];
+
+    _dataSourceZones = [[TNTableViewDataSource alloc] init];
+    [_dataSourceZones setTable:tableViewZones];
+    [tableViewZones setDataSource:_dataSourceZones];
 }
 
 
@@ -95,8 +105,6 @@
     [fieldAddress setStringValue:[[_nuage subnet] address] || @""];
     [fieldNetmask setStringValue:[[_nuage subnet] netmask] || @""];
     [fieldGateway setStringValue:[[_nuage subnet] gateway] || @""];
-    [fieldDomain setStringValue:[_nuage domain] || @""];
-    [fieldZone setStringValue:[_nuage zone] || @""];
 
     [buttonNuageType selectItemWithTitle:[_nuage type]];
 
@@ -115,6 +123,8 @@
     [fieldBandwidthOutboundAverage setStringValue:[[[_nuage bandwidth] outbound] average] || @""];
     [fieldBandwidthOutboundPeak setStringValue:[[[_nuage bandwidth] outbound] peak] || @""];
     [fieldBandwidthOutboundBurst setStringValue:[[[_nuage bandwidth] outbound] burst] || @""];
+
+    [[TNCNACommunicator defaultCNACommunicator] fetchDomainsAndCallSelector:@selector(_didFetchDomains:) ofObject:self];
 }
 
 /*! Update the network object with value and
@@ -128,13 +138,13 @@
         return;
     }
 
-    if (![fieldDomain stringValue] || [fieldDomain stringValue] == @"")
+    if ([tableViewDomains numberOfSelectedRows] != 1)
     {
         [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid domain name", @"You must enter a valid domain name")];
         return;
     }
 
-    if (![fieldZone stringValue] || [fieldZone stringValue] == @"")
+    if ([tableViewZones numberOfSelectedRows] != 1)
     {
         [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid zone name", @"You must enter a valid zone name")];
         return;
@@ -142,8 +152,8 @@
 
     [_nuage setName:[fieldName stringValue]];
     [_nuage setType:[buttonNuageType title]];
-    [_nuage setDomain:[fieldDomain stringValue]];
-    [_nuage setZone:[fieldZone stringValue]];
+    [_nuage setDomain:[[_dataSourceDomains objectAtIndex:[tableViewDomains selectedRow]] objectForKey:@"name"]];
+    [_nuage setZone:[[_dataSourceZones objectAtIndex:[tableViewZones selectedRow]] objectForKey:@"name"]];
 
     if (![_nuage subnet])
         [_nuage setSubnet:[[TNNuageNetworkSubnet alloc] init]];
@@ -207,6 +217,59 @@
         [_delegate updateNuage:_nuage];
 
     [mainPopover close];
+}
+
+
+#pragma mark -
+#pragma mark REST handler
+
+- (void)_didFetchDomains:(TNRESTConnection)aConnection
+{
+    var JSON = [[aConnection responseData] JSONObject],
+        domains = [CPArray array],
+        currentDomainIndex = 0;
+
+    for (var i = 0; i < [JSON count]; i++)
+    {
+        var domain = JSON[i],
+            domainName = domain.name,
+            domainID = domain.ID;
+
+        [domains addObject:[CPDictionary dictionaryWithObjectsAndKeys: domainName, @"name", domainID, @"ID"]];
+
+        if (domainName == [_nuage domain])
+            currentDomainIndex = i;
+    }
+
+    [_dataSourceDomains setContent:domains];
+    [tableViewDomains reloadData];
+
+    [tableViewDomains selectRowIndexes:[CPIndexSet indexSetWithIndex:currentDomainIndex] byExtendingSelection:NO];
+    [self tableViewSelectionDidChange:nil];
+}
+
+- (void)_didFetchZones:(TNRESTConnection)aConnection
+{
+    var JSON = [[aConnection responseData] JSONObject],
+        zones = [CPArray array],
+        currentZoneIndex = 0;
+
+    for (var i = 0; i < [JSON count]; i++)
+    {
+        var zone = JSON[i],
+            zoneName = zone.name,
+            zoneID = zone.ID;
+
+        [zones addObject:[CPDictionary dictionaryWithObjectsAndKeys: zoneName, @"name", zoneID, @"ID"]];
+
+        if (zoneName == [_nuage zone])
+            currentZoneIndex = i;
+    }
+
+    [_dataSourceZones setContent:zones];
+    [tableViewZones reloadData];
+
+    [tableViewZones selectRowIndexes:[CPIndexSet indexSetWithIndex:currentZoneIndex] byExtendingSelection:NO];
 }
 
 
@@ -303,6 +366,18 @@
         if (![_nuage bandwidth])
             [[_nuage bandwidth] setOutbound:nil];
     }
+}
+
+#pragma mark -
+#pragma mark Delegates
+
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    var selectedObject = [_dataSourceDomains objectAtIndex:[tableViewDomains selectedRow]];
+
+    [[TNCNACommunicator defaultCNACommunicator] fetchZonesInDomainWithID:[selectedObject objectForKey:@"ID"]
+                                                         andCallSelector:@selector(_didFetchZones:)
+                                                               ofObject:self];
 }
 
 @end

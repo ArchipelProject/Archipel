@@ -70,7 +70,6 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     CPButton                            _minusButton;
     CPButton                            _plusButton;
     CPDictionary                        _nuagesRAW;
-    TNCNACommunicator                   _CNACommunicator;
     TNTableViewDataSource               _datasourceNuages;
 }
 
@@ -149,7 +148,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
     // CNA Communicator
     var URLString = [defaults objectForKey:@"TNArchipelNuageURL"];
-    [self _initCNACommunicatorWithURLString:URLString];
+    [self _initCNACommunicatorWithURLString:[CPURL URLWithString:URLString]];
 }
 
 
@@ -238,7 +237,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [defaults setObject:[fieldPreferencesToken stringValue] forKey:@"TNArchipelNuagePassword"];
     [defaults setObject:[fieldPreferencesBaseURL stringValue] forKey:@"TNArchipelNuageURL"];
 
-    [self _initCNACommunicatorWithURLString:[fieldPreferencesBaseURL stringValue]];
+    [self _initCNACommunicatorWithURLString:[CPURL URLWithString:[fieldPreferencesBaseURL stringValue]]];
 }
 
 /*! called when user gets preferences
@@ -287,16 +286,19 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 }
 
 
-- (void)_initCNACommunicatorWithURLString:(CPString)anURL
+- (void)_initCNACommunicatorWithURLString:(CPURL)aBaseURL
 {
-    if (anURL)
+    if (aBaseURL)
     {
-        var anURL = [CPURL URLWithString:anURL];
+        var anURL = [CPURL URLWithString:@"cna-rest/rest/cloudMgmt/v1_0/" relativeToURL:aBaseURL];
 
-        _CNACommunicator = [[TNCNACommunicator alloc] initWithBaseURL:anURL];
+        [[TNCNACommunicator defaultCNACommunicator] setBaseURL:anURL];
+        [[TNCNACommunicator defaultCNACommunicator] fetchMe];
     }
     else
-        _CNACommunicator = nil;
+    {
+        [[TNCNACommunicator defaultCNACommunicator] setBaseURL:nil];
+    }
 }
 
 #pragma mark -
@@ -601,22 +603,19 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 */
 - (CPArray)completionForField:(CPComboBox)aComboBox value:(id)aValue
 {
-    if (!_CNACommunicator)
-        return;
-
     switch ([aComboBox tag])
     {
         case @"organization":
-            [_CNACommunicator fetchOrganizationsAndSetCompletionForComboBox:aComboBox];
+            [[TNCNACommunicator defaultCNACommunicator] fetchOrganizationsAndSetCompletionForComboBox:aComboBox];
             break;
         case @"unit":
-            [_CNACommunicator fetchGroupsAndSetCompletionForComboBox:aComboBox];
+            [[TNCNACommunicator defaultCNACommunicator] fetchGroupsAndSetCompletionForComboBox:aComboBox];
             break;
         case @"owner":
-            [_CNACommunicator fetchUsersAndSetCompletionForComboBox:aComboBox];
+            [[TNCNACommunicator defaultCNACommunicator] fetchUsersAndSetCompletionForComboBox:aComboBox];
             break;
         case @"category":
-            [_CNACommunicator fetchApplicationsAndSetCompletionForComboBox:aComboBox];
+            [[TNCNACommunicator defaultCNACommunicator] fetchApplicationsAndSetCompletionForComboBox:aComboBox];
             break;
     }
 }

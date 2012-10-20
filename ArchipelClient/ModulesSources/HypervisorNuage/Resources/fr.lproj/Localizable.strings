@@ -52,9 +52,3 @@
 /* The netmask to use for the Nuage network */
 "The netmask to use for Nuage network" = "The netmask to use for Nuage network";
 
-/* The network domain */
-"The network domain" = "The network domain";
-
-/* The network zone */
-"The network zone" = "The network zone";
-
