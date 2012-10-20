@@ -31,7 +31,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "Model/TNNuage.j"
-
+@import "TNIPUtils.j"
 
 
 /*! @ingroup hypervisornetworks
@@ -124,6 +124,11 @@
     [fieldBandwidthOutboundPeak setStringValue:[[[_nuage bandwidth] outbound] peak] || @""];
     [fieldBandwidthOutboundBurst setStringValue:[[[_nuage bandwidth] outbound] burst] || @""];
 
+    [_dataSourceDomains removeAllObjects];
+    [tableViewDomains reloadData];
+    [_dataSourceZones removeAllObjects];
+    [tableViewZones reloadData];
+
     [[TNCNACommunicator defaultCNACommunicator] fetchDomainsAndCallSelector:@selector(_didFetchDomains:) ofObject:self];
 }
 
@@ -150,6 +155,33 @@
         return;
     }
 
+    if ([fieldAddress stringValue] != @"" && !validateIPAddress([fieldAddress stringValue]))
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid IP address", @"You must enter a valid IP address")];
+        return;
+    }
+
+    if ([fieldNetmask stringValue] != @"" && !validateIPAddress([fieldNetmask stringValue]))
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid Netmask address", @"You must enter a valid Netmask address")];
+        return;
+    }
+
+    if ([fieldGateway stringValue] != @"" && !validateIPAddress([fieldGateway stringValue]))
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"You must enter a valid Gateway address", @"You must enter a valid Gateway address")];
+        return;
+    }
+
+    if ([fieldAddress stringValue] != @""
+        && [fieldNetmask stringValue] != @""
+        && [fieldGateway stringValue] != @""
+        && !validateIPsInSameSubnet([fieldAddress stringValue], [fieldGateway stringValue], [fieldNetmask stringValue]))
+    {
+        [fieldErrorMessage setStringValue:CPLocalizedString(@"Gateway must be in the network", @"Gateway must be in the network")];
+        return;
+    }
+
     [_nuage setName:[fieldName stringValue]];
     [_nuage setType:[buttonNuageType title]];
     [_nuage setDomain:[[_dataSourceDomains objectAtIndex:[tableViewDomains selectedRow]] objectForKey:@"name"]];
@@ -158,12 +190,9 @@
     if (![_nuage subnet])
         [_nuage setSubnet:[[TNNuageNetworkSubnet alloc] init]];
 
-    if ([fieldAddress stringValue] != @"")
-        [[_nuage subnet] setAddress:[fieldAddress stringValue]];
-    if ([fieldNetmask stringValue] != @"")
-        [[_nuage subnet] setNetmask:[fieldNetmask stringValue]];
-    if ([fieldGateway stringValue] != @"")
-        [[_nuage subnet] setGateway:[fieldGateway stringValue]];
+    [[_nuage subnet] setAddress:([fieldAddress stringValue] != @"") ? [fieldAddress stringValue] : nil];
+    [[_nuage subnet] setNetmask:([fieldNetmask stringValue] != @"") ? [fieldNetmask stringValue] : nil];
+    [[_nuage subnet] setGateway:([fieldGateway stringValue] != @"") ? [fieldGateway stringValue] : nil];
 
     if ([checkBoxBandwidthInbound state] == CPOnState)
     {
@@ -244,6 +273,9 @@
     [_dataSourceDomains setContent:domains];
     [tableViewDomains reloadData];
 
+    if (![_dataSourceDomains count])
+        return;
+
     [tableViewDomains selectRowIndexes:[CPIndexSet indexSetWithIndex:currentDomainIndex] byExtendingSelection:NO];
     [self tableViewSelectionDidChange:nil];
 }
@@ -268,6 +300,9 @@
 
     [_dataSourceZones setContent:zones];
     [tableViewZones reloadData];
+
+    if (![_dataSourceZones count])
+        return;
 
     [tableViewZones selectRowIndexes:[CPIndexSet indexSetWithIndex:currentZoneIndex] byExtendingSelection:NO];
 }
@@ -373,7 +408,11 @@
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
+    if (![tableViewDomains numberOfSelectedRows])
+        return;
+
     var selectedObject = [_dataSourceDomains objectAtIndex:[tableViewDomains selectedRow]];
+
 
     [[TNCNACommunicator defaultCNACommunicator] fetchZonesInDomainWithID:[selectedObject objectForKey:@"ID"]
                                                          andCallSelector:@selector(_didFetchZones:)

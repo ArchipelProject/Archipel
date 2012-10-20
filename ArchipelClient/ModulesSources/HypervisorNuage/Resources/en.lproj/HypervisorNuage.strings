@@ -1,15 +1,15 @@
 
-/* Class = "NSTextFieldCell"; title = "You can manage the hypervisor's network."; ObjectID = "9"; */
-"9.title" = "You can manage the hypervisor's network.";
+/* Class = "NSTextFieldCell"; title = "You can manage the Nuage networks."; ObjectID = "9"; */
+"9.title" = "You can manage the Nuage networks.";
 
-/* Class = "NSTextFieldCell"; title = "Manage hypervisor networks"; ObjectID = "10"; */
-"10.title" = "Manage hypervisor networks";
+/* Class = "NSTextFieldCell"; title = "Manage Nuage Networks"; ObjectID = "10"; */
+"10.title" = "Manage Nuage Networks";
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
 "19.title" = "Name:";
 
-/* Class = "NSTextFieldCell"; title = "Network basics"; ObjectID = "21"; */
-"21.title" = "Network basics";
+/* Class = "NSTextFieldCell"; title = "Nuage Network"; ObjectID = "21"; */
+"21.title" = "Nuage Network";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Name of the network"; ObjectID = "23"; */
 "23.placeholderString" = "Name of the network";
@@ -23,11 +23,11 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "37"; */
 "37.title" = "Item 3";
 
-/* Class = "NSTextFieldCell"; title = "Forward device:"; ObjectID = "39"; */
-"39.title" = "Forward device:";
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "39"; */
+"39.title" = "Type:";
 
-/* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
-"62.title" = "Bridge address:";
+/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "62"; */
+"62.title" = "Address:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "64"; */
 "64.placeholderString" = "auto";
@@ -74,8 +74,8 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "436"; */
 "436.title" = "Box";
 
-/* Class = "NSTextFieldCell"; title = "IP configuration"; ObjectID = "456"; */
-"456.title" = "IP configuration";
+/* Class = "NSTextFieldCell"; title = "Network configuration"; ObjectID = "456"; */
+"456.title" = "Network configuration";
 
 /* Class = "NSTextFieldCell"; title = "General informations"; ObjectID = "458"; */
 "458.title" = "General informations";
@@ -179,8 +179,8 @@
 /* Class = "NSTextFieldCell"; title = "Zone name"; ObjectID = "748"; */
 "748.title" = "Zone name";
 
-/* Class = "NSTextFieldCell"; placeholderString = "http://api.cna.com/"; ObjectID = "772"; */
-"772.placeholderString" = "http://api.cna.com/";
+/* Class = "NSTextFieldCell"; placeholderString = "https://api.cna.com/"; ObjectID = "772"; */
+"772.placeholderString" = "https://api.cna.com/";
 
 /* Class = "NSTextFieldCell"; placeholderString = "primalmotion"; ObjectID = "773"; */
 "773.placeholderString" = "primalmotion";
@@ -205,6 +205,9 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "Alcatel-Lucent"; ObjectID = "785"; */
 "785.placeholderString" = "Alcatel-Lucent";
+
+/* Class = "NSSecureTextFieldCell"; placeholderString = "Secret"; ObjectID = "788"; */
+"788.placeholderString" = "Secret";
 
 /* Class = "NSTableColumn"; headerCell.title = "Domain name"; ObjectID = "806"; */
 "806.headerCell.title" = "Domain name";

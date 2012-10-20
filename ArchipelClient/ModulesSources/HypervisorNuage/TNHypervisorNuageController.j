@@ -150,7 +150,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [self bind:@"authenticated" toObject:[TNCNACommunicator defaultCNACommunicator] withKeyPath:@"authenticated" options:nil];
 
     var URLString = [defaults objectForKey:@"TNArchipelNuageURL"];
-    [self _initCNACommunicatorWithURLString:[CPURL URLWithString:URLString]];
+    [self _initCNACommunicatorWithURLString:URLString];
 }
 
 
@@ -239,7 +239,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [defaults setObject:[fieldPreferencesToken stringValue] forKey:@"TNArchipelNuagePassword"];
     [defaults setObject:[fieldPreferencesBaseURL stringValue] forKey:@"TNArchipelNuageURL"];
 
-    [self _initCNACommunicatorWithURLString:[CPURL URLWithString:[fieldPreferencesBaseURL stringValue]]];
+    [self _initCNACommunicatorWithURLString:[fieldPreferencesBaseURL stringValue]];
 }
 
 /*! called when user gets preferences
@@ -288,11 +288,12 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 }
 
 
-- (void)_initCNACommunicatorWithURLString:(CPURL)aBaseURL
+- (void)_initCNACommunicatorWithURLString:(CPString)aBaseURLString
 {
-    if (aBaseURL)
+    if (aBaseURLString)
     {
-        var anURL = [CPURL URLWithString:@"cna-rest/rest/cloudMgmt/v1_0/" relativeToURL:aBaseURL];
+        var baseURL = [CPURL URLWithString:aBaseURLString[aBaseURLString.lenght - 1] != @"/" ? aBaseURLString + @"/" : aBaseURLString],
+            anURL = [CPURL URLWithString:@"cna-rest/rest/cloudMgmt/v1_0/" relativeToURL:baseURL];
 
         [[TNCNACommunicator defaultCNACommunicator] setBaseURL:anURL];
         [[TNCNACommunicator defaultCNACommunicator] fetchMe];
