@@ -8,7 +8,7 @@
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
 "19.title" = "Name:";
 
-/* Class = "NSTextFieldCell"; title = "Nuage Network"; ObjectID = "21"; */
+/* Class = "NSTextFieldCell"; title = "Network basics"; ObjectID = "21"; */
 "21.title" = "Network basics";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Name of the network"; ObjectID = "23"; */
@@ -23,10 +23,10 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "37"; */
 "37.title" = "Item 3";
 
-/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "39"; */
+/* Class = "NSTextFieldCell"; title = "Forward device:"; ObjectID = "39"; */
 "39.title" = "Forward device:";
 
-/* Class = "NSTextFieldCell"; title = "Address"; ObjectID = "62"; */
+/* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
 "62.title" = "Bridge address:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "64"; */
@@ -50,23 +50,23 @@
 /* Class = "NSTextFieldCell"; title = "Network name"; ObjectID = "206"; */
 "206.title" = "Network name";
 
-/* Class = "NSTextFieldCell"; title = "Name: "; ObjectID = "210"; */
-"210.title" = "Name: ";
+/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "210"; */
+"210.title" = "Address:";
 
-/* Class = "NSTextFieldCell"; title = "name"; ObjectID = "212"; */
-"212.title" = "name";
+/* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "212"; */
+"212.title" = "x.x.x.x";
 
 /* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "215"; */
 "215.title" = "x.x.x.x";
 
-/* Class = "NSTextFieldCell"; title = "Device:"; ObjectID = "216"; */
-"216.title" = "Device:";
+/* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "216"; */
+"216.title" = "Gateway:";
 
-/* Class = "NSTextFieldCell"; title = "IP:"; ObjectID = "232"; */
-"232.title" = "IP:";
+/* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "232"; */
+"232.title" = "Netmask:";
 
-/* Class = "NSTextFieldCell"; title = "device"; ObjectID = "238"; */
-"238.title" = "device";
+/* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "238"; */
+"238.title" = "x.x.x.x";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "317"; */
 "317.title" = "Text Cell";
@@ -74,7 +74,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "436"; */
 "436.title" = "Box";
 
-/* Class = "NSTextFieldCell"; title = "Network configuration"; ObjectID = "456"; */
+/* Class = "NSTextFieldCell"; title = "IP configuration"; ObjectID = "456"; */
 "456.title" = "IP configuration";
 
 /* Class = "NSTextFieldCell"; title = "General informations"; ObjectID = "458"; */
@@ -179,11 +179,11 @@
 /* Class = "NSTextFieldCell"; title = "Zone name"; ObjectID = "748"; */
 "748.title" = "Zone name";
 
-/* Class = "NSTextFieldCell"; placeholderString = "http://cna.com/cna-rest/rest/CloudMgmt/"; ObjectID = "772"; */
-"772.placeholderString" = "http://cna.com/cna-rest/rest/CloudMgmt/";
+/* Class = "NSTextFieldCell"; placeholderString = "http://api.cna.com/"; ObjectID = "772"; */
+"772.placeholderString" = "http://api.cna.com/";
 
-/* Class = "NSTextFieldCell"; placeholderString = "joesmith"; ObjectID = "773"; */
-"773.placeholderString" = "joesmith";
+/* Class = "NSTextFieldCell"; placeholderString = "primalmotion"; ObjectID = "773"; */
+"773.placeholderString" = "primalmotion";
 
 /* Class = "NSTextFieldCell"; title = "Nuage Preferences"; ObjectID = "775"; */
 "775.title" = "Nuage Preferences";
@@ -192,15 +192,15 @@
 "776.title" = "You can configure preferences for the Nuage module.";
 
 /* Class = "NSTextFieldCell"; title = "CNA API URL:"; ObjectID = "777"; */
-"777.title" = "CNA Base URL:";
+"777.title" = "CNA API URL:";
 
 /* Class = "NSTextFieldCell"; title = "User name:"; ObjectID = "778"; */
 "778.title" = "User name:";
 
 /* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "779"; */
-"779.title" = "API Token:";
+"779.title" = "Password:";
 
-/* Class = "NSTextFieldCell"; title = "Company name:"; ObjectID = "780"; */
+/* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "780"; */
 "780.title" = "Company:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Alcatel-Lucent"; ObjectID = "785"; */
@@ -221,3 +221,8 @@
 /* Class = "NSTextFieldCell"; title = "Domain and Zone configuration"; ObjectID = "820"; */
 "820.title" = "Domain and Zone configuration";
 
+/* Class = "NSTextFieldCell"; title = "Not authenticated"; ObjectID = "832"; */
+"832.title" = "Not authenticated";
+
+/* Class = "NSTextFieldCell"; title = "You must enter valid CNA credentials in the Nuage module preferences."; ObjectID = "833"; */
+"833.title" = "You must enter valid CNA credentials in the Nuage module preferences.";

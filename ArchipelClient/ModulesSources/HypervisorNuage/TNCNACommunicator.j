@@ -34,7 +34,7 @@ var defaultTNCNACommunicator;
     CPString    _currentOrganizationID  @accessors(property=currentOrganizationID);
     CPString    _currentUserID          @accessors(property=currentUserID);
 
-    BOOL        _authenticated;
+    BOOL        _authenticated          @accessors(property=authenticated);
 }
 
 + (TNCNACommunicator)defaultCNACommunicator
@@ -69,7 +69,7 @@ var defaultTNCNACommunicator;
         company =  [defaults objectForKey:@"TNArchipelNuageCompany"],
         password = [defaults objectForKey:@"TNArchipelNuagePassword"];
 
-    if (_username == username)
+    if (_username == username && _company == company && _token == password)
         return;
 
     _username = username;
@@ -83,7 +83,8 @@ var defaultTNCNACommunicator;
 
 - (void)fetchMe
 {
-    _authenticated = NO;
+    [self setAuthenticated:NO];
+
     [self _prepareLogin];
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"me" relativeToURL:_baseURL]],
@@ -96,20 +97,17 @@ var defaultTNCNACommunicator;
 {
     if ([aConnection responseCode] !== 200)
     {
-        var title = "CNA REST Login error",
-            informative = @"Unable to authenticate with CNA with given informations";
-
-        [TNAlert showAlertWithMessage:title informative:informative style:CPCriticalAlertStyle];
+        [self setAuthenticated:NO];
         return;
     }
 
     var JSON = [[aConnection responseData] JSONObject];
     _currentOrganizationID = JSON[0].enterpriseID;
     _currentUserID = JSON[0].ID;
-    CPLog.error("Fetched REST user Nuage enterprise ID: " + _currentOrganizationID);
-    CPLog.error("Fetched REST user ID: " + _currentUserID);
+    CPLog.info("Nuage: Fetched REST user Nuage enterprise ID: " + _currentOrganizationID);
+    CPLog.info("Nuage: Fetched REST user ID: " + _currentUserID);
 
-    _authenticated = YES;
+    [self setAuthenticated:YES];
 }
 
 - (void)fetchOrganizationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
@@ -166,7 +164,7 @@ var defaultTNCNACommunicator;
 
 - (void)_didFetchObjects:(TNRESTConnection)aConnection
 {
-    console.warn([[aConnection responseData] rawString]);
+    CPLog.info("CNA REST RESPONSE", [aConnection responseCode], ":", [[aConnection responseData] rawString]);
 
     if ([aConnection responseCode] !== 200 && [aConnection responseCode] !== 204)
     {
@@ -183,7 +181,11 @@ var defaultTNCNACommunicator;
         comboBox = [aConnection userInfo];
 
     if (!JSONObj)
+    {
+        CPLog.warn("JSON object is empty.");
         return;
+    }
+
 
     for (var i = 0; i < JSONObj.length; i++)
         [completions addObject:[JSONObj[i][RESTToken]]];

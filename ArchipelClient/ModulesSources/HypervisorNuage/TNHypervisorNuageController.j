@@ -147,6 +147,8 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [fieldXMLString setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
 
     // CNA Communicator
+    [self bind:@"authenticated" toObject:[TNCNACommunicator defaultCNACommunicator] withKeyPath:@"authenticated" options:nil];
+
     var URLString = [defaults objectForKey:@"TNArchipelNuageURL"];
     [self _initCNACommunicatorWithURLString:[CPURL URLWithString:URLString]];
 }
@@ -300,6 +302,12 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
         [[TNCNACommunicator defaultCNACommunicator] setBaseURL:nil];
     }
 }
+
+- (void)setAuthenticated:(BOOL)isAuth
+{
+    [self showMaskView:!isAuth]
+}
+
 
 #pragma mark -
 #pragma mark Action
