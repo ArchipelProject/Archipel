@@ -191,6 +191,8 @@ var defaultTNCNACommunicator;
         [completions addObject:[JSONObj[i][RESTToken]]];
 
     [comboBox setContentValues:completions];
+    [comboBox _popUpButtonWasClicked];
+    [comboBox popUpList];
 }
 
 - (void)fetchDomainsAndCallSelector:(SEL)aSelector ofObject:(id)anObject
