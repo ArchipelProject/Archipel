@@ -20,14 +20,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import libvirt
+import thread
 import xmpp
 
+from websockify import WebSocketProxy
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
 import archipel.archipelLibvirtEntity
-
-from websockify import WebSocketProxy
-
 
 ARCHIPEL_NS_VNC                 = "archipel:virtualmachine:vnc"
 ARCHIPEL_ERROR_CODE_VM_VNC      = -1010
@@ -47,6 +46,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.novnc_proxy = None
+
         # vocabulary
         registrar_item = {  "commands" : ["vnc", "screen"],
                             "parameters": [],
@@ -151,8 +151,9 @@ class TNArchipelVNC (TNArchipelPlugin):
 
         self.novnc_proxy = WebSocketProxy(target_host="127.0.0.1", target_port=current_vnc_port,
                                             listen_host="0.0.0.0", listen_port=novnc_proxy_port, cert=cert, ssl_only=onlyssl,
-                                            wrap_cmd=None, wrap_mode="exit", verbose=self.websocket_verbose)
-        self.novnc_proxy.start()
+                                            wrap_cmd=None, wrap_mode="exit", verbose=self.websocket_verbose, daemon=False)
+        # self.novnc_proxy.start()
+        thread.start_new_thread(self.novnc_proxy.start_server, ())
         self.entity.push_change("virtualmachine:vnc", "websocketvncstart")
 
     def stop_novnc_proxy(self, origin=None, user_info=None, parameters=None):
@@ -167,7 +168,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         """
         if self.novnc_proxy:
             self.entity.log.info("Stopping novnc proxy.")
-            self.novnc_proxy.stop()
+            self.novnc_proxy.stop_server()
             self.novnc_proxy = None
             self.entity.push_change("virtualmachine:vnc", "websocketvncstop")
 
