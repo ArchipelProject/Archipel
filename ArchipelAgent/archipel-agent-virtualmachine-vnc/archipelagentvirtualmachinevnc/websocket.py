@@ -113,6 +113,7 @@ Sec-WebSocket-Accept: %s\r
         self.run_once       = run_once
         self.timeout        = timeout
         self.idle_timeout   = idle_timeout
+        self.is_running     = False
 
         self.launch_time    = time.time()
         self.ws_connection  = False
@@ -812,6 +813,12 @@ Sec-WebSocket-Accept: %s\r
         """ Do something with a WebSockets client connection. """
         raise("WebSocketServer.new_client() must be overloaded")
 
+    def stop_server(self):
+        """
+        Stops the server if running
+        """
+        self.is_running = False
+
     def start_server(self):
         """
         Daemonize if requested. Listen for for connections. Run
@@ -827,13 +834,19 @@ Sec-WebSocket-Accept: %s\r
         self.started()  # Some things need to happen after daemonizing
 
         # Allow override of SIGINT
-        signal.signal(signal.SIGINT, self.do_SIGINT)
+        # If it fails, this means we are in a thread, and we cannot use signal
+        try:
+            signal.signal(signal.SIGINT, self.do_SIGINT)
+        except:
+            pass
+
         if not multiprocessing:
             # os.fork() (python 2.4) child reaper
             signal.signal(signal.SIGCHLD, self.fallback_SIGCHLD)
 
         last_active_time = self.launch_time
-        while True:
+        self.is_running = True
+        while self.is_running:
             try:
                 try:
                     self.client = None
@@ -929,6 +942,9 @@ Sec-WebSocket-Accept: %s\r
                 if startsock:
                     startsock.close()
 
+        # When we stop the server, nicely close the socket
+        lsock.shutdown(socket.SHUT_RDWR)
+        lsock.close()
 
 # HTTP handler with WebSocket upgrade support
 class WSRequestHandler(SimpleHTTPRequestHandler):
