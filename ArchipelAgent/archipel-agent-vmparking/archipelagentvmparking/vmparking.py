@@ -118,7 +118,7 @@ class TNVMParking (TNArchipelPlugin):
         xmldesc = self.entity.xmldesc(mask_description=False)
 
         if not hypervisor_parking_plugin.is_vm_registered(self.entity.uuid):
-            vms_info = [{"uuid": self.entity.uuid, "domain": xmldesc, "parker": "nobody", "status": ARCHIPEL_PARKING_STATUS_NOT_PARKED, "date": datetime.datetime.now()}]
+            vms_info = [{"uuid": self.entity.uuid, "domain": str(xmldesc), "parker": "nobody", "status": ARCHIPEL_PARKING_STATUS_NOT_PARKED, "creation_date": datetime.datetime.now()}]
             hypervisor_parking_plugin.register_vms_into_db(vms_info)
         else:
             hypervisor_parking_plugin.update_vm_domain_in_db(self.entity.uuid, xmldesc)
