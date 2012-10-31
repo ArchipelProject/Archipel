@@ -937,9 +937,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [checkboxPAE setState:((pae == 1) ? CPOnState : CPOffState)];
     [checkboxACPI setState:((acpi == 1) ? CPOnState : CPOffState)];
     [checkboxAPIC setState:((apic == 1) ? CPOnState : CPOffState)];
-    [checkboxHugePages setState:((hp == 1) ? CPOnState : CPOnState)];
+    [checkboxHugePages setState:((hp == 1) ? CPOnState : CPOffState)];
     [checkboxEnableUSB setState:CPOnState];
-    [checkboxNestedVirtualization setState:((nv == 1) ? CPOnState : CPOnState)];
+    [checkboxNestedVirtualization setState:((nv == 1) ? CPOnState : CPOffState)];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
 
