@@ -5,6 +5,9 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "4"; */
 "4.title" = "Box";
 
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "Change the kind of VM"; ObjectID = "5"; */
+"5.ibShadowedToolTip" = "Change the kind of VM";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "7"; */
 "7.title" = "OtherViews";
 
@@ -34,6 +37,12 @@
 
 /* Class = "NSTextFieldCell"; title = "Boot from"; ObjectID = "21"; */
 "21.title" = "Boot from:";
+
+/* Class = "TNTextFieldStepper"; ibShadowedToolTip = "Number of CPUs"; ObjectID = "22"; */
+"22.ibShadowedToolTip" = "Number of CPUs";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Amount of memory (RAM)"; ObjectID = "23"; */
+"23.ibShadowedToolTip" = "Amount of memory (RAM)";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Memory"; ObjectID = "24"; */
 "24.placeholderString" = "1024";
@@ -248,8 +257,17 @@
 /* Class = "NSTextFieldCell"; title = "On reboot"; ObjectID = "354"; */
 "354.title" = "On reboot:";
 
+/* Class = "NSButton"; ibShadowedToolTip = "Undefine the VM"; ObjectID = "369"; */
+"369.ibShadowedToolTip" = "Undefine the VM";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Open the XML editor"; ObjectID = "370"; */
+"370.ibShadowedToolTip" = "Open the XML editor";
+
 /* Class = "NSTextFieldCell"; title = "Advanced controls:"; ObjectID = "380"; */
 "380.title" = "Advanced controls:";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Save changes"; ObjectID = "385"; */
+"385.ibShadowedToolTip" = "Save changes";
 
 /* Class = "NSButtonCell"; title = "Validate"; ObjectID = "386"; */
 "386.title" = "Validate";
@@ -470,6 +488,9 @@
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "634"; */
 "634.title" = "Item 1";
 
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "Choose which device VM should boot from"; ObjectID = "636"; */
+"636.ibShadowedToolTip" = "Choose which device VM should boot from";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "638"; */
 "638.title" = "OtherViews";
 
@@ -506,6 +527,9 @@
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "666"; */
 "666.title" = "Item 1";
 
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "What the VM should do on power off event"; ObjectID = "669"; */
+"669.ibShadowedToolTip" = "What the VM should do on power off event";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "671"; */
 "671.title" = "OtherViews";
 
@@ -518,6 +542,9 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "674"; */
 "674.title" = "Item 3";
 
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "What the VM should do on reboot event"; ObjectID = "677"; */
+"677.ibShadowedToolTip" = "What the VM should do on reboot event";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "679"; */
 "679.title" = "OtherViews";
 
@@ -529,6 +556,9 @@
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "682"; */
 "682.title" = "Item 1";
+
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "What the VM should do on crash event"; ObjectID = "685"; */
+"685.ibShadowedToolTip" = "What the VM should do on crash event";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "687"; */
 "687.title" = "OtherViews";
@@ -553,6 +583,9 @@
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "698"; */
 "698.title" = "Item 1";
+
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "Configure the internal VM clock"; ObjectID = "701"; */
+"701.ibShadowedToolTip" = "Configure the internal VM clock";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "703"; */
 "703.title" = "OtherViews";
@@ -605,6 +638,9 @@
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Soft limit"; ObjectID = "871"; */
+"871.ibShadowedToolTip" = "Soft limit";
+
 /* Class = "NSTextFieldCell"; placeholderString = "Soft"; ObjectID = "872"; */
 "872.placeholderString" = "1024";
 
@@ -620,6 +656,9 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "878"; */
 "878.title" = "MB";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Hard limit"; ObjectID = "881"; */
+"881.ibShadowedToolTip" = "Hard limit";
+
 /* Class = "NSTextFieldCell"; placeholderString = "Hard"; ObjectID = "882"; */
 "882.placeholderString" = "1024";
 
@@ -628,6 +667,9 @@
 
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "884"; */
 "884.title" = "MB";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Guarantee"; ObjectID = "888"; */
+"888.ibShadowedToolTip" = "Guarantee";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Guarantee"; ObjectID = "889"; */
 "889.placeholderString" = "1024";
@@ -638,6 +680,9 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "891"; */
 "891.title" = "MB";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Swap hard limit"; ObjectID = "895"; */
+"895.ibShadowedToolTip" = "Swap hard limit";
+
 /* Class = "NSTextFieldCell"; placeholderString = "Swap Hard"; ObjectID = "896"; */
 "896.placeholderString" = "1024";
 
@@ -646,6 +691,9 @@
 
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "898"; */
 "898.title" = "MB";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Weight"; ObjectID = "912"; */
+"912.ibShadowedToolTip" = "Weight";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Weight"; ObjectID = "913"; */
 "913.placeholderString" = "1024";
@@ -1184,6 +1232,18 @@
 /* Class = "NSTextFieldCell"; title = "Use port like 5903. Ports \nlower than 1024 need root access."; ObjectID = "1823"; */
 "1823.title" = "Use port like 5903. Ports \nlower than 1024 need root access.";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Custom VM kernel path"; ObjectID = "1864"; */
+"1864.ibShadowedToolTip" = "Custom VM kernel path";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Custom VM initrd"; ObjectID = "1867"; */
+"1867.ibShadowedToolTip" = "Custom VM initrd";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Addition kernel parameters"; ObjectID = "1870"; */
+"1870.ibShadowedToolTip" = "Addition kernel parameters";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Custom VM loader"; ObjectID = "1873"; */
+"1873.ibShadowedToolTip" = "Custom VM loader";
+
 /* Class = "NSTextFieldCell"; placeholderString = "/loader/hvmloader"; ObjectID = "1874"; */
 "1874.placeholderString" = "/loader/hvmloader";
 
@@ -1214,6 +1274,12 @@
 /* Class = "NSTextFieldCell"; title = "Direct kernel boot"; ObjectID = "1886"; */
 "1886.title" = "Direct kernel boot";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Custom boot loader arguments"; ObjectID = "1913"; */
+"1913.ibShadowedToolTip" = "Custom boot loader arguments";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Custom boot loader path"; ObjectID = "1915"; */
+"1915.ibShadowedToolTip" = "Custom boot loader path";
+
 /* Class = "NSTextFieldCell"; placeholderString = "/usr/bin/pygrub"; ObjectID = "1916"; */
 "1916.placeholderString" = "/usr/bin/pygrub";
 
@@ -1238,20 +1304,38 @@
 /* Class = "NSTextFieldCell"; title = "IP Address"; ObjectID = "1933"; */
 "1933.title" = "IP Address";
 
+/* Class = "NSButton"; ibShadowedToolTip = "VM will use huge page (needs hypervisor configuration)"; ObjectID = "1952"; */
+"1952.ibShadowedToolTip" = "VM will use huge page (needs hypervisor configuration)";
+
 /* Class = "NSButtonCell"; title = "Huge page"; ObjectID = "1953"; */
 "1953.title" = "Huge page";
+
+/* Class = "NSButton"; ibShadowedToolTip = "VM will be able to use nested virtualization (need a compatible hypervisor)"; ObjectID = "1955"; */
+"1955.ibShadowedToolTip" = "VM will be able to use nested virtualization (need a compatible hypervisor)";
 
 /* Class = "NSButtonCell"; title = "Nested"; ObjectID = "1956"; */
 "1956.title" = "Nested";
 
+/* Class = "NSButton"; ibShadowedToolTip = "VM will use USB"; ObjectID = "1957"; */
+"1957.ibShadowedToolTip" = "VM will use USB";
+
 /* Class = "NSButtonCell"; title = "USB"; ObjectID = "1958"; */
 "1958.title" = "USB";
+
+/* Class = "NSButton"; ibShadowedToolTip = "VM will use PAE"; ObjectID = "1959"; */
+"1959.ibShadowedToolTip" = "VM will use PAE";
 
 /* Class = "NSButtonCell"; title = "PAE"; ObjectID = "1960"; */
 "1960.title" = "PAE";
 
+/* Class = "NSButton"; ibShadowedToolTip = "VM will use ACPI"; ObjectID = "1961"; */
+"1961.ibShadowedToolTip" = "VM will use ACPI";
+
 /* Class = "NSButtonCell"; title = "ACPI"; ObjectID = "1962"; */
 "1962.title" = "ACPI";
+
+/* Class = "NSButton"; ibShadowedToolTip = "WM will use APIC"; ObjectID = "1963"; */
+"1963.ibShadowedToolTip" = "WM will use APIC";
 
 /* Class = "NSButtonCell"; title = "APIC"; ObjectID = "1964"; */
 "1964.title" = "APIC";

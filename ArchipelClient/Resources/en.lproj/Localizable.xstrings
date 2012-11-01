@@ -22,6 +22,8 @@
 	<string>Add a contact</string>
 	<key>Add a group</key>
 	<string>Add a group</string>
+	<key>Add a new contact or group</key>
+	<string>Add a new contact or group</string>
 	<key>Add contact</key>
 	<string>Add contact</string>
 	<key>Add group</key>
@@ -78,6 +80,8 @@
 	<string>Delete group</string>
 	<key>Delete items</key>
 	<string>Delete items</string>
+	<key>Delete selected contacts or groups</key>
+	<string>Delete selected contacts or groups</string>
 	<key>Do not disturb</key>
 	<string>Do not disturb</string>
 	<key>Edit</key>
@@ -188,6 +192,8 @@
 	<string>Select previous entity</string>
 	<key>Select previous module</key>
 	<string>Select previous module</string>
+	<key>Show or hide properties view</key>
+	<string>Show or hide properties view</string>
 	<key>Status</key>
 	<string>Status</string>
 	<key>Subscription request</key>

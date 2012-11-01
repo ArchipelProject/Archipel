@@ -29,7 +29,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "39"; */
 "39.title" = "Box";
 
-/* Class = "NSTextFieldCell"; placeholderString = "Username"; ObjectID = "40"; */
+/* Class = "NSTextFieldCell"; placeholderString = "newuser@domain.com"; ObjectID = "40"; */
 "40.placeholderString" = "Username";
 
 /* Class = "NSTextFieldCell"; title = "Just enter the full JID of the contact"; ObjectID = "41"; */
@@ -44,7 +44,7 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "44"; */
 "44.title" = "Cancel";
 
-/* Class = "NSTextFieldCell"; title = "Username"; ObjectID = "45"; */
+/* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "45"; */
 "45.title" = "Username:";
 
 /* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "49"; */

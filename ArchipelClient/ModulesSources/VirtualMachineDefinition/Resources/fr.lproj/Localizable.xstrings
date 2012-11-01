@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Add a new drive</key>
+	<string>Add a new drive</string>
+	<key>Add a new graphic device</key>
+	<string>Add a new graphic device</string>
+	<key>Add new character device</key>
+	<string>Add new character device</string>
+	<key>Add new input device</key>
+	<string>Add new input device</string>
+	<key>Add new network interface</key>
+	<string>Add new network interface</string>
 	<key>All your changes will be definitly lost.</key>
 	<string>All your changes will be definitly lost.</string>
 	<key>Are you sure you want to undefine this virtual machine ?</key>
@@ -14,8 +24,26 @@
 	<string>Definition edited</string>
 	<key>Discard</key>
 	<string>Discard</string>
+	<key>Edit selected character device</key>
+	<string>Edit selected character device</string>
+	<key>Edit selected drive</key>
+	<string>Edit selected drive</string>
+	<key>Edit selected graphic device</key>
+	<string>Edit selected graphic device</string>
+	<key>Edit selected input device</key>
+	<string>Edit selected input device</string>
+	<key>Edit selected network interface</key>
+	<string>Edit selected network interface</string>
 	<key>Error</key>
 	<string>Error</string>
+	<key>Remove selected character devices</key>
+	<string>Remove selected character devices</string>
+	<key>Remove selected drives</key>
+	<string>Remove selected drives</string>
+	<key>Remove selected input devices</key>
+	<string>Remove selected input devices</string>
+	<key>Remove selected network interfaces</key>
+	<string>Remove selected network interfaces</string>
 	<key>Undefine</key>
 	<string>Undefine</string>
 	<key>Unsaved changes</key>

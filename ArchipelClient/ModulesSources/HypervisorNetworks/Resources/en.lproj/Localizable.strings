@@ -1,5 +1,14 @@
+/* Activate selected networks */
+"Activate selected networks" = "Activate selected networks";
+
 /* Activate this network */
 "Activate this network" = "Activate this network";
+
+/* Add a new DHCP reservation */
+"Add a new DHCP reservation" = "Add a new DHCP reservation";
+
+/* Add new DHCP range */
+"Add new DHCP range" = "Add new DHCP range";
 
 /* Add new host reservation */
 "Add new host reservation" = "Add new host reservation";
@@ -16,6 +25,9 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
+/* Create a new network */
+"Create a new network" = "Create a new network";
+
 /* Create new virtual network */
 "Create new virtual network" = "Create new virtual network";
 
@@ -24,6 +36,9 @@
 
 /* Deactivate Network */
 "Deactivate Network" = "Deactivate Network";
+
+/* Deactivate selected networks */
+"Deactivate selected networks" = "Deactivate selected networks";
 
 /* Deactivate this network */
 "Deactivate this network" = "Deactivate this network";
@@ -36,6 +51,9 @@
 
 /* Delete selected network */
 "Delete selected network" = "Delete selected network";
+
+/* Delete selected networks */
+"Delete selected networks" = "Delete selected networks";
 
 /* DHCP Hosts */
 "DHCP Hosts" = "DHCP Hosts";
@@ -61,8 +79,17 @@
 /* Network status has changed */
 "Network status has changed" = "Network status has changed";
 
+/* Open manual XML editor */
+"Open manual XML editor" = "Open manual XML editor";
+
 /* Remove */
 "Remove" = "Remove";
+
+/* Remove elected DHCP reservations */
+"Remove elected DHCP reservations" = "Remove elected DHCP reservations";
+
+/* Remove selected DHCP ranges */
+"Remove selected DHCP ranges" = "Remove selected DHCP ranges";
 
 /* You can't edit a running network */
 "You can't edit a running network" = "You can't edit a running network";

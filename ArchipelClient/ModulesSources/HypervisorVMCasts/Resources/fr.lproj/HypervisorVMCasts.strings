@@ -5,6 +5,9 @@
 /* Class = "NSTextFieldCell"; title = "You can manage the VMCasts of the hypervisor or download appliances that can be used by virtual machines."; ObjectID = "7"; */
 "7.title" = "Vous pouvez controler les VMCasts de l'hyperviseur ou télécharger des appliances qui pourront être utilisés par les machines virtuelles.";
 
+/* Class = "NSButton"; ibShadowedToolTip = "If checked, show only installed appliances"; ObjectID = "13"; */
+"13.ibShadowedToolTip" = "If checked, show only installed appliances";
+
 /* Class = "NSButtonCell"; title = "Display only installed"; ObjectID = "14"; */
 "14.title" = "Afficher seulement les appliances installées";
 
@@ -13,6 +16,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Enter the URL of the VMCast to add"; ObjectID = "29"; */
 "29.title" = "Entrez l'URL du VMCast à ajouter";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "URL of the VMCast feed to add"; ObjectID = "30"; */
+"30.ibShadowedToolTip" = "URL of the VMCast feed to add";
 
 /* Class = "NSTextFieldCell"; placeholderString = "http://myvmcastprovider.com"; ObjectID = "31"; */
 "31.placeholderString" = "http://monfournisseur.com";

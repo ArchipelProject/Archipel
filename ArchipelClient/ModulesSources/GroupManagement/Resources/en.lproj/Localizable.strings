@@ -13,6 +13,9 @@
 /* Destroy selected virtual machines */
 "Destroy selected virtual machines" = "Destroy selected virtual machines";
 
+/* Migrate all selected VMs */
+"Migrate all selected VMs" = "Migrate all selected VMs";
+
 /* Pause selected virtual machines */
 "Pause selected virtual machines" = "Pause selected virtual machines";
 
@@ -21,6 +24,24 @@
 
 /* Resume selected virtual machines */
 "Resume selected virtual machines" = "Resume selected virtual machines";
+
+/* Send all selected VM destroy event */
+"Send all selected VM destroy event" = "Send all selected VM destroy event";
+
+/* Send all selected VM pause event */
+"Send all selected VM pause event" = "Send all selected VM pause event";
+
+/* Send all selected VM reboot event */
+"Send all selected VM reboot event" = "Send all selected VM reboot event";
+
+/* Send all selected VM resume event */
+"Send all selected VM resume event" = "Send all selected VM resume event";
+
+/* Send all selected VM shutdown event */
+"Send all selected VM shutdown event" = "Send all selected VM shutdown event";
+
+/* Send all selected VM start event */
+"Send all selected VM start event" = "Send all selected VM start event";
 
 /* Shutdown selected virtual machines */
 "Shutdown selected virtual machines" = "Shutdown selected virtual machines";

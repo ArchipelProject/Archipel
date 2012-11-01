@@ -2,8 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Apply a role</key>
+	<string>Apply a role</string>
 	<key>Permission for selected user has been saved.</key>
 	<string>Permission for selected user has been saved.</string>
+	<key>Save current permission set</key>
+	<string>Save current permission set</string>
+	<key>Save current permission set as template</key>
+	<string>Save current permission set as template</string>
 	<key>Your role cannot be deleted.</key>
 	<string>Your role cannot be deleted.</string>
 	<key>Your role cannot be saved.</key>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
-		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11E2620</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
-		<string key="IBDocument.AppKitVersion">1138.47</string>
-		<string key="IBDocument.HIToolboxVersion">569.00</string>
+		<int key="IBDocument.SystemTarget">1080</int>
+		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
+		<string key="IBDocument.AppKitVersion">1187.34</string>
+		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2182</string>
+			<string key="NS.object.0">2843</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<string>NSButton</string>
+			<string>NSButtonCell</string>
+			<string>NSCustomObject</string>
 			<string>NSCustomView</string>
 			<string>NSTextField</string>
 			<string>NSTextFieldCell</string>
-			<string>NSButtonCell</string>
-			<string>NSCustomObject</string>
-			<string>NSButton</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -55,7 +55,7 @@
 								<reference key="NSSuperview" ref="930702664"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="295265130">
-									<int key="NSCellFlags">-2080244224</int>
+									<int key="NSCellFlags">-2080374784</int>
 									<int key="NSCellFlags2">134217728</int>
 									<string key="NSContents"/>
 									<object class="NSFont" key="NSSupport" id="930378981">
@@ -64,13 +64,14 @@
 										<int key="NSfFlags">1044</int>
 									</object>
 									<reference key="NSControlView" ref="721854551"/>
-									<int key="NSButtonFlags">-2033434369</int>
+									<int key="NSButtonFlags">-2033434624</int>
 									<int key="NSButtonFlags2">162</int>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">400</int>
 									<int key="NSPeriodicInterval">75</int>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 							<object class="NSButton" id="741539496">
 								<reference key="NSNextResponder" ref="930702664"/>
@@ -80,18 +81,19 @@
 								<reference key="NSNextKeyView" ref="721854551"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="874172925">
-									<int key="NSCellFlags">-2080244224</int>
+									<int key="NSCellFlags">-2080374784</int>
 									<int key="NSCellFlags2">134217728</int>
 									<string key="NSContents"/>
 									<reference key="NSSupport" ref="930378981"/>
 									<reference key="NSControlView" ref="741539496"/>
-									<int key="NSButtonFlags">-2033434369</int>
+									<int key="NSButtonFlags">-2033434624</int>
 									<int key="NSButtonFlags2">162</int>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">400</int>
 									<int key="NSPeriodicInterval">75</int>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 							<object class="NSTextField" id="13631270">
 								<reference key="NSNextResponder" ref="930702664"/>
@@ -101,7 +103,7 @@
 								<reference key="NSNextKeyView" ref="741539496"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="722935961">
-									<int key="NSCellFlags">-1804468671</int>
+									<int key="NSCellFlags">-1804599231</int>
 									<int key="NSCellFlags2">268436480</int>
 									<string key="NSContents"/>
 									<reference key="NSSupport" ref="930378981"/>
@@ -127,6 +129,7 @@
 										</object>
 									</object>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 						</object>
 						<string key="NSFrameSize">{589, 37}</string>
@@ -159,7 +162,7 @@
 						<reference key="NSSuperview" ref="308778987"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="892309814">
-							<int key="NSCellFlags">-1804468671</int>
+							<int key="NSCellFlags">-1804599231</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="930378981"/>
@@ -169,6 +172,7 @@
 							<reference key="NSBackgroundColor" ref="417845239"/>
 							<reference key="NSTextColor" ref="550149375"/>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 					<object class="NSTextField" id="97159164">
 						<reference key="NSNextResponder" ref="308778987"/>
@@ -178,7 +182,7 @@
 						<reference key="NSNextKeyView" ref="835423941"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="947968626">
-							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Max chat entries:</string>
 							<object class="NSFont" key="NSSupport">
@@ -203,6 +207,7 @@
 								<reference key="NSColor" ref="586675455"/>
 							</object>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 					<object class="NSTextField" id="875533445">
 						<reference key="NSNextResponder" ref="308778987"/>
@@ -212,7 +217,7 @@
 						<reference key="NSNextKeyView" ref="97159164"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="921154049">
-							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can configure preferences for chat module.</string>
 							<object class="NSFont" key="NSSupport">
@@ -224,6 +229,7 @@
 							<reference key="NSBackgroundColor" ref="459922863"/>
 							<reference key="NSTextColor" ref="571181278"/>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 					<object class="NSTextField" id="99071259">
 						<reference key="NSNextResponder" ref="308778987"/>
@@ -233,7 +239,7 @@
 						<reference key="NSNextKeyView" ref="875533445"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="159085263">
-							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Chat preferences</string>
 							<object class="NSFont" key="NSSupport">
@@ -248,6 +254,7 @@
 								<bytes key="NSRGB">MC4zNzY0NzA2MjU0IDAuNDAwMDAwMDM1OCAwLjQzNTI5NDE1MTMAA</bytes>
 							</object>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 				</object>
 				<string key="NSFrameSize">{462, 140}</string>

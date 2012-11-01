@@ -110,6 +110,18 @@
 /* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
 "150.title" = "Rafraichissement auto :";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling stats"; ObjectID = "151"; */
+"151.ibShadowedToolTip" = "Delay before polling stats";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Maximum number of item to keep in memory"; ObjectID = "153"; */
+"153.ibShadowedToolTip" = "Maximum number of item to keep in memory";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Maximum number of logs to keep in the history"; ObjectID = "155"; */
+"155.ibShadowedToolTip" = "Maximum number of logs to keep in the history";
+
+/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, UI will poll for new stats"; ObjectID = "161"; */
+"161.ibShadowedToolTip" = "If enabled, UI will poll for new stats";
+
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "184"; */
 "184.title" = "...";
 

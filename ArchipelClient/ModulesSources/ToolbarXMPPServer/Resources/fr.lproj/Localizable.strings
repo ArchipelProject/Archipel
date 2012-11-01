@@ -1,3 +1,9 @@
+/* Add a new shared group */
+"Add a new shared group" = "Add a new shared group";
+
+/* Add selected users to shared group */
+"Add selected users to shared group" = "Add selected users to shared group";
+
 /* Are you sure you want to unregister selected user(s) ? */
 "Are you sure you want to unregister selected user(s) ?" = "Are you sure you want to unregister selected user(s) ?";
 
@@ -13,8 +19,23 @@
 /* Confirm */
 "Confirm" = "Confirm";
 
+/* Delete selected shared groups */
+"Delete selected shared groups" = "Delete selected shared groups";
+
+/* Make selected users as admins */
+"Make selected users as admins" = "Make selected users as admins";
+
 /* Password doesn't match */
 "Password doesn't match" = "Password doesn't match";
+
+/* Register a new user */
+"Register a new user" = "Register a new user";
+
+/* Remove admin rights to selected users */
+"Remove admin rights to selected users" = "Remove admin rights to selected users";
+
+/* Remove selected users from shared group */
+"Remove selected users from shared group" = "Remove selected users from shared group";
 
 /* Shared Groups */
 "Shared Groups" = "Shared Groups";
@@ -24,6 +45,9 @@
 
 /* Unregister */
 "Unregister" = "Unregister";
+
+/* Unregister selected users */
+"Unregister selected users" = "Unregister selected users";
 
 /* Wrong group */
 "Wrong group" = "Wrong group";

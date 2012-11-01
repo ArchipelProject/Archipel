@@ -28,6 +28,9 @@
 /* Add a group */
 "Add a group" = "Ajouter un groupe";
 
+/* Add a new contact or group */
+"Add a new contact or group" = "Add a new contact or group";
+
 /* Add contact */
 "Add contact" = "Ajouter le contact";
 
@@ -133,6 +136,9 @@
 
 /* Delete items */
 "Delete items" = "Delete items";
+
+/* Delete selected contacts or groups */
+"Delete selected contacts or groups" = "Delete selected contacts or groups";
 
 /* disconnected */
 "disconnected" = "Deconnecté";
@@ -307,6 +313,9 @@
 
 /* Select previous module */
 "Select previous module" = "Select previous module";
+
+/* Show or hide properties view */
+"Show or hide properties view" = "Show or hide properties view";
 
 /* Status */
 "Status" = "Statut";

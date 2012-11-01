@@ -135,20 +135,24 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewVMCastURLWindow:)];
+    [_plusButton setToolTip:CPBundleLocalizedString(@"Register to a new VMCast feed", @"Register to a new VMCast feed")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(remove:)];
+    [_minusButton setToolTip:CPBundleLocalizedString(@"Unregister from selected VMCast feed", @"Unregister from selected VMCast feed")];
 
     _downloadButton = [CPButtonBar plusButton];
     [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CPSizeMake(16, 16)]];
     [_downloadButton setTarget:self];
     [_downloadButton setAction:@selector(download:)];
+    [_downloadButton setToolTip:CPBundleLocalizedString(@"Download selected appliance", @"Download selected appliance")];
 
     _downloadQueueButton = [CPButtonBar plusButton];
     [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CPSizeMake(16, 16)]];
     [_downloadQueueButton setTarget:self];
     [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
+    [_downloadQueueButton setToolTip:CPBundleLocalizedString(@"Open download queue", @"Open download queue")];
 
     [_minusButton setEnabled:NO];
     [_downloadButton setEnabled:NO];
