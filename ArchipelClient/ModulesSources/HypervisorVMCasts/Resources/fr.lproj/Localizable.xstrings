@@ -32,6 +32,10 @@
 	<string>Téléchargements pour </string>
 	<key>Download selected appliance</key>
 	<string>Télécharge l'appliance sélectionnée.</string>
+	<key>Open download queue</key>
+	<string>Open download queue</string>
+	<key>Register to a new VMCast feed</key>
+	<string>Register to a new VMCast feed</string>
 	<key>Register to a new VMCasts</key>
 	<string>S'abonner à un nouveau VMCasts</string>
 	<key>Remove selected appliance</key>
@@ -46,6 +50,8 @@
 	<string>Désabonnement</string>
 	<key>Unregister from selected VMCast</key>
 	<string>Se désabonner du flux VMCast sélectionné.</string>
+	<key>Unregister from selected VMCast feed</key>
+	<string>Unregister from selected VMCast feed</string>
 	<key>VMCasts</key>
 	<string>VMCasts</string>
 	<key>VMcast has been registred</key>

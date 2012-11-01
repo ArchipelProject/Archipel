@@ -28,6 +28,9 @@
 /* Detach */
 "Detach" = "Detach";
 
+/* Detach current VM from selected appliance */
+"Detach current VM from selected appliance" = "Detach current VM from selected appliance";
+
 /* Detach from appliance */
 "Detach from appliance" = "Detach from appliance";
 
@@ -40,6 +43,9 @@
 /* Instanciation has started */
 "Instanciation has started" = "Instanciation has started";
 
+/* Package current VM into hypervisor's VMCast */
+"Package current VM into hypervisor's VMCast" = "Package current VM into hypervisor's VMCast";
+
 /* Packaging started. */
 "Packaging started." = "Packaging started.";
 
@@ -48,6 +54,9 @@
 
 /* Unable to create package. Check agent logs */
 "Unable to create package. Check agent logs" = "Unable to create package. Check agent logs";
+
+/* Use selected package for VM. Any changes will be lost */
+"Use selected package for VM. Any changes will be lost" = "Use selected package for VM. Any changes will be lost";
 
 /* Virtual machine must not be running to package it. */
 "Virtual machine must not be running to package it." = "Virtual machine must not be running to package it.";

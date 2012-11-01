@@ -44,11 +44,26 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "47"; */
 "47.title" = "...";
 
+/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, OOM will not be able to kill the VM in case of memory going too low"; ObjectID = "48"; */
+"48.ibShadowedToolTip" = "If enabled, OOM will not be able to kill the VM in case of memory going too low";
+
+/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled , the VM will start with the hypervisor"; ObjectID = "49"; */
+"49.ibShadowedToolTip" = "If enabled , the VM will start with the hypervisor";
+
+/* Class = "TNTextFieldStepper"; ibShadowedToolTip = "Manage the number of CPU"; ObjectID = "50"; */
+"50.ibShadowedToolTip" = "Manage the number of CPU";
+
+/* Class = "NSSlider"; ibShadowedToolTip = "Adjust live memory"; ObjectID = "51"; */
+"51.ibShadowedToolTip" = "Adjust live memory";
+
 /* Class = "NSTextFieldCell"; title = "0%"; ObjectID = "54"; */
 "54.title" = "0%";
 
 /* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "56"; */
 "56.title" = "100%";
+
+/* Class = "NSSegmentedControl"; ibShadowedToolTip = "Controls the VM"; ObjectID = "59"; */
+"59.ibShadowedToolTip" = "Controls the VM";
 
 /* Class = "NSTextFieldCell"; title = "Live migration"; ObjectID = "62"; */
 "62.title" = "Live migration";
@@ -74,11 +89,17 @@
 /* Class = "NSTextFieldCell"; title = "You first need to define it using the \"definition\" tab."; ObjectID = "134"; */
 "134.title" = "You first need to define it using the \"definition\" tab.";
 
+/* Class = "NSButton"; ibShadowedToolTip = "Completely destroy, undefine, and remove data of the virtual machine"; ObjectID = "138"; */
+"138.ibShadowedToolTip" = "Completely destroy, undefine, and remove data of the virtual machine";
+
 /* Class = "NSButtonCell"; title = "Kill"; ObjectID = "139"; */
 "139.title" = "Kill";
 
 /* Class = "NSTextFieldCell"; title = "To enable live migration, you must start the virtual machine."; ObjectID = "143"; */
 "143.title" = "To enable live migration, you must start the virtual machine.";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling new screenshot"; ObjectID = "156"; */
+"156.ibShadowedToolTip" = "Delay before polling new screenshot";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Delay between screenshots"; ObjectID = "157"; */
 "157.placeholderString" = "Delay between screenshots";
@@ -100,6 +121,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Park the virtual machine"; ObjectID = "182"; */
 "182.title" = "Park the virtual machine";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Park the virtual machine into the hypervisor's parking"; ObjectID = "183"; */
+"183.ibShadowedToolTip" = "Park the virtual machine into the hypervisor's parking";
 
 /* Class = "NSButtonCell"; title = "Park"; ObjectID = "184"; */
 "184.title" = "Park";

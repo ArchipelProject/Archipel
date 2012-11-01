@@ -317,17 +317,20 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonDrives = [CPButtonBar plusButton];
     [_plusButtonDrives setTarget:self];
     [_plusButtonDrives setAction:@selector(addDrive:)];
+    [_plusButtonDrives setToolTip:CPBundleLocalizedString(@"Add a new drive", @"Add a new drive")];
 
     _minusButtonDrives = [CPButtonBar minusButton];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
     [_minusButtonDrives setEnabled:NO];
+    [_minusButtonDrives setToolTip:CPBundleLocalizedString(@"Remove selected drives", @"Remove selected drives")];
 
     _editButtonDrives = [CPButtonBar plusButton];
     [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_editButtonDrives setEnabled:NO];
+    [_editButtonDrives setToolTip:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")];
 
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
     [driveController setTable:tableDrives];
@@ -353,17 +356,20 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonNics = [CPButtonBar plusButton];
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
+    [_plusButtonNics setToolTip:CPBundleLocalizedString(@"Add new network interface", @"Add new network interface")];
 
     _minusButtonNics = [CPButtonBar minusButton];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
     [_minusButtonNics setEnabled:NO];
+    [_minusButtonNics setToolTip:CPBundleLocalizedString(@"Remove selected network interfaces", @"Remove selected network interfaces")];
 
     _editButtonNics = [CPButtonBar plusButton];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editInterface:)];
     [_editButtonNics setEnabled:NO];
+    [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected network interface", @"Edit selected network interface")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
     [interfaceController setTable:tableInterfaces];
@@ -383,15 +389,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonInputs = [CPButtonBar plusButton];
     [_plusButtonInputs setTarget:self];
     [_plusButtonInputs setAction:@selector(addInputDevice:)];
+    [_plusButtonInputs setToolTip:CPBundleLocalizedString(@"Add new input device", @"Add new input device")];
 
     _minusButtonInputDevice = [CPButtonBar minusButton];
     [_minusButtonInputDevice setTarget:self];
     [_minusButtonInputDevice setAction:@selector(deleteInputDevice:)];
+    [_minusButtonInputDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
 
     _editButtonInputDevice = [CPButtonBar plusButton];
     [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonInputDevice setTarget:self];
     [_editButtonInputDevice setAction:@selector(editInputDevice:)];
+    [_editButtonInputDevice setToolTip:CPBundleLocalizedString(@"Edit selected input device", @"Edit selected input device")];
 
     [buttonBarInputDevices setButtons:[_plusButtonInputs, _minusButtonInputDevice, _editButtonInputDevice]];
 
@@ -413,15 +422,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonGraphics = [CPButtonBar plusButton];
     [_plusButtonGraphics setTarget:self];
     [_plusButtonGraphics setAction:@selector(addGraphicDevice:)];
+    [_plusButtonGraphics setToolTip:CPBundleLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
 
     _minusButtonGraphicDevice = [CPButtonBar minusButton];
     [_minusButtonGraphicDevice setTarget:self];
     [_minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
+    [_minusButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
 
     _editButtonGraphicDevice = [CPButtonBar plusButton];
     [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonGraphicDevice setTarget:self];
     [_editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
+    [_editButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Edit selected graphic device", @"Edit selected graphic device")];
 
     [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, _minusButtonGraphicDevice, _editButtonGraphicDevice]];
     [graphicDeviceController setDelegate:self];
@@ -450,15 +462,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonCharacter = [CPButtonBar plusButton];
     [_plusButtonCharacter setTarget:self];
     [_plusButtonCharacter setAction:@selector(addCharacterDevice:)];
+    [_plusButtonCharacter setToolTip:CPBundleLocalizedString(@"Add new character device", @"Add new character device")];
 
     _minusButtonCharacterDevice = [CPButtonBar minusButton];
     [_minusButtonCharacterDevice setTarget:self];
     [_minusButtonCharacterDevice setAction:@selector(deleteCharacterDevice:)];
+    [_minusButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Remove selected character devices", @"Remove selected character devices")];
 
     _editButtonCharacterDevice = [CPButtonBar plusButton];
     [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonCharacterDevice setTarget:self];
     [_editButtonCharacterDevice setAction:@selector(editCharacterDevice:)];
+    [_editButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Edit selected character device", @"Edit selected character device")];
 
     [buttonBarCharacterDevices setButtons:[_plusButtonCharacter, _minusButtonCharacterDevice, _editButtonCharacterDevice]];
 

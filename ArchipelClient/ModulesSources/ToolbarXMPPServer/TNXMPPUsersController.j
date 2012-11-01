@@ -92,21 +92,25 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
     [_addButton setTarget:self];
     [_addButton setAction:@selector(openRegisterUserWindow:)];
+    [_addButton setToolTip:CPBundleLocalizedString(@"Register a new user", @"Register a new user")];
 
     _deleteButton = [CPButtonBar plusButton];
     [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
     [_deleteButton setTarget:self];
     [_deleteButton setAction:@selector(unregisterUser:)];
+    [_deleteButton setToolTip:CPBundleLocalizedString(@"Unregister selected users", @"Unregister selected users")];
 
     _grantAdminButton = [CPButtonBar plusButton];
     [_grantAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/star.png"] size:CPSizeMake(16, 16)]];
     [_grantAdminButton setTarget:self];
     [_grantAdminButton setAction:@selector(grantAdmin:)];
+    [_grantAdminButton setToolTip:CPBundleLocalizedString(@"Make selected users as admins", @"Make selected users as admins")];
 
     _revokeAdminButton = [CPButtonBar minusButton];
     [_revokeAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unstar.png"] size:CPSizeMake(16, 16)]];
     [_revokeAdminButton setTarget:self];
     [_revokeAdminButton setAction:@selector(revokeAdmin:)];
+    [_revokeAdminButton setToolTip:CPBundleLocalizedString(@"Remove admin rights to selected users", @"Remove admin rights to selected users")];
 
     [buttonBarControl setButtons:[_addButton, _deleteButton, _grantAdminButton, _revokeAdminButton]];
 

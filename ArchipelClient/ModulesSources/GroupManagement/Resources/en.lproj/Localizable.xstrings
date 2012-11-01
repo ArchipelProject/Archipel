@@ -12,12 +12,26 @@
 	<string>Cannot migrate virtual machine </string>
 	<key>Destroy selected virtual machines</key>
 	<string>Destroy selected virtual machines</string>
+	<key>Migrate all selected VMs</key>
+	<string>Migrate all selected VMs</string>
 	<key>Pause selected virtual machines</key>
 	<string>Pause selected virtual machines</string>
 	<key>Reboot selected virtual machines</key>
 	<string>Reboot selected virtual machines</string>
 	<key>Resume selected virtual machines</key>
 	<string>Resume selected virtual machines</string>
+	<key>Send all selected VM destroy event</key>
+	<string>Send all selected VM destroy event</string>
+	<key>Send all selected VM pause event</key>
+	<string>Send all selected VM pause event</string>
+	<key>Send all selected VM reboot event</key>
+	<string>Send all selected VM reboot event</string>
+	<key>Send all selected VM resume event</key>
+	<string>Send all selected VM resume event</string>
+	<key>Send all selected VM shutdown event</key>
+	<string>Send all selected VM shutdown event</string>
+	<key>Send all selected VM start event</key>
+	<string>Send all selected VM start event</string>
 	<key>Shutdown selected virtual machines</key>
 	<string>Shutdown selected virtual machines</string>
 	<key>Start selected virtual machines</key>

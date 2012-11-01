@@ -43,6 +43,12 @@
 /* Download selected appliance */
 "Download selected appliance" = "Télécharge l'appliance sélectionnée.";
 
+/* Open download queue */
+"Open download queue" = "Open download queue";
+
+/* Register to a new VMCast feed */
+"Register to a new VMCast feed" = "Register to a new VMCast feed";
+
 /* Register to a new VMCasts */
 "Register to a new VMCasts" = "S'abonner à un nouveau VMCasts";
 
@@ -63,6 +69,9 @@
 
 /* Unregister from selected VMCast */
 "Unregister from selected VMCast" = "Se désabonner du flux VMCast sélectionné.";
+
+/* Unregister from selected VMCast feed */
+"Unregister from selected VMCast feed" = "Unregister from selected VMCast feed";
 
 /* VMcast has been registred */
 "VMcast has been registred" = "Abonnement au VMcast effectué";

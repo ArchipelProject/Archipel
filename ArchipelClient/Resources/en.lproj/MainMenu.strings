@@ -8,6 +8,9 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "862"; */
 "862.title" = "Box";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "New group name"; ObjectID = "863"; */
+"863.ibShadowedToolTip" = "New group name";
+
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "870"; */
 "870.title" = "Cancel";
 
@@ -22,6 +25,9 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "My Group"; ObjectID = "874"; */
 "874.placeholderString" = "My Group";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Full JID of the new user"; ObjectID = "887"; */
+"887.ibShadowedToolTip" = "Full JID of the new user";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "888"; */
 "888.title" = "Box";
@@ -40,6 +46,9 @@
 
 /* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "894"; */
 "894.title" = "JID";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Optional nickname of user (visible only by you)"; ObjectID = "896"; */
+"896.ibShadowedToolTip" = "Optional nickname of user (visible only by you)";
 
 /* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "898"; */
 "898.title" = "Nickname";
@@ -119,6 +128,9 @@
 /* Class = "TNModalWindow"; title = "Connection"; ObjectID = "980"; */
 "980.title" = "Connection";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Enter your JID"; ObjectID = "987"; */
+"987.ibShadowedToolTip" = "Enter your JID";
+
 /* Class = "NSBox"; title = "Box"; ObjectID = "988"; */
 "988.title" = "Box";
 
@@ -134,11 +146,17 @@
 /* Class = "NSTextFieldCell"; title = "Jabber ID"; ObjectID = "994"; */
 "994.title" = "Jabber ID";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Enter your password"; ObjectID = "996"; */
+"996.ibShadowedToolTip" = "Enter your password";
+
 /* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "998"; */
 "998.title" = "Password";
 
 /* Class = "NSTextFieldCell"; placeholderString = "My password"; ObjectID = "999"; */
 "999.placeholderString" = "My password";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "enter your ejabberd BOSH URL"; ObjectID = "1000"; */
+"1000.ibShadowedToolTip" = "enter your ejabberd BOSH URL";
 
 /* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
 "1002.title" = "BOSH service";
@@ -148,6 +166,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Remember"; ObjectID = "1005"; */
 "1005.title" = "Remember";
+
+/* Class = "TNSwitch"; ibShadowedToolTip = "Remember credentials"; ObjectID = "1006"; */
+"1006.ibShadowedToolTip" = "Remember credentials";
 
 /* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "1009"; */
 "1009.title" = "Nickname";
@@ -175,6 +196,18 @@
 
 /* Class = "NSTextFieldCell"; title = "status"; ObjectID = "1031"; */
 "1031.title" = "status";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Click here to change the avatar"; ObjectID = "1033"; */
+"1033.ibShadowedToolTip" = "Click here to change the avatar";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "XMPP ressource"; ObjectID = "1044"; */
+"1044.ibShadowedToolTip" = "XMPP ressource";
+
+/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, use UI animations. It can slow down the performances"; ObjectID = "1046"; */
+"1046.ibShadowedToolTip" = "If enabled, use UI animations. It can slow down the performances";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Delay between loading entities modules. (0.15 is cool)"; ObjectID = "1047"; */
+"1047.ibShadowedToolTip" = "Delay between loading entities modules. (0.15 is cool)";
 
 /* Class = "NSTextFieldCell"; title = "General preferences"; ObjectID = "1051"; */
 "1051.title" = "General preferences";
@@ -206,6 +239,9 @@
 /* Class = "NSTextFieldCell"; title = "Using animations can slow down the performances."; ObjectID = "1065"; */
 "1065.title" = "Using animations can slow down the performances.";
 
+/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, use XMPP monitoring. It can slow down the performances"; ObjectID = "1072"; */
+"1072.ibShadowedToolTip" = "If enabled, use XMPP monitoring. It can slow down the performances";
+
 /* Class = "NSTextFieldCell"; title = "Using XMPP monitoring can slow down the performances."; ObjectID = "1074"; */
 "1074.title" = "Using XMPP monitoring can slow down the performances.";
 
@@ -215,8 +251,14 @@
 /* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "1077"; */
 "1077.title" = "Updates";
 
+/* Class = "NSButton"; ibShadowedToolTip = "Check for new update now"; ObjectID = "1078"; */
+"1078.ibShadowedToolTip" = "Check for new update now";
+
 /* Class = "NSButtonCell"; title = "Check now"; ObjectID = "1079"; */
 "1079.title" = "Check now";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Check for updates at startup"; ObjectID = "1080"; */
+"1080.ibShadowedToolTip" = "Check for updates at startup";
 
 /* Class = "NSButtonCell"; title = "Check at startup"; ObjectID = "1081"; */
 "1081.title" = "Check at startup";
@@ -299,6 +341,9 @@
 /* Class = "NSButtonCell"; title = "Open documentation"; ObjectID = "1328"; */
 "1328.title" = "Open documentation";
 
+/* Class = "NSButton"; ibShadowedToolTip = "Show the new user welcome view"; ObjectID = "1332"; */
+"1332.ibShadowedToolTip" = "Show the new user welcome view";
+
 /* Class = "NSButtonCell"; title = "Display"; ObjectID = "1333"; */
 "1333.title" = "Display";
 
@@ -307,6 +352,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Language"; ObjectID = "1339"; */
 "1339.title" = "Language";
+
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "Debug level. If you use trace, or debug, performances might be impacted"; ObjectID = "1346"; */
+"1346.ibShadowedToolTip" = "Debug level. If you use trace, or debug, performances might be impacted";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1348"; */
 "1348.title" = "OtherViews";
@@ -319,6 +367,9 @@
 
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1351"; */
 "1351.title" = "Item 3";
+
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "Language to use"; ObjectID = "1353"; */
+"1353.ibShadowedToolTip" = "Language to use";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1355"; */
 "1355.title" = "OtherViews";
@@ -401,11 +452,17 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1460"; */
 "1460.title" = "Cancel";
 
+/* Class = "NSTextField"; ibShadowedToolTip = "Enter your new password"; ObjectID = "1468"; */
+"1468.ibShadowedToolTip" = "Enter your new password";
+
 /* Class = "NSTextFieldCell"; placeholderString = "New password"; ObjectID = "1469"; */
 "1469.placeholderString" = "New password";
 
 /* Class = "NSTextFieldCell"; title = "New password"; ObjectID = "1470"; */
 "1470.title" = "New password";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Confirm your new password"; ObjectID = "1473"; */
+"1473.ibShadowedToolTip" = "Confirm your new password";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Retype new password"; ObjectID = "1474"; */
 "1474.placeholderString" = "Retype new password";
@@ -415,6 +472,9 @@
 
 /* Class = "NSTextFieldCell"; title = "More to come..."; ObjectID = "1478"; */
 "1478.title" = "More to come...";
+
+/* Class = "NSButton"; ibShadowedToolTip = "If checked, offline users are not shown"; ObjectID = "1487"; */
+"1487.ibShadowedToolTip" = "If checked, offline users are not shown";
 
 /* Class = "NSButtonCell"; title = "Hide offline users"; ObjectID = "1488"; */
 "1488.title" = "Hide offline users";
@@ -430,6 +490,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Version - Copyright"; ObjectID = "1624"; */
 "1624.title" = "Version - Copyright";
+
+/* Class = "NSPopUpButton"; ibShadowedToolTip = "Use legacy or overlay scrollers"; ObjectID = "1627"; */
+"1627.ibShadowedToolTip" = "Use legacy or overlay scrollers";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1629"; */
 "1629.title" = "OtherViews";
@@ -448,6 +511,21 @@
 
 /* Class = "NSTextFieldCell"; title = "unit"; ObjectID = "1639"; */
 "1639.title" = "unit";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Status"; ObjectID = "1643"; */
+"1643.ibShadowedToolTip" = "Status";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Events"; ObjectID = "1644"; */
+"1644.ibShadowedToolTip" = "Events";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Name"; ObjectID = "1645"; */
+"1645.ibShadowedToolTip" = "Name";
+
+/* Class = "NSImageView"; ibShadowedToolTip = "Avatar"; ObjectID = "1646"; */
+"1646.ibShadowedToolTip" = "Avatar";
+
+/* Class = "NSImageView"; ibShadowedToolTip = "Status"; ObjectID = "1647"; */
+"1647.ibShadowedToolTip" = "Status";
 
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1650"; */
 "1650.title" = "Label";

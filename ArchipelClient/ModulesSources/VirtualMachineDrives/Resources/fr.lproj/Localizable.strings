@@ -7,8 +7,14 @@
 /* Create a drive */
 "Create a drive" = "Create a drive";
 
+/* Create a new disk */
+"Create a new disk" = "Create a new disk";
+
 /* Delete */
 "Delete" = "Delete";
+
+/* Delete selected disks */
+"Delete selected disks" = "Delete selected disks";
 
 /* Delete selected drive */
 "Delete selected drive" = "Delete selected drive";
@@ -27,6 +33,9 @@
 
 /* Disk has been renamed */
 "Disk has been renamed" = "Disk has been renamed";
+
+/* Edit selected disk */
+"Edit selected disk" = "Edit selected disk";
 
 /* Edit selected drive */
 "Edit selected drive" = "Edit selected drive";

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Add a new shared group</key>
+	<string>Add a new shared group</string>
+	<key>Add selected users to shared group</key>
+	<string>Add selected users to shared group</string>
 	<key>Are you sure you want to unregister selected user(s) ?</key>
 	<string>Are you sure you want to unregister selected user(s) ?</string>
 	<key>Bad JID</key>
@@ -12,14 +16,26 @@
 	<string>Cancel</string>
 	<key>Confirm</key>
 	<string>Confirm</string>
+	<key>Delete selected shared groups</key>
+	<string>Delete selected shared groups</string>
+	<key>Make selected users as admins</key>
+	<string>Make selected users as admins</string>
 	<key>Password doesn't match</key>
 	<string>Password doesn't match</string>
+	<key>Register a new user</key>
+	<string>Register a new user</string>
+	<key>Remove admin rights to selected users</key>
+	<string>Remove admin rights to selected users</string>
+	<key>Remove selected users from shared group</key>
+	<string>Remove selected users from shared group</string>
 	<key>Shared Groups</key>
 	<string>Shared Groups</string>
 	<key>The password is too short. it must be at least 8 characters</key>
 	<string>The password is too short. it must be at least 8 characters</string>
 	<key>Unregister</key>
 	<string>Unregister</string>
+	<key>Unregister selected users</key>
+	<string>Unregister selected users</string>
 	<key>Wrong group</key>
 	<string>Wrong group</string>
 	<key>Wrong name</key>

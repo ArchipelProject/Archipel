@@ -8,6 +8,8 @@
 	<string> has been updated</string>
 	<key> to your roster</key>
 	<string> à votre roster.</string>
+	<key>Add a new VM</key>
+	<string>Add a new VM</string>
 	<key>Add a user subscription</key>
 	<string>Add a user subscription</string>
 	<key>Add contact</key>
@@ -24,28 +26,50 @@
 	<string>Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?</string>
 	<key>Cancel</key>
 	<string>Annuler</string>
+	<key>Clone selected VM</key>
+	<string>Clone selected VM</string>
 	<key>Clone this virtual machine</key>
 	<string>Cloner cette machine virtuelle</string>
 	<key>Create new virtual machine</key>
 	<string>Créer une nouvelle machine virtuelle</string>
 	<key>Delete</key>
 	<string>Supprimer</string>
+	<key>Delete selected parked VMs. All data will be lost</key>
+	<string>Delete selected parked VMs. All data will be lost</string>
 	<key>Delete virtual machine</key>
 	<string>Supprimer la machine virtuelle.</string>
 	<key>Destroying a Virtual Machine</key>
 	<string>Suppression de la machine virtuelle.</string>
 	<key>Destroying some Virtual Machines</key>
 	<string>Suppression des machines virtuelles.</string>
+	<key>Do not use Archipel to manage selected vms. Vms will still be there</key>
+	<string>Do not use Archipel to manage selected vms. Vms will still be there</string>
+	<key>Edit parked VM's XML definition</key>
+	<string>Edit parked VM's XML definition</string>
 	<key>Error</key>
 	<string>Erreur</string>
+	<key>If vm is in roster, jump to it, otherwhise, ask subscription</key>
+	<string>If vm is in roster, jump to it, otherwhise, ask subscription</string>
+	<key>Make Archipel manage selected VMs</key>
+	<string>Make Archipel manage selected VMs</string>
+	<key>Park selected VMs</key>
+	<string>Park selected VMs</string>
 	<key>Remove</key>
 	<string>Supprimer</string>
 	<key>Remove a user subscription</key>
 	<string>Remove a user subscription</string>
+	<key>Remove completely selected vms</key>
+	<string>Remove completely selected vms</string>
 	<key>Removing subscription</key>
 	<string>Supprimer la souscription</string>
 	<key>Subscription have been removed</key>
 	<string>La souscription a été supprimée.</string>
+	<key>Unpark selected VMs into this hypervisor</key>
+	<string>Unpark selected VMs into this hypervisor</string>
+	<key>VM will ask subscription to given user</key>
+	<string>VM will ask subscription to given user</string>
+	<key>VM will remove subscription from given user</key>
+	<string>VM will remove subscription from given user</string>
 	<key>Virtual machine </key>
 	<string>Machine virtuelle </string>
 	<key>Virtual machine has been cloned</key>

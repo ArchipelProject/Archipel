@@ -745,14 +745,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"];
     [_plusButton setMenu:plusMenu];
+    [_plusButton setToolTip:CPLocalizedString(@"Add a new contact or group", @"Add a new contact or group")];
 
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(20, 20)]];
     [minusButton setAction:@selector(deleteEntities:)];
+    [minusButton setToolTip:CPLocalizedString(@"Delete selected contacts or groups", @"Delete selected contacts or groups")];
 
     [_hideButton setTarget:self];
     [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
+    [_hideButton setToolTip:CPLocalizedString(@"Show or hide properties view", @"Show or hide properties view")];
 
     var buttons = [CPArray array];
 

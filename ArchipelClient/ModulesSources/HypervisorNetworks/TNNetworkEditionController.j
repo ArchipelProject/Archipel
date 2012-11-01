@@ -88,20 +88,24 @@
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
+    [_plusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Add a new DHCP reservation", @"Add a new DHCP reservation")];
 
     _minusButtonDHCPHosts= [CPButtonBar minusButton];
     [_minusButtonDHCPHosts setTarget:self];
     [_minusButtonDHCPHosts setAction:@selector(removeDHCPHost:)];
+    [_minusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Remove elected DHCP reservations", @"Remove elected DHCP reservations")];
 
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
 
     _plusButtonDHCPRanges = [CPButtonBar plusButton];
     [_plusButtonDHCPRanges setTarget:self];
     [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];
+    [_plusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Add new DHCP range", @"Add new DHCP range")];
 
     _minusButtonDHCPRanges = [CPButtonBar minusButton];
     [_minusButtonDHCPRanges setTarget:self];
     [_minusButtonDHCPRanges setAction:@selector(removeDHCPRange:)];
+    [_minusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Remove selected DHCP ranges", @"Remove selected DHCP ranges")];
 
     [buttonBarControlDHCPRanges setButtons:[_plusButtonDHCPRanges, _minusButtonDHCPRanges]];
 
