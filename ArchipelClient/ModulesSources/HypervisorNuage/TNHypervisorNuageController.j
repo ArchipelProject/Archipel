@@ -177,6 +177,9 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNuage];
 
+    var URLString = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelNuageURL"];
+    [self _initCNACommunicatorWithURLString:URLString];
+
     if ([self currentEntityHasPermission:@"nuagenetwork_get"])
         [self getHypervisorNuages];
     return YES;
