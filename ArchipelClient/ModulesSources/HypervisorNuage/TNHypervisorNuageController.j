@@ -180,6 +180,11 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     var URLString = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelNuageURL"];
     [self _initCNACommunicatorWithURLString:URLString];
 
+    [[CPNotificationCenter defaultCenter] addObserver:nuageController
+                                             selector:@selector(_didReceiveCNAPush:)
+                                                 name:NURESTPushCenterPushReceived
+                                               object:[NURESTPushCenter defaultCenter]];
+
     if ([self currentEntityHasPermission:@"nuagenetwork_get"])
         [self getHypervisorNuages];
     return YES;
@@ -191,6 +196,10 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 {
     [nuageController closeWindow:nil];
     [popoverXMLString close];
+
+    [[CPNotificationCenter defaultCenter] removeObserver:nuageController
+                                                 name:NURESTPushCenterPushReceived
+                                               object:[NURESTPushCenter defaultCenter]];
 
     [super willHide];
 }
@@ -300,10 +309,19 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
         [[TNCNACommunicator defaultCNACommunicator] setBaseURL:anURL];
         [[TNCNACommunicator defaultCNACommunicator] fetchMe];
+
+        if ([self isVisible])
+        {
+            [[NURESTPushCenter defaultCenter] stop];
+            [[NURESTPushCenter defaultCenter] setURL:anURL];
+            [[NURESTPushCenter defaultCenter] start];
+        }
     }
     else
     {
         [[TNCNACommunicator defaultCNACommunicator] setBaseURL:nil];
+        [[NURESTPushCenter defaultCenter] stop];
+        [[NURESTPushCenter defaultCenter] setURL:nil];
     }
 }
 

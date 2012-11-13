@@ -1,71 +1,75 @@
 /*
- * TNRESTConnexion.j
- *
- * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-@import "TNRESTLoginController.j"
+*   Filename:         NURESTConnection.j
+*   Created:          Tue Oct  9 11:49:32 PDT 2012
+*   Author:           Antoine Mercadal <antoine.mercadal@alcatel-lucent.com>
+*   Description:      CNA Dashboard
+*   Project:          Cloud Network Automation - Nuage - Data Center Service Delivery - IPD
+*
+* Copyright (c) 2011-2012 Alcatel, Alcatel-Lucent, Inc. All Rights Reserved.
+*
+* This source code contains confidential information which is proprietary to Alcatel.
+* No part of its contents may be used, copied, disclosed or conveyed to any party
+* in any manner whatsoever without prior written permission from Alcatel.
+*
+* Alcatel-Lucent is a trademark of Alcatel-Lucent, Inc.
+*
+*/
 
 @import <Foundation/CPURLConnection.j>
 
-TNRESTConnectionResponseCodeZero = 0;
-TNRESTConnectionResponseCodeSuccess = 200;
-TNRESTConnectionResponseCodeCreated = 201;
-TNRESTConnectionResponseCodeEmpty = 204;
-TNRESTConnectionResponseCodeNotFound = 404;
-TNRESTConnectionResponseCodeConflict = 409;
-TNRESTConnectionResponseCodeInternalServerError = 500;
-TNRESTConnectionResponseCodeServiceUnavailable = 503;
-TNRESTConnectionResponseCodeUnauthorized = 401;
-TNRESTConnectionResponseCodePermissionDenied = 403;
-TNRESTConnectionResponseCodeMultipleChoices = 300;
+NURESTConnectionResponseCodeZero = 0;
+NURESTConnectionResponseCodeSuccess = 200;
+NURESTConnectionResponseCodeCreated = 201;
+NURESTConnectionResponseCodeEmpty = 204;
+NURESTConnectionResponseCodeNotFound = 404;
+NURESTConnectionResponseCodeConflict = 409;
+NURESTConnectionResponseCodeInternalServerError = 500;
+NURESTConnectionResponseCodeServiceUnavailable = 503;
+NURESTConnectionResponseCodeUnauthorized = 401;
+NURESTConnectionResponseCodePreconditionFailed = 412;
+NURESTConnectionResponseCodePermissionDenied = 403;
+NURESTConnectionResponseCodeMultipleChoices = 300;
+NURESTConnectionTimeout = 42;
+
+NURESTConnectionFailureNotification = @"NURESTConnectionFailureNotification";
+
 
 /*! Enhanced version of CPURLConnection
 */
-@implementation TNRESTConnection : CPObject
+@implementation NURESTConnection : CPObject
 {
+    BOOL            _usesAuthentication     @accessors(property=usesAuthentication);
+    BOOL            _hasTimeouted           @accessors(getter=hasTimeouted);
     CPData          _responseData           @accessors(getter=responseData);
+    CPString        _errorMessage           @accessors(property=errorMessage);
     CPURLRequest    _request                @accessors(property=request);
+    HTTPRequest     _HTTPRequest            @accessors(getter=nativeRequest);
+    id              _internalUserInfo       @accessors(property=internalUserInfo);
     id              _target                 @accessors(property=target);
     id              _userInfo               @accessors(property=userInfo);
-    id              _internalUserInfo       @accessors(property=internalUserInfo);
     int             _responseCode           @accessors(getter=responseCode);
     SEL             _selector               @accessors(property=selector);
-    CPString        _errorMessage           @accessors(property=errorMessage);
-    BOOL            _usesAuthentication     @accessors(property=usesAuthentication);
+    int             _XHRTimeout             @accessors(property=timeout);
 
     BOOL            _isCanceled;
-    HTTPRequest     _HTTPRequest;
 }
 
 
 #pragma mark -
 #pragma mark Class Methods
 
-/*! Initialize a new TNRESTConnection
+/*! Initialize a new NURESTConnection
     @param aRequest the CPURLRequest to send
     @param anObject a random object that is the target of the result events
     @param aSuccessSelector the selector to send to anObject in case of success
     @param anErrorSelector the selector to send to anObject in case of error
-    @return TNRESTConnection fully ready TNRESTConnection
+    @return NURESTConnection fully ready NURESTConnection
 */
-+ (TNRESTConnection)connectionWithRequest:(CPURLRequest)aRequest
++ (NURESTConnection)connectionWithRequest:(CPURLRequest)aRequest
                                   target:(CPObject)anObject
                                 selector:(SEL)aSelector
 {
-    var connection = [[TNRESTConnection alloc] initWithRequest:aRequest];
+    var connection = [[NURESTConnection alloc] initWithRequest:aRequest];
     [connection setTarget:anObject];
     [connection setSelector:aSelector];
 
@@ -76,7 +80,7 @@ TNRESTConnectionResponseCodeMultipleChoices = 300;
 #pragma mark -
 #pragma mark Initialization
 
-/*! Initialize a TNRESTConnection with a CPURLRequest
+/*! Initialize a NURESTConnection with a CPURLRequest
     @param aRequest the request to user
 */
 - (void)initWithRequest:aRequest
@@ -85,7 +89,9 @@ TNRESTConnectionResponseCodeMultipleChoices = 300;
     {
         _request = aRequest;
         _isCanceled = NO;
+        _hasTimeouted = NO;
         _usesAuthentication = YES;
+        _XHRTimeout = 5000;
         _HTTPRequest = new CFHTTPRequest();
     }
 
@@ -97,12 +103,15 @@ TNRESTConnectionResponseCodeMultipleChoices = 300;
 - (void)start
 {
     _isCanceled = NO;
+    _hasTimeouted = NO;
 
     try
     {
         _HTTPRequest.open([_request HTTPMethod], [[_request URL] absoluteString], YES);
 
+        _HTTPRequest._nativeRequest.timeout = _XHRTimeout;
         _HTTPRequest.onreadystatechange = function() { [self _readyStateDidChange]; }
+        _HTTPRequest._nativeRequest.ontimeout = function() { [self _XHRDidTimeout]; }
 
         var fields = [_request allHTTPHeaderFields],
             key = nil,
@@ -113,10 +122,9 @@ TNRESTConnectionResponseCodeMultipleChoices = 300;
 
         if (_usesAuthentication)
         {
-            _HTTPRequest.setRequestHeader("X-Nuage-Organization", [[TNRESTLoginController defaultController] company]);
-            _HTTPRequest.setRequestHeader("Authorization", [[TNRESTLoginController defaultController] RESTAuthString]);
+            _HTTPRequest.setRequestHeader("X-Nuage-Organization", [[NURESTLoginController defaultController] company]);
+            _HTTPRequest.setRequestHeader("Authorization", [[NURESTLoginController defaultController] RESTAuthString]);
         }
-
 
         _HTTPRequest.send([_request HTTPBody]);
     }
@@ -159,6 +167,16 @@ TNRESTConnectionResponseCodeMultipleChoices = 300;
 
         [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
     }
+}
+
+- (void)_XHRDidTimeout
+{
+    _hasTimeouted = YES;
+
+    if (_target && _selector)
+        [_target performSelector:_selector withObject:self];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 @end

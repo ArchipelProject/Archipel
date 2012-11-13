@@ -19,7 +19,8 @@
 
 @import <Foundation/Foundation.j>
 
-@import "TNRESTConnection.j"
+@import "REST/NURESTConnection.j"
+@import "REST/NURESTPushCenter.j"
 
 var defaultTNCNACommunicator;
 
@@ -76,9 +77,9 @@ var defaultTNCNACommunicator;
     _company = company;
     _token = password;
 
-    [[TNRESTLoginController defaultController] setUser:username];
-    [[TNRESTLoginController defaultController] setPassword:password];
-    [[TNRESTLoginController defaultController] setCompany:company];
+    [[NURESTLoginController defaultController] setUser:username];
+    [[NURESTLoginController defaultController] setPassword:password];
+    [[NURESTLoginController defaultController] setCompany:company];
 }
 
 - (void)fetchMe
@@ -88,12 +89,12 @@ var defaultTNCNACommunicator;
     [self _prepareLogin];
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"me" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchMe:)];
+        connection = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchMe:)];
 
     [connection start];
 }
 
-- (void)_didFetchMe:(TNRESTConnection)aConnection
+- (void)_didFetchMe:(NURESTConnection)aConnection
 {
     if ([aConnection responseCode] !== 200)
     {
@@ -116,7 +117,7 @@ var defaultTNCNACommunicator;
         return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
+        connection = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
     [connection setInternalUserInfo:@"name"];
@@ -129,7 +130,7 @@ var defaultTNCNACommunicator;
         return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + @"/groups" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
+        connection = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
     [connection setInternalUserInfo:@"name"];
@@ -142,7 +143,7 @@ var defaultTNCNACommunicator;
         return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + @"/users" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
+        connection = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
     [connection setInternalUserInfo:@"userName"];
@@ -155,14 +156,14 @@ var defaultTNCNACommunicator;
         return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"users/" + _currentUserID + @"/apps" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
+        connection = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didFetchObjects:)];
 
     [connection setUserInfo:aComboBox];
     [connection setInternalUserInfo:@"name"];
     [connection start];
 }
 
-- (void)_didFetchObjects:(TNRESTConnection)aConnection
+- (void)_didFetchObjects:(NURESTConnection)aConnection
 {
     CPLog.info("CNA REST RESPONSE", [aConnection responseCode], ":", [[aConnection responseData] rawString]);
 
@@ -201,7 +202,7 @@ var defaultTNCNACommunicator;
         return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + "/domains" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:anObject selector:aSelector];
+        connection = [NURESTConnection connectionWithRequest:request target:anObject selector:aSelector];
 
     [connection start];
 }
@@ -212,7 +213,7 @@ var defaultTNCNACommunicator;
         return;
 
     var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"domains/" + aDomainID + "/zones" relativeToURL:_baseURL]],
-        connection = [TNRESTConnection connectionWithRequest:request target:anObject selector:aSelector];
+        connection = [NURESTConnection connectionWithRequest:request target:anObject selector:aSelector];
 
     [connection start];
 }

@@ -250,9 +250,39 @@
 
 
 #pragma mark -
+#pragma mark Notification Handlers
+
+
+- (void)_didReceiveCNAPush:(CPNotification)aNotification
+{
+    var JSONObject = [aNotification userInfo],
+        events = JSONObject.events,
+        pushHasBeenProcessed = NO;
+
+    if (events.length <= 0)
+        return;
+
+    for (var i = 0; i < events.length; i++)
+    {
+        var eventType = events[i].type,
+            entityType = events[i].entityType,
+            entities = events[i].entities;
+
+        for (var j = 0; j < entities.length; j++)
+        {
+            if (entityType == @"domain" || entityType == "zone")
+            {
+                [[TNCNACommunicator defaultCNACommunicator] fetchDomainsAndCallSelector:@selector(_didFetchDomains:) ofObject:self];
+                break;
+            }
+        }
+    }
+}
+
+#pragma mark -
 #pragma mark REST handler
 
-- (void)_didFetchDomains:(TNRESTConnection)aConnection
+- (void)_didFetchDomains:(NURESTConnection)aConnection
 {
     var JSON = [[aConnection responseData] JSONObject],
         domains = [CPArray array],
@@ -280,7 +310,7 @@
     [self tableViewSelectionDidChange:nil];
 }
 
-- (void)_didFetchZones:(TNRESTConnection)aConnection
+- (void)_didFetchZones:(NURESTConnection)aConnection
 {
     var JSON = [[aConnection responseData] JSONObject],
         zones = [CPArray array],

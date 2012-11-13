@@ -25,6 +25,6 @@ SUMMARY		= "Module to manage hypervisor nuage networking";
 VERSION		= "1.0";
 
 FileList = require("jake").FileList
-FILELIST = new FileList("*.j", "Model/*.j");
+FILELIST = new FileList("*.j", "Model/*.j", "REST/*.j");
 
 require("../modulescommon.jake");
