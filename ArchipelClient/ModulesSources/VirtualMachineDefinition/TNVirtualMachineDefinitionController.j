@@ -2108,6 +2108,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)didChangeMemory:(id)aSender
 {
     [_libvirtDomain setMemory:([aSender intValue] * 1024)];
+    // we must set value of current memory too, for more info take a
+    // look at https://github.com/ArchipelProject/Archipel/issues/591
+    [_libvirtDomain setCurrentMemory:([aSender intValue] * 1024)];
     [self makeDefinitionEdited:aSender];
 }
 
