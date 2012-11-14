@@ -143,13 +143,21 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         # before removing everything, we need to to check if we already have some
         # metadata about the networks, then set interface type to 'nuage' instead of 'brdige'
         # otherwise, we loose track of network association
-        old_nuage_network_interfaces_macs = []
+        old_nuage_network_interfaces_macs = {}
+
         if vm_xml_node.getTag("metadata") and vm_xml_node.getTag("metadata").getTag("nuage"):
             nuage_networks_nodes = vm_xml_node.getTag("metadata").getTag("nuage").getTags("nuage_network")
-            for nuage_network in nuage_networks_nodes:
-                nuage_network_interface = nuage_network.getTag("interface")
-                if nuage_network_interface and nuage_network_interface.getAttr("mac"):
-                    old_nuage_network_interfaces_macs.append(nuage_network_interface.getAttr("mac"))
+
+            if nuage_networks_nodes:
+
+                for nuage_network in nuage_networks_nodes:
+                    nuage_network_interface = nuage_network.getTag("interface")
+
+                    if nuage_network_interface and nuage_network_interface.getAttr("mac"):
+                        macaddress = nuage_network_interface.getAttr("mac").lower()
+                        nuagenetworkname = nuage_network.getAttr("name")
+                        interface_ip = nuage_network_interface.getAttr("address")
+                        old_nuage_network_interfaces_macs[macaddress] = (nuagenetworkname, interface_ip)
 
         if not vm_xml_node.getTag("metadata"):
             vm_xml_node.addChild("metadata")
@@ -167,13 +175,17 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
         for interface in interface_nodes:
 
-            if not interface.getAttr("type") == "nuage":
-                if not interface.getTag("mac") or not interface.getTag("mac").getAttr("address") or not interface.getTag("mac").getAttr("address") in old_nuage_network_interfaces_macs:
-                    continue
+            if interface.getAttr("type") == "nuage":
+                network_name = interface.getAttr("nuage_network_name")
+                ip_address = interface.getAttr("nuage_network_interface_ip")
+                mac_address = interface.getTag("mac").getAttr("address")
+            elif interface.getTag("mac") and interface.getTag("mac").getAttr("address") and interface.getTag("mac").getAttr("address") in old_nuage_network_interfaces_macs:
+                mac_address = interface.getTag("mac").getAttr("address").lower()
+                network_name = old_nuage_network_interfaces_macs[mac_address][0]
+                ip_address = old_nuage_network_interfaces_macs[mac_address][1]
+            else:
+                continue
 
-            network_name = interface.getAttr("nuage_network_name")
-            ip_address = interface.getAttr("nuage_network_interface_ip")
-            mac_address = interface.getTag("mac").getAttr("address")
             network_name_XML = hypervisor_nuage_plugin.get_network_by_name(network_name)
             strXML = str(network_name_XML).replace('xmlns="archipel:hypervisor:nuage:network" ', '')
             network_name_XML = xmpp.simplexml.NodeBuilder(data=strXML).getDom()
