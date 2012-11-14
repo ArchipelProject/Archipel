@@ -140,6 +140,17 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         if not self.entity.vcard_infos:
             return vm_xml_node
 
+        # before removing everything, we need to to check if we already have some
+        # metadata about the networks, then set interface type to 'nuage' instead of 'brdige'
+        # otherwise, we loose track of network association
+        old_nuage_network_interfaces_macs = []
+        if vm_xml_node.getTag("metadata") and vm_xml_node.getTag("metadata").getTag("nuage"):
+            nuage_networks_nodes = vm_xml_node.getTag("metadata").getTag("nuage").getTags("nuage_network")
+            for nuage_network in nuage_networks_nodes:
+                nuage_network_interface = nuage_network.getTag("interface")
+                if nuage_network_interface and nuage_network_interface.getAttr("mac"):
+                    old_nuage_network_interfaces_macs.append(nuage_network_interface.getAttr("mac"))
+
         if not vm_xml_node.getTag("metadata"):
             vm_xml_node.addChild("metadata")
         if vm_xml_node.getTag("metadata").getTag("nuage"):
@@ -157,7 +168,9 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         for interface in interface_nodes:
 
             if not interface.getAttr("type") == "nuage":
-                continue
+                if not interface.getTag("mac") or not interface.getTag("mac").getAttr("address") or not interface.getTag("mac").getAttr("address") in old_nuage_network_interfaces_macs:
+                    continue
+
             network_name = interface.getAttr("nuage_network_name")
             ip_address = interface.getAttr("nuage_network_interface_ip")
             mac_address = interface.getTag("mac").getAttr("address")
