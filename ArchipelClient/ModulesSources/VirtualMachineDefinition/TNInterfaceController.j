@@ -207,24 +207,28 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             [[_nic source] setBridge:nil];
             [[_nic source] setDevice:nil];
             [[_nic source] setMode:nil];
+            [_nic setTarget:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeBridge:
             [[_nic source] setNetwork:nil];
             [[_nic source] setBridge:[buttonSource title]];
             [[_nic source] setDevice:nil];
             [[_nic source] setMode:nil];
+            [_nic setTarget:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeUser:
             [[_nic source] setNetwork:nil];
             [[_nic source] setBridge:nil];
             [[_nic source] setDevice:nil];
             [[_nic source] setMode:nil];
+            [_nic setTarget:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeDirect:
             [[_nic source] setNetwork:nil];
             [[_nic source] setBridge:nil];
             [[_nic source] setDevice:[buttonSource title]];
             [[_nic source] setMode:TNLibvirtDeviceInterfaceSourceModeBridge];
+            [_nic setTarget:nil];
             break;
     }
 
