@@ -140,56 +140,103 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         if not self.entity.vcard_infos:
             return vm_xml_node
 
-        # before removing everything, we need to to check if we already have some
-        # metadata about the networks, then set interface type to 'nuage' instead of 'brdige'
-        # otherwise, we loose track of network association
-        old_nuage_network_interfaces_macs = {}
+        if not vm_xml_node.getTag("metadata"):
+            vm_xml_node.addChild("metadata")
 
-        if vm_xml_node.getTag("metadata") and vm_xml_node.getTag("metadata").getTag("nuage"):
+        # before removing everything, we need to to check if we already have some
+        # metadata about the networks, then we store the values in order to manage
+        # the nuage network correctly
+        old_nuage_networks_infos = {}
+
+        # If we already have some existing NUAGE NETWORKS metadata, then we store old informations
+        if vm_xml_node.getTag("metadata").getTag("nuage"):
+            # We check that we had some interfaces attached in some eventual nuage networks
             nuage_networks_nodes = vm_xml_node.getTag("metadata").getTag("nuage").getTags("nuage_network")
 
             if nuage_networks_nodes:
+                # We have :) so let's parse this information
 
                 for nuage_network in nuage_networks_nodes:
+
                     nuage_network_interface = nuage_network.getTag("interface")
 
+                    # we check that we have a mac address. (We should always have, but it's client dependent, so avoid a crash here)
                     if nuage_network_interface and nuage_network_interface.getAttr("mac"):
+                        # Here, we store old information (nuage network name used by the interface
+                        # and eventual desired IP address) in to a dictionary named old_nuage_networks_infos
+                        # and we put as key the MAC address, and as value a tupple containing nuage network name and eventual IP
                         macaddress = nuage_network_interface.getAttr("mac").lower()
                         nuagenetworkname = nuage_network.getAttr("name")
                         interface_ip = nuage_network_interface.getAttr("address")
-                        old_nuage_network_interfaces_macs[macaddress] = (nuagenetworkname, interface_ip)
+                        old_nuage_networks_infos[macaddress] = (nuagenetworkname, interface_ip)
 
-        if not vm_xml_node.getTag("metadata"):
-            vm_xml_node.addChild("metadata")
+
+        # Now we have old metadata in memory, we remove the nuage node. in order to rebuild it
         if vm_xml_node.getTag("metadata").getTag("nuage"):
             vm_xml_node.getTag("metadata").delChild("nuage")
 
+        # let's keep a track of the hypervisor_nuage_plugin version we will be using for getting network info
         hypervisor_nuage_plugin = self.entity.hypervisor.get_plugin("hypervisor_nuage_network")
 
+        # We now create the root nuage metadata node, and we put common information coming from the VM's VCARD
         nuage_node = xmpp.Node("nuage", attrs={"xmlns": "alcatel-lucent.com/nuage/cna"})
         nuage_node.addChild("enterprise", attrs={"name": self.entity.vcard_infos["ORGNAME"]})
         nuage_node.addChild("user", attrs={"name": self.entity.vcard_infos["USERID"]})
         nuage_node.addChild("application", attrs={"name": self.entity.vcard_infos["CATEGORIES"]})
 
+        # Now we will parse all given interfaces, and build nuage_networks info in nuage metadata
         interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
 
         for interface in interface_nodes:
 
             if interface.getAttr("type") == "nuage":
-                network_name = interface.getAttr("nuage_network_name")
-                ip_address = interface.getAttr("nuage_network_interface_ip")
-                mac_address = interface.getTag("mac").getAttr("address")
-            elif interface.getTag("mac") and interface.getTag("mac").getAttr("address") and interface.getTag("mac").getAttr("address") in old_nuage_network_interfaces_macs:
-                mac_address = interface.getTag("mac").getAttr("address").lower()
-                network_name = old_nuage_network_interfaces_macs[mac_address][0]
-                ip_address = old_nuage_network_interfaces_macs[mac_address][1]
-            else:
-                continue
+                # Ok, here is how it works:
+                # If the interface type is nuage, then it means that we just received a define from the client
+                # and we assume than the network name and interface ip are given in the XML description
+                network_name    = interface.getAttr("nuage_network_name")
+                ip_address      = interface.getAttr("nuage_network_interface_ip")
+                mac_address     = interface.getTag("mac").getAttr("address")
 
-            network_name_XML = hypervisor_nuage_plugin.get_network_by_name(network_name)
-            strXML = str(network_name_XML).replace('xmlns="archipel:hypervisor:nuage:network" ', '')
-            network_name_XML = xmpp.simplexml.NodeBuilder(data=strXML).getDom()
-            interface_node = network_name_XML.addChild("interface", attrs={"mac": mac_address})
+            else:
+                # Now, if the interface is not a nuage interface, we first check if
+                # we have some old nuage networks attached to the interface MAC
+                interface_mac_address = None
+                if interface.getTag("mac"):
+                    interface_mac_address = interface.getTag("mac").getAttr("address")
+
+                if interface_mac_address in old_nuage_networks_infos:
+                    # Ok now. We have an old nuage network attached to the MAC address
+                    # But we need to check the target dev name is using the NUAGE NETWORKS form
+                    # i.e. dev_name == mac_address.replace(":", "")
+                    interface_target_dev = None
+                    if interface.getTag("target"):
+                        interface_target_dev = interface.getTag("target").getAttr("dev")
+
+                    if not interface_target_dev == interface_mac_address.replace(":", ""):
+                        # Ok, so the dev name is not a valid nuage name, so we assume
+                        # the interface is not using a NUAGE NETWORK, we don't generate
+                        # nuage metadata and we continue to parse the next interface
+                        continue
+
+                    # If we reach this block, then this means we have an old NUAGE NETWORK
+                    # that was attached to the this interface's mac, AND the target dev name
+                    # is using the correct NUAGE NETWORKS form, so we just get the nuage informations
+                    # from the old_nuage_networks_infos that has been build above
+                    mac_address     = interface.getTag("mac").getAttr("address").lower()
+                    network_name    = old_nuage_networks_infos[mac_address][0]
+                    ip_address      = old_nuage_networks_infos[mac_address][1]
+
+                else:
+                    # We do not have any old nuage network using this mac address, so we continue.
+                    continue
+
+            # And now, we do our basic business to generate the <metadata>
+
+            network_name_XML    = hypervisor_nuage_plugin.get_network_by_name(network_name)
+            strXML              = str(network_name_XML).replace('xmlns="archipel:hypervisor:nuage:network" ', '')
+            network_name_XML    = xmpp.simplexml.NodeBuilder(data=strXML).getDom()
+            interface_node      = network_name_XML.addChild("interface", attrs={"mac": mac_address})
+
             if ip_address:
                 interface_node.setAttr("address", ip_address)
 
@@ -208,6 +255,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             nuage_node.addChild(node=network_name_XML)
 
         vm_xml_node.getTag("metadata").addChild(node=nuage_node)
+
         return vm_xml_node
 
 
