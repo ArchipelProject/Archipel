@@ -142,7 +142,7 @@ class TNArchipelLibvirtEntity (object):
         """
         if failure:
             status = "dnd"
-            message = "trying to recover libvirt connection"
+            message = "Libvirt connection lost"
             self.change_presence(status, message)
             for uuid, vm in self.virtualmachines.iteritems():
                 vm.change_presence(status, message)
