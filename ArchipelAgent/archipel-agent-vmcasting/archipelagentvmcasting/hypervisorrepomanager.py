@@ -213,7 +213,8 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtime arguments
         """
-        self.parse_timer.start()
+        if not self.parse_timer.is_alive():
+            self.parse_timer.start()
 
 
     ### Plugin interface

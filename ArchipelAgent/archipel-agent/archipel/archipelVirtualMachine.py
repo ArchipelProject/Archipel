@@ -366,10 +366,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         then to the domain by looking the uuid used as JID Node.
         Exit on any error.
         """
-        if self.domain:
-            self.log.error("Already connected to domain.")
-            return
-
         try:
             self.domain = self.hypervisor.libvirt_connection.lookupByUUIDString(self.uuid)
         except:

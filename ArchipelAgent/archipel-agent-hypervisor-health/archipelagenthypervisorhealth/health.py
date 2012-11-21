@@ -137,7 +137,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtime argument
         """
-        self.collector.start()
+        if not self.collector.is_alive():
+            self.collector.start()
 
 
     ### XMPP Processing
