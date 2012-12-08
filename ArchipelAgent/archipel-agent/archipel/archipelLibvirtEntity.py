@@ -142,17 +142,17 @@ class TNArchipelLibvirtEntity (object):
         """
         if failure:
             status = "dnd"
-            message = "trying to recover libvirt connection"
+            message = "Libvirt connection lost"
             self.change_presence(status, message)
+            for uuid, vm in self.virtualmachines.iteritems():
+                vm.change_presence(status, message)
         else:
-            if hasattr(self, 'set_presence_according_to_libvirt_info'):
-                self.connect_libvirt()
-                self.domain = None
-                self.connect_domain()
-                self.set_presence_according_to_libvirt_info()
-            else:
-                self.xmppstatusshow = ""
-                self.update_presence()
+            self.xmppstatusshow = ""
+            self.update_presence()
+            for uuid, vm in self.virtualmachines.iteritems():
+                vm.domain = None
+                vm.connect_domain()
+                vm.set_presence_according_to_libvirt_info()
 
     def check_libvirt_connection(self):
         """
