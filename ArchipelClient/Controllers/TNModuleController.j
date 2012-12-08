@@ -487,6 +487,12 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         frame                   = [_mainModuleView bounds],
         moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleIdentifier];
 
+    // auto validating of toolbar item should be disabled so
+    // they won't get enabled by theirselves when user clicks
+    // somewhere. for more info take a look at:
+    // https://github.com/ArchipelProject/Archipel/issues/602
+    [moduleToolbarItem setAutovalidates:NO];
+
     if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
         moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]] || [moduleLabel objectForKey:@"en"];
 
