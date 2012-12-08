@@ -366,10 +366,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         then to the domain by looking the uuid used as JID Node.
         Exit on any error.
         """
-        if self.domain:
-            self.log.error("Already connected to domain.")
-            return
-
         try:
             self.domain = self.hypervisor.libvirt_connection.lookupByUUIDString(self.uuid)
         except:
@@ -879,8 +875,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         self.log.debug("New XML description is now %s" % str(newxml))
         self.log.info("Starting to clone virtual machine %s from %s" % (self.uuid, parentuuid))
-        self.change_presence(presence_show="dnd", presence_status="Cloning...")
-        parentvm.change_presence(presence_show="dnd", presence_status="Cloning to %s" % parentname)
+        self.change_presence(presence_show="dnd", presence_status="Cloning from %s" % parentname)
+        parentvm.change_presence(presence_show="dnd", presence_status="Cloning to %s" % self.name)
         self.log.info("Starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
         thread.start_new_thread(self.perform_threaded_cloning, (path, newxml, parentvm))
 

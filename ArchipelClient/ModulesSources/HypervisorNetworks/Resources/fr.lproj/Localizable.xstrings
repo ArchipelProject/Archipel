@@ -2,8 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Activate selected networks</key>
+	<string>Activate selected networks</string>
 	<key>Activate this network</key>
 	<string>Activate this network</string>
+	<key>Add a new DHCP reservation</key>
+	<string>Add a new DHCP reservation</string>
+	<key>Add new DHCP range</key>
+	<string>Add new DHCP range</string>
 	<key>Add new host reservation</key>
 	<string>Add new host reservation</string>
 	<key>Add new range</key>
@@ -14,6 +20,8 @@
 	<string>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
+	<key>Create a new network</key>
+	<string>Create a new network</string>
 	<key>Create new virtual network</key>
 	<string>Create new virtual network</string>
 	<key>DHCP Hosts</key>
@@ -24,6 +32,8 @@
 	<string>Deactivate</string>
 	<key>Deactivate Network</key>
 	<string>Deactivate Network</string>
+	<key>Deactivate selected networks</key>
+	<string>Deactivate selected networks</string>
 	<key>Deactivate this network</key>
 	<string>Deactivate this network</string>
 	<key>Delete</key>
@@ -32,6 +42,8 @@
 	<string>Delete Network</string>
 	<key>Delete selected network</key>
 	<string>Delete selected network</string>
+	<key>Delete selected networks</key>
+	<string>Delete selected networks</string>
 	<key>Edit selected network</key>
 	<string>Edit selected network</string>
 	<key>Error</key>
@@ -42,8 +54,14 @@
 	<string>Network has been removed</string>
 	<key>Network status has changed</key>
 	<string>Network status has changed</string>
+	<key>Open manual XML editor</key>
+	<string>Open manual XML editor</string>
 	<key>Remove</key>
 	<string>Remove</string>
+	<key>Remove elected DHCP reservations</key>
+	<string>Remove elected DHCP reservations</string>
+	<key>Remove selected DHCP ranges</key>
+	<string>Remove selected DHCP ranges</string>
 	<key>You can't edit a running network</key>
 	<string>You can't edit a running network</string>
 	<key>You can't update a running network</key>

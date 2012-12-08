@@ -1,3 +1,18 @@
+/* Add a new drive */
+"Add a new drive" = "Add a new drive";
+
+/* Add a new graphic device */
+"Add a new graphic device" = "Add a new graphic device";
+
+/* Add new character device */
+"Add new character device" = "Add new character device";
+
+/* Add new input device */
+"Add new input device" = "Add new input device";
+
+/* Add new network interface */
+"Add new network interface" = "Add new network interface";
+
 /* All your changes will be definitly lost. */
 "All your changes will be definitly lost." = "All your changes will be definitly lost.";
 
@@ -16,8 +31,35 @@
 /* Discard */
 "Discard" = "Discard";
 
+/* Edit selected character device */
+"Edit selected character device" = "Edit selected character device";
+
+/* Edit selected drive */
+"Edit selected drive" = "Edit selected drive";
+
+/* Edit selected graphic device */
+"Edit selected graphic device" = "Edit selected graphic device";
+
+/* Edit selected input device */
+"Edit selected input device" = "Edit selected input device";
+
+/* Edit selected network interface */
+"Edit selected network interface" = "Edit selected network interface";
+
 /* Error */
 "Error" = "Error";
+
+/* Remove selected character devices */
+"Remove selected character devices" = "Remove selected character devices";
+
+/* Remove selected drives */
+"Remove selected drives" = "Remove selected drives";
+
+/* Remove selected input devices */
+"Remove selected input devices" = "Remove selected input devices";
+
+/* Remove selected network interfaces */
+"Remove selected network interfaces" = "Remove selected network interfaces";
 
 /* Undefine */
 "Undefine" = "Undefine";

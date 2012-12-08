@@ -365,7 +365,7 @@ class TNStorageManagement (TNArchipelPlugin):
                         have_undefined_at_least_on_disk = True
                 if have_undefined_at_least_on_disk:
                     xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
-                    self.entity.libvirt_connection.defineXML(xml)
+                    self.entity.hypervisor.libvirt_connection.defineXML(xml)
                     self.entity.push_change("virtualmachine:definition", "defined")
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")

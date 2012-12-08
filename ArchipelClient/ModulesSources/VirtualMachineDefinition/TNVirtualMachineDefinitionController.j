@@ -78,7 +78,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     @outlet CPButton                    buttonClocks;
     @outlet CPButton                    buttonDefine;
-    @outlet CPButton                    buttonDomainType;
     @outlet CPButton                    buttonOnCrash;
     @outlet CPButton                    buttonOnPowerOff;
     @outlet CPButton                    buttonOnReboot;
@@ -92,6 +91,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPButtonBar                 buttonBarInputDevices;
     @outlet CPPopover                   popoverXMLEditor;
     @outlet CPPopUpButton               buttonBoot;
+    @outlet CPPopUpButton               buttonDomainType;
     @outlet CPPopUpButton               buttonGuests;
     @outlet CPPopUpButton               buttonMachines;
     @outlet CPPopUpButton               buttonPreferencesBoot;
@@ -113,6 +113,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTableView                 tableInputDevices;
     @outlet CPTableView                 tableInterfaces;
     @outlet CPTextField                 fieldBlockIOTuningWeight;
+    @outlet CPTextField                 fieldBootloader;
     @outlet CPTextField                 fieldMemory;
     @outlet CPTextField                 fieldMemoryTuneGuarantee;
     @outlet CPTextField                 fieldMemoryTuneHardLimit;
@@ -121,7 +122,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
-    @outlet CPTextField                 fieldBootloader;
     @outlet CPTextField                 fieldPreferencesDomainType;
     @outlet CPTextField                 fieldPreferencesGuest;
     @outlet CPTextField                 fieldPreferencesMachine;
@@ -141,9 +141,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPView                      viewParametersEffectTop;
     @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersStandard;
+    @outlet LPMultiLineTextField        fieldBootloaderArgs;
     @outlet LPMultiLineTextField        fieldOSCommandLine;
     @outlet LPMultiLineTextField        fieldStringXMLDesc;
-    @outlet LPMultiLineTextField        fieldBootloaderArgs;
     @outlet TNCharacterDeviceController characterDeviceController;
     @outlet TNCharacterDeviceDataView   dataViewCharacterDevicePrototype;
     @outlet TNDriveController           driveController;
@@ -154,11 +154,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNInputDeviceDataView       dataViewInputDevicePrototype;
     @outlet TNInterfaceController       interfaceController;
     @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
-    @outlet TNSwitch                    switchACPI;
-    @outlet TNSwitch                    switchAPIC;
-    @outlet TNSwitch                    switchHugePages;
-    @outlet TNSwitch                    switchPAE;
-    @outlet TNSwitch                    switchPreferencesHugePages;
+    @outlet CPCheckbox                  checkboxACPI;
+    @outlet CPCheckbox                  checkboxAPIC;
+    @outlet CPCheckbox                  checkboxHugePages;
+    @outlet CPCheckbox                  checkboxNestedVirtualization;
+    @outlet CPCheckbox                  checkboxPAE;
+    @outlet CPCheckbox                  checkboxPreferencesHugePages;
+    @outlet CPCheckbox                  checkboxEnableUSB;
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;
 
@@ -315,17 +317,20 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonDrives = [CPButtonBar plusButton];
     [_plusButtonDrives setTarget:self];
     [_plusButtonDrives setAction:@selector(addDrive:)];
+    [_plusButtonDrives setToolTip:CPBundleLocalizedString(@"Add a new drive", @"Add a new drive")];
 
     _minusButtonDrives = [CPButtonBar minusButton];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
     [_minusButtonDrives setEnabled:NO];
+    [_minusButtonDrives setToolTip:CPBundleLocalizedString(@"Remove selected drives", @"Remove selected drives")];
 
     _editButtonDrives = [CPButtonBar plusButton];
     [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_editButtonDrives setEnabled:NO];
+    [_editButtonDrives setToolTip:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")];
 
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
     [driveController setTable:tableDrives];
@@ -351,17 +356,20 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonNics = [CPButtonBar plusButton];
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
+    [_plusButtonNics setToolTip:CPBundleLocalizedString(@"Add new network interface", @"Add new network interface")];
 
     _minusButtonNics = [CPButtonBar minusButton];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
     [_minusButtonNics setEnabled:NO];
+    [_minusButtonNics setToolTip:CPBundleLocalizedString(@"Remove selected network interfaces", @"Remove selected network interfaces")];
 
     _editButtonNics = [CPButtonBar plusButton];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editInterface:)];
     [_editButtonNics setEnabled:NO];
+    [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected network interface", @"Edit selected network interface")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
     [interfaceController setTable:tableInterfaces];
@@ -381,15 +389,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonInputs = [CPButtonBar plusButton];
     [_plusButtonInputs setTarget:self];
     [_plusButtonInputs setAction:@selector(addInputDevice:)];
+    [_plusButtonInputs setToolTip:CPBundleLocalizedString(@"Add new input device", @"Add new input device")];
 
     _minusButtonInputDevice = [CPButtonBar minusButton];
     [_minusButtonInputDevice setTarget:self];
     [_minusButtonInputDevice setAction:@selector(deleteInputDevice:)];
+    [_minusButtonInputDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
 
     _editButtonInputDevice = [CPButtonBar plusButton];
     [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonInputDevice setTarget:self];
     [_editButtonInputDevice setAction:@selector(editInputDevice:)];
+    [_editButtonInputDevice setToolTip:CPBundleLocalizedString(@"Edit selected input device", @"Edit selected input device")];
 
     [buttonBarInputDevices setButtons:[_plusButtonInputs, _minusButtonInputDevice, _editButtonInputDevice]];
 
@@ -411,15 +422,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonGraphics = [CPButtonBar plusButton];
     [_plusButtonGraphics setTarget:self];
     [_plusButtonGraphics setAction:@selector(addGraphicDevice:)];
+    [_plusButtonGraphics setToolTip:CPBundleLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
 
     _minusButtonGraphicDevice = [CPButtonBar minusButton];
     [_minusButtonGraphicDevice setTarget:self];
     [_minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
+    [_minusButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
 
     _editButtonGraphicDevice = [CPButtonBar plusButton];
     [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonGraphicDevice setTarget:self];
     [_editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
+    [_editButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Edit selected graphic device", @"Edit selected graphic device")];
 
     [buttonBarGraphicDevices setButtons:[_plusButtonGraphics, _minusButtonGraphicDevice, _editButtonGraphicDevice]];
     [graphicDeviceController setDelegate:self];
@@ -448,15 +462,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _plusButtonCharacter = [CPButtonBar plusButton];
     [_plusButtonCharacter setTarget:self];
     [_plusButtonCharacter setAction:@selector(addCharacterDevice:)];
+    [_plusButtonCharacter setToolTip:CPBundleLocalizedString(@"Add new character device", @"Add new character device")];
 
     _minusButtonCharacterDevice = [CPButtonBar minusButton];
     [_minusButtonCharacterDevice setTarget:self];
     [_minusButtonCharacterDevice setAction:@selector(deleteCharacterDevice:)];
+    [_minusButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Remove selected character devices", @"Remove selected character devices")];
 
     _editButtonCharacterDevice = [CPButtonBar plusButton];
     [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonCharacterDevice setTarget:self];
     [_editButtonCharacterDevice setAction:@selector(editCharacterDevice:)];
+    [_editButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Edit selected character device", @"Edit selected character device")];
 
     [buttonBarCharacterDevices setButtons:[_plusButtonCharacter, _minusButtonCharacterDevice, _editButtonCharacterDevice]];
 
@@ -511,10 +528,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 
-    // switch
-    [switchPAE setOn:NO animated:YES sendAction:NO];
-    [switchAPIC setOn:NO animated:YES sendAction:NO];
-    [switchACPI setOn:NO animated:YES sendAction:NO];
+    // checkboxes
+    [checkboxPAE setState:CPOffState];
+    [checkboxAPIC setState:CPOffState];
+    [checkboxACPI setState:CPOffState];
 
     //CPUStepper
     [stepperNumberCPUs setMaxValue:[defaults integerForKey:@"TNDescMaxNumberCPU"]];
@@ -653,7 +670,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setBool:[switchPreferencesHugePages isOn] forKey:@"TNDescDefaultHugePages"];
+    [defaults setBool:[checkboxPreferencesHugePages state] forKey:@"TNDescDefaultHugePages"];
     [defaults setObject:[buttonPreferencesBoot title] forKey:@"TNDescDefaultBoot"];
     [defaults setObject:[buttonPreferencesClockOffset title] forKey:@"TNDescDefaultClockOffset"];
     [defaults setObject:[buttonPreferencesInput title] forKey:@"TNDescDefaultInputType"];
@@ -688,7 +705,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldPreferencesGuest setStringValue:[defaults objectForKey:@"TNDescDefaultGuest"]];
     [fieldPreferencesMachine setIntValue:[defaults objectForKey:@"TNDescDefaultMachine"]];
     [fieldPreferencesMemory setStringValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
-    [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
+    [checkboxPreferencesHugePages setState:[defaults boolForKey:@"TNDescDefaultHugePages"]];
 }
 
 /*! called when MainMenu is ready
@@ -728,10 +745,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:buttonXMLEditor enabledAccordingToPermission:@"define"];
     [self setControl:fieldMemory enabledAccordingToPermission:@"define"];
     [self setControl:stepperNumberCPUs enabledAccordingToPermission:@"define"];
-    [self setControl:switchACPI enabledAccordingToPermission:@"define"];
-    [self setControl:switchAPIC enabledAccordingToPermission:@"define"];
-    [self setControl:switchHugePages enabledAccordingToPermission:@"define"];
-    [self setControl:switchPAE enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxACPI enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxAPIC enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxHugePages enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxEnableUSB enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxNestedVirtualization enabledAccordingToPermission:@"define"];
+    [self setControl:checkboxPAE enabledAccordingToPermission:@"define"];
     [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
     [self setControl:_editButtonNics enabledAccordingToPermission:@"define"];
     [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
@@ -915,6 +934,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         or          = [defaults objectForKey:@"TNDescDefaultOnReboot"],
         oc          = [defaults objectForKey:@"TNDescDefaultOnCrash"],
         hp          = [defaults boolForKey:@"TNDescDefaultHugePages"],
+        nv          = [defaults boolForKey:@"TNDescDefaultNestedVirtualization"],
         clock       = [defaults objectForKey:@"TNDescDefaultClockOffset"],
         pae         = [defaults boolForKey:@"TNDescDefaultPAE"],
         acpi        = [defaults boolForKey:@"TNDescDefaultACPI"],
@@ -929,10 +949,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnReboot selectItemWithTitle:or];
     [buttonOnCrash selectItemWithTitle:oc];
     [buttonClocks selectItemWithTitle:clock];
-    [switchPAE setOn:((pae == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
-    [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
+    [checkboxPAE setState:((pae == 1) ? CPOnState : CPOffState)];
+    [checkboxACPI setState:((acpi == 1) ? CPOnState : CPOffState)];
+    [checkboxAPIC setState:((apic == 1) ? CPOnState : CPOffState)];
+    [checkboxHugePages setState:((hp == 1) ? CPOnState : CPOffState)];
+    [checkboxEnableUSB setState:CPOnState];
+    [checkboxNestedVirtualization setState:((nv == 1) ? CPOnState : CPOffState)];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
 
@@ -1057,11 +1079,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [buttonDomainType addItemWithTitle:[domain valueForAttribute:@"type"]];
         }
 
-        var defaultDomainType = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDomainType"];
-        if (defaultDomainType && [buttonDomainType itemWithTitle:defaultDomainType])
-            [buttonDomainType selectItemWithTitle:defaultDomainType];
+        if (_libvirtDomain && [_libvirtDomain type])
+        {
+            [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
+        }
         else
-            [buttonDomainType selectItemAtIndex:0];
+        {
+            var defaultDomainType = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDomainType"];
+            if (defaultDomainType && [buttonDomainType itemWithTitle:defaultDomainType])
+                [buttonDomainType selectItemWithTitle:defaultDomainType];
+            else
+                [buttonDomainType selectItemAtIndex:0];
+        }
 
         [self setControl:buttonDomainType enabledAccordingToPermission:@"define"];
         [buttonDomainType setEnabled:YES];
@@ -1076,35 +1105,35 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         var features = [capabilities firstChildWithName:@"features"];
 
-        [switchPAE setEnabled:NO];
+        [checkboxPAE setEnabled:NO];
         if ([features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"] )
-            [switchPAE setEnabled:YES];
+            [checkboxPAE setEnabled:YES];
         if (![features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"])
-            [switchPAE setOn:YES animated:NO sendAction:NO];
+            [checkboxPAE setState:CPOnState];
         if ([features containsChildrenWithName:@"nonpae"] && ![features containsChildrenWithName:@"pae"])
-            [switchPAE setOn:NO animated:NO sendAction:NO];
+            [checkboxPAE setState:CPOffState];
 
-        [switchACPI setEnabled:NO];
+        [checkboxACPI setEnabled:NO];
         if ([features containsChildrenWithName:@"acpi"])
         {
-            var on = [[features firstChildWithName:@"acpi"] valueForAttribute:@"default"] == "on" ? YES : NO,
+            var on = [[features firstChildWithName:@"acpi"] valueForAttribute:@"default"] == "on" ? CPOnState : CPOffState,
                 toggle = [[features firstChildWithName:@"acpi"] valueForAttribute:@"toggle"] == "yes" ? YES : NO;
 
             if (toggle)
-                [switchACPI setEnabled:YES];
-            [switchACPI setOn:on animated:NO sendAction:NO];
+                [checkboxACPI setEnabled:YES];
+            [checkboxACPI setState:on];
         }
 
-        [switchAPIC setEnabled:NO];
+        [checkboxAPIC setEnabled:NO];
         if ([features containsChildrenWithName:@"apic"])
         {
-            var on = [[features firstChildWithName:@"apic"] valueForAttribute:@"default"] == "on" ? YES : NO,
+            var on = [[features firstChildWithName:@"apic"] valueForAttribute:@"default"] == "on" ? CPOnState : CPOffState,
                 toggle = [[features firstChildWithName:@"apic"] valueForAttribute:@"toggle"] == "yes" ? YES : NO;
 
             if (toggle)
-                [switchAPIC setEnabled:YES];
+                [checkboxAPIC setEnabled:YES];
 
-            [switchAPIC setOn:on animated:NO sendAction:NO];
+            [checkboxAPIC setState:on];
         }
     }
 }
@@ -1201,10 +1230,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_plusButtonInputs setEnabled:shouldEnableGUI];
     [_plusButtonNics setEnabled:shouldEnableGUI];
     [_plusButtonCharacter setEnabled:shouldEnableGUI];
-    [switchACPI setEnabled:shouldEnableGUI];
-    [switchAPIC setEnabled:shouldEnableGUI];
-    [switchHugePages setEnabled:shouldEnableGUI];
-    [switchPAE setEnabled:shouldEnableGUI];
+    [checkboxACPI setEnabled:shouldEnableGUI];
+    [checkboxAPIC setEnabled:shouldEnableGUI];
+    [checkboxHugePages setEnabled:shouldEnableGUI];
+    [checkboxEnableUSB setEnabled:shouldEnableGUI];
+    [checkboxNestedVirtualization setEnabled:shouldEnableGUI];
+    [checkboxPAE setEnabled:shouldEnableGUI];
     [fieldOSCommandLine setEnabled:shouldEnableGUI];
     [fieldOSKernel setEnabled:shouldEnableGUI];
     [fieldOSInitrd setEnabled:shouldEnableGUI];
@@ -1255,10 +1286,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_plusButtonGraphics setNeedsDisplay:YES];
     [_plusButtonInputs setNeedsDisplay:YES];
     [_plusButtonNics setNeedsDisplay:YES];
-    [switchACPI setNeedsDisplay:YES];
-    [switchAPIC setNeedsDisplay:YES];
-    [switchHugePages setNeedsDisplay:YES];
-    [switchPAE setNeedsDisplay:YES];
+    [checkboxACPI setNeedsDisplay:YES];
+    [checkboxAPIC setNeedsDisplay:YES];
+    [checkboxHugePages setNeedsDisplay:YES];
+    [checkboxEnableUSB setNeedsDisplay:YES];
+    [checkboxNestedVirtualization setNeedsDisplay:YES];
+    [checkboxPAE setNeedsDisplay:YES];
 
     if (shouldEnableGUI)
         [self buildGUIAccordingToCurrentGuest];
@@ -1280,8 +1313,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         for (var i = 0; i < [nuageNetworks count]; i++)
         {
             var nuageNetwork = [nuageNetworks objectAtIndex:i],
-                interface_mac = [[nuageNetwork firstChildWithName:@"interface_mac"] valueForAttribute:@"address"];
-                interface_ip = [[nuageNetwork firstChildWithName:@"interface_ip"] valueForAttribute:@"address"];
+                interface_mac = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"mac"];
+                interface_ip = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"address"];
 
             for (var j = 0; j < [[[_libvirtDomain devices] interfaces] count]; j++)
             {
@@ -1292,6 +1325,137 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                     [nic setNuageNetworkName:[nuageNetwork valueForAttribute:@"name"]];
                     [nic setNuageNetworkInterfaceIP:interface_ip];
                 }
+            }
+        }
+    }
+}
+
+/*! returns the value of cpu argument (if any)
+*/
+- (id)getCommandLineArgumentOfCPU
+{
+    var commandLine             = [_libvirtDomain commandLine],
+        ValueOfCPUArgument      = nil,
+        isValueOfCPUArgument    = NO;
+    if (commandLine)
+    {
+        for (var i = 0; i < [commandLine count]; i++)
+        {
+            for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
+            {
+                var argumentValue = [[[commandLine objectAtIndex:i] args] objectAtIndex:j];
+                if ([argumentValue value] == "-cpu")
+                {
+                    isValueOfCPUArgument = YES;
+                    continue;
+                }
+                if (isValueOfCPUArgument)
+                {
+                    ValueOfCPUArgument   = argumentValue;
+                    isValueOfCPUArgument = NO;
+                }
+                // we want last values that get passed to last -cpu
+                // so don't stop iteration after finding one
+            }
+        }
+    }
+    return ValueOfCPUArgument;
+}
+
+/*! returns YES if finds vmx extension in cpu argument
+*/
+- (void)isNestedVirtualizationEnabled
+{
+    return (([[self getCommandLineArgumentOfCPU] value] || "").indexOf("+vmx") > -1);
+}
+
+/*! adds "+vmx" to cpu argument if finds any cpu argument, else will
+  create one like: -cpu qemu64,+vmx
+*/
+- (void)addNestedVirtualization
+{
+    var valueOfCPUArgument = [self getCommandLineArgumentOfCPU];
+    CPLog.info("found cpu argument? " + valueOfCPUArgument);
+    if (!valueOfCPUArgument)
+    {
+        // we don't have any -cpu argument let's create one
+        // first check the commandLine
+        var commandLineObjects = [_libvirtDomain commandLine],
+            commandLine        = nil;
+        if (!commandLineObjects || [commandLineObjects count] === 0)
+        {
+            // hmm, we need commandLine too
+            var tmpCommandLine = [CPArray array];
+            commandLine = [[TNLibvirtDomainQEMUCommandLine alloc] init];
+            [tmpCommandLine addObject:commandLine];
+            [_libvirtDomain setCommandLine:tmpCommandLine];
+        }
+        else
+            commandLine = [commandLineObjects objectAtIndex:0];
+        // get arguments
+        var theArguments = [commandLine args];
+        [theArguments addObject:[[TNLibvirtDomainQEMUCommandLineArgument alloc] initWithValue:"-cpu"]];
+        valueOfCPUArgument = [[TNLibvirtDomainQEMUCommandLineArgument alloc] initWithValue:"qemu64"];
+        [theArguments addObject:valueOfCPUArgument];
+    }
+    var theValue = [valueOfCPUArgument value];
+    if (theValue.indexOf("+vmx") == -1)
+    {
+        theValue += ",+vmx";
+        [valueOfCPUArgument setValue:theValue];
+    }
+}
+
+/*! removes any "+vmx" arguments that has been passed to value of -cpu argument
+  also removes if it can match exactly -cpu qemu64,+vmx
+*/
+- (void)removeNestedVirtualization
+{
+    var commandLine             = [_libvirtDomain commandLine],
+        isValueOfCPUArgument    = NO;
+    if (commandLine)
+    {
+        // remove any "+vmx"
+        for (var i = 0; i < [commandLine count]; i++)
+        {
+            var shouldBeRemoved = [CPArray array];
+            for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
+            {
+                var argumentValue = [[[commandLine objectAtIndex:i] args] objectAtIndex:j];
+                if ([argumentValue value] == "-cpu")
+                {
+                    isValueOfCPUArgument = YES;
+                    continue;
+                }
+                if (isValueOfCPUArgument)
+                {
+                    var tmpValue = [argumentValue value];
+                    // remove it, if it's exactly what we add
+                    if (tmpValue == "qemu64,+vmx")
+                    {
+                        [shouldBeRemoved addObject:j];
+                        [shouldBeRemoved addObject:(j - 1)];
+                    }
+                    // just remove +vmx
+                    else
+                    {
+                        tmpValue = tmpValue.replace(new RegExp(",?\\+vmx", 'g'), '');
+                        [argumentValue setValue:tmpValue];
+                        isValueOfCPUArgument = NO;
+                    }
+                }
+            }
+            if ([shouldBeRemoved count] > 0)
+            {
+                var tmpArguments = [CPArray array];
+                for (var j = 0; j < [[[commandLine objectAtIndex:i] args] count]; j++)
+                {
+                    if ([shouldBeRemoved indexOfObject:j] !== CPNotFound)
+                        // skip it
+                        continue;
+                    [tmpArguments addObject:[[[commandLine objectAtIndex:i] args] objectAtIndex:j]];
+                }
+                [[commandLine objectAtIndex:i] setArgs:tmpArguments];
             }
         }
     }
@@ -1811,7 +1975,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [[_libvirtDomain features] setPAE:[aSender isOn]];
+    [[_libvirtDomain features] setPAE:[aSender state]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1822,7 +1986,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [[_libvirtDomain features] setACPI:[aSender isOn]];
+    [[_libvirtDomain features] setACPI:[aSender state]];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1833,11 +1997,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if (![_libvirtDomain features])
         [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
-    [[_libvirtDomain features] setAPIC:[aSender isOn]];
+    [[_libvirtDomain features] setAPIC:[aSender state]];
     [self makeDefinitionEdited:aSender];
 }
 
-/*! update the value for hugae page
+/*! update the value for huge page
     @param aSender the sender of the action
 */
 - (IBAction)didChangeHugePages:(id)aSender
@@ -1845,7 +2009,72 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![_libvirtDomain memoryBacking])
         [_libvirtDomain setMemoryBacking:[TNLibvirtDomainMemoryBacking new]];
 
-    [[_libvirtDomain memoryBacking] setUseHugePages:[aSender isOn]];
+    [[_libvirtDomain memoryBacking] setUseHugePages:[aSender state]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for enable USB
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeEnableUSB:(id)aSender
+{
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    var USBController,
+        controllers = [[_libvirtDomain devices] controllers];
+
+    // first, let's find the USBController and remove it if any
+    for (var i = 0; i < [controllers count]; i++)
+    {
+        var type = [[controllers objectAtIndex:i] type],
+            model = [[controllers objectAtIndex:i] model];
+
+        if (type == TNLibvirtDeviceControllerTypeUSB)
+        {
+            [controllers removeObject:[controllers objectAtIndex:i]];
+            break;
+        }
+    }
+
+    if (![aSender state])
+    {
+        USBController = [[TNLibvirtDeviceController alloc] init];
+        [USBController setType:TNLibvirtDeviceControllerTypeUSB]
+        [USBController setIndex:0] // Is that a good idea??
+        [USBController setModel:TNLibvirtDeviceControllerModelNONE];
+        [controllers addObject:USBController];
+
+        // and remove tablets if any
+        var devicesToRemove = [CPArray array];
+        for (var i = 0; i < [_inputDevicesDatasource count]; i++)
+        {
+            var inputDevice = [_inputDevicesDatasource objectAtIndex:i];
+            if ([inputDevice bus] == TNLibvirtDeviceInputBusUSB)
+                [devicesToRemove addObject:inputDevice];
+        }
+        [_inputDevicesDatasource removeObjectsInArray:devicesToRemove];
+        [tableInputDevices reloadData];
+    }
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for nested virtualization
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeNestedVirtualization:(id)aSender
+{
+    if ([aSender state])
+    {
+        // adds nested virtualization argument as qemu commandline
+        [self addNestedVirtualization];
+    }
+    else
+    {
+        // removes any +vmx flags from value of -cpu qemu arguments
+        [self removeNestedVirtualization];
+    }
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1879,6 +2108,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)didChangeMemory:(id)aSender
 {
     [_libvirtDomain setMemory:([aSender intValue] * 1024)];
+    // we must set value of current memory too, for more info take a
+    // look at https://github.com/ArchipelProject/Archipel/issues/591
+    [_libvirtDomain setCurrentMemory:([aSender intValue] * 1024)];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -2093,10 +2325,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [self didChangeMemory:fieldMemory];
         [self didChangeGuest:buttonGuests];
         [self didChangeVCPU:stepperNumberCPUs];
-        [self didChangeAPIC:switchAPIC];
-        [self didChangeACPI:switchACPI];
-        [self didChangePAE:switchPAE];
-        [self didChangeHugePages:switchHugePages];
+        [self didChangeAPIC:checkboxAPIC];
+        [self didChangeACPI:checkboxACPI];
+        [self didChangePAE:checkboxPAE];
+        [self didChangeHugePages:checkboxHugePages];
+        [self didChangeEnableUSB:checkboxEnableUSB];
+        [self didChangeNestedVirtualization:checkboxNestedVirtualization];
         [self didChangeClock:buttonClocks];
         [self didChangeOnCrash:buttonOnCrash];
         [self didChangeOnReboot:buttonOnReboot];
@@ -2139,7 +2373,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
 
     [self selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
-    [self buildGUIAccordingToCurrentGuest];
+    // we don't need call to buildGUIAccordingToCurrentGuest cause enabelGUI
+    // will call it if UI should be enabled
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     // button domainType
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
@@ -2163,21 +2399,45 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnCrash selectItemWithTitle:[_libvirtDomain onCrash]];
 
     // APIC
-    [switchAPIC setOn:NO animated:NO sendAction:NO];
-    [switchAPIC setOn:[[_libvirtDomain features] isAPIC] animated:NO sendAction:NO];
+    [checkboxAPIC setState:CPOffState];
+    [checkboxAPIC setState:[[_libvirtDomain features] isAPIC]];
 
     // ACPI
-    [switchACPI setOn:NO animated:NO sendAction:NO];
-    [switchACPI setOn:[[_libvirtDomain features] isACPI] animated:NO sendAction:NO];
+    [checkboxACPI setState:CPOffState]
+    [checkboxACPI setState:[[_libvirtDomain features] isACPI]];
 
     // PAE
-    [switchPAE setOn:NO animated:NO sendAction:NO];
-    [switchPAE setOn:[[_libvirtDomain features] isPAE] animated:NO sendAction:NO];
+    [checkboxPAE setState:CPOffState]
+    [checkboxPAE setState:[[_libvirtDomain features] isPAE]];
 
     // huge pages
-    [switchHugePages setOn:NO animated:NO sendAction:NO];
+    [checkboxHugePages setState:CPOffState]
     if ([_libvirtDomain memoryBacking] && [[_libvirtDomain memoryBacking] isUsingHugePages])
-        [switchHugePages setOn:YES animated:NO sendAction:NO];
+        [checkboxHugePages setState:YES];
+
+    // Enable USB
+    [checkboxEnableUSB setState:CPOnState]
+    if ([_libvirtDomain devices])
+    {
+        var controllers = [[_libvirtDomain devices] controllers];
+
+        for (var i = 0; i < [controllers count]; i++)
+        {
+            var type = [[controllers objectAtIndex:i] type],
+                model = [[controllers objectAtIndex:i] model];
+
+            if (type == TNLibvirtDeviceControllerTypeUSB && model == TNLibvirtDeviceControllerModelNONE)
+            {
+                [checkboxEnableUSB setState:CPOffState];
+                break;
+            }
+        }
+    }
+
+    // nested virtualization
+    [checkboxNestedVirtualization setState:CPOffState];
+    if ([self isNestedVirtualizationEnabled])
+        [checkboxNestedVirtualization setState:CPOnState];
 
     //clock
     [self setControl:buttonClocks enabledAccordingToPermission:@"define"];
@@ -2266,7 +2526,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
-    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return NO;
 }

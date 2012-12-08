@@ -1,4 +1,10 @@
 
+/* Class = "NSButton"; ibShadowedToolTip = "Adjust size to fit"; ObjectID = "5"; */
+"5.ibShadowedToolTip" = "Adjust size to fit";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Restore original size"; ObjectID = "6"; */
+"6.ibShadowedToolTip" = "Restore original size";
+
 /* Class = "NSTextFieldCell"; title = "Controls:"; ObjectID = "12"; */
 "12.title" = "Controls:";
 
@@ -7,6 +13,21 @@
 
 /* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "16"; */
 "16.title" = "100%";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Send CTRL+ALT+SUPR"; ObjectID = "17"; */
+"17.ibShadowedToolTip" = "Send CTRL+ALT+SUPR";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Get clibboard"; ObjectID = "18"; */
+"18.ibShadowedToolTip" = "Get clibboard";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Send clipboard"; ObjectID = "21"; */
+"21.ibShadowedToolTip" = "Send clipboard";
+
+/* Class = "NSSlider"; ibShadowedToolTip = "Adjust zoom"; ObjectID = "23"; */
+"23.ibShadowedToolTip" = "Adjust zoom";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Open detached viewer"; ObjectID = "25"; */
+"25.ibShadowedToolTip" = "Open detached viewer";
 
 /* Class = "NSWindow"; title = "Password"; ObjectID = "30"; */
 "30.title" = "Password";

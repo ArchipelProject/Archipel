@@ -8,8 +8,12 @@
 	<string>Cancel</string>
 	<key>Create a drive</key>
 	<string>Create a drive</string>
+	<key>Create a new disk</key>
+	<string>Create a new disk</string>
 	<key>Delete</key>
 	<string>Delete</string>
+	<key>Delete selected disks</key>
+	<string>Delete selected disks</string>
 	<key>Delete selected drive</key>
 	<string>Delete selected drive</string>
 	<key>Delete to drive</key>
@@ -22,6 +26,8 @@
 	<string>Disk has been removed</string>
 	<key>Disk has been renamed</key>
 	<string>Disk has been renamed</string>
+	<key>Edit selected disk</key>
+	<string>Edit selected disk</string>
 	<key>Edit selected drive</key>
 	<string>Edit selected drive</string>
 	<key>Error</key>

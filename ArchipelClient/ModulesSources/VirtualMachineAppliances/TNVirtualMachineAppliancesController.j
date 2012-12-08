@@ -93,18 +93,21 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/package.png"] size:CPSizeMake(16, 16)]];
     [_packageButton setTarget:self];
     [_packageButton setAction:@selector(openNewApplianceWindow:)];
+    [_packageButton setToolTip:CPBundleLocalizedString(@"Package current VM into hypervisor's VMCast", @"Package current VM into hypervisor's VMCast")];
 
     _attachButton  = [CPButtonBar plusButton];
     [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/lock.png"] size:CPSizeMake(16, 16)]];
     [_attachButton setTarget:self];
     [_attachButton setAction:@selector(attach:)];
     [_attachButton setEnabled:NO];
+    [_attachButton setToolTip:CPBundleLocalizedString(@"Use selected package for VM. Any changes will be lost", @"Use selected package for VM. Any changes will be lost")];
 
     _detachButton  = [CPButtonBar plusButton];
     [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unlock.png"] size:CPSizeMake(16, 16)]];
     [_detachButton setTarget:self];
     [_detachButton setAction:@selector(detach:)];
     [_detachButton setEnabled:NO];
+    [_detachButton setToolTip:CPBundleLocalizedString(@"Detach current VM from selected appliance", @"Detach current VM from selected appliance")];
 
     [buttonBarControl setButtons:[_attachButton, _detachButton, _packageButton]];
 }

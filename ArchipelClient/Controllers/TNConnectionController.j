@@ -220,7 +220,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     if (currentConnectionStatus
         && currentConnectionStatus != Strophe.Status.DISCONNECTED
         && currentConnectionStatus != Strophe.Status.CONNFAIL
-        && currentConnectionStatus != Strophe.Status.ERROR)
+        && currentConnectionStatus != Strophe.Status.ERROR
+        && currentConnectionStatus != Strophe.Status.DISCONNECTING)
     {
         [[TNStropheIMClient defaultClient] disconnect];
         return;
