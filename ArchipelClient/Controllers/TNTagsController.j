@@ -89,7 +89,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     _currentRosterItem  = nil;
     _alreadyReady       = NO;
 
-    _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 33, 30)];
+    _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 33, 24)];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
     [_tokenFieldTags setDelegate:self];
     [_tokenFieldTags setEditable:YES];
