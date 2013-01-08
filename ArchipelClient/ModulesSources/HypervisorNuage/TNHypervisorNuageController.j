@@ -28,6 +28,7 @@
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
 
+@import "../../Model/TNModule.j"
 @import "TNNuageEditionController.j"
 @import "TNNuageDataView.j"
 @import "TNCNACommunicator.j"

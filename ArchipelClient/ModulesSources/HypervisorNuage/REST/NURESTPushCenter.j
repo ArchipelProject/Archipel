@@ -139,16 +139,8 @@ _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
 
         default:
             setTimeout(function(){
-                if (_currentConnectionTrialNumber < NURESTPushCenterConnectionMaxTrials)
-                {
-                    CPLog.warn("PUSH CENTER: Trying to reconnect... (retry #%@ / %@)", _currentConnectionTrialNumber, NURESTPushCenterConnectionMaxTrials);
-                    [self _waitUntilServerIsBack];
-                }
-                else
-                {
-                    CPLog.error("PUSH CENTER: Maximum number of retry reached. logging out");
-                    [[CPApp delegate] logOut:nil];
-                }
+                CPLog.warn("PUSH CENTER: Trying to reconnect... (retry #%@ / %@)", _currentConnectionTrialNumber, NURESTPushCenterConnectionMaxTrials);
+                [self _waitUntilServerIsBack];
             }, NURESTPushCenterConnectionRetryDelay);
             break;
     }
