@@ -22,6 +22,7 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
+@import "../../Views/TNBasicDataView.j"
 
 var TNVirtualMachineDataViewAvatarUnknown;
 

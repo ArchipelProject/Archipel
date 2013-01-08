@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Views/TNBasicDataView.j"
 @import "Model/TNLibvirtDeviceGraphic.j"
 
 var TNGraphicDeviceDataViewIconVNC,

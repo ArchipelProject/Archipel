@@ -25,6 +25,9 @@
 
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Views/TNBasicDataView.j"
+
+
 var TNNetworkDataViewStatusImageActive,
     TNNetworkDataViewStatusImageUnactive;
 

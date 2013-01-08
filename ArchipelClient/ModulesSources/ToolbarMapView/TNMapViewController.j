@@ -26,6 +26,7 @@
 
 @import <TNKit/TNAlert.j>
 
+@import "../../Model/TNModule.j"
 @import "MapKit/MKMapView.j";
 @import "TNDragDropTableViewDataSource.j";
 

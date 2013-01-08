@@ -29,6 +29,7 @@
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
 @import "TNGroupedMigrationController.j";
 
 var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
@@ -330,7 +331,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
             @"action": controlType}];
 
         [vm sendStanza:controlStanza andRegisterSelector:@selector(_didSendAction:) ofObject:self];
-        }
     }
 }
 

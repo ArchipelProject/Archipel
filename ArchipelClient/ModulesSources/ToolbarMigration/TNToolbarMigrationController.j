@@ -25,6 +25,7 @@
 
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",

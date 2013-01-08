@@ -24,6 +24,7 @@
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPView.j>
 
+@import "../../Model/TNModule.j"
 @import "TNXMPPSharedGroupsController.j"
 @import "TNXMPPUsersController.j"
 

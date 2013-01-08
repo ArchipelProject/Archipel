@@ -21,6 +21,7 @@
 @import <StropheCappuccino/PubSub/TNPubSubNode.j>
 @import <StropheCappuccino/TNStropheConnection.j>
 
+@import "../../Model/TNModule.j"
 
 
 var TNArchipelNSPlatform                            = @"archipel:platform",

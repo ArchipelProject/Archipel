@@ -22,6 +22,7 @@
 // import only AppKit part you need here.
 @import <AppKit/CPTextField.j>
 
+@import "../../Model/TNModule.j"
 
 // if you don't need this variables outside of this file,
 // *always* use the 'var' keyword to make them filescoped

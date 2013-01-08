@@ -62,10 +62,7 @@ var TNDragTypeMigration = @"TNDragTypeMigration";
     [_content insertObject:object atIndex:row];
     [tableView reloadData];
 
-        return YES;
-    }
-
-    return NO;
+    return YES;
 }
 
 

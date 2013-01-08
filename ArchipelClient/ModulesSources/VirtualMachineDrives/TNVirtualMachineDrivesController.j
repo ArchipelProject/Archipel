@@ -28,6 +28,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
 @import "TNNewDriveController.j"
 @import "TNEditDriveController.j"
 @import "TNDriveDataView.j"

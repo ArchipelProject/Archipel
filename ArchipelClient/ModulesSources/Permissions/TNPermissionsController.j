@@ -31,6 +31,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
+@import "../../Model/TNModule.j"
 @import "TNPermissionUserFetcher.j"
 @import "TNRolesController.j"
 @import "TNPermissionDataView.j"

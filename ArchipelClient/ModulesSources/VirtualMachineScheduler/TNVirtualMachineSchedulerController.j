@@ -30,7 +30,8 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
-@import "TNSchedulerController.j";
+@import "../../Model/TNModule.j"
+@import "TNSchedulerController.j"
 
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
     @desc Scheduler control for virtual machines
