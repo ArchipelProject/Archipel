@@ -29,6 +29,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
 @import "TNVirtualMachineAllocationController.j"
 @import "TNVirtualMachineCloneController.j"
 @import "TNVirtualMachineDataView.j"

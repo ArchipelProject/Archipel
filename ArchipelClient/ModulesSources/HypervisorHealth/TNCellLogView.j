@@ -21,6 +21,8 @@
 @import <AppKit/CPProgressIndicator.j>
 @import <AppKit/CPTextField.j>
 
+@import "../../Views/TNBasicDataView.j"
+
 
 var TNCellLogViewIconError,
     TNCellLogViewIconWarning,

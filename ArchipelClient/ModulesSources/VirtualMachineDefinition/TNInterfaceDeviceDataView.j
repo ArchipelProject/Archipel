@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Views/TNBasicDataView.j"
 @import "Model/TNLibvirtDeviceInterface.j"
 @import "Model/TNLibvirtDeviceInterfaceFilterRef.j"
 @import "Model/TNLibvirtDeviceInterfaceSource.j"

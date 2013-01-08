@@ -640,7 +640,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
                                  target:self action:@selector(toolbarItemTagsClick:)
                                 toolTip:@"Show or hide the tags field"];
 
-    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 25.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
@@ -670,8 +670,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CPSizeMake(10.0, 8.0)]];
     [statusSelector addItem:DNDItem];
 
-    [statusItem setMinSize:CPSizeMake(123.0, 24.0)];
-    [statusItem setMaxSize:CPSizeMake(123.0, 24.0)];
+    [statusItem setMinSize:CPSizeMake(123.0, 25.0)];
+    [statusItem setMaxSize:CPSizeMake(123.0, 25.0)];
 
     [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
     [_mainToolbar setPosition:1 forToolbarItemIdentifier:TNToolBarItemStatus];

@@ -1,4 +1,4 @@
-@import <AppKit/CPView.j>
+@import <AppKit/CPWebView.j>
 
 @import "MKLocation.j"
 @import "MKMapScene.j"
@@ -51,7 +51,7 @@ var gmNamespace = nil;
     _hasLoaded = YES;
 }
 
-- (void)loadGoogleMapsWhenReady()
+- (void)loadGoogleMapsWhenReady
 {
     var domWin = [self DOMWindow];
 

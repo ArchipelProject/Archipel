@@ -27,6 +27,7 @@
 @import <TNKit/TNMessageBoard.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
 
 /*! @defgroup  mucchat Module Conference
     @desc This module handles MUC for all Archipel users

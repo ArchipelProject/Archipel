@@ -19,7 +19,7 @@
 /*! @ingroup archipelcore
     a nice modal CPWindow
 */
-@implementation TNModalWindow: CPWindow
+@implementation TNModalWindow: CPPanel
 
 - (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask
 {

@@ -30,6 +30,7 @@
 
 @import <TNKit/TNAlert.j>
 
+@import "../../Model/TNModule.j"
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
 @import "TNVMCastDatasource.j";

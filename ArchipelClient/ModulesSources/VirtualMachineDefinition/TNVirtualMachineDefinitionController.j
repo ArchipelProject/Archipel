@@ -36,6 +36,7 @@
 @import <TNKit/TNTextFieldStepper.j>
 @import <TNKit/TNSwipeView.j>
 
+@import "../../Model/TNModule.j"
 @import "Model/TNLibvirt.j"
 @import "TNCharacterDeviceController.j"
 @import "TNCharacterDeviceDataView.j"
