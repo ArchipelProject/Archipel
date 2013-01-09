@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D44</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -147,7 +147,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75497536</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Nom</string>
+															<string key="NSContents">Name</string>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSBackgroundColor" ref="769989642"/>
 															<reference key="NSTextColor" ref="1066665911"/>
@@ -195,7 +195,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75497536</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">ID Jabber</string>
+															<string key="NSContents">Jabber ID</string>
 															<reference key="NSSupport" ref="26"/>
 															<object class="NSColor" key="NSBackgroundColor">
 																<int key="NSColorSpace">6</int>
@@ -407,7 +407,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="610230672">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Vous pouvez envoyer des commandes groupées aux machines virtuelles dans ce groupe</string>
+							<string key="NSContents">You can send grouped commands to the followed virtual machines in the group.</string>
 							<object class="NSFont" key="NSSupport">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -434,7 +434,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="543361636">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Commandes groupées</string>
+							<string key="NSContents">Grouped commands</string>
 							<object class="NSFont" key="NSSupport" id="256438496">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
@@ -481,7 +481,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="606588087">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Migration groupée</string>
+							<string key="NSContents">Grouped migration</string>
 							<reference key="NSSupport" ref="256438496"/>
 							<reference key="NSControlView" ref="588319175"/>
 							<reference key="NSBackgroundColor" ref="778408564"/>
@@ -502,7 +502,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="789388762">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Choisissez l'hyperviseur de destination pour la machine virtuelle sélectionnée.</string>
+							<string key="NSContents">Choose the destination hypervisor for all selected virtual machines</string>
 							<reference key="NSSupport" ref="604623667"/>
 							<reference key="NSControlView" ref="901298923"/>
 							<reference key="NSBackgroundColor" ref="778408564"/>
@@ -582,7 +582,7 @@
 						<object class="NSButtonCell" key="NSCell" id="214148816">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Migrer</string>
+							<string key="NSContents">Migrate</string>
 							<reference key="NSSupport" ref="604623667"/>
 							<reference key="NSControlView" ref="697876774"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -605,7 +605,7 @@
 						<object class="NSButtonCell" key="NSCell" id="885026690">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Annuler</string>
+							<string key="NSContents">Cancel</string>
 							<reference key="NSSupport" ref="604623667"/>
 							<reference key="NSControlView" ref="273089990"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -628,7 +628,7 @@
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Boite</string>
+							<string key="NSContents">Box</string>
 							<reference key="NSSupport" ref="604623667"/>
 							<reference key="NSBackgroundColor" ref="68342467"/>
 							<object class="NSColor" key="NSTextColor">
@@ -690,7 +690,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75497536</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Nom</string>
+													<string key="NSContents">Name</string>
 													<reference key="NSSupport" ref="26"/>
 													<object class="NSColor" key="NSBackgroundColor" id="275153608">
 														<int key="NSColorSpace">3</int>
@@ -724,7 +724,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75497536</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">ID Jabber</string>
+													<string key="NSContents">Jabber ID</string>
 													<reference key="NSSupport" ref="26"/>
 													<reference key="NSBackgroundColor" ref="275153608"/>
 													<reference key="NSTextColor" ref="1066665911"/>

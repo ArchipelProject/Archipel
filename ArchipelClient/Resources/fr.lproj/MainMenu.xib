@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D50</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
@@ -15,7 +15,7 @@
 			</object>
 			<object class="NSArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>2843</string>
+				<string>2844</string>
 				<string>1810</string>
 			</object>
 		</object>
@@ -44,6 +44,8 @@
 			<string>NSTableView</string>
 			<string>NSTextField</string>
 			<string>NSTextFieldCell</string>
+			<string>NSTokenField</string>
+			<string>NSTokenFieldCell</string>
 			<string>NSView</string>
 			<string>NSViewController</string>
 			<string>NSWindowTemplate</string>
@@ -380,7 +382,7 @@
 									<object class="NSTextFieldCell" key="NSCell" id="3887065">
 										<int key="NSCellFlags">68157504</int>
 										<int key="NSCellFlags2">268436480</int>
-										<string key="NSContents">Connecté en tant que</string>
+										<string key="NSContents">Connected as ...</string>
 										<reference key="NSSupport" ref="24"/>
 										<reference key="NSControlView" ref="305220158"/>
 										<reference key="NSBackgroundColor" ref="970791577"/>
@@ -407,7 +409,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{646, 430}, {581, 448}}</string>
 				<int key="NSWTFlags">611844096</int>
-				<string key="NSWindowTitle">A propos d'Archipel</string>
+				<string key="NSWindowTitle">About Archipel</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -426,7 +428,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="142438076">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">268436480</int>
-								<string key="NSContents">Client Archipel</string>
+								<string key="NSContents">Archipel Client</string>
 								<object class="NSFont" key="NSSupport" id="619662178">
 									<string key="NSName">LucidaGrande</string>
 									<double key="NSSize">18</double>
@@ -579,7 +581,7 @@
 						<object class="NSButtonCell" key="NSCell" id="787712706">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Ouvrir documentation</string>
+							<string key="NSContents">Open documentation</string>
 							<object class="NSFont" key="NSSupport" id="649011811">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -606,7 +608,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="447790938">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Maintenant que votre hyperviseur est dans votre roster, vous pouvez commencer à l'utiliser. Sélectionnez-le, puis allez dans l'onglet "Machine Virtuelle" et demandez une nouvelle machine virtuelle.</string>
+							<string key="NSContents">Now your first hypervisor is in your roster, you can start to play with. Select it, then go to the "Virtual Machine" tab and ask for a new virtual machine.</string>
 							<object class="NSFont" key="NSSupport" id="647643796">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">11</double>
@@ -628,7 +630,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="77525915">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Et ensuite ?</string>
+							<string key="NSContents">And then ?</string>
 							<object class="NSFont" key="NSSupport" id="891076155">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -684,7 +686,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="371919378">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Pour le moment, votre roster est vide. You devriez déjà disposer d'au moins un agent Archipel sur votre hyperviseur et vous pouvez maintenant l'ajouter en tant que contact, de la même manière qu'avec n'importe quelle application de discussion. Cliquez sur le bouton "+" en bas de l'interface en choisisse "Ajouter un contact".</string>
+							<string key="NSContents">For now, your roster is empty. You should already have installed an Archipel Agent on your hypervisor and you can now add it as a "friend" just like you would do on standard messaging application. To do so, click on the "+" button at the bottom left of the interface and choose "Add contact" .</string>
 							<reference key="NSSupport" ref="647643796"/>
 							<reference key="NSControlView" ref="357865818"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -702,7 +704,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="172085306">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Demarrage rapide</string>
+							<string key="NSContents">Quick start</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="40449749"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -751,7 +753,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="624781105">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Archipel est un nouveau type d'orchestrateur, où tout est en temps réél. Archipel introduit de nouveaux concept qui ne sont pas habituel dans le monde la virtualisation. Nous vous remercions d'avoir choisi Archipel et nous espérons que apprecierez l'utiliser autant que nous apprécions le developper.</string>
+							<string key="NSContents">Archipel is a new kind of orchestrator, where everything is about real time. It introduces some new concepts that are not common to the virtualization world. We would like to thank you for choosing Archipel and we hope that you will enjoy using it as much as we enjoy making it.</string>
 							<reference key="NSSupport" ref="647643796"/>
 							<reference key="NSControlView" ref="404933532"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -769,7 +771,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="935116494">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">L'orchestrateur nouvelle génération</string>
+							<string key="NSContents">The next generation orchestrator</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="340149196"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -787,7 +789,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="718942285">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">138413056</int>
-							<string key="NSContents">Bienvenue dans Archipel!</string>
+							<string key="NSContents">Welcome to Archipel!</string>
 							<object class="NSFont" key="NSSupport" id="100264602">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">18</double>
@@ -921,7 +923,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="75349364">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">138413056</int>
-							<string key="NSContents">Chargement...</string>
+							<string key="NSContents">Loading...</string>
 							<reference key="NSSupport" ref="647643796"/>
 							<reference key="NSControlView" ref="704839579"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -939,7 +941,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="530341520">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">138413056</int>
-							<string key="NSContents">Chargement des modules</string>
+							<string key="NSContents">Loading modules</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="843434848"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -960,7 +962,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{646, 430}, {463, 271}}</string>
 				<int key="NSWTFlags">611844096</int>
-				<string key="NSWindowTitle">Connexion</string>
+				<string key="NSWindowTitle">Connection</string>
 				<string key="NSWindowClass">TNModalWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -979,7 +981,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="276368485">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">268436480</int>
-								<string key="NSContents">Connexion</string>
+								<string key="NSContents">Logon</string>
 								<reference key="NSSupport" ref="100264602"/>
 								<reference key="NSControlView" ref="683286276"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1003,7 +1005,7 @@
 								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="516354061"/>
-								<string key="NSPlaceholderString">utilisateur@domaine.com</string>
+								<string key="NSPlaceholderString">user@domain.com</string>
 								<reference key="NSControlView" ref="10669859"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="123995732"/>
@@ -1052,7 +1054,7 @@
 							<object class="NSButtonCell" key="NSCell" id="352254615">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Connexion</string>
+								<string key="NSContents">Connect</string>
 								<reference key="NSSupport" ref="516354061"/>
 								<reference key="NSControlView" ref="998619390"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -1096,7 +1098,7 @@
 								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="516354061"/>
-								<string key="NSPlaceholderString">Mon mot de passe</string>
+								<string key="NSPlaceholderString">My password</string>
 								<reference key="NSControlView" ref="274798215"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="123995732"/>
@@ -1114,7 +1116,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="638583405">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Mot de passe</string>
+								<string key="NSContents">Password</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="572042221"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1135,7 +1137,7 @@
 								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="516354061"/>
-								<string key="NSPlaceholderString">http://domaine.com:5280/http-bind</string>
+								<string key="NSPlaceholderString">http://domain.com:5280/http-bind</string>
 								<reference key="NSControlView" ref="1010139735"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="123995732"/>
@@ -1153,7 +1155,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="291102498">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Service BOSH</string>
+								<string key="NSContents">BOSH service</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="366929574"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1171,7 +1173,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="781020481">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Enregistrer</string>
+								<string key="NSContents">Remember</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="455285779"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1273,7 +1275,7 @@
 						<object class="NSButtonCell" key="NSCell" id="604556560">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Initialiser</string>
+							<string key="NSContents">Reset</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="267712620"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -1296,7 +1298,7 @@
 						<object class="NSButtonCell" key="NSCell" id="561120048">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Annuler</string>
+							<string key="NSContents">Cancel</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="241892953"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -1318,7 +1320,7 @@
 						<object class="NSButtonCell" key="NSCell" id="977025038">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Sauver</string>
+							<string key="NSContents">Save</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="35297610"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -1603,7 +1605,7 @@
 							</object>
 							<bool key="NSMenuItemRespectAlignment">YES</bool>
 							<object class="NSMenu" key="NSMenu" id="1003579154">
-								<string key="NSTitle">Autre vues</string>
+								<string key="NSTitle">OtherViews</string>
 								<object class="NSMutableArray" key="NSMenuItems">
 									<bool key="EncodedWithXMLCoder">YES</bool>
 									<reference ref="306845485"/>
@@ -1649,7 +1651,7 @@
 						<object class="NSButtonCell" key="NSCell" id="195755768">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Cacher les contacts hors-ligne</string>
+							<string key="NSContents">Hide offline users</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="716723755"/>
 							<int key="NSButtonFlags">1211912448</int>
@@ -1678,7 +1680,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="842647899">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Contacts hors-ligne</string>
+							<string key="NSContents">Offline users</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="957728669"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1696,7 +1698,7 @@
 						<object class="NSButtonCell" key="NSCell" id="205869754">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Vérifier à la connexion</string>
+							<string key="NSContents">Check at startup</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="795810391"/>
 							<int key="NSButtonFlags">1211912448</int>
@@ -1720,7 +1722,7 @@
 						<object class="NSButtonCell" key="NSCell" id="313506578">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Affichage</string>
+							<string key="NSContents">Display</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="583311556"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -1743,7 +1745,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="787818801">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Afficher le message d'accueil</string>
+							<string key="NSContents">Display welcome message</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="568715122"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1761,7 +1763,7 @@
 						<object class="NSButtonCell" key="NSCell" id="778093639">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Vérifier</string>
+							<string key="NSContents">Check now</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="748829007"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -1784,7 +1786,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="335879220">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Utiliser la surveillance XMPP peut impacter les performances.</string>
+							<string key="NSContents">Using XMPP monitoring can slow down the performances.</string>
 							<object class="NSFont" key="NSSupport" id="53254714">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">9</double>
@@ -1817,7 +1819,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="188574559">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Mise à jour</string>
+							<string key="NSContents">Updates</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="919373100"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1835,7 +1837,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="400262654">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Surveillance XMPP</string>
+							<string key="NSContents">XMPP monitoring</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="986017202"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1853,7 +1855,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="737780113">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Utiliser les animations peut impacter les performances.</string>
+							<string key="NSContents">Using animations can slow down the performances.</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="1036901858"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1874,7 +1876,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1037946653">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Ce paramêtre nécessite un rechargement.</string>
+							<string key="NSContents">This change need to reconnect to be considered by XMPP server.</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="879337540"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1903,7 +1905,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="42779113">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Langue</string>
+							<string key="NSContents">Language</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="625572724"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1923,7 +1925,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="649011811"/>
-							<string key="NSPlaceholderString">Bureau</string>
+							<string key="NSPlaceholderString">Office</string>
 							<reference key="NSControlView" ref="614946481"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="123995732"/>
@@ -1961,7 +1963,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="749840904">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Utiliser les animations</string>
+							<string key="NSContents">Use animation</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="707169002"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1979,7 +1981,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="925595354">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Niveau de log</string>
+							<string key="NSContents">Debug level</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="682986045"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1997,7 +1999,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="807174824">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Ressource BOSH</string>
+							<string key="NSContents">BOSH resource</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="786815752"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2015,7 +2017,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="79630836">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Delai chargement des modules</string>
+							<string key="NSContents">Module loading delay</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="874345940"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2033,7 +2035,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="885183074">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Vous pouvez configurer les préférences générales d'Archipel. Elle seront sauvées dans le serveur XMPP</string>
+							<string key="NSContents">You can configure general preferences of Archipel. This is stored using local storage.</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="299208830"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2051,7 +2053,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1042222612">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Préférences Générales</string>
+							<string key="NSContents">General preferences</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="196965198"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2094,7 +2096,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="319769532">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Entrer le JID de l'hyperviseur, machine virtuelle ou utilisateur</string>
+							<string key="NSContents">Enter the JID of the virtual machine, hypervisor or user.</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="667521422"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2158,7 +2160,7 @@
 						<object class="NSButtonCell" key="NSCell" id="478714812">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Ajouter</string>
+							<string key="NSContents">Add</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="230941535"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -2181,7 +2183,7 @@
 						<object class="NSButtonCell" key="NSCell" id="964581062">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Annuler</string>
+							<string key="NSContents">Cancel</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="481676244"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -2242,7 +2244,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="560856099">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Surnom</string>
+							<string key="NSContents">Nickname</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="804420603"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2260,7 +2262,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="861082869">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Ajouter un contact</string>
+							<string key="NSContents">Add a contact</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="769430770"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2302,7 +2304,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="791627197">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Créér un groupe</string>
+							<string key="NSContents">Create a group</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="430614317"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2323,7 +2325,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="50020389">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Vous pouvez classer les contacts dans des groupes</string>
+							<string key="NSContents">You can sort object into groups.</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="97903148"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2341,7 +2343,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="153979320">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Nom</string>
+							<string key="NSContents">Name</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="293336291"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2361,7 +2363,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="649011811"/>
-							<string key="NSPlaceholderString">Mon Groupe</string>
+							<string key="NSPlaceholderString">My Group</string>
 							<reference key="NSControlView" ref="885899097"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="123995732"/>
@@ -2405,7 +2407,7 @@
 						<object class="NSButtonCell" key="NSCell" id="217551047">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Créer</string>
+							<string key="NSContents">Create</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="848391559"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -2428,7 +2430,7 @@
 						<object class="NSButtonCell" key="NSCell" id="966263087">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Annuler</string>
+							<string key="NSContents">Cancel</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="1047952257"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -2544,7 +2546,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="808455146">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Site web</string>
+							<string key="NSContents">Category</string>
 							<object class="NSFont" key="NSSupport" id="792006151">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">9</double>
@@ -2566,7 +2568,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="141250320">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">site web</string>
+							<string key="NSContents">categorie</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="150318128"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2584,7 +2586,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="228987626">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">EMail</string>
+							<string key="NSContents">Owner</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="589968606"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2602,7 +2604,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="844252315">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">email</string>
+							<string key="NSContents">owner</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="163783634"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2692,7 +2694,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="220869565">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Entreprise</string>
+							<string key="NSContents">Company</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="41977453"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2710,7 +2712,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="323450669">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">entreprise</string>
+							<string key="NSContents">company</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="435597884"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2728,7 +2730,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="666100477">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Ville</string>
+							<string key="NSContents">Locality</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="347871263"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2746,7 +2748,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="737922278">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Ville</string>
+							<string key="NSContents">locality</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="349467902"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2764,7 +2766,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="243820833">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Nom</string>
+							<string key="NSContents">Name</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="1250504"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2870,7 +2872,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="723454010">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">268436480</int>
-									<string key="NSContents">Surnom</string>
+									<string key="NSContents">Nickname</string>
 									<reference key="NSSupport" ref="516354061"/>
 									<reference key="NSControlView" ref="355978882"/>
 									<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2948,7 +2950,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="706624066">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Statut</string>
+							<string key="NSContents">Status</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="157767178"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2969,7 +2971,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="430148903">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">statuts</string>
+							<string key="NSContents">status</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="385015156"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2990,7 +2992,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="755148173">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Domaine</string>
+							<string key="NSContents">Domain</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="140742915"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3011,7 +3013,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="705732009">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">domaine</string>
+							<string key="NSContents">domain</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="915277908"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3032,7 +3034,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1002283154">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Noeud</string>
+							<string key="NSContents">Node</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="710867098"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3053,7 +3055,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="796515341">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">noeud</string>
+							<string key="NSContents">node</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="509993663"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3074,7 +3076,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="199892552">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Ressource</string>
+							<string key="NSContents">Resource</string>
 							<reference key="NSSupport" ref="792006151"/>
 							<reference key="NSControlView" ref="354731376"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3116,7 +3118,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="242653617">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">ressource</string>
+							<string key="NSContents">resource</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="778965804"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3138,7 +3140,68 @@
 			<object class="NSCustomView" id="257661349">
 				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSButton" id="569852830">
+						<reference key="NSNextResponder" ref="257661349"/>
+						<int key="NSvFlags">297</int>
+						<string key="NSFrame">{{501, 4}, {40, 32}}</string>
+						<reference key="NSSuperview" ref="257661349"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSButtonCell" key="NSCell" id="195230561">
+							<int key="NSCellFlags">67108864</int>
+							<int key="NSCellFlags2">134217728</int>
+							<string key="NSContents"/>
+							<reference key="NSSupport" ref="649011811"/>
+							<string key="NSCellIdentifier">_NS:9</string>
+							<reference key="NSControlView" ref="569852830"/>
+							<int key="NSButtonFlags">-2038284288</int>
+							<int key="NSButtonFlags2">129</int>
+							<string key="NSAlternateContents"/>
+							<string key="NSKeyEquivalent"/>
+							<int key="NSPeriodicDelay">200</int>
+							<int key="NSPeriodicInterval">25</int>
+						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+					</object>
+					<object class="NSTokenField" id="723940869">
+						<reference key="NSNextResponder" ref="257661349"/>
+						<int key="NSvFlags">298</int>
+						<object class="NSMutableSet" key="NSDragTypes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="set.sortedObjects">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<string>NSStringPboardType</string>
+							</object>
+						</object>
+						<string key="NSFrame">{{7, 10}, {492, 22}}</string>
+						<reference key="NSSuperview" ref="257661349"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTokenFieldCell" key="NSCell" id="383374500">
+							<int key="NSCellFlags">341835776</int>
+							<int key="NSCellFlags2">0</int>
+							<object class="NSFont" key="NSSupport" id="600959748">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">12</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<string key="NSCellIdentifier">_NS:9</string>
+							<reference key="NSControlView" ref="723940869"/>
+							<bool key="NSDrawsBackground">YES</bool>
+							<reference key="NSBackgroundColor" ref="123995732"/>
+							<reference key="NSTextColor" ref="646325751"/>
+							<reference key="NSDelegate" ref="723940869"/>
+							<double key="NSCompletionDelay">0.0</double>
+							<int key="NSTokenStyle">0</int>
+						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+						<int key="NSTokenFieldVersion">2</int>
+					</object>
+				</object>
 				<string key="NSFrameSize">{545, 42}</string>
+				<reference key="NSNextKeyView" ref="723940869"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomObject" id="583409964">
@@ -3168,7 +3231,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="118420135">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Changer l'avatar</string>
+							<string key="NSContents">Change avatar</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="1035415089"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3189,12 +3252,8 @@
 						<object class="NSTextFieldCell" key="NSCell" id="622903031">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Choisissez un avatar dans la liste.</string>
-							<object class="NSFont" key="NSSupport" id="600959748">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">12</double>
-								<int key="NSfFlags">16</int>
-							</object>
+							<string key="NSContents">Pick up the new avatar of the entity from the following list.</string>
+							<reference key="NSSupport" ref="600959748"/>
 							<reference key="NSControlView" ref="42360357"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
 							<reference key="NSTextColor" ref="646325751"/>
@@ -3233,7 +3292,7 @@
 						<object class="NSButtonCell" key="NSCell" id="634682065">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Choisir</string>
+							<string key="NSContents">Choose</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="1007976838"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -3256,7 +3315,7 @@
 						<object class="NSButtonCell" key="NSCell" id="575480519">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Annuler</string>
+							<string key="NSContents">Cancel</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="284252310"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -3397,7 +3456,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="448520373">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Vous n'avez pas le niveau minimum de permission</string>
+							<string key="NSContents">You do not seem to have the minimal required permissions</string>
 							<reference key="NSSupport" ref="516354061"/>
 							<reference key="NSControlView" ref="431783865"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3415,7 +3474,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="427803826">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Vous n'avez pas la permission</string>
+							<string key="NSContents">Permission denied</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="371676389"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3476,7 +3535,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{646, 430}, {482, 402}}</string>
 				<int key="NSWTFlags">611844096</int>
-				<string key="NSWindowTitle">Nouvelle version</string>
+				<string key="NSWindowTitle">Update available</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -3495,7 +3554,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="972419416">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">268436480</int>
-								<string key="NSContents">Une nouvelle version est disponible</string>
+								<string key="NSContents">New version available</string>
 								<reference key="NSSupport" ref="619662178"/>
 								<reference key="NSControlView" ref="465035483"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3516,7 +3575,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="114222701">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Version courrante</string>
+								<string key="NSContents">Current version</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="611809049"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3588,7 +3647,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="972997670">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Nouvelle version</string>
+								<string key="NSContents">New version</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="342487827"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3606,7 +3665,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="24032248">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Notes</string>
+								<string key="NSContents">Release date</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="685305161"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -3650,7 +3709,7 @@
 							<object class="NSButtonCell" key="NSCell" id="762314681">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Mettre à jour</string>
+								<string key="NSContents">Update</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="474081551"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -3673,7 +3732,7 @@
 							<object class="NSButtonCell" key="NSCell" id="915536323">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Annuler</string>
+								<string key="NSContents">Cancel</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="428932293"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -3696,7 +3755,7 @@
 							<object class="NSButtonCell" key="NSCell" id="947283626">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Ignorer</string>
+								<string key="NSContents">Ignore</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="1072061798"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -3733,7 +3792,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{245, 301}, {755, 570}}</string>
 				<int key="NSWTFlags">611844096</int>
-				<string key="NSWindowTitle">Historique des notifications</string>
+				<string key="NSWindowTitle">Notification History</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -3824,7 +3883,7 @@
 													<object class="NSTableHeaderCell" key="NSHeaderCell">
 														<int key="NSCellFlags">75497536</int>
 														<int key="NSCellFlags2">2048</int>
-														<string key="NSContents">Titre</string>
+														<string key="NSContents">Title</string>
 														<reference key="NSSupport" ref="26"/>
 														<reference key="NSBackgroundColor" ref="678078598"/>
 														<reference key="NSTextColor" ref="476820400"/>
@@ -4021,7 +4080,7 @@
 							<object class="NSButtonCell" key="NSCell" id="607325797">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Fermer</string>
+								<string key="NSContents">Close</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="320918066"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -4044,7 +4103,7 @@
 							<object class="NSButtonCell" key="NSCell" id="853966482">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Nettoyer</string>
+								<string key="NSContents">Clean</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="265510698"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -4067,7 +4126,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="1067471833">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">268436480</int>
-								<string key="NSContents">Historique des notifications</string>
+								<string key="NSContents">Notifications history</string>
 								<reference key="NSSupport" ref="619662178"/>
 								<reference key="NSControlView" ref="948422801"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -4088,7 +4147,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="544401019">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">268436480</int>
-								<string key="NSContents">Cette table contient toutes les notifications affichées durant la sessions courante.</string>
+								<string key="NSContents">This table lists all the previous notification displayed during the current session.</string>
 								<reference key="NSSupport" ref="516354061"/>
 								<reference key="NSControlView" ref="89988712"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -4112,7 +4171,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{646, 430}, {529, 282}}</string>
 				<int key="NSWTFlags">611844096</int>
-				<string key="NSWindowTitle">Choix de l'avatar</string>
+				<string key="NSWindowTitle">Avatar chooser</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -4131,7 +4190,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="998468414">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">272629760</int>
-								<string key="NSContents">Gérez votre compte XMPP</string>
+								<string key="NSContents">Manage XMPP account</string>
 								<reference key="NSSupport" ref="619662178"/>
 								<reference key="NSControlView" ref="170790578"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -4152,7 +4211,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="436854261">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">138412032</int>
-								<string key="NSContents">Plus à venir...</string>
+								<string key="NSContents">More to come...</string>
 								<reference key="NSSupport" ref="619662178"/>
 								<reference key="NSControlView" ref="559319516"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -4173,7 +4232,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="960374585">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">272629760</int>
-								<string key="NSContents">Vous pouvez modifier certaines options de votre compte XMPP.</string>
+								<string key="NSContents">You can modify your XMPP account properties.</string>
 								<reference key="NSSupport" ref="600959748"/>
 								<reference key="NSControlView" ref="661838399"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -4213,7 +4272,7 @@
 							<object class="NSButtonCell" key="NSCell" id="883250194">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Sauver</string>
+								<string key="NSContents">Save</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="677933227"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -4236,7 +4295,7 @@
 							<object class="NSButtonCell" key="NSCell" id="848561300">
 								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">134217728</int>
-								<string key="NSContents">Annuler</string>
+								<string key="NSContents">Cancel</string>
 								<reference key="NSSupport" ref="649011811"/>
 								<reference key="NSControlView" ref="527800986"/>
 								<int key="NSButtonFlags">-2038022144</int>
@@ -4259,7 +4318,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="780475181">
 								<int key="NSCellFlags">68157504</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Nouveau mot de passe</string>
+								<string key="NSContents">New password</string>
 								<reference key="NSSupport" ref="891076155"/>
 								<reference key="NSControlView" ref="399344991"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -4279,7 +4338,7 @@
 								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="649011811"/>
-								<string key="NSPlaceholderString">Nouveau mot de passe</string>
+								<string key="NSPlaceholderString">New password</string>
 								<reference key="NSControlView" ref="642376630"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="123995732"/>
@@ -4317,7 +4376,7 @@
 								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="649011811"/>
-								<string key="NSPlaceholderString">Confirmation</string>
+								<string key="NSPlaceholderString">Retype new password</string>
 								<reference key="NSControlView" ref="149450868"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="123995732"/>
@@ -5475,6 +5534,22 @@
 						<reference key="destination" ref="257661349"/>
 					</object>
 					<int key="connectionID">1218</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonSave</string>
+						<reference key="source" ref="1047165392"/>
+						<reference key="destination" ref="569852830"/>
+					</object>
+					<int key="connectionID">1680</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tokenFieldTags</string>
+						<reference key="source" ref="1047165392"/>
+						<reference key="destination" ref="723940869"/>
+					</object>
+					<int key="connectionID">1681</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -7165,6 +7240,11 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">1146</int>
 						<reference key="object" ref="257661349"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="723940869"/>
+							<reference ref="569852830"/>
+						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">tags view</string>
 					</object>
@@ -8885,6 +8965,34 @@
 						<reference key="object" ref="263310713"/>
 						<reference key="parent" ref="876563167"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1676</int>
+						<reference key="object" ref="723940869"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="383374500"/>
+						</object>
+						<reference key="parent" ref="257661349"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1677</int>
+						<reference key="object" ref="383374500"/>
+						<reference key="parent" ref="723940869"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1678</int>
+						<reference key="object" ref="569852830"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="195230561"/>
+						</object>
+						<reference key="parent" ref="257661349"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1679</int>
+						<reference key="object" ref="195230561"/>
+						<reference key="parent" ref="569852830"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -9195,6 +9303,10 @@
 					<string>1659.IBPluginDependency</string>
 					<string>1663.IBPluginDependency</string>
 					<string>1666.IBPluginDependency</string>
+					<string>1676.IBPluginDependency</string>
+					<string>1677.IBPluginDependency</string>
+					<string>1678.IBPluginDependency</string>
+					<string>1679.IBPluginDependency</string>
 					<string>367.IBPluginDependency</string>
 					<string>367.IBWindowTemplateEditedContentRect</string>
 					<string>367.NSWindowTemplate.visibleAtLaunch</string>
@@ -9787,6 +9899,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{307, 836}, {480, 270}}</string>
 					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -9972,7 +10088,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1675</int>
+			<int key="maxID">1681</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10502,45 +10618,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/AppController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSCollectionViewItem</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>imageView</string>
-							<string>textField</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSImageView</string>
-							<string>NSTextField</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>imageView</string>
-							<string>textField</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageView</string>
-								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">textField</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/NSCollectionViewItem.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -11123,7 +11200,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">TNModalWindow</string>
-					<string key="superclassName">NSWindow</string>
+					<string key="superclassName">NSPanel</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNModalWindow.h</string>
@@ -11825,14 +11902,42 @@
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">mainView</string>
-						<string key="NS.object.0">NSView</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonSave</string>
+							<string>mainView</string>
+							<string>tokenFieldTags</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
+							<string>NSView</string>
+							<string>NSTokenField</string>
+						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">mainView</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">mainView</string>
-							<string key="candidateClassName">NSView</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonSave</string>
+							<string>mainView</string>
+							<string>tokenFieldTags</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonSave</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainView</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tokenFieldTags</string>
+								<string key="candidateClassName">NSTokenField</string>
+							</object>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">

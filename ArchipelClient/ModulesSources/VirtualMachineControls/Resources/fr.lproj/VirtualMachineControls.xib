@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D44</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -885,7 +885,7 @@ IHBhcmsuA</string>
 						<object class="NSTextFieldCell" key="NSCell" id="449018482">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Killing a virtual machine is definitive. It will be completely removed.</string>
+							<string key="NSContents">These advanced commands can affect the availability of the virtual machine.</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="1020715076"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
@@ -1065,7 +1065,7 @@ IHBhcmsuA</string>
 						<object class="NSTextFieldCell" key="NSCell" id="118943805">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Kill the virtual machine</string>
+							<string key="NSContents">Advanced controls</string>
 							<object class="NSFont" key="NSSupport" id="852465451">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
@@ -1166,7 +1166,7 @@ IHBhcmsuA</string>
 						<object class="NSTextFieldCell" key="NSCell" id="248660292">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Screenshot refresh time:</string>
+							<string key="NSContents">Screenshot refresh time</string>
 							<reference key="NSSupport" ref="869774426"/>
 							<reference key="NSControlView" ref="954345060"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>

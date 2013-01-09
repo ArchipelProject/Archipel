@@ -1,27 +1,27 @@
 
 /* Class = "NSTextFieldCell"; title = "Health"; ObjectID = "4"; */
-"4.title" = "Santé";
+"4.title" = "Health";
 
 /* Class = "NSTextFieldCell"; title = "CPU usage:"; ObjectID = "6"; */
-"6.title" = "Utilisation CPU :";
+"6.title" = "CPU usage:";
 
 /* Class = "NSTextFieldCell"; title = "Disk usage:"; ObjectID = "8"; */
-"8.title" = "Utilisation disque :";
+"8.title" = "Disk usage:";
 
 /* Class = "NSTextFieldCell"; title = "Load average:"; ObjectID = "11"; */
-"11.title" = "Charge moyenne :";
+"11.title" = "Load average:";
 
 /* Class = "NSTextFieldCell"; title = "Free memory:"; ObjectID = "12"; */
-"12.title" = "Mémoire libre :";
+"12.title" = "Free memory:";
 
 /* Class = "NSTextFieldCell"; title = "Machine:"; ObjectID = "15"; */
-"15.title" = "Machine :";
+"15.title" = "Machine:";
 
 /* Class = "NSTextFieldCell"; title = "Swapped:"; ObjectID = "16"; */
-"16.title" = "Swap :";
+"16.title" = "Swapped:";
 
 /* Class = "NSTextFieldCell"; title = "Uptime:"; ObjectID = "20"; */
-"20.title" = "Uptime :";
+"20.title" = "Uptime:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "22"; */
 "22.title" = "...";
@@ -45,7 +45,7 @@
 "34.title" = "...";
 
 /* Class = "NSTextFieldCell"; title = "CPU History"; ObjectID = "48"; */
-"48.title" = "Historique CPU";
+"48.title" = "CPU History";
 
 /* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "52"; */
 "52.title" = "100%";
@@ -57,19 +57,19 @@
 "56.title" = "0%";
 
 /* Class = "NSTextFieldCell"; title = "Memory History"; ObjectID = "64"; */
-"64.title" = "Historique mémoire";
+"64.title" = "Memory History";
 
 /* Class = "NSTextFieldCell"; title = "20G"; ObjectID = "66"; */
-"66.title" = "20Go";
+"66.title" = "20G";
 
 /* Class = "NSTextFieldCell"; title = "10G"; ObjectID = "67"; */
-"67.title" = "10Go";
+"67.title" = "10G";
 
 /* Class = "NSTextFieldCell"; title = "0G"; ObjectID = "68"; */
-"68.title" = "0Go";
+"68.title" = "0G";
 
 /* Class = "NSTextFieldCell"; title = "Load History"; ObjectID = "76"; */
-"76.title" = "Historique de charge";
+"76.title" = "Load History";
 
 /* Class = "NSTextFieldCell"; title = "10"; ObjectID = "78"; */
 "78.title" = "10";
@@ -87,28 +87,28 @@
 "90.title" = "Max";
 
 /* Class = "NSTextFieldCell"; title = "Network usage"; ObjectID = "92"; */
-"92.title" = "Utilisation réseau";
+"92.title" = "Network usage";
 
 /* Class = "NSTextFieldCell"; title = "Disks usage"; ObjectID = "104"; */
-"104.title" = "Utilisation disque";
+"104.title" = "Disks usage";
 
 /* Class = "NSTextFieldCell"; title = "Health preferences"; ObjectID = "136"; */
-"136.title" = "Préférences Santé";
+"136.title" = "Health preferences";
 
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for the health module."; ObjectID = "138"; */
-"138.title" = "Vous pouvez configurer les préférences du module de santé";
+"138.title" = "You can configure preferences for the health module.";
 
 /* Class = "NSTextFieldCell"; title = "Auto refresh interval:"; ObjectID = "140"; */
-"140.title" = "Interval de MaJ :";
+"140.title" = "Auto refresh interval:";
 
 /* Class = "NSTextFieldCell"; title = "Max items in history:"; ObjectID = "142"; */
-"142.title" = "Nombre max d'historiques :";
+"142.title" = "Max items in history:";
 
 /* Class = "NSTextFieldCell"; title = "Max log lines:"; ObjectID = "144"; */
-"144.title" = "Nombre max de logs :";
+"144.title" = "Max log lines:";
 
 /* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
-"150.title" = "Rafraichissement auto :";
+"150.title" = "Auto refresh stats:";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling stats"; ObjectID = "151"; */
 "151.ibShadowedToolTip" = "Delay before polling stats";

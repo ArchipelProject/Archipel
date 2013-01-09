@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D44</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -347,7 +347,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="282853100">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Vous pouvez piloter les réseaux de l'hyperviseur</string>
+							<string key="NSContents">You can manage the hypervisor's network.</string>
 							<object class="NSFont" key="NSSupport" id="179505641">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -374,7 +374,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="23418014">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Piloter les réseaux de l'hyperviseur</string>
+							<string key="NSContents">Manage hypervisor networks</string>
 							<object class="NSFont" key="NSSupport" id="548128472">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
@@ -449,7 +449,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75497536</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Début</string>
+															<string key="NSContents">Start</string>
 															<reference key="NSSupport" ref="26"/>
 															<object class="NSColor" key="NSBackgroundColor" id="969551036">
 																<int key="NSColorSpace">3</int>
@@ -484,7 +484,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75497536</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Fin</string>
+															<string key="NSContents">End</string>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSBackgroundColor" ref="969551036"/>
 															<reference key="NSTextColor" ref="349294912"/>
@@ -662,7 +662,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75497536</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Addresse MAC</string>
+															<string key="NSContents">MAC Address</string>
 															<reference key="NSSupport" ref="26"/>
 															<object class="NSColor" key="NSBackgroundColor" id="978407914">
 																<int key="NSColorSpace">3</int>
@@ -697,7 +697,7 @@
 														<object class="NSTableHeaderCell" key="NSHeaderCell">
 															<int key="NSCellFlags">75497536</int>
 															<int key="NSCellFlags2">2048</int>
-															<string key="NSContents">Nom</string>
+															<string key="NSContents">Name</string>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSBackgroundColor" ref="978407914"/>
 															<reference key="NSTextColor" ref="349294912"/>
@@ -965,7 +965,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75497536</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Nom</string>
+													<string key="NSContents">Name</string>
 													<reference key="NSSupport" ref="26"/>
 													<reference key="NSBackgroundColor" ref="797341924"/>
 													<reference key="NSTextColor" ref="349294912"/>
@@ -1072,7 +1072,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="233634488">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">Réservation IP</string>
+							<string key="NSContents">IP Reservation</string>
 							<object class="NSFont" key="NSSupport" id="241279421">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">11</double>
@@ -1129,7 +1129,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75497536</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Début</string>
+													<string key="NSContents">Start</string>
 													<reference key="NSSupport" ref="26"/>
 													<object class="NSColor" key="NSBackgroundColor" id="351536825">
 														<int key="NSColorSpace">3</int>
@@ -1158,7 +1158,7 @@
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
 													<int key="NSCellFlags">75497536</int>
 													<int key="NSCellFlags2">2048</int>
-													<string key="NSContents">Fin</string>
+													<string key="NSContents">End</string>
 													<reference key="NSSupport" ref="26"/>
 													<reference key="NSBackgroundColor" ref="351536825"/>
 													<reference key="NSTextColor" ref="349294912"/>
@@ -1390,7 +1390,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="844278278">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Délai:</string>
+							<string key="NSContents">Delay:</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="221377303"/>
@@ -1410,7 +1410,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="786391202">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">délai</string>
+							<string key="NSContents">delay</string>
 							<reference key="NSSupport" ref="859373352"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="388308990"/>
@@ -1430,7 +1430,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="560397784">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Masque:</string>
+							<string key="NSContents">Mask:</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="706376519"/>
@@ -1590,7 +1590,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="555397735">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Carte :</string>
+							<string key="NSContents">Device:</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="527522555"/>
@@ -1610,7 +1610,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="611847446">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">carte</string>
+							<string key="NSContents">device</string>
 							<reference key="NSSupport" ref="859373352"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="827772003"/>
@@ -1630,7 +1630,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="708082869">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">nom</string>
+							<string key="NSContents">name</string>
 							<reference key="NSSupport" ref="859373352"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="130060420"/>
@@ -1650,7 +1650,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="515754482">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">71305216</int>
-							<string key="NSContents">Nom : </string>
+							<string key="NSContents">Name: </string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="392661939"/>
@@ -1670,7 +1670,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="114484620">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">Gamme DHCP</string>
+							<string key="NSContents">DHCP Ranges</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="1023278182"/>
@@ -1690,7 +1690,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="595052574">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">Information du pont</string>
+							<string key="NSContents">Bridge information</string>
 							<reference key="NSSupport" ref="241279421"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="331373945"/>
@@ -1710,7 +1710,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="256879915">
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Nom du réseau</string>
+							<string key="NSContents">Network name</string>
 							<object class="NSFont" key="NSSupport">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">14</double>
@@ -1791,7 +1791,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="306483877">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Nom:</string>
+							<string key="NSContents">Name:</string>
 							<object class="NSFont" key="NSSupport" id="965450233">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -1813,7 +1813,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="796021556">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Addresse du pont:</string>
+							<string key="NSContents">Bridge address:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="745258264"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1831,7 +1831,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="97135927">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Carte de sortie:</string>
+							<string key="NSContents">Forward device:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="479764993"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1849,7 +1849,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="678622548">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Infos basiques</string>
+							<string key="NSContents">Network basics</string>
 							<reference key="NSSupport" ref="548128472"/>
 							<reference key="NSControlView" ref="44947341"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1872,7 +1872,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">Nom du réseau</string>
+							<string key="NSPlaceholderString">Name of the network</string>
 							<reference key="NSControlView" ref="396097288"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -1895,7 +1895,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="753534544">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Nom du pont :</string>
+							<string key="NSContents">Bridge name:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="270522499"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2020,7 +2020,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">Nom du pont</string>
+							<string key="NSPlaceholderString">Name of the network bridge</string>
 							<reference key="NSControlView" ref="193292368"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -2038,7 +2038,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="199565340">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Delai du pont: </string>
+							<string key="NSContents">Bridge delay: </string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="40168493"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2058,7 +2058,7 @@
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="5247702"/>
-							<string key="NSPlaceholderString">Delai de renvoi</string>
+							<string key="NSPlaceholderString">Forward delay</string>
 							<reference key="NSControlView" ref="132394055"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="255320839"/>
@@ -2096,7 +2096,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="930233789">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Masque:</string>
+							<string key="NSContents">Netmask:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="209231076"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2276,7 +2276,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="143120818">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Activer STP:</string>
+							<string key="NSContents">Activate STP:</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="455799328"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2672,7 +2672,7 @@
 						<object class="NSButtonCell" key="NSCell" id="845902540">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Sauver</string>
+							<string key="NSContents">Save</string>
 							<reference key="NSSupport" ref="5247702"/>
 							<reference key="NSControlView" ref="204776721"/>
 							<int key="NSButtonFlags">-2038022144</int>
@@ -2695,7 +2695,7 @@
 						<object class="NSButtonCell" key="NSCell" id="511731036">
 							<int key="NSCellFlags">-2080374784</int>
 							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Annuler</string>
+							<string key="NSContents">Cancel</string>
 							<reference key="NSSupport" ref="5247702"/>
 							<reference key="NSControlView" ref="159830380"/>
 							<int key="NSButtonFlags">-2038022144</int>
