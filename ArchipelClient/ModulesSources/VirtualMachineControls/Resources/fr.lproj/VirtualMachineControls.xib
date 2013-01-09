@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D44</string>
+		<string key="IBDocument.SystemVersion">12D50</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -252,7 +252,7 @@ IHBhcmsuA</string>
 							</object>
 						</object>
 						<reference key="NSContentView" ref="513997119"/>
-						<int key="NSBorderType">1</int>
+						<int key="NSBorderType">2</int>
 						<int key="NSBoxType">4</int>
 						<int key="NSTitlePosition">2</int>
 						<bool key="NSTransparent">NO</bool>
@@ -2661,7 +2661,7 @@ IHBhcmsuA</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">210</int>
+			<int key="maxID">216</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2872,6 +2872,7 @@ IHBhcmsuA</string>
 							<string>fieldInfoConsumedCPU</string>
 							<string>fieldInfoMem</string>
 							<string>fieldInfoState</string>
+							<string>fieldNumberOfCPUs</string>
 							<string>fieldOOMAdjust</string>
 							<string>fieldOOMScore</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
@@ -2880,7 +2881,6 @@ IHBhcmsuA</string>
 							<string>imageViewFullScreenshot</string>
 							<string>popoverWindowScreenshot</string>
 							<string>sliderMemory</string>
-							<string>stepperCPU</string>
 							<string>switchAutoStart</string>
 							<string>switchPreventOOMKiller</string>
 							<string>tableHypervisors</string>
@@ -2901,12 +2901,12 @@ IHBhcmsuA</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
+							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSImageView</string>
 							<string>NSImageView</string>
 							<string>NSPopover</string>
 							<string>NSSlider</string>
-							<string>TNTextFieldStepper</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>NSTableView</string>
@@ -2927,6 +2927,7 @@ IHBhcmsuA</string>
 							<string>fieldInfoConsumedCPU</string>
 							<string>fieldInfoMem</string>
 							<string>fieldInfoState</string>
+							<string>fieldNumberOfCPUs</string>
 							<string>fieldOOMAdjust</string>
 							<string>fieldOOMScore</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
@@ -2935,7 +2936,6 @@ IHBhcmsuA</string>
 							<string>imageViewFullScreenshot</string>
 							<string>popoverWindowScreenshot</string>
 							<string>sliderMemory</string>
-							<string>stepperCPU</string>
 							<string>switchAutoStart</string>
 							<string>switchPreventOOMKiller</string>
 							<string>tableHypervisors</string>
@@ -2984,6 +2984,10 @@ IHBhcmsuA</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNumberOfCPUs</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">fieldOOMAdjust</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
@@ -3014,10 +3018,6 @@ IHBhcmsuA</string>
 							<object class="IBToOneOutletInfo">
 								<string key="name">sliderMemory</string>
 								<string key="candidateClassName">NSSlider</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperCPU</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">switchAutoStart</string>
