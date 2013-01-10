@@ -75,7 +75,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         # register to the node vmrequest
         if isinstance(self.entity, TNArchipelHypervisor):
             self.entity.log.info("NUAGENETWORKS: Checking if general bridge %s exists." % self.nuageBridgeName)
-            if not os.system("brctl showmacs %s" % self.nuageBridgeName) == 0:
+            if not os.system("brctl showstp %s" % self.nuageBridgeName) == 0:
                 self.entity.log.info("NUAGENETWORKS: Nope. creating it...")
                 if os.system("brctl addbr %s" % self.nuageBridgeName):
                     self.entity.log.error("NUAGENETWORKS: Unable to create bridge. Dying.")
