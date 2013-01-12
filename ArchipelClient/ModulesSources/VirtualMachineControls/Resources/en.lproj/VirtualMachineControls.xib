@@ -716,7 +716,7 @@ IHBhcmsuA</string>
 					<object class="NSCustomView" id="425424343">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{608, 589}, {77, 25}}</string>
+						<string key="NSFrame">{{610, 589.5}, {77, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="146402377"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
