@@ -26,16 +26,16 @@
 
 - (void)setBordered
 {
-    _DOMElement.style.border = "1px solid black";
+    self._DOMElement.style.border = "1px solid black";
 }
 
 - (void)setBorderedWithHexColor:(CPString)aHexColor
 {
-    _DOMElement.style.border = "1px solid " + aHexColor;
+    self._DOMElement.style.border = "1px solid " + aHexColor;
 }
 
 - (void)setBorderRadius:(int)aRadius
 {
-    _DOMElement.style.borderRadius = aRadius + "px";
+    self._DOMElement.style.borderRadius = aRadius + "px";
 }
 @end

@@ -26,7 +26,7 @@
 
 - (id)DOMWindow
 {
-    return _DOMWindow;
+    return self._DOMWindow;
 }
 
 @end

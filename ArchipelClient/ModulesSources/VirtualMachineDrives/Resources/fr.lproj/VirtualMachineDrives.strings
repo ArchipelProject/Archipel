@@ -9,7 +9,7 @@
 "18.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "21"; */
-"21.title" = "Name:";
+"21.title" = "Name";
 
 /* Class = "NSTextFieldCell"; placeholderString = "New name"; ObjectID = "22"; */
 "22.placeholderString" = "New name";
@@ -42,7 +42,7 @@
 "36.title" = "Item 3";
 
 /* Class = "NSTextFieldCell"; title = "Format"; ObjectID = "38"; */
-"38.title" = "Format:";
+"38.title" = "Format";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "46"; */
 "46.title" = "Box";
@@ -63,7 +63,7 @@
 "55.placeholderString" = "My drive ";
 
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "56"; */
-"56.title" = "Name:";
+"56.title" = "Name";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "59"; */
 "59.title" = "OtherViews";
@@ -78,7 +78,7 @@
 "62.title" = "Item 1";
 
 /* Class = "NSTextFieldCell"; title = "Size"; ObjectID = "63"; */
-"63.title" = "Size:";
+"63.title" = "Size";
 
 /* Class = "NSTextFieldCell"; placeholderString = "10"; ObjectID = "66"; */
 "66.placeholderString" = "10";
@@ -96,7 +96,7 @@
 "74.title" = "Item 3";
 
 /* Class = "NSTextFieldCell"; title = "Format"; ObjectID = "75"; */
-"75.title" = "Format:";
+"75.title" = "Format";
 
 /* Class = "NSButtonCell"; title = "Use metadata preallocation"; ObjectID = "78"; */
 "78.title" = "Use metadata preallocation";

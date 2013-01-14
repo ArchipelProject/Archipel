@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D50</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -612,7 +612,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1059072120">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Action:</string>
+							<string key="NSContents">Action</string>
 							<object class="NSFont" key="NSSupport" id="673151101">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -659,7 +659,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="660008268">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Comment:</string>
+							<string key="NSContents">Comment</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="416819945"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -805,7 +805,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="937682270">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Second:</string>
+							<string key="NSContents">Second</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="777533224"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -856,7 +856,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="294763095">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Minute:</string>
+							<string key="NSContents">Minute</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="628779469"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -907,7 +907,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="528807300">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Hour:</string>
+							<string key="NSContents">Hour</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="223512618"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -958,7 +958,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="940270759">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Day:</string>
+							<string key="NSContents">Day</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="780306623"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -1009,7 +1009,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="119423000">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Month:</string>
+							<string key="NSContents">Month</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="311193293"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
@@ -1060,7 +1060,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="587532093">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Year:</string>
+							<string key="NSContents">Year</string>
 							<reference key="NSSupport" ref="673151101"/>
 							<reference key="NSControlView" ref="996807419"/>
 							<reference key="NSBackgroundColor" ref="117298641"/>
