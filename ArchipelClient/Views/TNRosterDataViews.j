@@ -60,11 +60,11 @@ var TNRosterDataViewContactImageUnknownUser,
 */
 @implementation TNRosterDataViewContact : CPView
 {
-    @outlet     CPImageView         avatar         @accessors;
-    @outlet     CPImageView         statusIcon     @accessors;
-    @outlet     CPTextField         events         @accessors;
-    @outlet     CPTextField         name           @accessors;
-    @outlet     CPTextField         status         @accessors;
+    @outlet     CPImageView         avatar         @accessors();
+    @outlet     CPImageView         statusIcon     @accessors();
+    @outlet     CPTextField         events         @accessors();
+    @outlet     CPTextField         name           @accessors();
+    @outlet     CPTextField         status         @accessors();
 
     TNStropheContact                _contact;
 }
@@ -213,7 +213,7 @@ var TNRosterDataViewContactImageUnknownUser,
 */
 @implementation TNRosterDataViewGroup : CPView
 {
-    @outlet name @accessors;
+    @outlet CPTextField name @accessors;
 }
 
 
@@ -225,15 +225,12 @@ var TNRosterDataViewContactImageUnknownUser,
 */
 - (id)_initTheme
 {
-        [name setTextColor:[CPColor colorWithHexString:@"5F676F"]];
-        [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [name setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-        [name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [name setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
-        [name setVerticalAlignment:CPCenterVerticalTextAlignment];
-    }
-
-    return self;
+    [name setTextColor:[CPColor colorWithHexString:@"5F676F"]];
+    [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+    [name setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [name setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
+    [name setVerticalAlignment:CPCenterVerticalTextAlignment];
 }
 
 

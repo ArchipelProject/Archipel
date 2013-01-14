@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Model/TNModule.j"
 
 /*! @defgroup  toolbardestroybutton Module Toolbar Button Destroy
     @desc This module displays a toolbar item that can send destroy action to the current entity

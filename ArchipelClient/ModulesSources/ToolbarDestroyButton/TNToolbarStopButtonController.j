@@ -20,6 +20,8 @@
 
 @import <TNKit/TNToolbar.j>
 
+@import "../../Model/TNModule.j"
+
 var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     TNArchipelControlDestroy        = @"TNArchipelControlDestroy";
 

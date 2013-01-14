@@ -30,6 +30,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
 @import "TNInstalledAppliancesObject.j";
 
 

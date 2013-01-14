@@ -27,6 +27,7 @@
 
 @import <TNKit/TNMessageBoard.j>
 
+@import "../../Model/TNModule.j"
 @import "TNDetachedChatController.j"
 
 

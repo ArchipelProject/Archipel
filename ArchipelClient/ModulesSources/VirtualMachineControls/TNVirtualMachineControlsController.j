@@ -33,6 +33,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
 
+@import "../../Model/TNModule.j"
 @import "TNExtendedContactObject.j"
 
 

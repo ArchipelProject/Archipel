@@ -22,6 +22,9 @@
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPTextField.j>
 
+@import "../../Views/TNBasicDataView.j"
+
+
 /*! @ingroup permissions
     This class represent a permission DataView
 */

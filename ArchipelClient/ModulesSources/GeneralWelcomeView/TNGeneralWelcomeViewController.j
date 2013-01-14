@@ -22,6 +22,7 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWebView.j>
 
+@import "../../Model/TNModule.j"
 
 /*! @defgroup generalwelcomeview Module GeneralWelcomeView
     @desc the welcome page

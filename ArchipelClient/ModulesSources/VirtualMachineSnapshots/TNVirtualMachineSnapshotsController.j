@@ -28,8 +28,9 @@
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
 
-@import "TNSnapshot.j";
-@import "TNSnapshotsDatasource.j";
+@import "../../Model/TNModule.j"
+@import "TNSnapshot.j"
+@import "TNSnapshotsDatasource.j"
 
 
 var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_",

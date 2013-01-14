@@ -72,10 +72,10 @@
 "64.title" = "...";
 
 /* Class = "NSTextFieldCell"; title = "Advanced controls"; ObjectID = "71"; */
-"71.title" = "Kill the virtual machine";
+"71.title" = "Advanced controls";
 
 /* Class = "NSTextFieldCell"; title = "These advanced commands can affect the availability of the virtual machine."; ObjectID = "73"; */
-"73.title" = "Killing a virtual machine is definitive. It will be completely removed.";
+"73.title" = "These advanced commands can affect the availability of the virtual machine.";
 
 /* Class = "NSTextFieldCell"; title = "Virtual machine controls preferences"; ObjectID = "96"; */
 "96.title" = "Virtual machine controls preferences";
@@ -105,7 +105,7 @@
 "157.placeholderString" = "Delay between screenshots";
 
 /* Class = "NSTextFieldCell"; title = "Screenshot refresh time"; ObjectID = "158"; */
-"158.title" = "Screenshot refresh time:";
+"158.title" = "Screenshot refresh time";
 
 /* Class = "NSTableColumn"; headerCell.title = "Hypervisor"; ObjectID = "172"; */
 "172.headerCell.title" = "Hypervisor";

@@ -3,51 +3,51 @@
 <plist version="1.0">
 <dict>
 	<key> has been created</key>
-	<string> a été créée</string>
+	<string> has been created</string>
 	<key> has been updated</key>
 	<string> has been updated</string>
 	<key> to your roster</key>
-	<string> à votre roster.</string>
+	<string> to your roster</string>
 	<key>Add a new VM</key>
 	<string>Add a new VM</string>
 	<key>Add a user subscription</key>
 	<string>Add a user subscription</string>
 	<key>Add contact</key>
-	<string>Ajouter contact</string>
+	<string>Add contact</string>
 	<key>Added new subscription to virtual machine</key>
-	<string>Souscription ajoutée</string>
+	<string>Added new subscription to virtual machine</string>
 	<key>Adding contact</key>
-	<string>Ajout du contact</string>
+	<string>Adding contact</string>
 	<key>Are you sure you want to completely remove these virtual machines ?</key>
-	<string>Etes-vous sûr de vouloir supprimer les machines virtuelles sélectionnées ?</string>
+	<string>Are you sure you want to completely remove these virtual machines ?</string>
 	<key>Are you sure you want to completely remove this virtual machine ?</key>
-	<string>Etes-vous sûr de vouloir supprimer la machine virtuelle sélectionnée ?</string>
+	<string>Are you sure you want to completely remove this virtual machine ?</string>
 	<key>Are you sure you want to remove the subscription for this user ?</key>
-	<string>Etes-vous sûr de vouloir supprimer la souscription à cet utilisateur ?</string>
+	<string>Are you sure you want to remove the subscription for this user ?</string>
 	<key>Cancel</key>
-	<string>Annuler</string>
+	<string>Cancel</string>
 	<key>Clone selected VM</key>
 	<string>Clone selected VM</string>
 	<key>Clone this virtual machine</key>
-	<string>Cloner cette machine virtuelle</string>
+	<string>Clone this virtual machine</string>
 	<key>Create new virtual machine</key>
-	<string>Créer une nouvelle machine virtuelle</string>
+	<string>Create new virtual machine</string>
 	<key>Delete</key>
-	<string>Supprimer</string>
+	<string>Delete</string>
 	<key>Delete selected parked VMs. All data will be lost</key>
 	<string>Delete selected parked VMs. All data will be lost</string>
 	<key>Delete virtual machine</key>
-	<string>Supprimer la machine virtuelle.</string>
+	<string>Delete virtual machine</string>
 	<key>Destroying a Virtual Machine</key>
-	<string>Suppression de la machine virtuelle.</string>
+	<string>Destroying a Virtual Machine</string>
 	<key>Destroying some Virtual Machines</key>
-	<string>Suppression des machines virtuelles.</string>
+	<string>Destroying some Virtual Machines</string>
 	<key>Do not use Archipel to manage selected vms. Vms will still be there</key>
 	<string>Do not use Archipel to manage selected vms. Vms will still be there</string>
 	<key>Edit parked VM's XML definition</key>
 	<string>Edit parked VM's XML definition</string>
 	<key>Error</key>
-	<string>Erreur</string>
+	<string>Error</string>
 	<key>If vm is in roster, jump to it, otherwhise, ask subscription</key>
 	<string>If vm is in roster, jump to it, otherwhise, ask subscription</string>
 	<key>Make Archipel manage selected VMs</key>
@@ -55,15 +55,15 @@
 	<key>Park selected VMs</key>
 	<string>Park selected VMs</string>
 	<key>Remove</key>
-	<string>Supprimer</string>
+	<string>Remove</string>
 	<key>Remove a user subscription</key>
 	<string>Remove a user subscription</string>
 	<key>Remove completely selected vms</key>
 	<string>Remove completely selected vms</string>
 	<key>Removing subscription</key>
-	<string>Supprimer la souscription</string>
+	<string>Removing subscription</string>
 	<key>Subscription have been removed</key>
-	<string>La souscription a été supprimée.</string>
+	<string>Subscription have been removed</string>
 	<key>Unpark selected VMs into this hypervisor</key>
 	<string>Unpark selected VMs into this hypervisor</string>
 	<key>VM will ask subscription to given user</key>
@@ -71,16 +71,16 @@
 	<key>VM will remove subscription from given user</key>
 	<string>VM will remove subscription from given user</string>
 	<key>Virtual machine </key>
-	<string>Machine virtuelle </string>
+	<string>Virtual machine </string>
 	<key>Virtual machine has been cloned</key>
-	<string>La machine virtuelle a été clonée.</string>
+	<string>Virtual machine has been cloned</string>
 	<key>Virtual machine has been removed</key>
-	<string>La machine virtuelle a été supprimée.</string>
+	<string>Virtual machine has been removed</string>
 	<key>Would you like to add </key>
-	<string>Voulez-vous ajouter </string>
+	<string>Would you like to add </string>
 	<key>You must select a virtual machine</key>
-	<string>Vous devez sélectionner une machine virtuelle</string>
+	<string>You must select a virtual machine</string>
 	<key>You must select one (and only one) virtual machine</key>
-	<string>Vous devez sélectionner une seule machine virtuelle</string>
+	<string>You must select one (and only one) virtual machine</string>
 </dict>
 </plist>

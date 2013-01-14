@@ -18,6 +18,8 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Model/TNModule.j"
+
 
 var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     TNArchipelControlStop           = @"TNArchipelControlStop";

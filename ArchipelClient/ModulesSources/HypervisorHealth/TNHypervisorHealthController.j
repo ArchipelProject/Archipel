@@ -29,6 +29,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNWorker.j>
 
+@import "../../Model/TNModule.j"
 @import "TNCellLogView.j"
 @import "TNCellPartitionView.j"
 @import "TNDatasourceChartView.j"
