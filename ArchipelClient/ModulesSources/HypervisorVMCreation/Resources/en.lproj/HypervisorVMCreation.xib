@@ -570,7 +570,7 @@
 					<object class="NSComboBox" id="872659149">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{117, 197}, {303, 26}}</string>
+						<string key="NSFrame">{{117, 195}, {303, 26}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="750595858"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -671,7 +671,7 @@
 					<object class="NSComboBox" id="72586992">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{117, 167}, {303, 26}}</string>
+						<string key="NSFrame">{{117, 165}, {303, 26}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="427669467"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -755,7 +755,7 @@
 					<object class="NSComboBox" id="41564578">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{117, 137}, {303, 26}}</string>
+						<string key="NSFrame">{{117, 135}, {303, 26}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="693107011"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -839,7 +839,7 @@
 					<object class="NSComboBox" id="678165430">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{117, 107}, {303, 26}}</string>
+						<string key="NSFrame">{{117, 105}, {303, 26}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="166442030"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -923,7 +923,7 @@
 					<object class="NSComboBox" id="699117000">
 						<reference key="NSNextResponder" ref="705762664"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{117, 77}, {303, 26}}</string>
+						<string key="NSFrame">{{117, 75}, {303, 26}}</string>
 						<reference key="NSSuperview" ref="705762664"/>
 						<reference key="NSNextKeyView" ref="946243695"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -3938,8 +3938,8 @@
 							<reference ref="872659149"/>
 							<reference ref="72586992"/>
 							<reference ref="41564578"/>
-							<reference ref="678165430"/>
 							<reference ref="699117000"/>
+							<reference ref="678165430"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">new vm main view</string>
