@@ -4,5 +4,4 @@ node_js:
 before_install:
     - jdk_switcher use openjdk6
 install: ./travis-ci.py
-script: jake test
 env: PATH=/home/travis/builds/ArchipelProject/Archipel/narwhal/bin:$PATH CAPP_BUILD=/home/travis/builds/ArchipelProject/Archipel/Cappuccino NARWHAL_ENGINE=rhino
