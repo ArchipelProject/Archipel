@@ -39,14 +39,13 @@ def updateSubmodules():
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
     if os.system("cd ./ArchipelClient/Libraries/Cappuccino && ./bootstrap.sh --quiet --noprompt --directory ../../../narwhal"):
-        if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clean && jake release && jake debug"):
-            sys.exit(-1)
+        sys.exit(-1)
 
 
 def buildGrowlCappuccino():
     os.system("echo \* Starting to build GrowlCappuccino")
     if os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake release && jake debug"):
-        os.system("echo \* unable to build GrowlCappuccino")
+        os.system("echo \* unable to build GrowlCappuccino: %s" %  os.environ["PATH"])
         sys.exit(-2)
 
 def buildLPKit():
