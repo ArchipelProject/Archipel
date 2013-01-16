@@ -46,7 +46,7 @@ def buildGrowlCappuccino():
     os.system("echo \* Starting to build GrowlCappuccino")
     if os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake release && jake debug"):
         os.system("echo \* unable to build GrowlCappuccino: %s" %  os.environ["PATH"])
-        os.system("ls -l %" os.environ["INSTALL_DIR"])
+        os.system("ls -l %s" % os.environ["INSTALL_DIR"])
         sys.exit(-2)
 
 def buildLPKit():

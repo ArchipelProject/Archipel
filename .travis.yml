@@ -9,5 +9,5 @@ env:
         - CAPP_SOURCE=`pwd`/ArchipelProject/Archipel/Libraries/Cappuccino/
         - INSTALL_DIR=$CAPP_SOURCE/Install
         - PATH=$INSTALL_DIR/bin/:$PATH
-        - CAPP_BUILD=$CAPP_SOURCE/Build"
+        - CAPP_BUILD=$CAPP_SOURCE/Build
         - NARWHAL_ENGINE=rhino
