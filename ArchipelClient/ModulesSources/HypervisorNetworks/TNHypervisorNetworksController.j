@@ -31,10 +31,13 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
-@import "TNNetworkEditionController.j"
-@import "TNNetworkDataView.j"
-
 @import "Model/TNLibvirtNet.j"
+@import "TNNetworkDataView.j"
+@import "TNNetworkEditionController.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",

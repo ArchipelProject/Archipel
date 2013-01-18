@@ -22,7 +22,7 @@
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
-@import <AppKit/CPTextField.j>
+@import <AppKit/CPOutlineView.j>
 @import <AppKit/CPWindow.j>
 
 @import <LPKit/LPMultiLineTextField.j>
@@ -31,6 +31,9 @@
 @import "../../Model/TNModule.j"
 @import "TNSnapshot.j"
 @import "TNSnapshotsDatasource.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_",

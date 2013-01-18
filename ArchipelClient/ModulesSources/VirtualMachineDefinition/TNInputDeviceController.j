@@ -22,6 +22,9 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 /*! @ingroup virtualmachinedefinition
     this is the virtual input editor

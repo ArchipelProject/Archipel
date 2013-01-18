@@ -32,6 +32,11 @@
 @import "../../Model/TNModule.j"
 @import "TNGroupedMigrationController.j";
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeVirtualMachine
+
+
 var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     TNArchipelTypeVirtualMachineControlCreate       = @"create",
     TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown",

@@ -29,6 +29,7 @@
 @import "../Views/TNModalWindow.j"
 @import "../Views/TNSwitch.j"
 
+@class CPLocalizedString
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";

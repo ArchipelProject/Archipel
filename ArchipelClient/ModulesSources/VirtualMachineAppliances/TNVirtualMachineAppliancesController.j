@@ -33,6 +33,9 @@
 @import "../../Model/TNModule.j"
 @import "TNInstalledAppliancesObject.j";
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:vmcasting",
     TNArchipelTypeVirtualMachineVMCastingGet        = @"get",

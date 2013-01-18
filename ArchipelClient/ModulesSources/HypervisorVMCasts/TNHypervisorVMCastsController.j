@@ -37,6 +37,11 @@
 @import "TNVMCastRegistrationController.j"
 @import "TNDownloadQueueController.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelTypeHypervisorVMCastingDownloadProgress
+
+
 var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_",
     TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
     TNArchipelTypeHypervisorVMCastingGet                = @"get",

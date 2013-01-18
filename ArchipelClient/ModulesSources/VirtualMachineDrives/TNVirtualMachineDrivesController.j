@@ -34,6 +34,9 @@
 @import "TNDriveDataView.j"
 @import "TNDriveObject.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskCreate  = @"create",

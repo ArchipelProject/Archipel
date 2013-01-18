@@ -28,6 +28,11 @@
 @import <StropheCappuccino/PubSub/TNPubSubController.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
 
+@class CPLocalizedString
+@global TNArchipelEntityTypeUser
+@global TNArchipelEntityTypeVirtualMachine
+@global TNArchipelEntityTypeHypervisor
+
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to add a TNStropheContact
 */

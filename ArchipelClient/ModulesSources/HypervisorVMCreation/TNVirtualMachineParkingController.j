@@ -23,6 +23,9 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparking",
     TNArchipelTypeHypervisorParkingList         = @"list",

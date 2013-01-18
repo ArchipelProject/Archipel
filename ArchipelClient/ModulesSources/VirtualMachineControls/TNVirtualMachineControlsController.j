@@ -32,10 +32,15 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
 
 @import "../../Model/TNModule.j"
 @import "TNExtendedContactObject.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeHypervisor
+@global TNArchipelRosterOutlineViewDeselectAll
 
 
 var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition",

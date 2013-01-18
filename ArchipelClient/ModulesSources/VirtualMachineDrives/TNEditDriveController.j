@@ -20,12 +20,19 @@
 
 @import <AppKit/CPButton.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
 
+@import <GrowlCappuccino/TNGrowlCenter.j>
+@import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNAlert.j>
 
 @import "TNDriveObject.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelDrivesFormats
 
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
@@ -144,7 +151,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         return;
     }
 
-    var stanza          = [TNStropheStanza iqWithType:@"set"];
+    var stanza = [TNStropheStanza iqWithType:@"set"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildWithName:@"archipel" andAttributes:{

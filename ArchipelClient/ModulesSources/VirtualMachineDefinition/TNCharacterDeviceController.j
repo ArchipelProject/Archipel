@@ -21,8 +21,12 @@
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPTableView.j>
 
 @import "Model/TNLibvirtDeviceCharacter.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 /*! @ingroup virtualmachinedefinition

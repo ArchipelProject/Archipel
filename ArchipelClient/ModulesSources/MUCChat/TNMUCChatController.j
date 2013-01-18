@@ -29,6 +29,10 @@
 
 @import "../../Model/TNModule.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
+
 /*! @defgroup  mucchat Module Conference
     @desc This module handles MUC for all Archipel users
 */

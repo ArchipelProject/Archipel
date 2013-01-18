@@ -21,6 +21,16 @@
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPTableView.j>
+
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNAlert.j>
+
+@import "Model/TNLibvirt.j"
+
+@class TNMenuItem
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",

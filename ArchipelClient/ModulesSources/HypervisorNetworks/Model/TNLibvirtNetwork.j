@@ -17,11 +17,13 @@
  */
 
 
+@import "TNLibvirtNetworkBandwidth.j"
 @import "TNLibvirtNetworkBase.j"
 @import "TNLibvirtNetworkBridge.j"
 @import "TNLibvirtNetworkDomain.j"
 @import "TNLibvirtNetworkForward.j"
 @import "TNLibvirtNetworkIP.j"
+
 
 /*! @ingroup hypervisornetworks
     Model for network

@@ -22,6 +22,8 @@
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPTextField.j>
 
+@global TNArchipelRememberOpenedGroup
+
 
 TNArchipelRosterOutlineViewReload                   = @"TNArchipelRosterOutlineViewReload";
 TNArchipelPropertiesViewDidShowNotification         = @"TNArchipelPropertiesViewDidShowNotification";

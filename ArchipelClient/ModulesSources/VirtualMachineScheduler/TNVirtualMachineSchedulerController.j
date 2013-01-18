@@ -33,6 +33,10 @@
 @import "../../Model/TNModule.j"
 @import "TNSchedulerController.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
+
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
     @desc Scheduler control for virtual machines
 */

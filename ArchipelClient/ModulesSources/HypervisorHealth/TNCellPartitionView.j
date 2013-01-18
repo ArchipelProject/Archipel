@@ -23,6 +23,10 @@
 
 @import "../../Views/TNBasicDataView.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
+
 /*! represent a Partition object in a CPTableView
 */
 @implementation TNCellPartitionView : TNBasicDataView

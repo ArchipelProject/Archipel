@@ -32,6 +32,11 @@
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
 
+@class CPLocalizedString
+@global TNArchipelRememberOpenedGroup
+@global TNArchipelPropertiesViewDidShowNotification
+@global TNArchipelEntityTypeUser
+
 
 /*! @ingroup archipelcore
     subclass of CPView that represent the bottom-left property panel.

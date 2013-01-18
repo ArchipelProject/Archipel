@@ -33,6 +33,11 @@
 
 @import "TNXMPPServerUserFetcher.j"
 
+@class TNTableViewLazyDataSource
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
+
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
     TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",

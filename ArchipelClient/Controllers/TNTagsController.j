@@ -31,6 +31,10 @@
 
 @import "TNPermissionsCenter.j"
 
+@class CPLocalizedString
+@global TNArchipelNotificationRosterSelectionChanged
+
+
 var TNArchipelTypeTags              = @"archipel:tags",
     TNArchipelTypeTagsSetTags       = @"settags";
 

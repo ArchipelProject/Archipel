@@ -26,6 +26,8 @@
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
 
+@class CPLocalizedString
+
 
 /*! @ingroup archipelcore
     This class represent the current XMPP account properties controller

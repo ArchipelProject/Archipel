@@ -22,6 +22,8 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
+@import "TNVMCastDatasource.j"
+
 
 var TNCellApplianceStatusIconInstalled,
     TNCellApplianceStatusIconInstalling,

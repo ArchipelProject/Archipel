@@ -28,6 +28,7 @@
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
 @import "TNLibvirtDeviceController.j"
+@import "TNLibvirtDeviceVideo.j"
 
 /*! @ingroup virtualmachinedefinition
     Model for devices

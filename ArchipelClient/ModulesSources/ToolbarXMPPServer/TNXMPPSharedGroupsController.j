@@ -34,6 +34,9 @@
 
 @import "TNXMPPServerUserFetcher.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     TNArchipelTypeXMPPServerGroupsCreate        = @"create",

@@ -21,6 +21,10 @@
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPTableView.j>
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 /*! @ingroup virtualmachinedefinition

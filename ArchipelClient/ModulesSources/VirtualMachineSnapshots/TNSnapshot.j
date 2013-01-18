@@ -17,7 +17,7 @@
  */
 
 @import <Foundation/Foundation.j>
-
+@import <AppKit/CPImage.j>
 
 /*! @ingroup virtualmachinedrives
     this class represent a snapshot

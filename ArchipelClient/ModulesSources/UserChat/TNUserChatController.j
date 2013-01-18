@@ -30,6 +30,9 @@
 @import "../../Model/TNModule.j"
 @import "TNDetachedChatController.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 /*! @defgroup  userchat Module User Chat
     @desc This module allows to chat with entities

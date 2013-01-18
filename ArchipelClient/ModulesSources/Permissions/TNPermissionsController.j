@@ -37,6 +37,10 @@
 @import "TNPermissionDataView.j"
 @import "TNPermission.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeUser
+
 
 var TNArchipelTypePermissions                   = @"archipel:permissions",
     TNArchipelTypePermissionsList               = @"list",

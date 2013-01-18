@@ -25,11 +25,16 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNAlert.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
 
 @import "../../Model/TNModule.j"
 @import "MapKit/MKMapView.j";
 @import "TNDragDropTableViewDataSource.j";
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeHypervisor
+@global TNArchipelEntityTypeVirtualMachine
 
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
@@ -102,6 +107,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [textFieldDestinationNameLabel setTextColor:[CPColor colorWithHexString:@"00000"]];
     [textFieldDestinationName setTextColor:[CPColor colorWithHexString:@"00000"]];
 
+    var posy;
     if (posy = [defaults integerForKey:@"TNArchipelMapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 
@@ -155,7 +161,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [mapViewContainer addSubview:_mainMapView];
 
 
-    var defaults = [CPUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults],
+        posy;
+
     if (posy = [defaults integerForKey:@"TNArchipelMapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 

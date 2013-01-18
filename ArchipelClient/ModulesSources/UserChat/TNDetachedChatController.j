@@ -21,11 +21,17 @@
 
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPPlatformWindow.j>
+@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSound.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
 
+@import <StropheCappuccino/TNStropheIMClient.j>
 @import <TNKit/TNMessageBoard.j>
+
+@global TNStropheContactMessageReceivedNotification
+@global TNStropheContactVCardReceivedNotification
+@global TNStropheContactNicknameUpdatedNotification
 
 
 if ([CPPlatform isBrowser])

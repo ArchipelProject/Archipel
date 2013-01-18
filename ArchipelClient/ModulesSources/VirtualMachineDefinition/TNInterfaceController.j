@@ -16,11 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <Foundation/Foundation.j>
+
+@import <TNKit/TNTableViewDataSource.j>
+
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:network",
     TNArchipelTypeHypervisorNuageNetwork            = @"archipel:hypervisor:nuage:network",

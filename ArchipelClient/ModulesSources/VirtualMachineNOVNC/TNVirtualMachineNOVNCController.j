@@ -31,6 +31,8 @@
 @import "TNExternalVNCWindow.j"
 @import "TNZoomAnimation.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmachine:vnc",

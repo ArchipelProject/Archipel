@@ -25,6 +25,11 @@
 
 @import <TNKit/TNAlert.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelDrivesFormats
+
+
 var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskCreate      = @"create",
     TNArchipelTypeVirtualMachineDiskGoldenList  = @"getgolden";

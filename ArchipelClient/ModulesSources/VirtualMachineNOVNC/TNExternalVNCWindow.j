@@ -19,11 +19,19 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPImageView.j>
+@import <AppKit/CPSlider.j>
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNToolbar.j>
-@import <TNKit/TNToolbar.j>
+@import <TNKit/TNAlert.j>
+@import <GrowlCappuccino/TNGrowlCenter.j>
 @import <VNCCappuccino/TNVNCView.j>
+
+@global CPLocalizedStringTNAlert
+@global CPLocalizedStringFromTableInBundle
+@global TNStropheContactVCardReceivedNotification
+@global TNStropheContactNicknameUpdatedNotification
+
 
 var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     TNVNCWindowToolBarSendPasteboard    = @"TNVNCWindowToolBarSendPasteboard",
@@ -73,7 +81,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarSendPasteboard label:CPBundleLocalizedString(@"Send Clipboard", @"Send Clipboard") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarSendPasteboard.png"] target:self action:@selector(sendPasteboard:)];
         [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarFullScreen label:CPBundleLocalizedString(@"Full Screen", @"Full Screen") icon:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] target:self action:@selector(setFullScreen:)];
         [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:CPBundleLocalizedString(@"Ctrl Alt Del", @"Ctrl Alt Del") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
-        zoomItem = [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarZoom label:CPBundleLocalizedString(@"Zoom", @"Zoom") view:zoomSlider target:self action:@selector(changeScale:)];
+
+        var zoomItem = [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarZoom label:CPBundleLocalizedString(@"Zoom", @"Zoom") view:zoomSlider target:self action:@selector(changeScale:)];
 
         [zoomItem setMinSize:CGSizeMake(120.0, 24.0)];
         [zoomItem setMaxSize:CGSizeMake(120.0, 24.0)];

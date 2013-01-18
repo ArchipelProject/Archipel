@@ -21,6 +21,16 @@
 
 @import "TNLibvirtBase.j";
 
+@import "TNLibvirtDevices.j"
+@import "TNLibvirtDomainBlockIOTune.j"
+@import "TNLibvirtDomainFeatures.j"
+@import "TNLibvirtDomainClock.j"
+@import "TNLibvirtDomainMemoryBacking.j"
+@import "TNLibvirtDomainMemoryTune.j"
+@import "TNLibvirtDomainOS.j"
+@import "TNLibvirtDomainQEMUCommandLine.j"
+@import "TNLibvirtDomainMetadata.j"
+
 
 TNLibvirtDomainTypeKVM                      = @"kvm";
 TNLibvirtDomainTypeXen                      = @"xen";

@@ -23,6 +23,7 @@
 @import <AppKit/CPColor.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTabView.j>
@@ -49,6 +50,11 @@
 @import "TNInterfaceController.j"
 @import "TNInterfaceDeviceDataView.j"
 @import "TNVirtualMachineGuestItem.j"
+
+@class TNTabView
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 
 var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinitionUpdatedNotification",
@@ -192,6 +198,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     TNTableViewDataSource               _inputDevicesDatasource;
     TNTableViewDataSource               _nicsDatasource;
     TNXMLNode                           _libvirtCapabilities;
+    TNXMLNode                           _libvirtDomain;
 }
 
 
@@ -1314,7 +1321,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         for (var i = 0; i < [nuageNetworks count]; i++)
         {
             var nuageNetwork = [nuageNetworks objectAtIndex:i],
-                interface_mac = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"mac"];
+                interface_mac = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"mac"],
                 interface_ip = [[nuageNetwork firstChildWithName:@"interface"] valueForAttribute:@"address"];
 
             for (var j = 0; j < [[[_libvirtDomain devices] interfaces] count]; j++)
@@ -2241,8 +2248,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [buttonGuests removeAllItems];
 
         var host = [aStanza firstChildWithName:@"host"],
-            guests = [aStanza childrenWithName:@"guest"],
-            _libvirtCapabilities = [CPDictionary dictionary];
+            guests = [aStanza childrenWithName:@"guest"];
+
+        _libvirtCapabilities = [CPDictionary dictionary];
 
         if ([guests count] == 0)
         {

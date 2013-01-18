@@ -17,8 +17,18 @@
  */
 
 @import <Foundation/Foundation.j>
+@import <GrowlCappuccino/TNGrowlCenter.j>
+@import <StropheCappuccino/TNPubSub.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <StropheCappuccino/TNStropheJID.j>
+@import <StropheCappuccino/TNStropheStanza.j>
 
 @import "../Resources/admin-accounts.js"
+
+@class CPLocalizedString
+@global TNArchipelEntityTypeUser
+
 
 TNPermissionsValidationModeBare             = 0;
 TNPermissionsValidationModeNode             = 1;

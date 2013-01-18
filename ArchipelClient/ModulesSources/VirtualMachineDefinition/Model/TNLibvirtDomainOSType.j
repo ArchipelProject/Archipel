@@ -24,6 +24,8 @@ TNLibvirtDomainOSTypeTypeHVM    = @"hvm";
 
 @import "TNLibvirtBase.j";
 
+@global TNLibvirtDomainTypeXen
+
 
 /*! @ingroup virtualmachinedefinition
     Model for OS Type

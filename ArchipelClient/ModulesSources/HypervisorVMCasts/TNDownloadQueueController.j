@@ -21,10 +21,15 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPWindow.j>
 
+@import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "TNCellPercentageView.j"
+@import "TNDownoadObject.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelTypeHypervisorVMCastingDownloadQueue
 
 
 var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",

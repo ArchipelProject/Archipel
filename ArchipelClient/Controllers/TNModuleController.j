@@ -28,6 +28,9 @@
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
+@global TNArchipelEntityTypes
+
+
 /*! @global
     @group TNArchipelModuleType
     type for tab module
@@ -79,6 +82,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
     BOOL                            _allowToolbarSwitching;
+    BOOL                            _deactivateModuleTabItemPositionStorage;
     CPDictionary                    _modulesMenuItems;
     CPDictionary                    _openedTabsRegistry;
     CPDictionary                    _tabModules;
@@ -400,7 +404,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     if (entityDefinition)
     {
         var entityType = [entityDefinition objectForKey:@"Type"],
-            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"];
+            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"],
+            entityDescription;
 
         if (!entityDescriptionGroup)
             entityDescription = entityType;

@@ -32,6 +32,8 @@
 
 @import "Model/TNLibvirtNet.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 /*! @ingroup hypervisornetworks

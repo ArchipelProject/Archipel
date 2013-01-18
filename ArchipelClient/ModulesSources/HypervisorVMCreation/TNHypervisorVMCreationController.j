@@ -22,6 +22,7 @@
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPSearchField.j>
+@import <AppKit/CPTabViewItem.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
@@ -37,6 +38,11 @@
 @import "TNVirtualMachineParkedDataView.j"
 @import "TNVirtualMachineParkingController.j"
 @import "TNVirtualMachineSubscriptionController.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeVirtualMachine
+@global TNArchipelRosterOutlineViewSelectItemNotification
 
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",

@@ -73,6 +73,8 @@
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
 
+@global CPLocalizedString
+
 
 CPFontDefaultSystemFontFace = @"Courier";
 
@@ -434,7 +436,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* module controller */
     CPLog.trace(@"initializing moduleController");
-    _moduleLoadingStarted = NO;
     [moduleController setDelegate:self];
     [moduleController setMainToolbar:_mainToolbar];
     [moduleController setMainTabView:_moduleTabView];

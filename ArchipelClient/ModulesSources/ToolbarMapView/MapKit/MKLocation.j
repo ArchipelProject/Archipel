@@ -1,5 +1,6 @@
 @import <Foundation/CPObject.j>
-@import "MKMapView.j"
+
+@class MKMapView
 
 @implementation MKLocation : CPObject
 {
