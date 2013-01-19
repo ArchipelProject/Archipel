@@ -216,15 +216,15 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [scrollViewContentView setDocumentView:viewMainContent];
     [scrollViewContentView setAutohidesScrollers:YES];
     var frameSize = [scrollViewContentView contentSize];
-    [viewMainContent setFrameOrigin:CPPointMake(0.0, 0.0)];
+    [viewMainContent setFrameOrigin:CGPointMake(0.0, 0.0)];
     [viewMainContent setFrameSize:frameSize];
     [viewMainContent setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [viewBottomControl setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 
      var inset = CGInsetMake(2, 2, 2, 5);
-    [buttonUndefine setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"undefine.png"] size:CPSizeMake(16, 16)]];
+    [buttonUndefine setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"undefine.png"] size:CGSizeMake(16, 16)]];
     [buttonUndefine setValue:inset forThemeAttribute:@"content-inset"];
-    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
+    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CGSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
     // set theme of buttonXMLEditorDefine to default
@@ -246,8 +246,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [viewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
-    [viewParametersStandard setFrameSize:CPSizeMake([scrollViewParametersStandard frameSize].width, [viewParametersStandard frameSize].height)];
-    [viewParametersAdvanced setFrameSize:CPSizeMake([scrollViewParametersAdvanced frameSize].width, [viewParametersAdvanced frameSize].height)];
+    [viewParametersStandard setFrameSize:CGSizeMake([scrollViewParametersStandard frameSize].width, [viewParametersStandard frameSize].height)];
+    [viewParametersAdvanced setFrameSize:CGSizeMake([scrollViewParametersAdvanced frameSize].width, [viewParametersAdvanced frameSize].height)];
 
     [scrollViewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [scrollViewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
@@ -273,8 +273,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tabViewParameters addTabViewItem:tabViewItemCharacter];
     [tabViewParameters setDelegate:self];
 
-    var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CPSizeMake(1.0, 10.0)],
-        shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CPSizeMake(1.0, 10.0)];
+    var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CGSizeMake(1.0, 10.0)],
+        shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CGSizeMake(1.0, 10.0)];
     [viewParametersEffectTop setBackgroundColor:[CPColor colorWithPatternImage:shadowTop]];
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
@@ -334,7 +334,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonDrives setToolTip:CPBundleLocalizedString(@"Remove selected drives", @"Remove selected drives")];
 
     _editButtonDrives = [CPButtonBar plusButton];
-    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_editButtonDrives setEnabled:NO];
@@ -373,7 +373,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonNics setToolTip:CPBundleLocalizedString(@"Remove selected network interfaces", @"Remove selected network interfaces")];
 
     _editButtonNics = [CPButtonBar plusButton];
-    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editInterface:)];
     [_editButtonNics setEnabled:NO];
@@ -405,7 +405,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonInputDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
 
     _editButtonInputDevice = [CPButtonBar plusButton];
-    [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButtonInputDevice setTarget:self];
     [_editButtonInputDevice setAction:@selector(editInputDevice:)];
     [_editButtonInputDevice setToolTip:CPBundleLocalizedString(@"Edit selected input device", @"Edit selected input device")];
@@ -438,7 +438,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
 
     _editButtonGraphicDevice = [CPButtonBar plusButton];
-    [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButtonGraphicDevice setTarget:self];
     [_editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
     [_editButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Edit selected graphic device", @"Edit selected graphic device")];
@@ -478,7 +478,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Remove selected character devices", @"Remove selected character devices")];
 
     _editButtonCharacterDevice = [CPButtonBar plusButton];
-    [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButtonCharacterDevice setTarget:self];
     [_editButtonCharacterDevice setAction:@selector(editCharacterDevice:)];
     [_editButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Edit selected character device", @"Edit selected character device")];
@@ -548,8 +548,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
 
-    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
-    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(8.0, 8.0)];
+    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
+    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CGSizeMake(8.0, 8.0)];
     [buttonDefine setEnabled:NO];
 
     [viewParametersStandard applyShadow];
@@ -1114,7 +1114,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         var features = [capabilities firstChildWithName:@"features"];
 
         [checkboxPAE setEnabled:NO];
-        if ([features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"] )
+        if ([features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"])
             [checkboxPAE setEnabled:YES];
         if (![features containsChildrenWithName:@"nonpae"] && [features containsChildrenWithName:@"pae"])
             [checkboxPAE setState:CPOnState];

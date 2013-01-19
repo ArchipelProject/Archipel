@@ -126,9 +126,9 @@ var TNModuleStatusImageReady,
 {
     var mainBundle = [CPBundle mainBundle];
 
-    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
-    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
-    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)];
+    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
+    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
+    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CGSizeMake(8.0, 8.0)];
 }
 
 - (BOOL)initializeModule

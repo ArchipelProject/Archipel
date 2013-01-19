@@ -35,7 +35,7 @@
 {
     if (!_imageView)
     {
-        var frame = CPRectInset([self bounds], 5.0, 5.0);
+        var frame = CGRectInset([self bounds], 5.0, 5.0);
 
         _imageView = [[CPImageView alloc] initWithFrame:frame];
 

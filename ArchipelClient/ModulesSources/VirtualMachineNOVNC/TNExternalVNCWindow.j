@@ -71,7 +71,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         _mainToolbar = [[TNToolbar alloc] init];
         [self setToolbar:_mainToolbar];
 
-        var zoomSlider = [[CPSlider alloc] initWithFrame:CPRectMake(0.0, 0.0, 96.0, 21.0)];
+        var zoomSlider = [[CPSlider alloc] initWithFrame:CGRectMake(0.0, 0.0, 96.0, 21.0)];
         [zoomSlider setMinValue:1.0];
         [zoomSlider setDoubleValue:100.0];
         [zoomSlider setMaxValue:200.0];
@@ -143,7 +143,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
 
     var domWindow = [[self platformWindow] DOMWindow],
-        unloadFunction = function(){
+        unloadFunction = function()
+        {
             [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
             [self close];
         };
@@ -157,7 +158,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
             " Your browser don't support any known unload event. This will result as big memory leak each time you close this window!"+
             " Please report a bug at https://gitbub.com/primalmotion/Archipel/issues. I have to go! Good luck!");
 
-    _imageViewVirtualMachineAvatar = [[CPImageView alloc] initWithFrame:CPRectMake(7.0, 4.0, 50.0, 50.0)];
+    _imageViewVirtualMachineAvatar = [[CPImageView alloc] initWithFrame:CGRectMake(7.0, 4.0, 50.0, 50.0)];
     [_imageViewVirtualMachineAvatar setImage:[_entity avatar]];
     [[_mainToolbar customSubViews] addObject:_imageViewVirtualMachineAvatar];
     [_mainToolbar reloadToolbarItems];
@@ -200,7 +201,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [self fitWindowToSize:[_vncView displaySize]];
 }
 
-- (void)fitWindowToSize:(CPSize)aSize
+- (void)fitWindowToSize:(CGSize)aSize
 {
     var vncSize         = aSize,
         newRect         = [[self platformWindow] contentRect],
@@ -308,14 +309,14 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
 /*! VNCView delegate
 */
-- (void)vncView:(TNVNCView)aVNCView didDesktopSizeChange:(CPSize)aNewSize
+- (void)vncView:(TNVNCView)aVNCView didDesktopSizeChange:(CGSize)aNewSize
 {
     [self fitWindowToSize:aNewSize];
 }
 
 /*! VNCView delegate
 */
-- (void)vncView:(TNVNCView)aVNCView didBecomeFullScreen:(BOOL)isFullScreen size:(CPSize)aSize zoomFactor:(float)zoomFactor
+- (void)vncView:(TNVNCView)aVNCView didBecomeFullScreen:(BOOL)isFullScreen size:(CGSize)aSize zoomFactor:(float)zoomFactor
 {
     [_vncView setZoom:zoomFactor];
 }

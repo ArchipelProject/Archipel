@@ -61,10 +61,10 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
 - (void)awakeFromCib
 {
-    TNArchipelAvatarManagerThumbSize = CPSizeMake(48, 48);
+    TNArchipelAvatarManagerThumbSize = CGSizeMake(48, 48);
 
     var itemPrototype   = [[CPCollectionViewItem alloc] init],
-        avatarView      = [[TNAvatarView alloc] initWithFrame:CPRectMakeZero()];
+        avatarView      = [[TNAvatarView alloc] initWithFrame:CGRectMakeZero()];
 
     [imageSpinner setHidden:YES];
 

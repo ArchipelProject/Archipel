@@ -103,7 +103,7 @@ var TNInterfaceDeviceDataViewIconNetwork,
     }
 
     if ([_currentInterface type] == TNLibvirtDeviceInterfaceTypeNuage && [_currentInterface nuageNetworkInterfaceIP])
-        [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString] + @" ("+ [_currentInterface nuageNetworkInterfaceIP] +")"];
+        [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString] + @" (" + [_currentInterface nuageNetworkInterfaceIP] + ")"];
     else
         [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString]];
 

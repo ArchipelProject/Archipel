@@ -193,7 +193,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
     var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"charts"],
         tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"logs"],
-        scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
+        scrollViewChart = [[CPScrollView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:CPBundleLocalizedString(@"Charts", @"Charts")];
     [tabViewItemCharts setView:scrollViewChart];

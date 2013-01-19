@@ -78,8 +78,8 @@
     [viewControls setBackgroundColor:[CPColor colorWithPatternImage:controlsBg]];
 
     //controls buttons
-    var imageClear  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/clean.png"] size:CPSizeMake(16, 16)],
-        imageDetach = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] size:CPSizeMake(16, 16)];
+    var imageClear  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/clean.png"] size:CGSizeMake(16, 16)],
+        imageDetach = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] size:CGSizeMake(16, 16)];
 
     [buttonClear setImage:imageClear];
     [buttonDetach setImage:imageDetach];

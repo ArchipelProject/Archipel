@@ -101,7 +101,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)]];
+    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CGSizeMake(16, 16)]];
 
     [splitView setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -113,22 +113,22 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [_datasourcePermissions setSearchableKeyPaths:[@"name", @"description"]];
     [tablePermissions setDataSource:_datasourcePermissions];
     [[tablePermissions tableColumnWithIdentifier:@"self"] setDataView:[permissionDataViewPrototype duplicate]];
-    [tablePermissions setIntercellSpacing:CPSizeMakeZero()];
+    [tablePermissions setIntercellSpacing:CGSizeMakeZero()];
 
     _saveButton = [CPButtonBar plusButton];
-    [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
+    [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CGSizeMake(16, 16)]];
     [_saveButton setTarget:self];
     [_saveButton setAction:@selector(changePermissionsState:)];
     [_saveButton setToolTip:CPBundleLocalizedString(@"Save current permission set", @"Save current permission set")];
 
     _saveAsTemplateButton = [CPButtonBar plusButton];
-    [_saveAsTemplateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/role_add.png"] size:CPSizeMake(16, 16)]];
+    [_saveAsTemplateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/role_add.png"] size:CGSizeMake(16, 16)]];
     [_saveAsTemplateButton setTarget:rolesController];
     [_saveAsTemplateButton setAction:@selector(openNewTemplateWindow:)];
     [_saveAsTemplateButton setToolTip:CPBundleLocalizedString(@"Save current permission set as template", @"Save current permission set as template")];
 
     _applyRoleButton = [CPButtonBar plusButton];
-    [_applyRoleButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/roles.png"] size:CPSizeMake(16, 16)]];
+    [_applyRoleButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/roles.png"] size:CGSizeMake(16, 16)]];
     [_applyRoleButton setTarget:self];
     [_applyRoleButton setAction:@selector(openRolesWindow:)];
     [_applyRoleButton setToolTip:CPBundleLocalizedString(@"Apply a role", @"Apply a role")];

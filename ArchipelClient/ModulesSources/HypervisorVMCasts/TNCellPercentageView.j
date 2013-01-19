@@ -36,7 +36,7 @@
 {
     if (self = [super init])
     {
-        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CPRectMake(0.0, 4.0, 0.0, 16.0)];
+        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CGRectMake(0.0, 4.0, 0.0, 16.0)];
         [_progressBar setAutoresizingMask:CPViewWidthSizable];
         [_progressBar setMaxValue:100];
         [_progressBar setMinValue:0];

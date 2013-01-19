@@ -114,7 +114,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected disks", @"Delete selected disks")];
 
     _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(openEditWindow:)];
     [_editButton setEnabled:NO];

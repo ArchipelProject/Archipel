@@ -45,10 +45,10 @@ var TNCellLogViewIconError,
 + (void)initialize
 {
     var bundle = [CPBundle bundleForClass:TNCellLogView];
-    TNCellLogViewIconError      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-error.png"] size:CPSizeMake(18.0, 18.0)];
-    TNCellLogViewIconWarning    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-warning.png"] size:CPSizeMake(18.0, 18.0)];
-    TNCellLogViewIconInfo       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-info.png"] size:CPSizeMake(18.0, 18.0)];
-    TNCellLogViewIconDebug      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-debug.png"] size:CPSizeMake(18.0, 18.0)];
+    TNCellLogViewIconError      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-error.png"] size:CGSizeMake(18.0, 18.0)];
+    TNCellLogViewIconWarning    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-warning.png"] size:CGSizeMake(18.0, 18.0)];
+    TNCellLogViewIconInfo       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-info.png"] size:CGSizeMake(18.0, 18.0)];
+    TNCellLogViewIconDebug      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-debug.png"] size:CGSizeMake(18.0, 18.0)];
 
 }
 

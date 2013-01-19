@@ -92,7 +92,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)awakeFromCib
 {
-    _mainWindow = [[CPPanel alloc] initWithContentRect:CPRectMake(0.0, 0.0, 700.0, 543.0) styleMask:CPDocModalWindowMask];
+    _mainWindow = [[CPPanel alloc] initWithContentRect:CGRectMake(0.0, 0.0, 700.0, 543.0) styleMask:CPDocModalWindowMask];
     [_mainWindow setContentView:viewContentWindowPreferences];
 
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],

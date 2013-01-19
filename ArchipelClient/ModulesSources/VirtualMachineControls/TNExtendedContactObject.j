@@ -42,7 +42,7 @@ var TNExtendedContactImageSelected;
 
 + (void)initialize
 {
-    TNExtendedContactImageSelected = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
+    TNExtendedContactImageSelected = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CGSizeMake(12, 12)];
 }
 
 /*! intialize a TNExtendedContact with given values

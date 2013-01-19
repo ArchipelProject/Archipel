@@ -45,8 +45,8 @@ var TNInputDeviceDataViewIconTablet,
 
 + (void)initialize
 {
-    TNInputDeviceDataViewIconTablet = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNInputDeviceDataView] pathForResource:@"icon-tablet.png"] size:CPSizeMake(26.0, 26.0)];
-    TNInputDeviceDataViewIconMouse = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNInputDeviceDataView] pathForResource:@"icon-mouse.png"] size:CPSizeMake(26.0, 26.0)];
+    TNInputDeviceDataViewIconTablet = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNInputDeviceDataView] pathForResource:@"icon-tablet.png"] size:CGSizeMake(26.0, 26.0)];
+    TNInputDeviceDataViewIconMouse = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNInputDeviceDataView] pathForResource:@"icon-mouse.png"] size:CGSizeMake(26.0, 26.0)];
 }
 
 

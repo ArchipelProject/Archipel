@@ -120,25 +120,25 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected networks", @"Delete selected networks")]
 
     _activateButton = [CPButtonBar plusButton];
-    [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(16, 16)]];
+    [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CGSizeMake(16, 16)]];
     [_activateButton setTarget:self];
     [_activateButton setAction:@selector(activateNetwork:)];
     [_activateButton setToolTip:CPBundleLocalizedString(@"Activate selected networks", @"Activate selected networks")];
 
     _deactivateButton = [CPButtonBar plusButton];
-    [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/cancel.png"] size:CPSizeMake(16, 16)]];
+    [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/cancel.png"] size:CGSizeMake(16, 16)]];
     [_deactivateButton setTarget:self];
     [_deactivateButton setAction:@selector(deactivateNetwork:)];
     [_deactivateButton setToolTip:CPBundleLocalizedString(@"Deactivate selected networks", @"Deactivate selected networks")];
 
     _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(editNetwork:)];
     [_editButton setToolTip:CPBundleLocalizedString(@"Edit selected network", @"Edit selected network")];
 
     _editXMLButton = [CPButtonBar plusButton];
-    [_editXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
+    [_editXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CGSizeMake(16, 16)]];
     [_editXMLButton setTarget:self];
     [_editXMLButton setAction:@selector(openXMLEditor:)];
     [_editXMLButton setToolTip:CPBundleLocalizedString(@"Open manual XML editor", @"Open manual XML editor")];

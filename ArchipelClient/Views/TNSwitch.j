@@ -43,7 +43,7 @@
 }
 
 
-+ (TNSwitch)switchWithFrame:(CPRect)aFrame
++ (TNSwitch)switchWithFrame:(CGRect)aFrame
 {
     var mainBundle  = [CPBundle mainBundle],
         aSwitch     = [[TNSwitch alloc] initWithFrame:aFrame],
