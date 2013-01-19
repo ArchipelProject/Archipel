@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersList               = @"list",
