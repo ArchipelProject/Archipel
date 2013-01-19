@@ -31,14 +31,12 @@ DEPLOY_PATH="/var/www/archipelproject.org/app/"
 EXPORT_PATH="/var/www/archipelproject.org/nightlies/old/"
 API_PATH="/var/www/archipelproject.org/api/"
 
-
 def updateSubmodules():
     os.system("bash ./pull.sh")
 
-
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clobber && jake release && jake debug"):
+    if os.system('rm -rf "$CAPP_BUILD"; cd ./ArchipelClient/Libraries/Cappuccino && jake clobber && jake install'):
         sys.exit(-1)
 
 
