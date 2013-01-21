@@ -35,6 +35,11 @@
 
 @import "Model/TNNuage.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNVirtualMachineVMCreationAddFieldDelegateNotification
+
+
 var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     TNArchipelTypeHypervisorNuage               = @"archipel:hypervisor:nuage:network",
     TNArchipelTypeHypervisorNuageGet            = @"get",
@@ -127,13 +132,13 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected Nuage networks", @"Delete selected Nuage networks")];
 
     _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(editNuage:)];
     [_editButton setToolTip:CPBundleLocalizedString(@"Open configuration panel for selected Nuage network", @"Open configuration panel for selected Nuage network")];
 
     _editXMLButton = [CPButtonBar plusButton];
-    [_editXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CPSizeMake(16, 16)]];
+    [_editXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CGSizeMake(16, 16)]];
     [_editXMLButton setTarget:self];
     [_editXMLButton setAction:@selector(openXMLEditor:)];
     [_editXMLButton setToolTip:CPLocalizedString(@"Open the manual XML editor", @"Open the manual XML editor")];
@@ -502,7 +507,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     {
         [self flushUI];
 
-        var nuages = [aStanza childrenWithName:@"nuage"]
+        var nuages = [aStanza childrenWithName:@"nuage"];
 
         for (var i = 0; i < [nuages count]; i++)
         {

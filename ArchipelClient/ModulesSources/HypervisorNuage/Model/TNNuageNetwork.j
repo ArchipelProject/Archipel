@@ -19,6 +19,7 @@
 
 @import "TNNuageNetworkBase.j"
 @import "TNNuageNetworkSubnet.j"
+@import "TNNuageNetworkBandwidth.j"
 
 TNNuageNetworkTypeIPV4  = @"ipv4";
 TNNuageNetworkTypeIPV6  = @"ipv6";

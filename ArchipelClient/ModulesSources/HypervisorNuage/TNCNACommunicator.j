@@ -19,6 +19,9 @@
 
 @import <Foundation/Foundation.j>
 
+@import <TNKit/TNAlert.j>
+
+@import "REST/NURESTLoginController.j"
 @import "REST/NURESTConnection.j"
 @import "REST/NURESTPushCenter.j"
 
