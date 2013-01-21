@@ -164,7 +164,7 @@ var gmNamespace = nil;
     {
         // TODO some sort of queue?
     }
-    return marker;
+    return aMarker;
 }
 
 - (void)clearOverlays

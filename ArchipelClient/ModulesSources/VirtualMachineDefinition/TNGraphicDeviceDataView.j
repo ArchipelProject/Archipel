@@ -48,9 +48,9 @@ var TNGraphicDeviceDataViewIconVNC,
 
 + (void)initialize
 {
-    TNGraphicDeviceDataViewIconVNC = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-vnc.png"] size:CPSizeMake(26.0, 26.0)];
-    TNGraphicDeviceDataViewIconRDP = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-rdp.png"] size:CPSizeMake(26.0, 26.0)];
-    TNGraphicDeviceDataViewIconSPICE = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-spice.png"] size:CPSizeMake(26.0, 26.0)];
+    TNGraphicDeviceDataViewIconVNC = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-vnc.png"] size:CGSizeMake(26.0, 26.0)];
+    TNGraphicDeviceDataViewIconRDP = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-rdp.png"] size:CGSizeMake(26.0, 26.0)];
+    TNGraphicDeviceDataViewIconSPICE = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNGraphicDeviceDataView] pathForResource:@"icon-spice.png"] size:CGSizeMake(26.0, 26.0)];
 }
 
 

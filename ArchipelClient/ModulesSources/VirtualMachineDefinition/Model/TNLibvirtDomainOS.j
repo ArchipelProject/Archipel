@@ -20,6 +20,7 @@
 @import <StropheCappuccino/TNXMLNode.j>
 
 @import "TNLibvirtBase.j";
+@import "TNLibvirtDomainOSType.j"
 
 TNLibvirtDomainOSBootHardDrive          = @"hd";
 TNLibvirtDomainOSBootCDROM              = @"cdrom";

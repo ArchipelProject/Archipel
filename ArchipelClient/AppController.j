@@ -73,6 +73,8 @@
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
 
+@global CPLocalizedString
+
 
 CPFontDefaultSystemFontFace = @"Courier";
 
@@ -233,7 +235,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [theWindow setFullPlatformWindow:YES];
 
-    TNUserAvatarSize = CPSizeMake(50.0, 50.0);
+    TNUserAvatarSize = CGSizeMake(50.0, 50.0);
 
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
@@ -349,7 +351,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
-    _moduleTabView = [[TNTabView alloc] initWithFrame:CPRectMakeZero()];
+    _moduleTabView = [[TNTabView alloc] initWithFrame:CGRectMakeZero()];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setContentBackgroundColor:commonImageModuleBackground];
     [rightView setBackView:_moduleTabView];
@@ -379,7 +381,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var bounds  = [_moduleTabView bounds];
 
     _rightViewTextField = [CPTextField labelWithTitle:@""];
-    [_rightViewTextField setFrame:CPRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
+    [_rightViewTextField setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
     [_rightViewTextField setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
     [_rightViewTextField setAlignment:CPCenterTextAlignment]
     [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:26]];
@@ -399,9 +401,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* traffic LEDs */
     CPLog.trace(@"Initializing the traffic status LED");
-    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
-    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
-    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
+    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
+    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CGSizeMake(8.0, 8.0)];
 
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
@@ -434,7 +436,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* module controller */
     CPLog.trace(@"initializing moduleController");
-    _moduleLoadingStarted = NO;
     [moduleController setDelegate:self];
     [moduleController setMainToolbar:_mainToolbar];
     [moduleController setMainTabView:_moduleTabView];
@@ -455,13 +456,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"353535"]];
-    [labelCurrentUser setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
 
     [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
     [fieldVersion setStringValue:@""];
     [fieldVersion setTextColor:[CPColor colorWithHexString:@"353535"]];
-    [fieldVersion setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [fieldVersion setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [fieldVersion setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [fieldVersion setSelectable:YES];
     [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
@@ -640,7 +641,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
                                  target:self action:@selector(toolbarItemTagsClick:)
                                 toolTip:@"Show or hide the tags field"];
 
-    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 25.0)],
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 130.0, 25.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
@@ -655,23 +656,23 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:DNDItem];
 
-    [statusItem setMinSize:CPSizeMake(123.0, 25.0)];
-    [statusItem setMaxSize:CPSizeMake(123.0, 25.0)];
+    [statusItem setMinSize:CGSizeMake(123.0, 25.0)];
+    [statusItem setMaxSize:CGSizeMake(123.0, 25.0)];
 
     [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
     [_mainToolbar setPosition:1 forToolbarItemIdentifier:TNToolBarItemStatus];
@@ -694,7 +695,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         userAvatar          = [[CPMenuItem alloc] init],
         userAvatarMenu      = [[CPMenu alloc] init];
 
-    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
+    _userAvatarButton = [[CPButton alloc] initWithFrame:CGRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
 
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
@@ -719,36 +720,36 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CPSizeMake(1, 27)]],
-        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CPSizeMake(1, 26)],
-        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CPSizeMake(1, 26)],
-        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CPSizeMake(1, 26)],
+    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
+        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(1, 26)],
+        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
+        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(1, 26)],
         buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
-        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CPSizeMake(1, 26)],
-        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CPSizeMake(1, 26)],
-        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CPSizeMake(1, 26)],
+        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(1, 26)],
+        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
+        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(1, 26)],
         buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
     _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(20, 20)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(20, 20)];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CGSizeMake(20, 20)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CGSizeMake(20, 20)];
 
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
-    _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
+    _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CGRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(20, 20)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CGSizeMake(20, 20)]];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"];
     [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"];
     [_plusButton setMenu:plusMenu];
     [_plusButton setToolTip:CPLocalizedString(@"Add a new contact or group", @"Add a new contact or group")];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(20, 20)]];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CGSizeMake(20, 20)]];
     [minusButton setAction:@selector(deleteEntities:)];
     [minusButton setToolTip:CPLocalizedString(@"Delete selected contacts or groups", @"Delete selected contacts or groups")];
 
@@ -1381,7 +1382,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)toolbarItemAvatarClick:(id)aSender
 {
-    var wp = CPPointMake(16, 12);
+    var wp = CGPointMake(16, 12);
 
     wp = [aSender convertPoint:wp toView:nil];
 

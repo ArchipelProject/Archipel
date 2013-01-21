@@ -22,6 +22,9 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlAlloc        = @"alloc",
@@ -140,7 +143,7 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
         var rect = [aSender rectOfRow:[aSender selectedRow]];
         rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil]

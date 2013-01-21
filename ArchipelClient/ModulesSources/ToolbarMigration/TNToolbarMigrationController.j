@@ -24,8 +24,15 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
 
 @import "../../Model/TNModule.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeHypervisor
+@global TNArchipelEntityTypeVirtualMachine
+
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",

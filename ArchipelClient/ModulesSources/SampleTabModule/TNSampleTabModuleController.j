@@ -24,6 +24,10 @@
 
 @import "../../Model/TNModule.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
+
 // if you don't need this variables outside of this file,
 // *always* use the 'var' keyword to make them filescoped
 // otherwise, it will be application scoped

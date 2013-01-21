@@ -22,6 +22,9 @@
 
 @import "../../Model/TNModule.j"
 
+@global TNArchipelEntityTypeVirtualMachine
+
+
 var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     TNArchipelControlDestroy        = @"TNArchipelControlDestroy";
 

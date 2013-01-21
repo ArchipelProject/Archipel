@@ -28,7 +28,7 @@
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-    var wp = CPPointMake(16, 12);
+    var wp = CGPointMake(16, 12);
 
     wp = [self convertPoint:wp toView:nil];
 

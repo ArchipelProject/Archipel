@@ -21,6 +21,16 @@
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPTableView.j>
+
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNAlert.j>
+
+@import "Model/TNLibvirt.j"
+
+@class TNMenuItem
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
@@ -270,13 +280,14 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             [fieldDevicePath setStringValue:@"127.0.0.1:4242-sheepdog/myshare"];
         else
         {
-            var hostString = [[[[_drive source] hosts] firstObject] name]
-                                + @":"
-                                + [[[[_drive source] hosts] firstObject] port]
-                                + @"-"
-                                + [[_drive source] protocol]
-                                + @"/"
-                                + [[_drive source] name];
+            var host = [[[_drive source] hosts] firstObject],
+                driveSource = [_drive source],
+                hostname = [host name],
+                port = [host port],
+                protocol = [source protocol],
+                sourceName = [driveSource name],
+                hostString = hostname + @":" + port + @"-" + protocol + @"/" + sourceName;
+
             [fieldDevicePath setStringValue:hostString];
         }
     }
@@ -354,7 +365,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         var rect = [aSender rectOfRow:[aSender selectedRow]];
         rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];

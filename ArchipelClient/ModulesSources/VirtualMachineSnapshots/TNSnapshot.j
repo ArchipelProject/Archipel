@@ -17,7 +17,7 @@
  */
 
 @import <Foundation/Foundation.j>
-
+@import <AppKit/CPImage.j>
 
 /*! @ingroup virtualmachinedrives
     this class represent a snapshot
@@ -47,7 +47,7 @@
     if (self = [super init])
     {
         var bundle      = [CPBundle mainBundle];
-        _currentIcon    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(16, 16)];
+        _currentIcon    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CGSizeMake(16, 16)];
     }
 
     return self;

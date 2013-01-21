@@ -21,8 +21,12 @@
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPTableView.j>
 
 @import "Model/TNLibvirtDeviceCharacter.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 /*! @ingroup virtualmachinedefinition
@@ -151,7 +155,7 @@
         var rect = [aSender rectOfRow:[aSender selectedRow]];
         rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];

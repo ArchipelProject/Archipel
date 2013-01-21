@@ -27,6 +27,8 @@
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <TNKit/TNAlert.j>
 
+@class CPLocalizedString
+@global TNArchipelRememberOpenedGroup
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to add grou in roster

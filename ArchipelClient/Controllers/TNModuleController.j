@@ -28,6 +28,9 @@
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
+@global TNArchipelEntityTypes
+
+
 /*! @global
     @group TNArchipelModuleType
     type for tab module
@@ -79,6 +82,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
     BOOL                            _allowToolbarSwitching;
+    BOOL                            _deactivateModuleTabItemPositionStorage;
     CPDictionary                    _modulesMenuItems;
     CPDictionary                    _openedTabsRegistry;
     CPDictionary                    _tabModules;
@@ -385,7 +389,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleItem                  = [[CPMenuItem alloc] init],
         moduleRootMenu              = [[CPMenu alloc] init],
         frame                       = [_mainModuleView bounds],
-        scrollView                  = [[CPScrollView alloc] initWithFrame:CPRectMakeZero()],
+        scrollView                  = [[CPScrollView alloc] initWithFrame:CGRectMakeZero()],
         moduleTabItem               = [[TNModuleTabViewItem alloc] initWithIdentifier:moduleIdentifier],
         currentModuleController     = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
 
@@ -400,7 +404,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     if (entityDefinition)
     {
         var entityType = [entityDefinition objectForKey:@"Type"],
-            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"];
+            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"],
+            entityDescription;
 
         if (!entityDescriptionGroup)
             entityDescription = entityType;
@@ -500,8 +505,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleToolTip = [moduleToolTip objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
 
     [moduleToolbarItem setLabel:moduleLabel];
-    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32, 32)]];
-    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CPSizeMake(32, 32)]];
+    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CGSizeMake(32, 32)]];
+    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CGSizeMake(32, 32)]];
     [moduleToolbarItem setToolTip:moduleToolTip];
 
     // if toolbar item only, no cib

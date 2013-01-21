@@ -21,7 +21,7 @@
 */
 @implementation TNModalWindow: CPPanel
 
-- (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask
+- (id)initWithContentRect:(CGRect)aFrame styleMask:(id)aMask
 {
     if ([CPPlatform isBrowser])
     {

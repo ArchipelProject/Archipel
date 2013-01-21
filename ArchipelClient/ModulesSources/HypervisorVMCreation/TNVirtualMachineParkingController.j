@@ -23,6 +23,9 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparking",
     TNArchipelTypeHypervisorParkingList         = @"list",
@@ -91,7 +94,7 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
         var rect = [aSender rectOfRow:[aSender selectedRow]];
         rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];

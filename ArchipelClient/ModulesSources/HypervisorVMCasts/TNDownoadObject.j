@@ -18,6 +18,8 @@
 
 @import <Foundation/Foundation.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 /*! @ingroup hypervisorvmcasts

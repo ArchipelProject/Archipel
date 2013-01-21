@@ -22,6 +22,8 @@
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPTextField.j>
 
+@global TNArchipelRememberOpenedGroup
+
 
 TNArchipelRosterOutlineViewReload                   = @"TNArchipelRosterOutlineViewReload";
 TNArchipelPropertiesViewDidShowNotification         = @"TNArchipelPropertiesViewDidShowNotification";
@@ -42,9 +44,9 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
 #pragma mark Initialization
 
 /*! init the class
-    @param aFrame CPRect the frame of the view
+    @param aFrame CGRect the frame of the view
 */
-- (id)initWithFrame:(CPRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {

@@ -26,7 +26,10 @@
 @import <StropheCappuccino/TNStropheRoster.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
-
+@global TNArchipelRosterOutlineViewReload
+@global TNTagsControllerNodeReadyNotification
+@global TNArchipelEntityTypes
+@global TNArchipelEntityTypeUser
 
 /*! @global
     @group TNDragType

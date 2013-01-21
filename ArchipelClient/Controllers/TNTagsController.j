@@ -31,6 +31,10 @@
 
 @import "TNPermissionsCenter.j"
 
+@class CPLocalizedString
+@global TNArchipelNotificationRosterSelectionChanged
+
+
 var TNArchipelTypeTags              = @"archipel:tags",
     TNArchipelTypeTagsSetTags       = @"settags";
 
@@ -80,7 +84,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
         gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-tags.png"]],
-        imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CPSizeMake(16, 16)],
+        imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CGSizeMake(16, 16)],
         tokenFrame;
 
     [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
@@ -89,7 +93,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     _currentRosterItem  = nil;
     _alreadyReady       = NO;
 
-    // tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 33, 24)];
+    // tokenFieldTags = [[CPTokenField alloc] initWithFrame:CGRectMake(0.0, 1.0, CGRectGetWidth(frame) - 33, 24)];
     // [tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
     [tokenFieldTags setDelegate:self];
     [tokenFieldTags setEditable:YES];

@@ -33,6 +33,10 @@
 @import "../../Model/TNModule.j"
 @import "TNSchedulerController.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
+
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
     @desc Scheduler control for virtual machines
 */
@@ -72,12 +76,12 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [tableJobs setDataSource:_datasourceJobs];
 
     _buttonSchedule    = [CPButtonBar plusButton];
-    [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CPSizeMake(16, 16)]];
+    [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CGSizeMake(16, 16)]];
     [_buttonSchedule setTarget:self];
     [_buttonSchedule setAction:@selector(openNewJobWindow:)];
 
     _buttonUnschedule  = [CPButtonBar plusButton];
-    [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
+    [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CGSizeMake(16, 16)]];
     [_buttonUnschedule setTarget:schedulerController];
     [_buttonUnschedule setAction:@selector(unschedule:)];
 

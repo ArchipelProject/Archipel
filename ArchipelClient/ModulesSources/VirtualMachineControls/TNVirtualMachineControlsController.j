@@ -32,10 +32,15 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
 
 @import "../../Model/TNModule.j"
 @import "TNExtendedContactObject.j"
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeHypervisor
+@global TNArchipelRosterOutlineViewDeselectAll
 
 
 var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition",
@@ -194,7 +199,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     // button bar migration
     _migrateButton  = [CPButtonBar plusButton];
-    [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
+    [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CGSizeMake(16, 16)]];
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
     [_migrateButton setEnabled:NO];
@@ -826,7 +831,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self disableAllButtons];
     [self layoutButtons:libvirtState];
 
-    for (var i = 0; i < [_datasourceHypervisors count]; i++ )
+    for (var i = 0; i < [_datasourceHypervisors count]; i++)
     {
         var item = [_datasourceHypervisors objectAtIndex:i];
 

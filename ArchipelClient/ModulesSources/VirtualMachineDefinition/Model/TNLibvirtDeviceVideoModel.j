@@ -59,7 +59,7 @@ TNLibvirtDeviceVideoModels          = [ TNLibvirtDeviceVideoModelVGA,
     {
         _type = TNLibvirtDeviceVideoModelCIRRUS;
         _vram = @"9216";
-        _head = @"1";
+        _heads = @"1";
     }
 
     return self;

@@ -28,6 +28,11 @@
 @import "TNXMPPSharedGroupsController.j"
 @import "TNXMPPUsersController.j"
 
+@class TNMenuItem
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeHypervisor
+
 var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users";
 
 /*! @defgroup  toolbarxmppserver Module XMPP Server
@@ -50,7 +55,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     BOOL                                    _pushRegistred;
     CPImage                                 _defaultAvatar;
     CPTabViewItem                           _itemViewGroups;
-    CPTabViewItem                           _itemViewUser;
+    CPTabViewItem                           _itemViewUsers;
 
 }
 

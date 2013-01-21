@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersList               = @"list",
@@ -50,10 +51,10 @@ var _iconEntityTypeHuman,
 + (void)initialize
 {
     var bundle = [CPBundle bundleForClass:TNXMPPServerUserFetcher];
-    _iconEntityTypeHuman = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CPSizeMake(16, 16)];
-    _iconEntityTypeVM = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CPSizeMake(16, 16)];
-    _iconEntityTypeHypervisor = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CPSizeMake(16, 16)];
-    _iconUserAdmin = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-admin.png"] size:CPSizeMake(16, 16)];
+    _iconEntityTypeHuman = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CGSizeMake(16, 16)];
+    _iconEntityTypeVM = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CGSizeMake(16, 16)];
+    _iconEntityTypeHypervisor = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CGSizeMake(16, 16)];
+    _iconUserAdmin = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-admin.png"] size:CGSizeMake(16, 16)];
 }
 
 /*! Instaciate the class

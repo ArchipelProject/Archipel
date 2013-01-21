@@ -175,7 +175,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_dataSource setCurrentlyLoading:YES];
     if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
         [_delegate userFetcher:self isLoading:YES];
-    
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
 }
 
@@ -208,7 +208,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_dataSource setCurrentlyLoading:NO];
     if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
         [_delegate userFetcher:self isLoading:NO];
-    
+
 }
 
 

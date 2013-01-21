@@ -21,6 +21,9 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlClone        = @"clone";

@@ -20,6 +20,9 @@
 
 @import "../../Model/TNModule.j"
 
+@global TNArchipelEntityTypeVirtualMachine
+
+
 /*! @defgroup  toolbardestroybutton Module Toolbar Button Destroy
     @desc This module displays a toolbar item that can send destroy action to the current entity
 */

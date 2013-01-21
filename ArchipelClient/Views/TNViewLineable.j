@@ -21,15 +21,15 @@
 
 @implementation TNViewLineable : CPView
 {
-    CPPoint _origin;
-    CPPoint _end;
+    CGPoint _origin;
+    CGPoint _end;
     CPBezierPath _path;
 
     CPBezierPath _originPoint;
     CPBezierPath _endPoint;
 }
 
-- (id)initWithFrame:(CPRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -39,7 +39,7 @@
     return self;
 }
 
-- (void)drawRect:(CPRect)aRect
+- (void)drawRect:(CGRect)aRect
 {
     [super drawRect:aRect];
     [_originPoint setLineWidth:5];
