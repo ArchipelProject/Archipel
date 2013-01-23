@@ -284,7 +284,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
                 driveSource = [_drive source],
                 hostname = [host name],
                 port = [host port],
-                protocol = [source protocol],
+                protocol = [driveSource protocol],
                 sourceName = [driveSource name],
                 hostString = hostname + @":" + port + @"-" + protocol + @"/" + sourceName;
 

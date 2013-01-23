@@ -28,15 +28,17 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "TNXMPPServerUserFetcher.j"
 
 @class TNTableViewLazyDataSource
+@class TNPermissionsCenter
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
-
+@global TNPermissionsAdminListUpdatedNotification
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",

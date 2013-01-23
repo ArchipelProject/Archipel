@@ -31,9 +31,11 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "TNXMPPServerUserFetcher.j"
 
+@class TNPermissionsCenter
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 

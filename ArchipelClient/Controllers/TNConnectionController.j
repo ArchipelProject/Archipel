@@ -22,6 +22,7 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
+@import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 
 @import "../Model/TNDatasourceRoster.j"

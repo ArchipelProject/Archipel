@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/AppKit.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>

@@ -25,6 +25,7 @@
 @import <AppKit/CPToolbar.j>
 @import <AppKit/CPToolbarItem.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPViewController.j>
 
 @import <StropheCappuccino/TNStropheConnection.j>
 @import <StropheCappuccino/TNStropheContact.j>

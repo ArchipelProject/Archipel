@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
 @import "../Resources/archipel-commit.js"
 
 /*! @ingroup archipelcore

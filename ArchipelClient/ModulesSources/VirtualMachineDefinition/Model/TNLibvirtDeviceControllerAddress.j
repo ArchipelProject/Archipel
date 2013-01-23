@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
+@import "TNLibvirtBase.j"
 
 /*! @ingroup virtualmachinedefinition
     Model for controller's addresses

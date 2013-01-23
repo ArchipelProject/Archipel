@@ -18,6 +18,12 @@
 
 @import <Foundation/Foundation.j>
 
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
+
+@class TNPermissionsCenter
+
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersList               = @"list",
     TNArchipelTypeXMPPServerUsersFilter             = @"filter",

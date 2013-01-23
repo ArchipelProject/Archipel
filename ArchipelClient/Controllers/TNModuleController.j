@@ -28,8 +28,10 @@
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
-@global TNArchipelEntityTypes
+@import "TNPermissionsCenter.j"
 
+@global TNArchipelEntityTypes
+@global CPApp
 
 /*! @global
     @group TNArchipelModuleType

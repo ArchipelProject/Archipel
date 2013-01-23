@@ -24,7 +24,10 @@
 @import <Foundation/Foundation.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheStanza.j>
 
+@import "Model/TNLibvirtDeviceInterface.j"
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle

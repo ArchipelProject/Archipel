@@ -25,8 +25,11 @@
 
 @import <TNKit/TNAlert.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
 @import <StropheCappuccino/PubSub/TNPubSubController.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
+
+@import "TNPermissionsCenter.j"
 
 @class CPLocalizedString
 @global TNArchipelEntityTypeUser

@@ -23,6 +23,8 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPTableView.j>
 
+@import "Model/TNLibvirtDeviceGraphic.j"
+
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 

@@ -1,4 +1,6 @@
 
+@import <Foundation/Foundation.j>
+
 @implementation MKMapItem : CPObject
 {
 }

@@ -24,6 +24,11 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPView.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
+@import <StropheCappuccino/TNPubSub.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <TNKit/TNTableViewDataSource.j>
+
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 
