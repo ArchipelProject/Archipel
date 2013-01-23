@@ -27,6 +27,7 @@ from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq, build_error_message
 
+import archipel.archipelLibvirtEntity
 import appliancecompresser
 import appliancedecompresser
 
@@ -430,12 +431,13 @@ class TNVMApplianceManager (TNArchipelPlugin):
                     paths.append(path)
 
                 snapshots = []
-                if self.entity.domain.hasCurrentSnapshot(0):
-                    snapshot_names = self.entity.domain.snapshotListNames(0)
-                    for snapshot_name in snapshot_names:
-                        snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
-                        desc = snapshotObject.getXMLDesc(0)
-                        snapshots.append(desc)
+                if self.entity.hypervisor.is_hypervisor((archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+                    if self.entity.domain.hasCurrentSnapshot(0):
+                        snapshot_names = self.entity.domain.snapshotListNames(0)
+                        for snapshot_name in snapshot_names:
+                            snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
+                            desc = snapshotObject.getXMLDesc(0)
+                            snapshots.append(desc)
                 working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
                 ## create directories if needed
                 if not os.path.exists(working_dir):
