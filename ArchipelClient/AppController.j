@@ -73,7 +73,8 @@
 @import "Views/TNSwitch.j"
 
 @global CPLocalizedString
-
+@global CPApplicationWillTerminateNotification
+@global CPApp
 
 CPFontDefaultSystemFontFace = @"Courier";
 
