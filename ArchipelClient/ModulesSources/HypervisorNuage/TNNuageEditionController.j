@@ -32,6 +32,7 @@
 
 @import "Model/TNNuage.j"
 @import "TNIPUtils.j"
+@import "TNCNACommunicator.j"
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle

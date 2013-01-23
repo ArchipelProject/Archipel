@@ -15,7 +15,10 @@
 *
 */
 
+@import <Foundation/Foundation.j>
 @import <Foundation/CPURLConnection.j>
+
+@import "NURESTLoginController.j"
 
 NURESTConnectionResponseCodeZero = 0;
 NURESTConnectionResponseCodeSuccess = 200;
