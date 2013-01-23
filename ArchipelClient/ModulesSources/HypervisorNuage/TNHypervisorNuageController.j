@@ -24,9 +24,11 @@
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPSecureTextField.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
 @import "TNNuageEditionController.j"
@@ -61,10 +63,10 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPPopover                   popoverXMLString;
     @outlet CPSearchField               fieldFilterNuage;
+    @outlet CPSecureTextField           fieldPreferencesToken;
     @outlet CPTableView                 tableViewNuage;
     @outlet CPTextField                 fieldPreferencesBaseURL;
     @outlet CPTextField                 fieldPreferencesCompany;
-    @outlet CPTextField                 fieldPreferencesToken;
     @outlet CPTextField                 fieldPreferencesUserName;
     @outlet CPView                      viewTableContainer;
     @outlet LPMultiLineTextField        fieldXMLString;
