@@ -24,6 +24,8 @@
 
 @import <StropheCappuccino/TNStropheContact.j>
 
+@import "../Model/TNDatasourceRoster.j"
+
 @global TNArchipelRememberOpenedGroup
 
 

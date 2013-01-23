@@ -29,8 +29,10 @@
 @import <StropheCappuccino/TNStropheContact.j>
 @import <TNKit/TNSwipeView.j>
 
+@import "../Views/TNEditableLabel.j"
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
+
 
 @class CPLocalizedString
 @global TNArchipelRememberOpenedGroup

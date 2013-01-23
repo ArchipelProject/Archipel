@@ -27,6 +27,8 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTextFieldStepper.j>
 
+@import "../../Views/TNCalendarView.j"
+
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 

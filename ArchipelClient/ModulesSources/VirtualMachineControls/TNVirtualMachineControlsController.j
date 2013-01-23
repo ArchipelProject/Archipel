@@ -34,6 +34,7 @@
 @import <TNKit/TNTextFieldStepper.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
 
+@import "../../Views/TNSwitch.j"
 @import "../../Model/TNModule.j"
 @import "TNExtendedContactObject.j"
 
@@ -41,7 +42,7 @@
 @global CPLocalizedStringFromTableInBundle
 @global TNArchipelEntityTypeHypervisor
 @global TNArchipelRosterOutlineViewDeselectAll
-
+@global CPApp
 
 var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition",
     TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control",

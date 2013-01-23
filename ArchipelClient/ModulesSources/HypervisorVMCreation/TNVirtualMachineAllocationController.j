@@ -22,6 +22,7 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPTableView.j>
+@import <AppKit/CPComboBox.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <StropheCappuccino/TNStropheStanza.j>
