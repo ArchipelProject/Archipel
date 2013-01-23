@@ -20,6 +20,12 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPPopover.j>
+
+@import <LPKit/LPMultiLineTextField.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <GrowlCappuccino/GrowlCappuccino.j>
+@import <TNKit/TNAlert.j>
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle

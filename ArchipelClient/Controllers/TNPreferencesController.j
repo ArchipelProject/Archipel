@@ -25,7 +25,9 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPScrollView.j>
 
+@import <TNKit/TNAlert.j>
 @import <GrowlCappuccino/TNGrowlCenter.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStrophePrivateStorage.j>
@@ -35,6 +37,7 @@
 
 @class CPLocalizedString
 
+@global CPApp
 @global TNArchipelRosterOutlineViewReload
 @global TNArchipelModulesLoadingCompleteNotification
 @global TNStrophePrivateStorageSetNotification

@@ -25,8 +25,9 @@
 @import <AppKit/CPWindow.j>
 
 @import <LPKit/LPMultiLineTextField.j>
-@import <VNCCappuccino/TNVNCView.j>
+@import <VNCCappuccino/VNCCappuccino.j>
 
+@import "../../Views/TNSwitch.j"
 @import "../../Model/TNModule.j"
 @import "TNExternalVNCWindow.j"
 @import "TNZoomAnimation.j"

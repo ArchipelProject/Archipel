@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/AppKit.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
@@ -37,11 +36,9 @@
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <LPKit/LPMultiLineTextField.j>
 @import <LPKit/LPCrashReporter.j>
-@import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNFlipView.j>
 @import <TNKit/TNTabView.j>
-@import <VNCCappuccino/VNCCappuccino.j>
 
 @import "Categories/TNCategories.j"
 @import "Controllers/TNAvatarController.j"
@@ -59,22 +56,16 @@
 @import "Controllers/TNUpdateController.j"
 @import "Controllers/TNUserAvatarController.j"
 @import "Controllers/TNXMPPAccountController.j"
-@import "Model/TNDatasourceRoster.j"
-@import "Model/TNModule.j"
 @import "Model/TNVersion.j"
-@import "Views/TNBasicDataView.j"
 @import "Views/TNButtonBarPopUpButton.j"
-@import "Views/TNCalendarView.j"
-@import "Views/TNEditableLabel.j"
 @import "Views/TNMenuItem.j"
-@import "Views/TNModalWindow.j"
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
-@import "Views/TNSwitch.j"
 
 @global CPLocalizedString
-
+@global CPApplicationWillTerminateNotification
+@global CPApp
 
 CPFontDefaultSystemFontFace = @"Courier";
 

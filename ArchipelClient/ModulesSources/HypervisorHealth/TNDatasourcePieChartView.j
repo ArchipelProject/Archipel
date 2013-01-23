@@ -17,6 +17,7 @@
  */
 
 @import <Foundation/Foundation.j>
+@import <AppKit/CGGradient.j>
 
 @import <LPKit/LPPieChartView.j>
 

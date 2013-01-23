@@ -20,11 +20,17 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPTableView.j>
 
 @import <LPKit/LPMultiLineTextField.j>
+@import <StropheCappuccino/TNXMLNode.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNAlert.j>
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
+@global TNArchipelModuleStatusWaiting
+@global TNArchipelModuleStatusReady
 
 
 var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparking",

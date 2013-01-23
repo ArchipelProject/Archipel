@@ -22,14 +22,15 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
+@import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 
-@import "../Model/TNDatasourceRoster.j"
 @import "../Utils/EKShakeAnimation.j"
 @import "../Views/TNModalWindow.j"
 @import "../Views/TNSwitch.j"
 
 @class CPLocalizedString
+@class TNDatasourceRoster
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";

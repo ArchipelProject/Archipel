@@ -16,6 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+@import <Foundation/Foundation.j>
+@import <AppKit/CPPanel.j>
+
+
 /*! @ingroup archipelcore
     a nice modal CPWindow
 */

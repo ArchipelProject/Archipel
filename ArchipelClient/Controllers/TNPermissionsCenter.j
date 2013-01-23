@@ -17,6 +17,8 @@
  */
 
 @import <Foundation/Foundation.j>
+@import <AppKit/CPImageView.j>
+
 @import <GrowlCappuccino/TNGrowlCenter.j>
 @import <StropheCappuccino/TNPubSub.j>
 @import <StropheCappuccino/TNStropheContact.j>
@@ -28,7 +30,7 @@
 
 @class CPLocalizedString
 @global TNArchipelEntityTypeUser
-
+@global CPWindowAbove
 
 TNPermissionsValidationModeBare             = 0;
 TNPermissionsValidationModeNode             = 1;

@@ -26,6 +26,8 @@
 
 @import "../Model/TNVersion.j"
 
+@global TNPreferencesControllerSavePreferencesRequestNotification
+
 
 /*! @ingroup archipelcore
     this class allow to check for new version of the application

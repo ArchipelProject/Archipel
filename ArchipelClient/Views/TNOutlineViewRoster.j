@@ -22,6 +22,10 @@
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPTextField.j>
 
+@import <StropheCappuccino/TNStropheContact.j>
+
+@import "../Model/TNDatasourceRoster.j"
+
 @global TNArchipelRememberOpenedGroup
 
 

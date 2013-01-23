@@ -16,6 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
+
+@class TNPermissionsCenter
+
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersList               = @"list",
     TNArchipelTypeXMPPServerUsersFilter             = @"filter",

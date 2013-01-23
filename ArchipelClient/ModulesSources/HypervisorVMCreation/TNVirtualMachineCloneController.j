@@ -21,6 +21,10 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+
+
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 

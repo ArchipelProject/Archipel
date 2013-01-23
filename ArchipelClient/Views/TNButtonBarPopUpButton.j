@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
+@import <AppKit/CPMenu.j>
 
 
 /*! @ingroup archipelcore

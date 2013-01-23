@@ -19,8 +19,11 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+
+@import "Model/TNLibvirtDeviceInput.j"
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle

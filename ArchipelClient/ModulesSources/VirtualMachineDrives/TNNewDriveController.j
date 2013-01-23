@@ -24,6 +24,7 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
+@import <StropheCappuccino/TNStropheStanza.j>
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle

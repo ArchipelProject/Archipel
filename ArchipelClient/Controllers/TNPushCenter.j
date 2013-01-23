@@ -18,6 +18,8 @@
 
 @import <Foundation/Foundation.j>
 
+@import <StropheCappuccino/TNStropheConnection.j>
+@import <StropheCappuccino/TNPubSub.j>
 
 var __defaultPushCenter;
 
