@@ -26,9 +26,9 @@
 /* Class = "NSTextFieldCell"; title = "conference.archipelproject.org"; ObjectID = "51"; */
 "51.title" = "conference.archipelproject.org";
 
-/* Class = "NSTextFieldCell"; title = "Room"; ObjectID = "52"; */
+/* Class = "NSTextFieldCell"; title = "Room:"; ObjectID = "52"; */
 "52.title" = "Room:";
 
-/* Class = "NSTextFieldCell"; title = "Server"; ObjectID = "53"; */
+/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "53"; */
 "53.title" = "Server:";
 
