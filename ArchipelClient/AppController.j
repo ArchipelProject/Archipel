@@ -363,7 +363,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setFrontView:viewLoading];
 
-    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
     [progressIndicatorModulesLoading setMinValue:0.0];
     [progressIndicatorModulesLoading setMaxValue:1.0];
     [progressIndicatorModulesLoading setDoubleValue:0.0];
