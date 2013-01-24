@@ -95,8 +95,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)awakeFromCib
 {
-    [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
+    // [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setIsPaneSplitter:YES];
 
@@ -163,6 +163,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [filterFieldUsers setSendsSearchStringImmediately:YES];
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
+
+
+    var filterBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/background-filter.png"]];
+    [[viewTableGroupsContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
+    [[viewTableUsersInGroupContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
 }
 
 
