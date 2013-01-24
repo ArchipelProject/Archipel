@@ -34,7 +34,7 @@
         knobBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob.png"] size:switchSize]],
         highlightedKnobBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob-highlighted.png"] size:switchSize]];
 
-    return [CPDictionary dictionaryWithObjects:[offBackgroundImage, onBackgroundImage, knobBackgroundImage, CGSizeMake(30,25), CGSizeMake(12,5),
+    return [CPDictionary dictionaryWithObjects:[offBackgroundImage, onBackgroundImage, knobBackgroundImage, CGSizeMake(30,25), CGSizeMake(12,6),
                                                 [CPFont boldSystemFontOfSize:11], [CPColor colorWithWhite:0 alpha:0.7], [CPColor colorWithWhite:1 alpha:0.8], CGSizeMake(0,1),
                                                 [CPFont boldSystemFontOfSize:11], [CPColor colorWithWhite:1 alpha:1.0], [CPColor colorWithWhite:0.3 alpha:0.8], CGSizeMake(0,1)]
                                        forKeys:[@"off-background-color", @"on-background-color", @"knob-background-color", @"knob-size", @"label-offset",

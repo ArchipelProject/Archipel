@@ -200,6 +200,8 @@
 	<string>Kontaktanfrage</string>
 	<key>TB</key>
 	<string>TB</string>
+	<key>TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences</key>
+	<string>TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences</string>
 	<key>Tags</key>
 	<string>Tags</string>
 	<key>The group has been removed</key>
@@ -242,6 +244,8 @@
 	<string>Ihre Einstellungen wurden auf dem XMPP Server gespeichert</string>
 	<key>Your status is now </key>
 	<string>Ihr Status ist nun </string>
+	<key>archipel:tags</key>
+	<string>archipel:tags</string>
 	<key>authenticating</key>
 	<string>Authentifizierung</string>
 	<key>authentification-failed</key>

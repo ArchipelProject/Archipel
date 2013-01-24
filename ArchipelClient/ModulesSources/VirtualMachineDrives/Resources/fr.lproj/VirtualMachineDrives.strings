@@ -143,12 +143,12 @@
 /* Class = "NSTextFieldCell"; title = "Golden Drive"; ObjectID = "260"; */
 "260.title" = "Golden Drive";
 
-/* Class = "NSTextFieldCell"; title = "Real size:"; ObjectID = "267"; */
+/* Class = "NSTextFieldCell"; title = "Real size"; ObjectID = "267"; */
 "267.title" = "Real size:";
 
-/* Class = "NSTextFieldCell"; title = "Virtual size:"; ObjectID = "269"; */
+/* Class = "NSTextFieldCell"; title = "Virtual size"; ObjectID = "269"; */
 "269.title" = "Virtual size:";
 
-/* Class = "NSTextFieldCell"; title = "Golden drive:"; ObjectID = "271"; */
+/* Class = "NSTextFieldCell"; title = "Golden drive"; ObjectID = "271"; */
 "271.title" = "Golden drive:";
 

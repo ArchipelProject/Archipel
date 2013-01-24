@@ -50,6 +50,9 @@
 /* Class = "NSTextFieldCell"; title = "Activate STP:"; ObjectID = "55"; */
 "55.title" = "Activate STP:";
 
+/* Class = "NSButtonCell"; title = "Active"; ObjectID = "57"; */
+"57.title" = "Active";
+
 /* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
 "62.title" = "Bridge address:";
 
@@ -61,6 +64,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
 "68.title" = "Netmask:";
+
+/* Class = "NSButtonCell"; title = "Enable DHCP"; ObjectID = "70"; */
+"70.title" = "Enable DHCP";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "72"; */
 "72.title" = "Box";
@@ -214,9 +220,6 @@
 
 /* Class = "NSTextFieldCell"; title = "DHCP Configuration"; ObjectID = "460"; */
 "460.title" = "DHCP Configuration";
-
-/* Class = "NSTextFieldCell"; title = "Enable DCHP:"; ObjectID = "462"; */
-"462.title" = "Enable DCHP:";
 
 /* Class = "NSTextFieldCell"; title = "Quality of service"; ObjectID = "464"; */
 "464.title" = "Quality of service";

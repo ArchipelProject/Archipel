@@ -200,6 +200,8 @@
 	<string>Subscription request</string>
 	<key>TB</key>
 	<string>TB</string>
+	<key>TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences</key>
+	<string>TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences</string>
 	<key>Tags</key>
 	<string>Tags</string>
 	<key>The group has been removed</key>
@@ -242,6 +244,8 @@
 	<string>Your preferences have been saved to the XMPP server</string>
 	<key>Your status is now </key>
 	<string>Your status is now </string>
+	<key>archipel:tags</key>
+	<string>archipel:tags</string>
 	<key>authenticating</key>
 	<string>authenticating</string>
 	<key>authentification-failed</key>

@@ -69,6 +69,8 @@
     @outlet CPTextField         fieldNetworkName;
     @outlet CPView              viewHostsConf;
     @outlet CPView              viewRangesConf;
+    @outlet CPView              viewHostsTableContainer;
+    @outlet CPView              viewRangesTableContainer;
 
     CPArray                     _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
     id                          _delegate                   @accessors(property=delegate);
@@ -123,13 +125,14 @@
     [tableViewRanges setDelegate:self];
     [tableViewRanges setDataSource:_datasourceDHCPRanges];
     [_datasourceDHCPRanges setTable:tableViewRanges];
+    [viewRangesTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // TABLE FOR HOSTS
     _datasourceDHCPHosts = [[TNTableViewDataSource alloc] init];
     [tableViewHosts setDelegate:self];
     [tableViewHosts setDataSource:_datasourceDHCPHosts];
     [_datasourceDHCPHosts setTable:tableViewHosts];
-
+    [viewHostsTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     var menuRange = [[CPMenu alloc] init],
         menuHost = [[CPMenu alloc] init];
@@ -621,5 +624,5 @@
 // the current bundle.
 function CPBundleLocalizedString(key, comment)
 {
-    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNWindowNetworkController], comment);
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNNetworkEditionController], comment);
 }
