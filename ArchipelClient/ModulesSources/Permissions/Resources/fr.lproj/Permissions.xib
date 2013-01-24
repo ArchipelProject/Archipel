@@ -680,7 +680,7 @@
 											<object class="NSSearchField" id="1030451056">
 												<reference key="NSNextResponder" ref="82778366"/>
 												<int key="NSvFlags">265</int>
-												<string key="NSFrame">{{242, 324}, {207, 22}}</string>
+												<string key="NSFrame">{{243, 325}, {207, 22}}</string>
 												<reference key="NSSuperview" ref="82778366"/>
 												<reference key="NSNextKeyView" ref="549195567"/>
 												<bool key="NSEnabled">YES</bool>
@@ -753,7 +753,7 @@
 															<object class="NSTableView" id="487991068">
 																<reference key="NSNextResponder" ref="435823178"/>
 																<int key="NSvFlags">256</int>
-																<string key="NSFrameSize">{454, 276}</string>
+																<string key="NSFrameSize">{455, 277}</string>
 																<reference key="NSSuperview" ref="435823178"/>
 																<reference key="NSNextKeyView" ref="301116546"/>
 																<string key="NSReuseIdentifierKey">_NS:1197</string>
@@ -763,7 +763,7 @@
 																<object class="NSTableHeaderView" key="NSHeaderView" id="923830">
 																	<reference key="NSNextResponder" ref="301116546"/>
 																	<int key="NSvFlags">256</int>
-																	<string key="NSFrameSize">{454, 17}</string>
+																	<string key="NSFrameSize">{455, 17}</string>
 																	<reference key="NSSuperview" ref="301116546"/>
 																	<reference key="NSNextKeyView" ref="435823178"/>
 																	<string key="NSReuseIdentifierKey">_NS:1199</string>
@@ -779,7 +779,7 @@
 																	<bool key="EncodedWithXMLCoder">YES</bool>
 																	<object class="NSTableColumn" id="789768491">
 																		<string key="NSIdentifier">self</string>
-																		<double key="NSWidth">449.0703125</double>
+																		<double key="NSWidth">455.0703125</double>
 																		<double key="NSMinWidth">40</double>
 																		<double key="NSMaxWidth">1000</double>
 																		<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -816,7 +816,7 @@
 																<double key="NSIntercellSpacingHeight">0.0</double>
 																<reference key="NSBackgroundColor" ref="835591828"/>
 																<reference key="NSGridColor" ref="1006392325"/>
-																<double key="NSRowHeight">43</double>
+																<double key="NSRowHeight">40</double>
 																<int key="NSTvFlags">-759169024</int>
 																<reference key="NSDelegate"/>
 																<reference key="NSDataSource"/>
@@ -829,7 +829,7 @@
 																<int key="NSTableViewGroupRowStyle">1</int>
 															</object>
 														</object>
-														<string key="NSFrame">{{0, 17}, {454, 276}}</string>
+														<string key="NSFrame">{{0, 17}, {455, 277}}</string>
 														<reference key="NSSuperview" ref="549195567"/>
 														<reference key="NSNextKeyView" ref="487991068"/>
 														<string key="NSReuseIdentifierKey">_NS:1195</string>
@@ -871,7 +871,7 @@
 															<bool key="EncodedWithXMLCoder">YES</bool>
 															<reference ref="923830"/>
 														</object>
-														<string key="NSFrameSize">{454, 17}</string>
+														<string key="NSFrameSize">{455, 17}</string>
 														<reference key="NSSuperview" ref="549195567"/>
 														<reference key="NSNextKeyView" ref="923830"/>
 														<string key="NSReuseIdentifierKey">_NS:1200</string>
@@ -880,7 +880,7 @@
 														<int key="NScvFlags">4</int>
 													</object>
 												</object>
-												<string key="NSFrame">{{0, 25}, {454, 293}}</string>
+												<string key="NSFrame">{{0, 25}, {455, 294}}</string>
 												<reference key="NSSuperview" ref="82778366"/>
 												<reference key="NSNextKeyView" ref="435823178"/>
 												<string key="NSReuseIdentifierKey">_NS:1193</string>
@@ -889,7 +889,7 @@
 												<reference key="NSHScroller" ref="7471844"/>
 												<reference key="NSContentView" ref="435823178"/>
 												<reference key="NSHeaderClipView" ref="301116546"/>
-												<bytes key="NSScrollAmts">QSAAAEEgAABCLAAAQiwAAA</bytes>
+												<bytes key="NSScrollAmts">QSAAAEEgAABCIAAAQiAAAA</bytes>
 												<double key="NSMinMagnification">0.25</double>
 												<double key="NSMaxMagnification">4</double>
 												<double key="NSMagnification">1</double>
@@ -897,13 +897,13 @@
 											<object class="NSCustomView" id="246992960">
 												<reference key="NSNextResponder" ref="82778366"/>
 												<int key="NSvFlags">290</int>
-												<string key="NSFrameSize">{454, 26}</string>
+												<string key="NSFrameSize">{455, 26}</string>
 												<reference key="NSSuperview" ref="82778366"/>
 												<reference key="NSNextKeyView" ref="315658567"/>
 												<string key="NSClassName">CPButtonBar</string>
 											</object>
 										</object>
-										<string key="NSFrameSize">{454, 351}</string>
+										<string key="NSFrame">{{-1, 0}, {455, 352}}</string>
 										<reference key="NSSuperview" ref="886251599"/>
 										<reference key="NSNextKeyView" ref="1030451056"/>
 										<string key="NSClassName">NSView</string>
@@ -1418,7 +1418,7 @@
 					<object class="NSButton" id="821866017">
 						<reference key="NSNextResponder" ref="965184083"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{14, 12}, {118, 32}}</string>
+						<string key="NSFrame">{{14, 13}, {118, 32}}</string>
 						<reference key="NSSuperview" ref="965184083"/>
 						<reference key="NSNextKeyView" ref="904518639"/>
 						<bool key="NSEnabled">YES</bool>
@@ -1601,8 +1601,8 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="234277992">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Name:</string>
+							<int key="NSCellFlags2">4195328</int>
+							<string key="NSContents">Name</string>
 							<object class="NSFont" key="NSSupport" id="610651722">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -1637,14 +1637,14 @@
 					<object class="NSTextField" id="529173914">
 						<reference key="NSNextResponder" ref="88660364"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{13, 83}, {72, 17}}</string>
+						<string key="NSFrame">{{16, 83}, {69, 17}}</string>
 						<reference key="NSSuperview" ref="88660364"/>
 						<reference key="NSNextKeyView" ref="924088602"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="906749111">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Comment:</string>
+							<int key="NSCellFlags2">4195328</int>
+							<string key="NSContents">Comment</string>
 							<reference key="NSSupport" ref="610651722"/>
 							<reference key="NSControlView" ref="529173914"/>
 							<reference key="NSBackgroundColor" ref="114604100"/>
@@ -1664,7 +1664,7 @@
 					<object class="NSTextField" id="529190703">
 						<reference key="NSNextResponder" ref="432641304"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{34, 6}, {321, 17}}</string>
+						<string key="NSFrame">{{34, 5}, {321, 13}}</string>
 						<reference key="NSSuperview" ref="432641304"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
 						<bool key="NSEnabled">YES</bool>
@@ -1672,7 +1672,11 @@
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Label</string>
-							<reference key="NSSupport" ref="650279727"/>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">9</double>
+								<int key="NSfFlags">3614</int>
+							</object>
 							<string key="NSCellIdentifier">_NS:1505</string>
 							<reference key="NSControlView" ref="529190703"/>
 							<reference key="NSBackgroundColor" ref="114604100"/>
@@ -1683,7 +1687,7 @@
 					<object class="NSButton" id="422156566">
 						<reference key="NSNextResponder" ref="432641304"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{6, 12}, {22, 18}}</string>
+						<string key="NSFrame">{{6, 11}, {22, 18}}</string>
 						<reference key="NSSuperview" ref="432641304"/>
 						<reference key="NSNextKeyView" ref="874667446"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -1714,7 +1718,7 @@
 					<object class="NSTextField" id="874667446">
 						<reference key="NSNextResponder" ref="432641304"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{34, 23}, {321, 17}}</string>
+						<string key="NSFrame">{{34, 18}, {321, 17}}</string>
 						<reference key="NSSuperview" ref="432641304"/>
 						<reference key="NSNextKeyView" ref="529190703"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
@@ -1739,7 +1743,7 @@
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 				</object>
-				<string key="NSFrameSize">{372, 43}</string>
+				<string key="NSFrameSize">{361, 40}</string>
 				<reference key="NSNextKeyView" ref="422156566"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="NSClassName">TNPermissionDataView</string>
@@ -3173,64 +3177,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>imageViewModuleReady</string>
-							<string>viewMask</string>
-							<string>viewPreferences</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSImageView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>imageViewModuleReady</string>
-							<string>viewMask</string>
-							<string>viewPreferences</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageViewModuleReady</string>
-								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewMask</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewPreferences</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNModule.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNPermissionDataView</string>
 					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -3286,332 +3232,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNPermissionDataView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNPermissionsController</string>
-					<string key="superclassName">TNModule</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>changePermissionsState:</string>
-							<string>openRolesWindow:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>changePermissionsState:</string>
-							<string>openRolesWindow:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">changePermissionsState:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">openRolesWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBarControl</string>
-							<string>filterField</string>
-							<string>filterRosterUsers</string>
-							<string>filterUsers</string>
-							<string>imageFecthingUsers</string>
-							<string>labelFecthingUsers</string>
-							<string>labelNoUserSelected</string>
-							<string>permissionDataViewPrototype</string>
-							<string>rolesController</string>
-							<string>splitView</string>
-							<string>tablePermissions</string>
-							<string>tableRosterUsers</string>
-							<string>tableUsers</string>
-							<string>viewTableContainer</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>CPButtonBar</string>
-							<string>NSSearchField</string>
-							<string>NSSearchField</string>
-							<string>NSSearchField</string>
-							<string>NSImageView</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>TNPermissionDataView</string>
-							<string>TNRolesController</string>
-							<string>NSSplitView</string>
-							<string>NSTableView</string>
-							<string>NSTableView</string>
-							<string>NSTableView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBarControl</string>
-							<string>filterField</string>
-							<string>filterRosterUsers</string>
-							<string>filterUsers</string>
-							<string>imageFecthingUsers</string>
-							<string>labelFecthingUsers</string>
-							<string>labelNoUserSelected</string>
-							<string>permissionDataViewPrototype</string>
-							<string>rolesController</string>
-							<string>splitView</string>
-							<string>tablePermissions</string>
-							<string>tableRosterUsers</string>
-							<string>tableUsers</string>
-							<string>viewTableContainer</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonBarControl</string>
-								<string key="candidateClassName">CPButtonBar</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">filterField</string>
-								<string key="candidateClassName">NSSearchField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">filterRosterUsers</string>
-								<string key="candidateClassName">NSSearchField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">filterUsers</string>
-								<string key="candidateClassName">NSSearchField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageFecthingUsers</string>
-								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">labelFecthingUsers</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">labelNoUserSelected</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">permissionDataViewPrototype</string>
-								<string key="candidateClassName">TNPermissionDataView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">rolesController</string>
-								<string key="candidateClassName">TNRolesController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">splitView</string>
-								<string key="candidateClassName">NSSplitView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tablePermissions</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tableRosterUsers</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tableUsers</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewTableContainer</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNPermissionsController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNRolesController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addRoles:</string>
-							<string>applyRoles:</string>
-							<string>closeNewTemplateWindow:</string>
-							<string>closeWindow:</string>
-							<string>deleteSelectedRole:</string>
-							<string>openNewTemplateWindow:</string>
-							<string>openWindow:</string>
-							<string>retractRoles:</string>
-							<string>saveRole:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>addRoles:</string>
-							<string>applyRoles:</string>
-							<string>closeNewTemplateWindow:</string>
-							<string>closeWindow:</string>
-							<string>deleteSelectedRole:</string>
-							<string>openNewTemplateWindow:</string>
-							<string>openWindow:</string>
-							<string>retractRoles:</string>
-							<string>saveRole:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">addRoles:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">applyRoles:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">closeNewTemplateWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">closeWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">deleteSelectedRole:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">openNewTemplateWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">openWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">retractRoles:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">saveRole:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBar</string>
-							<string>buttonSave</string>
-							<string>fieldNewTemplateDescription</string>
-							<string>fieldNewTemplateName</string>
-							<string>filterField</string>
-							<string>mainPopover</string>
-							<string>popoverNewTemplate</string>
-							<string>tableRoles</string>
-							<string>viewTableContainer</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>CPButtonBar</string>
-							<string>NSButton</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSSearchField</string>
-							<string>NSPopover</string>
-							<string>NSPopover</string>
-							<string>NSTableView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBar</string>
-							<string>buttonSave</string>
-							<string>fieldNewTemplateDescription</string>
-							<string>fieldNewTemplateName</string>
-							<string>filterField</string>
-							<string>mainPopover</string>
-							<string>popoverNewTemplate</string>
-							<string>tableRoles</string>
-							<string>viewTableContainer</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonBar</string>
-								<string key="candidateClassName">CPButtonBar</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonSave</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldNewTemplateDescription</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldNewTemplateName</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">filterField</string>
-								<string key="candidateClassName">NSSearchField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mainPopover</string>
-								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">popoverNewTemplate</string>
-								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tableRoles</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewTableContainer</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNRolesController.h</string>
 					</object>
 				</object>
 			</object>

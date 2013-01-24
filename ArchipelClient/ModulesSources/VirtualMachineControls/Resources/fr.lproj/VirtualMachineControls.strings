@@ -11,34 +11,34 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "24"; */
 "24.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "OOM adjust:"; ObjectID = "26"; */
+/* Class = "NSTextFieldCell"; title = "OOM adjust"; ObjectID = "26"; */
 "26.title" = "OOM adjust:";
 
-/* Class = "NSTextFieldCell"; title = "Prevent OOM:"; ObjectID = "27"; */
+/* Class = "NSTextFieldCell"; title = "Prevent OOM"; ObjectID = "27"; */
 "27.title" = "Prevent OOM:";
 
-/* Class = "NSTextFieldCell"; title = "Auto start:"; ObjectID = "28"; */
+/* Class = "NSTextFieldCell"; title = "Auto start"; ObjectID = "28"; */
 "28.title" = "Auto start:";
 
-/* Class = "NSTextFieldCell"; title = "Virtual CPUs:"; ObjectID = "29"; */
+/* Class = "NSTextFieldCell"; title = "Virtual CPUs"; ObjectID = "29"; */
 "29.title" = "Virtual CPUs:";
 
-/* Class = "NSTextFieldCell"; title = "Memory:"; ObjectID = "30"; */
+/* Class = "NSTextFieldCell"; title = "Memory"; ObjectID = "30"; */
 "30.title" = "Memory:";
 
-/* Class = "NSTextFieldCell"; title = "Status:"; ObjectID = "31"; */
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "31"; */
 "31.title" = "Status:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "41"; */
 "41.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "OOM score:"; ObjectID = "43"; */
+/* Class = "NSTextFieldCell"; title = "OOM score"; ObjectID = "43"; */
 "43.title" = "OOM score:";
 
-/* Class = "NSTextFieldCell"; title = "CPU time:"; ObjectID = "44"; */
+/* Class = "NSTextFieldCell"; title = "CPU time"; ObjectID = "44"; */
 "44.title" = "CPU time:";
 
-/* Class = "NSTextFieldCell"; title = "Adjust memory:"; ObjectID = "45"; */
+/* Class = "NSTextFieldCell"; title = "Adjust memory"; ObjectID = "45"; */
 "45.title" = "Adjust memory:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "47"; */

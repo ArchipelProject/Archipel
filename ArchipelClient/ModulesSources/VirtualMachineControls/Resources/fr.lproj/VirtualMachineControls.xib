@@ -647,7 +647,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="408701074">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{453, 542}, {28, 14}}</string>
+						<string key="NSFrame">{{454, 543.5}, {28, 13}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="439646841"/>
 						<bool key="NSEnabled">YES</bool>
@@ -655,10 +655,10 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">100%</string>
-							<object class="NSFont" key="NSSupport" id="971462600">
+							<object class="NSFont" key="NSSupport" id="22">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">9</double>
-								<int key="NSfFlags">16</int>
+								<int key="NSfFlags">3614</int>
 							</object>
 							<reference key="NSControlView" ref="408701074"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
@@ -672,7 +672,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="818389727">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{366, 542}, {22, 14}}</string>
+						<string key="NSFrame">{{366, 543.5}, {22, 13}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="538964662"/>
 						<bool key="NSEnabled">YES</bool>
@@ -680,7 +680,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">0%</string>
-							<reference key="NSSupport" ref="971462600"/>
+							<reference key="NSSupport" ref="22"/>
 							<reference key="NSControlView" ref="818389727"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<object class="NSColor" key="NSTextColor">
@@ -693,7 +693,7 @@ IHBhcmsuA</string>
 					<object class="NSSlider" id="538964662">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{386, 539}, {65, 21}}</string>
+						<string key="NSFrame">{{386, 541}, {65, 21}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="408701074"/>
 						<bool key="NSEnabled">YES</bool>
@@ -732,7 +732,7 @@ IHBhcmsuA</string>
 					<object class="NSCustomView" id="976703076">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{829, 590}, {77, 24}}</string>
+						<string key="NSFrame">{{828, 591}, {77, 24}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="842116646"/>
 						<string key="NSClassName">TNSwitch</string>
@@ -770,7 +770,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="177118566">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{607, 539}, {70, 20}}</string>
+						<string key="NSFrame">{{607, 540.5}, {70, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="929790345"/>
 						<bool key="NSEnabled">YES</bool>
@@ -778,7 +778,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
-							<reference key="NSSupport" ref="279289462"/>
+							<reference key="NSSupport" ref="986145391"/>
 							<reference key="NSControlView" ref="177118566"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -796,7 +796,11 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">OOM score:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<object class="NSFont" key="NSSupport" id="672023766">
+								<string key="NSName">LucidaGrande-Bold</string>
+								<double key="NSSize">13</double>
+								<int key="NSfFlags">2072</int>
+							</object>
 							<reference key="NSControlView" ref="929790345"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -814,7 +818,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">CPU time:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="439646841"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -832,7 +836,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Adjust memory:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="243192778"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -842,7 +846,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="793795978">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{826, 539}, {70, 20}}</string>
+						<string key="NSFrame">{{826, 540.5}, {70, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="737200575"/>
 						<bool key="NSEnabled">YES</bool>
@@ -850,7 +854,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
-							<reference key="NSSupport" ref="279289462"/>
+							<reference key="NSSupport" ref="986145391"/>
 							<reference key="NSControlView" ref="793795978"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -860,7 +864,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="1017003443">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{826, 565}, {70, 20}}</string>
+						<string key="NSFrame">{{826, 566.5}, {70, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="243192778"/>
 						<bool key="NSEnabled">YES</bool>
@@ -868,7 +872,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
-							<reference key="NSSupport" ref="279289462"/>
+							<reference key="NSSupport" ref="986145391"/>
 							<reference key="NSControlView" ref="1017003443"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -878,7 +882,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="1020715076">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 202}, {567, 20}}</string>
+						<string key="NSFrame">{{17, 203.5}, {567, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="612616559"/>
 						<bool key="NSEnabled">YES</bool>
@@ -886,7 +890,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">These advanced commands can affect the availability of the virtual machine.</string>
-							<reference key="NSSupport" ref="279289462"/>
+							<reference key="NSSupport" ref="986145391"/>
 							<reference key="NSControlView" ref="1020715076"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -914,7 +918,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="189844766">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{366, 565}, {117, 20}}</string>
+						<string key="NSFrame">{{366, 566.5}, {117, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="655263251"/>
 						<bool key="NSEnabled">YES</bool>
@@ -932,7 +936,7 @@ IHBhcmsuA</string>
 					<object class="NSTextField" id="291882641">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{384, 591}, {96, 20}}</string>
+						<string key="NSFrame">{{384, 592.5}, {96, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="755319072"/>
 						<bool key="NSEnabled">YES</bool>
@@ -958,7 +962,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">OOM adjust:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="99166188"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -976,7 +980,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Prevent OOM:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="146402377"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -994,7 +998,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Auto start:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="655263251"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -1012,7 +1016,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Virtual CPUs:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="755319072"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -1030,7 +1034,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Memory:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="842116646"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -1048,7 +1052,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Status:</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="906035852"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -1167,7 +1171,7 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Screenshot refresh time</string>
-							<reference key="NSSupport" ref="869774426"/>
+							<reference key="NSSupport" ref="672023766"/>
 							<reference key="NSControlView" ref="954345060"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -1233,7 +1237,11 @@ IHBhcmsuA</string>
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">138412032</int>
 							<string key="NSContents">You first need to define it using the "definition" tab.</string>
-							<reference key="NSSupport" ref="971462600"/>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">9</double>
+								<int key="NSfFlags">16</int>
+							</object>
 							<reference key="NSControlView" ref="200967147"/>
 							<reference key="NSBackgroundColor" ref="977635433"/>
 							<reference key="NSTextColor" ref="96033734"/>
@@ -1628,7 +1636,6 @@ IHBhcmsuA</string>
 							<reference ref="425424343"/>
 							<reference ref="538964662"/>
 							<reference ref="818389727"/>
-							<reference ref="408701074"/>
 							<reference ref="737200575"/>
 							<reference ref="56684550"/>
 							<reference ref="743849093"/>
@@ -1641,6 +1648,7 @@ IHBhcmsuA</string>
 							<reference ref="871356984"/>
 							<reference ref="612616559"/>
 							<reference ref="132443003"/>
+							<reference ref="408701074"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -2667,379 +2675,11 @@ IHBhcmsuA</string>
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>imageViewModuleReady</string>
-							<string>viewMask</string>
-							<string>viewPreferences</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSImageView</string>
-							<string>NSView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>imageViewModuleReady</string>
-							<string>viewMask</string>
-							<string>viewPreferences</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageViewModuleReady</string>
-								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewMask</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewPreferences</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNModule.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TNSwitch</string>
 					<string key="superclassName">LPSwitch</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNSwitch.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNVirtualMachineControlsController</string>
-					<string key="superclassName">TNModule</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>destroy:</string>
-							<string>free:</string>
-							<string>manageAdvancedControls:</string>
-							<string>migrate:</string>
-							<string>openFullScreenshotWindow:</string>
-							<string>park:</string>
-							<string>pause:</string>
-							<string>play:</string>
-							<string>reboot:</string>
-							<string>segmentedControlClicked:</string>
-							<string>setAutostart:</string>
-							<string>setMemory:</string>
-							<string>setPreventOOMKiller:</string>
-							<string>setVCPUs:</string>
-							<string>stop:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>destroy:</string>
-							<string>free:</string>
-							<string>manageAdvancedControls:</string>
-							<string>migrate:</string>
-							<string>openFullScreenshotWindow:</string>
-							<string>park:</string>
-							<string>pause:</string>
-							<string>play:</string>
-							<string>reboot:</string>
-							<string>segmentedControlClicked:</string>
-							<string>setAutostart:</string>
-							<string>setMemory:</string>
-							<string>setPreventOOMKiller:</string>
-							<string>setVCPUs:</string>
-							<string>stop:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">destroy:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">free:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">manageAdvancedControls:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">migrate:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">openFullScreenshotWindow:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">park:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">pause:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">play:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">reboot:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">segmentedControlClicked:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">setAutostart:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">setMemory:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">setPreventOOMKiller:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">setVCPUs:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">stop:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>boxAdvancedCommands</string>
-							<string>buttonBarMigration</string>
-							<string>buttonBarTransport</string>
-							<string>buttonKill</string>
-							<string>buttonPark</string>
-							<string>buttonScreenshot</string>
-							<string>checkBoxAdvancedCommands</string>
-							<string>fieldInfoConsumedCPU</string>
-							<string>fieldInfoMem</string>
-							<string>fieldInfoState</string>
-							<string>fieldOOMAdjust</string>
-							<string>fieldOOMScore</string>
-							<string>fieldPreferencesScreenshotRefresh</string>
-							<string>filterHypervisors</string>
-							<string>imageState</string>
-							<string>imageViewFullScreenshot</string>
-							<string>popoverWindowScreenshot</string>
-							<string>sliderMemory</string>
-							<string>stepperCPU</string>
-							<string>switchAutoStart</string>
-							<string>switchPreventOOMKiller</string>
-							<string>tableHypervisors</string>
-							<string>viewTableHypervisorsContainer</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSBox</string>
-							<string>CPButtonBar</string>
-							<string>NSSegmentedControl</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>NSButton</string>
-							<string>CPCheckBox</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSTextField</string>
-							<string>NSSearchField</string>
-							<string>NSImageView</string>
-							<string>NSImageView</string>
-							<string>NSPopover</string>
-							<string>NSSlider</string>
-							<string>TNTextFieldStepper</string>
-							<string>TNSwitch</string>
-							<string>TNSwitch</string>
-							<string>NSTableView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>boxAdvancedCommands</string>
-							<string>buttonBarMigration</string>
-							<string>buttonBarTransport</string>
-							<string>buttonKill</string>
-							<string>buttonPark</string>
-							<string>buttonScreenshot</string>
-							<string>checkBoxAdvancedCommands</string>
-							<string>fieldInfoConsumedCPU</string>
-							<string>fieldInfoMem</string>
-							<string>fieldInfoState</string>
-							<string>fieldOOMAdjust</string>
-							<string>fieldOOMScore</string>
-							<string>fieldPreferencesScreenshotRefresh</string>
-							<string>filterHypervisors</string>
-							<string>imageState</string>
-							<string>imageViewFullScreenshot</string>
-							<string>popoverWindowScreenshot</string>
-							<string>sliderMemory</string>
-							<string>stepperCPU</string>
-							<string>switchAutoStart</string>
-							<string>switchPreventOOMKiller</string>
-							<string>tableHypervisors</string>
-							<string>viewTableHypervisorsContainer</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">boxAdvancedCommands</string>
-								<string key="candidateClassName">NSBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonBarMigration</string>
-								<string key="candidateClassName">CPButtonBar</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonBarTransport</string>
-								<string key="candidateClassName">NSSegmentedControl</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonKill</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonPark</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonScreenshot</string>
-								<string key="candidateClassName">NSButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">checkBoxAdvancedCommands</string>
-								<string key="candidateClassName">CPCheckBox</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldInfoConsumedCPU</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldInfoMem</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldInfoState</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldOOMAdjust</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldOOMScore</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">fieldPreferencesScreenshotRefresh</string>
-								<string key="candidateClassName">NSTextField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">filterHypervisors</string>
-								<string key="candidateClassName">NSSearchField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageState</string>
-								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageViewFullScreenshot</string>
-								<string key="candidateClassName">NSImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">popoverWindowScreenshot</string>
-								<string key="candidateClassName">NSPopover</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">sliderMemory</string>
-								<string key="candidateClassName">NSSlider</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">stepperCPU</string>
-								<string key="candidateClassName">TNTextFieldStepper</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">switchAutoStart</string>
-								<string key="candidateClassName">TNSwitch</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">switchPreventOOMKiller</string>
-								<string key="candidateClassName">TNSwitch</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">tableHypervisors</string>
-								<string key="candidateClassName">NSTableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewTableHypervisorsContainer</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/TNVirtualMachineControlsController.h</string>
 					</object>
 				</object>
 			</object>

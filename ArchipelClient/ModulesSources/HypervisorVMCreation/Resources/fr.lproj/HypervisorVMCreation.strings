@@ -59,10 +59,10 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Archipel VM"; ObjectID = "53"; */
 "53.placeholderString" = "Archipel VM";
 
-/* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "56"; */
+/* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "56"; */
 "56.title" = "JID :";
 
-/* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "58"; */
+/* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "58"; */
 "58.title" = "JID :";
 
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "60"; */
@@ -77,7 +77,7 @@
 /* Class = "NSTextFieldCell"; title = "Choose the name for the clone. Leave it blank to generate."; ObjectID = "104"; */
 "104.title" = "Si vous laissez ce champ vide, le nom sera généré.";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "105"; */
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "105"; */
 "105.title" = "Nom :";
 
 /* Class = "NSTextFieldCell"; title = "Clone virtual machine"; ObjectID = "106"; */
@@ -98,7 +98,7 @@
 /* Class = "NSTextFieldCell"; title = "Virtual Machine Name"; ObjectID = "273"; */
 "273.title" = "Virtual Machine Name";
 
-/* Class = "NSTextFieldCell"; title = "Nickname:"; ObjectID = "277"; */
+/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "277"; */
 "277.title" = "Nickname:";
 
 /* Class = "NSTextFieldCell"; title = "202198d4-b1ea-11e0-a2dc-0016d4e7e91f"; ObjectID = "282"; */
@@ -113,28 +113,28 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "289"; */
 "289.title" = "mydomain.com";
 
-/* Class = "NSTextFieldCell"; title = "Hypervisor:"; ObjectID = "290"; */
+/* Class = "NSTextFieldCell"; title = "Hypervisor"; ObjectID = "290"; */
 "290.title" = "Hypervisor:";
 
-/* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "291"; */
+/* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "291"; */
 "291.title" = "Domain:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "294"; */
 "294.title" = "company";
 
-/* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "295"; */
+/* Class = "NSTextFieldCell"; title = "Company"; ObjectID = "295"; */
 "295.title" = "Company:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "327"; */
 "327.title" = "Running";
 
-/* Class = "NSTextFieldCell"; title = "Status:"; ObjectID = "328"; */
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "328"; */
 "328.title" = "Status";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "329"; */
 "329.title" = "Status";
 
-/* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "330"; */
+/* Class = "NSTextFieldCell"; title = "Locality"; ObjectID = "330"; */
 "330.title" = "Locality:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Other Virtual Machines"; ObjectID = "358"; */
@@ -170,10 +170,10 @@
 /* Class = "NSTextFieldCell"; title = "date"; ObjectID = "455"; */
 "455.title" = "date";
 
-/* Class = "NSTextFieldCell"; title = "Parker:"; ObjectID = "456"; */
+/* Class = "NSTextFieldCell"; title = "Parker"; ObjectID = "456"; */
 "456.title" = "Parker:";
 
-/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "457"; */
+/* Class = "NSTextFieldCell"; title = "Date"; ObjectID = "457"; */
 "457.title" = "Date:";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "470"; */
@@ -203,19 +203,19 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "528"; */
 "528.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "Unit:"; ObjectID = "529"; */
+/* Class = "NSTextFieldCell"; title = "Unit"; ObjectID = "529"; */
 "529.title" = "Unit:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "532"; */
 "532.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "533"; */
+/* Class = "NSTextFieldCell"; title = "Owner"; ObjectID = "533"; */
 "533.title" = "Owner:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "540"; */
 "540.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "Category:"; ObjectID = "541"; */
+/* Class = "NSTextFieldCell"; title = "Category"; ObjectID = "541"; */
 "541.title" = "Category:";
 
 /* Class = "NSTextFieldCell"; title = "Category"; ObjectID = "546"; */

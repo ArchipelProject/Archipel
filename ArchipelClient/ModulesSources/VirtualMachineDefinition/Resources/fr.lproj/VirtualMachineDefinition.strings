@@ -236,7 +236,7 @@
 /* Class = "NSTextFieldCell"; title = "Cache mode"; ObjectID = "330"; */
 "330.title" = "Cache mode:";
 
-/* Class = "NSTextFieldCell"; title = "Number of CPUs"; ObjectID = "333"; */
+/* Class = "NSTextFieldCell"; title = "CPUs"; ObjectID = "333"; */
 "333.title" = "Number of CPUs:";
 
 /* Class = "NSTextFieldCell"; title = "Boot"; ObjectID = "336"; */
@@ -761,10 +761,10 @@
 /* Class = "NSTextFieldCell"; title = "Input bus"; ObjectID = "1192"; */
 "1192.title" = "Input bus:";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1199"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1199"; */
 "1199.title" = "Type:";
 
-/* Class = "NSTextFieldCell"; title = "Bus:"; ObjectID = "1201"; */
+/* Class = "NSTextFieldCell"; title = "Bus"; ObjectID = "1201"; */
 "1201.title" = "Bus:";
 
 /* Class = "NSTextFieldCell"; title = "Bus"; ObjectID = "1204"; */
@@ -797,10 +797,10 @@
 /* Class = "NSTextFieldCell"; title = "Graphic device"; ObjectID = "1242"; */
 "1242.title" = "Graphic device";
 
-/* Class = "NSTextFieldCell"; title = "Keymap:"; ObjectID = "1268"; */
+/* Class = "NSTextFieldCell"; title = "Keymap"; ObjectID = "1268"; */
 "1268.title" = "Keymap:";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "1269"; */
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "1269"; */
 "1269.title" = "Password:";
 
 /* Class = "NSTextFieldCell"; title = "Keymap"; ObjectID = "1270"; */
@@ -809,7 +809,7 @@
 /* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "1271"; */
 "1271.title" = "Password";
 
-/* Class = "NSTextFieldCell"; title = "Listen:"; ObjectID = "1279"; */
+/* Class = "NSTextFieldCell"; title = "Listen"; ObjectID = "1279"; */
 "1279.title" = "Listen:";
 
 /* Class = "NSTextFieldCell"; title = "Listen"; ObjectID = "1281"; */
@@ -836,16 +836,16 @@
 /* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1315"; */
 "1315.title" = "Type:";
 
-/* Class = "NSTextFieldCell"; title = "Device:"; ObjectID = "1325"; */
+/* Class = "NSTextFieldCell"; title = "Device"; ObjectID = "1325"; */
 "1325.title" = "Device:";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1326"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1326"; */
 "1326.title" = "Type:";
 
 /* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1328"; */
 "1328.title" = "Type";
 
-/* Class = "NSTextFieldCell"; title = "Target:"; ObjectID = "1329"; */
+/* Class = "NSTextFieldCell"; title = "Target"; ObjectID = "1329"; */
 "1329.title" = "Target:";
 
 /* Class = "NSTextFieldCell"; title = "Device"; ObjectID = "1330"; */
@@ -863,10 +863,10 @@
 /* Class = "NSTextFieldCell"; title = "Cache mode"; ObjectID = "1353"; */
 "1353.title" = "Cache mode";
 
-/* Class = "NSTextFieldCell"; title = "Format:"; ObjectID = "1355"; */
+/* Class = "NSTextFieldCell"; title = "Format"; ObjectID = "1355"; */
 "1355.title" = "Format:";
 
-/* Class = "NSTextFieldCell"; title = "Cache:"; ObjectID = "1356"; */
+/* Class = "NSTextFieldCell"; title = "Cache"; ObjectID = "1356"; */
 "1356.title" = "Cache:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Virtual Drives"; ObjectID = "1357"; */
@@ -875,10 +875,10 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1358"; */
 "1358.title" = "Text Cell";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1392"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1392"; */
 "1392.title" = "Type:";
 
-/* Class = "NSTextFieldCell"; title = "Model:"; ObjectID = "1393"; */
+/* Class = "NSTextFieldCell"; title = "Model"; ObjectID = "1393"; */
 "1393.title" = "Model:";
 
 /* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1395"; */
@@ -887,10 +887,10 @@
 /* Class = "NSTextFieldCell"; title = "Model"; ObjectID = "1396"; */
 "1396.title" = "Model";
 
-/* Class = "NSTextFieldCell"; title = "Source:"; ObjectID = "1398"; */
+/* Class = "NSTextFieldCell"; title = "Source"; ObjectID = "1398"; */
 "1398.title" = "Source:";
 
-/* Class = "NSTextFieldCell"; title = "Filter:"; ObjectID = "1399"; */
+/* Class = "NSTextFieldCell"; title = "Filter"; ObjectID = "1399"; */
 "1399.title" = "Filter:";
 
 /* Class = "NSTextFieldCell"; title = "Source"; ObjectID = "1400"; */
@@ -932,13 +932,13 @@
 /* Class = "NSTextFieldCell"; title = "Yes"; ObjectID = "1481"; */
 "1481.title" = "Yes";
 
-/* Class = "NSTextFieldCell"; title = "Shareable:"; ObjectID = "1482"; */
+/* Class = "NSTextFieldCell"; title = "Shareable"; ObjectID = "1482"; */
 "1482.title" = "Shareable:";
 
-/* Class = "NSTextFieldCell"; title = "Read Only:"; ObjectID = "1483"; */
+/* Class = "NSTextFieldCell"; title = "Read Only"; ObjectID = "1483"; */
 "1483.title" = "Read Only:";
 
-/* Class = "NSTextFieldCell"; title = "Transient:"; ObjectID = "1484"; */
+/* Class = "NSTextFieldCell"; title = "Transient"; ObjectID = "1484"; */
 "1484.title" = "Transient:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Character devices"; ObjectID = "1502"; */
@@ -950,10 +950,10 @@
 /* Class = "NSTextFieldCell"; title = "Source"; ObjectID = "1513"; */
 "1513.title" = "Source";
 
-/* Class = "NSTextFieldCell"; title = "Path:"; ObjectID = "1515"; */
+/* Class = "NSTextFieldCell"; title = "Path"; ObjectID = "1515"; */
 "1515.title" = "Path:";
 
-/* Class = "NSTextFieldCell"; title = "Mode:"; ObjectID = "1516"; */
+/* Class = "NSTextFieldCell"; title = "Mode"; ObjectID = "1516"; */
 "1516.title" = "Mode:";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "1539"; */
@@ -1115,10 +1115,10 @@
 /* Class = "NSTextFieldCell"; title = "4242"; ObjectID = "1679"; */
 "1679.title" = "4242";
 
-/* Class = "NSTextFieldCell"; title = "Service:"; ObjectID = "1681"; */
+/* Class = "NSTextFieldCell"; title = "Service"; ObjectID = "1681"; */
 "1681.title" = "Service:";
 
-/* Class = "NSTextFieldCell"; title = "Host:"; ObjectID = "1683"; */
+/* Class = "NSTextFieldCell"; title = "Host"; ObjectID = "1683"; */
 "1683.title" = "Host:";
 
 /* Class = "NSTextFieldCell"; title = "xxx.xxx.xxx.xxx"; ObjectID = "1693"; */
@@ -1127,10 +1127,10 @@
 /* Class = "NSTextFieldCell"; title = "4242"; ObjectID = "1694"; */
 "1694.title" = "4242";
 
-/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "1695"; */
+/* Class = "NSTextFieldCell"; title = "Address"; ObjectID = "1695"; */
 "1695.title" = "Address:";
 
-/* Class = "NSTextFieldCell"; title = "Port:"; ObjectID = "1696"; */
+/* Class = "NSTextFieldCell"; title = "Port"; ObjectID = "1696"; */
 "1696.title" = "Port:";
 
 /* Class = "NSTextFieldCell"; title = "The type"; ObjectID = "1697"; */
@@ -1139,10 +1139,10 @@
 /* Class = "NSTextFieldCell"; title = "My Device"; ObjectID = "1698"; */
 "1698.title" = "My Device";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1699"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1699"; */
 "1699.title" = "Type:";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "1700"; */
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "1700"; */
 "1700.title" = "Name:";
 
 /* Class = "NSTextFieldCell"; title = "Target"; ObjectID = "1701"; */
@@ -1154,7 +1154,7 @@
 /* Class = "NSTextFieldCell"; title = "The type"; ObjectID = "1728"; */
 "1728.title" = "The type";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1729"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1729"; */
 "1729.title" = "Type:";
 
 /* Class = "NSTextFieldCell"; title = "Protocol"; ObjectID = "1730"; */
@@ -1220,13 +1220,13 @@
 /* Class = "NSTextFieldCell"; title = "None/None/None"; ObjectID = "1812"; */
 "1812.title" = "None/None/None";
 
-/* Class = "NSTextFieldCell"; title = "In limit:"; ObjectID = "1813"; */
+/* Class = "NSTextFieldCell"; title = "In limit"; ObjectID = "1813"; */
 "1813.title" = "In limit:";
 
 /* Class = "NSTextFieldCell"; title = "None/None/None"; ObjectID = "1814"; */
 "1814.title" = "None/None/None";
 
-/* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "1815"; */
+/* Class = "NSTextFieldCell"; title = "Out limit"; ObjectID = "1815"; */
 "1815.title" = "Out limit:";
 
 /* Class = "NSTextFieldCell"; title = "Use port like 5903. Ports \nlower than 1024 need root access."; ObjectID = "1823"; */
