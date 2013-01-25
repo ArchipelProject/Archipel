@@ -8509,7 +8509,7 @@
 					<object class="NSTextField" id="249156433">
 						<reference key="NSNextResponder" ref="1059033817"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{706, 19}, {71, 13}}</string>
+						<string key="NSFrame">{{706, 22}, {71, 13}}</string>
 						<reference key="NSSuperview" ref="1059033817"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="711520267">
@@ -8544,7 +8544,7 @@
 					<object class="NSTextField" id="161574292">
 						<reference key="NSNextResponder" ref="1059033817"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{647, 37}, {95, 17}}</string>
+						<string key="NSFrame">{{647, 37}, {130, 17}}</string>
 						<reference key="NSSuperview" ref="1059033817"/>
 						<reference key="NSNextKeyView" ref="431717406"/>
 						<bool key="NSEnabled">YES</bool>
@@ -8638,7 +8638,7 @@
 					<object class="NSTextField" id="1022523767">
 						<reference key="NSNextResponder" ref="1059033817"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{363, 37}, {82, 17}}</string>
+						<string key="NSFrame">{{363, 37}, {276, 17}}</string>
 						<reference key="NSSuperview" ref="1059033817"/>
 						<reference key="NSNextKeyView" ref="161574292"/>
 						<bool key="NSEnabled">YES</bool>
@@ -8821,7 +8821,7 @@
 					<object class="NSTextField" id="787030549">
 						<reference key="NSNextResponder" ref="1059033817"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{76, 37}, {91, 17}}</string>
+						<string key="NSFrame">{{76, 37}, {278, 17}}</string>
 						<reference key="NSSuperview" ref="1059033817"/>
 						<reference key="NSNextKeyView" ref="1022523767"/>
 						<bool key="NSEnabled">YES</bool>
@@ -16717,10 +16717,10 @@ A</string>
 							<reference ref="770909234"/>
 							<reference ref="161574292"/>
 							<reference ref="530140495"/>
-							<reference ref="249156433"/>
 							<reference ref="277922076"/>
 							<reference ref="175336550"/>
 							<reference ref="685681096"/>
+							<reference ref="249156433"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -20521,6 +20521,554 @@ A</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNCharacterDeviceController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>didDeviceKindChange:</string>
+							<string>didDeviceTypeChange:</string>
+							<string>didSourceModeChange:</string>
+							<string>didTargetTypeChange:</string>
+							<string>openWindow:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>didDeviceKindChange:</string>
+							<string>didDeviceTypeChange:</string>
+							<string>didSourceModeChange:</string>
+							<string>didTargetTypeChange:</string>
+							<string>openWindow:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didDeviceKindChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didDeviceTypeChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didSourceModeChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didTargetTypeChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonKind</string>
+							<string>buttonOK</string>
+							<string>buttonProtocolType</string>
+							<string>buttonSourceMode</string>
+							<string>buttonTargetType</string>
+							<string>buttonType</string>
+							<string>fieldSourceHost</string>
+							<string>fieldSourcePath</string>
+							<string>fieldSourceService</string>
+							<string>fieldTargetAddress</string>
+							<string>fieldTargetName</string>
+							<string>fieldTargetPort</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonKind</string>
+							<string>buttonOK</string>
+							<string>buttonProtocolType</string>
+							<string>buttonSourceMode</string>
+							<string>buttonTargetType</string>
+							<string>buttonType</string>
+							<string>fieldSourceHost</string>
+							<string>fieldSourcePath</string>
+							<string>fieldSourceService</string>
+							<string>fieldTargetAddress</string>
+							<string>fieldTargetName</string>
+							<string>fieldTargetPort</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonKind</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonProtocolType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonSourceMode</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonTargetType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourceHost</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourcePath</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourceService</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetAddress</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetPort</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNCharacterDeviceController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNCharacterDeviceDataView</string>
+					<string key="superclassName">TNBasicDataView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>fieldProtocolType</string>
+							<string>fieldSourceHost</string>
+							<string>fieldSourceMode</string>
+							<string>fieldSourcePath</string>
+							<string>fieldSourceService</string>
+							<string>fieldTargetAddress</string>
+							<string>fieldTargetName</string>
+							<string>fieldTargetPort</string>
+							<string>fieldTargetType</string>
+							<string>fieldType</string>
+							<string>imageIcon</string>
+							<string>labelProtocol</string>
+							<string>labelProtocolType</string>
+							<string>labelSource</string>
+							<string>labelSourceHost</string>
+							<string>labelSourceMode</string>
+							<string>labelSourcePath</string>
+							<string>labelSourceService</string>
+							<string>labelTarget</string>
+							<string>labelTargetAddress</string>
+							<string>labelTargetName</string>
+							<string>labelTargetPort</string>
+							<string>labelTargetType</string>
+							<string>labelTitle</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSImageView</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>fieldProtocolType</string>
+							<string>fieldSourceHost</string>
+							<string>fieldSourceMode</string>
+							<string>fieldSourcePath</string>
+							<string>fieldSourceService</string>
+							<string>fieldTargetAddress</string>
+							<string>fieldTargetName</string>
+							<string>fieldTargetPort</string>
+							<string>fieldTargetType</string>
+							<string>fieldType</string>
+							<string>imageIcon</string>
+							<string>labelProtocol</string>
+							<string>labelProtocolType</string>
+							<string>labelSource</string>
+							<string>labelSourceHost</string>
+							<string>labelSourceMode</string>
+							<string>labelSourcePath</string>
+							<string>labelSourceService</string>
+							<string>labelTarget</string>
+							<string>labelTargetAddress</string>
+							<string>labelTargetName</string>
+							<string>labelTargetPort</string>
+							<string>labelTargetType</string>
+							<string>labelTitle</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldProtocolType</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourceHost</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourceMode</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourcePath</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldSourceService</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetAddress</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetPort</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTargetType</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldType</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageIcon</string>
+								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelProtocol</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelProtocolType</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelSource</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelSourceHost</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelSourceMode</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelSourcePath</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelSourceService</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelTarget</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelTargetAddress</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelTargetName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelTargetPort</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelTargetType</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelTitle</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNCharacterDeviceDataView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNDriveController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>busTypeChanged:</string>
+							<string>closeWindow:</string>
+							<string>driveTypeDidChange:</string>
+							<string>openWindow:</string>
+							<string>performDeviceTypeChanged:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>busTypeChanged:</string>
+							<string>closeWindow:</string>
+							<string>driveTypeDidChange:</string>
+							<string>openWindow:</string>
+							<string>performDeviceTypeChanged:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">busTypeChanged:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">driveTypeDidChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">performDeviceTypeChanged:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonDevice</string>
+							<string>buttonDriverCache</string>
+							<string>buttonOK</string>
+							<string>buttonSourcePath</string>
+							<string>buttonTargetBus</string>
+							<string>buttonTargetDevice</string>
+							<string>buttonType</string>
+							<string>checkBoxReadOnly</string>
+							<string>checkBoxShareable</string>
+							<string>checkBoxTransient</string>
+							<string>fieldDevicePath</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>CPCheckBox</string>
+							<string>CPCheckBox</string>
+							<string>CPCheckBox</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonDevice</string>
+							<string>buttonDriverCache</string>
+							<string>buttonOK</string>
+							<string>buttonSourcePath</string>
+							<string>buttonTargetBus</string>
+							<string>buttonTargetDevice</string>
+							<string>buttonType</string>
+							<string>checkBoxReadOnly</string>
+							<string>checkBoxShareable</string>
+							<string>checkBoxTransient</string>
+							<string>fieldDevicePath</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonDevice</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonDriverCache</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonSourcePath</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonTargetBus</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonTargetDevice</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxReadOnly</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxShareable</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxTransient</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldDevicePath</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNDriveController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNDriveDeviceDataView</string>
 					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -20673,6 +21221,127 @@ A</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNGraphicDeviceController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>graphicTypeChange:</string>
+							<string>openWindow:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>graphicTypeChange:</string>
+							<string>openWindow:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">graphicTypeChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonKeymap</string>
+							<string>buttonOK</string>
+							<string>buttonType</string>
+							<string>fieldListenAddress</string>
+							<string>fieldListenPort</string>
+							<string>fieldPassword</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonKeymap</string>
+							<string>buttonOK</string>
+							<string>buttonType</string>
+							<string>fieldListenAddress</string>
+							<string>fieldListenPort</string>
+							<string>fieldPassword</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonKeymap</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldListenAddress</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldListenPort</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldPassword</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNGraphicDeviceController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNGraphicDeviceDataView</string>
 					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -20748,6 +21417,99 @@ A</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNInputDeviceController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBus</string>
+							<string>buttonOK</string>
+							<string>buttonType</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBus</string>
+							<string>buttonOK</string>
+							<string>buttonType</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBus</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNInputDeviceController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNInputDeviceDataView</string>
 					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -20806,6 +21568,239 @@ A</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNInputDeviceDataView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNInterfaceController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>inboundLimitChange:</string>
+							<string>openWindow:</string>
+							<string>outboundLimitChange:</string>
+							<string>performNicTypeChanged:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>inboundLimitChange:</string>
+							<string>openWindow:</string>
+							<string>outboundLimitChange:</string>
+							<string>performNicTypeChanged:</string>
+							<string>save:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">inboundLimitChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">outboundLimitChange:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">performNicTypeChanged:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">save:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarNetworkParameters</string>
+							<string>buttonModel</string>
+							<string>buttonNetworkFilter</string>
+							<string>buttonOK</string>
+							<string>buttonSource</string>
+							<string>buttonType</string>
+							<string>checkBoxBandwidthInbound</string>
+							<string>checkBoxBandwidthOutbound</string>
+							<string>fieldBandwidthInboundAverage</string>
+							<string>fieldBandwidthInboundBurst</string>
+							<string>fieldBandwidthInboundPeak</string>
+							<string>fieldBandwidthOutboundAverage</string>
+							<string>fieldBandwidthOutboundBurst</string>
+							<string>fieldBandwidthOutboundPeak</string>
+							<string>fieldErrorMessage</string>
+							<string>fieldMac</string>
+							<string>fieldNuageInterfaceIP</string>
+							<string>labelNuageInterfaceIP</string>
+							<string>mainPopover</string>
+							<string>tableViewNetworkFilterParameters</string>
+							<string>viewNWFilterParametersContainer</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CPButtonBar</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>CPCheckBox</string>
+							<string>CPCheckBox</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+							<string>NSTableView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarNetworkParameters</string>
+							<string>buttonModel</string>
+							<string>buttonNetworkFilter</string>
+							<string>buttonOK</string>
+							<string>buttonSource</string>
+							<string>buttonType</string>
+							<string>checkBoxBandwidthInbound</string>
+							<string>checkBoxBandwidthOutbound</string>
+							<string>fieldBandwidthInboundAverage</string>
+							<string>fieldBandwidthInboundBurst</string>
+							<string>fieldBandwidthInboundPeak</string>
+							<string>fieldBandwidthOutboundAverage</string>
+							<string>fieldBandwidthOutboundBurst</string>
+							<string>fieldBandwidthOutboundPeak</string>
+							<string>fieldErrorMessage</string>
+							<string>fieldMac</string>
+							<string>fieldNuageInterfaceIP</string>
+							<string>labelNuageInterfaceIP</string>
+							<string>mainPopover</string>
+							<string>tableViewNetworkFilterParameters</string>
+							<string>viewNWFilterParametersContainer</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarNetworkParameters</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonModel</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonNetworkFilter</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonSource</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxBandwidthInbound</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkBoxBandwidthOutbound</string>
+								<string key="candidateClassName">CPCheckBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBandwidthInboundAverage</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBandwidthInboundBurst</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBandwidthInboundPeak</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBandwidthOutboundAverage</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBandwidthOutboundBurst</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBandwidthOutboundPeak</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldErrorMessage</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldMac</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNuageInterfaceIP</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelNuageInterfaceIP</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableViewNetworkFilterParameters</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewNWFilterParametersContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNInterfaceController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -20930,6 +21925,1053 @@ A</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNInterfaceDeviceDataView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNModule</string>
+					<string key="superclassName">NSViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">toolbarItemClicked:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">toolbarItemClicked:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">toolbarItemClicked:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
+							<string>viewPreferences</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSImageView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
+							<string>viewPreferences</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageViewModuleReady</string>
+								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewMask</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewPreferences</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNModule.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNVirtualMachineDefinitionController</string>
+					<string key="superclassName">TNModule</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addCharacterDevice:</string>
+							<string>addDrive:</string>
+							<string>addGraphicDevice:</string>
+							<string>addInputDevice:</string>
+							<string>addNetworkCard:</string>
+							<string>closeXMLEditor:</string>
+							<string>defineXML:</string>
+							<string>defineXMLString:</string>
+							<string>deleteCharacterDevice:</string>
+							<string>deleteDrive:</string>
+							<string>deleteGraphicDevice:</string>
+							<string>deleteInputDevice:</string>
+							<string>deleteNetworkCard:</string>
+							<string>didChangeACPI:</string>
+							<string>didChangeAPIC:</string>
+							<string>didChangeBlockIOTuningWeight:</string>
+							<string>didChangeBoot:</string>
+							<string>didChangeBootloader:</string>
+							<string>didChangeBootloaderArgs:</string>
+							<string>didChangeClock:</string>
+							<string>didChangeDomainType:</string>
+							<string>didChangeEnableUSB:</string>
+							<string>didChangeGuest:</string>
+							<string>didChangeHugePages:</string>
+							<string>didChangeMachine:</string>
+							<string>didChangeMemory:</string>
+							<string>didChangeMemoryTuneGuarantee:</string>
+							<string>didChangeMemoryTuneHardLimit:</string>
+							<string>didChangeMemoryTuneSoftLimit:</string>
+							<string>didChangeMemoryTuneSwapHardLimit:</string>
+							<string>didChangeNestedVirtualization:</string>
+							<string>didChangeOSCommandLine:</string>
+							<string>didChangeOSInitrd:</string>
+							<string>didChangeOSKernel:</string>
+							<string>didChangeOSLoader:</string>
+							<string>didChangeOnCrash:</string>
+							<string>didChangeOnPowerOff:</string>
+							<string>didChangeOnReboot:</string>
+							<string>didChangePAE:</string>
+							<string>didChangeVCPU:</string>
+							<string>editCharacterDevice:</string>
+							<string>editDrive:</string>
+							<string>editGraphicDevice:</string>
+							<string>editInputDevice:</string>
+							<string>editInterface:</string>
+							<string>makeDefinitionEdited:</string>
+							<string>openXMLEditor:</string>
+							<string>undefineXML:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addCharacterDevice:</string>
+							<string>addDrive:</string>
+							<string>addGraphicDevice:</string>
+							<string>addInputDevice:</string>
+							<string>addNetworkCard:</string>
+							<string>closeXMLEditor:</string>
+							<string>defineXML:</string>
+							<string>defineXMLString:</string>
+							<string>deleteCharacterDevice:</string>
+							<string>deleteDrive:</string>
+							<string>deleteGraphicDevice:</string>
+							<string>deleteInputDevice:</string>
+							<string>deleteNetworkCard:</string>
+							<string>didChangeACPI:</string>
+							<string>didChangeAPIC:</string>
+							<string>didChangeBlockIOTuningWeight:</string>
+							<string>didChangeBoot:</string>
+							<string>didChangeBootloader:</string>
+							<string>didChangeBootloaderArgs:</string>
+							<string>didChangeClock:</string>
+							<string>didChangeDomainType:</string>
+							<string>didChangeEnableUSB:</string>
+							<string>didChangeGuest:</string>
+							<string>didChangeHugePages:</string>
+							<string>didChangeMachine:</string>
+							<string>didChangeMemory:</string>
+							<string>didChangeMemoryTuneGuarantee:</string>
+							<string>didChangeMemoryTuneHardLimit:</string>
+							<string>didChangeMemoryTuneSoftLimit:</string>
+							<string>didChangeMemoryTuneSwapHardLimit:</string>
+							<string>didChangeNestedVirtualization:</string>
+							<string>didChangeOSCommandLine:</string>
+							<string>didChangeOSInitrd:</string>
+							<string>didChangeOSKernel:</string>
+							<string>didChangeOSLoader:</string>
+							<string>didChangeOnCrash:</string>
+							<string>didChangeOnPowerOff:</string>
+							<string>didChangeOnReboot:</string>
+							<string>didChangePAE:</string>
+							<string>didChangeVCPU:</string>
+							<string>editCharacterDevice:</string>
+							<string>editDrive:</string>
+							<string>editGraphicDevice:</string>
+							<string>editInputDevice:</string>
+							<string>editInterface:</string>
+							<string>makeDefinitionEdited:</string>
+							<string>openXMLEditor:</string>
+							<string>undefineXML:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">addCharacterDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addDrive:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addGraphicDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addInputDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addNetworkCard:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeXMLEditor:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">defineXML:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">defineXMLString:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteCharacterDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteDrive:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteGraphicDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteInputDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteNetworkCard:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeACPI:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeAPIC:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeBlockIOTuningWeight:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeBoot:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeBootloader:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeBootloaderArgs:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeClock:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeDomainType:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeEnableUSB:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeGuest:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeHugePages:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeMachine:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeMemory:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeMemoryTuneGuarantee:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeMemoryTuneHardLimit:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeMemoryTuneSoftLimit:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeMemoryTuneSwapHardLimit:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeNestedVirtualization:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOSCommandLine:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOSInitrd:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOSKernel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOSLoader:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOnCrash:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOnPowerOff:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeOnReboot:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangePAE:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didChangeVCPU:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">editCharacterDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">editDrive:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">editGraphicDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">editInputDevice:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">editInterface:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">makeDefinitionEdited:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openXMLEditor:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">undefineXML:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarCharacterDevices</string>
+							<string>buttonBarControlDrives</string>
+							<string>buttonBarControlNics</string>
+							<string>buttonBarGraphicDevices</string>
+							<string>buttonBarInputDevices</string>
+							<string>buttonBoot</string>
+							<string>buttonClocks</string>
+							<string>buttonDefine</string>
+							<string>buttonDomainType</string>
+							<string>buttonGuests</string>
+							<string>buttonMachines</string>
+							<string>buttonOnCrash</string>
+							<string>buttonOnPowerOff</string>
+							<string>buttonOnReboot</string>
+							<string>buttonPreferencesBoot</string>
+							<string>buttonPreferencesClockOffset</string>
+							<string>buttonPreferencesDriveCache</string>
+							<string>buttonPreferencesInput</string>
+							<string>buttonPreferencesNumberOfCPUs</string>
+							<string>buttonPreferencesOnCrash</string>
+							<string>buttonPreferencesOnPowerOff</string>
+							<string>buttonPreferencesOnReboot</string>
+							<string>buttonPreferencesVNCKeyMap</string>
+							<string>buttonUndefine</string>
+							<string>buttonXMLEditor</string>
+							<string>buttonXMLEditorDefine</string>
+							<string>characterDeviceController</string>
+							<string>checkboxACPI</string>
+							<string>checkboxAPIC</string>
+							<string>checkboxEnableUSB</string>
+							<string>checkboxHugePages</string>
+							<string>checkboxNestedVirtualization</string>
+							<string>checkboxPAE</string>
+							<string>checkboxPreferencesHugePages</string>
+							<string>dataViewCharacterDevicePrototype</string>
+							<string>dataViewDrivesPrototype</string>
+							<string>dataViewGraphicDevicePrototype</string>
+							<string>dataViewInputDevicePrototype</string>
+							<string>dataViewNICsPrototype</string>
+							<string>driveController</string>
+							<string>fieldBlockIOTuningWeight</string>
+							<string>fieldBootloader</string>
+							<string>fieldBootloaderArgs</string>
+							<string>fieldFilterCharacters</string>
+							<string>fieldFilterDrives</string>
+							<string>fieldFilterNics</string>
+							<string>fieldMemory</string>
+							<string>fieldMemoryTuneGuarantee</string>
+							<string>fieldMemoryTuneHardLimit</string>
+							<string>fieldMemoryTuneSoftLimit</string>
+							<string>fieldMemoryTuneSwapHardLimit</string>
+							<string>fieldOSCommandLine</string>
+							<string>fieldOSInitrd</string>
+							<string>fieldOSKernel</string>
+							<string>fieldOSLoader</string>
+							<string>fieldPreferencesDomainType</string>
+							<string>fieldPreferencesGuest</string>
+							<string>fieldPreferencesMachine</string>
+							<string>fieldPreferencesMemory</string>
+							<string>fieldStringXMLDesc</string>
+							<string>graphicDeviceController</string>
+							<string>inputDeviceController</string>
+							<string>interfaceController</string>
+							<string>labelVirtualMachineIsRunning</string>
+							<string>popoverXMLEditor</string>
+							<string>scrollViewContentView</string>
+							<string>stepperNumberCPUs</string>
+							<string>tabViewParameters</string>
+							<string>tableCharacterDevices</string>
+							<string>tableDrives</string>
+							<string>tableGraphicsDevices</string>
+							<string>tableInputDevices</string>
+							<string>tableInterfaces</string>
+							<string>viewBottomControl</string>
+							<string>viewCharacterDevicesContainer</string>
+							<string>viewDrivesContainer</string>
+							<string>viewGraphicDevicesContainer</string>
+							<string>viewInputDevicesContainer</string>
+							<string>viewMainContent</string>
+							<string>viewNicsContainer</string>
+							<string>viewParametersAdvanced</string>
+							<string>viewParametersCharacterDevices</string>
+							<string>viewParametersDrives</string>
+							<string>viewParametersEffectBottom</string>
+							<string>viewParametersEffectTop</string>
+							<string>viewParametersNICs</string>
+							<string>viewParametersStandard</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSPopUpButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>TNCharacterDeviceController</string>
+							<string>CPCheckbox</string>
+							<string>CPCheckbox</string>
+							<string>CPCheckbox</string>
+							<string>CPCheckbox</string>
+							<string>CPCheckbox</string>
+							<string>CPCheckbox</string>
+							<string>CPCheckbox</string>
+							<string>TNCharacterDeviceDataView</string>
+							<string>TNDriveDeviceDataView</string>
+							<string>TNGraphicDeviceDataView</string>
+							<string>TNInputDeviceDataView</string>
+							<string>TNInterfaceDeviceDataView</string>
+							<string>TNDriveController</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>LPMultiLineTextField</string>
+							<string>NSSearchField</string>
+							<string>NSSearchField</string>
+							<string>NSSearchField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>LPMultiLineTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>LPMultiLineTextField</string>
+							<string>TNGraphicDeviceController</string>
+							<string>TNInputDeviceController</string>
+							<string>TNInterfaceController</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+							<string>NSScrollView</string>
+							<string>TNTextFieldStepper</string>
+							<string>TNTabView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonBarCharacterDevices</string>
+							<string>buttonBarControlDrives</string>
+							<string>buttonBarControlNics</string>
+							<string>buttonBarGraphicDevices</string>
+							<string>buttonBarInputDevices</string>
+							<string>buttonBoot</string>
+							<string>buttonClocks</string>
+							<string>buttonDefine</string>
+							<string>buttonDomainType</string>
+							<string>buttonGuests</string>
+							<string>buttonMachines</string>
+							<string>buttonOnCrash</string>
+							<string>buttonOnPowerOff</string>
+							<string>buttonOnReboot</string>
+							<string>buttonPreferencesBoot</string>
+							<string>buttonPreferencesClockOffset</string>
+							<string>buttonPreferencesDriveCache</string>
+							<string>buttonPreferencesInput</string>
+							<string>buttonPreferencesNumberOfCPUs</string>
+							<string>buttonPreferencesOnCrash</string>
+							<string>buttonPreferencesOnPowerOff</string>
+							<string>buttonPreferencesOnReboot</string>
+							<string>buttonPreferencesVNCKeyMap</string>
+							<string>buttonUndefine</string>
+							<string>buttonXMLEditor</string>
+							<string>buttonXMLEditorDefine</string>
+							<string>characterDeviceController</string>
+							<string>checkboxACPI</string>
+							<string>checkboxAPIC</string>
+							<string>checkboxEnableUSB</string>
+							<string>checkboxHugePages</string>
+							<string>checkboxNestedVirtualization</string>
+							<string>checkboxPAE</string>
+							<string>checkboxPreferencesHugePages</string>
+							<string>dataViewCharacterDevicePrototype</string>
+							<string>dataViewDrivesPrototype</string>
+							<string>dataViewGraphicDevicePrototype</string>
+							<string>dataViewInputDevicePrototype</string>
+							<string>dataViewNICsPrototype</string>
+							<string>driveController</string>
+							<string>fieldBlockIOTuningWeight</string>
+							<string>fieldBootloader</string>
+							<string>fieldBootloaderArgs</string>
+							<string>fieldFilterCharacters</string>
+							<string>fieldFilterDrives</string>
+							<string>fieldFilterNics</string>
+							<string>fieldMemory</string>
+							<string>fieldMemoryTuneGuarantee</string>
+							<string>fieldMemoryTuneHardLimit</string>
+							<string>fieldMemoryTuneSoftLimit</string>
+							<string>fieldMemoryTuneSwapHardLimit</string>
+							<string>fieldOSCommandLine</string>
+							<string>fieldOSInitrd</string>
+							<string>fieldOSKernel</string>
+							<string>fieldOSLoader</string>
+							<string>fieldPreferencesDomainType</string>
+							<string>fieldPreferencesGuest</string>
+							<string>fieldPreferencesMachine</string>
+							<string>fieldPreferencesMemory</string>
+							<string>fieldStringXMLDesc</string>
+							<string>graphicDeviceController</string>
+							<string>inputDeviceController</string>
+							<string>interfaceController</string>
+							<string>labelVirtualMachineIsRunning</string>
+							<string>popoverXMLEditor</string>
+							<string>scrollViewContentView</string>
+							<string>stepperNumberCPUs</string>
+							<string>tabViewParameters</string>
+							<string>tableCharacterDevices</string>
+							<string>tableDrives</string>
+							<string>tableGraphicsDevices</string>
+							<string>tableInputDevices</string>
+							<string>tableInterfaces</string>
+							<string>viewBottomControl</string>
+							<string>viewCharacterDevicesContainer</string>
+							<string>viewDrivesContainer</string>
+							<string>viewGraphicDevicesContainer</string>
+							<string>viewInputDevicesContainer</string>
+							<string>viewMainContent</string>
+							<string>viewNicsContainer</string>
+							<string>viewParametersAdvanced</string>
+							<string>viewParametersCharacterDevices</string>
+							<string>viewParametersDrives</string>
+							<string>viewParametersEffectBottom</string>
+							<string>viewParametersEffectTop</string>
+							<string>viewParametersNICs</string>
+							<string>viewParametersStandard</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarCharacterDevices</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControlDrives</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControlNics</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarGraphicDevices</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarInputDevices</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBoot</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonClocks</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonDefine</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonDomainType</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonGuests</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonMachines</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOnCrash</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOnPowerOff</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOnReboot</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesBoot</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesClockOffset</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesDriveCache</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesInput</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesNumberOfCPUs</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesOnCrash</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesOnPowerOff</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesOnReboot</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonPreferencesVNCKeyMap</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonUndefine</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonXMLEditor</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonXMLEditorDefine</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">characterDeviceController</string>
+								<string key="candidateClassName">TNCharacterDeviceController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxACPI</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxAPIC</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxEnableUSB</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxHugePages</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxNestedVirtualization</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxPAE</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">checkboxPreferencesHugePages</string>
+								<string key="candidateClassName">CPCheckbox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewCharacterDevicePrototype</string>
+								<string key="candidateClassName">TNCharacterDeviceDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewDrivesPrototype</string>
+								<string key="candidateClassName">TNDriveDeviceDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewGraphicDevicePrototype</string>
+								<string key="candidateClassName">TNGraphicDeviceDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewInputDevicePrototype</string>
+								<string key="candidateClassName">TNInputDeviceDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewNICsPrototype</string>
+								<string key="candidateClassName">TNInterfaceDeviceDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveController</string>
+								<string key="candidateClassName">TNDriveController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBlockIOTuningWeight</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBootloader</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldBootloaderArgs</string>
+								<string key="candidateClassName">LPMultiLineTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldFilterCharacters</string>
+								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldFilterDrives</string>
+								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldFilterNics</string>
+								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldMemory</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldMemoryTuneGuarantee</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldMemoryTuneHardLimit</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldMemoryTuneSoftLimit</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldMemoryTuneSwapHardLimit</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldOSCommandLine</string>
+								<string key="candidateClassName">LPMultiLineTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldOSInitrd</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldOSKernel</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldOSLoader</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldPreferencesDomainType</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldPreferencesGuest</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldPreferencesMachine</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldPreferencesMemory</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldStringXMLDesc</string>
+								<string key="candidateClassName">LPMultiLineTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">graphicDeviceController</string>
+								<string key="candidateClassName">TNGraphicDeviceController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">inputDeviceController</string>
+								<string key="candidateClassName">TNInputDeviceController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">interfaceController</string>
+								<string key="candidateClassName">TNInterfaceController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelVirtualMachineIsRunning</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">popoverXMLEditor</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">scrollViewContentView</string>
+								<string key="candidateClassName">NSScrollView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">stepperNumberCPUs</string>
+								<string key="candidateClassName">TNTextFieldStepper</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabViewParameters</string>
+								<string key="candidateClassName">TNTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableCharacterDevices</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableDrives</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableGraphicsDevices</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableInputDevices</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableInterfaces</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewBottomControl</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewCharacterDevicesContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewDrivesContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewGraphicDevicesContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewInputDevicesContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewMainContent</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewNicsContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersAdvanced</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersCharacterDevices</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersDrives</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersEffectBottom</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersEffectTop</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersNICs</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersStandard</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNVirtualMachineDefinitionController.h</string>
 					</object>
 				</object>
 			</object>

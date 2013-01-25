@@ -1266,7 +1266,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="527184444">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Autostart:</string>
+							<string key="NSContents">Autostart</string>
 							<object class="NSFont" key="NSSupport" id="23">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">9</double>
@@ -1314,7 +1314,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1043085030">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">In limit:</string>
+							<string key="NSContents">In limit</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="455708803"/>
@@ -1374,7 +1374,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="491005996">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Out limit:</string>
+							<string key="NSContents">Out limit</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="901172039"/>
@@ -1394,7 +1394,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="844278278">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Delay:</string>
+							<string key="NSContents">Delay</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="221377303"/>
@@ -1434,7 +1434,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="560397784">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Mask:</string>
+							<string key="NSContents">Mask</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="706376519"/>
@@ -1454,7 +1454,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="370571022">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">IP:</string>
+							<string key="NSContents">IP</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="23622199"/>
@@ -1494,7 +1494,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="530977385">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">STP:</string>
+							<string key="NSContents">STP</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="78311330"/>
@@ -1534,7 +1534,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="374611094">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Mode:</string>
+							<string key="NSContents">Mode</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="14035217"/>
@@ -1594,7 +1594,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="555397735">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Device:</string>
+							<string key="NSContents">Device</string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="527522555"/>
@@ -1654,7 +1654,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="515754482">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Name: </string>
+							<string key="NSContents">Name </string>
 							<reference key="NSSupport" ref="23"/>
 							<string key="NSCellIdentifier">_NS:3946</string>
 							<reference key="NSControlView" ref="392661939"/>
@@ -1745,7 +1745,7 @@
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{2, 102.5}, {16, 16}}</string>
+						<string key="NSFrame">{{6, 107.5}, {8, 8}}</string>
 						<reference key="NSSuperview" ref="1064896233"/>
 						<reference key="NSNextKeyView" ref="937961799"/>
 						<string key="NSReuseIdentifierKey">_NS:1658</string>
@@ -1756,7 +1756,7 @@
 							<string key="NSCellIdentifier">_NS:1658</string>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">0</int>
-							<int key="NSStyle">2</int>
+							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -1795,7 +1795,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="306483877">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Name:</string>
+							<string key="NSContents">Name</string>
 							<object class="NSFont" key="NSSupport" id="965450233">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -1817,7 +1817,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="796021556">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Bridge address:</string>
+							<string key="NSContents">Bridge address</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="745258264"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1835,7 +1835,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="97135927">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Forward device:</string>
+							<string key="NSContents">Forward device</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="479764993"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -1899,7 +1899,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="753534544">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Bridge name:</string>
+							<string key="NSContents">Bridge name</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="270522499"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2042,7 +2042,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="199565340">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Bridge delay: </string>
+							<string key="NSContents">Bridge delay </string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="40168493"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2100,7 +2100,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="930233789">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Netmask:</string>
+							<string key="NSContents">Netmask</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="209231076"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2280,7 +2280,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="143120818">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Activate STP:</string>
+							<string key="NSContents">Activate STP</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="455799328"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2348,7 +2348,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="461543037">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Auto start:</string>
+							<string key="NSContents">Auto start</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="971138218"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2474,7 +2474,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="155686340">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Outbound:</string>
+							<string key="NSContents">Outbound</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="706038081"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -2768,7 +2768,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="31857546">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Inbound:</string>
+							<string key="NSContents">Inbound</string>
 							<reference key="NSSupport" ref="965450233"/>
 							<reference key="NSControlView" ref="552082032"/>
 							<reference key="NSBackgroundColor" ref="212351458"/>
@@ -6105,6 +6105,64 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNHypervisorNetworksController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNModule</string>
+					<string key="superclassName">NSViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">toolbarItemClicked:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">toolbarItemClicked:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">toolbarItemClicked:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
+							<string>viewPreferences</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSImageView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
+							<string>viewPreferences</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageViewModuleReady</string>
+								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewMask</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewPreferences</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNModule.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

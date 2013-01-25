@@ -11,6 +11,6 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Maximum saved messages"; ObjectID = "37"; */
 "37.placeholderString" = "Maximum saved messages";
 
-/* Class = "NSTextFieldCell"; title = "Max chat entries:"; ObjectID = "40"; */
+/* Class = "NSTextFieldCell"; title = "Max chat entries"; ObjectID = "40"; */
 "40.title" = "Max chat entries:";
 
