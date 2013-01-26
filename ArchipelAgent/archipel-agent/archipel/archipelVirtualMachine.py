@@ -73,6 +73,7 @@ ARCHIPEL_ERROR_CODE_VM_NETWORKINFO = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES = -1019
 ARCHIPEL_ERROR_CODE_VM_FREE = -1020
 ARCHIPEL_ERROR_CODE_VM_SCREENSHOT = -1021
+ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_NODE_INFO = -1022
 ARCHIPEL_ERROR_CODE_VM_MIGRATING = -43
 
 ARCHIPEL_NS_VM_CONTROL = "archipel:vm:control"
@@ -278,6 +279,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.permission_center.create_permission("define", "Authorizes users to define virtual machine", False)
         self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
+        self.permission_center.create_permission("nodeinfo", "Authorizes users to access virtual machine's hypervisor node informations", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
 
     def add_vm_definition_hook(self, method):
@@ -1462,6 +1464,21 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             reply.setQueryPayload([self.hypervisor.capabilities])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES)
+        return reply
+
+    def iq_nodeinfo(self, iq):
+        """
+        Send the virtual machine's hypervisor node informations.
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            reply = iq.buildReply("result")
+            reply.setQueryPayload([self.hypervisor.nodeinfo])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_NODE_INFO)
         return reply
 
     def message_insult(self, msg):
