@@ -1662,6 +1662,14 @@ IHBhcmsuA</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">fieldPreferencesCpuUsageRefresh</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="690994870"/>
+					</object>
+					<int key="connectionID">221</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">view</string>
 						<reference key="source" ref="709368042"/>
 						<reference key="destination" ref="641263015"/>
@@ -2469,6 +2477,11 @@ IHBhcmsuA</string>
 						<reference key="parent" ref="802415413"/>
 					</object>
 					<object class="IBObjectRecord">
+						<int key="objectID">220</int>
+						<reference key="object" ref="406398470"/>
+						<reference key="parent" ref="312948039"/>
+					</object>
+					<object class="IBObjectRecord">
 						<int key="objectID">218</int>
 						<reference key="object" ref="690994870"/>
 						<object class="NSMutableArray" key="children">
@@ -2481,11 +2494,6 @@ IHBhcmsuA</string>
 						<int key="objectID">219</int>
 						<reference key="object" ref="244612565"/>
 						<reference key="parent" ref="690994870"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">220</int>
-						<reference key="object" ref="406398470"/>
-						<reference key="parent" ref="312948039"/>
 					</object>
 				</object>
 			</object>
@@ -2811,7 +2819,7 @@ IHBhcmsuA</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">220</int>
+			<int key="maxID">221</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2966,7 +2974,7 @@ IHBhcmsuA</string>
 							<string>fieldInfoState</string>
 							<string>fieldOOMAdjust</string>
 							<string>fieldOOMScore</string>
-							<string>fieldPreferencesCPUSampleRefresh</string>
+							<string>fieldPreferencesCpuUsageRefresh</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
 							<string>filterHypervisors</string>
 							<string>imageState</string>
@@ -3023,7 +3031,7 @@ IHBhcmsuA</string>
 							<string>fieldInfoState</string>
 							<string>fieldOOMAdjust</string>
 							<string>fieldOOMScore</string>
-							<string>fieldPreferencesCPUSampleRefresh</string>
+							<string>fieldPreferencesCpuUsageRefresh</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
 							<string>filterHypervisors</string>
 							<string>imageState</string>
@@ -3087,7 +3095,7 @@ IHBhcmsuA</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">fieldPreferencesCPUSampleRefresh</string>
+								<string key="name">fieldPreferencesCpuUsageRefresh</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
