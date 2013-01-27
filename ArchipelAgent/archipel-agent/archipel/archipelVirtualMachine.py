@@ -1277,7 +1277,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 cpuorth = "CPU"
             else:
                 cpuorth = "CPUs"
-            return "I'm in state %s, I use %d MB of memory. I've got %d %s and I've consumed %d percent(s) of my hypervisor (%s)." % (state, mem, i["nrVirtCpu"], cpuorth, i["cpuPrct"], i["hypervisor"])
+            return "I'm in state %s, I use %d MB of memory. I've got %d %s and I'm consuming %d percent(s) of my allocated ressources on %s." % (state, mem, i["nrVirtCpu"], cpuorth, i["cpuPrct"], i["hypervisor"])
         except Exception as ex:
             return build_error_message(self, ex, msg)
 

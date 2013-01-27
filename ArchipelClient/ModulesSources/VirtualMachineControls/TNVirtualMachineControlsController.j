@@ -768,7 +768,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         defaults            = [CPUserDefaults standardUserDefaults],
         infoNode            = [aStanza firstChildWithName:@"info"],
         libvirtState        = [infoNode valueForAttribute:@"state"],
-        cpuTime             = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 60000000000),
+        cpuPrct             = parseInt([infoNode valueForAttribute:@"cpuPrct"]),
         mem                 = parseFloat([infoNode valueForAttribute:@"memory"]),
         maxMem              = parseFloat([infoNode valueForAttribute:@"maxMem"]),
         autostart           = parseInt([infoNode valueForAttribute:@"autostart"]),
@@ -779,7 +779,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [fieldInfoMem setTextColor:[CPColor blackColor]];
     [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
-    [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
+    [fieldInfoConsumedCPU setStringValue:cpuPrct + @" %"];
 
     [stepperCPU setDoubleValue:[nvCPUs intValue]];
 
