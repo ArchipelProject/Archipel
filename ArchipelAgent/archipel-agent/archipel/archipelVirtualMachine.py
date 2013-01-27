@@ -41,6 +41,7 @@ import thread
 import xmpp
 import tempfile
 import base64
+from time import sleep
 from threading import Timer
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
@@ -674,6 +675,16 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             return (data, size)
         return (None, (0, 0))
 
+    def __compute_cpu_usage(self,interval):
+        """
+        Return the vm CPU usage in percent within interval
+        """
+        nrCore = self.hypervisor.get_nodeinfo()['nrCoreperSocket']
+        t0 = self.domain.info()[4]
+        sleep(interval)
+        t1 = self.domain.info()[4]
+        return 100*(t1-t0)/(interval*nrCore*1000000000)
+        
     def info(self):
         """
         Return info of a domain.
@@ -692,7 +703,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             "maxMem": dominfo[1],
             "memory": dominfo[2],
             "nrVirtCpu": dominfo[3],
-            "cpuTime": dominfo[4],
+            "cpuPrct": self.__compute_cpu_usage(1),
             "hypervisor": self.hypervisor.jid,
             "autostart": str(autostart)}
 
