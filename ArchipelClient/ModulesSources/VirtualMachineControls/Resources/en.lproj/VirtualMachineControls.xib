@@ -1186,6 +1186,50 @@ IHBhcmsuA</string>
 				<int key="NSvFlags">269</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="690994870">
+						<reference key="NSNextResponder" ref="802415413"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{205, 30}, {238, 22}}</string>
+						<reference key="NSSuperview" ref="802415413"/>
+						<reference key="NSWindow"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="244612565">
+							<int key="NSCellFlags">-1804599231</int>
+							<int key="NSCellFlags2">268436480</int>
+							<string key="NSContents"/>
+							<reference key="NSSupport" ref="986145391"/>
+							<string key="NSPlaceholderString">Delay between CPU Usage</string>
+							<reference key="NSControlView" ref="690994870"/>
+							<bool key="NSDrawsBackground">YES</bool>
+							<reference key="NSBackgroundColor" ref="20554231"/>
+							<object class="NSColor" key="NSTextColor" id="415698394">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">textColor</string>
+								<reference key="NSColor" ref="590663584"/>
+							</object>
+						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+					</object>
+					<object class="NSTextField" id="312948039">
+						<reference key="NSNextResponder" ref="802415413"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{37, 33}, {163, 17}}</string>
+						<reference key="NSSuperview" ref="802415413"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="690994870"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="406398470">
+							<int key="NSCellFlags">68157504</int>
+							<int key="NSCellFlags2">71304192</int>
+							<string key="NSContents">CPU Usage refresh time</string>
+							<reference key="NSSupport" ref="672023766"/>
+							<reference key="NSControlView" ref="312948039"/>
+							<reference key="NSBackgroundColor" ref="977635433"/>
+							<reference key="NSTextColor" ref="96033734"/>
+						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+					</object>
 					<object class="NSTextField" id="525034696">
 						<reference key="NSNextResponder" ref="802415413"/>
 						<int key="NSvFlags">269</int>
@@ -1202,12 +1246,7 @@ IHBhcmsuA</string>
 							<reference key="NSControlView" ref="525034696"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="20554231"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">6</int>
-								<string key="NSCatalogName">System</string>
-								<string key="NSColorName">textColor</string>
-								<reference key="NSColor" ref="590663584"/>
-							</object>
+							<reference key="NSTextColor" ref="415698394"/>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -2097,6 +2136,8 @@ IHBhcmsuA</string>
 							<reference ref="116586965"/>
 							<reference ref="954345060"/>
 							<reference ref="525034696"/>
+							<reference ref="312948039"/>
+							<reference ref="690994870"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -2418,6 +2459,34 @@ IHBhcmsuA</string>
 						<reference key="object" ref="835113995"/>
 						<reference key="parent" ref="641263015"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">217</int>
+						<reference key="object" ref="312948039"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="406398470"/>
+						</object>
+						<reference key="parent" ref="802415413"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">218</int>
+						<reference key="object" ref="690994870"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="244612565"/>
+						</object>
+						<reference key="parent" ref="802415413"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">219</int>
+						<reference key="object" ref="244612565"/>
+						<reference key="parent" ref="690994870"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">220</int>
+						<reference key="object" ref="406398470"/>
+						<reference key="parent" ref="312948039"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2477,6 +2546,11 @@ IHBhcmsuA</string>
 					<string>204.IBPluginDependency</string>
 					<string>206.IBPluginDependency</string>
 					<string>207.IBPluginDependency</string>
+					<string>217.IBPluginDependency</string>
+					<string>218.IBAttributePlaceholdersKey</string>
+					<string>218.IBPluginDependency</string>
+					<string>219.IBPluginDependency</string>
+					<string>220.IBPluginDependency</string>
 					<string>23.IBPluginDependency</string>
 					<string>24.IBPluginDependency</string>
 					<string>26.IBPluginDependency</string>
@@ -2616,6 +2690,18 @@ IHBhcmsuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">ToolTip</string>
+						<object class="IBToolTipAttribute" key="NS.object.0">
+							<string key="name">ToolTip</string>
+							<reference key="object" ref="690994870"/>
+							<string key="toolTip">Delay before polling new CPU usage</string>
+						</object>
+					</object>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2725,7 +2811,7 @@ IHBhcmsuA</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">216</int>
+			<int key="maxID">220</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
