@@ -211,7 +211,7 @@ class TNThreadedHealthCollector (Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        output  = subprocess.Popen(["df", "-P"], stdout=subprocess.PIPE).communicate()[0]
+        output  = subprocess.Popen(["df", "-P", "-x", "devfs", "-x", "devtmpfs", "-x", "tmpfs"], stdout=subprocess.PIPE).communicate()[0]
         listed  = []
         ret     = []
         out     = output.split("\n")[1:-1]
@@ -222,6 +222,20 @@ class TNThreadedHealthCollector (Thread):
             ret.append({"partition": cell[0], "blocks": cell[1], "used": int(cell[2]) * 1024, "available": int(cell[3]) * 1024, "capacity": cell[4], "mount": cell[5]})
             listed.append(cell[5])
         return ret
+
+    def get_disk_total(self):
+        """
+        Get total size of drive used stats.
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
+        out = subprocess.Popen(["df", "--total", "-P", "-x", "devfs", "-x", "devtmpfs", "-x", "tmpfs"], stdout=subprocess.PIPE).communicate()[0].split("\n")
+        for line in out:
+            line = line.split()
+            if line[0] == "total":
+                disk_total = line
+                break
+        return {"used": disk_total[2], "available": disk_total[3], "capacity": disk_total[4]}
 
     def get_network_stats(self):
         """
@@ -251,20 +265,6 @@ class TNThreadedHealthCollector (Thread):
             ret[dev] = delta_usage
         self.current_record = records;
         return {"date": datetime.datetime.now(), "records": json.dumps(ret)}
-
-    def get_disk_total(self):
-        """
-        Get total size of drive used stats.
-        @rtype: dict
-        @return: dictionnary containing the informations
-        """
-        out = subprocess.Popen(["df", "--total", "-P"], stdout=subprocess.PIPE).communicate()[0].split("\n")
-        for line in out:
-            line = line.split()
-            if line[0] == "total":
-                disk_total = line
-                break
-        return {"used": disk_total[2], "available": disk_total[3], "capacity": disk_total[4]}
 
     def getTimeList(self):
         """
