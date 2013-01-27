@@ -1273,12 +1273,11 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             states = ("no state", "running", "blocked", "paused", "shutdown", "shut off", "crashed")
             state = states[i["state"]]
             mem = int(i["memory"]) / 1024
-            time = int(i["cpuTime"]) / 1000000000
             if i["nrVirtCpu"] < 2:
                 cpuorth = "CPU"
             else:
                 cpuorth = "CPUs"
-            return "I'm in state %s, I use %d MB of memory. I've got %d %s and I've consumed %d second(s) of my hypervisor (%s)." % (state, mem, i["nrVirtCpu"], cpuorth, time, i["hypervisor"])
+            return "I'm in state %s, I use %d MB of memory. I've got %d %s and I've consumed %d percent(s) of my hypervisor (%s)." % (state, mem, i["nrVirtCpu"], cpuorth, i["cpuPrct"], i["hypervisor"])
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
