@@ -311,12 +311,12 @@ class TNThreadedHealthCollector (Thread):
 
                     log.info("Stats saved in database file.")
 
-                    if int(self.database_thread_cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
-                        self.database_thread_cursor.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from network where collection_date=(select collection_date from network order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        log.debug("Old stored stats have been purged from memory.")
+                    if int(self.database_thread_cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 1.5:
+                        self.database_thread_cursor.execute("delete from cpu where collection_date order by collection_date desc limit -1 offset "+ str(self.max_rows_before_purge))
+                        self.database_thread_cursor.execute("delete from memory where collection_date order by collection_date desc limit -1 offset "+ str(self.max_rows_before_purge))
+                        self.database_thread_cursor.execute("delete from load where collection_date order by collection_date desc limit -1 offset "+ str(self.max_rows_before_purge))
+                        self.database_thread_cursor.execute("delete from network where collection_date order by collection_date desc limit -1 offset "+ str(self.max_rows_before_purge))
+                        log.debug("Old stored stats have been purged from database.")
 
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]
