@@ -817,7 +817,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
                                              target:self
                                            selector:@selector(getCpuUsage:)
                                            userInfo:nil
-                                            repeats:NO];
+                                            repeats:YES];
         }
 
         if (!_screenshotTimer && [self isVisible])
@@ -827,7 +827,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
                                              target:self
                                            selector:@selector(getThumbnailScreenshot:)
                                            userInfo:nil
-                                            repeats:NO];
+                                            repeats:YES];
         }
 
         if ([self currentEntityHasPermission:@"migrate"])
