@@ -59,6 +59,7 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_MANAGE           = -9010
 ARCHIPEL_ERROR_CODE_HYPERVISOR_UNMANAGE         = -9011
 ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO   = -9012
 ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO     = -9013
+ARCHIPEL_ERROR_CODE_HYPERVISOR_NODE_INFO        = -9014
 
 # Namespace
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
@@ -196,7 +197,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             self.log.warning("Your hypervisor doesn't support libvirt eventing. Using fake event loop.")
 
         self.capabilities = self.get_capabilities()
-
+        self.nodeinfo = self.get_nodeinfo()
+        
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
@@ -292,6 +294,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                                 "method": self.message_capabilities,
                                 "permissions": ["capabilities"],
                                 "description": "Get my libvirt capabilities" },
+                            {   "commands" : ["nodeinfo"],
+                                "parameters": [],
+                                "method": self.message_nodeinfo,
+                                "permissions": ["nodeinfo"],
+                                "description": "Get my node informations" },
                             {   "commands" : ["libvirt uri", "migration info"],
                                 "parameters": [],
                                 "method": self.message_migration_info,
@@ -338,6 +345,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.permission_center.create_permission("ip", "Authorizes users to get hypervisor's IP address", False)
         self.permission_center.create_permission("migrationinfo", "Authorizes users to get the migration informations", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False)
+        self.permission_center.create_permission("nodeinfo", "Authorizes users to access the hypervisor Node Information", False)
         self.permission_center.create_permission("manage", "Authorizes users make Archipel able to manage external virtual machines", False)
         self.permission_center.create_permission("unmanage", "Authorizes users to make Archipel able to unmanage virtual machines", False)
         self.permission_center.create_permission("setorginfo", "Authorizes users to change VM Organization information of virtual machines", False)
@@ -484,6 +492,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             - ip
             - uri
             - capabilities
+            - nodeinfo
             - manage
             - unmanage
             - setorginfo
@@ -515,6 +524,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = self.iq_migration_info(iq)
         elif action == "capabilities":
             reply = self.iq_capabilities(iq)
+        elif action == "nodeinfo":
+            reply = self.iq_nodeinfo(iq)
         elif action == "manage":
             reply = self.iq_manage(iq)
         elif action == "unmanage":
@@ -733,6 +744,21 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
         return capp
+    
+    def get_nodeinfo(self):
+        """
+        Retur hypervisor's node informations
+        """
+        nodeinfo = self.libvirt_connection.getInfo()
+        return {
+            "model": nodeinfo[0],
+            "memory": nodeinfo[1],
+            "nrCPU": nodeinfo[2],
+            "mHzCPU": nodeinfo[3],
+            "nrNumaNodes": nodeinfo[4],
+            "nrSockets": nodeinfo[5],
+            "nrCoreperSocket": nodeinfo[6],
+            "nrThreadperCore": nodeinfo[7]}
 
     def migration_info(self):
         """
@@ -1066,6 +1092,34 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         try:
             return str(self.capabilities)
+        except Exception as ex:
+            return build_error_message(self, ex, msg)
+
+    def iq_nodeinfo(self, iq):
+        """
+        Send the hypervisor node informations.
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            reply = iq.buildReply("result")
+            reply.setQueryPayload(self.nodeinfo)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_NODE_INFO)
+        return reply
+
+    def message_nodeinfo(self, msg):
+        """
+        Process the node info message request.
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message
+        @rtype: xmpp.Protocol.Message
+        @return: a ready to send Message containing the result of the action
+        """
+        try:
+            return str(self.nodeinfo)
         except Exception as ex:
             return build_error_message(self, ex, msg)
 
