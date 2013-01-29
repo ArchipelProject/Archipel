@@ -977,7 +977,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 /*! @ignore
 */
-- (IBAction)_performDeleteEntity
+- (void)_performDeleteEntity
 {
     var indexes = [_rosterOutlineView selectedRowIndexes],
         contactToRemove = [CPArray array],

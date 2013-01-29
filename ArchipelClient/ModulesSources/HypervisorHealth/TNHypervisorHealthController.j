@@ -473,7 +473,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 /*! Action that make the auto refresh on or off
     @param sender the sender of the action
 */
-- (IBAction)handleAutoRefresh
+- (void)handleAutoRefresh
 {
     var defaults    = [CPUserDefaults standardUserDefaults];
 

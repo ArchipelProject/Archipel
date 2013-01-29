@@ -22,7 +22,7 @@
 
 - (void)setDefaultButton:(CPButton)aButton
 {
-    [_attachedWindow setDefaultButton:aButton];
+    [_popoverWindow setDefaultButton:aButton];
 }
 
 - (CPButton)defaultButton
@@ -32,7 +32,7 @@
 
 - (void)makeFirstResponder:(id)aResponder
 {
-    [_attachedWindow makeFirstResponder:aResponder];
+    [_popoverWindow makeFirstResponder:aResponder];
 }
 
 @end

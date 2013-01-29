@@ -83,7 +83,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet TNVirtualMachineParkedDataView          dataViewParkedVMPrototype;
     @outlet TNVirtualMachineParkingController       VMParkingController;
     @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
-    @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
 
     CPButton                                        _addSubscriptionButton;
     CPButton                                        _cloneButton;

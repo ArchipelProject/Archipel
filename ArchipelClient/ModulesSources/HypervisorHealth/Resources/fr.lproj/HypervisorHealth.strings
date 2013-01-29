@@ -2,25 +2,25 @@
 /* Class = "NSTextFieldCell"; title = "Health"; ObjectID = "4"; */
 "4.title" = "Health";
 
-/* Class = "NSTextFieldCell"; title = "CPU usage:"; ObjectID = "6"; */
+/* Class = "NSTextFieldCell"; title = "CPU usage"; ObjectID = "6"; */
 "6.title" = "CPU usage:";
 
-/* Class = "NSTextFieldCell"; title = "Disk usage:"; ObjectID = "8"; */
+/* Class = "NSTextFieldCell"; title = "Disk usage"; ObjectID = "8"; */
 "8.title" = "Disk usage:";
 
-/* Class = "NSTextFieldCell"; title = "Load average:"; ObjectID = "11"; */
+/* Class = "NSTextFieldCell"; title = "Load averag"; ObjectID = "11"; */
 "11.title" = "Load average:";
 
-/* Class = "NSTextFieldCell"; title = "Free memory:"; ObjectID = "12"; */
+/* Class = "NSTextFieldCell"; title = "Free memory"; ObjectID = "12"; */
 "12.title" = "Free memory:";
 
-/* Class = "NSTextFieldCell"; title = "Machine:"; ObjectID = "15"; */
+/* Class = "NSTextFieldCell"; title = "Machine"; ObjectID = "15"; */
 "15.title" = "Machine:";
 
-/* Class = "NSTextFieldCell"; title = "Swapped:"; ObjectID = "16"; */
+/* Class = "NSTextFieldCell"; title = "Swapped"; ObjectID = "16"; */
 "16.title" = "Swapped:";
 
-/* Class = "NSTextFieldCell"; title = "Uptime:"; ObjectID = "20"; */
+/* Class = "NSTextFieldCell"; title = "Uptime"; ObjectID = "20"; */
 "20.title" = "Uptime:";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "22"; */
@@ -98,16 +98,16 @@
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for the health module."; ObjectID = "138"; */
 "138.title" = "You can configure preferences for the health module.";
 
-/* Class = "NSTextFieldCell"; title = "Auto refresh interval:"; ObjectID = "140"; */
+/* Class = "NSTextFieldCell"; title = "Auto refresh interval"; ObjectID = "140"; */
 "140.title" = "Auto refresh interval:";
 
-/* Class = "NSTextFieldCell"; title = "Max items in history:"; ObjectID = "142"; */
+/* Class = "NSTextFieldCell"; title = "Max items in history"; ObjectID = "142"; */
 "142.title" = "Max items in history:";
 
-/* Class = "NSTextFieldCell"; title = "Max log lines:"; ObjectID = "144"; */
+/* Class = "NSTextFieldCell"; title = "Max log lines"; ObjectID = "144"; */
 "144.title" = "Max log lines:";
 
-/* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
+/* Class = "NSTextFieldCell"; title = "Auto refresh stats"; ObjectID = "150"; */
 "150.title" = "Auto refresh stats:";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling stats"; ObjectID = "151"; */
@@ -128,10 +128,10 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "185"; */
 "185.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "Driver version:"; ObjectID = "186"; */
+/* Class = "NSTextFieldCell"; title = "Driver version"; ObjectID = "186"; */
 "186.title" = "Driver version:";
 
-/* Class = "NSTextFieldCell"; title = "Libvirt version:"; ObjectID = "187"; */
+/* Class = "NSTextFieldCell"; title = "Libvirt version"; ObjectID = "187"; */
 "187.title" = "Libvirt version:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Logs messages"; ObjectID = "209"; */

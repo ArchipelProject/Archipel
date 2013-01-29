@@ -183,12 +183,12 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="947968626">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
+							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Max chat entries:</string>
 							<object class="NSFont" key="NSSupport">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
-								<int key="NSfFlags">16</int>
+								<int key="NSfFlags">2072</int>
 							</object>
 							<reference key="NSControlView" ref="97159164"/>
 							<object class="NSColor" key="NSBackgroundColor" id="459922863">
