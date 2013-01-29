@@ -827,7 +827,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
                                              target:self
                                            selector:@selector(getThumbnailScreenshot:)
                                            userInfo:nil
-                                            repeats:YES];
+                                            repeats:NO];
         }
 
         if ([self currentEntityHasPermission:@"migrate"])
