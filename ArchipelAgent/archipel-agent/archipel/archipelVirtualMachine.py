@@ -41,7 +41,6 @@ import thread
 import xmpp
 import tempfile
 import base64
-from time import sleep
 from threading import Timer
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
@@ -121,6 +120,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
+        self.cputime_samples=[0,0]
+        self.cputime_sampling_Interval = 2.0
+        self.cputime_sampling_Timer(self.cputime_sampling_Interval)
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
@@ -675,15 +677,20 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             return (data, size)
         return (None, (0, 0))
 
-    def __compute_cpu_usage(self,interval):
+    def cputime_sampling_Timer(self,Interval):
+        """
+        Create a threaded timer to take cputime samples from actual domain
+        """
+        Timer(Interval, self.cputime_sampling_Timer,[Interval]).start()
+        if self.domain and not self.is_freeing:
+            self.cputime_samples.pop()
+            self.cputime_samples.insert(0,self.domain.info()[4])
+
+    def compute_cpu_usage(self):
         """
         Return the vm CPU usage in percent within interval
         """
-        nrCore = self.hypervisor.get_nodeinfo()['nrCoreperSocket']
-        t0 = self.domain.info()[4]
-        sleep(interval)
-        t1 = self.domain.info()[4]
-        return 100*(t1-t0)/(interval*nrCore*1000000000)
+        return 100*(self.cputime_samples[0]-self.cputime_samples[1])/(self.cputime_sampling_Interval*self.hypervisor.get_nodeinfo()['nrCoreperSocket']*1000000000)
         
     def info(self):
         """
@@ -703,7 +710,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             "maxMem": dominfo[1],
             "memory": dominfo[2],
             "nrVirtCpu": dominfo[3],
-            "cpuPrct": self.__compute_cpu_usage(1),
+            "cpuPrct": self.compute_cpu_usage(),
             "hypervisor": self.hypervisor.jid,
             "autostart": str(autostart)}
 
