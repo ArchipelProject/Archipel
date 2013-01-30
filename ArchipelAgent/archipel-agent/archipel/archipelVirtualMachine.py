@@ -41,6 +41,7 @@ import thread
 import xmpp
 import tempfile
 import base64
+import time
 from threading import Timer
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
@@ -120,7 +121,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
-        self.cputime_samples=[0,0]
+        self.cputime_samples=[]
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_Timer(self.cputime_sampling_Interval)
 
@@ -679,18 +680,27 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
     def cputime_sampling_Timer(self,Interval):
         """
-        Create a threaded timer to take cputime samples from actual domain
+        Create a threaded timer to take timestamp,cputime samples from actual domain
         """
         Timer(Interval, self.cputime_sampling_Timer,[Interval]).start()
         if self.domain and not self.is_freeing:
-            self.cputime_samples.pop()
-            self.cputime_samples.insert(0,self.domain.info()[4])
+            self.cputime_samples.insert(0,(time.time(),self.domain.info()[4]))
+            if len(self.cputime_samples) > 2:
+                self.cputime_samples.pop()
 
     def compute_cpu_usage(self):
         """
-        Return the vm CPU usage in percent within interval
+        Return the vm CPU usage in percent between two samples
         """
-        return 100*(self.cputime_samples[0]-self.cputime_samples[1])/(self.cputime_sampling_Interval*self.hypervisor.get_nodeinfo()['nrCoreperSocket']*1000000000)
+        try:
+            prtCPU = 100*(self.cputime_samples[0][1]-self.cputime_samples[1][1])/((self.cputime_samples[0][0]-self.cputime_samples[1][0])*self.hypervisor.get_nodeinfo()['nrCoreperSocket']*1000000000)
+        except:
+            prtCPU = 0
+        
+        if prtCPU > 0:
+            return prtCPU
+        else:
+            return 0 
         
     def info(self):
         """
