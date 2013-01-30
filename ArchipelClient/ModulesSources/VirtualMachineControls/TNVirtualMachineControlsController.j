@@ -774,6 +774,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         "action": TNArchipelTypeVirtualMachineControlInfo}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveVirtualMachineInfo:)];
+    if (_cpuUsageTimer)
+        [_cpuUsageTimer invalidate];
+        [_cpuUsageTimer = nil];
 }
 
 /*! compute virtual machine answer about its information
@@ -813,12 +816,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         if (!_cpuUsageTimer && [self isVisible])
         {
-            [self getVirtualMachineInfo];
             _cpuUsageTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsCpuUsageRefresh"]
                                              target:self
                                            selector:@selector(getCpuUsage:)
                                            userInfo:nil
-                                            repeats:YES];
+                                            repeats:NO];
         }
 
         if (!_screenshotTimer && [self isVisible])
