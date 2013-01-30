@@ -164,6 +164,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
+    [fieldInfoConsumedCPU setStringValue:"--" + @" %"];
 
     _imagePlay      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
     _imageStop      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
@@ -773,6 +774,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         "action": TNArchipelTypeVirtualMachineControlInfo}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveVirtualMachineInfo:)];
+    if (_cpuUsageTimer)
+        [_cpuUsageTimer invalidate];
+        [_cpuUsageTimer = nil];
 }
 
 /*! compute virtual machine answer about its information
@@ -812,12 +816,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         if (!_cpuUsageTimer && [self isVisible])
         {
-            [self getVirtualMachineInfo];
             _cpuUsageTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsCpuUsageRefresh"]
                                              target:self
                                            selector:@selector(getCpuUsage:)
                                            userInfo:nil
-                                            repeats:YES];
+                                            repeats:NO];
         }
 
         if (!_screenshotTimer && [self isVisible])
@@ -827,7 +830,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
                                              target:self
                                            selector:@selector(getThumbnailScreenshot:)
                                            userInfo:nil
-                                            repeats:YES];
+                                            repeats:NO];
         }
 
         if ([self currentEntityHasPermission:@"migrate"])

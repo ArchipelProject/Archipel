@@ -1119,7 +1119,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready to send Message containing the result of the action
         """
         try:
-            return str(self.nodeinfo)
+            return "I have %d CPU(s) model %s with %d core(s) each running at %d MHz, I own %d MB of Memory." % (self.nodeinfo['nrSockets'],self.nodeinfo['model'],self.nodeinfo['nrCoreperSocket'],self.nodeinfo['mHzCPU'],self.nodeinfo['memory'])
         except Exception as ex:
             return build_error_message(self, ex, msg)
 

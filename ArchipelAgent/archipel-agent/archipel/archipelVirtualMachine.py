@@ -41,7 +41,7 @@ import thread
 import xmpp
 import tempfile
 import base64
-from time import sleep
+import time
 from threading import Timer
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
@@ -121,6 +121,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
+        self.cputime_samples=[]
+        self.cputime_sampling_Interval = 2.0
+        self.cputime_sampling_Timer(self.cputime_sampling_Interval)
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
@@ -675,15 +678,29 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             return (data, size)
         return (None, (0, 0))
 
-    def __compute_cpu_usage(self,interval):
+    def cputime_sampling_Timer(self,Interval):
         """
-        Return the vm CPU usage in percent within interval
+        Create a threaded timer to take timestamp,cputime samples from actual domain
         """
-        nrCore = self.hypervisor.get_nodeinfo()['nrCoreperSocket']
-        t0 = self.domain.info()[4]
-        sleep(interval)
-        t1 = self.domain.info()[4]
-        return 100*(t1-t0)/(interval*nrCore*1000000000)
+        Timer(Interval, self.cputime_sampling_Timer,[Interval]).start()
+        if self.domain and not self.is_freeing:
+            self.cputime_samples.insert(0,(time.time(),self.domain.info()[4]))
+            if len(self.cputime_samples) > 2:
+                self.cputime_samples.pop()
+
+    def compute_cpu_usage(self):
+        """
+        Return the vm CPU usage in percent between two samples
+        """
+        try:
+            prtCPU = 100*(self.cputime_samples[0][1]-self.cputime_samples[1][1])/((self.cputime_samples[0][0]-self.cputime_samples[1][0])*self.hypervisor.get_nodeinfo()['nrCoreperSocket']*1000000000)
+        except:
+            prtCPU = 0
+        
+        if prtCPU > 0:
+            return prtCPU
+        else:
+            return 0 
         
     def info(self):
         """
@@ -703,7 +720,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             "maxMem": dominfo[1],
             "memory": dominfo[2],
             "nrVirtCpu": dominfo[3],
-            "cpuPrct": self.__compute_cpu_usage(1),
+            "cpuPrct": self.compute_cpu_usage(),
             "hypervisor": self.hypervisor.jid,
             "autostart": str(autostart)}
 
