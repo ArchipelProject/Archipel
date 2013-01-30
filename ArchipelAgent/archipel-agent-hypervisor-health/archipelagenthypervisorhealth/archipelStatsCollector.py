@@ -310,13 +310,13 @@ class TNThreadedHealthCollector (Thread):
                     self.database_thread_cursor.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])
 
                     log.info("Stats saved in database file.")
-
-                    if int(self.database_thread_cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
-                        self.database_thread_cursor.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from network where collection_date=(select collection_date from network order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        log.debug("Old stored stats have been purged from memory.")
+                    nrRow = int(self.database_thread_cursor.execute("select count(*) from cpu").fetchone()[0]);
+                    if  nrRow > self.max_rows_before_purge * 1.5:
+                        self.database_thread_cursor.execute("DELETE FROM cpu WHERE collection_date IN (SELECT collection_date FROM cpu ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM memory WHERE collection_date IN (SELECT collection_date FROM memory ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM load WHERE collection_date IN (SELECT collection_date FROM load ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM network WHERE collection_date IN (SELECT collection_date FROM network ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        log.debug("Old stored stats have been purged from database.")
 
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]
