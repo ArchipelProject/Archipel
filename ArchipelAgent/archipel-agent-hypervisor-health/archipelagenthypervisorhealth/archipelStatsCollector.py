@@ -311,11 +311,11 @@ class TNThreadedHealthCollector (Thread):
 
                     log.info("Stats saved in database file.")
                     nrRow = int(self.database_thread_cursor.execute("select count(*) from cpu").fetchone()[0]);
-                    if  nrRow >= self.max_rows_before_purge * 1.5:
-                        self.database_thread_cursor.execute("delete from cpu order by collection_date asc limit "+ str(nrRow - self.max_rows_before_purge))
-                        self.database_thread_cursor.execute("delete from memory order by collection_date asc limit "+ str(nrRow - self.max_rows_before_purge))
-                        self.database_thread_cursor.execute("delete from load order by collection_date asc limit "+ str(nrRow - self.max_rows_before_purge))
-                        self.database_thread_cursor.execute("delete from network order by collection_date asc limit "+ str(nrRow - self.max_rows_before_purge))
+                    if  nrRow > self.max_rows_before_purge * 1.5:
+                        self.database_thread_cursor.execute("DELETE FROM cpu WHERE collection_date IN (SELECT collection_date FROM cpu ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM memory WHERE collection_date IN (SELECT collection_date FROM memory ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM load WHERE collection_date IN (SELECT collection_date FROM load ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM network WHERE collection_date IN (SELECT collection_date FROM network ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
                         log.debug("Old stored stats have been purged from database.")
 
                     del self.stats_CPU[0:middle]
