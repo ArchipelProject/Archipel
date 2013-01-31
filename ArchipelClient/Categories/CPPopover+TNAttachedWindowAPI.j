@@ -27,7 +27,7 @@
 
 - (CPButton)defaultButton
 {
-    return [_attachedWindow defaultButton];
+    return [_popoverWindow defaultButton];
 }
 
 - (void)makeFirstResponder:(id)aResponder
