@@ -77,8 +77,14 @@ var TNRosterDataViewContactImageUnknownUser,
 {
     var bundle  = [CPBundle mainBundle];
 
-    TNRosterDataViewContactImageNormalCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
-    TNRosterDataViewContactImageSelectedCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
+    TNRosterDataViewContactImageNormalCartoucheColor = CPColorWithImages([  ["pills/pill-left.png", 6, 14, bundle],
+                                                                            ["pills/pill-center.png", 1, 14, bundle],
+                                                                            ["pills/pill-right.png", 6, 14, bundle]]);
+
+    TNRosterDataViewContactImageSelectedCartoucheColor = CPColorWithImages([["pills/pill-highlighted-left.png", 6, 14, bundle],
+                                                                            ["pills/pill-highlighted-center.png", 1, 14, bundle],
+                                                                            ["pills/pill-highlighted-right.png", 6, 14, bundle]]);
+
 
     [CPValueTransformer setValueTransformer:[[TNNoAvatarValueTransformer alloc] init] forName:@"TNNoAvatarValueTransformer"];
 }
@@ -89,7 +95,8 @@ var TNRosterDataViewContactImageUnknownUser,
 {
     [events setBackgroundColor:TNRosterDataViewContactImageNormalCartoucheColor];
     [events setVerticalAlignment:CPCenterVerticalTextAlignment];
-    [events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+    [events setValue:[CPColor colorWithHexString:@"6D96EE"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+
     [events setValue:TNRosterDataViewContactImageNormalCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
     [events setValue:TNRosterDataViewContactImageSelectedCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
     [events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"content-inset"];
@@ -128,14 +135,11 @@ var TNRosterDataViewContactImageUnknownUser,
     [statusIcon bind:@"objectValue" toObject:aContact withKeyPath:@"statusIcon" options:nil];
     [avatar bind:@"objectValue" toObject:aContact withKeyPath:@"avatar" options:opts];
 
+    [events setHidden:YES];
     if ([aContact numberOfEvents] > 0)
     {
         [events setHidden:NO];
         [events setStringValue:[aContact numberOfEvents]];
-    }
-    else
-    {
-        [events setHidden:YES];
     }
 }
 
