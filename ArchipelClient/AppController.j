@@ -792,6 +792,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)didRetrieveConfiguration:(CPNotification)aNotification
 {
     [CPMenu setMenuBarVisible:YES];
+
+    [[[TNStropheIMClient defaultClient] roster] getRoster];
+
     [connectionController hideWindow:nil];
     [theWindow makeKeyAndOrderFront:nil];
     [self updateOverallScrollersStyle];
@@ -1671,8 +1674,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
 {
     CPLog.info(@"All modules have been loaded");
-
-    [[[TNStropheIMClient defaultClient] roster] getRoster];
 
     _rosterOutlineView._DOMElement.style.WebkitTransition = "";
     _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
