@@ -164,7 +164,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
-    [fieldInfoConsumedCPU setStringValue:"--" + @" %"];
+    [fieldInfoConsumedCPU setStringValue:"..."];
 
     _imagePlay      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
     _imageStop      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
