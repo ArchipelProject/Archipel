@@ -144,6 +144,8 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
 
     var rowIndex = [self rowForItem:[aNotification userInfo]];
     if (rowIndex !== CPNotFound)
+        [[_searchField cancelButton] performClick:self];
+        [self reloadData];
         [self selectRowIndexes:[CPIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
 }
 
