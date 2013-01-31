@@ -442,18 +442,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* status bar */
     [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/statusbar-bg.png"]]]];
+    [statusBar applyShadow:[CPColor colorWithHexString:@"f3f3f3"] offset:CGSizeMake(0.0, 1.0)];
 
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
-    [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"353535"]];
-    [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
 
     [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
     [fieldVersion setStringValue:@""];
-    [fieldVersion setTextColor:[CPColor colorWithHexString:@"353535"]];
-    [fieldVersion setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [fieldVersion setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [fieldVersion setSelectable:YES];
     [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
 
