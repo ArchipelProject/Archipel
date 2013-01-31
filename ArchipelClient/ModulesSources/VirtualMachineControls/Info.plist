@@ -41,6 +41,8 @@
     <integer>255</integer>
     <key>TNArchipelControlsScreenshotRefresh</key>
     <integer>10</integer>
+    <key>TNArchipelControlsCpuUsageRefresh</key>
+    <integer>5</integer>
     <key>UseModuleMenu</key>
     <integer>1</integer>
 </dict>
