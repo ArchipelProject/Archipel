@@ -139,6 +139,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
+        self.bad_chars_in_name = '(){}[]<>!@#$'
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -563,13 +564,16 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vmuuid = str(moduuid.uuid1())
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         vm_jid = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
-        disallow_spaces_in_name = (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name"))
-
+        disallow_spaces_in_name =   (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name")) or self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
+        strip_unhandled_chars_in_name = self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
+        
         if not requested_name:
             name = self.generate_name()
         else:
             if disallow_spaces_in_name:
                 requested_name = requested_name.replace(" ", "-")
+            if strip_unhandled_chars_in_name:
+                requested_name = filter(lambda c: c not in self.bad_chars_in_name, requested_name)
             if not self.get_vm_by_name(requested_name):
                 name = requested_name
             else:
