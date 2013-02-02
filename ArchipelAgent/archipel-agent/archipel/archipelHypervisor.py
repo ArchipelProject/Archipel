@@ -570,7 +570,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             if disallow_spaces_in_name:
                 requested_name = requested_name.replace(" ", "-")
-            if not self.get_vm_by_name(requested_name):
+            if not self.get_vm_by_name(requested_name) and requested_name not in self.libvirt_connection.listDefinedDomains():
                 name = requested_name
             else:
                 raise Exception("This hypervisor already has virtual machine named %s. Please, choose another one." % requested_name)
