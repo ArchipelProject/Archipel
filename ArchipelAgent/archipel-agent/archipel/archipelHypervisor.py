@@ -986,7 +986,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             for name in allDomainNames:
                 uuid = self.libvirt_connection.lookupByName(name).UUIDString()
                 if not uuid in managed_vm_uuids:
-                    n = xmpp.Node("item", attrs={"managed": "False"})
+                    n = xmpp.Node("item", attrs={"managed": "False", "name":name})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
             reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))
