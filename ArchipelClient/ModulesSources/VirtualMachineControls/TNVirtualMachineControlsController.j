@@ -801,6 +801,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [fieldInfoMem setTextColor:[CPColor blackColor]];
     [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
+    [sliderMemory setToolTip:@"Adjust live memory (" + Math.round([sliderMemory intValue]/[sliderMemory maxValue]*100) + "%)"];
     [fieldInfoConsumedCPU setStringValue:cpuPrct + @" %"];
 
     [stepperCPU setDoubleValue:[nvCPUs intValue]];

@@ -710,6 +710,13 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             raise Exception("You need to first define the virtual machine")
 
         dominfo = self.domain.info()
+        desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
+        os_type = desc.getTag("os").getTag("type").getData()
+        if os_type == "hvm":
+            delta_memory = 4096
+        else:
+            delta_memory = 0
+
         try:
             autostart = self.domain.autostart()
         except:
@@ -717,8 +724,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         return {
             "state": dominfo[0],
-            "maxMem": dominfo[1],
-            "memory": dominfo[2],
+            "maxMem": dominfo[1] - delta_memory,
+            "memory": dominfo[2] - delta_memory,
             "nrVirtCpu": dominfo[3],
             "cpuPrct": self.compute_cpu_usage(),
             "hypervisor": self.hypervisor.jid,
