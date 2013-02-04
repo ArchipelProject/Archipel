@@ -942,7 +942,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             else
             {
                 var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil];
-                [contact setNickname:@"This virtual machine is not managed by Archipel. Double click on it to manage."];
+                    name = [[queryItems objectAtIndex:i] valueForAttribute:@"name"];
+
+                [contact setNickname: name + @" is not managed by Archipel. Double click on it to manage."];
 
                 [_virtualMachinesNotManagedDatasource addObject:contact];
             }
