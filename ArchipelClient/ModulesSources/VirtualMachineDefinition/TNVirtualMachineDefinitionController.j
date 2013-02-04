@@ -1660,6 +1660,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)defineXML:(id)aSender
 {
+    // simulate controls changes for textfield if IBaction as not been fired
+    // @TODO : Change the behavior to use bindings for controls
+    [self didChangeMemory:fieldMemory];
+    [self didChangeMemoryTuneHardLimit:fieldMemoryTuneHardLimit];
+    [self didChangeMemoryTuneSoftLimit:fieldMemoryTuneSoftLimit];
+    [self didChangeMemoryTuneGuarantee:fieldMemoryTuneGuarantee];
+    [self didChangeBlockIOTuningWeight:fieldBlockIOTuningWeight];
+    [self didChangeOSKernel:fieldOSKernel];
+    [self didChangeOSInitrd:fieldOSInitrd];
+    [self didChangeOSLoader:fieldOSLoader];
+    [self didChangeOSCommandLine:fieldOSCommandLine];
+    [self didChangeBootloader:fieldBootloader];
+    [self didChangeBootloaderArgs:fieldBootloaderArgs];
     [self defineXML];
 }
 
