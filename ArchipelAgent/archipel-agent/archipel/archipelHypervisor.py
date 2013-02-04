@@ -139,6 +139,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
+        self.bad_chars_in_name = '(){}[]<>!@#$'
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -198,7 +199,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         self.capabilities = self.get_capabilities()
         self.nodeinfo = self.get_nodeinfo()
-        
+
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
@@ -563,13 +564,16 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vmuuid = str(moduuid.uuid1())
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         vm_jid = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
-        disallow_spaces_in_name = (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name"))
+        disallow_spaces_in_name = (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name")) or self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
+        strip_unhandled_chars_in_name = self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
 
         if not requested_name:
             name = self.generate_name()
         else:
             if disallow_spaces_in_name:
                 requested_name = requested_name.replace(" ", "-")
+            if strip_unhandled_chars_in_name:
+                requested_name = filter(lambda c: c not in self.bad_chars_in_name, requested_name)
             if not self.get_vm_by_name(requested_name):
                 name = requested_name
             else:
@@ -744,7 +748,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
         return capp
-    
+
     def get_nodeinfo(self):
         """
         Retur hypervisor's node informations
@@ -986,7 +990,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             for name in allDomainNames:
                 uuid = self.libvirt_connection.lookupByName(name).UUIDString()
                 if not uuid in managed_vm_uuids:
-                    n = xmpp.Node("item", attrs={"managed": "False"})
+                    n = xmpp.Node("item", attrs={"managed": "False", "name":name})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
             reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))

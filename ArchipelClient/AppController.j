@@ -32,6 +32,7 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 @import <AppKit/CPWebView.j>
+@import <AppKit/_CPToolTip.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <LPKit/LPMultiLineTextField.j>
