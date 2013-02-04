@@ -570,7 +570,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             if disallow_spaces_in_name:
                 requested_name = requested_name.replace(" ", "-")
-            if not self.get_vm_by_name(requested_name):
+            if not (self.get_vm_by_name(requested_name) or (requested_name in self.libvirt_connection.listDefinedDomains() and not requested_uuid)):
                 name = requested_name
             else:
                 raise Exception("This hypervisor already has virtual machine named %s. Please, choose another one." % requested_name)
@@ -986,7 +986,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             for name in allDomainNames:
                 uuid = self.libvirt_connection.lookupByName(name).UUIDString()
                 if not uuid in managed_vm_uuids:
-                    n = xmpp.Node("item", attrs={"managed": "False"})
+                    n = xmpp.Node("item", attrs={"managed": "False", "name":name})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
             reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))
