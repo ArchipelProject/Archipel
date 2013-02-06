@@ -30,11 +30,17 @@
 
 @import <TNKit/TNAlert.j>
 
+@import "../../Model/TNModule.j"
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
 @import "TNVMCastDatasource.j";
 @import "TNVMCastRegistrationController.j"
 @import "TNDownloadQueueController.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelTypeHypervisorVMCastingDownloadProgress
+
 
 var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_",
     TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
@@ -143,13 +149,13 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [_minusButton setToolTip:CPBundleLocalizedString(@"Unregister from selected VMCast feed", @"Unregister from selected VMCast feed")];
 
     _downloadButton = [CPButtonBar plusButton];
-    [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CPSizeMake(16, 16)]];
+    [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CGSizeMake(16, 16)]];
     [_downloadButton setTarget:self];
     [_downloadButton setAction:@selector(download:)];
     [_downloadButton setToolTip:CPBundleLocalizedString(@"Download selected appliance", @"Download selected appliance")];
 
     _downloadQueueButton = [CPButtonBar plusButton];
-    [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CPSizeMake(16, 16)]];
+    [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CGSizeMake(16, 16)]];
     [_downloadQueueButton setTarget:self];
     [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
     [_downloadQueueButton setToolTip:CPBundleLocalizedString(@"Open download queue", @"Open download queue")];

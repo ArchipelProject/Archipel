@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Views/TNBasicDataView.j"
 @import "Model/TNLibvirtDeviceDisk.j"
 @import "Model/TNLibvirtDeviceDiskDriver.j"
 @import "Model/TNLibvirtDeviceDiskSource.j"

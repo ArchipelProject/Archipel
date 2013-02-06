@@ -22,6 +22,12 @@
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPTextField.j>
 
+@import <StropheCappuccino/TNStropheContact.j>
+
+@import "../Model/TNDatasourceRoster.j"
+
+@global TNArchipelRememberOpenedGroup
+
 
 TNArchipelRosterOutlineViewReload                   = @"TNArchipelRosterOutlineViewReload";
 TNArchipelPropertiesViewDidShowNotification         = @"TNArchipelPropertiesViewDidShowNotification";
@@ -42,9 +48,9 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
 #pragma mark Initialization
 
 /*! init the class
-    @param aFrame CPRect the frame of the view
+    @param aFrame CGRect the frame of the view
 */
-- (id)initWithFrame:(CPRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -138,6 +144,8 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
 
     var rowIndex = [self rowForItem:[aNotification userInfo]];
     if (rowIndex !== CPNotFound)
+        [[_searchField cancelButton] performClick:self];
+        [self reloadData];
         [self selectRowIndexes:[CPIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
 }
 

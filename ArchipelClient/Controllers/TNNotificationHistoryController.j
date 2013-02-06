@@ -25,6 +25,8 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <GrowlCappuccino/GrowlCappuccino.j>
+
 
 /*! @ingroup archipelcore
     Representation of Archipel entity avatar controler

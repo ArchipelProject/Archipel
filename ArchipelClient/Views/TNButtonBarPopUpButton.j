@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
+@import <AppKit/CPMenu.j>
 
 
 /*! @ingroup archipelcore
@@ -28,7 +29,7 @@
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-    var wp = CPPointMake(16, 12);
+    var wp = CGPointMake(16, 12);
 
     wp = [self convertPoint:wp toView:nil];
 

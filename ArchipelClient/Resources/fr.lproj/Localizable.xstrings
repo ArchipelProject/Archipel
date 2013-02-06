@@ -3,59 +3,59 @@
 <plist version="1.0">
 <dict>
 	<key> contact in group</key>
-	<string> contact dans le groupe</string>
+	<string> contact in group</string>
 	<key> contacts in group</key>
-	<string> contacts dans le groupe</string>
+	<string> contacts in group</string>
 	<key> has been added</key>
-	<string> a ete ajouté</string>
+	<string> has been added</string>
 	<key> has been created</key>
-	<string> a été créé</string>
+	<string> has been created</string>
 	<key> has been removed</key>
-	<string> a été supprimé</string>
+	<string> has been removed</string>
 	<key> is asking you subscription. Do you want to authorize it ?</key>
-	<string> vous demande une souscription. Voulez-vous l'accepter ?</string>
+	<string> is asking you subscription. Do you want to authorize it ?</string>
 	<key>About Archipel</key>
-	<string>A propos d'Archipel</string>
+	<string>About Archipel</string>
 	<key>Accept</key>
-	<string>Accepter</string>
+	<string>Accept</string>
 	<key>Add a contact</key>
-	<string>Ajouter un contact</string>
+	<string>Add a contact</string>
 	<key>Add a group</key>
-	<string>Ajouter un groupe</string>
+	<string>Add a group</string>
 	<key>Add a new contact or group</key>
 	<string>Add a new contact or group</string>
 	<key>Add contact</key>
-	<string>Ajouter le contact</string>
+	<string>Add contact</string>
 	<key>Add group</key>
-	<string>Ajouter le groupe</string>
+	<string>Add group</string>
 	<key>Admin rights</key>
 	<string>Admin rights</string>
 	<key>Archipel</key>
 	<string>Archipel</string>
 	<key>Archipel Help</key>
-	<string>Aide Archipel</string>
+	<string>Archipel Help</string>
 	<key>Are you sure you want to delete selected items?</key>
 	<string>Are you sure you want to delete selected items?</string>
 	<key>Ask subscribtion</key>
 	<string>Ask subscribtion</string>
 	<key>Available</key>
-	<string>Disponible</string>
+	<string>Available</string>
 	<key>Away</key>
-	<string>Parti(e)</string>
+	<string>Away</string>
 	<key>B</key>
 	<string>B</string>
 	<key>Busy</key>
-	<string>Occupé</string>
+	<string>Busy</string>
 	<key>Cancel</key>
-	<string>Annuler</string>
+	<string>Cancel</string>
 	<key>Cannot save your preferences to the XMPP server</key>
-	<string>Impossible de sauvegarder les préférences dans le serveur XMPP.</string>
+	<string>Cannot save your preferences to the XMPP server</string>
 	<key>Collapse all groups</key>
-	<string>Réduire tous les groupes</string>
+	<string>Collapse all groups</string>
 	<key>Collapse group</key>
-	<string>Réduire le groupe</string>
+	<string>Collapse group</string>
 	<key>Connected as </key>
-	<string>Connecté en tant que </string>
+	<string>Connected as </string>
 	<key>Contact</key>
 	<string>Contact</string>
 	<key>Contact </key>
@@ -63,79 +63,79 @@
 	<key>Contacts</key>
 	<string>Contacts</string>
 	<key>Contents</key>
-	<string>Contenu</string>
+	<string>Contents</string>
 	<key>Copy</key>
-	<string>Copier</string>
+	<string>Copy</string>
 	<key>Current Selection</key>
 	<string>Current Selection</string>
 	<key>Cut</key>
-	<string>Couper</string>
+	<string>Cut</string>
 	<key>Decline</key>
-	<string>Refuser</string>
+	<string>Decline</string>
 	<key>Delete</key>
-	<string>Supprimer</string>
+	<string>Delete</string>
 	<key>Delete contact</key>
-	<string>Supprimer le contact</string>
+	<string>Delete contact</string>
 	<key>Delete group</key>
-	<string>Supprimer le groupe</string>
+	<string>Delete group</string>
 	<key>Delete items</key>
 	<string>Delete items</string>
 	<key>Delete selected contacts or groups</key>
 	<string>Delete selected contacts or groups</string>
 	<key>Do not disturb</key>
-	<string>Ne pas déranger</string>
+	<string>Do not disturb</string>
 	<key>Edit</key>
-	<string>Editer</string>
+	<string>Edit</string>
 	<key>Error</key>
-	<string>Erreur</string>
+	<string>Error</string>
 	<key>Error while getting your preferences from the XMPP Server</key>
 	<string>Error while getting your preferences from the XMPP Server</string>
 	<key>Expand all groups</key>
-	<string>Etendre tous les groupes</string>
+	<string>Expand all groups</string>
 	<key>Expand group</key>
-	<string>Etendre le groupe</string>
+	<string>Expand group</string>
 	<key>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</key>
 	<string>For some reasons, Archipel has not be able to fetch correctly your data from XMPPServer due to an error parsing the data. If this problem is reproducible, you may want to reset them</string>
 	<key>Full JID required</key>
 	<string>Full JID required</string>
 	<key>GB</key>
-	<string>Go</string>
+	<string>GB</string>
 	<key>Go to website</key>
-	<string>Visiter le site web</string>
+	<string>Go to website</string>
 	<key>Group</key>
-	<string>Groupe</string>
+	<string>Group</string>
 	<key>Group </key>
-	<string>Groupe </string>
+	<string>Group </string>
 	<key>Group addition error</key>
-	<string>Erreur d'ajout de groupe</string>
+	<string>Group addition error</string>
 	<key>Group supression</key>
-	<string>Supprimer le groupe</string>
+	<string>Group supression</string>
 	<key>Groups</key>
-	<string>Groupes</string>
+	<string>Groups</string>
 	<key>Help</key>
-	<string>Aide</string>
+	<string>Help</string>
 	<key>Hide main menu</key>
-	<string>Chacher le menu principal</string>
+	<string>Hide main menu</string>
 	<key>Hypervisor</key>
-	<string>Hyperviseur</string>
+	<string>Hypervisor</string>
 	<key>JID is not valid</key>
-	<string>le JID n'est pas valide</string>
+	<string>JID is not valid</string>
 	<key>KB</key>
 	<string>KB</string>
 	<key>Later</key>
 	<string>Later</string>
 	<key>Loaded </key>
-	<string>Chargé </string>
+	<string>Loaded </string>
 	<key>Locale change</key>
-	<string>Changement de langue</string>
+	<string>Locale change</string>
 	<key>Log out</key>
-	<string>Déconnexion</string>
+	<string>Log out</string>
 	<key>Logon</key>
-	<string>Connexion</string>
+	<string>Logon</string>
 	<key>MB</key>
-	<string>Mo</string>
+	<string>MB</string>
 	<key>Make a donation</key>
-	<string>Faire un don</string>
+	<string>Make a donation</string>
 	<key>Modules</key>
 	<string>Modules</string>
 	<key>Navigation</key>
@@ -147,67 +147,69 @@
 	<key>OK</key>
 	<string>OK</string>
 	<key>Password error</key>
-	<string>Erreur de mot de passe</string>
+	<string>Password error</string>
 	<key>Paste</key>
-	<string>Coller</string>
+	<string>Paste</string>
 	<key>Please select a contact first.</key>
-	<string>Veuillez choisir un contact.</string>
+	<string>Please select a contact first.</string>
 	<key>Please select a group first.</key>
-	<string>Veuillez choisir un groupe.</string>
+	<string>Please select a group first.</string>
 	<key>Preferences</key>
-	<string>Préférences</string>
+	<string>Preferences</string>
 	<key>Preferences saved</key>
-	<string>Préférences sauvegardées</string>
+	<string>Preferences saved</string>
 	<key>Quit</key>
-	<string>Quitter</string>
+	<string>Quit</string>
 	<key>Redo</key>
-	<string>Refaire</string>
+	<string>Redo</string>
 	<key>Release note</key>
-	<string>Note de version</string>
+	<string>Release note</string>
 	<key>Remove subscribtion</key>
 	<string>Remove subscribtion</string>
 	<key>Rename contact</key>
-	<string>Renommer le contact</string>
+	<string>Rename contact</string>
 	<key>Rename group</key>
-	<string>Renommer le groupe</string>
+	<string>Rename group</string>
 	<key>Report a bug</key>
-	<string>Rapporter un bug</string>
+	<string>Report a bug</string>
 	<key>Reset</key>
 	<string>Reset</string>
 	<key>Resource</key>
 	<string>Resource</string>
 	<key>Search entity</key>
-	<string>Rechercher une entité</string>
+	<string>Search entity</string>
 	<key>Select a contact</key>
-	<string>Sélectionner un contact</string>
+	<string>Select a contact</string>
 	<key>Select a group</key>
-	<string>Sélectionner un groupe</string>
+	<string>Select a group</string>
 	<key>Select all</key>
-	<string>Tout sélectionner</string>
+	<string>Select all</string>
 	<key>Select next entity</key>
-	<string>Séléctionner l'entité suivante</string>
+	<string>Select next entity</string>
 	<key>Select next module</key>
 	<string>Select next module</string>
 	<key>Select previous entity</key>
-	<string>Séléctionner l'entité précédente</string>
+	<string>Select previous entity</string>
 	<key>Select previous module</key>
 	<string>Select previous module</string>
 	<key>Show or hide properties view</key>
 	<string>Show or hide properties view</string>
 	<key>Status</key>
-	<string>Statut</string>
+	<string>Status</string>
 	<key>Subscription request</key>
-	<string>Demande de souscription</string>
+	<string>Subscription request</string>
 	<key>TB</key>
 	<string>TB</string>
+	<key>TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences</key>
+	<string>TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences</string>
 	<key>Tags</key>
-	<string>Etiquettes</string>
+	<string>Tags</string>
 	<key>The group has been removed</key>
-	<string>Le groupe a été supprimé</string>
+	<string>The group has been removed</string>
 	<key>The group must be empty</key>
-	<string>Le groupe doit être vide</string>
+	<string>The group must be empty</string>
 	<key>The passwords you entered don't match.</key>
-	<string>Les mots de passes ne concordent pas.</string>
+	<string>The passwords you entered don't match.</string>
 	<key>Toggle tag view</key>
 	<string>Toggle tag view</string>
 	<key>Unable to grant admin rights to users. See log</key>
@@ -215,54 +217,56 @@
 	<key>Unable to revoke admin rights to users. See log</key>
 	<string>Unable to revoke admin rights to users. See log</string>
 	<key>Unable to update your password</key>
-	<string>Impossible de mettre à jour votre mot de passe</string>
+	<string>Unable to update your password</string>
 	<key>Undo</key>
-	<string>Defaire</string>
+	<string>Undo</string>
 	<key>User</key>
-	<string>Utilisateur</string>
+	<string>User</string>
 	<key>User admin rights successfully granted</key>
 	<string>User admin rights successfully granted</string>
 	<key>User admin rights successfuly revoked</key>
 	<string>User admin rights successfuly revoked</string>
 	<key>Virtual machine</key>
-	<string>Machine virtuelle</string>
+	<string>Virtual machine</string>
 	<key>XMPP Account</key>
-	<string>Compte XMPP</string>
+	<string>XMPP Account</string>
 	<key>You can't assign tags here</key>
-	<string>Vous ne pouvez pas assigner d'étiquettes ici.</string>
+	<string>You can't assign tags here</string>
 	<key>You have to enter a valid group name.</key>
-	<string>Vous devez entrer un nom de groupe valide</string>
+	<string>You have to enter a valid group name.</string>
 	<key>You must enter a JID using the form user@domain.</key>
-	<string>Vous devez entrer un JID de la forme utilisateur@domaine.com.</string>
+	<string>You must enter a JID using the form user@domain.</string>
 	<key>You need to reload the application to complete the locale change.</key>
-	<string>Vous devez recharger l'application pour que le changement de langue prenne effet.</string>
+	<string>You need to reload the application to complete the locale change.</string>
 	<key>Your password has been successfully updated</key>
-	<string>Votre mot de passe a été mis à jour</string>
+	<string>Your password has been successfully updated</string>
 	<key>Your preferences have been saved to the XMPP server</key>
-	<string>Vos préférences ont été sauvegardée dans le serveur XMPP</string>
+	<string>Your preferences have been saved to the XMPP server</string>
 	<key>Your status is now </key>
-	<string>Votre statut est maintenant </string>
+	<string>Your status is now </string>
+	<key>archipel:tags</key>
+	<string>archipel:tags</string>
 	<key>authenticating</key>
-	<string>Authentification</string>
+	<string>authenticating</string>
 	<key>authentification-failed</key>
-	<string>Echec d'authentification</string>
+	<string>authentification-failed</string>
 	<key>cancel</key>
-	<string>Annuler</string>
+	<string>cancel</string>
 	<key>connect</key>
-	<string>Connexion</string>
+	<string>connect</string>
 	<key>connected</key>
-	<string>Connecté</string>
+	<string>connected</string>
 	<key>connecting</key>
-	<string>Connexion...</string>
+	<string>connecting</string>
 	<key>connection-failed</key>
-	<string>Echec de la connexion</string>
+	<string>connection-failed</string>
 	<key>disconnected</key>
-	<string>Deconnecté</string>
+	<string>disconnected</string>
 	<key>disconnecting</key>
-	<string>Deconnexion...</string>
+	<string>disconnecting</string>
 	<key>host-unreachable</key>
-	<string>Hôte injoingnable</string>
+	<string>host-unreachable</string>
 	<key>unknown-error</key>
-	<string>Erreur inconnue</string>
+	<string>unknown-error</string>
 </dict>
 </plist>

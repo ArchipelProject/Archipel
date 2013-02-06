@@ -155,7 +155,7 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "240"; */
 "240.title" = "Text Cell";
 
-/* Class = "NSTextFieldCell"; title = "Shared roster groups:"; ObjectID = "350"; */
+/* Class = "NSTextFieldCell"; title = "Shared roster groups"; ObjectID = "350"; */
 "350.title" = "Shared roster groups:";
 
 /* Class = "NSTextFieldCell"; title = "XMPP Server preferences"; ObjectID = "352"; */

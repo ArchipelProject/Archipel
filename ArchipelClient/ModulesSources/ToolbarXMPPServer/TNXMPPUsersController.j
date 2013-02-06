@@ -28,10 +28,17 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "TNXMPPServerUserFetcher.j"
+
+@class TNTableViewLazyDataSource
+@class TNPermissionsCenter
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNPermissionsAdminListUpdatedNotification
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
@@ -74,7 +81,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)]];
+    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CGSizeMake(16, 16)]];
 
     // table users
     _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
@@ -89,25 +96,25 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_usersFetcher setDisplaysOnlyHumans:YES];
 
     _addButton = [CPButtonBar plusButton];
-    [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
+    [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CGSizeMake(16, 16)]];
     [_addButton setTarget:self];
     [_addButton setAction:@selector(openRegisterUserWindow:)];
     [_addButton setToolTip:CPBundleLocalizedString(@"Register a new user", @"Register a new user")];
 
     _deleteButton = [CPButtonBar plusButton];
-    [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
+    [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CGSizeMake(16, 16)]];
     [_deleteButton setTarget:self];
     [_deleteButton setAction:@selector(unregisterUser:)];
     [_deleteButton setToolTip:CPBundleLocalizedString(@"Unregister selected users", @"Unregister selected users")];
 
     _grantAdminButton = [CPButtonBar plusButton];
-    [_grantAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/star.png"] size:CPSizeMake(16, 16)]];
+    [_grantAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/star.png"] size:CGSizeMake(16, 16)]];
     [_grantAdminButton setTarget:self];
     [_grantAdminButton setAction:@selector(grantAdmin:)];
     [_grantAdminButton setToolTip:CPBundleLocalizedString(@"Make selected users as admins", @"Make selected users as admins")];
 
     _revokeAdminButton = [CPButtonBar minusButton];
-    [_revokeAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unstar.png"] size:CPSizeMake(16, 16)]];
+    [_revokeAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unstar.png"] size:CGSizeMake(16, 16)]];
     [_revokeAdminButton setTarget:self];
     [_revokeAdminButton setAction:@selector(revokeAdmin:)];
     [_revokeAdminButton setToolTip:CPBundleLocalizedString(@"Remove admin rights to selected users", @"Remove admin rights to selected users")];

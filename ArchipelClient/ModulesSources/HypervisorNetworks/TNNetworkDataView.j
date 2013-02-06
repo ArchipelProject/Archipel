@@ -25,6 +25,9 @@
 
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Views/TNBasicDataView.j"
+
+
 var TNNetworkDataViewStatusImageActive,
     TNNetworkDataViewStatusImageUnactive;
 
@@ -73,16 +76,16 @@ var TNNetworkDataViewStatusImageActive,
 + (void)initialize
 {
     var bundle  = [CPBundle mainBundle];
-    TNNetworkDataViewStatusImageActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
-    TNNetworkDataViewStatusImageUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)];
+    TNNetworkDataViewStatusImageActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
+    TNNetworkDataViewStatusImageUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red.png"] size:CGSizeMake(8.0, 8.0)];
 }
 
-- (void)initWithFrame:(CPRect)aFrame
+- (void)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
-        [tableDHCPRanges setIntercellSpacing:CPSizeMake(2.0, 2.0)];
-        [tableDHCPHosts setIntercellSpacing:CPSizeMake(2.0, 2.0)];
+        [tableDHCPRanges setIntercellSpacing:CGSizeMake(2.0, 2.0)];
+        [tableDHCPHosts setIntercellSpacing:CGSizeMake(2.0, 2.0)];
     }
 
     return self;

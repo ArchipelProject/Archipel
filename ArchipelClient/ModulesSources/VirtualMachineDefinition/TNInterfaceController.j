@@ -16,11 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <Foundation/Foundation.j>
+
+@import <TNKit/TNTableViewDataSource.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+
+@import "Model/TNLibvirtDeviceInterface.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:network",
     TNArchipelTypeHypervisorNuageNetwork            = @"archipel:hypervisor:nuage:network",
@@ -382,7 +393,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
         var rect = [aSender rectOfRow:[aSender selectedRow]];
         rect.origin.y += rect.size.height / 2;
         rect.origin.x += rect.size.width / 2;
-        [mainPopover showRelativeToRect:CPRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
     }
     else
         [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];

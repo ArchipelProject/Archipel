@@ -17,7 +17,7 @@
  */
 
 @import <Foundation/Foundation.j>
-
+@import <AppKit/CPImage.j>
 
 /*! @ingroup archipelcore
     Simple CPImage subclass that add a string to get the avatar filename

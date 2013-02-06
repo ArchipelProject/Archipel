@@ -1,7 +1,9 @@
 @import <AppKit/CPView.j>
 @import "MKMapItem.j"
-@import "MKMapView.j"
 @import "MKLocation.j"
+
+@class MKMapView
+
 
 @implementation MKPolyline : MKMapItem
 {

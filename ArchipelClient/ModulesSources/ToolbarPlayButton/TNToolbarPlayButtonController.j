@@ -18,6 +18,10 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Model/TNModule.j"
+
+@global TNArchipelEntityTypeVirtualMachine
+
 
 var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     TNArchipelControlPlay           = @"TNArchipelControlPlay";

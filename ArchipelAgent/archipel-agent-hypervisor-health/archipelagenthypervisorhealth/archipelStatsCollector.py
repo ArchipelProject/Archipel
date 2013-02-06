@@ -211,7 +211,7 @@ class TNThreadedHealthCollector (Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        output  = subprocess.Popen(["df", "-P"], stdout=subprocess.PIPE).communicate()[0]
+        output  = subprocess.Popen(["df", "-P", "-x", "devfs", "-x", "devtmpfs", "-x", "tmpfs"], stdout=subprocess.PIPE).communicate()[0]
         listed  = []
         ret     = []
         out     = output.split("\n")[1:-1]
@@ -222,6 +222,20 @@ class TNThreadedHealthCollector (Thread):
             ret.append({"partition": cell[0], "blocks": cell[1], "used": int(cell[2]) * 1024, "available": int(cell[3]) * 1024, "capacity": cell[4], "mount": cell[5]})
             listed.append(cell[5])
         return ret
+
+    def get_disk_total(self):
+        """
+        Get total size of drive used stats.
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
+        out = subprocess.Popen(["df", "--total", "-P", "-x", "devfs", "-x", "devtmpfs", "-x", "tmpfs"], stdout=subprocess.PIPE).communicate()[0].split("\n")
+        for line in out:
+            line = line.split()
+            if line[0] == "total":
+                disk_total = line
+                break
+        return {"used": disk_total[2], "available": disk_total[3], "capacity": disk_total[4]}
 
     def get_network_stats(self):
         """
@@ -251,20 +265,6 @@ class TNThreadedHealthCollector (Thread):
             ret[dev] = delta_usage
         self.current_record = records;
         return {"date": datetime.datetime.now(), "records": json.dumps(ret)}
-
-    def get_disk_total(self):
-        """
-        Get total size of drive used stats.
-        @rtype: dict
-        @return: dictionnary containing the informations
-        """
-        out = subprocess.Popen(["df", "--total", "-P"], stdout=subprocess.PIPE).communicate()[0].split("\n")
-        for line in out:
-            line = line.split()
-            if line[0] == "total":
-                disk_total = line
-                break
-        return {"used": disk_total[2], "available": disk_total[3], "capacity": disk_total[4]}
 
     def getTimeList(self):
         """
@@ -310,13 +310,13 @@ class TNThreadedHealthCollector (Thread):
                     self.database_thread_cursor.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])
 
                     log.info("Stats saved in database file.")
-
-                    if int(self.database_thread_cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
-                        self.database_thread_cursor.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_cursor.execute("delete from network where collection_date=(select collection_date from network order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        log.debug("Old stored stats have been purged from memory.")
+                    nrRow = int(self.database_thread_cursor.execute("select count(*) from cpu").fetchone()[0]);
+                    if  nrRow > self.max_rows_before_purge * 1.5:
+                        self.database_thread_cursor.execute("DELETE FROM cpu WHERE collection_date IN (SELECT collection_date FROM cpu ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM memory WHERE collection_date IN (SELECT collection_date FROM memory ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM load WHERE collection_date IN (SELECT collection_date FROM load ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        self.database_thread_cursor.execute("DELETE FROM network WHERE collection_date IN (SELECT collection_date FROM network ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
+                        log.debug("Old stored stats have been purged from database.")
 
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]

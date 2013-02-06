@@ -20,6 +20,10 @@
 @import <StropheCappuccino/TNXMLNode.j>
 
 @import "TNLibvirtBase.j";
+@import "TNLibvirtDeviceDiskSource.j"
+@import "TNLibvirtDeviceDiskTarget.j"
+@import "TNLibvirtDeviceDiskDriver.j"
+@import "TNLibvirtDeviceDiskSource.j"
 
 
 TNLibvirtDeviceDiskTypeFile             = @"file";

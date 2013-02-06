@@ -27,6 +27,11 @@
 @import <TNKit/TNMessageBoard.j>
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Model/TNModule.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 /*! @defgroup  mucchat Module Conference
     @desc This module handles MUC for all Archipel users
@@ -106,13 +111,13 @@
     [viewConferenceInfo applyShadow];
 
     _toolbarItemImages = [
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CPSizeMake(32,32)]
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon.png"] size:CGSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)]
     ];
 
     _numberOfNotices = 0;

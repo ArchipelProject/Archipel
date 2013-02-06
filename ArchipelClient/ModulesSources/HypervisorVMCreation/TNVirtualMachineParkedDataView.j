@@ -22,6 +22,9 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
+@import "../../Views/TNBasicDataView.j"
+
+
 /*! @ingroup hypervisorvmcreation
     This class represent a virtual machine DataView
 */

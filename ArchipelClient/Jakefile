@@ -43,6 +43,8 @@ $DOCUMENTATION_BUILD = FILE.join("Build", "Documentation");
 
 app ("Archipel", function(task)
 {
+    ENV["OBJJ_INCLUDE_PATHS"] = "Frameworks/Debug:Frameworks";
+
     task.setBuildIntermediatesPath(FILE.join("Build", NAME + ".build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
     task.setPreventsNib2Cib(true);

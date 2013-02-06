@@ -21,6 +21,13 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNAlert.j>
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
     TNArchipelTypeHypervisorVMCastingRegister           = @"register",

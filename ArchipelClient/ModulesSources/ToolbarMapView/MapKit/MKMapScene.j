@@ -1,5 +1,9 @@
 @import <Foundation/Foundation.j>
-@import "MKMapView.j"
+
+@class MKMapView
+@class MKMapItem
+@class MKMarker
+
 
 @implementation MKMapScene : CPObject
 {
@@ -29,14 +33,14 @@
 - (BOOL)saveToURL:(CPURL)anURL
 {
     var request = [CPURLRequest requestWithURL:anURL];
-    
+
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:"data=" + [self json]];
-    
+
     [request setValue:@"close" forHTTPHeaderField:@"Connection"];
-    
+
     //[request setValue:@"true" forHTTPHeaderField:@"x-cappuccino-overwrite"];
-    
+
     var connection = [CPURLConnection connectionWithRequest:request delegate:self];
 }
 
@@ -66,7 +70,7 @@
         var aData = aData.replace('while(1);', ''),
             mapItems = CPJSObjectCreateWithJSON(aData),
             gm = [MKMapView gmNamespace];
-        
+
         for (var i in mapItems)
         {
             var mapItem = mapItems[i];

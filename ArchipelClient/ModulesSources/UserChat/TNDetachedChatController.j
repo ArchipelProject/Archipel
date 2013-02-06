@@ -21,17 +21,23 @@
 
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPPlatformWindow.j>
+@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSound.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
 
+@import <StropheCappuccino/TNStropheIMClient.j>
 @import <TNKit/TNMessageBoard.j>
+
+@global TNStropheContactMessageReceivedNotification
+@global TNStropheContactVCardReceivedNotification
+@global TNStropheContactNicknameUpdatedNotification
 
 
 if ([CPPlatform isBrowser])
-    var TNDetachedChatControllerDefaultFrame = CPRectMake(100, 100, 400, 370);
+    var TNDetachedChatControllerDefaultFrame = CGRectMake(100, 100, 400, 370);
 else
-    var TNDetachedChatControllerDefaultFrame = CPRectMake(100, 100, 400, 395);
+    var TNDetachedChatControllerDefaultFrame = CGRectMake(100, 100, 400, 395);
 
 
 /*! @ingroup userchat
@@ -73,17 +79,17 @@ else
         [[_window contentView] setAutoresizingMask:nil];
         [_window setDelegate:self];
 
-        _scrollView = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
+        _scrollView = [[CPScrollView alloc] initWithFrame:CGRectMake(0, 0, 400, 322)];
         [_scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [_scrollView setBackgroundColor:[CPColor whiteColor]];
         [_scrollView setAutohidesScrollers:YES];
         [[_window contentView] addSubview:_scrollView];
 
-        _messageBoard = [[TNMessageBoard alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
+        _messageBoard = [[TNMessageBoard alloc] initWithFrame:CGRectMake(0, 0, 400, 322)];
         [_messageBoard setAutoresizingMask:CPViewWidthSizable]
         [_scrollView setDocumentView:_messageBoard];
 
-        _fieldMessage = [[CPTextField alloc] initWithFrame:CPRectMake(50, 332, 338, 29)];
+        _fieldMessage = [[CPTextField alloc] initWithFrame:CGRectMake(50, 332, 338, 29)];
         [_fieldMessage setEditable:YES];
         [_fieldMessage setBezeled:YES];
         [_fieldMessage setTarget:self];
@@ -91,7 +97,7 @@ else
         [_fieldMessage setAutoresizingMask: CPViewWidthSizable | CPViewMinYMargin];
         [[_window contentView] addSubview:_fieldMessage];
 
-        _viewAvatar = [[CPImageView alloc] initWithFrame:CPRectMake(2, 326, 42, 42)];
+        _viewAvatar = [[CPImageView alloc] initWithFrame:CGRectMake(2, 326, 42, 42)];
         [_viewAvatar setImageScaling:CPScaleProportionally];
         [_viewAvatar setBackgroundColor:[CPColor blackColor]];
         [_viewAvatar setImage:[_entity avatar]];

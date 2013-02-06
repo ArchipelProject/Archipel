@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPTextField.j>
 
 
 /*! @ingroup categories
@@ -26,9 +28,9 @@
 
 /*! Apply shadow to all labels
     @param aShadowColor CPColor of the shadow
-    @param anOffset CPSize represeting the offset
+    @param anOffset CGSize represeting the offset
 */
-- (void)applyShadow:(CPColor)aShadowColor offset:(CPSize)anOffset
+- (void)applyShadow:(CPColor)aShadowColor offset:(CGSize)anOffset
 {
     var subviews = [CPArray arrayWithArray:[self subviews]];
 

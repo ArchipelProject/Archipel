@@ -20,6 +20,7 @@
 @import <StropheCappuccino/TNXMLNode.j>
 
 @import "TNLibvirtBase.j";
+@import "TNLibvirtDeviceDiskSourceHost.j"
 
 TNLibvirtDeviceDiskSourceProtocolSheepdog = @"sheepdog";
 TNLibvirtDeviceDiskSourceProtocolNBD = @"nbd";

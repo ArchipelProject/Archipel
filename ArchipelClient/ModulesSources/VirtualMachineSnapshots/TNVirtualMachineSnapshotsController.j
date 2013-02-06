@@ -22,14 +22,18 @@
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
-@import <AppKit/CPTextField.j>
+@import <AppKit/CPOutlineView.j>
 @import <AppKit/CPWindow.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
 
-@import "TNSnapshot.j";
-@import "TNSnapshotsDatasource.j";
+@import "../../Model/TNModule.j"
+@import "TNSnapshot.j"
+@import "TNSnapshotsDatasource.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_",
@@ -80,7 +84,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
-    [fieldNewSnapshotDescription setFrameSize:CPSizeMake(366, 120)];
+    [fieldNewSnapshotDescription setFrameSize:CGSizeMake(366, 120)];
 
     // VM table view
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
@@ -146,19 +150,19 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CPSizeMake(14, 14)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CGSizeMake(14, 14)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
     [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new snapshot", @"Create a new snapshot")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
-    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CPSizeMake(14, 14)]];
+    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CGSizeMake(14, 14)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
     [_minusButton setEnabled:NO];
     [_minusButton setToolTip:CPBundleLocalizedString(@"Remove selected snapshot", @"Remove selected snapshot")];
 
     _revertButton = [CPButtonBar minusButton];
-    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CPSizeMake(14, 14)]];
+    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CGSizeMake(14, 14)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
     [_revertButton setEnabled:NO];

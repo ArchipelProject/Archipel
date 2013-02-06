@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPImageView.j>
+@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTabView.j>
@@ -29,12 +30,17 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNWorker.j>
 
+@import "../../Model/TNModule.j"
+@import "../../Views/TNSwitch.j"
 @import "TNCellLogView.j"
 @import "TNCellPartitionView.j"
 @import "TNDatasourceChartView.j"
 @import "TNDatasourcePieChartView.j"
 @import "TNLogEntryObject.j"
 @import "TNPartitionObject.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
@@ -188,7 +194,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
     var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"charts"],
         tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"logs"],
-        scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
+        scrollViewChart = [[CPScrollView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:CPBundleLocalizedString(@"Charts", @"Charts")];
     [tabViewItemCharts setView:scrollViewChart];
@@ -373,15 +379,20 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [_loadDatasource setData:someData.loadFifteen inSet:2];
     [_cpuDatasource setData:someData.cpuFree inSet:0];
 
-    var nnic = 0;
+    var nnic = 0,
+        nic;
+
     for (nic in someData.networks)
         nnic++;
+
     if (!_networkDatasource)
     {
         _networkDatasource = [[TNDatasourceChartView alloc] initWithNumberOfSets:(nnic + 1)];
         [chartViewNetwork setDataSource:_networkDatasource];
     }
+
     nnic = 0;
+
     for (nic in someData.networks)
     {
         [_networkDatasource setData:someData.networks[nic] inSet:nnic];
@@ -406,7 +417,8 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [_loadDatasource pushData:someData.load.fifteen inSet:2];
     [_cpuDatasource pushData:someData.cpu.idle inSet:0];
 
-    var nnic = 0;
+    var nnic = 0,
+        nic;
     for (nic in someData.networks)
     {
         [_networkDatasource pushData:someData.networks[nic][0] inSet:nnic];
@@ -461,7 +473,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 /*! Action that make the auto refresh on or off
     @param sender the sender of the action
 */
-- (IBAction)handleAutoRefresh
+- (void)handleAutoRefresh
 {
     var defaults    = [CPUserDefaults standardUserDefaults];
 

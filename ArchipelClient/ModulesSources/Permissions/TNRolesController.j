@@ -24,6 +24,13 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPView.j>
 
+@import <GrowlCappuccino/GrowlCappuccino.j>
+@import <StropheCappuccino/TNPubSub.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <TNKit/TNTableViewDataSource.j>
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 /*! @ingroup permissionsmodule
@@ -62,8 +69,8 @@
     [_datasourceRoles setSearchableKeyPaths:[@"name", @"description"]];
     [tableRoles setDataSource:_datasourceRoles];
 
-    buttonDelete = [CPButtonBar plusButton];
-    [buttonDelete setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
+    var buttonDelete = [CPButtonBar plusButton];
+    [buttonDelete setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CGSizeMake(16, 16)]];
     [buttonDelete setTarget:self];
     [buttonDelete setAction:@selector(deleteSelectedRole:)];
 

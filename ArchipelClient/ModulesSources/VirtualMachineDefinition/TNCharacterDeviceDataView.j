@@ -18,7 +18,12 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Views/TNBasicDataView.j"
 @import "Model/TNLibvirtDeviceCharacter.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNCharacterDeviceDataViewIconCONSOLE,
     TNCharacterDeviceDataViewIconSERIAL,

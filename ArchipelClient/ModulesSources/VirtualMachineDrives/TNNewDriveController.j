@@ -24,6 +24,12 @@
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelDrivesFormats
+
 
 var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskCreate      = @"create",

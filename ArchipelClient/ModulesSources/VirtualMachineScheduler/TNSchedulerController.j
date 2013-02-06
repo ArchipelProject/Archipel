@@ -20,8 +20,18 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPTabViewItem.j>
 
+@import <GrowlCappuccino/TNGrowlCenter.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNAlert.j>
 @import <TNKit/TNTextFieldStepper.j>
+
+@import "../../Views/TNCalendarView.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     TNArchipelTypeEntityScheduleSchedule    = @"schedule",
@@ -59,6 +69,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     @outlet CPPopover               mainPopover;
 
     id                              _delegate   @accessors(property=delegate);
+    CPDate                          _scheduledDate;
 }
 
 #pragma mark -

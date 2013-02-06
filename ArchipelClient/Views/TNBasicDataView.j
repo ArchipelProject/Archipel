@@ -18,7 +18,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/CPView.j>
-
+@import <AppKit/CGGradient.j>
 
 @implementation TNBasicDataView : CPView
 {
@@ -28,7 +28,7 @@
     CPColor _backgroundBottomColorSelected;
 }
 
-- (id)initWithRect:(CPRect)aRect
+- (id)initWithRect:(CGRect)aRect
 {
     if (self = [super initWithRect:aRect])
     {
@@ -59,7 +59,7 @@
     aRect.size.height += 1;
 
     CGContextAddPath(context, CGPathWithRoundedRectangleInRect(aRect, 0, 0, YES, YES, YES, YES));
-    CGContextDrawLinearGradient(context, gradient, CGPointMake(CPRectGetMidX(aRect), 0.0), CGPointMake(CPRectGetMidX(aRect), aRect.size.height), 0);
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(CGRectGetMidX(aRect), 0.0), CGPointMake(CGRectGetMidX(aRect), aRect.size.height), 0);
     CGContextClosePath(context);
     CGContextStrokePath(context);
     CGContextFillPath(context);
@@ -81,8 +81,5 @@
 
     return self;
 }
-
-@end
-
 
 @end

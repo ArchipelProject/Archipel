@@ -31,8 +31,13 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "TNXMPPServerUserFetcher.j"
+
+@class TNPermissionsCenter
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
 
 
 var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
@@ -90,8 +95,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)awakeFromCib
 {
-    [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
+    // [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setIsPaneSplitter:YES];
 
@@ -115,13 +120,13 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [tableGroups setDelegate:self];
 
     _addGroupButton = [CPButtonBar plusButton];
-    [_addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-add.png"] size:CPSizeMake(16, 16)]];
+    [_addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-add.png"] size:CGSizeMake(16, 16)]];
     [_addGroupButton setTarget:self];
     [_addGroupButton setAction:@selector(openNewGroupWindow:)];
     [_addGroupButton setToolTip:CPBundleLocalizedString(@"Add a new shared group", @"Add a new shared group")];
 
     _deleteGroupButton = [CPButtonBar plusButton];
-    [_deleteGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-remove.png"] size:CPSizeMake(16, 16)]];
+    [_deleteGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-remove.png"] size:CGSizeMake(16, 16)]];
     [_deleteGroupButton setTarget:self];
     [_deleteGroupButton setAction:@selector(deleteGroup:)];
     [_deleteGroupButton setToolTip:CPBundleLocalizedString(@"Delete selected shared groups", @"Delete selected shared groups")];
@@ -136,13 +141,13 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [tableUsersInGroup setDelegate:self];
 
     _addUserInGroupButton = [CPButtonBar plusButton];
-    [_addUserInGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
+    [_addUserInGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CGSizeMake(16, 16)]];
     [_addUserInGroupButton setTarget:self];
     [_addUserInGroupButton setAction:@selector(openAddUserInGroupWindow:)];
     [_addUserInGroupButton setToolTip:CPBundleLocalizedString(@"Add selected users to shared group", @"Add selected users to shared group")];
 
     _deleteUserFromGroupButton = [CPButtonBar plusButton];
-    [_deleteUserFromGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
+    [_deleteUserFromGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CGSizeMake(16, 16)]];
     [_deleteUserFromGroupButton setTarget:self];
     [_deleteUserFromGroupButton setAction:@selector(removeUsersFromGroup:)];
     [_deleteUserFromGroupButton setToolTip:CPBundleLocalizedString(@"Remove selected users from shared group", @"Remove selected users from shared group")];
@@ -158,6 +163,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [filterFieldUsers setSendsSearchStringImmediately:YES];
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
+
+
+    var filterBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/background-filter.png"]];
+    [[viewTableGroupsContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
+    [[viewTableUsersInGroupContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
 }
 
 

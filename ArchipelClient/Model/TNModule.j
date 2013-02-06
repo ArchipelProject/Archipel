@@ -25,6 +25,7 @@
 @import <AppKit/CPToolbar.j>
 @import <AppKit/CPToolbarItem.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPViewController.j>
 
 @import <StropheCappuccino/TNStropheConnection.j>
 @import <StropheCappuccino/TNStropheContact.j>
@@ -36,6 +37,8 @@
 @import "../Controllers/TNPermissionsCenter.j"
 @import "../Controllers/TNPushCenter.j"
 
+@global TNArchipelModulesVisibilityRequestNotification
+@global TNArchipelModuleTypeToolbar
 
 var TNArchipelErrorPermission           = 0,
     TNArchipelErrorGeneral              = 1;
@@ -124,9 +127,9 @@ var TNModuleStatusImageReady,
 {
     var mainBundle = [CPBundle mainBundle];
 
-    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
-    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
-    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CPSizeMake(8.0, 8.0)];
+    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
+    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
+    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CGSizeMake(8.0, 8.0)];
 }
 
 - (BOOL)initializeModule
@@ -656,7 +659,7 @@ var TNModuleStatusImageReady,
     if (perm)
     {
         CPLog.warn("Permission denied (" + code + "): " + [[aStanza firstChildWithName:@"text"] text]);
-        msg = [[aStanza firstChildWithName:@"text"] text];
+        var msg = [[aStanza firstChildWithName:@"text"] text];
         [growl pushNotificationWithTitle:@"Permission denied" message:msg icon:TNGrowlIconWarning];
         return TNArchipelErrorPermission;
     }
@@ -704,9 +707,11 @@ var TNModuleStatusImageReady,
     if (!aHandler)
         return;
 
-    keys = [_registredSelectors allKeysForObject:aHandler];
+    var keys = [_registredSelectors allKeysForObject:aHandler];
+
     for (var i = 0; i < [keys count]; i++)
         [_registredSelectors removeObjectForKey:[keys objectAtIndex:i]];
+
     aHandler = nil;
 }
 

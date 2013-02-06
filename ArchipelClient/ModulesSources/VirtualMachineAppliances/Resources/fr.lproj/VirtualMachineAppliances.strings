@@ -17,7 +17,7 @@
 /* Class = "NSTextFieldCell"; title = "Create an appliance"; ObjectID = "28"; */
 "28.title" = "Create an appliance";
 
-/* Class = "NSTextFieldCell"; title = "You can create an appliance from this virtual machine actual configuration."; ObjectID = "29"; */
+/* Class = "NSTextFieldCell"; title = "You can create an appliance from this virtual machine actual configuration. It will be published to the local VMCast of the virtual machine's hypervisor."; ObjectID = "29"; */
 "29.title" = "You can create an appliance from this virtual machine actual configuration.";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Name of appliance"; ObjectID = "31"; */
@@ -25,9 +25,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "32"; */
 "32.title" = "Name:";
-
-/* Class = "NSTextFieldCell"; title = "It will be published to the local VMCast of the virtual machine's hypervisor."; ObjectID = "37"; */
-"37.title" = "It will be published to the local VMCast of the virtual machine's hypervisor.";
 
 /* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "51"; */
 "51.title" = "Virtual machine is running.";

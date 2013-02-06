@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Views/TNBasicDataView.j"
 @import "Model/TNLibvirtDeviceInterface.j"
 @import "Model/TNLibvirtDeviceInterfaceFilterRef.j"
 @import "Model/TNLibvirtDeviceInterfaceSource.j"
@@ -102,7 +103,7 @@ var TNInterfaceDeviceDataViewIconNetwork,
     }
 
     if ([_currentInterface type] == TNLibvirtDeviceInterfaceTypeNuage && [_currentInterface nuageNetworkInterfaceIP])
-        [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString] + @" ("+ [_currentInterface nuageNetworkInterfaceIP] +")"];
+        [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString] + @" (" + [_currentInterface nuageNetworkInterfaceIP] + ")"];
     else
         [fieldMAC setStringValue:[[_currentInterface MAC] uppercaseString]];
 

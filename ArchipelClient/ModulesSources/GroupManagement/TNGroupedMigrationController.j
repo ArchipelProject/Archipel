@@ -24,6 +24,11 @@
 @import <AppKit/CPTableView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelEntityTypeHypervisor
 
 
 /*! @ingroup groupmanagement

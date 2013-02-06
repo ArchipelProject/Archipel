@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D54</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -266,13 +266,13 @@
 					<object class="NSTextField" id="1072718201">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{69, 23}, {97, 17}}</string>
+						<string key="NSFrame">{{63, 23}, {103, 17}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSNextKeyView" ref="497849494"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="175098584">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
+							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Nom de salle</string>
 							<object class="NSFont" key="NSSupport" id="750141632">
 								<string key="NSName">LucidaGrande-Bold</string>
@@ -314,7 +314,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="358602607">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
+							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Nome du serveur</string>
 							<reference key="NSSupport" ref="750141632"/>
 							<reference key="NSControlView" ref="281096482"/>
@@ -661,8 +661,8 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="868008689"/>
 							<reference ref="750718241"/>
-							<reference ref="791549011"/>
 							<reference ref="867496968"/>
+							<reference ref="791549011"/>
 						</object>
 						<reference key="parent" ref="772899369"/>
 					</object>

@@ -18,6 +18,11 @@
 
 @import <Foundation/Foundation.j>
 
+@import "../../Model/TNModule.j"
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+
 
 /*! @defgroup  sampletoolbarmodule Module SampleToolbarModule
     @desc Development starting point to create a Toolbar module

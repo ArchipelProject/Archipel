@@ -28,6 +28,11 @@
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
+@import "TNPermissionsCenter.j"
+
+@global TNArchipelEntityTypes
+@global CPApp
+
 /*! @global
     @group TNArchipelModuleType
     type for tab module
@@ -79,6 +84,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
     BOOL                            _allowToolbarSwitching;
+    BOOL                            _deactivateModuleTabItemPositionStorage;
     CPDictionary                    _modulesMenuItems;
     CPDictionary                    _openedTabsRegistry;
     CPDictionary                    _tabModules;
@@ -385,7 +391,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleItem                  = [[CPMenuItem alloc] init],
         moduleRootMenu              = [[CPMenu alloc] init],
         frame                       = [_mainModuleView bounds],
-        scrollView                  = [[CPScrollView alloc] initWithFrame:CPRectMakeZero()],
+        scrollView                  = [[CPScrollView alloc] initWithFrame:CGRectMakeZero()],
         moduleTabItem               = [[TNModuleTabViewItem alloc] initWithIdentifier:moduleIdentifier],
         currentModuleController     = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
 
@@ -400,7 +406,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     if (entityDefinition)
     {
         var entityType = [entityDefinition objectForKey:@"Type"],
-            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"];
+            entityDescriptionGroup = [entityDefinition objectForKey:@"Description"],
+            entityDescription;
 
         if (!entityDescriptionGroup)
             entityDescription = entityType;
@@ -487,6 +494,12 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         frame                   = [_mainModuleView bounds],
         moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleIdentifier];
 
+    // auto validating of toolbar item should be disabled so
+    // they won't get enabled by theirselves when user clicks
+    // somewhere. for more info take a look at:
+    // https://github.com/ArchipelProject/Archipel/issues/602
+    [moduleToolbarItem setAutovalidates:NO];
+
     if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
         moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]] || [moduleLabel objectForKey:@"en"];
 
@@ -494,8 +507,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleToolTip = [moduleToolTip objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
 
     [moduleToolbarItem setLabel:moduleLabel];
-    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32, 32)]];
-    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CPSizeMake(32, 32)]];
+    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CGSizeMake(32, 32)]];
+    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CGSizeMake(32, 32)]];
     [moduleToolbarItem setToolTip:moduleToolTip];
 
     // if toolbar item only, no cib

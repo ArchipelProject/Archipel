@@ -21,6 +21,14 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 
+@import <StropheCappuccino/TNStropheStanza.j>
+
+
+@global CPLocalizedString
+@global CPLocalizedStringFromTableInBundle
+@global TNArchipelModuleStatusWaiting
+@global TNArchipelModuleStatusReady
+@global TNArchipelModuleStatusError
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlManage       = @"manage",
@@ -43,7 +51,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)alloc:(id)aSender
 {
-    [mainPopover close];
     [self alloc];
 }
 

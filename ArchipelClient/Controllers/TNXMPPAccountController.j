@@ -25,6 +25,9 @@
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
+@import <TNKit/TNAlert.j>
+
+@class CPLocalizedString
 
 
 /*! @ingroup archipelcore

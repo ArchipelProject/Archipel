@@ -22,13 +22,15 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
 
+@import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 
-@import "../Model/TNDatasourceRoster.j"
 @import "../Utils/EKShakeAnimation.j"
 @import "../Views/TNModalWindow.j"
 @import "../Views/TNSwitch.j"
 
+@class CPLocalizedString
+@class TNDatasourceRoster
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
@@ -77,22 +79,22 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [credentialRemember setAction:@selector(rememberCredentials:)];
 
     [labelTitle setStringValue:CPLocalizedString(@"Logon", @"Logon")];
-    [labelTitle setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-    [labelJID setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [labelJID setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelJID setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-    [labelPassword setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [labelPassword setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-    [labelBoshService setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [labelBoshService setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelBoshService setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-    [labelRemember setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [labelRemember setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelRemember setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-    [message setTextShadowOffset:CPSizeMake(0.0, 1.0)];
+    [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [message setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];

@@ -32,7 +32,7 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
 "39.title" = "Annuler";
 
-/* Class = "NSTextFieldCell"; title = "URL:"; ObjectID = "47"; */
+/* Class = "NSTextFieldCell"; title = "URL"; ObjectID = "47"; */
 "47.title" = "URL:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "100"; */

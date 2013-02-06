@@ -16,6 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
+
+@class TNPermissionsCenter
+
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersList               = @"list",
     TNArchipelTypeXMPPServerUsersFilter             = @"filter",
@@ -175,7 +183,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_dataSource setCurrentlyLoading:YES];
     if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
         [_delegate userFetcher:self isLoading:YES];
-    
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
 }
 
@@ -208,7 +216,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_dataSource setCurrentlyLoading:NO];
     if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
         [_delegate userFetcher:self isLoading:NO];
-    
+
 }
 
 

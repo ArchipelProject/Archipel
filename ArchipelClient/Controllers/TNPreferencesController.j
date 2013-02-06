@@ -25,10 +25,25 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPScrollView.j>
 
+@import <TNKit/TNAlert.j>
 @import <GrowlCappuccino/TNGrowlCenter.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <StropheCappuccino/TNStrophePrivateStorage.j>
+@import <StropheCappuccino/TNStropheStanza.j>
 
 @import "../Views/TNSwitch.j"
+
+@class CPLocalizedString
+
+@global CPApp
+@global TNArchipelRosterOutlineViewReload
+@global TNArchipelModulesLoadingCompleteNotification
+@global TNStrophePrivateStorageSetNotification
+@global TNStrophePrivateStorageSetErrorNotification
+@global TNStrophePrivateStorageGetErrorNotification
+
 
 TNPreferencesControllerSavePreferencesRequestNotification = @"TNPreferencesControllerSavePreferencesRequestNotification";
 
@@ -80,7 +95,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)awakeFromCib
 {
-    _mainWindow = [[CPWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 700.0, 543.0) styleMask:CPDocModalWindowMask];
+    _mainWindow = [[CPPanel alloc] initWithContentRect:CGRectMake(0.0, 0.0, 700.0, 543.0) styleMask:CPDocModalWindowMask];
     [_mainWindow setContentView:viewContentWindowPreferences];
 
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
@@ -139,10 +154,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)_didModulesLoadComplete:(CPNotification)aNotification
 {
-    _moduleLoader = [aNotification object];
-
-    var tabModules          = [_moduleLoader tabModules],
-        toolbarModules      = [_moduleLoader toolbarModules],
+    var moduleLoader        = [aNotification object],
+        tabModules          = [moduleLoader tabModules],
+        toolbarModules      = [moduleLoader toolbarModules],
         notSortedModules    = [tabModules arrayByAddingObjectsFromArray:toolbarModules],
         sortDescriptor      = [CPSortDescriptor sortDescriptorWithKey:@"label" ascending:YES];
 

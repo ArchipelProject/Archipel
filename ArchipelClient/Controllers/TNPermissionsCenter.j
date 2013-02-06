@@ -17,8 +17,20 @@
  */
 
 @import <Foundation/Foundation.j>
+@import <AppKit/CPImageView.j>
+
+@import <GrowlCappuccino/TNGrowlCenter.j>
+@import <StropheCappuccino/TNPubSub.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <StropheCappuccino/TNStropheJID.j>
+@import <StropheCappuccino/TNStropheStanza.j>
 
 @import "../Resources/admin-accounts.js"
+
+@class CPLocalizedString
+@global TNArchipelEntityTypeUser
+@global CPWindowAbove
 
 TNPermissionsValidationModeBare             = 0;
 TNPermissionsValidationModeNode             = 1;
@@ -68,12 +80,12 @@ var __defaultPermissionCenter;
         _cachedPermissions                  = [CPDictionary dictionary];
         _delegates                          = [CPArray array];
         _disableBadgesRegistry              = [CPDictionary dictionary];
-        _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
+        _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 16.0, 16.0)];
         _adminAccountValidationMode         = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelCheckNodeAdminAccount"];
 
         [self resetAdminAccounts];
 
-        [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
+        [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CGSizeMake(16.0, 16.0)]];
     }
 
     return self;
@@ -292,7 +304,7 @@ var __defaultPermissionCenter;
     var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
         badge = [CPKeyedUnarchiver unarchiveObjectWithData:data];
 
-    [badge setFrameOrigin:CPPointMake(CPRectGetWidth([aControl frame]) - 16.0, CPRectGetHeight([aControl frame]) - 16.0)];
+    [badge setFrameOrigin:CGPointMake(CGRectGetWidth([aControl frame]) - 16.0, CGRectGetHeight([aControl frame]) - 16.0)];
 
     [aControl addSubview:badge positioned:CPWindowAbove relativeTo:nil];
 
@@ -313,7 +325,7 @@ var __defaultPermissionCenter;
         badge = [CPKeyedUnarchiver unarchiveObjectWithData:data],
         segment = [aSegmentedControl segment:aSegment];
 
-    [badge setFrameOrigin:CPPointMake(CPRectGetWidth([segment frame]) - 16.0 + [segment frame].origin.x, CPRectGetHeight([segment frame]) - 16.0)];
+    [badge setFrameOrigin:CGPointMake(CGRectGetWidth([segment frame]) - 16.0 + [segment frame].origin.x, CGRectGetHeight([segment frame]) - 16.0)];
 
     [aSegmentedControl addSubview:badge positioned:CPWindowAbove relativeTo:nil];
 

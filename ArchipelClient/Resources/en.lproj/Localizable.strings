@@ -46,6 +46,9 @@
 /* Archipel Help */
 "Archipel Help" = "Archipel Help";
 
+/* settagsTNTagsControllerNodeReadyNotification */
+"archipel:tags" = "archipel:tags";
+
 /* Are you sure you want to delete selected items? */
 "Are you sure you want to delete selected items?" = "Are you sure you want to delete selected items?";
 
@@ -56,7 +59,7 @@
 "authenticating" = "authenticating";
 
 /* authentification-failed */
-"authentification-failed" = "authentication-failed";
+"authentification-failed" = "authentification-failed";
 
 /* Available */
 "Available" = "Available";
@@ -337,6 +340,9 @@
 
 /* The passwords you entered don't match. */
 "The passwords you entered don't match." = "The passwords you entered don't match.";
+
+/* archipelTNPreferencesControllerRestoredNotification */
+"TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences" = "TNPreferencesControllerSavePreferencesRequestNotificationarchipel:preferences";
 
 /* Toggle tag view */
 "Toggle tag view" = "Toggle tag view";

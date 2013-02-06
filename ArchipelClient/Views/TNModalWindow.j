@@ -16,12 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+@import <Foundation/Foundation.j>
+@import <AppKit/CPPanel.j>
+
+
 /*! @ingroup archipelcore
     a nice modal CPWindow
 */
-@implementation TNModalWindow: CPWindow
+@implementation TNModalWindow: CPPanel
 
-- (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask
+- (id)initWithContentRect:(CGRect)aFrame styleMask:(id)aMask
 {
     if ([CPPlatform isBrowser])
     {

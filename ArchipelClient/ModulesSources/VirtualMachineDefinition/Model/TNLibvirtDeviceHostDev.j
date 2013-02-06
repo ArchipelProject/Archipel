@@ -62,11 +62,11 @@ TNLibvirtDeviceHostDevTypes             = [TNLibvirtDeviceHostDevTypePCI, TNLibv
         if ([aNode name] != @"hostdev")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid hostdev"];
 
-        if ([aNode valueForAttribute:@"managed"] )
+        if ([aNode valueForAttribute:@"managed"])
             _managed = [aNode valueForAttribute:@"managed"] == @"yes" ? YES : NO;
 
-        _mode   = [aNode valueForAttribute:@"mode"];
-        _type   = [aNode valueForAttribute:@"type"];
+        _mode = [aNode valueForAttribute:@"mode"];
+        _type = [aNode valueForAttribute:@"type"];
 
         if ([aNode containsChildrenWithName:@"boot"])
             _boot = [[TNLibvirtDeviceHostDevBoot alloc] initWithXMLNode:[aNode firstChildWithName:@"boot"]];

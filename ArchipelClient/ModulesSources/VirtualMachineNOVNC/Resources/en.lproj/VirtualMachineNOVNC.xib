@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D54</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -562,18 +562,18 @@
 						<object class="NSTextField" id="954036573">
 							<reference key="NSNextResponder" ref="440179165"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{19, 105}, {69, 17}}</string>
+							<string key="NSFrame">{{17, 104}, {71, 17}}</string>
 							<reference key="NSSuperview" ref="440179165"/>
 							<reference key="NSNextKeyView" ref="248718457"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="312246165">
 								<int key="NSCellFlags">68157504</int>
-								<int key="NSCellFlags2">71304192</int>
+								<int key="NSCellFlags2">4195328</int>
 								<string key="NSContents">Password</string>
-								<object class="NSFont" key="NSSupport" id="668857035">
+								<object class="NSFont" key="NSSupport" id="798441678">
 									<string key="NSName">LucidaGrande-Bold</string>
 									<double key="NSSize">13</double>
-									<int key="NSfFlags">16</int>
+									<int key="NSfFlags">2072</int>
 								</object>
 								<reference key="NSControlView" ref="954036573"/>
 								<reference key="NSBackgroundColor" ref="33462811"/>
@@ -789,7 +789,7 @@
 					<object class="NSCustomView" id="344197852">
 						<reference key="NSNextResponder" ref="692868867"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{162, 25}, {77, 24}}</string>
+						<string key="NSFrame">{{163, 24}, {77, 24}}</string>
 						<reference key="NSSuperview" ref="692868867"/>
 						<string key="NSClassName">TNSwitch</string>
 					</object>
@@ -816,15 +816,15 @@
 					<object class="NSTextField" id="978944861">
 						<reference key="NSNextResponder" ref="692868867"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{38, 29}, {121, 17}}</string>
+						<string key="NSFrame">{{38, 28}, {121, 17}}</string>
 						<reference key="NSSuperview" ref="692868867"/>
 						<reference key="NSNextKeyView" ref="344197852"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="849769101">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
+							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Prefer SSL</string>
-							<reference key="NSSupport" ref="668857035"/>
+							<reference key="NSSupport" ref="798441678"/>
 							<reference key="NSControlView" ref="978944861"/>
 							<reference key="NSBackgroundColor" ref="33462811"/>
 							<reference key="NSTextColor" ref="989663373"/>
@@ -840,9 +840,9 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="571731098">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
+							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Check rate</string>
-							<reference key="NSSupport" ref="668857035"/>
+							<reference key="NSSupport" ref="798441678"/>
 							<reference key="NSControlView" ref="123351248"/>
 							<reference key="NSBackgroundColor" ref="33462811"/>
 							<reference key="NSTextColor" ref="989663373"/>
@@ -878,9 +878,9 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="846128101">
 							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">71304192</int>
+							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">FBU refresh rate</string>
-							<reference key="NSSupport" ref="668857035"/>
+							<reference key="NSSupport" ref="798441678"/>
 							<reference key="NSControlView" ref="366554522"/>
 							<reference key="NSBackgroundColor" ref="33462811"/>
 							<reference key="NSTextColor" ref="989663373"/>

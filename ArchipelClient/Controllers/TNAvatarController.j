@@ -24,9 +24,9 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPView.j>
 
-
 @import "../Views/TNAvatarImage.j"
 @import "../Views/TNAvatarView.j"
+@import "TNPermissionsCenter.j"
 
 
 
@@ -61,10 +61,10 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
 - (void)awakeFromCib
 {
-    TNArchipelAvatarManagerThumbSize = CPSizeMake(48, 48);
+    TNArchipelAvatarManagerThumbSize = CGSizeMake(48, 48);
 
     var itemPrototype   = [[CPCollectionViewItem alloc] init],
-        avatarView      = [[TNAvatarView alloc] initWithFrame:CPRectMakeZero()];
+        avatarView      = [[TNAvatarView alloc] initWithFrame:CGRectMakeZero()];
 
     [imageSpinner setHidden:YES];
 
@@ -182,8 +182,8 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
         {
             var avatar      = [avatars objectAtIndex:i],
                 file        = [avatar valueForAttribute:@"name"],
-                cacheKey    = [avatar valueForAttribute:@"hash"] || data, // @TODO: remove the || data later
                 data        = [avatar text],
+                cacheKey    = [avatar valueForAttribute:@"hash"] || data, // @TODO: remove the || data later
                 img;
 
             if ([_rawAvatarDataCache containsKey:cacheKey])

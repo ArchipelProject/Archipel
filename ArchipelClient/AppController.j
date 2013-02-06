@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/AppKit.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
@@ -33,15 +32,14 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 @import <AppKit/CPWebView.j>
+@import <AppKit/_CPToolTip.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <LPKit/LPMultiLineTextField.j>
 @import <LPKit/LPCrashReporter.j>
-@import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNFlipView.j>
 @import <TNKit/TNTabView.j>
-@import <VNCCappuccino/VNCCappuccino.j>
 
 @import "Categories/TNCategories.j"
 @import "Controllers/TNAvatarController.j"
@@ -59,20 +57,16 @@
 @import "Controllers/TNUpdateController.j"
 @import "Controllers/TNUserAvatarController.j"
 @import "Controllers/TNXMPPAccountController.j"
-@import "Model/TNDatasourceRoster.j"
-@import "Model/TNModule.j"
 @import "Model/TNVersion.j"
-@import "Views/TNBasicDataView.j"
 @import "Views/TNButtonBarPopUpButton.j"
-@import "Views/TNCalendarView.j"
-@import "Views/TNEditableLabel.j"
 @import "Views/TNMenuItem.j"
-@import "Views/TNModalWindow.j"
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
-@import "Views/TNSwitch.j"
 
+@global CPLocalizedString
+@global CPApplicationWillTerminateNotification
+@global CPApp
 
 CPFontDefaultSystemFontFace = @"Courier";
 
@@ -233,7 +227,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [theWindow setFullPlatformWindow:YES];
 
-    TNUserAvatarSize = CPSizeMake(50.0, 50.0);
+    TNUserAvatarSize = CGSizeMake(50.0, 50.0);
 
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
@@ -349,7 +343,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
-    _moduleTabView = [[TNTabView alloc] initWithFrame:CPRectMakeZero()];
+    _moduleTabView = [[TNTabView alloc] initWithFrame:CGRectMakeZero()];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setContentBackgroundColor:commonImageModuleBackground];
     [rightView setBackView:_moduleTabView];
@@ -370,7 +364,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setFrontView:viewLoading];
 
-    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
     [progressIndicatorModulesLoading setMinValue:0.0];
     [progressIndicatorModulesLoading setMaxValue:1.0];
     [progressIndicatorModulesLoading setDoubleValue:0.0];
@@ -379,7 +372,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var bounds  = [_moduleTabView bounds];
 
     _rightViewTextField = [CPTextField labelWithTitle:@""];
-    [_rightViewTextField setFrame:CPRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
+    [_rightViewTextField setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
     [_rightViewTextField setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
     [_rightViewTextField setAlignment:CPCenterTextAlignment]
     [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:26]];
@@ -399,9 +392,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* traffic LEDs */
     CPLog.trace(@"Initializing the traffic status LED");
-    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CPSizeMake(8.0, 8.0)];
-    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CPSizeMake(8.0, 8.0)];
-    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CPSizeMake(8.0, 8.0)];
+    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
+    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
+    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CGSizeMake(8.0, 8.0)];
 
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
@@ -434,7 +427,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* module controller */
     CPLog.trace(@"initializing moduleController");
-    _moduleLoadingStarted = NO;
     [moduleController setDelegate:self];
     [moduleController setMainToolbar:_mainToolbar];
     [moduleController setMainTabView:_moduleTabView];
@@ -451,18 +443,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* status bar */
     [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/statusbar-bg.png"]]]];
+    [statusBar applyShadow:[CPColor colorWithHexString:@"f3f3f3"] offset:CGSizeMake(0.0, 1.0)];
 
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
-    [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"353535"]];
-    [labelCurrentUser setTextShadowOffset:CPSizeMake(0.0, 1.0)];
-    [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
 
     [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
     [fieldVersion setStringValue:@""];
-    [fieldVersion setTextColor:[CPColor colorWithHexString:@"353535"]];
-    [fieldVersion setTextShadowOffset:CPSizeMake(0.0, 1.0)];
-    [fieldVersion setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [fieldVersion setSelectable:YES];
     [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
 
@@ -491,7 +478,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         editMenu        = [_mainMenu addItemWithTitle:CPLocalizedString(@"Edit", @"Edit")  action:nil keyEquivalent:@""],
         contactsItem    = [_mainMenu addItemWithTitle:CPLocalizedString(@"Contacts", @"Contact") action:nil keyEquivalent:@""],
         groupsItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Groups", @"Groups") action:nil keyEquivalent:@""],
-        statusItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Status", @"Status") action:nil keyEquivalent:@""],
         navigationItem  = [_mainMenu addItemWithTitle:CPLocalizedString(@"Navigation", @"Navigation") action:nil keyEquivalent:@""],
         moduleItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Modules", @"Modules") action:nil keyEquivalent:@""],
         helpItem        = [_mainMenu addItemWithTitle:CPLocalizedString(@"Help", @"Help") action:nil keyEquivalent:@""],
@@ -505,15 +491,15 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults        = [CPUserDefaults standardUserDefaults];
 
     // Archipel
-    [archipelMenu addItemWithTitle:CPLocalizedString(@"About Archipel", @"About Archipel") action:@selector(showAboutWindow:) keyEquivalent:@"?"];
+    [[archipelMenu addItemWithTitle:CPLocalizedString(@"About Archipel", @"About Archipel") action:@selector(showAboutWindow:) keyEquivalent:@"?"] setTarget:self];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:CPLocalizedString(@"Preferences", @"Preferences") action:@selector(showPreferencesWindow:) keyEquivalent:@","];
-    [archipelMenu addItemWithTitle:CPLocalizedString(@"XMPP Account", @"XMPP Account") action:@selector(showXMPPAccountWindow:) keyEquivalent:@";"];
+    [[archipelMenu addItemWithTitle:CPLocalizedString(@"Preferences", @"Preferences") action:@selector(showPreferencesWindow:) keyEquivalent:@","] setTarget:self];
+    [[archipelMenu addItemWithTitle:CPLocalizedString(@"XMPP Account", @"XMPP Account") action:@selector(showXMPPAccountWindow:) keyEquivalent:@";"] setTarget:self];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:CPLocalizedString(@"Notifications", @"Notification") action:@selector(showNotificationWindow:) keyEquivalent:@">"];
+    [[archipelMenu addItemWithTitle:CPLocalizedString(@"Notifications", @"Notification") action:@selector(showNotificationWindow:) keyEquivalent:@">"] setTarget:self];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:CPLocalizedString(@"Log out", @"Log out") action:@selector(logout:) keyEquivalent:@"Q"];
-    [archipelMenu addItemWithTitle:CPLocalizedString(@"Quit", @"Quit") action:nil keyEquivalent:@""];
+    [[archipelMenu addItemWithTitle:CPLocalizedString(@"Log out", @"Log out") action:@selector(logout:) keyEquivalent:@"Q"] setTarget:self];
+    [[archipelMenu addItemWithTitle:CPLocalizedString(@"Quit", @"Quit") action:nil keyEquivalent:@""] setTarget:self];
     [_mainMenu setSubmenu:archipelMenu forItem:archipelItem];
 
     //Edit
@@ -529,45 +515,47 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     // Groups
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
-        [groupsMenu addItemWithTitle:CPLocalizedString(@"Add group", @"Add group") action:@selector(addGroup:) keyEquivalent:@"G"];
-        [groupsMenu addItemWithTitle:CPLocalizedString(@"Delete group", @"Delete group") action:@selector(deleteEntities:) keyEquivalent:@"D"];
+        [[groupsMenu addItemWithTitle:CPLocalizedString(@"Add group", @"Add group") action:@selector(addGroup:) keyEquivalent:@"G"] setTarget:self];
+        [[groupsMenu addItemWithTitle:CPLocalizedString(@"Delete group", @"Delete group") action:@selector(deleteEntities:) keyEquivalent:@"D"] setTarget:self];
         [groupsMenu addItem:[CPMenuItem separatorItem]];
     }
 
-    [groupsMenu addItemWithTitle:CPLocalizedString(@"Rename group", @"Rename group") action:@selector(renameGroup:) keyEquivalent:@"R"];
+    [[groupsMenu addItemWithTitle:CPLocalizedString(@"Rename group", @"Rename group") action:@selector(renameGroup:) keyEquivalent:@"R"] setTarget:self];
     [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
 
     // Contacts
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
-        [contactsMenu addItemWithTitle:CPLocalizedString(@"Add contact", @"Add contact") action:@selector(addContact:) keyEquivalent:@"C"];
-        [contactsMenu addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contacts") action:@selector(deleteEntities:) keyEquivalent:@"D"];
-        [contactsMenu addItem:[CPMenuItem separatorItem]];
-        [contactsMenu addItemWithTitle:CPLocalizedString(@"Ask subscribtion", @"Ask subscribtion") action:@selector(askSubscription:) keyEquivalent:@"'"];
-        [contactsMenu addItemWithTitle:CPLocalizedString(@"Remove subscribtion", @"Remove subscribtion") action:@selector(removeSubscription:) keyEquivalent:@"\""];
+        [[contactsMenu addItemWithTitle:CPLocalizedString(@"Add contact", @"Add contact") action:@selector(addContact:) keyEquivalent:@"C"] setTarget:self];
+        [[contactsMenu addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contacts") action:@selector(deleteEntities:) keyEquivalent:@"D"] setTarget:self];
+        [contactsMenu addItem:[CPMenuItem separatorItem]]
+        [[contactsMenu addItemWithTitle:CPLocalizedString(@"Ask subscribtion", @"Ask subscribtion") action:@selector(askSubscription:) keyEquivalent:@"'"] setTarget:self];
+        [[contactsMenu addItemWithTitle:CPLocalizedString(@"Remove subscribtion", @"Remove subscribtion") action:@selector(removeSubscription:) keyEquivalent:@"\""] setTarget:self];
         [contactsMenu addItem:[CPMenuItem separatorItem]];
     }
 
-    [contactsMenu addItemWithTitle:CPLocalizedString(@"Rename contact", @"Rename contact") action:@selector(renameContact:) keyEquivalent:@"R"];
+    [[contactsMenu addItemWithTitle:CPLocalizedString(@"Rename contact", @"Rename contact") action:@selector(renameContact:) keyEquivalent:@"R"] setTarget:self];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
 
     // navigation
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Hide main menu", @"Hide main menu") action:@selector(switchMainMenu:) keyEquivalent:@"U"];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Search entity", @"Search entity") action:@selector(focusFilter:) keyEquivalent:@"F"];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Hide main menu", @"Hide main menu") action:@selector(switchMainMenu:) keyEquivalent:@"U"] setTarget:self];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Search entity", @"Search entity") action:@selector(focusFilter:) keyEquivalent:@"F"] setTarget:self];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select next entity", @"Select next entity") action:@selector(selectNextEntity:) keyEquivalent:CPDownArrowFunctionKey];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous entity", @"Select previous entity") action:@selector(selectPreviousEntity:) keyEquivalent:CPUpArrowFunctionKey];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select next entity", @"Select next entity") action:@selector(selectNextEntity:) keyEquivalent:CPDownArrowFunctionKey] setTarget:self];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous entity", @"Select previous entity") action:@selector(selectPreviousEntity:) keyEquivalent:CPUpArrowFunctionKey] setTarget:self];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select next module", @"Select next module") action:@selector(selectNextModule:) keyEquivalent:CPRightArrowFunctionKey] setKeyEquivalentModifierMask:CPCommandKeyMask | CPAlternateKeyMask];
-    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous module", @"Select previous module") action:@selector(selectPreviousModule:) keyEquivalent:CPLeftArrowFunctionKey] setKeyEquivalentModifierMask:CPCommandKeyMask | CPAlternateKeyMask];
+    var nextModuleItem = [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select next module", @"Select next module") action:@selector(selectNextModule:) keyEquivalent:CPRightArrowFunctionKey] setKeyEquivalentModifierMask:CPCommandKeyMask | CPAlternateKeyMask],
+        previousModuleItem = [[navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous module", @"Select previous module") action:@selector(selectPreviousModule:) keyEquivalent:CPLeftArrowFunctionKey] setKeyEquivalentModifierMask:CPCommandKeyMask | CPAlternateKeyMask];
+    [nextModuleItem setTarget:self];
+    [previousModuleItem setTarget:self];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand group", @"Expand group") action:@selector(expandGroup:) keyEquivalent:@"["];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse group", @"Expand group") action:@selector(collapseGroup:) keyEquivalent:@"]"];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Expand group", @"Expand group") action:@selector(expandGroup:) keyEquivalent:@"["] setTarget:self];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse group", @"Expand group") action:@selector(collapseGroup:) keyEquivalent:@"]"] setTarget:self];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand all groups", @"Expand all groups") action:@selector(expandAllGroups:) keyEquivalent:@"{"];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse all groups", @"Collapse all groups") action:@selector(collapseAllGroups:) keyEquivalent:@"}"];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Expand all groups", @"Expand all groups") action:@selector(expandAllGroups:) keyEquivalent:@"{"] setTarget:self];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse all groups", @"Collapse all groups") action:@selector(collapseAllGroups:) keyEquivalent:@"}"] setTarget:self];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:CPLocalizedString(@"Toggle tag view", @"Toggle tag view") action:@selector(toolbarItemTagsClick:) keyEquivalent:@"T"];
+    [[navigationMenu addItemWithTitle:CPLocalizedString(@"Toggle tag view", @"Toggle tag view") action:@selector(toolbarItemTagsClick:) keyEquivalent:@"T"] setTarget:self];
 
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
 
@@ -577,13 +565,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [moduleItem setEnabled:NO];
 
     // help
-    [helpMenu addItemWithTitle:CPLocalizedString(@"Archipel Help", @"Archipel Help") action:@selector(openWiki:) keyEquivalent:@"?"];
-    [helpMenu addItemWithTitle:CPLocalizedString(@"Release note", @"Release note") action:@selector(openReleaseNotes:) keyEquivalent:@""];
+    [[helpMenu addItemWithTitle:CPLocalizedString(@"Archipel Help", @"Archipel Help") action:@selector(openWiki:) keyEquivalent:@"?"] setTarget:self];
+    [[helpMenu addItemWithTitle:CPLocalizedString(@"Release note", @"Release note") action:@selector(openReleaseNotes:) keyEquivalent:@""] setTarget:self];
     [helpMenu addItem:[CPMenuItem separatorItem]];
-    [helpMenu addItemWithTitle:CPLocalizedString(@"Go to website", @"Go to website") action:@selector(openWebsite:) keyEquivalent:@""];
-    [helpMenu addItemWithTitle:CPLocalizedString(@"Report a bug", @"Report a bug") action:@selector(openBugTracker:) keyEquivalent:@""];
+    [[helpMenu addItemWithTitle:CPLocalizedString(@"Go to website", @"Go to website") action:@selector(openWebsite:) keyEquivalent:@""] setTarget:self];
+    [[helpMenu addItemWithTitle:CPLocalizedString(@"Report a bug", @"Report a bug") action:@selector(openBugTracker:) keyEquivalent:@""] setTarget:self];
     [helpMenu addItem:[CPMenuItem separatorItem]];
-    [helpMenu addItemWithTitle:CPLocalizedString(@"Make a donation", @"Make a donation") action:@selector(openDonationPage:) keyEquivalent:@""];
+    [[helpMenu addItemWithTitle:CPLocalizedString(@"Make a donation", @"Make a donation") action:@selector(openDonationPage:) keyEquivalent:@""] setTarget:self];
     [_mainMenu setSubmenu:helpMenu forItem:helpItem];
 
     [CPApp setMainMenu:_mainMenu];
@@ -595,16 +583,16 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)makeRosterMenu
 {
     _rosterMenuForContacts = [[CPMenu alloc] init];
-    [_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contact") action:@selector(deleteEntities:) keyEquivalent:@"D"];
+    [[_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contact") action:@selector(deleteEntities:) keyEquivalent:@"D"] setTarget:self];
     [_rosterMenuForContacts addItem:[CPMenuItem separatorItem]];
-    [_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Ask subscribtion", @"Ask subscribtion") action:@selector(askSubscription:) keyEquivalent:@"'"];
-    [_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Remove subscribtion", @"Remove subscribtion") action:@selector(removeSubscription:) keyEquivalent:@"\""];
+    [[_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Ask subscribtion", @"Ask subscribtion") action:@selector(askSubscription:) keyEquivalent:@"'"] setTarget:self];
+    [[_rosterMenuForContacts addItemWithTitle:CPLocalizedString(@"Remove subscribtion", @"Remove subscribtion") action:@selector(removeSubscription:) keyEquivalent:@"\""] setTarget:self];
 
     _rosterMenuForGroups = [[CPMenu alloc] init];
-    [_rosterMenuForGroups addItemWithTitle:@"Delete group" action:@selector(deleteEntities:) keyEquivalent:@"D"];
+    [[_rosterMenuForGroups addItemWithTitle:@"Delete group" action:@selector(deleteEntities:) keyEquivalent:@"D"] setTarget:self];
     [_rosterMenuForGroups addItem:[CPMenuItem separatorItem]];
-    [_rosterMenuForGroups addItemWithTitle:@"Expand group" action:@selector(expandGroup:) keyEquivalent:@"["];
-    [_rosterMenuForGroups addItemWithTitle:@"Collapse group" action:@selector(collapseAllGroups:) keyEquivalent:@"]"];
+    [[_rosterMenuForGroups addItemWithTitle:@"Expand group" action:@selector(expandGroup:) keyEquivalent:@"["] setTarget:self];
+    [[_rosterMenuForGroups addItemWithTitle:@"Collapse group" action:@selector(collapseAllGroups:) keyEquivalent:@"]"] setTarget:self];
 }
 
 /*! initialize the toolbar with default items
@@ -640,7 +628,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
                                  target:self action:@selector(toolbarItemTagsClick:)
                                 toolTip:@"Show or hide the tags field"];
 
-    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 130.0, 25.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
@@ -655,23 +643,23 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CPSizeMake(10.0, 8.0)]];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CGSizeMake(10.0, 8.0)]];
     [statusSelector addItem:DNDItem];
 
-    [statusItem setMinSize:CPSizeMake(123.0, 24.0)];
-    [statusItem setMaxSize:CPSizeMake(123.0, 24.0)];
+    [statusItem setMinSize:CGSizeMake(123.0, 25.0)];
+    [statusItem setMaxSize:CGSizeMake(123.0, 25.0)];
 
     [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
     [_mainToolbar setPosition:1 forToolbarItemIdentifier:TNToolBarItemStatus];
@@ -694,7 +682,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         userAvatar          = [[CPMenuItem alloc] init],
         userAvatarMenu      = [[CPMenu alloc] init];
 
-    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
+    _userAvatarButton = [[CPButton alloc] initWithFrame:CGRectMake(5.0, 4.0, TNUserAvatarSize.width - 5, TNUserAvatarSize.height - 5)],
 
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
@@ -719,36 +707,36 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CPSizeMake(1, 27)]],
-        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CPSizeMake(1, 26)],
-        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CPSizeMake(1, 26)],
-        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CPSizeMake(1, 26)],
+    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
+        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(1, 26)],
+        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
+        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(1, 26)],
         buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
-        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CPSizeMake(1, 26)],
-        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CPSizeMake(1, 26)],
-        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CPSizeMake(1, 26)],
+        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(1, 26)],
+        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
+        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(1, 26)],
         buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
     _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(20, 20)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(20, 20)];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CGSizeMake(20, 20)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CGSizeMake(20, 20)];
 
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
-    _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
+    _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CGRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(20, 20)]];
-    [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"];
-    [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CGSizeMake(20, 20)]];
+    [[plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"] setTarget:self];
+    [[plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"] setTarget:self];
     [_plusButton setMenu:plusMenu];
     [_plusButton setToolTip:CPLocalizedString(@"Add a new contact or group", @"Add a new contact or group")];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(20, 20)]];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CGSizeMake(20, 20)]];
     [minusButton setAction:@selector(deleteEntities:)];
     [minusButton setToolTip:CPLocalizedString(@"Delete selected contacts or groups", @"Delete selected contacts or groups")];
 
@@ -805,6 +793,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)didRetrieveConfiguration:(CPNotification)aNotification
 {
     [CPMenu setMenuBarVisible:YES];
+
+    [[[TNStropheIMClient defaultClient] roster] getRoster];
+
     [connectionController hideWindow:nil];
     [theWindow makeKeyAndOrderFront:nil];
     [self updateOverallScrollersStyle];
@@ -836,11 +827,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     {
         CPLog.trace(@"Starting loading all modules");
         [moduleController load];
-    }
-    else
-    {
-        // If all modules are loaded, we can ask for the roster right now
-        [[[TNStropheIMClient defaultClient] roster] getRoster];
     }
 }
 
@@ -985,7 +971,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 /*! @ignore
 */
-- (IBAction)_performDeleteEntity
+- (void)_performDeleteEntity
 {
     var indexes = [_rosterOutlineView selectedRowIndexes],
         contactToRemove = [CPArray array],
@@ -1381,7 +1367,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)toolbarItemAvatarClick:(id)aSender
 {
-    var wp = CPPointMake(16, 12);
+    var wp = CGPointMake(16, 12);
 
     wp = [aSender convertPoint:wp toView:nil];
 
@@ -1684,8 +1670,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
 {
     CPLog.info(@"All modules have been loaded");
-
-    [[[TNStropheIMClient defaultClient] roster] getRoster];
 
     _rosterOutlineView._DOMElement.style.WebkitTransition = "";
     _viewGradientAnimation._DOMElement.style.WebkitTransition = "";

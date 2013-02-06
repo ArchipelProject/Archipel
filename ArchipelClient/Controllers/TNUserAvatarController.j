@@ -26,6 +26,11 @@
 
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <StropheCappuccino/TNXMLNode.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <GrowlCappuccino/GrowlCappuccino.j>
+
+@global TNUserAvatarSize
+
 
 /*! @ingroup archipelcore
     representation of the current user avatar controller

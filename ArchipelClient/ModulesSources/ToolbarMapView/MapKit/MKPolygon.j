@@ -55,7 +55,7 @@
             locEnum = [_locations objectEnumerator],
             loc = nil,
             lineCoordinates = [];
-        
+
         while (loc = [locEnum nextObject])
         {
             lineCoordinates.push([loc googleLatLng]);

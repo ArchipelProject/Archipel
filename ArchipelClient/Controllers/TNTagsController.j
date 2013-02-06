@@ -31,6 +31,10 @@
 
 @import "TNPermissionsCenter.j"
 
+@class CPLocalizedString
+@global TNArchipelNotificationRosterSelectionChanged
+
+
 var TNArchipelTypeTags              = @"archipel:tags",
     TNArchipelTypeTagsSetTags       = @"settags";
 
@@ -42,15 +46,15 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 */
 @implementation TNTagsController : CPObject
 {
-    @outlet CPView      mainView            @accessors(readonly);
+    @outlet CPView          mainView            @accessors(readonly);
+    @outlet CPTokenField    tokenFieldTags;
+    @outlet CPButton        buttonSave;
 
-    TNPubSubController  _pubsubController   @accessors(getter=pubSubController);
-    TNPubSubNode        _pubsubTagsNode;
+    TNPubSubController      _pubsubController   @accessors(getter=pubSubController);
+    TNPubSubNode            _pubsubTagsNode;
 
-    BOOL                _alreadyReady;
-    CPButton            _buttonSave;
-    CPTokenField        _tokenFieldTags;
-    id                  _currentRosterItem;
+    BOOL                    _alreadyReady;
+    id                      _currentRosterItem;
 }
 
 
@@ -80,7 +84,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
         gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-tags.png"]],
-        imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CPSizeMake(16, 16)],
+        imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CGSizeMake(16, 16)],
         tokenFrame;
 
     [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
@@ -89,28 +93,19 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     _currentRosterItem  = nil;
     _alreadyReady       = NO;
 
-    _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 33, 30)];
-    [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
-    [_tokenFieldTags setDelegate:self];
-    [_tokenFieldTags setEditable:YES];
-    [_tokenFieldTags setEnabled:NO];
-    [_tokenFieldTags setPlaceholderString:CPLocalizedString(@"You can't assign tags here", @"You can't assign tags here")];
-    [_tokenFieldTags setTarget:self];
-    [_tokenFieldTags setAction:@selector(performSetTags:)];
+    // tokenFieldTags = [[CPTokenField alloc] initWithFrame:CGRectMake(0.0, 1.0, CGRectGetWidth(frame) - 33, 24)];
+    // [tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
+    [tokenFieldTags setDelegate:self];
+    [tokenFieldTags setEditable:YES];
+    [tokenFieldTags setEnabled:NO];
+    [tokenFieldTags setPlaceholderString:CPLocalizedString(@"You can't assign tags here", @"You can't assign tags here")];
+    [tokenFieldTags setTarget:self];
+    [tokenFieldTags setAction:@selector(performSetTags:)];
 
-    [mainView addSubview:_tokenFieldTags];
-
-    _buttonSave = [CPButton buttonWithTitle:@""];
-    [_buttonSave setFrameSize:CPSizeMake(30.0, 24.0)];
-    [_buttonSave setAlphaValue:0.8];
-    [_buttonSave setImage:imageTag];
-    [_buttonSave setAutoresizingMask:CPViewMinXMargin];
-    [_buttonSave setFrameOrigin:CPPointMake(CPRectGetWidth(frame) - CPRectGetWidth([_buttonSave frame]) - 4, 4)];
-    [_buttonSave setTarget:self];
-    [_buttonSave setAction:@selector(performSetTags:)];
-    [_buttonSave setEnabled:NO];
-
-    [mainView addSubview:_buttonSave];
+    [buttonSave setImage:imageTag];
+    [buttonSave setTarget:self];
+    [buttonSave setAction:@selector(performSetTags:)];
+    [buttonSave setEnabled:NO];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
 
@@ -173,26 +168,26 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     _currentRosterItem = [aNotification object];
 
-    [_tokenFieldTags setObjectValue:[]];
+    [tokenFieldTags setObjectValue:[]];
 
     if (![_currentRosterItem isKindOfClass:TNStropheContact])
     {
-        [_tokenFieldTags setPlaceholderString:@"You can't assign tags here"];
-        [_buttonSave setEnabled:NO];
-        [_tokenFieldTags setEnabled:NO];
-        [_tokenFieldTags setObjectValue:[]];
+        [tokenFieldTags setPlaceholderString:@"You can't assign tags here"];
+        [buttonSave setEnabled:NO];
+        [tokenFieldTags setEnabled:NO];
+        [tokenFieldTags setObjectValue:[]];
     }
     else
     {
-        [[TNPermissionsCenter defaultCenter] setControl:_buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
-        [[TNPermissionsCenter defaultCenter] setControl:_tokenFieldTags segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+        [[TNPermissionsCenter defaultCenter] setControl:buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+        [[TNPermissionsCenter defaultCenter] setControl:tokenFieldTags segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
 
-        [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
-        [_tokenFieldTags setEnabled:YES];
-        [_buttonSave setEnabled:YES];
+        [tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
+        [tokenFieldTags setEnabled:YES];
+        [buttonSave setEnabled:YES];
 
         if (_currentRosterItem)
-            [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
+            [tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
     }
 }
 
@@ -209,7 +204,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
         return;
 
     var stanza      = [TNStropheStanza iqWithType:@"set"],
-        content     = [_tokenFieldTags objectValue],
+        content     = [tokenFieldTags objectValue],
         tagsString  = @"";
 
     for (var i = 0; i < [content count]; i++)
@@ -241,7 +236,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
         for (var j = 0; j < [tags count]; j++)
         {
             var tag = [tags objectAtIndex:j];
-            if (tag && (tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag] && ![[_tokenFieldTags objectValue] containsObject:tag])
+            if (tag && (tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag] && ![[tokenFieldTags objectValue] containsObject:tag])
                 [availableTags addObject:tag];
         }
     }
@@ -271,7 +266,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     }
 
     if (_currentRosterItem)
-        [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
+        [tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
 }
 
 
@@ -281,8 +276,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     if (anEntity === _currentRosterItem)
     {
-        [aCenter setControl:_buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
-        [aCenter setControl:_tokenFieldTags segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+        [aCenter setControl:buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+        [aCenter setControl:tokenFieldTags segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
     }
 }
 
