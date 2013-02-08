@@ -1630,6 +1630,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
+    [self getXMLDesc];
     [self requestVisible];
     if (![self isVisible])
         return;
