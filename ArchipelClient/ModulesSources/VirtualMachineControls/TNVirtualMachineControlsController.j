@@ -176,7 +176,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Play", @"Play") forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Stop", @"Stop") forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Destroy", @"Destroy") forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Force Off", @"Force Off") forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Reboot", @"Reboot") forSegment:TNArchipelTransportBarReboot];
 
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPlay];
@@ -1108,10 +1108,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if (![[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"])
     {
-        var alert = [TNAlert alertWithMessage:[CPString stringWithFormat:CPBundleLocalizedString(@"Unplug %@?", @"Unplug %@?"), [_entity nickname]]
-                                    informative:CPBundleLocalizedString(@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
+        var alert = [TNAlert alertWithMessage:[CPString stringWithFormat:CPBundleLocalizedString(@"Force Off %@?", @"Force Off %@?"), [_entity nickname]]
+                                    informative:CPBundleLocalizedString(@"Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
                                      target:self
-                                     actions:[[CPBundleLocalizedString(@"Unplug", @"Unplug"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];
+                                     actions:[[CPBundleLocalizedString(@"Force Off", @"Force Off"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];
 
         [alert setShowsSuppressionButton:YES];
         [alert setUserInfo:alert];
