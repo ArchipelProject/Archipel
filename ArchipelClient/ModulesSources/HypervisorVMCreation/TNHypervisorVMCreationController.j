@@ -138,7 +138,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setTarget:self];
     [tableVirtualMachines setDoubleAction:@selector(openEditVirtualMachineWindow:)];
     [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
-    [tableVirtualMachines setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableVirtualMachines setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesDatasource setTable:tableVirtualMachines];
@@ -210,7 +209,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesNotManaged setTarget:self];
     [tableVirtualMachinesNotManaged setDoubleAction:@selector(didNotManagedTableDoubleClick:)];
     [[tableVirtualMachinesNotManaged tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
-    [tableVirtualMachinesNotManaged setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableVirtualMachinesNotManaged setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesNotManagedDatasource setTable:tableVirtualMachinesNotManaged];
@@ -236,7 +234,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setTarget:self];
     [tableVirtualMachinesParked setDoubleAction:@selector(openParkedXMLEditor:)];
     [[tableVirtualMachinesParked tableColumnWithIdentifier:@"self"] setDataView:[dataViewParkedVMPrototype duplicate]];
-    [tableVirtualMachinesParked setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableVirtualMachinesParked setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_virtualMachinesParkedDatasource setTable:tableVirtualMachinesParked];

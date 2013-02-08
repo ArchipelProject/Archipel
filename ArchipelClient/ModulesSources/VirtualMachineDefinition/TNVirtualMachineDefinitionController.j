@@ -312,7 +312,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives setDataSource:_drivesDatasource];
     [tableDrives setTarget:self];
     [tableDrives setDoubleAction:@selector(editDrive:)];
-    [tableDrives setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableDrives setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -351,7 +350,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInterfaces setDataSource:_nicsDatasource];
     [tableInterfaces setTarget:self];
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
-    [tableInterfaces setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableInterfaces setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -387,7 +385,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableInputDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewInputDevicePrototype duplicate]];
     [tableInputDevices setTarget:self];
     [tableInputDevices setDoubleAction:@selector(editInputDevice:)];
-    [tableInputDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableInputDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_inputDevicesDatasource setTable:tableInputDevices];
@@ -420,7 +417,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableGraphicsDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewGraphicDevicePrototype duplicate]];
     [tableGraphicsDevices setTarget:self];
     [tableGraphicsDevices setDoubleAction:@selector(editGraphicDevice:)];
-    [tableGraphicsDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableGraphicsDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_graphicDevicesDatasource setTable:tableGraphicsDevices];
@@ -456,7 +452,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableCharacterDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewCharacterDevicePrototype duplicate]];
     [tableCharacterDevices setTarget:self];
     [tableCharacterDevices setDoubleAction:@selector(editCharacterDevice:)];
-    [tableCharacterDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableCharacterDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
 
