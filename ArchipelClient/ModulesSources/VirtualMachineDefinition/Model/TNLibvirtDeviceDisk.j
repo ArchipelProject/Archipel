@@ -29,9 +29,11 @@
 TNLibvirtDeviceDiskTypeFile             = @"file";
 TNLibvirtDeviceDiskTypeBlock            = @"block";
 TNLibvirtDeviceDiskTypeNetwork          = @"network";
+TNLibvirtDeviceDiskTypeDir              = @"dir";
 TNLibvirtDeviceDiskTypes                = [ TNLibvirtDeviceDiskTypeFile,
                                             TNLibvirtDeviceDiskTypeBlock,
-                                            TNLibvirtDeviceDiskTypeNetwork];
+                                            TNLibvirtDeviceDiskTypeNetwork,
+                                            TNLibvirtDeviceDiskTypeDir];
 
 TNLibvirtDeviceDiskDeviceCDROM          = @"cdrom";
 TNLibvirtDeviceDiskDeviceDisk           = @"disk";

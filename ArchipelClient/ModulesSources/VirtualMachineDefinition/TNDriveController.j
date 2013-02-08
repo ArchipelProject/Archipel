@@ -248,7 +248,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (IBAction)driveTypeDidChange:(id)aSender
 {
-    if ([buttonType title] == TNLibvirtDeviceDiskTypeBlock)
+    if ([buttonType title] == TNLibvirtDeviceDiskTypeBlock || [buttonType title] == TNLibvirtDeviceDiskTypeDir)
     {
         [fieldDevicePath setHidden:NO];
         [fieldDevicePath setEnabled:YES];
@@ -411,9 +411,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         for (var i = 0; i < [disks count]; i++)
         {
             var disk    = [disks objectAtIndex:i],
-                vSize   = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
+                vSize       = [CPString formatByteSize:[disk valueForAttribute:@"virtualSize"]],
+                dSize       = [CPString formatByteSize:[disk valueForAttribute:@"diskSize"]],
                 format  = [disk valueForAttribute:@"format"],
-                label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk valueForAttribute:@"diskSize"] + ")",
+                label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + dSize + " used)",
                 item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
             [item setStringValue:[disk valueForAttribute:@"path"]];
             [item setObjectValue:format];

@@ -22,6 +22,32 @@
 
 @import "TNLibvirtBase.j";
 
+TNLibvirtDeviceDiskDriverNameTap                    = @"tap";
+TNLibvirtDeviceDiskDriverNameTap2                   = @"tap2";
+TNLibvirtDeviceDiskDriverNamePhy                    = @"phy";
+TNLibvirtDeviceDiskDriverNameFile                   = @"file";
+TNLibvirtDeviceDiskDriverNameQemu                   = @"qemu";
+
+TNLibvirtDeviceDiskDriverName                       = [ TNLibvirtDeviceDiskDriverNameTap,
+                                                        TNLibvirtDeviceDiskDriverNameTap2,
+                                                        TNLibvirtDeviceDiskDriverNamePhy,
+                                                        TNLibvirtDeviceDiskDriverNameFile,
+                                                        TNLibvirtDeviceDiskDriverNameQemu];
+
+TNLibvirtDeviceDiskDriverTypeAio                    = @"aio";
+TNLibvirtDeviceDiskDriverTypeRaw                    = @"raw";
+TNLibvirtDeviceDiskDriverTypeCow                    = @"cow";
+TNLibvirtDeviceDiskDriverTypeQcow                   = @"qcow";
+TNLibvirtDeviceDiskDriverTypeQcow2                  = @"qcow2";
+TNLibvirtDeviceDiskDriverTypeVmdk                   = @"vmdk";
+
+TNLibvirtDeviceDiskDriverType                       = [ TNLibvirtDeviceDiskDriverTypeAio,
+                                                        TNLibvirtDeviceDiskDriverTypeRaw,
+                                                        TNLibvirtDeviceDiskDriverTypeCow,
+                                                        TNLibvirtDeviceDiskDriverTypeQcow,
+                                                        TNLibvirtDeviceDiskDriverTypeQcow2,
+                                                        TNLibvirtDeviceDiskDriverTypeVmdk];
+
 
 TNLibvirtDeviceDiskDriverCacheDefault               = @"default";
 TNLibvirtDeviceDiskDriverCacheNone                  = @"none";
