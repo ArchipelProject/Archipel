@@ -91,7 +91,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [tableMedias setTarget:self];
     [tableMedias setDoubleAction:@selector(openEditWindow:)];
     [tableMedias setDelegate:self];
-    [tableMedias setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableMedias setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [[tableMedias tableColumnWithIdentifier:@"self"] setDataView:[dataViewDrivePrototype duplicate]];
