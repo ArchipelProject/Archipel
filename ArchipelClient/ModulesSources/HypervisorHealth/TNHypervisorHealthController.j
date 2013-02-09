@@ -189,7 +189,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [[chartViewNetwork gridView] setBackgroundColor:[CPColor whiteColor]];
 
     // tabview
-    [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
     [tabViewInfos setDelegate:self];
 
     var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"charts"],
@@ -216,14 +215,15 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     _datasourcePartitions = [[TNTableViewDataSource alloc] init];
 
     [tablePartitions setDataSource:_datasourcePartitions];
+    [tablePartitions setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
     [_datasourcePartitions setTable:tablePartitions];
 
     [[tablePartitions tableColumnWithIdentifier:@"self"] setDataView:[partitionDataViewPrototype duplicate]];
-    [tablePartitions setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
 
     // logs tables
     _datasourceLogs = [[TNTableViewDataSource alloc] init];
     [tableLogs setDelegate:self];
+    [tableLogs setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
     [tableLogs setDataSource:_datasourceLogs];
 
     [_datasourceLogs setTable:tableLogs];
@@ -233,7 +233,6 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [filterLogField setAction:@selector(filterObjects:)];
 
     [[tableLogs tableColumnWithIdentifier:@"self"] setDataView:[logDataViewPrototype duplicate]];
-    [tableLogs setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
 
     // Workers
     _statsHistoryWorker = [[TNWorker alloc] initWithURL:[CPURL URLWithString:[bundle pathForResource:@"statsHistoryWorker.js"]]];

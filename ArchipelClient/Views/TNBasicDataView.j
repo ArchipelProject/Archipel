@@ -20,50 +20,64 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CGGradient.j>
 
+var TNBasicDataViewColorRegistry;
+
+
 @implementation TNBasicDataView : CPView
 {
-    CPColor _backgroundTopColor;
-    CPColor _backgroundBottomColor;
-    CPColor _backgroundTopColorSelected;
-    CPColor _backgroundBottomColorSelected;
 }
 
-- (id)initWithRect:(CGRect)aRect
++ (void)initialize
 {
-    if (self = [super initWithRect:aRect])
+    TNBasicDataViewColorRegistry = [CPDictionary dictionary];
+}
+
+- (void)setThemeState:(CPThemeState)aThemeState
+{
+    if ([self hasThemeState:aThemeState])
+        return;
+
+    [super setThemeState:aThemeState];
+
+    if (aThemeState == CPThemeStateSelectedDataView)
     {
-        _backgroundTopColor = [CPColor redColor];
-        _backgroundBottomColor = [CPColor blueColor];
+        for (var i = 0; i < [[self subviews] count]; i++)
+        {
+            var view = [[self subviews] objectAtIndex:i];
+            if ([view isKindOfClass:CPTextField] && ![view isBezeled])
+            {
+                [TNBasicDataViewColorRegistry setObject:[view textColor] forKey:view];
+                [view setTextColor:[CPColor whiteColor]];
+            }
+
+            [view setThemeState:aThemeState];
+        }
+        [self applyShadow:[CPColor colorWithHexString:@"2F5288"] offset:CGSizeMake(-1.0, -1.0)];
     }
-
-    return self;
 }
 
-- (void)drawRect:(CGRect)aRect
+- (void)unsetThemeState:(CPThemeState)aThemeState
 {
-    [super drawRect:aRect];
+    if (![self hasThemeState:aThemeState])
+        return;
 
-    var topColor = ([self hasThemeState:CPThemeStateSelectedDataView]) ? _backgroundTopColorSelected : _backgroundTopColor,
-        bottomColor = ([self hasThemeState:CPThemeStateSelectedDataView]) ? _backgroundBottomColorSelected : _backgroundBottomColor,
-        context = [[CPGraphicsContext currentContext] graphicsPort],
-        gradientColor = [[topColor redComponent], [topColor greenComponent], [topColor blueComponent],1.0, [bottomColor redComponent], [bottomColor greenComponent], [bottomColor blueComponent],1.0],
-        gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), gradientColor, [0,1], 2);
+    [super unsetThemeState:aThemeState];
 
-    CGContextSetStrokeColor(context, [CPColor colorWithHexString:@"E1E1E1"]);
-    CGContextSetLineWidth(context, 1.0);
-    CGContextBeginPath(context);
+    if (aThemeState == CPThemeStateSelectedDataView)
+    {
+        for (var i = 0; i < [[self subviews] count]; i++)
+        {
+            var view = [[self subviews] objectAtIndex:i];
+            if ([view isKindOfClass:CPTextField] && ![view isBezeled])
+                [view setTextColor:[TNBasicDataViewColorRegistry objectForKey:view]];
 
-    aRect.origin.x -= 2;
-    aRect.origin.y -= 2;
-    aRect.size.width += 6;
-    aRect.size.height += 1;
-
-    CGContextAddPath(context, CGPathWithRoundedRectangleInRect(aRect, 0, 0, YES, YES, YES, YES));
-    CGContextDrawLinearGradient(context, gradient, CGPointMake(CGRectGetMidX(aRect), 0.0), CGPointMake(CGRectGetMidX(aRect), aRect.size.height), 0);
-    CGContextClosePath(context);
-    CGContextStrokePath(context);
-    CGContextFillPath(context);
+            [view unsetThemeState:aThemeState];
+        }
+        [self applyShadow];
+    }
 }
+
+
 
 /*! CPCoder compliance
 */
@@ -71,11 +85,6 @@
 {
     if (self = [super initWithCoder:aCoder])
     {
-        _backgroundTopColor = [CPColor colorWithHexString:@"FBFBFB"];
-        _backgroundBottomColor = [CPColor colorWithHexString:@"F9F9F9"];
-        _backgroundTopColorSelected = [CPColor colorWithHexString:@"E7E7E7"];
-        _backgroundBottomColorSelected = [CPColor colorWithHexString:@"F4F4F4"];
-
         [self applyShadow];
     }
 
