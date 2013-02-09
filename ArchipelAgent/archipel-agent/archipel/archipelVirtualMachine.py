@@ -710,9 +710,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             raise Exception("You need to first define the virtual machine")
 
         dominfo = self.domain.info()
-        desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
-        os_type = desc.getTag("os").getTag("type").getData()
-        if os_type == "hvm":
+
+        if (self.definition.getAttr("type") == "xen") and (self.definition.getTag("os").getTag("type").getData() == "hvm"):
             delta_memory = 4096
         else:
             delta_memory = 0
