@@ -2337,7 +2337,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([aStanza firstChildWithName:@"not-defined"])
     {
-        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
+        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:[buttonDomainType title] osType:[buttonMachines title]];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
 
