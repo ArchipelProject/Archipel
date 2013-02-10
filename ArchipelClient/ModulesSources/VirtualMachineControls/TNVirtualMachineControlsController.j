@@ -326,7 +326,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shut down", @"Shut down") action:@selector(stop:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Pause / Resume", @"Pause / Resume") action:@selector(pause:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reboot", @"Reboot") action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Destroy", @"Destroy") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Force Off", @"Force Off") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when user saves preferences

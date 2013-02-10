@@ -19,9 +19,9 @@
     <key>PluginDisplayName</key>
     <dict>
         <key>en</key>
-        <string>Destroy</string>
+        <string>Force Off</string>
         <key>fr</key>
-        <string>Détruire</string>
+        <string>Forcer l'arrêt</string>
     </dict>
     <key>ToolTip</key>
     <dict>
