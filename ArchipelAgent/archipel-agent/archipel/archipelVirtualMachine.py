@@ -730,7 +730,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-
+        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
+            raise Exception('Virtual machine must be running.')
+            
         desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
         interfaces_nodes = desc.getTag("devices").getTags("interface")
         netstats = []
