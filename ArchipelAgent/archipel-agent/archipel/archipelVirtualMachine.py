@@ -737,8 +737,11 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         interfaces_nodes = desc.getTag("devices").getTags("interface")
         netstats = []
         for nic in interfaces_nodes:
-            name = nic.getTag("alias").getAttr("name")
             target = nic.getTag("target").getAttr("dev")
+            try:
+                name = nic.getTag("alias").getAttr("name")
+            except:
+                name = target
             stats = self.domain.interfaceStats(target)
             netstats.append({
                 "name": name,
