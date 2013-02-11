@@ -20,16 +20,25 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CGGradient.j>
 
-var TNBasicDataViewColorRegistry;
-
 
 @implementation TNBasicDataView : CPView
 {
+    CPDictionary _colorRegistry;
 }
 
-+ (void)initialize
+- (void)initWithFrame:(CGRect)aRect
 {
-    TNBasicDataViewColorRegistry = [CPDictionary dictionary];
+    if (self = [super initWithFrame:aRect])
+    {
+        [self _init]
+    }
+
+    return self;
+}
+
+- (void)_init
+{
+    _colorRegistry = [CPDictionary dictionary];
 }
 
 - (void)setThemeState:(CPThemeState)aThemeState
@@ -46,7 +55,7 @@ var TNBasicDataViewColorRegistry;
             var view = [[self subviews] objectAtIndex:i];
             if ([view isKindOfClass:CPTextField] && ![view isBezeled])
             {
-                [TNBasicDataViewColorRegistry setObject:[view textColor] forKey:view];
+                [_colorRegistry setObject:[view textColor] forKey:view];
                 [view setTextColor:[CPColor whiteColor]];
             }
 
@@ -69,7 +78,7 @@ var TNBasicDataViewColorRegistry;
         {
             var view = [[self subviews] objectAtIndex:i];
             if ([view isKindOfClass:CPTextField] && ![view isBezeled])
-                [view setTextColor:[TNBasicDataViewColorRegistry objectForKey:view]];
+                [view setTextColor:[_colorRegistry objectForKey:view]];
 
             [view unsetThemeState:aThemeState];
         }
@@ -85,6 +94,7 @@ var TNBasicDataViewColorRegistry;
 {
     if (self = [super initWithCoder:aCoder])
     {
+        [self _init];
         [self applyShadow];
     }
 
