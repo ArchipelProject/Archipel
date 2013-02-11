@@ -256,8 +256,14 @@ class TNArchipelVNC (TNArchipelPlugin):
         @rtype: string
         @return: the answer
         """
+        if not self.entity.domain:
+            return "You need to first define the virtual machine"
+        if not self.entity.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
+            return "Virtual machine must be running."
         try:
             ports = self.display()
-            return "You can connect to my screen at %s:%s" % (self.entity.ipaddr, ports["direct"])
+            ssl_support = "SSL connexion only" if ports["supportssl"] and ports["onlyssl"] else "SSL connexion supported" if ports["supportssl"] and not ports["onlyssl"] else "SSL connexion not supported"
+            return "You can connect to my screen at %s:%s (%s)" % (self.entity.ipaddr, ports["proxy"],ssl_support)
         except Exception as ex:
             return build_error_message(self, ex, msg)
+
