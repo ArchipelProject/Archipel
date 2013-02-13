@@ -85,12 +85,12 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
 #pragma mark -
 #pragma mark Class Method
 
-+ (TNLibvirtDomain)defaultDomainWithType:(CPString)aType
++ (TNLibvirtDomain)defaultDomainWithType:(CPString)aType osType:(CPString)anOsType
 {
     var domain = [[TNLibvirtDomain alloc] init];
 
     [domain setType:aType];
-    [[[domain OS] type] setType:TNLibvirtDomainOSTypeTypeHVM];
+    [[[domain OS] type] setType:anOsType];
 
     return domain;
 }

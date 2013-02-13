@@ -65,7 +65,7 @@
     <key>TNDescDefaultMachine</key>
     <string>pc-0.13</string>
     <key>TNDescDefaultMemory</key>
-    <string></string>
+    <string>128</string>
     <key>TNDescDefaultNumberCPU</key>
     <string>1</string>
     <key>TNDescMaxNumberCPU</key>

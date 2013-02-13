@@ -1625,6 +1625,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
+    [self getXMLDesc];
     [self requestVisible];
     if (![self isVisible])
         return;
@@ -1655,6 +1656,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)defineXML:(id)aSender
 {
+    // simulate controls changes for textfield if IBaction as not been fired
+    // @TODO : Change the behavior to use bindings for controls
+    [self didChangeMemory:fieldMemory];
+    [self didChangeMemoryTuneHardLimit:fieldMemoryTuneHardLimit];
+    [self didChangeMemoryTuneSoftLimit:fieldMemoryTuneSoftLimit];
+    [self didChangeMemoryTuneGuarantee:fieldMemoryTuneGuarantee];
+    [self didChangeBlockIOTuningWeight:fieldBlockIOTuningWeight];
+    [self didChangeOSKernel:fieldOSKernel];
+    [self didChangeOSInitrd:fieldOSInitrd];
+    [self didChangeOSLoader:fieldOSLoader];
+    [self didChangeOSCommandLine:fieldOSCommandLine];
+    [self didChangeBootloader:fieldBootloader];
+    [self didChangeBootloaderArgs:fieldBootloaderArgs];
     [self defineXML];
 }
 
@@ -2318,7 +2332,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([aStanza firstChildWithName:@"not-defined"])
     {
-        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
+        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:[buttonDomainType title] osType:[buttonMachines title]];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
 
@@ -2377,9 +2391,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
 
     [self selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
-    // we don't need call to buildGUIAccordingToCurrentGuest cause enabelGUI
-    // will call it if UI should be enabled
-    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     // button domainType
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
@@ -2530,6 +2541,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
+
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return NO;
 }
