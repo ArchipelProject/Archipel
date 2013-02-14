@@ -84,12 +84,12 @@ class TNVMApplianceManager (TNArchipelPlugin):
                                 "parameters": [{"name": "identifier", "description": "The identifer of the appliance, UUID or name"}],
                                 "method": self.message_attach,
                                 "permissions": ["appliance_attach"],
-                                "description": "Start the given network" },
+                                "description": "Attach to the given appliance" },
                             {   "commands" : ["detach appliance"],
                                 "parameters": [],
                                 "method": self.message_detach,
                                 "permissions": ["appliance_detach"],
-                                "description": "Stop the given network" }
+                                "description": "Detach from the current appliance" }
                             ]
         self.entity.add_message_registrar_items(registrar_items)
 

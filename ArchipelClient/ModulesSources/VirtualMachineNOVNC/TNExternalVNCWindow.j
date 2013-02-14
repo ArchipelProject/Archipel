@@ -95,6 +95,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         [_mainToolbar setPosition:5 forToolbarItemIdentifier:TNVNCWindowToolBarZoom];
         [_mainToolbar setPosition:10 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
         [_mainToolbar setPosition:11 forToolbarItemIdentifier:TNVNCWindowToolBarFullScreen];
+
+        [[self contentView] setBackgroundColor:[CPColor blackColor]];
     }
 
     return self;
@@ -143,11 +145,10 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
 
     var domWindow = [[self platformWindow] DOMWindow],
-        unloadFunction = function()
-        {
-            [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
-            [self close];
-        };
+        unloadFunction = function() {
+                [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+                [self close];
+            };
 
     if (window.onbeforeunload)
         domWindow.onbeforeunload = unloadFunction
@@ -165,6 +166,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     _vncView  = [[TNVNCView alloc] initWithFrame:[[self contentView] bounds]];
 
+    [_vncView setAutoResizeViewPort:NO];
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
     [_vncView setHost:aHost];
@@ -281,10 +283,11 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     switch (aState)
     {
         case TNVNCCappuccinoStateFailed:
+            [_vncView setHidden:YES];
             var growl = [[TNGrowlCenter alloc] init];
             [growl setView:[self contentView]];
             [growl pushNotificationWithTitle:[_entity nickname]
-                                     message:CPBundleLocalizedString(@"Cannot connect to the VNC screen at ", @"Cannot connect to the VNC screen at ") + [_vncView host] + @":" + [_vncView port]
+                                     message:CPBundleLocalizedString(@"Error connecting to the VNC screen. Use the VNC tab for more information.", @"Error connecting to the VNC screen. Use the VNC tab for more information.")
                                         icon:TNGrowlIconError];
 
             CPLog.error(@"Cannot connect to the VNC screen at " + [_vncView host] + @":" + [_vncView port]);
@@ -292,6 +295,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
         case TNVNCCappuccinoStateNormal:
             _hasBeenConnected = YES;
+            [_vncView setHidden:NO];
             [self fitWindowToVNCView];
             [_vncView focus];
             [self orderFront:nil];
@@ -301,6 +305,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         case TNVNCCappuccinoStateDisconnected:
             if (_hasBeenConnected)
             {
+                [_vncView setHidden:YES];
                 [self close];
                 [[self platformWindow] orderOut:nil];
             }

@@ -35,7 +35,7 @@
 /* Class = "NSTextFieldCell"; title = "OOM score"; ObjectID = "43"; */
 "43.title" = "OOM score:";
 
-/* Class = "NSTextFieldCell"; title = "CPU time"; ObjectID = "44"; */
+/* Class = "NSTextFieldCell"; title = "CPU Usage"; ObjectID = "44"; */
 "44.title" = "CPU time:";
 
 /* Class = "NSTextFieldCell"; title = "Adjust memory"; ObjectID = "45"; */
@@ -136,4 +136,13 @@
 
 /* Class = "NSBox"; title = "Commands"; ObjectID = "201"; */
 "201.title" = "Commands";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling new CPU usage"; ObjectID = "218"; */
+"218.ibShadowedToolTip" = "Delay before polling new CPU usage";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Delay between CPU Usage"; ObjectID = "219"; */
+"219.placeholderString" = "Delay between CPU Usage";
+
+/* Class = "NSTextFieldCell"; title = "CPU Usage refresh time"; ObjectID = "220"; */
+"220.title" = "CPU Usage refresh time";
 

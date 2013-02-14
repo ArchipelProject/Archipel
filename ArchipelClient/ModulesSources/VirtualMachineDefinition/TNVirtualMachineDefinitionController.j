@@ -312,7 +312,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives setDataSource:_drivesDatasource];
     [tableDrives setTarget:self];
     [tableDrives setDoubleAction:@selector(editDrive:)];
-    [tableDrives setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableDrives setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -351,7 +350,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInterfaces setDataSource:_nicsDatasource];
     [tableInterfaces setTarget:self];
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
-    [tableInterfaces setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableInterfaces setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -387,7 +385,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableInputDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewInputDevicePrototype duplicate]];
     [tableInputDevices setTarget:self];
     [tableInputDevices setDoubleAction:@selector(editInputDevice:)];
-    [tableInputDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableInputDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_inputDevicesDatasource setTable:tableInputDevices];
@@ -420,7 +417,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableGraphicsDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewGraphicDevicePrototype duplicate]];
     [tableGraphicsDevices setTarget:self];
     [tableGraphicsDevices setDoubleAction:@selector(editGraphicDevice:)];
-    [tableGraphicsDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableGraphicsDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
     [_graphicDevicesDatasource setTable:tableGraphicsDevices];
@@ -456,7 +452,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableCharacterDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewCharacterDevicePrototype duplicate]];
     [tableCharacterDevices setTarget:self];
     [tableCharacterDevices setDoubleAction:@selector(editCharacterDevice:)];
-    [tableCharacterDevices setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
     [tableCharacterDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
 
 
@@ -1630,6 +1625,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)openXMLEditor:(id)aSender
 {
+    [self getXMLDesc];
     [self requestVisible];
     if (![self isVisible])
         return;
@@ -1660,6 +1656,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)defineXML:(id)aSender
 {
+    // simulate controls changes for textfield if IBaction as not been fired
+    // @TODO : Change the behavior to use bindings for controls
+    [self didChangeMemory:fieldMemory];
+    [self didChangeMemoryTuneHardLimit:fieldMemoryTuneHardLimit];
+    [self didChangeMemoryTuneSoftLimit:fieldMemoryTuneSoftLimit];
+    [self didChangeMemoryTuneGuarantee:fieldMemoryTuneGuarantee];
+    [self didChangeBlockIOTuningWeight:fieldBlockIOTuningWeight];
+    [self didChangeOSKernel:fieldOSKernel];
+    [self didChangeOSInitrd:fieldOSInitrd];
+    [self didChangeOSLoader:fieldOSLoader];
+    [self didChangeOSCommandLine:fieldOSCommandLine];
+    [self didChangeBootloader:fieldBootloader];
+    [self didChangeBootloaderArgs:fieldBootloaderArgs];
     [self defineXML];
 }
 
@@ -2323,7 +2332,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([aStanza firstChildWithName:@"not-defined"])
     {
-        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
+        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:[buttonDomainType title] osType:[buttonMachines title]];
         [_libvirtDomain setName:[_entity nickname]];
         [_libvirtDomain setUUID:[[_entity JID] node]];
 
@@ -2382,9 +2391,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
 
     [self selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
-    // we don't need call to buildGUIAccordingToCurrentGuest cause enabelGUI
-    // will call it if UI should be enabled
-    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     // button domainType
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
@@ -2535,6 +2541,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _definitionRecovered = YES;
     [self handleDefinitionEdition:NO];
+
+    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return NO;
 }

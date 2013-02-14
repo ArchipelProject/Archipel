@@ -29,7 +29,10 @@ var TNDriveDeviceDataViewIconQCOW2,
     TNDriveDeviceDataViewIconCOW,
     TNDriveDeviceDataViewIconVMDK,
     TNDriveDeviceDataViewIconRAW,
-    TNDriveDeviceDataViewIconCDROM;
+    TNDriveDeviceDataViewIconCDROM,
+    TNDriveDeviceDataViewIconDISK,
+    TNDriveDeviceDataViewIconNETWORK,
+    TNDriveDeviceDataViewIconFLOPPY;
 
 /*! @ingroup virtualmachinedefinition
     This is a representation of a data view for displaying a drive device
@@ -67,46 +70,93 @@ var TNDriveDeviceDataViewIconQCOW2,
 */
 + (void)initialize
 {
-    TNDriveDeviceDataViewIconQCOW2 = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow2.png"]];
-    TNDriveDeviceDataViewIconQCOW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow.png"]];
-    TNDriveDeviceDataViewIconCOW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cow.png"]];
-    TNDriveDeviceDataViewIconVMDK = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_vmdk.png"]];
-    TNDriveDeviceDataViewIconRAW = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_raw.png"]];
-    TNDriveDeviceDataViewIconCDROM = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cdrom.png"]];
+    TNDriveDeviceDataViewIconQCOW2      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow2.png"]];
+    TNDriveDeviceDataViewIconQCOW       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow.png"]];
+    TNDriveDeviceDataViewIconCOW        = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cow.png"]];
+    TNDriveDeviceDataViewIconVMDK       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_vmdk.png"]];
+    TNDriveDeviceDataViewIconRAW        = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_raw.png"]];
+    TNDriveDeviceDataViewIconCDROM      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cdrom.png"]];
+    TNDriveDeviceDataViewIconDISK       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_dev.png"]];
+    TNDriveDeviceDataViewIconNETWORK    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_net.png"]];
+    TNDriveDeviceDataViewIconFLOPPY     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_floppy.png"]];
 }
 
 
 #pragma mark -
-#pragma mark Overides
+#pragma mark Overrides
 
 /*! Set the current object Value
-    @param aGraphicDevice the disk to represent
+    @param aDisk the disk to represent
 */
 - (void)setObjectValue:(TNLibvirtDeviceDisk)aDisk
 {
     _currentDisk = aDisk;
 
-    switch ([[_currentDisk driver] type])
+    switch ([_currentDisk device])
     {
-        case @"qcow2":
-            [imageIcon setImage:TNDriveDeviceDataViewIconQCOW2];
+        case TNLibvirtDeviceDiskDeviceCDROM:
+            [imageIcon setImage:TNDriveDeviceDataViewIconCDROM];
+            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeRaw];
             break;
-        case @"qcow":
-            [imageIcon setImage:TNDriveDeviceDataViewIconQCOW];
+
+        case TNLibvirtDeviceDiskDeviceFloppy:
+            [imageIcon setImage:TNDriveDeviceDataViewIconFLOPPY];
+            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeRaw];
             break;
-        case @"cow":
-            [imageIcon setImage:TNDriveDeviceDataViewIconCOW];
-            break;
-        case @"vmdk":
-            [imageIcon setImage:TNDriveDeviceDataViewIconVMDK];
-            break;
-        case @"raw":
-            [imageIcon setImage:TNDriveDeviceDataViewIconRAW];
+
+        case TNLibvirtDeviceDiskDeviceDisk:
+            switch ([_currentDisk type])
+            {
+                case TNLibvirtDeviceDiskTypeDir:
+                case TNLibvirtDeviceDiskTypeBlock:
+                    [imageIcon setImage:TNDriveDeviceDataViewIconDISK];
+                    [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeRaw];
+                    break;
+
+                case TNLibvirtDeviceDiskTypeNetwork:
+                    [imageIcon setImage:TNDriveDeviceDataViewIconNETWORK];
+                    [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeRaw];
+                    break
+
+                case TNLibvirtDeviceDiskTypeFile:
+                    var _disk_format = ( [_currentDisk source]
+                                         && [[_currentDisk source] sourceObject]
+                                         && [[_currentDisk source] sourceObject] != @""
+                                         && ! ([[[_currentDisk source] sourceObject] isKindOfClass:CPArray])
+                                         && [[_currentDisk driver] name] != TNLibvirtDeviceDiskDriverNameQemu
+                                       ) ? [[[_currentDisk source] sourceObject].split(".") lastObject] : [[_currentDisk driver] type];
+
+                    switch (_disk_format)
+                    {
+                        case @"qcow2":
+                            [imageIcon setImage:TNDriveDeviceDataViewIconQCOW2];
+                            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeQcow2];
+                            break;
+
+                        case @"qcow":
+                            [imageIcon setImage:TNDriveDeviceDataViewIconQCOW];
+                            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeQcow];
+                            break;
+
+                        case @"cow":
+                            [imageIcon setImage:TNDriveDeviceDataViewIconCOW];
+                            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeCow];
+                            break;
+
+                        case @"vmdk":
+                            [imageIcon setImage:TNDriveDeviceDataViewIconVMDK];
+                            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeVmdk];
+                            break;
+
+                        default:
+                            [imageIcon setImage:TNDriveDeviceDataViewIconRAW];
+                            [fieldFormat setStringValue:TNLibvirtDeviceDiskDriverTypeRaw];
+                    }
+                    break;
+
+            }
             break;
     }
-
-    if ([_currentDisk device] == TNLibvirtDeviceDiskDeviceCDROM)
-        [imageIcon setImage:TNDriveDeviceDataViewIconCDROM];
 
     if ([_currentDisk source] && [[_currentDisk source] sourceObject] && [[_currentDisk source] sourceObject] != @"")
     {
@@ -127,10 +177,10 @@ var TNDriveDeviceDataViewIconQCOW2,
     [fieldDevice setStringValue:[_currentDisk device]];
     [fieldTarget setStringValue:[[_currentDisk target] bus] + @":" + [[_currentDisk target] device]];
     [fieldCache setStringValue:[[_currentDisk driver] cache]];
-    [fieldFormat setStringValue:[[_currentDisk driver] type]];
     [fieldTransient setStringValue:[_currentDisk isTransient] ? @"Yes" : @"No"];
     [fieldShareable setStringValue:[_currentDisk isShareable] ? @"Yes" : @"No"];
     [fieldReadOnly setStringValue:[_currentDisk isReadOnly] ? @"Yes" : @"No"];
+
 }
 
 

@@ -710,6 +710,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             raise Exception("You need to first define the virtual machine")
 
         dominfo = self.domain.info()
+
+        if (self.definition.getAttr("type") == "xen") and (self.definition.getTag("os").getTag("type").getData() == "hvm"):
+            delta_memory = 4096
+        else:
+            delta_memory = 0
+
         try:
             autostart = self.domain.autostart()
         except:
@@ -717,8 +723,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         return {
             "state": dominfo[0],
-            "maxMem": dominfo[1],
-            "memory": dominfo[2],
+            "maxMem": dominfo[1] - delta_memory,
+            "memory": dominfo[2] - delta_memory,
             "nrVirtCpu": dominfo[3],
             "cpuPrct": self.compute_cpu_usage(),
             "hypervisor": self.hypervisor.jid,
@@ -730,13 +736,18 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
-
+        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
+            raise Exception('Virtual machine must be running.')
+            
         desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
         interfaces_nodes = desc.getTag("devices").getTags("interface")
         netstats = []
         for nic in interfaces_nodes:
-            name = nic.getTag("alias").getAttr("name")
             target = nic.getTag("target").getAttr("dev")
+            try:
+                name = nic.getTag("alias").getAttr("name")
+            except:
+                name = target
             stats = self.domain.interfaceStats(target)
             netstats.append({
                 "name": name,
