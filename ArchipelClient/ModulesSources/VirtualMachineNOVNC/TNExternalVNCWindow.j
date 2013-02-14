@@ -166,6 +166,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     _vncView  = [[TNVNCView alloc] initWithFrame:[[self contentView] bounds]];
 
+    [_vncView setAutoResizeViewPort:NO];
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
     [_vncView setHost:aHost];

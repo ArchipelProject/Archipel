@@ -61,7 +61,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPCheckBox              checkboxPasswordRemember;
     @outlet CPImageView             imageViewSecureConnection;
     @outlet CPPopover               popoverPasteBoard;
-    @outlet CPScrollView            mainScrollView;
     @outlet CPSlider                sliderScaling;
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
@@ -69,6 +68,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPTextField             labelErrorInformation;
     @outlet CPView                  viewConnectionErrorHelp;
     @outlet CPView                  viewControls;
+    @outlet CPView                  viewVNCContainer;
     @outlet CPWindow                windowPassword;
     @outlet LPMultiLineTextField    fieldPasteBoard;
     @outlet TNSwitch                switchPreferencesPreferSSL;
@@ -133,12 +133,11 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [fieldPassword setSecure:YES];
 
-    _vncView = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
-    [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    _vncView = [[TNVNCView alloc] initWithFrame:CGRectMakeZero()];
+    [_vncView setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewMaxXMargin | CPViewMaxYMargin];
+    [self _centerVNCView];
+    [viewVNCContainer addSubview:_vncView];
 
-    [mainScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [mainScrollView setDocumentView:_vncView];
-    [mainScrollView setAutohidesScrollers:YES];
     [sliderScaling setContinuous:YES];
     [sliderScaling setMinValue:1];
     [sliderScaling setMaxValue:200];
@@ -224,7 +223,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     if ([self isConnected])
     {
         [_vncView disconnect:nil];
-        [_vncView resetSize];
         [_vncView unfocus];
     }
 
@@ -311,6 +309,15 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
 #pragma mark -
 #pragma mark Utilities
+
+- (void)_centerVNCView
+{
+    var frame = [viewVNCContainer bounds],
+        centerX = frame.size.width / 2.0,
+        centerY = frame.size.height / 2.0;
+
+    [_vncView setCenter:CGPointMake(centerX, centerY)];
+}
 
 /*! check if VNC is currenttly connected
     @return Boolean.
@@ -475,10 +482,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [buttonAddCertificateException setTitle:CPBundleLocalizedString(@"Add Exception", @"Add Exception")];
 
-    [viewConnectionErrorHelp setFrame:[[_vncView superview] bounds]];
-    [[_vncView superview] addSubview:viewConnectionErrorHelp];
-
-
+    [viewConnectionErrorHelp setFrame:[viewVNCContainer bounds]];
+    [viewVNCContainer addSubview:viewConnectionErrorHelp];
 }
 
 
@@ -518,6 +523,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (IBAction)changeScale:(id)aSender
 {
     [_vncView setZoom:([aSender intValue] / 100)];
+    [self _centerVNCView];
 }
 
 /*! Make the VNCView fitting the maximum amount of space
@@ -525,7 +531,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)fitToScreen:(id)aSender
 {
-    var visibleRect     = [_vncView visibleRect],
+    var visibleRect     = [viewVNCContainer frame],
         currentVNCSize  = [_vncView displaySize],
         currentVNCZoom  = [_vncView zoom] * 100,
         diffPerc        = ((visibleRect.size.height - (currentVNCSize.height + 6)) / (currentVNCSize.height + 6)),
@@ -691,7 +697,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     {
         case TNVNCCappuccinoStateFailed:
             [_vncView setHidden:YES];
-            [_vncView resetSize];
 
             if ([_vncView oldState] == TNVNCCappuccinoStateSecurityResult)
             {
@@ -717,6 +722,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
         case TNVNCCappuccinoStateNormal:
             [_vncView setHidden:NO];
+            [self _centerVNCView];
             [self _showConnectionHelp:NO];
             setTimeout(function(){ [self fitToScreen:nil] }, 500);
             [imageViewSecureConnection setHidden:!_useSSL];
