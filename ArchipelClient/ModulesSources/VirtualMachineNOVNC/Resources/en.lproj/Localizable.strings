@@ -1,8 +1,11 @@
-/* Cannot connect to the VNC screen at  */
-"Cannot connect to the VNC screen at " = "Cannot connect to the VNC screen at ";
+/* Add Exception */
+"Add Exception" = "Add Exception";
 
 /* Ctrl Alt Del */
 "Ctrl Alt Del" = "Ctrl Alt Del";
+
+/* Error connecting to the VNC screen. Use the VNC tab for more information. */
+"Error connecting to the VNC screen. Use the VNC tab for more information." = "Error connecting to the VNC screen. Use the VNC tab for more information.";
 
 /* Fit screen to window */
 "Fit screen to window" = "Fit screen to window";
@@ -21,6 +24,9 @@
 
 /* Reset zoom */
 "Reset zoom" = "Reset zoom";
+
+/* Retry */
+"Retry" = "Retry";
 
 /* Screen for  */
 "Screen for " = "Screen for ";

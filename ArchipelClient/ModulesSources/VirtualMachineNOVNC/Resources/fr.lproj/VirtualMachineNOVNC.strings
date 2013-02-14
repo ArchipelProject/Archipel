@@ -101,6 +101,33 @@
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "161"; */
 "161.title" = "Label";
 
-/* Class = "NSTextFieldCell"; title = "WebSocket problem"; ObjectID = "163"; */
-"163.title" = "WebSocket problem";
+/* Class = "NSTextFieldCell"; title = "Oops! Archipel is unable to connect to the VNC Screen..."; ObjectID = "167"; */
+"167.title" = "Oops! Archipel is unable to connect to the VNC Screen...";
+
+/* Class = "NSTextFieldCell"; title = "It seems Archipel is unable to connect to the VNC Screen. There are several reasons why this can be happening, please review them."; ObjectID = "169"; */
+"169.title" = "It seems Archipel is unable to connect to the VNC Screen. There are several reasons why this can be happening, please review them.";
+
+/* Class = "NSButtonCell"; title = "Add Exception"; ObjectID = "174"; */
+"174.title" = "Add Exception";
+
+/* Class = "NSTextFieldCell"; title = "The 'machine_ip' address in archipel.conf is not correct or set to auto. In that case, just put the actual hypervisor IP. Remember that the connection goes from your browser."; ObjectID = "178"; */
+"178.title" = "The 'machine_ip' address in archipel.conf is not correct or set to auto. In that case, just put the actual hypervisor IP. Remember that the connection goes from your browser.";
+
+/* Class = "NSTextFieldCell"; title = "Your browser doesn't support encrypted websockets. In that case, in archipel.conf, set 'vnc_certificate_file' to 'None' and restart the agents."; ObjectID = "180"; */
+"180.title" = "Your browser doesn't support encrypted websockets. In that case, in archipel.conf, set 'vnc_certificate_file' to 'None' and restart the agents.";
+
+/* Class = "NSTextFieldCell"; title = "If you are using encrypted connection (by setting a pem file in archipel.conf and setting 'vnc_only_ssl' to 'True', then you need to have a valid certificate. Self signed certificates need to be explicitely allowed (click on the link below to add and exception)."; ObjectID = "182"; */
+"182.title" = "If you are using encrypted connection (by setting a pem file in archipel.conf and setting 'vnc_only_ssl' to 'True', then you need to have a valid certificate. Self signed certificates need to be explicitely allowed (click on the link below to add and exception).";
+
+/* Class = "NSTextFieldCell"; title = "1"; ObjectID = "184"; */
+"184.title" = "1";
+
+/* Class = "NSTextFieldCell"; title = "2"; ObjectID = "186"; */
+"186.title" = "2";
+
+/* Class = "NSTextFieldCell"; title = "3"; ObjectID = "188"; */
+"188.title" = "3";
+
+/* Class = "NSTextFieldCell"; title = "info"; ObjectID = "190"; */
+"190.title" = "info";
 
