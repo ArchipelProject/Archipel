@@ -730,6 +730,13 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     }
 }
 
+/*! VNCView delegate
+*/
+- (void)vncView:(TNVNCView)aVNCView didDesktopSizeChange:(CGSize)aNewSize
+{
+    [self fitToScreen:nil];
+}
+
 - (void)vncView:(TNVNCView)aVNCView didReceivePasteBoardText:(CPString)aText
 {
     alert(aText);
