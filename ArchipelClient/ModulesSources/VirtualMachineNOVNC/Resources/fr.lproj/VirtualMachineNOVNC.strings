@@ -1,4 +1,7 @@
 
+/* Class = "NSView"; ibShadowedToolTip = "The connection is encrypted"; ObjectID = "3"; */
+"3.ibShadowedToolTip" = "The connection is encrypted";
+
 /* Class = "NSButton"; ibShadowedToolTip = "Adjust size to fit"; ObjectID = "5"; */
 "5.ibShadowedToolTip" = "Adjust size to fit";
 
@@ -11,7 +14,7 @@
 /* Class = "NSTextFieldCell"; title = "Zoom: 0%"; ObjectID = "14"; */
 "14.title" = "Zoom: 0%";
 
-/* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "16"; */
+/* Class = "NSTextFieldCell"; title = "200%"; ObjectID = "16"; */
 "16.title" = "100%";
 
 /* Class = "NSButton"; ibShadowedToolTip = "Send CTRL+ALT+SUPR"; ObjectID = "17"; */
