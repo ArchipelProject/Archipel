@@ -283,7 +283,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [viewAboutWindowLogoContainer setBackgroundColor:[CPColor blackColor]];
 
     /* main split views */
-    var posx = [defaults integerForKey:@"mainSplitViewPosition"] || 230;
+    var posx = 230;
     [splitViewMain setPosition:posx ofDividerAtIndex:0];
     var bounds = [leftView bounds];
     bounds.size.width = posx;
@@ -1606,21 +1606,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         return _rosterMenuForContacts;
     else if ([anItem isKindOfClass:TNStropheGroup])
         return _rosterMenuForGroups;
-}
-
-/*! Delegate of splitViewMain. This will save the positionning of splitview in CPUserDefaults
-*/
-- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
-{
-    if (([aNotification object] !== splitViewMain) || ([[CPApp currentEvent] type] != CPLeftMouseUp))
-        return;
-
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        splitView   = [aNotification object],
-        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
-
-    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
-    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults

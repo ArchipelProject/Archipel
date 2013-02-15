@@ -132,7 +132,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     // @TODO: this should not be added statically here. but by modules that implements theses keys.
     _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelBOSHJID",
                             @"TNArchipelBOSHPassword", @"TNArchipelBOSHService", @"TNArchipelBOSHRememberCredentials",
-                            @"TNArchipelTagsVisible", @"mainSplitViewPosition", @"TNArchipelModuleControllerOpenedTabRegistry",
+                            @"TNArchipelTagsVisible", @"TNArchipelModuleControllerOpenedTabRegistry",
                             @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups", @"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
 }
 
