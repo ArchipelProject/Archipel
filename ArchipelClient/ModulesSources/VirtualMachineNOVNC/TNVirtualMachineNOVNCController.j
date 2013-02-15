@@ -848,7 +848,6 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
 */
 - (void)remoteScreenView:(TNRemoteScreenView)aScreenView didGetFocus:(BOOL)hasFocus
 {
-    [aScreenView applyGlow:(hasFocus ? [CPColor colorWithHexString:@"A1CAE2"] : nil) spread:30 size:CGSizeMake(0, 0)];
 }
 
 @end
