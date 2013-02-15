@@ -39,17 +39,19 @@
 var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmachine:vnc",
     TNArchipelTypeVirtualMachineVNC                 = @"archipel:virtualmachine:vnc",
     TNArchipelTypeVirtualMachineVNCDisplay          = @"display",
-    TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_",
     TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationRecoveredNotification",
     TNArchipelVNCShowExternalWindowNotification     = @"TNArchipelVNCShowExternalWindowNotification",
     TNArchipelDefinitionUpdatedNotification         = @"TNArchipelDefinitionUpdatedNotification";
 
+TNArchipelVNCScreenTypeVNC = @"vnc";
+TNArchipelVNCScreenTypeSPICE = @"spice";
 
 /*! @ingroup virtualmachinenovnc
     module that allow to access virtual machine console using VNC
 */
 @implementation TNVirtualMachineNOVNCController : TNModule
 {
+    @outlet CPButton                buttonAddCertificateException;
     @outlet CPButton                buttonExternalWindow;
     @outlet CPButton                buttonGetPasteBoard;
     @outlet CPButton                buttonPasswordSend;
@@ -65,21 +67,24 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
-    @outlet CPTextField             labelWebsocketProblem;
+    @outlet CPTextField             labelErrorInformation;
+    @outlet CPView                  viewConnectionErrorHelp;
     @outlet CPView                  viewControls;
+    @outlet CPView                  viewVNCContainer;
     @outlet CPWindow                windowPassword;
     @outlet LPMultiLineTextField    fieldPasteBoard;
     @outlet TNSwitch                switchPreferencesPreferSSL;
-    @outlet CPScrollView            mainScrollView;
 
     BOOL                            _useSSL;
-    BOOL                            _vncOnlySSL;
-    BOOL                            _vncSupportSSL;
+    BOOL                            _onlySSL;
+    BOOL                            _supportsSSL;
+    CPString                        _remoteScreenType;
     CPString                        _url;
     CPString                        _VMHost;
-    CPString                        _vncDirectPort;
-    CPString                        _vncProxyPort;
+    CPString                        _remoteScreenDirectPort;
+    CPString                        _remoteScreenProxyPort;
     TNVNCView                       _vncView;
+    TNSpiceView                     _spiceView
 }
 
 
@@ -91,10 +96,12 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (void)awakeFromCib
 {
     [windowPassword setDefaultButton:buttonPasswordSend];
-    [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],
         defaults    = [CPUserDefaults standardUserDefaults];
+
+    [imageViewSecureConnection setHidden:YES];
+    [imageViewSecureConnection setImage:CPImageInBundle(@"secure.png", CGSizeMake(16.0, 16.0), bundle)];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -130,15 +137,24 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [fieldPassword setSecure:YES];
 
-    _vncView = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
-    [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    // VNC View
+    _vncView = [[TNVNCView alloc] initWithFrame:CGRectMakeZero()];
+    [_vncView setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewMaxXMargin | CPViewMaxYMargin];
 
-    [mainScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [mainScrollView setDocumentView:_vncView];
-    [mainScrollView setAutohidesScrollers:YES];
+    // SPICE View
+    _spiceView = [[TNSpiceView alloc] initWithFrame:CGRectMakeZero()];
+    [_spiceView setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewMaxXMargin | CPViewMaxYMargin];
+
     [sliderScaling setContinuous:YES];
-    [sliderScaling setMinValue:1];
-    [sliderScaling setMaxValue:200];
+    [sliderScaling setMinValue:0.2];
+    [sliderScaling setMaxValue:2];
+
+    [buttonAddCertificateException setThemeState:CPThemeStateDefault];
+    [viewConnectionErrorHelp applyShadow];
+
+    // [viewVNCContainer setClipsToBounds:NO];
+
+    [self _showConnectionHelp:NO];
 
     [[self view] applyShadow];
 }
@@ -175,11 +191,11 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)willUnload
 {
-    _VMHost         = nil;
-    _vncProxyPort   = nil;
-    _vncDirectPort  = nil;
-    _vncSupportSSL  = nil;
-    _vncOnlySSL     = nil;
+    _VMHost                 = nil;
+    _remoteScreenProxyPort  = nil;
+    _remoteScreenDirectPort = nil;
+    _supportsSSL            = nil;
+    _onlySSL                = nil;
 
     [fieldPassword setStringValue:@""];
 
@@ -194,7 +210,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         return NO;
 
     [_vncView setHidden:YES];
-    [labelWebsocketProblem setHidden:YES];
+    [_spiceView setHidden:YES];
+    [self _showConnectionHelp:NO];
 
     [self handleDisplayVNCScreen];
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
@@ -208,14 +225,16 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (void)willHide
 {
     [imageViewSecureConnection setHidden:YES];
+    [_vncView setHidden:YES];
+    [_spiceView setHidden:YES];
+    [self _showConnectionHelp:NO];
+
     [windowPassword close];
 
-    [_vncView setHidden:YES];
     if ([self isConnected])
     {
-        [_vncView disconnect:nil];
-        [_vncView resetSize];
-        [_vncView unfocus];
+        [[self currentScreenView] disconnect:nil];
+        [[self currentScreenView] unfocus];
     }
 
     [super willHide];
@@ -302,73 +321,88 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 #pragma mark -
 #pragma mark Utilities
 
+- (void)_switchViewAccordingToCurrentType
+{
+    switch (_remoteScreenType)
+    {
+        case TNArchipelVNCScreenTypeVNC:
+            [_spiceView removeFromSuperview];
+            [viewVNCContainer addSubview:_vncView];
+            break;
+
+        case TNArchipelVNCScreenTypeSPICE:
+            [_vncView removeFromSuperview];
+            [viewVNCContainer addSubview:_spiceView];
+            break;
+    }
+
+    [self _centerScreenView];
+}
+
+- (TNRemoteScreenView)currentScreenView
+{
+    switch (_remoteScreenType)
+    {
+        case TNArchipelVNCScreenTypeVNC : return _vncView;
+        case TNArchipelVNCScreenTypeSPICE : return _spiceView;
+    }
+}
+
+- (void)_centerScreenView
+{
+    var frame = [viewVNCContainer bounds],
+        centerX = frame.size.width / 2.0,
+        centerY = frame.size.height / 2.0;
+
+    [[self currentScreenView] setCenter:CGPointMake(centerX, centerY)];
+}
+
 /*! check if VNC is currenttly connected
     @return Boolean.
 */
 - (BOOL)isConnected
 {
-    return ([_vncView state] != TNVNCCappuccinoStateDisconnected || [_vncView state] == TNVNCCappuccinoStateDisconnect)
+    return ([_vncView state] != TNRemoteScreenViewStateDisconnected || [_vncView state] == TNRemoteScreenViewStateDisconnecting)
 }
 
 /*! Check if virtual machine is running. if not displays the masking view
 */
 - (void)handleDisplayVNCScreen
 {
-    if (([_entity XMPPShow] != TNStropheContactStatusOnline  && [_entity XMPPShow] != TNStropheContactStatusAway)
-        || _vncProxyPort == -1
-        || !_vncProxyPort)
+    var conditionVMStatusOK = ([_entity XMPPShow] == TNStropheContactStatusOnline || [_entity XMPPShow] == TNStropheContactStatusAway);
+
+    if (!conditionVMStatusOK || _remoteScreenProxyPort == -1|| !_remoteScreenProxyPort)
     {
-        _VMHost         = nil;
-        _vncProxyPort   = nil;
-        _vncDirectPort  = nil;
-        _vncSupportSSL  = nil;
-        _vncOnlySSL     = nil;
+        _VMHost                 = nil;
+        _remoteScreenProxyPort  = nil;
+        _remoteScreenDirectPort = nil;
+        _supportsSSL            = nil;
+        _onlySSL                = nil;
 
         if ([self isConnected])
         {
-            [_vncView unfocus];
-            [_vncView disconnect:nil];
+            [[self currentScreenView] unfocus];
+            [[self currentScreenView] disconnect:nil];
         }
 
-        [_vncView setHidden:YES];
+        [self _showConnectionHelp:NO];
+        [[self currentScreenView] setHidden:YES];
         [self showMaskView:YES];
 
         return;
     }
 
     if (![self isVisible])
-    {
         return;
-    }
 
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        scaleKey    = TNArchipelVNCScaleFactor + [[self entity] JID],
+    var defaults = [CPUserDefaults standardUserDefaults],
         passwordKey = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID],
-        lastScale   = [defaults floatForKey:scaleKey],
-        preferSSL   = [defaults boolForKey:@"NOVNCPreferSSL"];
+        preferSSL = [defaults boolForKey:@"NOVNCPreferSSL"];
 
-    if ((_vncOnlySSL) || (preferSSL && _vncSupportSSL))
+    if (_onlySSL || (preferSSL && _supportsSSL))
         _useSSL = YES;
 
-    if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
-    {
-        var growl = [TNGrowlCenter defaultCenter];
-        if (_vncOnlySSL)
-        {
-            CPLog.warn(@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome.");
-            return;
-        }
-        else
-        {
-            CPLog.warn(@"Your browser doesn't support Websocket TLSv1. We use plain connection.");
-            _useSSL = NO;
-        }
-    }
-
-    if (lastScale)
-        [sliderScaling setDoubleValue:lastScale];
-    else
-        [sliderScaling setDoubleValue:100];
+    [sliderScaling setDoubleValue:1];
 
     if ([defaults stringForKey:passwordKey])
     {
@@ -381,38 +415,82 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         [checkboxPasswordRemember setState:CPOffState];
     }
 
-    [_vncView setCheckRate:[defaults integerForKey:@"NOVNCheckRate"]];
-    [_vncView setFrameBufferRequestRate:[defaults integerForKey:@"NOVNCFBURate"]];
-    [_vncView setHost:_VMHost];
-    [_vncView setPort:_vncProxyPort];
-    [_vncView setPassword:[fieldPassword stringValue]];
-    [_vncView setZoom:(lastScale) ? (lastScale / 100) : 1];
-    [_vncView setTrueColor:YES];
-    [_vncView setEncrypted:_useSSL];
-    [_vncView setDelegate:self];
-    [_vncView setHidden:NO];
     [self showMaskView:NO];
 
-    CPLog.info("VNC: connecting to " + _VMHost + ":" + _vncProxyPort + " using SSL:"
-                + _useSSL + "(checkRate: " + [defaults integerForKey:@"NOVNCheckRate"]
-                + ", FBURate: " + [defaults integerForKey:@"NOVNCFBURate"]);
+    [self _switchViewAccordingToCurrentType];
+
+    var currentScreenView;
+    switch (_remoteScreenType)
+    {
+        case TNArchipelVNCScreenTypeVNC:
+            currentScreenView = [self _loadVNC];
+            break;
+
+        case TNArchipelVNCScreenTypeSPICE:
+            currentScreenView = [self _loadSpice];
+            break;
+
+        default:
+            [TNAlert showAlertWithMessage:@"Unknown screen type received"
+                              informative:@"Screen type " + _remoteScreenType + " is not valid"
+                                    style:CPCriticalAlertStyle];
+            return;
+    }
 
     try
     {
-        [_vncView load];
-        [_vncView connect:nil];
-        [_vncView setHidden:NO];
-        [labelWebsocketProblem setHidden:YES];
+        [currentScreenView load];
+        [currentScreenView connect:nil];
     }
     catch(e)
     {
-        [_vncView setHidden:YES];
-        [labelWebsocketProblem setHidden:NO];
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Websocket error for VNC", @"Websocket error for VNC")
                           informative:CPBundleLocalizedString(@"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.", @"It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.")
                                 style:CPCriticalAlertStyle];
         CPLog.error("Websocket problem. unable to start noVNC subsystem: " + e);
     }
+}
+
+- (void)_loadVNC
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    [_vncView setCheckRate:[defaults integerForKey:@"NOVNCheckRate"]];
+    [_vncView setFrameBufferRequestRate:[defaults integerForKey:@"NOVNCFBURate"]];
+    [_vncView setHost:_VMHost];
+    [_vncView setPort:_remoteScreenProxyPort];
+    [_vncView setPassword:[fieldPassword stringValue]];
+    [_vncView setZoom:1];
+    [_vncView setTrueColor:YES];
+    [_vncView setEncrypted:_useSSL];
+    [_vncView setDelegate:self];
+
+    CPLog.info("VNC: connecting to %@:%@  using SSL: %@", _VMHost, _remoteScreenProxyPort, _useSSL);
+
+    return _vncView;
+}
+
+- (void)_loadSpice
+{
+    if (_spiceView)
+        [_spiceView removeFromSuperview];
+
+    // @TODO: this is a hack. If I keep the same _spiceView, then fantom canvas stay behind the main one.
+    _spiceView = [[TNSpiceView alloc] initWithFrame:CGRectMakeZero()];
+    [_spiceView setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewMaxXMargin | CPViewMaxYMargin];
+    [viewVNCContainer addSubview:_spiceView];
+
+    [_spiceView setHost:_VMHost];
+    [_spiceView setPort:_remoteScreenProxyPort];
+    [_spiceView setPassword:[fieldPassword stringValue]];
+    [_spiceView setZoom:1];
+    [_spiceView setEncrypted:_useSSL];
+    [_spiceView setDelegate:self];
+    [self showMaskView:NO];
+
+    CPLog.info("SPICE: connecting to %@:%@  using SSL: %@", _VMHost, _remoteScreenProxyPort, _useSSL);
+
+    return _spiceView;
 }
 
 /*! create a zoom animation between two zoom factor
@@ -439,14 +517,21 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     }
 }
 
-
 /*! Open the VNCView in a new physical window
 */
 - (void)openVNCInNewWindow
 {
-    var winFrame    = CGRectMake(100, 100, 800, 600),
-        pfWinFrame  = CGRectMake(100, 100, 800, 600),
-        defaults    = [CPUserDefaults standardUserDefaults],
+    if (_remoteScreenType !== TNArchipelVNCScreenTypeVNC)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"SPICE is not supported as external window", @"SPICE is not supported as external window")
+                          informative:CPBundleLocalizedString(@"For now, you cannot use SPICE screen in external window", @"For now, you cannot use SPICE screen in external window")
+                                style:CPWarningAlertStyle];
+        return;
+    }
+
+    var winFrame = CGRectMake(100, 100, 800, 600),
+        pfWinFrame = CGRectMake(100, 100, 800, 600),
+        defaults = [CPUserDefaults standardUserDefaults],
         VNCWindow,
         platformVNCWindow;
 
@@ -464,13 +549,39 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         winFrame.origin.y = 50;
         winFrame.size.height += 25;
 
-        VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
+        VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame
+                                                           styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
     }
 
-    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:[defaults integerForKey:@"NOVNCheckRate"] FBURate:[defaults integerForKey:@"NOVNCFBURate"] entity:_entity];
-    [VNCWindow makeKeyAndOrderFront:nil];
+    [VNCWindow loadVNCViewWithHost:_VMHost
+                              port:_remoteScreenProxyPort
+                              type:_remoteScreenType
+                          password:[fieldPassword stringValue]
+                           encrypt:_useSSL
+                         trueColor:YES
+                         checkRate:[defaults integerForKey:@"NOVNCheckRate"]
+                           FBURate:[defaults integerForKey:@"NOVNCFBURate"]
+                            entity:_entity];
 }
 
+/*! Shows the connection failure information
+    @param shouldShow YES to show, NO to hide
+*/
+- (void)_showConnectionHelp:(BOOL)shouldShow
+{
+    if (!shouldShow)
+    {
+        [viewConnectionErrorHelp removeFromSuperview];
+        return;
+    }
+
+    [labelErrorInformation setStringValue:[CPString stringWithFormat:@"Tried to connect to %@:%@ (SSL: %@)", _VMHost, _remoteScreenProxyPort, _useSSL]];
+
+    [buttonAddCertificateException setTitle:CPBundleLocalizedString(@"Add Exception", @"Add Exception")];
+
+    [viewConnectionErrorHelp setFrame:[viewVNCContainer bounds]];
+    [viewVNCContainer addSubview:viewConnectionErrorHelp];
+}
 
 
 #pragma mark -
@@ -508,13 +619,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)changeScale:(id)aSender
 {
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        zoom        = [aSender intValue],
-        key         = TNArchipelVNCScaleFactor + [[self entity] JID];
-
-    [defaults setFloat:zoom forKey:key];
-
-    [_vncView setZoom:(zoom / 100)];
+    [[self currentScreenView] setZoom:[aSender floatValue]];
+    [self _centerScreenView];
 }
 
 /*! Make the VNCView fitting the maximum amount of space
@@ -522,11 +628,11 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)fitToScreen:(id)aSender
 {
-    var visibleRect     = [_vncView visibleRect],
-        currentVNCSize  = [_vncView displaySize],
-        currentVNCZoom  = [_vncView zoom] * 100,
+    var visibleRect     = [viewVNCContainer frame],
+        currentVNCSize  = [[self currentScreenView] displaySize],
+        currentVNCZoom  = [[self currentScreenView] zoom],
         diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height),
-        newZoom         = (diffPerc < 0) ? 100 - (Math.abs(diffPerc) * 100) : 100 + (Math.abs(diffPerc) * 100);
+        newZoom         = (diffPerc < 0) ? 1 - (Math.abs(diffPerc)) : 1 + (Math.abs(diffPerc));
 
     [self animateChangeScaleFrom:currentVNCZoom to:newZoom];
 }
@@ -536,11 +642,11 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)resetZoom:(id)aSender
 {
-    var visibleRect     = [_vncView visibleRect],
-        currentVNCSize  = [_vncView displaySize],
-        currentVNCZoom  = [_vncView zoom] * 100;
+    var visibleRect = [[self currentScreenView] visibleRect],
+        currentVNCSize = [[self currentScreenView] displaySize],
+        currentVNCZoom = [[self currentScreenView] zoom];
 
-    [self animateChangeScaleFrom:currentVNCZoom to:100];
+    [self animateChangeScaleFrom:currentVNCZoom to:1];
 }
 
 /*! Send CTRL ALT DEL key combination to the VNCView
@@ -549,9 +655,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (IBAction)sendCtrlAltDel:(id)aSender
 {
     CPLog.info("sending ctrl+alt+del to VNCView");
-    [_vncView sendCtrlAltDel:aSender];
-
-    // [_vncView sendTextToPasteboard:@"HELLO MOTO"];
+    [[self currentScreenView] sendCtrlAltDel:aSender];
 }
 
 /*! Send the content of the pasteboard to the VNCView
@@ -561,7 +665,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     CPLog.info("sending the content of Pasteboard to VNCView: " + [fieldPasteBoard stringValue]);
 
-    [_vncView sendTextToPasteboard:[fieldPasteBoard stringValue]];
+    [[self currentScreenView] sendTextToPasteboard:[fieldPasteBoard stringValue]];
 
     [fieldPasteBoard setStringValue:@""];
 
@@ -573,8 +677,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (IBAction)rememberPassword:(id)aSender
 {
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+    var defaults = [CPUserDefaults standardUserDefaults],
+        key = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
 
     if ([checkboxPasswordRemember state] == CPOnState)
         [defaults setObject:[fieldPassword stringValue] forKey:key];
@@ -589,15 +693,34 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     [self rememberPassword:nil];
     [windowPassword close];
-    if (([_vncView state] == TNVNCCappuccinoStateDisconnected)
-        || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
+    if (([[self currentScreenView] state] == TNRemoteScreenViewStateDisconnected) || ([[self currentScreenView] state] == TNRemoteScreenViewStateDisconnecting))
     {
-        [_vncView setPassword:[fieldPassword stringValue]];
-        [_vncView connect:nil];
+        [[self currentScreenView] setPassword:[fieldPassword stringValue]];
+        [[self currentScreenView] connect:nil];
     }
     else
     {
-        [_vncView sendPassword:[fieldPassword stringValue]];
+        [[self currentScreenView] sendPassword:[fieldPassword stringValue]];
+    }
+}
+
+/*! Opens a new browser window and try to access the certificate
+    @param sender the sender of the action
+*/
+- (IBAction)addCertificateException:(id)aSender
+{
+    if ([buttonAddCertificateException title] == CPBundleLocalizedString(@"Add Exception", @"Add Exception"))
+    {
+        var host = [[self currentScreenView] host],
+            port = [[self currentScreenView] port];
+
+        window.open("https://" + host + ":" + port);
+        [buttonAddCertificateException setTitle:CPBundleLocalizedString(@"Retry", @"Retry")];
+    }
+    else
+    {
+        [self getVirtualMachineVNCDisplay];
+        [buttonAddCertificateException setTitle:CPBundleLocalizedString(@"Add Exception", @"Add Exception")];
     }
 }
 
@@ -627,12 +750,13 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     {
         var displayNode = [aStanza firstChildWithName:@"display"];
 
-        _VMHost         = [displayNode valueForAttribute:@"host"];
-        _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
-        _vncDirectPort  = [displayNode valueForAttribute:@"port"];
-        _vncSupportSSL  = ([displayNode valueForAttribute:@"supportssl"] == "True") ? YES : NO;
-        _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
-        _useSSL         = NO;
+        _VMHost                 = [displayNode valueForAttribute:@"host"];
+        _remoteScreenProxyPort  = [displayNode valueForAttribute:@"proxy"];
+        _remoteScreenDirectPort = [displayNode valueForAttribute:@"port"];
+        _remoteScreenType       = [displayNode valueForAttribute:@"type"];
+        _supportsSSL            = ([displayNode valueForAttribute:@"supportssl"] == "True") ? YES : NO;
+        _onlySSL                = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
+        _useSSL                 = NO;
 
         [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:displayNode];
         [self handleDisplayVNCScreen];
@@ -653,7 +777,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     [sliderScaling setDoubleValue:[animation currentZoom]];
 
-    [_vncView setZoom:([animation currentZoom] / 100)];
+    [[self currentScreenView] setZoom:([animation currentZoom])];
 }
 
 /*! TNZoomAnimation delegate
@@ -663,41 +787,67 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [self changeScale:sliderScaling];
 }
 
-- (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
+- (void)remoteScreenView:(TNRemoteScreenView)aScreenView updateState:(CPString)aState message:(CPString)aMessage
 {
     switch (aState)
     {
-        case TNVNCCappuccinoStateFailed:
-            if ([_vncView oldState] == TNVNCCappuccinoStateSecurityResult)
+        case TNRemoteScreenViewStateError:
+            [aScreenView setHidden:YES];
+
+            if ([windowPassword isVisible] || ![self isConnected]) // we are asking for the password
+                break;
+
+            if ([aScreenView oldState] == TNVNCStateSecurityResult)
             {
                 [imageViewSecureConnection setHidden:YES];
+                [self _showConnectionHelp:NO];
                 [windowPassword center];
                 [windowPassword makeKeyAndOrderFront:nil];
             }
             else
             {
                 [imageViewSecureConnection setHidden:YES];
-                CPLog.error(@"disconnected from the VNC screen at " + _VMHost + @":" + _vncProxyPort);
+                CPLog.error(@"disconnected from the VNC screen at " + _VMHost + @":" + _remoteScreenProxyPort);
+
+                if ([aScreenView oldState] !== TNRemoteScreenViewStateConnected)
+                    [self _showConnectionHelp:YES];
             }
-            [_vncView resetSize];
-            [_vncView setHidden:YES];
             break;
 
-        case TNVNCCappuccinoStatePassword:
+        case TNRemoteScreenViewNeedsPassword:
             [windowPassword center];
             [windowPassword makeKeyAndOrderFront:nil];
+            [self _showConnectionHelp:NO];
             break;
 
-        case TNVNCCappuccinoStateNormal:
-            if (_useSSL)
-                [imageViewSecureConnection setHidden:NO];
+        case TNRemoteScreenViewStateConnected:
+            [aScreenView setHidden:NO];
+            [self _centerScreenView];
+            [self _showConnectionHelp:NO];
+            setTimeout(function(){ [self fitToScreen:nil] }, 500);
+            [imageViewSecureConnection setHidden:!_useSSL];
             break;
     }
 }
 
-- (void)vncView:(TNVNCView)aVNCView didReceivePasteBoardText:(CPString)aText
+/*! TNRemoteScreenView delegate
+*/
+- (void)remoteScreenView:(TNRemoteScreenView)aScreenView didDesktopSizeChange:(CGSize)aNewSize
+{
+    [self fitToScreen:nil];
+}
+
+/*! TNRemoteScreenView delegate
+*/
+- (void)remoteScreenView:(TNRemoteScreenView)aScreenView didReceivePasteBoardText:(CPString)aText
 {
     alert(aText);
+}
+
+/*! TNRemoteScreenView delegate
+*/
+- (void)remoteScreenView:(TNRemoteScreenView)aScreenView didGetFocus:(BOOL)hasFocus
+{
 }
 
 @end

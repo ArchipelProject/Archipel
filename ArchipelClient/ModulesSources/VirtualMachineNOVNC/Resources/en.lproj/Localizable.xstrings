@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Cannot connect to the VNC screen at </key>
-	<string>Cannot connect to the VNC screen at </string>
+	<key>Add Exception</key>
+	<string>Add Exception</string>
 	<key>Ctrl Alt Del</key>
 	<string>Ctrl Alt Del</string>
+	<key>Error connecting to the VNC screen. Use the VNC tab for more information.</key>
+	<string>Error connecting to the VNC screen. Use the VNC tab for more information.</string>
 	<key>Fit screen to window</key>
 	<string>Fit screen to window</string>
 	<key>Full Screen</key>
@@ -18,6 +20,8 @@
 	<string>Open external VNC program</string>
 	<key>Reset zoom</key>
 	<string>Reset zoom</string>
+	<key>Retry</key>
+	<string>Retry</string>
 	<key>Screen for </key>
 	<string>Screen for </string>
 	<key>Send Clipboard</key>
