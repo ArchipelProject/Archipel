@@ -385,6 +385,7 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
             [[self currentScreenView] disconnect:nil];
         }
 
+        [self _showConnectionHelp:NO];
         [[self currentScreenView] setHidden:YES];
         [self showMaskView:YES];
 
@@ -793,7 +794,7 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
         case TNRemoteScreenViewStateError:
             [aScreenView setHidden:YES];
 
-            if ([windowPassword isVisible]) // we are asking for the password
+            if ([windowPassword isVisible] || ![self isConnected]) // we are asking for the password
                 break;
 
             if ([aScreenView oldState] == TNVNCStateSecurityResult)
