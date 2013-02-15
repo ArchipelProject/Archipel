@@ -180,8 +180,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
         # We now create the root nuage metadata node, and we put common information coming from the VM's VCARD
         nuage_node = xmpp.Node("nuage", attrs={"xmlns": "alcatel-lucent.com/nuage/cna"})
-        nuage_node.addChild("enterprise", attrs={"name": self.entity.vcard_infos["ORGNAME"]})
         nuage_node.addChild("user", attrs={"name": self.entity.vcard_infos["USERID"]})
+        nuage_node.addChild("enterprise", attrs={"name": self.entity.vcard_infos["ORGNAME"]})
         nuage_node.addChild("application", attrs={"name": self.entity.vcard_infos["CATEGORIES"]})
 
         # Now we will parse all given interfaces, and build nuage_networks info in nuage metadata
