@@ -1866,10 +1866,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([guest firstChildWithName:@"loader"])
         [[_libvirtDomain OS] setLoader:[[guest firstChildWithName:@"loader"] text]];
 
-    [self buildGUIAccordingToCurrentGuest];
 
     [self didChangeDomainType:buttonDomainType];
     [self didChangeMachine:buttonMachines];
+    [self buildGUIAccordingToCurrentGuest];
+
 }
 
 /*! update the value for domain type
