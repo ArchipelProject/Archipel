@@ -10,6 +10,9 @@
 /* Fit screen to window */
 "Fit screen to window" = "Fit screen to window";
 
+/* For now, you cannot use SPICE screen in external window */
+"For now, you cannot use SPICE screen in external window" = "For now, you cannot use SPICE screen in external window";
+
 /* Full Screen */
 "Full Screen" = "Full Screen";
 
@@ -33,6 +36,9 @@
 
 /* Send Clipboard */
 "Send Clipboard" = "Send Clipboard";
+
+/* SPICE is not supported as external window */
+"SPICE is not supported as external window" = "SPICE is not supported as external window";
 
 /* Websocket error for VNC */
 "Websocket error for VNC" = "Websocket error for VNC";

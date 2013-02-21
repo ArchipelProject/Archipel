@@ -12,10 +12,12 @@
 	<string>Cancel</string>
 	<key>Crashed</key>
 	<string>Crashed</string>
-	<key>Destroy</key>
-	<string>Destroy</string>
-	<key>Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.</key>
-	<string>Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.</string>
+	<key>Force Off</key>
+	<string>Force Off</string>
+	<key>Force Off %@?</key>
+	<string>Force Off %@?</string>
+	<key>Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.</key>
+	<string>Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.</string>
 	<key>Kill</key>
 	<string>Kill</string>
 	<key>Kill virtual machine?</key>
@@ -58,10 +60,6 @@
 	<string>Start</string>
 	<key>Stop</key>
 	<string>Stop</string>
-	<key>Unplug</key>
-	<string>Unplug</string>
-	<key>Unplug %@?</key>
-	<string>Unplug %@?</string>
 	<key>Virtual machine has been destroyed.</key>
 	<string>Virtual machine has been destroyed.</string>
 	<key>Virtual machine is parking.</key>

@@ -10,6 +10,8 @@
 	<string>Error connecting to the VNC screen. Use the VNC tab for more information.</string>
 	<key>Fit screen to window</key>
 	<string>Fit screen to window</string>
+	<key>For now, you cannot use SPICE screen in external window</key>
+	<string>For now, you cannot use SPICE screen in external window</string>
 	<key>Full Screen</key>
 	<string>Full Screen</string>
 	<key>Get Clipboard</key>
@@ -22,6 +24,8 @@
 	<string>Reset zoom</string>
 	<key>Retry</key>
 	<string>Retry</string>
+	<key>SPICE is not supported as external window</key>
+	<string>SPICE is not supported as external window</string>
 	<key>Screen for </key>
 	<string>Screen for </string>
 	<key>Send Clipboard</key>

@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D65</string>
+		<string key="IBDocument.SystemVersion">12D68</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -1379,7 +1379,20 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">1</double>
 												<double key="NSIntercellSpacingHeight">1</double>
-												<reference key="NSBackgroundColor" ref="624669266"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<object class="NSColor" key="NSColor" id="769156828">
+														<int key="NSColorSpace">6</int>
+														<string key="NSCatalogName">System</string>
+														<string key="NSColorName">alternateSelectedControlColor</string>
+														<object class="NSColor" key="NSColor">
+															<int key="NSColorSpace">1</int>
+															<bytes key="NSRGB">MCAwIDEAA</bytes>
+														</object>
+													</object>
+												</object>
 												<object class="NSColor" key="NSGridColor" id="849767385">
 													<int key="NSColorSpace">6</int>
 													<string key="NSCatalogName">System</string>
@@ -1397,7 +1410,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -1597,7 +1611,12 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">1</double>
 												<double key="NSIntercellSpacingHeight">1</double>
-												<reference key="NSBackgroundColor" ref="624669266"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<reference key="NSColor" ref="769156828"/>
+												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">41</double>
 												<int key="NSTvFlags">-767557632</int>
@@ -1607,7 +1626,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -2714,7 +2734,12 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">1</double>
 												<double key="NSIntercellSpacingHeight">1</double>
-												<reference key="NSBackgroundColor" ref="624669266"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<reference key="NSColor" ref="769156828"/>
+												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">78</double>
 												<int key="NSTvFlags">-633339904</int>
@@ -2724,7 +2749,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -2992,7 +3018,12 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">1</double>
 												<double key="NSIntercellSpacingHeight">1</double>
-												<reference key="NSBackgroundColor" ref="624669266"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<reference key="NSColor" ref="769156828"/>
+												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">78</double>
 												<int key="NSTvFlags">-633339904</int>
@@ -3002,7 +3033,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -3214,7 +3246,12 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">1</double>
 												<double key="NSIntercellSpacingHeight">1</double>
-												<reference key="NSBackgroundColor" ref="624669266"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<reference key="NSColor" ref="769156828"/>
+												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">78</double>
 												<int key="NSTvFlags">-767557632</int>
@@ -3224,7 +3261,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
