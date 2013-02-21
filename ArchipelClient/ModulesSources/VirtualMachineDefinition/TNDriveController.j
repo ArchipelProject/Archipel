@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPMenuItem.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <AppKit/CPTableView.j>
+@import <Foundation/Foundation.j>
 
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNAlert.j>
 
 @import "Model/TNLibvirt.j"
 
-@class TNMenuItem
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 
@@ -206,7 +206,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     }
 
     [[_drive driver] setCache:[buttonDriverCache title]];
-    [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
+    [[_drive driver] setType:[[buttonSourcePath selectedItem] representedObject]];
     [[_drive target] setBus:[buttonTargetBus title]];
     [[_drive target] setDevice:[buttonTargetDevice title]];
 
@@ -418,9 +418,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
                 dSize       = [CPString formatByteSize:[disk valueForAttribute:@"diskSize"]],
                 format  = [disk valueForAttribute:@"format"],
                 label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + dSize + " used)",
-                item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
+                item    = [[CPMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
             [item setStringValue:[disk valueForAttribute:@"path"]];
-            [item setObjectValue:format];
+            [item setRepresentedObject:format];
             [buttonSourcePath addItem:item];
         }
 
@@ -467,10 +467,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         {
             var iso     = [isos objectAtIndex:i],
                 label   = [iso valueForAttribute:@"name"],
-                item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
+                item    = [[CPMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
 
             [item setStringValue:[iso valueForAttribute:@"path"]];
-            [item setObjectValue:"raw"];
+            [item setRepresentedObject:"raw"];
             [buttonSourcePath addItem:item];
 
         }

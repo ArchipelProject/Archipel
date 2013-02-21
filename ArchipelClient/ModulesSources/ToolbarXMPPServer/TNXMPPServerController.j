@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPImage.j>
+@import <AppKit/CPMenuItem.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTabView.j>
@@ -28,7 +29,6 @@
 @import "TNXMPPSharedGroupsController.j"
 @import "TNXMPPUsersController.j"
 
-@class TNMenuItem
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 @global TNArchipelEntityTypeHypervisor
@@ -240,7 +240,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
     {
         var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i],
-            item = [[TNMenuItem alloc] init];
+            item = [[CPMenuItem alloc] init];
 
         if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
             && ([contact XMPPShow] != TNStropheContactStatusOffline)
@@ -250,7 +250,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
             [servers addObject:[[contact JID] domain]];
 
             [item setTitle:[[contact JID] domain]]; // sic..
-            [item setObjectValue:contact];
+            [item setRepresentedObject:contact];
             [items addObject:item];
 
             [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:contact];
@@ -265,7 +265,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
         [buttonHypervisors addItem:[sortedItems objectAtIndex:i]];
 
     [buttonHypervisors selectItemAtIndex:0];
-    _entity = [[buttonHypervisors selectedItem] objectValue];
+    _entity = [[buttonHypervisors selectedItem] representedObject];
 }
 
 
@@ -277,12 +277,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (IBAction)changeCurrentHypervisor:(id)aSender
 {
-    _entity = [[buttonHypervisors selectedItem] objectValue];
+    _entity = [[buttonHypervisors selectedItem] representedObject];
 
-    [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+    [usersController setEntity:[[buttonHypervisors selectedItem] representedObject]];
 
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-        [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+        [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] representedObject]];
 
     [self permissionsChanged];
 }
@@ -296,12 +296,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     switch ([anItem identifier])
     {
         case @"itemUsers":
-            [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+            [usersController setEntity:[[buttonHypervisors selectedItem] representedObject]];
             [usersController reload];
             break;
 
         case @"itemGroups":
-            [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+            [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] representedObject]];
             [sharedGroupsController reload];
             break;
     }
