@@ -155,6 +155,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (IBAction)save:(id)aSender
 {
+    if ([_drive type] != [buttonType title])
+        [[_drive driver] setName:nil];
+
     [_drive setDevice:[buttonDevice title]];
     [_drive setType:[buttonType title]];
 
