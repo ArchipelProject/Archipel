@@ -696,12 +696,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             prtCPU = 100 * (self.cputime_samples[0][1] - self.cputime_samples[1][1]) / ((self.cputime_samples[0][0] - self.cputime_samples[1][0]) * self.hypervisor.get_nodeinfo()['nrCoreperSocket'] * 1000000000)
         except:
             prtCPU = 0
-        
+
         if prtCPU > 0:
             return prtCPU
         else:
-            return 0 
-        
+            return 0
+
     def info(self):
         """
         Return info of a domain.
@@ -738,7 +738,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             raise Exception("You need to first define the virtual machine")
         if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
             raise Exception('Virtual machine must be running.')
-            
+
         desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
         interfaces_nodes = desc.getTag("devices").getTags("interface")
         netstats = []
@@ -852,7 +852,15 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                         if disk.getAttr("type") == "block":
                             raise Exception("The agent policy doesn't allow to use block devices.")
 
-        self.hypervisor.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+        # if there is any error, catch it and strip down the <description> tag to avoid
+        # sending back the password to build_error_iq, then forward the exception
+        try:
+            self.hypervisor.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+        except Exception as ex:
+            if xmldesc.getTag('description'):
+                xmldesc.delChild("description")
+            raise ex
+
         self.definition = xmldesc
 
         if not self.domain:
