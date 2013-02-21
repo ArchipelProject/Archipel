@@ -275,6 +275,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.permission_center.create_permission("suspend", "Authorizes users to suspend virtual machine ", False)
         self.permission_center.create_permission("resume", "Authorizes users to resume virtual machine", False)
         self.permission_center.create_permission("xmldesc", "Authorizes users to access the XML description of the virtual machine", False)
+        self.permission_center.create_permission("xmledit", "Authorizes users to manualy edit the XML description of the virtual machine", False)
         self.permission_center.create_permission("migrate", "Authorizes users to perform live migration", False)
         self.permission_center.create_permission("autostart", "Authorizes users to set the virtual machine autostart", False)
         self.permission_center.create_permission("memory", "Authorizes users to change memory in live", False)

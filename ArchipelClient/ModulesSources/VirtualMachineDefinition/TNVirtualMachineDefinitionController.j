@@ -745,7 +745,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:buttonOnPowerOff enabledAccordingToPermission:@"define"];
     [self setControl:buttonOnReboot enabledAccordingToPermission:@"define"];
     [self setControl:buttonUndefine enabledAccordingToPermission:@"undefine"];
-    [self setControl:buttonXMLEditor enabledAccordingToPermission:@"define"];
+    [self setControl:buttonXMLEditor enabledAccordingToPermission:@"xmledit"];
     [self setControl:fieldMemory enabledAccordingToPermission:@"define"];
     [self setControl:stepperNumberCPUs enabledAccordingToPermission:@"define"];
     [self setControl:checkboxACPI enabledAccordingToPermission:@"define"];
