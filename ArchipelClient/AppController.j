@@ -59,7 +59,6 @@
 @import "Controllers/TNXMPPAccountController.j"
 @import "Model/TNVersion.j"
 @import "Views/TNButtonBarPopUpButton.j"
-@import "Views/TNMenuItem.j"
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"

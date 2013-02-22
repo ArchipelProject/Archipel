@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPMenuItem.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <AppKit/CPTableView.j>
+@import <Foundation/Foundation.j>
 
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNAlert.j>
 
 @import "Model/TNLibvirt.j"
 
-@class TNMenuItem
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 
@@ -155,6 +155,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (IBAction)save:(id)aSender
 {
+    if ([_drive type] != [buttonType title])
+        [[_drive driver] setName:nil];
+
     [_drive setDevice:[buttonDevice title]];
     [_drive setType:[buttonType title]];
 
@@ -186,7 +189,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             break;
 
         case TNLibvirtDeviceDiskTypeFile:
-            [[_drive source] setFile:[[buttonSourcePath selectedItem] stringValue]];
+            [[_drive source] setFile:[[buttonSourcePath selectedItem] representedObject].path];
             [[_drive source] setDevice:nil];
             [[_drive source] setHosts:nil];
             [[_drive source] setProtocol:nil];
@@ -203,7 +206,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     }
 
     [[_drive driver] setCache:[buttonDriverCache title]];
-    [[_drive driver] setType:[[buttonSourcePath selectedItem] objectValue]];
+    [[_drive driver] setType:[[buttonSourcePath selectedItem] representedObject].format];
     [[_drive target] setBus:[buttonTargetBus title]];
     [[_drive target] setDevice:[buttonTargetDevice title]];
 
@@ -411,13 +414,13 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         for (var i = 0; i < [disks count]; i++)
         {
             var disk    = [disks objectAtIndex:i],
-                vSize       = [CPString formatByteSize:[disk valueForAttribute:@"virtualSize"]],
-                dSize       = [CPString formatByteSize:[disk valueForAttribute:@"diskSize"]],
+                vSize   = [CPString formatByteSize:[disk valueForAttribute:@"virtualSize"]],
+                dSize   = [CPString formatByteSize:[disk valueForAttribute:@"diskSize"]],
                 format  = [disk valueForAttribute:@"format"],
                 label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + dSize + " used)",
-                item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
-            [item setStringValue:[disk valueForAttribute:@"path"]];
-            [item setObjectValue:format];
+                item    = [[CPMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
+
+            [item setRepresentedObject:{"format": format, "path": [disk valueForAttribute:@"path"]}];
             [buttonSourcePath addItem:item];
         }
 
@@ -426,7 +429,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         {
             var item  = [[buttonSourcePath itemArray] objectAtIndex:i];
 
-            if ([item stringValue] == [[_drive source] file])
+            if ([item representedObject].path == [[_drive source] file])
             {
                 [buttonSourcePath selectItem:item];
                 break;
@@ -464,10 +467,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         {
             var iso     = [isos objectAtIndex:i],
                 label   = [iso valueForAttribute:@"name"],
-                item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
+                item    = [[CPMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
 
-            [item setStringValue:[iso valueForAttribute:@"path"]];
-            [item setObjectValue:"raw"];
+            [item setRepresentedObject:{"format": "raw", "path": [iso valueForAttribute:@"path"]}];
             [buttonSourcePath addItem:item];
 
         }
@@ -477,7 +479,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         {
             var item  = [[buttonSourcePath itemArray] objectAtIndex:i];
 
-            if ([item stringValue] == [[_drive source] file])
+            if ([item representedObject].path == [[_drive source] file])
             {
                 [buttonSourcePath selectItem:item];
                 break;

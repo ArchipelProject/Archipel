@@ -28,7 +28,8 @@ TNLibvirtDomainClockClockTimezone   = @"timezone";
 TNLibvirtDomainClockClockVariable   = @"variable";
 
 TNLibvirtDomainClockClocks          = [ TNLibvirtDomainClockClockUTC,
-                                        TNLibvirtDomainClockClockLocalTime];
+                                        TNLibvirtDomainClockClockLocalTime,
+                                        TNLibvirtDomainClockClockVariable];
 
 /*! @ingroup virtualmachinedefinition
     Model for clock

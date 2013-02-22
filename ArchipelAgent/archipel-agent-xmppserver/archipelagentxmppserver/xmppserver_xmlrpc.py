@@ -48,17 +48,32 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
 
 
+    def _send_xmlrpc_call(self, method, args):
+        """
+        Sends the xml rpc call with given args
+        @type method: function
+        @param method: the xmlrpc method to launch
+        @type args: dict
+        @param args: containing the xmlrpc call arguments
+        @rtype: dict
+        @return: the xmlrpc reply
+        """
+        try:
+            return method(args)
+        except Exception as ex:
+            raise Exception(str(ex).replace(self.xmlrpc_password, "[PASSWORD_HIDDEN]"))
+
     ## TNXMPPServerControllerBase implementation
 
     def users_register(self, users):
         """
-        Reister new users
+        Register new users
         @type users: list
         @param users: list of users to register
         """
         server = self.entity.jid.getDomain()
         for user in users:
-            answer = self.xmlrpc_server.register({"user": user["jid"].getNode(), "password": user["password"], "host": server})
+            answer = self._send_xmlrpc_call(self.xmlrpc_server.register, {"user": user["jid"].getNode(), "password": user["password"], "host": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot register new user. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Registered a new user %s@%s" % (user["jid"].getNode(), server))
@@ -73,7 +88,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         """
         server = self.entity.jid.getDomain()
         for jid in users:
-            answer = self.xmlrpc_server.unregister({"user": jid.getNode(),"host": server})
+            answer = self._send_xmlrpc_call(self.xmlrpc_server.unregister, {"user": jid.getNode(),"host": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot unregister user. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Unregistered user %s@%s" % (jid.getNode(), server))
@@ -85,7 +100,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         Return total number of registered users
         """
         server = self.entity.jid.getDomain()
-        answer = self.xmlrpc_server.registered_users({"host": server})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.registered_users, {"host": server})
         n = 0
         if not only_humans:
             n = len(answer["users"])
@@ -94,7 +109,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
             for user in users:
                 entity_type = "human"
                 try:
-                    answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                    answer = self._send_xmlrpc_call(self.xmlrpc_server.get_vcard, {"host": server, "user": user["username"], "name" : "ROLE"})
                     if not answer["content"] in ("hypervisor", "virtualmachine"):
                         n = n + 1
                 except:
@@ -107,7 +122,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         List all registered users
         """
         server = self.entity.jid.getDomain()
-        answer = self.xmlrpc_server.registered_users({"host": server})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.registered_users, {"host": server})
         nodes = []
         bound_begin = page * self.user_page_size
         bound_end = bound_begin + self.user_page_size
@@ -115,7 +130,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         for user in users:
             entity_type = "human"
             try:
-                answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                answer = self._send_xmlrpc_call(self.xmlrpc_server.get_vcard, {"host": server, "user": user["username"], "name" : "ROLE"})
                 if answer["content"] in ("hypervisor", "virtualmachine"):
                     entity_type = answer["content"]
                 if only_humans and not entity_type == "human":
@@ -131,7 +146,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         Filter all registered users.
         """
         server = self.entity.jid.getDomain()
-        answer = self.xmlrpc_server.registered_users({"host": server})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.registered_users, {"host": server})
         nodes = []
         users = sorted(answer["users"], cmp=lambda x, y: cmp(x["username"], y["username"]))
         for user in users:
@@ -139,7 +154,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
                 continue
             entity_type = "human"
             try:
-                answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                answer = self._send_xmlrpc_call(self.xmlrpc_server.get_vcard, {"host": server, "user": user["username"], "name" : "ROLE"})
                 if answer["content"] in ("hypervisor", "virtualmachine"):
                     entity_type = answer["content"]
             except:
@@ -159,7 +174,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         @param description: the description of the group
         """
         server = self.entity.jid.getDomain()
-        answer = self.xmlrpc_server.srg_create({"host": server, "display": ID, "name": name, "description": description, "group": ID})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_create, {"host": server, "display": ID, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Creating a new shared group %s" % ID)
@@ -173,7 +188,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         @param ID: the ID of the group to delete
         """
         server = self.entity.jid.getDomain()
-        answer = self.xmlrpc_server.srg_delete({"host": server, "group": ID})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_delete, {"host": server, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Removing a shared group %s" % ID)
@@ -184,12 +199,12 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         Returns a list of existing groups
         """
         server = self.entity.jid.getDomain()
-        answer = self.xmlrpc_server.srg_list({"host": server})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_list, {"host": server})
         groups = answer["groups"]
         ret = []
 
         for group in groups:
-            answer = self.xmlrpc_server.srg_get_info({"host": server, "group": group["id"]})
+            answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_get_info, {"host": server, "group": group["id"]})
             informations = answer["informations"]
             for info in informations:
                 if info['information'][0]["key"] == "name":
@@ -197,7 +212,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
                 if info['information'][0]["key"] == "description":
                     description = info['information'][1]["value"]
             info = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", ""), "members": []}
-            answer  = self.xmlrpc_server.srg_get_members({"host": server, "group": group["id"]})
+            answer  = self._send_xmlrpc_call(self.xmlrpc_server.srg_get_members, {"host": server, "group": group["id"]})
             members = answer["members"]
             for member in members:
                 info["members"].append(member["member"])
@@ -215,7 +230,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         server = self.entity.jid.getDomain()
         for user in users:
             userJID = xmpp.JID(user)
-            answer = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
+            answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_user_add, {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot add user to shared roster group. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Adding user %s into shared group %s" % (userJID, ID))
@@ -232,7 +247,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         server = self.entity.jid.getDomain()
         for user in users:
             userJID = xmpp.JID(user)
-            answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
+            answer  = self._send_xmlrpc_call(self.xmlrpc_server.srg_user_del, {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot remove user from shared roster group. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, ID))

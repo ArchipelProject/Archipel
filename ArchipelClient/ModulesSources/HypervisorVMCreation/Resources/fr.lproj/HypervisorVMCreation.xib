@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D65</string>
+		<string key="IBDocument.SystemVersion">12D68</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -2313,7 +2313,20 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">0.0</double>
 												<double key="NSIntercellSpacingHeight">0.0</double>
-												<reference key="NSBackgroundColor" ref="633509787"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<object class="NSColor" key="NSColor" id="540567196">
+														<int key="NSColorSpace">6</int>
+														<string key="NSCatalogName">System</string>
+														<string key="NSColorName">alternateSelectedControlColor</string>
+														<object class="NSColor" key="NSColor">
+															<int key="NSColorSpace">1</int>
+															<bytes key="NSRGB">MCAwIDEAA</bytes>
+														</object>
+													</object>
+												</object>
 												<reference key="NSGridColor" ref="914950799"/>
 												<double key="NSRowHeight">84</double>
 												<int key="NSTvFlags">-633339904</int>
@@ -2323,8 +2336,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewSelectionHighlightStyle">-1</int>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -2572,7 +2585,12 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">0.0</double>
 												<double key="NSIntercellSpacingHeight">0.0</double>
-												<reference key="NSBackgroundColor" ref="633509787"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<reference key="NSColor" ref="540567196"/>
+												</object>
 												<reference key="NSGridColor" ref="914950799"/>
 												<double key="NSRowHeight">84</double>
 												<int key="NSTvFlags">-633339904</int>
@@ -2582,8 +2600,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewSelectionHighlightStyle">-1</int>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -2831,7 +2849,12 @@
 												</object>
 												<double key="NSIntercellSpacingWidth">0.0</double>
 												<double key="NSIntercellSpacingHeight">0.0</double>
-												<reference key="NSBackgroundColor" ref="633509787"/>
+												<object class="NSColor" key="NSBackgroundColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">_sourceListBackgroundColor</string>
+													<reference key="NSColor" ref="540567196"/>
+												</object>
 												<reference key="NSGridColor" ref="914950799"/>
 												<double key="NSRowHeight">77</double>
 												<int key="NSTvFlags">-633339904</int>
@@ -2841,8 +2864,8 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewSelectionHighlightStyle">-1</int>
-												<int key="NSTableViewDraggingDestinationStyle">0</int>
+												<int key="NSTableViewSelectionHighlightStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">1</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</object>
@@ -5934,6 +5957,588 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNHypervisorVMCreationController</string>
+					<string key="superclassName">TNModule</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addSelectedVMToRoster:</string>
+							<string>deleteParkedVirtualMachines:</string>
+							<string>deleteVirtualMachine:</string>
+							<string>didNotManagedTableDoubleClick:</string>
+							<string>manageVirtualMachine:</string>
+							<string>openAddSubscriptionWindow:</string>
+							<string>openCloneVirtualMachineWindow:</string>
+							<string>openEditVirtualMachineWindow:</string>
+							<string>openNewVirtualMachineWindow:</string>
+							<string>openParkedXMLEditor:</string>
+							<string>openRemoveSubscriptionWindow:</string>
+							<string>parkVirtualMachines:</string>
+							<string>unmanageVirtualMachine:</string>
+							<string>unparkVirtualMachines:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addSelectedVMToRoster:</string>
+							<string>deleteParkedVirtualMachines:</string>
+							<string>deleteVirtualMachine:</string>
+							<string>didNotManagedTableDoubleClick:</string>
+							<string>manageVirtualMachine:</string>
+							<string>openAddSubscriptionWindow:</string>
+							<string>openCloneVirtualMachineWindow:</string>
+							<string>openEditVirtualMachineWindow:</string>
+							<string>openNewVirtualMachineWindow:</string>
+							<string>openParkedXMLEditor:</string>
+							<string>openRemoveSubscriptionWindow:</string>
+							<string>parkVirtualMachines:</string>
+							<string>unmanageVirtualMachine:</string>
+							<string>unparkVirtualMachines:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">addSelectedVMToRoster:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteParkedVirtualMachines:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deleteVirtualMachine:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">didNotManagedTableDoubleClick:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">manageVirtualMachine:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openAddSubscriptionWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openCloneVirtualMachineWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openEditVirtualMachineWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openNewVirtualMachineWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openParkedXMLEditor:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openRemoveSubscriptionWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">parkVirtualMachines:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">unmanageVirtualMachine:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">unparkVirtualMachines:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>VMAllocationController</string>
+							<string>VMCloneController</string>
+							<string>VMManagerController</string>
+							<string>VMParkingController</string>
+							<string>VMSubscriptionController</string>
+							<string>buttonBarControl</string>
+							<string>buttonBarNotManagedVMControl</string>
+							<string>buttonBarParkedVMControl</string>
+							<string>dataViewParkedVMPrototype</string>
+							<string>dataViewVMPrototype</string>
+							<string>fieldFilterVM</string>
+							<string>fieldFilterVMNotManaged</string>
+							<string>fieldFilterVMParked</string>
+							<string>popupDeleteMachine</string>
+							<string>tabViewVMs</string>
+							<string>tableVirtualMachines</string>
+							<string>tableVirtualMachinesNotManaged</string>
+							<string>tableVirtualMachinesParked</string>
+							<string>viewItemManagedVMs</string>
+							<string>viewItemNotManagedVMs</string>
+							<string>viewItemParkedVMs</string>
+							<string>viewTableContainer</string>
+							<string>viewTableContainerNotManaged</string>
+							<string>viewTableContainerParked</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>TNVirtualMachineAllocationController</string>
+							<string>TNVirtualMachineCloneController</string>
+							<string>TNVirtualMachineManageController</string>
+							<string>TNVirtualMachineParkingController</string>
+							<string>TNVirtualMachineSubscriptionController</string>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>CPButtonBar</string>
+							<string>TNVirtualMachineParkedDataView</string>
+							<string>TNVirtualMachineDataView</string>
+							<string>NSSearchField</string>
+							<string>NSSearchField</string>
+							<string>NSSearchField</string>
+							<string>NSPopUpButton</string>
+							<string>NSTabView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSTableView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>VMAllocationController</string>
+							<string>VMCloneController</string>
+							<string>VMManagerController</string>
+							<string>VMParkingController</string>
+							<string>VMSubscriptionController</string>
+							<string>buttonBarControl</string>
+							<string>buttonBarNotManagedVMControl</string>
+							<string>buttonBarParkedVMControl</string>
+							<string>dataViewParkedVMPrototype</string>
+							<string>dataViewVMPrototype</string>
+							<string>fieldFilterVM</string>
+							<string>fieldFilterVMNotManaged</string>
+							<string>fieldFilterVMParked</string>
+							<string>popupDeleteMachine</string>
+							<string>tabViewVMs</string>
+							<string>tableVirtualMachines</string>
+							<string>tableVirtualMachinesNotManaged</string>
+							<string>tableVirtualMachinesParked</string>
+							<string>viewItemManagedVMs</string>
+							<string>viewItemNotManagedVMs</string>
+							<string>viewItemParkedVMs</string>
+							<string>viewTableContainer</string>
+							<string>viewTableContainerNotManaged</string>
+							<string>viewTableContainerParked</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">VMAllocationController</string>
+								<string key="candidateClassName">TNVirtualMachineAllocationController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">VMCloneController</string>
+								<string key="candidateClassName">TNVirtualMachineCloneController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">VMManagerController</string>
+								<string key="candidateClassName">TNVirtualMachineManageController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">VMParkingController</string>
+								<string key="candidateClassName">TNVirtualMachineParkingController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">VMSubscriptionController</string>
+								<string key="candidateClassName">TNVirtualMachineSubscriptionController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarControl</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarNotManagedVMControl</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonBarParkedVMControl</string>
+								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewParkedVMPrototype</string>
+								<string key="candidateClassName">TNVirtualMachineParkedDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">dataViewVMPrototype</string>
+								<string key="candidateClassName">TNVirtualMachineDataView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldFilterVM</string>
+								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldFilterVMNotManaged</string>
+								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldFilterVMParked</string>
+								<string key="candidateClassName">NSSearchField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">popupDeleteMachine</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabViewVMs</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableVirtualMachines</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableVirtualMachinesNotManaged</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tableVirtualMachinesParked</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewItemManagedVMs</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewItemNotManagedVMs</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewItemParkedVMs</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableContainer</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableContainerNotManaged</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewTableContainerParked</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNHypervisorVMCreationController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNModule</string>
+					<string key="superclassName">NSViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">toolbarItemClicked:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">toolbarItemClicked:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">toolbarItemClicked:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
+							<string>viewPreferences</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSImageView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
+							<string>viewPreferences</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageViewModuleReady</string>
+								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewMask</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewPreferences</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNModule.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNVirtualMachineAllocationController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>alloc:</string>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+							<string>update:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>alloc:</string>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+							<string>update:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">alloc:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">update:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonAlloc</string>
+							<string>fieldNewVMRequestedCategories</string>
+							<string>fieldNewVMRequestedLocality</string>
+							<string>fieldNewVMRequestedName</string>
+							<string>fieldNewVMRequestedOrganization</string>
+							<string>fieldNewVMRequestedOrganizationUnit</string>
+							<string>fieldNewVMRequestedOwner</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
+							<string>NSComboBox</string>
+							<string>NSComboBox</string>
+							<string>NSComboBox</string>
+							<string>NSComboBox</string>
+							<string>NSComboBox</string>
+							<string>NSComboBox</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonAlloc</string>
+							<string>fieldNewVMRequestedCategories</string>
+							<string>fieldNewVMRequestedLocality</string>
+							<string>fieldNewVMRequestedName</string>
+							<string>fieldNewVMRequestedOrganization</string>
+							<string>fieldNewVMRequestedOrganizationUnit</string>
+							<string>fieldNewVMRequestedOwner</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonAlloc</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewVMRequestedCategories</string>
+								<string key="candidateClassName">NSComboBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewVMRequestedLocality</string>
+								<string key="candidateClassName">NSComboBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewVMRequestedName</string>
+								<string key="candidateClassName">NSComboBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewVMRequestedOrganization</string>
+								<string key="candidateClassName">NSComboBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewVMRequestedOrganizationUnit</string>
+								<string key="candidateClassName">NSComboBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewVMRequestedOwner</string>
+								<string key="candidateClassName">NSComboBox</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNVirtualMachineAllocationController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNVirtualMachineCloneController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cloneVirtualMachine:</string>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cloneVirtualMachine:</string>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">cloneVirtualMachine:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonClone</string>
+							<string>fieldCloneVirtualMachineName</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonClone</string>
+							<string>fieldCloneVirtualMachineName</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonClone</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldCloneVirtualMachineName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNVirtualMachineCloneController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNVirtualMachineDataView</string>
 					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -6114,6 +6719,25 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNVirtualMachineManageController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">alloc:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">alloc:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">alloc:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNVirtualMachineManageController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNVirtualMachineParkedDataView</string>
 					<string key="superclassName">TNBasicDataView</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -6179,6 +6803,220 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNVirtualMachineParkedDataView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNVirtualMachineParkingController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+							<string>updateXML:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>closeWindow:</string>
+							<string>openWindow:</string>
+							<string>updateXML:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">closeWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">updateXML:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonDefine</string>
+							<string>fieldXMLString</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
+							<string>LPMultiLineTextField</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonDefine</string>
+							<string>fieldXMLString</string>
+							<string>mainPopover</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonDefine</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldXMLString</string>
+								<string key="candidateClassName">LPMultiLineTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainPopover</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNVirtualMachineParkingController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNVirtualMachineSubscriptionController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addSubscription:</string>
+							<string>closeAddSubscriptionWindow:</string>
+							<string>closeRemoveSubscriptionWindow:</string>
+							<string>openAddSubsctiptionWindow:</string>
+							<string>openRemoveSubscriptionWindow:</string>
+							<string>removeSubscription:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>addSubscription:</string>
+							<string>closeAddSubscriptionWindow:</string>
+							<string>closeRemoveSubscriptionWindow:</string>
+							<string>openAddSubsctiptionWindow:</string>
+							<string>openRemoveSubscriptionWindow:</string>
+							<string>removeSubscription:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">addSubscription:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeAddSubscriptionWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">closeRemoveSubscriptionWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openAddSubsctiptionWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openRemoveSubscriptionWindow:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeSubscription:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonAddSubscription</string>
+							<string>buttonRemoveSubscription</string>
+							<string>fieldNewSubscriptionTarget</string>
+							<string>fieldRemoveSubscriptionTarget</string>
+							<string>popoverAddSubscription</string>
+							<string>popoverRemoveSubscription</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSTextField</string>
+							<string>NSPopover</string>
+							<string>NSPopover</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonAddSubscription</string>
+							<string>buttonRemoveSubscription</string>
+							<string>fieldNewSubscriptionTarget</string>
+							<string>fieldRemoveSubscriptionTarget</string>
+							<string>popoverAddSubscription</string>
+							<string>popoverRemoveSubscription</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonAddSubscription</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonRemoveSubscription</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldNewSubscriptionTarget</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldRemoveSubscriptionTarget</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">popoverAddSubscription</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">popoverRemoveSubscription</string>
+								<string key="candidateClassName">NSPopover</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNVirtualMachineSubscriptionController.h</string>
 					</object>
 				</object>
 			</object>
