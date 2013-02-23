@@ -191,12 +191,23 @@
     [_nuage setDomain:[[_dataSourceDomains objectAtIndex:[tableViewDomains selectedRow]] objectForKey:@"name"]];
     [_nuage setZone:[[_dataSourceZones objectAtIndex:[tableViewZones selectedRow]] objectForKey:@"name"]];
 
-    if (![_nuage subnet])
-        [_nuage setSubnet:[[TNNuageNetworkSubnet alloc] init]];
+    var subnetAddress = [[fieldAddress stringValue] length] ? [fieldAddress stringValue] : nil,
+        subnetMask = [[fieldNetmask stringValue] length] ? [fieldNetmask stringValue] : nil,
+        subnetGateway = [[fieldGateway stringValue] length] ? [fieldGateway stringValue] : nil;
 
-    [[_nuage subnet] setAddress:([fieldAddress stringValue] != @"") ? [fieldAddress stringValue] : nil];
-    [[_nuage subnet] setNetmask:([fieldNetmask stringValue] != @"") ? [fieldNetmask stringValue] : nil];
-    [[_nuage subnet] setGateway:([fieldGateway stringValue] != @"") ? [fieldGateway stringValue] : nil];
+    if (subnetAddress && subnetMask && subnetGateway)
+    {
+        if (![_nuage subnet])
+            [_nuage setSubnet:[[TNNuageNetworkSubnet alloc] init]];
+
+        [[_nuage subnet] setAddress:subnetAddress];
+        [[_nuage subnet] setNetmask:subnetMask];
+        [[_nuage subnet] setGateway:subnetGateway];
+    }
+    else
+    {
+        [_nuage setSubnet:nil];
+    }
 
     if ([checkBoxBandwidthInbound state] == CPOnState)
     {
