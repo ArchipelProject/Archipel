@@ -35,73 +35,63 @@
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
 
+var TNConnectionControllerForceResource,
+    TNArchipelForcedServiceURL,
+    TNArchipelServiceTemplate;
+
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to manage connection to XMPP Server
 */
 @implementation TNConnectionController : CPObject
 {
-    @outlet CPButton        connectButton;
-    @outlet CPImageView     spinning;
-    @outlet CPTextField     boshService;
-    @outlet CPTextField     JID;
-    @outlet CPTextField     labelBoshService;
-    @outlet CPTextField     labelJID;
-    @outlet CPTextField     labelPassword;
-    @outlet CPTextField     labelRemember;
-    @outlet CPTextField     labelTitle;
-    @outlet CPTextField     message;
-    @outlet CPTextField     password;
-    @outlet TNModalWindow   mainWindow              @accessors(readonly);
-    @outlet TNSwitch        credentialRemember;
+    @outlet CPButton            buttonConnect;
+    @outlet CPImageView         imageViewSpinning;
+    @outlet CPSecureTextField   fieldPassword;
+    @outlet CPTextField         fieldService;
+    @outlet CPTextField         fieldJID;
+    @outlet CPTextField         labelService;
+    @outlet CPTextField         labelMessage;
+    @outlet TNSwitch            switchCredentialRemember;
 
-    BOOL                    _credentialRecovered    @accessors(getter=areCredentialRecovered);
-    TNStropheStanza         _userVCard              @accessors(property=userVCard);
+    @outlet TNModalWindow       mainWindow              @accessors(readonly);
 
-    CPDictionary            _credentialsHistory;
+    TNStropheStanza             _userVCard              @accessors(property=userVCard);
 }
 
 #pragma mark -
 #pragma mark Initialization
 
++ (void)initialize
+{
+    var bundle = [CPBundle mainBundle];
+
+    TNArchipelServiceTemplate            = [bundle objectForInfoDictionaryKey:@"TNArchipelServiceTemplate"];
+    TNConnectionControllerForceResource  = !![bundle objectForInfoDictionaryKey:@"TNArchipelForceService"];
+    TNArchipelForcedServiceURL  = [bundle objectForInfoDictionaryKey:@"TNArchipelForcedServiceURL"];
+}
+
 /*! initialize the window when CIB is loaded
 */
 - (void)awakeFromCib
 {
-    _credentialRecovered = NO;
-
     [mainWindow setShowsResizeIndicator:NO];
-    [mainWindow setDefaultButton:connectButton];
+    [mainWindow setDefaultButton:buttonConnect];
 
-    [password setSecure:YES];
-    [password setNeedsLayout]; // for some reasons, with XCode 4, setSecure doesn't work every time. this force it to relayout
+    [switchCredentialRemember setTarget:self];
+    [switchCredentialRemember setAction:@selector(rememberCredentials:)];
 
-    [credentialRemember setTarget:self];
-    [credentialRemember setAction:@selector(rememberCredentials:)];
+    [[mainWindow contentView] applyShadow];
 
-    [labelTitle setStringValue:CPLocalizedString(@"Logon", @"Logon")];
-    [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [buttonConnect setBezelStyle:CPRoundedBezelStyle];
 
-    [labelJID setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelJID setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [fieldPassword setSecure:YES];
+    [fieldPassword setNeedsLayout];
 
-    [labelPassword setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-
-    [labelBoshService setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelBoshService setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-
-    [labelRemember setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelRemember setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-
-    [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [message setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-
-    [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
-
-    [connectButton setBezelStyle:CPRoundedBezelStyle];
-
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didJIDChange:) name:CPControlTextDidChangeNotification object:JID];
+    if (!TNConnectionControllerForceResource)
+        [[CPNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(_didJIDChange:)
+                                                     name:CPControlTextDidChangeNotification
+                                                   object:fieldJID];
 }
 
 
@@ -116,24 +106,13 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
 - (void)_didJIDChange:(CPNotification)aNotification
 {
-    if (_credentialsHistory && [_credentialsHistory containsKey:[JID stringValue]])
-    {
-        [password setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"password"] || @""];
-        [boshService setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"service"] || @""];
-        [credentialRemember setOn:YES animated:YES sendAction:NO];
-    }
-    else
-    {
-        var JIDObject;
-        try { JIDObject = [TNStropheJID stropheJIDWithString:[JID stringValue]];} catch(e) {return;}
+    var currentJID;
 
-        [password setStringValue:@""];
-        if ([JIDObject domain])
-            [boshService setStringValue:@"http://" + [JIDObject domain] + @":5280/http-bind"];
-        else
-            [boshService setStringValue:@""];
-        [credentialRemember setOn:NO animated:YES sendAction:NO];
-    }
+    try { currentJID = [TNStropheJID stropheJIDWithString:[fieldJID stringValue]]; } catch(e) { }
+
+    [fieldService setStringValue:[currentJID domain] ? TNArchipelServiceTemplate.replace("@DOMAIN@", [currentJID domain]) : @""];
+
+    [self _saveCredentials];
 }
 
 
@@ -144,51 +123,74 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)initCredentials
 {
-    var defaults            = [CPUserDefaults standardUserDefaults],
-        lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService"],
-        lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID"],
-        lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword"],
-        lastRememberCred    = [defaults objectForKey:@"TNArchipelBOSHRememberCredentials"];
+    [self _prepareCredentialRemember];
+    [self _prepareJID];
+    [self _prepareService];
+    [self _preparePassword];
 
-    _credentialsHistory     = [defaults objectForKey:@"TNArchipelBOSHCredentialHistory"] || [CPDictionary dictionary];
-
-    if (lastBoshService)
-        [boshService setStringValue:lastBoshService || @""];
-
-    if (lastJID && lastJID != @"")
-    {
-        var JIDObject;
-        try { JIDObject = [TNStropheJID stropheJIDWithString:lastJID] } catch(e){};
-        [JID setStringValue:[JIDObject bare]];
-    }
-
-    [self _didJIDChange:nil];
-
-    if ([credentialRemember isOn])
-    {
-        _credentialRecovered = YES;
-        [password setStringValue:lastPassword || @""];
+    if ([[fieldPassword stringValue] length])
         [self connect:nil];
+}
+
+- (void)_prepareCredentialRemember
+{
+    var lastCredsRemember = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelRememberCredentials"];
+
+    [switchCredentialRemember setOn:lastCredsRemember animated:NO sendAction:NO];
+}
+
+- (void)_prepareJID
+{
+    var lastJID = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPJID"];
+
+    try { [fieldJID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]]; } catch (e) {};
+}
+
+- (void)_preparePassword
+{
+    var lastPassword = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPPassword"];
+
+    [fieldPassword setStringValue:lastPassword || @""];
+}
+
+- (void)_prepareService
+{
+    // This is forced. Nothing can change, so we just set it.
+    if (TNConnectionControllerForceResource)
+    {
+        [fieldService setStringValue:TNArchipelForcedServiceURL];
+        [fieldService setHidden:YES];
+        [labelService setHidden:YES];
+
+        var windowFrame = [[mainWindow contentView] frameSize];
+        windowFrame.height -= 26;
+        [mainWindow setFrameSize:windowFrame];
+        [mainWindow center];
+        return;
     }
+
+    var lastService = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPService"];
+
+    [fieldService setStringValue:lastService || @""];
 }
 
-/*! add History token
-*/
-- (void)saveCredentialsInHistory
+- (void)_saveCredentials
 {
-    var historyToken = [CPDictionary dictionaryWithObjectsAndKeys:[password stringValue], @"password",
-                                                                  [boshService stringValue], @"service"];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
-    [_credentialsHistory setObject:historyToken forKey:[JID stringValue]];
-    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory"];
-}
+    if (![switchCredentialRemember isOn])
+    {
+        [defaults removeObjectForKey:@"TNArchipelXMPPService"];
+        [defaults removeObjectForKey:@"TNArchipelXMPPJID"];
+        [defaults removeObjectForKey:@"TNArchipelXMPPPassword"];
+        [defaults setBool:NO forKey:@"TNArchipelRememberCredentials"];
+        return;
+    }
 
-/*! add History token
-*/
-- (void)clearCredentialFromHistory
-{
-    [_credentialsHistory removeObjectForKey:[JID stringValue]];
-    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory"];
+    [defaults setObject:[fieldJID stringValue] forKey:@"TNArchipelXMPPJID"];
+    [defaults setObject:[fieldPassword stringValue] forKey:@"TNArchipelXMPPPassword"];
+    [defaults setObject:[fieldService stringValue] forKey:@"TNArchipelXMPPService"];
+    [defaults setBool:YES forKey:@"TNArchipelRememberCredentials"];
 }
 
 
@@ -217,50 +219,31 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (IBAction)connect:(id)sender
 {
-    var currentConnectionStatus = [[[TNStropheIMClient defaultClient] connection] currentStatus];
+    var defaults = [CPUserDefaults standardUserDefaults],
+        currentConnectionStatus = [[[TNStropheIMClient defaultClient] connection] currentStatus],
+        connectionJID;
 
-    if (currentConnectionStatus
-        && currentConnectionStatus != Strophe.Status.DISCONNECTED
-        && currentConnectionStatus != Strophe.Status.CONNFAIL
-        && currentConnectionStatus != Strophe.Status.ERROR
-        && currentConnectionStatus != Strophe.Status.DISCONNECTING)
+    if (currentConnectionStatus && currentConnectionStatus != Strophe.Status.DISCONNECTED)
     {
         [[TNStropheIMClient defaultClient] disconnect];
         return;
     }
 
-    var defaults = [CPUserDefaults standardUserDefaults];
-
-    if ([credentialRemember isOn])
+    try
     {
-        [self saveCredentialsInHistory];
-
-        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
-        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
-        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
-        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
-        _credentialRecovered = YES;
-        CPLog.info("logging information saved");
+        connectionJID = [TNStropheJID stropheJIDWithString:[[fieldJID stringValue] lowercaseString]];
     }
-    else
+    catch (e)
     {
-        _credentialRecovered = NO;
-        [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
-    }
-
-    var connectionJID;
-
-    try { connectionJID = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]]; } catch (e) {}
-
-    if (![connectionJID domain])
-    {
-        [message setStringValue:CPLocalizedString(@"Full JID required", @"Full JID required")];
+        [labelMessage setStringValue:CPLocalizedString(@"Full JID required", @"Full JID required")];
         return;
     }
 
-    [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
+    [self _saveCredentials];
 
-    var stropheClient = [TNStropheIMClient IMClientWithService:[[boshService stringValue] lowercaseString] JID:connectionJID password:[password stringValue] rosterClass:TNDatasourceRoster];
+    [connectionJID setResource:[defaults objectForKey:@"TNArchipelXMPPResource"]];
+
+    var stropheClient = [TNStropheIMClient IMClientWithService:[[fieldService stringValue] lowercaseString] JID:connectionJID password:[fieldPassword stringValue] rosterClass:TNDatasourceRoster];
 
     [stropheClient setDelegate:self];
     [stropheClient setDefaultClient];
@@ -271,25 +254,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
 - (IBAction)rememberCredentials:(id)sender
 {
-    var defaults = [CPUserDefaults standardUserDefaults];
-
-    if ([credentialRemember isOn])
-    {
-        [self saveCredentialsInHistory];
-
-        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
-        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
-        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
-        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
-    }
-    else
-    {
-        [self clearCredentialFromHistory];
-
-        [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
-        [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
-        [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
-    }
+    [self _saveCredentials];
 }
 
 /*! delegate of TNStropheIMClient
@@ -301,14 +266,14 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     switch (anError)
     {
         case "host-unknown":
-            [message setStringValue:CPLocalizedString(@"host-unreachable", @"host-unreachable")];
+            [labelMessage setStringValue:CPLocalizedString(@"host-unreachable", @"host-unreachable")];
             break;
         default:
-            [message setStringValue:anError || @"Error is unknown because empty"];
+            [labelMessage setStringValue:anError || @"Error is unknown because empty"];
     }
-    [connectButton setEnabled:YES];
-    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
-    [spinning setHidden:YES];
+    [buttonConnect setEnabled:YES];
+    [buttonConnect setTitle:CPLocalizedString(@"connect", @"connect")];
+    [imageViewSpinning setHidden:YES];
 }
 
 /*! delegate of TNStropheIMClient
@@ -316,10 +281,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
-    [message setStringValue:CPLocalizedString(@"connecting", @"connecting")];
-    [connectButton setTitle:CPLocalizedString(@"cancel", @"cancel")];
-    [connectButton setNeedsLayout];
-    [spinning setHidden:NO];
+    [labelMessage setStringValue:CPLocalizedString(@"connecting", @"connecting")];
+    [buttonConnect setTitle:CPLocalizedString(@"cancel", @"cancel")];
+    [buttonConnect setNeedsLayout];
+    [imageViewSpinning setHidden:NO];
 }
 
 /*! delegate of TNStropheIMClient
@@ -327,8 +292,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheConnected:(TNStropheIMClient)aStropheClient
 {
-    [message setStringValue:CPLocalizedString(@"connected", @"connected")];
-    [spinning setHidden:YES];
+    [labelMessage setStringValue:CPLocalizedString(@"connected", @"connected")];
+    [imageViewSpinning setHidden:YES];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveUserVCard:) name:TNStropheClientVCardReceivedNotification object:aStropheClient];
     [aStropheClient getVCard];
@@ -341,10 +306,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheConnectFail:(TNStropheIMClient)aStropheClient
 {
-    [spinning setHidden:YES];
-    [connectButton setEnabled:YES];
-    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
-    [message setStringValue:CPLocalizedString(@"connection-failed", @"connection-failed")];
+    [imageViewSpinning setHidden:YES];
+    [buttonConnect setEnabled:YES];
+    [buttonConnect setTitle:CPLocalizedString(@"connect", @"connect")];
+    [labelMessage setStringValue:CPLocalizedString(@"connection-failed", @"connection-failed")];
 
     CPLog.info(@"XMPP connection failed");
 }
@@ -354,7 +319,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheAuthenticating:(TNStropheIMClient)aStropheClient
 {
-    [message setStringValue:CPLocalizedString(@"authenticating", @"authenticating")];
+    [labelMessage setStringValue:CPLocalizedString(@"authenticating", @"authenticating")];
     CPLog.info(@"XMPP authenticating...");
 }
 
@@ -363,10 +328,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheAuthFail:(TNStropheIMClient)aStropheClient
 {
-    [spinning setHidden:YES];
-    [connectButton setEnabled:YES];
-    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
-    [message setStringValue:CPLocalizedString(@"authentification-failed", @"authentification-failed")];
+    [imageViewSpinning setHidden:YES];
+    [buttonConnect setEnabled:YES];
+    [buttonConnect setTitle:CPLocalizedString(@"connect", @"connect")];
+    [labelMessage setStringValue:CPLocalizedString(@"authentification-failed", @"authentification-failed")];
 
     [[EKShakeAnimation alloc] initWithView:mainWindow._windowView];
     CPLog.info(@"XMPP auth failed");
@@ -377,10 +342,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheError:(TNStropheIMClient)aStropheClient
 {
-    [spinning setHidden:YES];
-    [connectButton setEnabled:YES];
-    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
-    [message setStringValue:CPLocalizedString(@"unknown-error", @"unknown-error")];
+    [imageViewSpinning setHidden:YES];
+    [buttonConnect setEnabled:YES];
+    [buttonConnect setTitle:CPLocalizedString(@"connect", @"connect")];
+    [labelMessage setStringValue:CPLocalizedString(@"unknown-error", @"unknown-error")];
 
     CPLog.info(@"XMPP unknown error");
 }
@@ -390,8 +355,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheDisconnecting:(TNStropheIMClient)aStropheClient
 {
-    [spinning setHidden:NO];
-    [message setStringValue:CPLocalizedString(@"disconnecting", @"disconnecting")];
+    [imageViewSpinning setHidden:NO];
+    [labelMessage setStringValue:CPLocalizedString(@"disconnecting", @"disconnecting")];
 
     CPLog.info(@"XMPP is disconnecting");
 }
@@ -401,10 +366,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheDisconnected:(TNStropheIMClient)aStropheClient
 {
-    [spinning setHidden:YES];
-    [connectButton setEnabled:YES];
-    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
-    [message setStringValue:CPLocalizedString(@"disconnected", @"disconnected")];
+    [imageViewSpinning setHidden:YES];
+    [buttonConnect setEnabled:YES];
+    [buttonConnect setTitle:CPLocalizedString(@"connect", @"connect")];
+    [labelMessage setStringValue:CPLocalizedString(@"disconnected", @"disconnected")];
 
     CPLog.info(@"XMPP connection is now disconnected");
 }
