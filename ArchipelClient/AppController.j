@@ -129,6 +129,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNToolBarItemStatus             = @"TNToolBarItemStatus",
     TNArchipelTagViewHeight         = 33.0;
 
+__COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
+
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
 */
@@ -264,9 +266,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
             [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
             [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelXMPPResource"], @"TNArchipelXMPPResource",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
             [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
@@ -450,7 +450,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
     [fieldVersion setStringValue:@""];
     [fieldVersion setSelectable:YES];
-    [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
+    [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, __COPYRIGHT__]];
 
     /* Placing the connection window */
     [connectionController showWindow:nil];
