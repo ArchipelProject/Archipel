@@ -1866,10 +1866,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([guest firstChildWithName:@"loader"])
         [[_libvirtDomain OS] setLoader:[[guest firstChildWithName:@"loader"] text]];
 
-    [self buildGUIAccordingToCurrentGuest];
 
     [self didChangeDomainType:buttonDomainType];
     [self didChangeMachine:buttonMachines];
+    [self buildGUIAccordingToCurrentGuest];
+
 }
 
 /*! update the value for domain type
@@ -2406,7 +2407,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     // button BOOT
     [self setControl:buttonBoot enabledAccordingToPermission:@"define"];
-    [buttonBoot selectItemWithTitle:[[_libvirtDomain OS] boot]];
+    if ([[_libvirtDomain OS] boot])
+        [buttonBoot selectItemWithTitle:[[_libvirtDomain OS] boot]];
+    else
+        [buttonBoot selectItemAtIndex:0];
 
     // LIFECYCLE
     [buttonOnPowerOff selectItemWithTitle:[_libvirtDomain onPowerOff]];

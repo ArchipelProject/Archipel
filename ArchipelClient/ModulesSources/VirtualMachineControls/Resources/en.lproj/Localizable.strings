@@ -13,11 +13,14 @@
 /* Crashed */
 "Crashed" = "Crashed";
 
-/* Destroy */
-"Destroy" = "Destroy";
+/* Force Off */
+"Force Off" = "Force Off";
 
-/* Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer. */
-"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer." = "Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.";
+/* Force Off %@? */
+"Force Off %@?" = "Force Off %@?";
+
+/* Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer. */
+"Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer." = "Force Off (destroy) a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.";
 
 /* Kill */
 "Kill" = "Kill";
@@ -81,12 +84,6 @@
 
 /* Stop */
 "Stop" = "Stop";
-
-/* Unplug */
-"Unplug" = "Unplug";
-
-/* Unplug %@? */
-"Unplug %@?" = "Unplug %@?";
 
 /* Virtual machine has been destroyed. */
 "Virtual machine has been destroyed." = "Virtual machine has been destroyed.";

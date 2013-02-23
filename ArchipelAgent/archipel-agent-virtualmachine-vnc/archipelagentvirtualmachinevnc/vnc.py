@@ -206,11 +206,15 @@ class TNArchipelVNC (TNArchipelPlugin):
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         try:
             directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
+            screentype = xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("type")
+
             if directport == -1:
                 return {"direct"        : -1,
                         "proxy"         : -1,
                         "onlyssl"       : False,
-                        "supportssl"    : False}
+                        "supportssl"    : False,
+                        "type"          : screentype}
+
             proxyport = directport + 1000
             supportSSL = self.configuration.get("VNC", "vnc_certificate_file")
             if supportSSL.lower() in ("none", "no", "false"):
@@ -220,7 +224,8 @@ class TNArchipelVNC (TNArchipelPlugin):
             return {"direct"        : directport,
                     "proxy"         : proxyport,
                     "onlyssl"       : self.configuration.getboolean("VNC", "vnc_only_ssl"),
-                    "supportssl"    : supportSSL}
+                    "supportssl"    : supportSSL,
+                    "type"          : screentype}
         except Exception as ex:
             return None
 
@@ -240,7 +245,7 @@ class TNArchipelVNC (TNArchipelPlugin):
             if not ports:
                 payload = xmpp.Node("display", attrs={})
             else:
-                payload = xmpp.Node("display", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
+                payload = xmpp.Node("display", attrs={"type": ports["type"], "port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
             reply.setQueryPayload([payload])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=archipel.archipelLibvirtEntity.ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)

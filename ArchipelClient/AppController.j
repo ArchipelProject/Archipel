@@ -59,7 +59,6 @@
 @import "Controllers/TNXMPPAccountController.j"
 @import "Model/TNVersion.j"
 @import "Views/TNButtonBarPopUpButton.j"
-@import "Views/TNMenuItem.j"
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
@@ -129,6 +128,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNToolBarItemHelp               = @"TNToolBarItemHelp",
     TNToolBarItemStatus             = @"TNToolBarItemStatus",
     TNArchipelTagViewHeight         = 33.0;
+
+__COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
@@ -265,9 +266,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
             [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
             [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelXMPPResource"], @"TNArchipelXMPPResource",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
             [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
@@ -283,7 +282,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [viewAboutWindowLogoContainer setBackgroundColor:[CPColor blackColor]];
 
     /* main split views */
-    var posx = [defaults integerForKey:@"mainSplitViewPosition"] || 230;
+    var posx = 230;
     [splitViewMain setPosition:posx ofDividerAtIndex:0];
     var bounds = [leftView bounds];
     bounds.size.width = posx;
@@ -451,7 +450,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [fieldVersion setFont:[CPFont systemFontOfSize:9.0]];
     [fieldVersion setStringValue:@""];
     [fieldVersion setSelectable:YES];
-    [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, [defaults objectForKey:@"TNArchipelCopyright"]]];
+    [fieldVersion setStringValue:[CPString stringWithFormat:@"Archipel UI Version %@ - %@", _currentVersion, __COPYRIGHT__]];
 
     /* Placing the connection window */
     [connectionController showWindow:nil];
@@ -1606,21 +1605,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         return _rosterMenuForContacts;
     else if ([anItem isKindOfClass:TNStropheGroup])
         return _rosterMenuForGroups;
-}
-
-/*! Delegate of splitViewMain. This will save the positionning of splitview in CPUserDefaults
-*/
-- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
-{
-    if (([aNotification object] !== splitViewMain) || ([[CPApp currentEvent] type] != CPLeftMouseUp))
-        return;
-
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        splitView   = [aNotification object],
-        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
-
-    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
-    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults

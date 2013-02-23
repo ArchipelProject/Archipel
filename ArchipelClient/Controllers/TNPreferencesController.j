@@ -130,9 +130,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     _excludedTokens = [CPDictionary dictionary];
 
     // @TODO: this should not be added statically here. but by modules that implements theses keys.
-    _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelBOSHJID",
-                            @"TNArchipelBOSHPassword", @"TNArchipelBOSHService", @"TNArchipelBOSHRememberCredentials",
-                            @"TNArchipelTagsVisible", @"mainSplitViewPosition", @"TNArchipelModuleControllerOpenedTabRegistry",
+    _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelXMPPJID",
+                            @"TNArchipelXMPPPassword", @"TNArchipelXMPPService", @"TNArchipelRememberCredentials",
+                            @"TNArchipelTagsVisible", @"TNArchipelModuleControllerOpenedTabRegistry",
                             @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups", @"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
 }
 
@@ -249,7 +249,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
-    [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
+    [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelXMPPResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [buttonLanguage selectItemWithTitle:[defaults objectForKey:@"CPBundleLocale"]];
     [buttonScrollersStyle selectItemWithTitle:[defaults objectForKey:@"TNArchipelScrollersStyle"]];
@@ -290,7 +290,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];
-    [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
+    [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelXMPPResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
     [defaults setObject:[buttonLanguage title] forKey:@"CPBundleLocale"];
     [defaults setObject:[buttonScrollersStyle title] forKey:@"TNArchipelScrollersStyle"];

@@ -2,19 +2,130 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+    <!--
+        Default language
+    -->
+
+    <!-- Configure the default language -->
     <key>CPBundleLocale</key>
     <string>en</string>
 
+
+    <!--
+        Connection informations
+    -->
+
+    <!-- This will be used as default XMPP resource -->
+    <key>TNArchipelXMPPResource</key>
+    <string>ArchipelController</string>
+
+    <!-- This is template for auto guessing the XMPP service.
+        '@DOMAIN@' will be replaced by user JID's domain
+     -->
+    <key>TNArchipelServiceTemplate</key>
+    <string>http://@DOMAIN@:5280/http-bind</string>
+
+    <!-- Set this to one to force using a specific XMPP service
+        In that case, the service field will be hidden, and users
+        won't be able to change it. THIS IS NOT A SECURITY PARAMETER!
+        This is only UI flavor
+     -->
+    <key>TNArchipelForceService</key>
+    <integer>0</integer>
+
+    <!-- This will be used a forced service URL if
+        TNArchipelForceService is set to 1
+    -->
+    <key>TNArchipelForcedServiceURL</key>
+    <string>ws://archipelproject.org:5280</string>
+
+
+    <!--
+        Various UI conf
+    -->
+
+    <!-- Set the default font -->
     <key>CPSystemFontFace</key>
     <string>Asap</string>
 
+    <!-- Set the default log level -->
+    <key>TNArchipelConsoleDebugLevel</key>
+    <string>warn</string>
 
+    <!-- UI flavour: you can hide the manage contact button -->
+    <key>TNArchipelDisplayXMPPManageContactsButton</key>
+    <integer>1</integer>
+
+    <!-- Cool down timer before loading modules, when switching entities in roster -->
+    <key>TNArchipelModuleLoadingDelay</key>
+    <real>0.15</real>
+
+    <!-- Default value for monitoring XMPP stanza or not
+        Enabling that will decrease performances
+    -->
+    <key>TNArchipelMonitorStanza</key>
+    <integer>0</integer>
+
+    <!-- If set to 1, offline contacts will be hidden -->
+    <key>TNHideOfflineContacts</key>
+    <integer>0</integer>
+
+    <!-- Enable the property controller -->
+    <key>TNArchipelPropertyControllerEnabled</key>
+    <integer>1</integer>
+
+    <!-- Default scroller type -->
+    <key>TNArchipelScrollersStyle</key>
+    <string>Overlay</string>
+
+    <!-- Uses UI animations -->
+    <key>TNArchipelUseAnimations</key>
+    <integer>0</integer>
+
+    <!-- Default UI animation time -->
+    <key>TNArchipelAnimationsDuration</key>
+    <real>0.3</real>
+
+
+    <!--
+        Versioning and Updates
+    -->
+
+    <!-- If set to one, try to contact auto update server for new version -->
+    <key>TNArchipelAutoCheckUpdate</key>
+    <integer>1</integer>
+
+    <!-- URL of the auto update server -->
+    <key>TNArchipelUpdateServerURL</key>
+    <string>http://updates.archipelproject.org</string>
+
+
+    <!--
+        Admin mode
+    -->
+
+    <!-- You should seriously not touch that -->
     <key>ArchipelCheckNodeAdminAccount</key>
     <integer>1</integer>
     <key>ArchipelDefaultAdminAccounts</key>
     <array>
         <string>admin</string>
     </array>
+
+
+    <!--
+        Crash reports
+    -->
+
+    <!-- You should seriously not touch that either -->
+    <key>LPCrashReporterLoggingURL</key>
+    <string>http://crashes.archipelproject.org/reports.php</string>
+
+
+    <!--
+        DO NOT TOUCH
+    -->
     <key>CFBundleIconFile</key>
     <string>icon.icns</string>
     <key>CPBundleIdentifier</key>
@@ -23,34 +134,8 @@
     <string>Archipel</string>
     <key>CPPrincipalClass</key>
     <string>CPApplication</string>
-    <key>LPCrashReporterLoggingURL</key>
-    <string>http://crashes.archipelproject.org/reports.php</string>
     <key>Main cib file base name</key>
     <string>MainMenu.cib</string>
-    <key>TNArchipelAnimationsDuration</key>
-    <real>0.3</real>
-    <key>TNArchipelAutoCheckUpdate</key>
-    <integer>1</integer>
-    <key>TNArchipelBOSHResource</key>
-    <string>ArchipelController</string>
-    <key>TNArchipelBOSHService</key>
-    <string>http://jabber.archipelproject.org:5280/http-bind</string>
-    <key>TNArchipelConsoleDebugLevel</key>
-    <string>warn</string>
-    <key>TNArchipelCopyright</key>
-    <string>Copyright 2010-2013 Antoine Mercadal</string>
-    <key>TNArchipelDisplayXMPPManageContactsButton</key>
-    <integer>1</integer>
-    <key>TNArchipelModuleLoadingDelay</key>
-    <real>0.15</real>
-    <key>TNArchipelMonitorStanza</key>
-    <integer>0</integer>
-    <key>TNHideOfflineContacts</key>
-    <integer>0</integer>
-    <key>TNArchipelUpdateServerURL</key>
-    <string>http://updates.archipelproject.org</string>
-    <key>TNArchipelUseAnimations</key>
-    <integer>0</integer>
     <key>TNArchipelVersion</key>
     <dict>
         <key>major</key>
@@ -62,9 +147,6 @@
         <key>codeName</key>
         <string>Moon</string>
     </dict>
-    <key>TNArchipelPropertyControllerEnabled</key>
-    <integer>1</integer>
-    <key>TNArchipelScrollersStyle</key>
-    <string>Overlay</string>
+
 </dict>
 </plist>

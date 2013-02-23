@@ -134,10 +134,11 @@
     switch ([buttonType title])
     {
         case TNLibvirtDeviceGraphicTypeVNC:
-
+        case TNLibvirtDeviceGraphicTypeSPICE:
             [fieldPassword setEnabled:YES];
             [fieldListenAddress setEnabled:YES];
             break;
+
         default:
             [fieldPassword setStringValue:@""];
             [fieldListenAddress setStringValue:@""];
