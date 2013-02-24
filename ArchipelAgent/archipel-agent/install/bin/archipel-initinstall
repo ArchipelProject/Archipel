@@ -116,6 +116,8 @@ def clean_installation(prefix=""):
         msg("cleaning old existing files")
         msg("cleaning init script from %s/etc/init.d/archipel" % prefix)
         os.system("rm -rf %s/etc/init.d/archipel" % prefix)
+        msg("cleaning Service script from %s/usr/lib/systemd/system/" % prefix)
+        os.system("rm -f %s/usr/lib/systemd/system/archipel.service" % prefix)
         msg("Cleaning library folders from %s/var/lib/archipel" % prefix)
         os.system("rm -rf %s/var/lib/archipel" % prefix)
         msg("Cleaning configuration file from %s/etc/archipel" % prefix)
@@ -127,27 +129,40 @@ def clean_installation(prefix=""):
         error(str(ex))
 
 
-def install_init_script(prefix, init_script):
+def install_init_script(prefix, init_script, systemd_script):
     """
     Install the init script
     @type prefix: string
     @param prefix: the installation prefix
     @type init_script: string
     @param init_script: origin path of the init script
+    @type systemd_script : string
+    @param systemd_script : origin path of service script
     """
-    msg("Installing init script to %s/etc/init.d/archipel" % prefix)
+    if os.path.exists("%s/etc/init.d/" % prefix):
+        msg("Installing init script to %s/etc/init.d/archipel" % prefix)
 
-    if os.path.exists("%s/etc/init.d/archipel" % prefix):
-        warn("Init script already exists. Leaving as it is.")
-        return
-    if os.system("cp '%s' '%s/etc/init.d/archipel'" % (init_script, prefix)) == 0:
-        success("Init script installed")
-    else:
-        error("Unable to copy the init script. Please install it by yourself", exit=False)
-    if os.system("chmod 755 '%s/etc/init.d/archipel'" % prefix) == 0:
-        success("Init script chmoded")
-    else:
-        error("Unable to chmod the init script", exit=False)
+        if os.path.exists("%s/etc/init.d/archipel" % prefix):
+            warn("Init script already exists. Leaving as it is.")
+            return
+        if os.system("cp '%s' '%s/etc/init.d/archipel'" % (init_script, prefix)) == 0:
+            success("Init script installed")
+        else:
+            error("Unable to copy the init script. Please install it by yourself", exit=False)
+        if os.system("chmod 755 '%s/etc/init.d/archipel'" % prefix) == 0:
+            success("Init script chmoded")
+        else:
+            error("Unable to chmod the init script", exit=False)
+
+    if os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
+        msg("Installing Service script to %s/usr/lib/systemd/system" % prefix)
+        if os.path.isfile("%s%s" % (prefix,systemd_script)):
+            warn("Service script already exists. Leaving as it is.")
+            return
+        if os.system("cp '%s' '%s/usr/lib/systemd/system/'" % (systemd_script, prefix)) == 0:
+            success("Service script installed")
+        else:
+            error("Unable to copy the Service script. Please install it by yourself", exit=False)
 
 def install_config_folder(prefix, conf_folder):
     """
@@ -228,26 +243,29 @@ def get_data_files(prefix):
     @param prefix: the installation prefix
     """
     init_script = resource_filename(Requirement.parse("archipel-agent"),"install/etc/init.d/archipel")
+    systemd_script = resource_filename(Requirement.parse("archipel-agent"),"install/usr/lib/systemd/system/archipel.service")
     conf_folder = resource_filename(Requirement.parse("archipel-agent"),"install/etc/archipel")
     lib_folder = resource_filename(Requirement.parse("archipel-agent"),"install/var/lib/archipel")
 
     # we are in the case of RPM installation
     if not os.path.exists(init_script):
         init_script = "%s/usr/install/etc/init.d/archipel" % prefix
+    if not os.path.exists(systemd_script):
+        systemd_script = "%s/usr/lib/systemd/system/archipel.service" % prefix
     if not os.path.exists(conf_folder):
         conf_folder = "%s/usr/install/etc/archipel" % prefix
     if not os.path.exists(lib_folder):
         lib_folder = "%s/usr/install/var/lib/archipel" % prefix
-    return (init_script, conf_folder, lib_folder)
+    return (init_script, systemd_script, conf_folder, lib_folder)
 
 
 def install(prefix="", xmpp_server="auto", hypervisor_name="auto"):
 
-    init_script, conf_folder, lib_folder = get_data_files(prefix)
+    init_script, systemd_script, conf_folder, lib_folder = get_data_files(prefix)
 
     msg("Installation initialization started")
     try:
-        install_init_script(prefix, init_script)
+        install_init_script(prefix, init_script, systemd_script)
         if install_config_folder(prefix, conf_folder):
             pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
         install_data_folder(prefix,lib_folder )
