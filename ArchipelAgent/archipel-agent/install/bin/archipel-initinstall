@@ -139,7 +139,16 @@ def install_init_script(prefix, init_script, systemd_script):
     @type systemd_script : string
     @param systemd_script : origin path of service script
     """
-    if os.path.exists("%s/etc/init.d/" % prefix):
+    if os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
+        msg("Installing Service script to %s/usr/lib/systemd/system" % prefix)
+        if os.path.isfile("%s%s" % (prefix,systemd_script)):
+            warn("Service script already exists. Leaving as it is.")
+            return
+        if os.system("cp '%s' '%s/usr/lib/systemd/system/'" % (systemd_script, prefix)) == 0:
+            success("Service script installed")
+        else:
+            error("Unable to copy the Service script. Please install it by yourself", exit=False)
+    elif os.path.exists("%s/etc/init.d/" % prefix):
         msg("Installing init script to %s/etc/init.d/archipel" % prefix)
 
         if os.path.exists("%s/etc/init.d/archipel" % prefix):
@@ -153,16 +162,8 @@ def install_init_script(prefix, init_script, systemd_script):
             success("Init script chmoded")
         else:
             error("Unable to chmod the init script", exit=False)
-
-    if os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
-        msg("Installing Service script to %s/usr/lib/systemd/system" % prefix)
-        if os.path.isfile("%s%s" % (prefix,systemd_script)):
-            warn("Service script already exists. Leaving as it is.")
-            return
-        if os.system("cp '%s' '%s/usr/lib/systemd/system/'" % (systemd_script, prefix)) == 0:
-            success("Service script installed")
-        else:
-            error("Unable to copy the Service script. Please install it by yourself", exit=False)
+    else:
+        error("No suitable system and service manager has been found !", exit=False)
 
 def install_config_folder(prefix, conf_folder):
     """
