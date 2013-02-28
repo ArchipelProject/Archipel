@@ -37,6 +37,7 @@ def updateSubmodules():
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
     os.system('rm -f "$CAPP_BUILD"')
+    os.system('rm -f "/home/cruise/narwhal"')
     if os.system('cd ./ArchipelClient/Libraries/Cappuccino && ./bootstrap.sh --noprompt --directory /home/cruise/narwhal && jake clobber && jake install'):
         sys.exit(-1)
 
