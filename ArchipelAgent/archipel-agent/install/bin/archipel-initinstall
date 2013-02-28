@@ -117,7 +117,7 @@ def clean_installation(prefix=""):
         msg("cleaning init script from %s/etc/init.d/archipel" % prefix)
         os.system("rm -rf %s/etc/init.d/archipel" % prefix)
         msg("cleaning Service script from %s/usr/lib/systemd/system/" % prefix)
-        os.system("rm -f %s/usr/lib/systemd/system/archipel.service" % prefix)
+        os.system("rm -f %s/usr/lib/systemd/system/archipel-agent.service" % prefix)
         msg("Cleaning library folders from %s/var/lib/archipel" % prefix)
         os.system("rm -rf %s/var/lib/archipel" % prefix)
         msg("Cleaning configuration file from %s/etc/archipel" % prefix)
@@ -141,7 +141,7 @@ def install_init_script(prefix, init_script, systemd_script):
     """
     if os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
         msg("Installing Service script to %s/usr/lib/systemd/system" % prefix)
-        if os.path.isfile("%s%s" % (prefix,systemd_script)):
+        if os.path.isfile("%s/usr/lib/systemd/system/archipel-agent.service" % (prefix)):
             warn("Service script already exists. Leaving as it is.")
             return
         if os.system("cp '%s' '%s/usr/lib/systemd/system/'" % (systemd_script, prefix)) == 0:
@@ -244,7 +244,7 @@ def get_data_files(prefix):
     @param prefix: the installation prefix
     """
     init_script = resource_filename(Requirement.parse("archipel-agent"),"install/etc/init.d/archipel")
-    systemd_script = resource_filename(Requirement.parse("archipel-agent"),"install/usr/lib/systemd/system/archipel.service")
+    systemd_script = resource_filename(Requirement.parse("archipel-agent"),"install/usr/lib/systemd/system/archipel-agent.service")
     conf_folder = resource_filename(Requirement.parse("archipel-agent"),"install/etc/archipel")
     lib_folder = resource_filename(Requirement.parse("archipel-agent"),"install/var/lib/archipel")
 
@@ -252,7 +252,7 @@ def get_data_files(prefix):
     if not os.path.exists(init_script):
         init_script = "%s/usr/install/etc/init.d/archipel" % prefix
     if not os.path.exists(systemd_script):
-        systemd_script = "%s/usr/lib/systemd/system/archipel.service" % prefix
+        systemd_script = "%s/usr/lib/systemd/system/archipel-agent.service" % prefix
     if not os.path.exists(conf_folder):
         conf_folder = "%s/usr/install/etc/archipel" % prefix
     if not os.path.exists(lib_folder):
