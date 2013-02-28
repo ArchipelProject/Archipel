@@ -127,7 +127,6 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     var selectedIndex = [[self selectedRowIndexes] firstIndex];
 
     [self scrollRowToVisible:selectedIndex];
-    [self reloadData];
 }
 
 /*! called when TNArchipelRosterOutlineViewSelectItemNotification is received.
