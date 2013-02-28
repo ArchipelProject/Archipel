@@ -1021,6 +1021,11 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     }
 
     [propertiesController reload];
+
+    //@TODO: Temp hack to fix the CPTableView bug
+    // https://github.com/cappuccino/cappuccino/issues/1814
+    [_rosterOutlineView reloadData];
+
 }
 
 /*! will log out from Archipel
@@ -1462,9 +1467,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     switch ([anItem class])
     {
         case TNStropheGroup:
-            return rosterDataViewForGroups;
+            return [rosterDataViewForGroups duplicate];
         case TNStropheContact:
-            return rosterDataViewForContacts;
+            return [rosterDataViewForContacts duplicate];
     }
 }
 
