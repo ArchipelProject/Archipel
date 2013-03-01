@@ -31,6 +31,12 @@ DEPLOY_PATH="/var/www/archipelproject.org/app/"
 EXPORT_PATH="/var/www/archipelproject.org/nightlies/old/"
 API_PATH="/var/www/archipelproject.org/api/"
 
+
+os.environ["CAPP_BUILD"] = "/home/cruise/cappuccino"
+os.environ["NARWHAL_EGINE"] = "rhino"
+os.environ["CAPP_NOSUDO"] = "1"
+
+
 def updateSubmodules():
     os.system("bash ./pull.sh")
 
