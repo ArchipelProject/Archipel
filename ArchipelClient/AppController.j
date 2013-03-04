@@ -1466,6 +1466,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     {
         view = (key == TNStropheGroup) ? [rosterDataViewForGroups duplicate] : [rosterDataViewForContacts duplicate];
         [view setIdentifier:key];
+        [view setAutoresizingMask:CPViewNotSizable];
     }
 
     return view;
