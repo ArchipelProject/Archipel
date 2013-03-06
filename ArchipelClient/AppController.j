@@ -1459,13 +1459,17 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 - (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
 {
-    switch ([anItem class])
+    var key = [anItem className],
+        view = [_rosterOutlineView makeViewWithIdentifier:key owner:self];
+
+    if (!view)
     {
-        case TNStropheGroup:
-            return rosterDataViewForGroups;
-        case TNStropheContact:
-            return rosterDataViewForContacts;
+        view = (key == TNStropheGroup) ? [rosterDataViewForGroups duplicate] : [rosterDataViewForContacts duplicate];
+        [view setIdentifier:key];
+        [view setAutoresizingMask:CPViewNotSizable];
     }
+
+    return view;
 }
 
 /*! called the roster outlineView to ask the height of row for given item
