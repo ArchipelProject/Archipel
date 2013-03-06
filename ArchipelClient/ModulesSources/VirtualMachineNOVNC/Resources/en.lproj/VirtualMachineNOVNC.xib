@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D74</string>
+		<string key="IBDocument.SystemVersion">12D76</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -438,7 +438,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="440179165">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -620,7 +620,6 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{438, 210}</string>
-					<reference key="NSSuperview"/>
 					<reference key="NSNextKeyView" ref="137483945"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -986,256 +985,268 @@
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSTextField" id="1062724309">
+					<object class="NSCustomView" id="584643589">
 						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 301}, {582, 17}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="693440835"/>
-						<string key="NSReuseIdentifierKey">_NS:1535</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="873976785">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">info</string>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">9</double>
-								<int key="NSfFlags">3614</int>
+						<int key="NSvFlags">301</int>
+						<object class="NSMutableArray" key="NSSubviews">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSTextField" id="1062724309">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{17, 301}, {582, 17}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="693440835"/>
+								<string key="NSReuseIdentifierKey">_NS:1535</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="873976785">
+									<int key="NSCellFlags">68157504</int>
+									<int key="NSCellFlags2">272630784</int>
+									<string key="NSContents">info</string>
+									<object class="NSFont" key="NSSupport">
+										<string key="NSName">LucidaGrande</string>
+										<double key="NSSize">9</double>
+										<int key="NSfFlags">3614</int>
+									</object>
+									<string key="NSCellIdentifier">_NS:1535</string>
+									<reference key="NSControlView" ref="1062724309"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<object class="NSColor" key="NSTextColor">
+										<int key="NSColorSpace">1</int>
+										<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
+									</object>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
-							<string key="NSCellIdentifier">_NS:1535</string>
-							<reference key="NSControlView" ref="1062724309"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
+							<object class="NSTextField" id="245360601">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{17, 82}, {38, 40}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="29546184"/>
+								<string key="NSReuseIdentifierKey">_NS:1535</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="175045882">
+									<int key="NSCellFlags">68157504</int>
+									<int key="NSCellFlags2">138413056</int>
+									<string key="NSContents">3</string>
+									<object class="NSFont" key="NSSupport" id="68860964">
+										<string key="NSName">LucidaGrande-Bold</string>
+										<double key="NSSize">23</double>
+										<int key="NSfFlags">16</int>
+									</object>
+									<string key="NSCellIdentifier">_NS:1535</string>
+									<reference key="NSControlView" ref="245360601"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<object class="NSColor" key="NSTextColor">
+										<int key="NSColorSpace">1</int>
+										<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
+									</object>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+							</object>
+							<object class="NSTextField" id="55161325">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{17, 130}, {38, 40}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="755889358"/>
+								<string key="NSReuseIdentifierKey">_NS:1535</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="285803688">
+									<int key="NSCellFlags">68157504</int>
+									<int key="NSCellFlags2">138413056</int>
+									<string key="NSContents">2</string>
+									<reference key="NSSupport" ref="68860964"/>
+									<string key="NSCellIdentifier">_NS:1535</string>
+									<reference key="NSControlView" ref="55161325"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<object class="NSColor" key="NSTextColor">
+										<int key="NSColorSpace">1</int>
+										<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
+									</object>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+							</object>
+							<object class="NSTextField" id="631558788">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{17, 191}, {38, 40}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="1070513094"/>
+								<string key="NSReuseIdentifierKey">_NS:1535</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="20950690">
+									<int key="NSCellFlags">68157504</int>
+									<int key="NSCellFlags2">138413056</int>
+									<string key="NSContents">1</string>
+									<reference key="NSSupport" ref="68860964"/>
+									<string key="NSCellIdentifier">_NS:1535</string>
+									<reference key="NSControlView" ref="631558788"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<object class="NSColor" key="NSTextColor">
+										<int key="NSColorSpace">1</int>
+										<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
+									</object>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+							</object>
+							<object class="NSTextField" id="29546184">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{57, 54}, {542, 68}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="376156917"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<string key="NSAntiCompressionPriority">{250, 750}</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="403661566">
+									<int key="NSCellFlags">67108864</int>
+									<int key="NSCellFlags2">272629760</int>
+									<string key="NSContents">If you are using encrypted connection (by setting a pem file in archipel.conf and setting 'vnc_only_ssl' to 'True', then you need to have a valid certificate. Self signed certificates need to be explicitely allowed (click on the link below to add and exception).</string>
+									<reference key="NSSupport" ref="588635494"/>
+									<string key="NSCellIdentifier">_NS:9</string>
+									<reference key="NSControlView" ref="29546184"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<reference key="NSTextColor" ref="989663373"/>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+								<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
+							</object>
+							<object class="NSTextField" id="755889358">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{57, 130}, {542, 42}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="245360601"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<string key="NSAntiCompressionPriority">{250, 750}</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="553970095">
+									<int key="NSCellFlags">67108864</int>
+									<int key="NSCellFlags2">272629760</int>
+									<string key="NSContents">Your browser doesn't support encrypted websockets. In that case, in archipel.conf, set 'vnc_certificate_file' to 'None' and restart the agents.</string>
+									<reference key="NSSupport" ref="588635494"/>
+									<string key="NSCellIdentifier">_NS:9</string>
+									<reference key="NSControlView" ref="755889358"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<reference key="NSTextColor" ref="989663373"/>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+								<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
+							</object>
+							<object class="NSTextField" id="1070513094">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{57, 180}, {542, 51}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="55161325"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<string key="NSAntiCompressionPriority">{250, 750}</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="618151883">
+									<int key="NSCellFlags">67108864</int>
+									<int key="NSCellFlags2">272629760</int>
+									<string key="NSContents">The 'machine_ip' address in archipel.conf is not correct or set to auto. In that case, just put the actual hypervisor IP. Remember that the connection goes from your browser.</string>
+									<reference key="NSSupport" ref="588635494"/>
+									<string key="NSCellIdentifier">_NS:9</string>
+									<reference key="NSControlView" ref="1070513094"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<reference key="NSTextColor" ref="989663373"/>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+								<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
+							</object>
+							<object class="NSButton" id="376156917">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{242, 13}, {132, 32}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSButtonCell" key="NSCell" id="134809012">
+									<int key="NSCellFlags">67108864</int>
+									<int key="NSCellFlags2">134217728</int>
+									<string key="NSContents">Add Exception</string>
+									<reference key="NSSupport" ref="820393570"/>
+									<string key="NSCellIdentifier">_NS:9</string>
+									<reference key="NSControlView" ref="376156917"/>
+									<int key="NSButtonFlags">-2038284288</int>
+									<int key="NSButtonFlags2">129</int>
+									<string key="NSAlternateContents"/>
+									<string key="NSKeyEquivalent"/>
+									<int key="NSPeriodicDelay">200</int>
+									<int key="NSPeriodicInterval">25</int>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+							</object>
+							<object class="NSTextField" id="693440835">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{17, 248}, {582, 45}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="631558788"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<string key="NSAntiCompressionPriority">{250, 750}</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="822320597">
+									<int key="NSCellFlags">67108864</int>
+									<int key="NSCellFlags2">272629760</int>
+									<string key="NSContents">It seems Archipel is unable to connect to the VNC Screen. There are several reasons why this can be happening, please review them.</string>
+									<reference key="NSSupport" ref="588635494"/>
+									<string key="NSCellIdentifier">_NS:9</string>
+									<reference key="NSControlView" ref="693440835"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<reference key="NSTextColor" ref="989663373"/>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+								<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
+							</object>
+							<object class="NSTextField" id="12882324">
+								<reference key="NSNextResponder" ref="584643589"/>
+								<int key="NSvFlags">269</int>
+								<string key="NSFrame">{{17, 318}, {582, 24}}</string>
+								<reference key="NSSuperview" ref="584643589"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="1062724309"/>
+								<string key="NSReuseIdentifierKey">_NS:1535</string>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="1004702024">
+									<int key="NSCellFlags">68157504</int>
+									<int key="NSCellFlags2">272630784</int>
+									<string key="NSContents">Oops! Archipel is unable to connect to the VNC Screen...</string>
+									<object class="NSFont" key="NSSupport">
+										<string key="NSName">LucidaGrande-Bold</string>
+										<double key="NSSize">17</double>
+										<int key="NSfFlags">16</int>
+									</object>
+									<string key="NSCellIdentifier">_NS:1535</string>
+									<reference key="NSControlView" ref="12882324"/>
+									<reference key="NSBackgroundColor" ref="33462811"/>
+									<object class="NSColor" key="NSTextColor">
+										<int key="NSColorSpace">2</int>
+										<bytes key="NSRGB">MC45ODQzMTM3ODYgMC4zODgyMzUzMzA2IDAuMzUyOTQxMTg1MgA</bytes>
+									</object>
+								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="245360601">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 82}, {38, 40}}</string>
+						<string key="NSFrame">{{20, 20}, {616, 362}}</string>
 						<reference key="NSSuperview" ref="90466767"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="29546184"/>
-						<string key="NSReuseIdentifierKey">_NS:1535</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="175045882">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">138413056</int>
-							<string key="NSContents">3</string>
-							<object class="NSFont" key="NSSupport" id="68860964">
-								<string key="NSName">LucidaGrande-Bold</string>
-								<double key="NSSize">23</double>
-								<int key="NSfFlags">16</int>
-							</object>
-							<string key="NSCellIdentifier">_NS:1535</string>
-							<reference key="NSControlView" ref="245360601"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
-							</object>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="55161325">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 130}, {38, 40}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="755889358"/>
-						<string key="NSReuseIdentifierKey">_NS:1535</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="285803688">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">138413056</int>
-							<string key="NSContents">2</string>
-							<reference key="NSSupport" ref="68860964"/>
-							<string key="NSCellIdentifier">_NS:1535</string>
-							<reference key="NSControlView" ref="55161325"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
-							</object>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="631558788">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 191}, {38, 40}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="1070513094"/>
-						<string key="NSReuseIdentifierKey">_NS:1535</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="20950690">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">138413056</int>
-							<string key="NSContents">1</string>
-							<reference key="NSSupport" ref="68860964"/>
-							<string key="NSCellIdentifier">_NS:1535</string>
-							<reference key="NSControlView" ref="631558788"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">1</int>
-								<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
-							</object>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="29546184">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{57, 54}, {542, 68}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="376156917"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<string key="NSAntiCompressionPriority">{250, 750}</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="403661566">
-							<int key="NSCellFlags">67108864</int>
-							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">If you are using encrypted connection (by setting a pem file in archipel.conf and setting 'vnc_only_ssl' to 'True', then you need to have a valid certificate. Self signed certificates need to be explicitely allowed (click on the link below to add and exception).</string>
-							<reference key="NSSupport" ref="588635494"/>
-							<string key="NSCellIdentifier">_NS:9</string>
-							<reference key="NSControlView" ref="29546184"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<reference key="NSTextColor" ref="989663373"/>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-						<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
-					</object>
-					<object class="NSTextField" id="755889358">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{57, 130}, {542, 42}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="245360601"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<string key="NSAntiCompressionPriority">{250, 750}</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="553970095">
-							<int key="NSCellFlags">67108864</int>
-							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">Your browser doesn't support encrypted websockets. In that case, in archipel.conf, set 'vnc_certificate_file' to 'None' and restart the agents.</string>
-							<reference key="NSSupport" ref="588635494"/>
-							<string key="NSCellIdentifier">_NS:9</string>
-							<reference key="NSControlView" ref="755889358"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<reference key="NSTextColor" ref="989663373"/>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-						<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
-					</object>
-					<object class="NSTextField" id="1070513094">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{57, 180}, {542, 51}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="55161325"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<string key="NSAntiCompressionPriority">{250, 750}</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="618151883">
-							<int key="NSCellFlags">67108864</int>
-							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">The 'machine_ip' address in archipel.conf is not correct or set to auto. In that case, just put the actual hypervisor IP. Remember that the connection goes from your browser.</string>
-							<reference key="NSSupport" ref="588635494"/>
-							<string key="NSCellIdentifier">_NS:9</string>
-							<reference key="NSControlView" ref="1070513094"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<reference key="NSTextColor" ref="989663373"/>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-						<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
-					</object>
-					<object class="NSButton" id="376156917">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{242, 13}, {132, 32}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="134809012">
-							<int key="NSCellFlags">67108864</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Add Exception</string>
-							<reference key="NSSupport" ref="820393570"/>
-							<string key="NSCellIdentifier">_NS:9</string>
-							<reference key="NSControlView" ref="376156917"/>
-							<int key="NSButtonFlags">-2038284288</int>
-							<int key="NSButtonFlags2">129</int>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">200</int>
-							<int key="NSPeriodicInterval">25</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="693440835">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 248}, {582, 45}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="631558788"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<string key="NSAntiCompressionPriority">{250, 750}</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="822320597">
-							<int key="NSCellFlags">67108864</int>
-							<int key="NSCellFlags2">272629760</int>
-							<string key="NSContents">It seems Archipel is unable to connect to the VNC Screen. There are several reasons why this can be happening, please review them.</string>
-							<reference key="NSSupport" ref="588635494"/>
-							<string key="NSCellIdentifier">_NS:9</string>
-							<reference key="NSControlView" ref="693440835"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<reference key="NSTextColor" ref="989663373"/>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-						<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
-					</object>
-					<object class="NSTextField" id="12882324">
-						<reference key="NSNextResponder" ref="90466767"/>
-						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{17, 318}, {582, 24}}</string>
-						<reference key="NSSuperview" ref="90466767"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="1062724309"/>
-						<string key="NSReuseIdentifierKey">_NS:1535</string>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="1004702024">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">272630784</int>
-							<string key="NSContents">Oops! Archipel is unable to connect to the VNC Screen...</string>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande-Bold</string>
-								<double key="NSSize">17</double>
-								<int key="NSfFlags">16</int>
-							</object>
-							<string key="NSCellIdentifier">_NS:1535</string>
-							<reference key="NSControlView" ref="12882324"/>
-							<reference key="NSBackgroundColor" ref="33462811"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">2</int>
-								<bytes key="NSRGB">MC45ODQzMTM3ODYgMC4zODgyMzUzMzA2IDAuMzUyOTQxMTg1MgA</bytes>
-							</object>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{616, 362}</string>
+				<string key="NSFrameSize">{656, 402}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="12882324"/>
@@ -1416,30 +1427,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonAddCertificateException</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="376156917"/>
-					</object>
-					<int key="connectionID">175</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">addCertificateException:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="376156917"/>
-					</object>
-					<int key="connectionID">176</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">labelErrorInformation</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1062724309"/>
-					</object>
-					<int key="connectionID">191</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">viewVNCContainer</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="1071846967"/>
@@ -1549,6 +1536,30 @@
 						<reference key="destination" ref="630526641"/>
 					</object>
 					<int key="connectionID">100</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">labelErrorInformation</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1062724309"/>
+					</object>
+					<int key="connectionID">191</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addCertificateException:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="376156917"/>
+					</object>
+					<int key="connectionID">176</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonAddCertificateException</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="376156917"/>
+					</object>
+					<int key="connectionID">175</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2084,158 +2095,9 @@
 						<reference key="object" ref="90466767"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="12882324"/>
-							<reference ref="376156917"/>
-							<reference ref="1070513094"/>
-							<reference ref="755889358"/>
-							<reference ref="29546184"/>
-							<reference ref="631558788"/>
-							<reference ref="55161325"/>
-							<reference ref="245360601"/>
-							<reference ref="693440835"/>
-							<reference ref="1062724309"/>
+							<reference ref="584643589"/>
 						</object>
 						<reference key="parent" ref="0"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">166</int>
-						<reference key="object" ref="12882324"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1004702024"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">167</int>
-						<reference key="object" ref="1004702024"/>
-						<reference key="parent" ref="12882324"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">168</int>
-						<reference key="object" ref="693440835"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="822320597"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">169</int>
-						<reference key="object" ref="822320597"/>
-						<reference key="parent" ref="693440835"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">173</int>
-						<reference key="object" ref="376156917"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="134809012"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">174</int>
-						<reference key="object" ref="134809012"/>
-						<reference key="parent" ref="376156917"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">177</int>
-						<reference key="object" ref="1070513094"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="618151883"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">178</int>
-						<reference key="object" ref="618151883"/>
-						<reference key="parent" ref="1070513094"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">179</int>
-						<reference key="object" ref="755889358"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="553970095"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">180</int>
-						<reference key="object" ref="553970095"/>
-						<reference key="parent" ref="755889358"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">181</int>
-						<reference key="object" ref="29546184"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="403661566"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">182</int>
-						<reference key="object" ref="403661566"/>
-						<reference key="parent" ref="29546184"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">183</int>
-						<reference key="object" ref="631558788"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="20950690"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">184</int>
-						<reference key="object" ref="20950690"/>
-						<reference key="parent" ref="631558788"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">185</int>
-						<reference key="object" ref="55161325"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="285803688"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">186</int>
-						<reference key="object" ref="285803688"/>
-						<reference key="parent" ref="55161325"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">187</int>
-						<reference key="object" ref="245360601"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="175045882"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">188</int>
-						<reference key="object" ref="175045882"/>
-						<reference key="parent" ref="245360601"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">189</int>
-						<reference key="object" ref="1062724309"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="873976785"/>
-						</object>
-						<reference key="parent" ref="90466767"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">190</int>
-						<reference key="object" ref="873976785"/>
-						<reference key="parent" ref="1062724309"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">193</int>
@@ -2395,6 +2257,164 @@
 						<reference key="object" ref="684126278"/>
 						<reference key="parent" ref="813241127"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">194</int>
+						<reference key="object" ref="584643589"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="12882324"/>
+							<reference ref="693440835"/>
+							<reference ref="376156917"/>
+							<reference ref="1070513094"/>
+							<reference ref="755889358"/>
+							<reference ref="29546184"/>
+							<reference ref="631558788"/>
+							<reference ref="55161325"/>
+							<reference ref="245360601"/>
+							<reference ref="1062724309"/>
+						</object>
+						<reference key="parent" ref="90466767"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">166</int>
+						<reference key="object" ref="12882324"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1004702024"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">168</int>
+						<reference key="object" ref="693440835"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="822320597"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">173</int>
+						<reference key="object" ref="376156917"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="134809012"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">177</int>
+						<reference key="object" ref="1070513094"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="618151883"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">179</int>
+						<reference key="object" ref="755889358"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="553970095"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">181</int>
+						<reference key="object" ref="29546184"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="403661566"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">183</int>
+						<reference key="object" ref="631558788"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="20950690"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">185</int>
+						<reference key="object" ref="55161325"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="285803688"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">187</int>
+						<reference key="object" ref="245360601"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="175045882"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">189</int>
+						<reference key="object" ref="1062724309"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="873976785"/>
+						</object>
+						<reference key="parent" ref="584643589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">190</int>
+						<reference key="object" ref="873976785"/>
+						<reference key="parent" ref="1062724309"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">188</int>
+						<reference key="object" ref="175045882"/>
+						<reference key="parent" ref="245360601"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">186</int>
+						<reference key="object" ref="285803688"/>
+						<reference key="parent" ref="55161325"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">184</int>
+						<reference key="object" ref="20950690"/>
+						<reference key="parent" ref="631558788"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">182</int>
+						<reference key="object" ref="403661566"/>
+						<reference key="parent" ref="29546184"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">180</int>
+						<reference key="object" ref="553970095"/>
+						<reference key="parent" ref="755889358"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">178</int>
+						<reference key="object" ref="618151883"/>
+						<reference key="parent" ref="1070513094"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">174</int>
+						<reference key="object" ref="134809012"/>
+						<reference key="parent" ref="376156917"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">169</int>
+						<reference key="object" ref="822320597"/>
+						<reference key="parent" ref="693440835"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">167</int>
+						<reference key="object" ref="1004702024"/>
+						<reference key="parent" ref="12882324"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2452,6 +2472,7 @@
 					<string>19.IBPluginDependency</string>
 					<string>190.IBPluginDependency</string>
 					<string>193.IBPluginDependency</string>
+					<string>194.IBPluginDependency</string>
 					<string>2.IBPluginDependency</string>
 					<string>20.IBPluginDependency</string>
 					<string>21.IBAttributePlaceholdersKey</string>
@@ -2588,6 +2609,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
@@ -2708,7 +2730,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">193</int>
+			<int key="maxID">194</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
