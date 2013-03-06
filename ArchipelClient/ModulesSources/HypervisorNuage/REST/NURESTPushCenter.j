@@ -16,8 +16,25 @@
 */
 
 @import <Foundation/Foundation.j>
-
 @import "NURESTConnection.j"
+
+@global CPApp
+
+function _format_log_json(string)
+{
+    if (!string || !string.length)
+        return "";
+
+    try
+    {
+        return JSON.stringify(JSON.parse(string), null, 4);
+    }
+    catch(e)
+    {
+        return string
+    };
+}
+
 
 NURESTPushCenterPushReceived        = @"NURESTPushCenterPushReceived";
 NURESTPushCenterServerUnreachable   = @"NURESTPushCenterServerUnreachable";
@@ -27,12 +44,14 @@ NUPushEventTypeCreate = @"CREATE";
 NUPushEventTypeUpdate = @"UPDATE";
 NUPushEventTypeDelete = @"DELETE";
 NUPushEventTypeRevoke = @"REVOKE";
+NUPushEventTypeGrant  = @"GRANT";
 
 var NURESTPushCenterDefault,
     NURESTPushCenterConnectionRetryDelay = 5000,
     NURESTPushCenterConnectionMaxTrials = 10;
 
 _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
+_DEBUG_NUMBER_OF_RECEIVED_PUSH_SESSION_ = 0;
 
 /*! This is the default push center
     Use it by calling [NURESTPushCenter defaultCenter];
@@ -117,6 +136,7 @@ _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
     _currentConnectionTrialNumber++;
     _currentConnexion = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didReceiveAliveCheckResponse:)];
     [_currentConnexion setTimeout:0];
+    [_currentConnexion setIgnoreRequestIdle:YES];
     [_currentConnexion start];
 }
 
@@ -141,8 +161,16 @@ _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
 
         default:
             setTimeout(function(){
-                CPLog.warn("PUSH CENTER: Trying to reconnect... (retry #%@ / %@)", _currentConnectionTrialNumber, NURESTPushCenterConnectionMaxTrials);
-                [self _waitUntilServerIsBack];
+                if (_currentConnectionTrialNumber < NURESTPushCenterConnectionMaxTrials)
+                {
+                    CPLog.warn("PUSH CENTER: Trying to reconnect... (retry #%@ / %@)", _currentConnectionTrialNumber, NURESTPushCenterConnectionMaxTrials);
+                    [self _waitUntilServerIsBack];
+                }
+                else
+                {
+                    CPLog.error("PUSH CENTER: Maximum number of retry reached. logging out");
+                    [[CPApp delegate] logOut:nil];
+                }
             }, NURESTPushCenterConnectionRetryDelay);
             break;
     }
@@ -165,6 +193,7 @@ _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
 
     _currentConnexion = [NURESTConnection connectionWithRequest:request target:self selector:@selector(_didReceiveEvent:)];
     [_currentConnexion setTimeout:0];
+    [_currentConnexion setIgnoreRequestIdle:YES];
     [_currentConnexion start];
 }
 
@@ -180,8 +209,8 @@ _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
 
     if ([aConnection responseCode] !== 200)
     {
-        CPLog.error("PUSH CENTER: Connexion failure URL %s. Error Code: %s, (%s) ", _URL, [aConnection responseCode], [aConnection errorMessage]);
-        CPLog.error("PUSH CENTER: Trying to reconnect in 5 seconds")
+        CPLog.error("RESTCAPPUCCINO PUSHCENTER: Connexion failure URL %s. Error Code: %s, (%s) ", _URL, [aConnection responseCode], [aConnection errorMessage]);
+        CPLog.error("RESTCAPPUCCINO PUSHCENTER: Trying to reconnect in 5 seconds")
 
         _lastEventIDBeforeDisconnection = JSONObject ? JSONObject.uuid : nil;
 
@@ -196,15 +225,19 @@ _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
 
         try
         {
-            CPLog.debug(" >>> Received event from server: " + [[aConnection responseData] rawString]);
+
             _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ += numberOfIndividualEvents;
-            console.warn("_DEBUG_NUMBER_OF_RECEIVED_EVENTS_: " + _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ + " - latest push contains " + numberOfIndividualEvents + " event(s)");
+            _DEBUG_NUMBER_OF_RECEIVED_PUSH_SESSION_++;
+
+            CPLog.debug("RESTCAPPUCCINO PUSHCENTER:\n\nReceived Push #%d (total: %d, latest: %d):\n\n%@\n\n",
+                            _DEBUG_NUMBER_OF_RECEIVED_PUSH_SESSION_, _DEBUG_NUMBER_OF_RECEIVED_EVENTS_,
+                            numberOfIndividualEvents, _format_log_json([[aConnection responseData] rawString]));
 
             [[CPNotificationCenter defaultCenter] postNotificationName:NURESTPushCenterPushReceived object:self userInfo:JSONObject];
         }
         catch (e)
         {
-            CPLog.error("PUSH CENTER: An error occured while processing a push event: " + e);
+            CPLog.error("RESTCAPPUCCINO PUSHCENTER: An error occured while processing a push event: " + e);
         }
     }
 

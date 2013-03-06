@@ -31,9 +31,6 @@ var defaultTNCNACommunicator;
 @implementation TNCNACommunicator : CPObject
 {
     CPURL       _baseURL                @accessors(property=baseURL);
-    CPString    _username               @accessors(property=username);
-    CPString    _company                @accessors(property=company);
-    CPString    _token                  @accessors(property=token);
 
     CPString    _currentOrganizationID  @accessors(property=currentOrganizationID);
     CPString    _currentUserID          @accessors(property=currentUserID);
@@ -73,16 +70,17 @@ var defaultTNCNACommunicator;
         company =  [defaults objectForKey:@"TNArchipelNuageCompany"],
         password = [defaults objectForKey:@"TNArchipelNuagePassword"];
 
-    if (_username == username && _company == company && _token == password)
-        return;
-
-    _username = username;
-    _company = company;
-    _token = password;
-
     [[NURESTLoginController defaultController] setUser:username];
     [[NURESTLoginController defaultController] setPassword:password];
     [[NURESTLoginController defaultController] setCompany:company];
+    [[NURESTLoginController defaultController] setAPIKey:nil];
+
+    if (![password length] || ![company length] || ![username length])
+    {
+        [self setAuthenticated:YES];
+        [[NURESTPushCenter defaultCenter] stop];
+        [[NURESTPushCenter defaultCenter] setURL:nil];
+    }
 }
 
 - (void)fetchMe
@@ -102,16 +100,49 @@ var defaultTNCNACommunicator;
     if ([aConnection responseCode] !== 200)
     {
         [self setAuthenticated:NO];
+
+        [[NURESTPushCenter defaultCenter] stop];
+        [[NURESTPushCenter defaultCenter] setURL:nil];
+
         return;
     }
 
     var JSON = [[aConnection responseData] JSONObject];
     _currentOrganizationID = JSON[0].enterpriseID;
     _currentUserID = JSON[0].ID;
+
+    [[NURESTLoginController defaultController] setAPIKey:JSON[0].APIKey];
+
     CPLog.info("Nuage: Fetched REST user Nuage enterprise ID: " + _currentOrganizationID);
     CPLog.info("Nuage: Fetched REST user ID: " + _currentUserID);
 
+    [[NURESTPushCenter defaultCenter] stop];
+    [[NURESTPushCenter defaultCenter] setURL:_baseURL];
+    [[NURESTPushCenter defaultCenter] start];
+
     [self setAuthenticated:YES];
+}
+
+- (void)fetchDomainsAndCallSelector:(SEL)aSelector ofObject:(id)anObject
+{
+    if (!_authenticated)
+        return;
+
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + "/domains" relativeToURL:_baseURL]],
+        connection = [NURESTConnection connectionWithRequest:request target:anObject selector:aSelector];
+
+    [connection start];
+}
+
+- (void)fetchZonesInDomainWithID:(CPString)aDomainID andCallSelector:(SEL)aSelector ofObject:(id)anObject
+{
+    if (!_authenticated)
+        return;
+
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"domains/" + aDomainID + "/zones" relativeToURL:_baseURL]],
+        connection = [NURESTConnection connectionWithRequest:request target:anObject selector:aSelector];
+
+    [connection start];
 }
 
 - (void)fetchOrganizationsAndSetCompletionForComboBox:(CPComboBox)aComboBox
@@ -190,7 +221,6 @@ var defaultTNCNACommunicator;
         return;
     }
 
-
     for (var i = 0; i < JSONObj.length; i++)
         [completions addObject:[JSONObj[i][RESTToken]]];
 
@@ -199,27 +229,6 @@ var defaultTNCNACommunicator;
     [comboBox popUpList];
 }
 
-- (void)fetchDomainsAndCallSelector:(SEL)aSelector ofObject:(id)anObject
-{
-    if (!_authenticated)
-        return;
-
-    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"enterprises/" + _currentOrganizationID + "/domains" relativeToURL:_baseURL]],
-        connection = [NURESTConnection connectionWithRequest:request target:anObject selector:aSelector];
-
-    [connection start];
-}
-
-- (void)fetchZonesInDomainWithID:(CPString)aDomainID andCallSelector:(SEL)aSelector ofObject:(id)anObject
-{
-    if (!_authenticated)
-        return;
-
-    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"domains/" + aDomainID + "/zones" relativeToURL:_baseURL]],
-        connection = [NURESTConnection connectionWithRequest:request target:anObject selector:aSelector];
-
-    [connection start];
-}
 
 
 @end

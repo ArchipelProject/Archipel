@@ -187,13 +187,9 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     var URLString = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelNuageURL"];
     [self _initCNACommunicatorWithURLString:URLString];
 
-    [[CPNotificationCenter defaultCenter] addObserver:nuageController
-                                             selector:@selector(_didReceiveCNAPush:)
-                                                 name:NURESTPushCenterPushReceived
-                                               object:[NURESTPushCenter defaultCenter]];
-
     if ([self currentEntityHasPermission:@"nuagenetwork_get"])
         [self getHypervisorNuages];
+
     return YES;
 }
 
@@ -309,32 +305,23 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
 - (void)_initCNACommunicatorWithURLString:(CPString)aBaseURLString
 {
-    if (aBaseURLString)
-    {
-        var baseURL = [CPURL URLWithString:aBaseURLString[aBaseURLString.lenght - 1] != @"/" ? aBaseURLString + @"/" : aBaseURLString],
-            anURL = [CPURL URLWithString:@"cna-rest/rest/cloudMgmt/v1_0/" relativeToURL:baseURL];
+    var baseURL = [CPURL URLWithString:aBaseURLString[aBaseURLString.lenght - 1] != @"/" ? aBaseURLString + @"/" : aBaseURLString],
+        anURL = [CPURL URLWithString:@"cna-rest/rest/cloudMgmt/v1_0/" relativeToURL:baseURL];
 
-        [[TNCNACommunicator defaultCNACommunicator] setBaseURL:anURL];
-        [[TNCNACommunicator defaultCNACommunicator] fetchMe];
-
-        if ([self isVisible])
-        {
-            [[NURESTPushCenter defaultCenter] stop];
-            [[NURESTPushCenter defaultCenter] setURL:anURL];
-            [[NURESTPushCenter defaultCenter] start];
-        }
-    }
-    else
-    {
-        [[TNCNACommunicator defaultCNACommunicator] setBaseURL:nil];
-        [[NURESTPushCenter defaultCenter] stop];
-        [[NURESTPushCenter defaultCenter] setURL:nil];
-    }
+    [[TNCNACommunicator defaultCNACommunicator] setBaseURL:anURL];
+    [[TNCNACommunicator defaultCNACommunicator] fetchMe];
 }
 
 - (void)setAuthenticated:(BOOL)isAuth
 {
-    [self showMaskView:!isAuth]
+    [self flushUI];
+    [self showMaskView:!isAuth];
+
+    if (isAuth)
+    {
+        if ([self currentEntityHasPermission:@"nuagenetwork_get"])
+            [self getHypervisorNuages];
+    }
 }
 
 

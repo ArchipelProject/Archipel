@@ -285,7 +285,7 @@
 
         for (var j = 0; j < entities.length; j++)
         {
-            if (entityType == @"domain" || entityType == "zone")
+            if ([[@"domain", @"domaintemplate", @"zone", @"zonetemplate"] containsObject:entityType])
             {
                 [[TNCNACommunicator defaultCNACommunicator] fetchDomainsAndCallSelector:@selector(_didFetchDomains:) ofObject:self];
                 break;
@@ -384,6 +384,11 @@
 
     [mainPopover makeFirstResponder:fieldName];
     [mainPopover setDefaultButton:buttonOK];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_didReceiveCNAPush:)
+                                                 name:NURESTPushCenterPushReceived
+                                               object:[NURESTPushCenter defaultCenter]];
 }
 
 /*! hide the main window
@@ -392,6 +397,10 @@
 - (IBAction)closeWindow:(id)sender
 {
     [mainPopover close];
+
+    [[CPNotificationCenter defaultCenter] removeObserver:self
+                                                 name:NURESTPushCenterPushReceived
+                                               object:[NURESTPushCenter defaultCenter]];
 }
 
 /*! Called when checkbox for inbound changed
