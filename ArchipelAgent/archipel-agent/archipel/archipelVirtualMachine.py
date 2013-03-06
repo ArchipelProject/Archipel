@@ -929,7 +929,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.log.info("Starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
         thread.start_new_thread(self.perform_threaded_cloning, (path, newxml, parentvm))
 
-    def migrate_step1(self, destination_jid):
+    def migrate(self, destination_jid):
         """
         Migrate a virtual machine from this host to another.
         This step check is virtual machine can be migrated.
@@ -943,19 +943,32 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             raise Exception('Virtual machine is already migrating.')
         if not self.definition:
             raise Exception('Virtual machine must be defined.')
-        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
-            raise Exception('Virtual machine must be running.')
+        if self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
+            raise Exception('Virtual machine is blocked.')
         if self.hypervisor.jid.getStripped() == destination_jid.getStripped():
             raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
+
+        if self.domain.info()[0] == libvirt.VIR_DOMAIN_SHUTOFF:
+            self.migrate_not_running(destination_jid)
+        else:
+            self.migrate_running_step1(destination_jid)
+
+    def migrate_running_step1(self, destination_jid):
+        """
+        This step asks for the destination_jid hypervisor what is his
+        libvirt uri.
+        """
 
         self.is_migrating = True
         migration_destination_jid = destination_jid
 
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=migration_destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "migrationinfo"})
-        self.xmppclient.SendAndCallForResponse(iq, self.migrate_step2)
+        xmpp.dispatcher.ID += 1
+        iq.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
+        self.xmppclient.SendAndCallForResponse(iq, self.migrate_running_step2)
 
-    def migrate_step2(self, conn, resp):
+    def migrate_running_step2(self, conn, resp):
         """
         Once received the remote hypervisor URI, start libvirt migration in a thread.
         """
@@ -978,9 +991,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.is_migrating = False
 
         self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
-        thread.start_new_thread(self.migrate_step3, (remote_hypervisor_uri, ))
+        thread.start_new_thread(self.migrate_running_step3, (remote_hypervisor_uri, ))
 
-    def migrate_step3(self, remote_hypervisor_uri):
+    def migrate_running_step3(self, remote_hypervisor_uri):
         """
         Perform the migration.
         """
@@ -999,6 +1012,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
             self.log.error("Can't migrate to %s because of : %s" % (remote_hypervisor_uri, str(ex)))
+
+    def migrate_not_running(self, remote_hypervisor_uri):
+        """
+        Migrate vm which is not running.
+        """
+        self.log.error("MIGRATION: migrate non running vm is not implemented")
 
     def free(self):
         """
@@ -1077,7 +1096,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         try:
             hyp_jid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("hypervisorjid"))
-            self.migrate_step1(hyp_jid)
+            self.migrate(hyp_jid)
             reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MIGRATE)
