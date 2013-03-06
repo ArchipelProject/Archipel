@@ -379,6 +379,12 @@ class TNArchipelEntity (object):
         else:
             self.log.warning("Trying to disconnect, but not connected. Ignoring.")
 
+    def reset_loop_status(self):
+        """
+        Reset the loop_status value to restart (used from callback when disconnect envent is raised)
+        """
+        self.loop_status=ARCHIPEL_XMPP_LOOP_RESTART
+
     ### Pubsub
 
     def recover_pubsubs(self, origin, user_info, arguments):
@@ -485,6 +491,7 @@ class TNArchipelEntity (object):
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.RegisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
         self.xmppclient.RegisterHandler('iq', self.process_ping_iq, typ="get", ns="urn:xmpp:ping")
+        self.xmppclient.RegisterDisconnectHandler(self.reset_loop_status)
         for plugin in self.plugins:
             self.log.info("PLUGIN: registering stanza handler for plugin %s" % plugin["info"]["identifier"])
             plugin["plugin"].register_handlers()
