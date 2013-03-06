@@ -497,6 +497,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             - manage
             - unmanage
             - setorginfo
+            - soft_alloc
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -508,7 +509,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         # temp fix to authorize migration
         # We should find a way to authorize
         # hypervisors to ask uri with another way
-        if not action in ('migrationinfo'):
+        if not action in ('migrationinfo', 'soft_alloc'):
             self.check_perm(conn, iq, action, -1)
 
         if action == "alloc":
@@ -533,6 +534,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = self.iq_unmanage(iq)
         elif action == "setorginfo":
             reply = self.iq_set_organization_info(iq)
+        elif action == "soft_alloc":
+            reply = self.iq_soft_alloc(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -853,13 +856,18 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         try:
             reply = iq.buildReply("result")
-            vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
-            name = iq.getTag("query").getTag("archipel").getAttr("name")
-            password = iq.getTag("query").getTag("archipel").getAttr("password")
+            domain = iq.getTag("query").getTag("archipel").getTag("domain")
+            vmjid = xmpp.JID(domain.getTag("description").getData().split("::::")[0])
+            password = domain.getTag("description").getData().split("::::")[1]
+            name = domain.getTag("name").getData()
 
-            self.soft_alloc(vmjid, name, password)
+            vm_thread = self.soft_alloc(vmjid, name, password, start=False)
+            vm = vm_thread.get_instance()
+            vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
+            vm_thread.start()
 
             self.push_change("hypervisor", "migrate")
+            self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid.getNode())
             self.shout("virtualmachine", "The virtual machine %s has been migrated from hypervisor %s" % (vmjid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SOFT_ALLOC)

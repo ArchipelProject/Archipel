@@ -949,7 +949,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
 
         if self.domain.info()[0] == libvirt.VIR_DOMAIN_SHUTOFF:
-            self.migrate_not_running(destination_jid)
+            self.migrate_not_running_step1(destination_jid)
         else:
             self.migrate_running_step1(destination_jid)
 
@@ -1013,11 +1013,31 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
             self.log.error("Can't migrate to %s because of : %s" % (remote_hypervisor_uri, str(ex)))
 
-    def migrate_not_running(self, remote_hypervisor_uri):
+    def migrate_not_running_step1(self, destination_jid):
         """
         Migrate vm which is not running.
         """
-        self.log.error("MIGRATION: migrate non running vm is not implemented")
+
+        iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=destination_jid)
+        iq.getTag("query").addChild(name="archipel", attrs={"action": "soft_alloc"})
+        iq.getTag("query").getTag("archipel").addChild(node=self.xmldesc(mask_description=False))
+        xmpp.dispatcher.ID += 1
+        iq.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
+        self.xmppclient.SendAndCallForResponse(iq, self.migrate_not_running_step2)
+
+    def migrate_not_running_step2(self, conn, resp):
+        """
+        After vm thread has been started and vm has been defined remotely,
+        free locally.
+        """
+        if resp.getType() == "error":
+            self.shout("migration", "Cannot define vm on remote hypervisor")
+            self.log.error("MIGRATION: cannot define vm on remote hypervisor: reply : %s" % resp)
+            return
+        else:
+            self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", self.uuid)
+            self.log.info("MIGRATION: migration is a SUCCESS")
+            self.hypervisor.soft_free(self.uuid)
 
     def free(self):
         """
