@@ -620,7 +620,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInterfaces reloadData];
 
     [self checkIfRunning];
-    [self enableGUI:([_entity XMPPShow] == TNStropheContactStatusBusy)];
 
     return YES;
 }
@@ -1295,9 +1294,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [checkboxEnableUSB setNeedsDisplay:YES];
     [checkboxNestedVirtualization setNeedsDisplay:YES];
     [checkboxPAE setNeedsDisplay:YES];
-
-    if (shouldEnableGUI)
-        [self buildGUIAccordingToCurrentGuest];
 
     [self handleDefinitionEdition:NO];
 
@@ -2237,6 +2233,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)getCapabilities
 {
+    [self enableGUI:NO];
+
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
@@ -2251,8 +2249,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (BOOL)_didGetXMLCapabilities:(TNStropheStanza)aStanza
 {
-    [self enableGUI:NO];
-
     if ([aStanza type] == @"result")
     {
         [buttonGuests removeAllItems];
@@ -2390,6 +2386,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
 
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
+    [self buildGUIAccordingToCurrentGuest];
 
     [self selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
 
@@ -2524,7 +2521,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     // HOST BOOTLOADER
     [fieldBootloader setStringValue:[_libvirtDomain bootloader]];
     [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs]];
-
 
     // BLOCK IO TUNING
     if ([[_libvirtDomain blkiotune] weight])
