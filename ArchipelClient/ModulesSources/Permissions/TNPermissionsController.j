@@ -242,7 +242,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (void)setUIAccordingToPermissions
 {
-    // ATTENTION
+    // ATTENTION -- ? what??
     // if (![self currentEntityHasPermission:@"permission_get"])
     //     [self changeCurrentUser:nil];
 
@@ -409,10 +409,13 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 {
     if ([currentTable numberOfSelectedRows] > 0)
     {
-        var object = [[currentTable dataSource] objectAtIndex:[currentTable selectedRow]];
+        var selectedObjects = [[currentTable dataSource] objectsAtIndexes:[currentTable selectedRowIndexes]];
 
         [viewTableContainer setHidden:NO];
         [labelNoUserSelected setHidden:YES];
+
+        var object = [selectedObjects firstObject];
+
         if ([object isKindOfClass:TNStropheContact])
             [self getUserPermissions:[[object JID] bare]];
         else
@@ -559,12 +562,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     var currentTable = ([tableUsers numberOfSelectedRows] > 0) ? tableUsers : tableRosterUsers,
         stanza = [TNStropheStanza iqWithType:@"set"],
         currentAction = TNArchipelTypePermissionsSetOwn,
-        permissionTarget = [[currentTable dataSource] objectAtIndex:[currentTable selectedRow]];
-
-    if ([permissionTarget isKindOfClass:TNStropheContact])
-        permissionTarget = [[permissionTarget JID] bare];
-    else
-        permissionTarget = [permissionTarget bare];
+        permissionTargets = [[currentTable dataSource] objectsAtIndexes:[currentTable selectedRowIndexes]];
 
     if ([self currentEntityHasPermission:@"permission_set"])
         currentAction = TNArchipelTypePermissionsSet
@@ -573,18 +571,23 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [stanza addChildWithName:@"archipel" andAttributes:{
         @"action": currentAction}];
 
-
     for (var i = 0; i < [_datasourcePermissions count]; i++)
     {
         var perm = [_datasourcePermissions objectAtIndex:i];
 
-        [stanza addChildWithName:@"permission" andAttributes:{
-            @"permission_target": permissionTarget,
-            @"permission_type": @"user",
-            @"permission_name": [perm name],
-            @"permission_value": [perm state]
-        }];
-        [stanza up];
+        for (var j = 0; j < [permissionTargets count]; j++)
+        {
+            var target = [permissionTargets objectAtIndex:j];
+
+            [stanza addChildWithName:@"permission" andAttributes:{
+                    @"permission_target": [target isKindOfClass:TNStropheContact] ? [[target JID] bare] : [target bare],
+                    @"permission_type": @"user",
+                    @"permission_name": [perm name],
+                    @"permission_value": [perm state]
+                }];
+
+            [stanza up];
+        }
     }
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didChangePermissionsState:) ofObject:self];

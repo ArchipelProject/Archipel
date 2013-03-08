@@ -110,6 +110,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPSlider                sliderMemory;
     @outlet CPTableView             tableHypervisors;
     @outlet CPTextField             fieldInfoConsumedCPU;
+    @outlet CPTextField             fieldTableHypervisorHidden;
     @outlet CPTextField             fieldInfoMem;
     @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldOOMAdjust;

@@ -1004,8 +1004,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         Will run the hypervisor to free virtual machine.
         """
-        self.is_freeing = True
+
         self.perform_hooks("HOOK_VM_FREE")
+        self.unregister_handlers()
+        self.is_freeing = True
         self.hypervisor.free(self.jid)
 
     def set_organization_info(self, organizationInfo, publish=True):

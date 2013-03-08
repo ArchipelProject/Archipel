@@ -136,7 +136,7 @@
     if (![[_table dataSource] containsObject:_characterDevice])
         [[_table dataSource] addObject:_characterDevice];
 
-    [_delegate handleDefinitionEdition:YES];
+    [_delegate setDefinitionEdited:YES];
     [_table reloadData];
     [mainPopover close];
     CPLog.debug("Generated character device XML is: " + [_characterDevice description]);

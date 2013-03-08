@@ -85,8 +85,9 @@
     if (![[_table dataSource] containsObject:_inputDevice])
         [[_table dataSource] addObject:_inputDevice];
 
-    [_delegate handleDefinitionEdition:YES];
+    [_delegate setDefinitionEdited:YES];
     [_table reloadData];
+
     [mainPopover close];
 }
 

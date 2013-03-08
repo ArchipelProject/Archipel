@@ -60,10 +60,6 @@
 	<string>You can only set one graphic device</string>
 	<key>You have made some changes in the virtual machine definition. Would you like save these changes?</key>
 	<string>You have made some changes in the virtual machine definition. Would you like save these changes?</string>
-	<key>You must select a drive</key>
-	<string>You must select a drive</string>
-	<key>You must select a network interface</key>
-	<string>You must select a network interface</string>
 	<key>You started the virtual machine, but you haven't save the current changes.</key>
 	<string>You started the virtual machine, but you haven't save the current changes.</string>
 	<key>Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.</key>

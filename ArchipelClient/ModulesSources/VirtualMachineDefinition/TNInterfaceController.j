@@ -303,12 +303,10 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
         [[_nic bandwidth] setOutbound:nil];
     }
 
-    // final
-    [_delegate handleDefinitionEdition:YES];
-
     if (![[_table dataSource] containsObject:_nic])
         [[_table dataSource] addObject:_nic];
 
+    [_delegate setDefinitionEdited:YES];
     [_table reloadData];
     [mainPopover close];
 }
