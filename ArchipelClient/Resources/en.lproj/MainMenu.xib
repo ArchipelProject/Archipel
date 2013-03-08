@@ -3286,8 +3286,8 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSButton" id="569852830">
 						<reference key="NSNextResponder" ref="257661349"/>
-						<int key="NSvFlags">297</int>
-						<string key="NSFrame">{{501, 4}, {40, 32}}</string>
+						<int key="NSvFlags">265</int>
+						<string key="NSFrame">{{501, -1}, {40, 32}}</string>
 						<reference key="NSSuperview" ref="257661349"/>
 						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -3310,7 +3310,7 @@
 					</object>
 					<object class="NSTokenField" id="723940869">
 						<reference key="NSNextResponder" ref="257661349"/>
-						<int key="NSvFlags">298</int>
+						<int key="NSvFlags">266</int>
 						<object class="NSMutableSet" key="NSDragTypes">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="NSArray" key="set.sortedObjects">
@@ -3318,7 +3318,7 @@
 								<string>NSStringPboardType</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{7, 10}, {492, 22}}</string>
+						<string key="NSFrame">{{7, 5}, {492, 22}}</string>
 						<reference key="NSSuperview" ref="257661349"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="569852830"/>
@@ -3345,7 +3345,7 @@
 						<int key="NSTokenFieldVersion">2</int>
 					</object>
 				</object>
-				<string key="NSFrameSize">{545, 42}</string>
+				<string key="NSFrameSize">{545, 33}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="723940869"/>
