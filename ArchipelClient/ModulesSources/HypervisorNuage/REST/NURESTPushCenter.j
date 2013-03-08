@@ -36,9 +36,10 @@ function _format_log_json(string)
 }
 
 
-NURESTPushCenterPushReceived        = @"NURESTPushCenterPushReceived";
-NURESTPushCenterServerUnreachable   = @"NURESTPushCenterServerUnreachable";
-NURESTPushCenterServerReachable     = @"NURESTPushCenterServerReachable";
+NURESTPushCenterPushReceived            = @"NURESTPushCenterPushReceived";
+NURESTPushCenterServerUnreachable       = @"NURESTPushCenterServerUnreachable";
+NURESTPushCenterServerReachable         = @"NURESTPushCenterServerReachable";
+NURESTPushCenterServerDefinitiveFailure = @"NURESTPushCenterServerDefinitiveFailure";
 
 NUPushEventTypeCreate = @"CREATE";
 NUPushEventTypeUpdate = @"UPDATE";
@@ -48,7 +49,7 @@ NUPushEventTypeGrant  = @"GRANT";
 
 var NURESTPushCenterDefault,
     NURESTPushCenterConnectionRetryDelay = 5000,
-    NURESTPushCenterConnectionMaxTrials = 10;
+    NURESTPushCenterConnectionMaxTrials = -1;
 
 _DEBUG_NUMBER_OF_RECEIVED_EVENTS_ = 0;
 _DEBUG_NUMBER_OF_RECEIVED_PUSH_SESSION_ = 0;
@@ -161,7 +162,7 @@ _DEBUG_NUMBER_OF_RECEIVED_PUSH_SESSION_ = 0;
 
         default:
             setTimeout(function(){
-                if (_currentConnectionTrialNumber < NURESTPushCenterConnectionMaxTrials)
+                if (NURESTPushCenterConnectionMaxTrials == -1 || (_currentConnectionTrialNumber < NURESTPushCenterConnectionMaxTrials))
                 {
                     CPLog.warn("PUSH CENTER: Trying to reconnect... (retry #%@ / %@)", _currentConnectionTrialNumber, NURESTPushCenterConnectionMaxTrials);
                     [self _waitUntilServerIsBack];
@@ -169,7 +170,9 @@ _DEBUG_NUMBER_OF_RECEIVED_PUSH_SESSION_ = 0;
                 else
                 {
                     CPLog.error("PUSH CENTER: Maximum number of retry reached. logging out");
-                    [[CPApp delegate] logOut:nil];
+                    [[CPNotificationCenter defaultCenter] postNotificationName:NURESTPushCenterServerDefinitiveFailure
+                                                                        object:self
+                                                                      userInfo:nil];
                 }
             }, NURESTPushCenterConnectionRetryDelay);
             break;
