@@ -305,8 +305,9 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
 - (void)_initCNACommunicatorWithURLString:(CPString)aBaseURLString
 {
-    var baseURL = [CPURL URLWithString:aBaseURLString[aBaseURLString.lenght - 1] != @"/" ? aBaseURLString + @"/" : aBaseURLString],
-        anURL = [CPURL URLWithString:@"cna-rest/rest/cloudMgmt/v1_0/" relativeToURL:baseURL];
+    var APIEndpoint = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"RESTServerBaseURLResource"],
+        baseURL = [CPURL URLWithString:aBaseURLString[aBaseURLString.lenght - 1] != @"/" ? aBaseURLString + @"/" : aBaseURLString],
+        anURL = [CPURL URLWithString:APIEndpoint relativeToURL:baseURL];
 
     [[TNCNACommunicator defaultCNACommunicator] setBaseURL:anURL];
     [[TNCNACommunicator defaultCNACommunicator] fetchMe];
