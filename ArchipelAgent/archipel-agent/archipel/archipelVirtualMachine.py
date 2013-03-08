@@ -678,15 +678,24 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             return (data, size)
         return (None, (0, 0))
 
-    def cputime_sampling_timer(self,Interval):
+    def cputime_sampling_timer(self, interval):
         """
         Create a threaded timer to take timestamp,cputime samples from actual domain
         """
-        Timer(Interval, self.cputime_sampling_timer, [Interval]).start()
-        if self.domain and not self.is_freeing:
-            self.cputime_samples.insert(0, (time.time(), self.domain.info()[4]))
-            if len(self.cputime_samples) > 2:
-                self.cputime_samples.pop()
+        if self.domain and not self.is_freeing and not self.is_migrating:
+            try:
+                self.cputime_samples.insert(0, (time.time(), self.domain.info()[4]))
+                if len(self.cputime_samples) > 2:
+                    self.cputime_samples.pop()
+            except Exception as ex:
+                # @TODO: I'm sure there is a better way to do this.
+                # First, this thing should be only running when the VM is running
+                # instead of trying for nothing is the VM is not defined and running.
+                self.log.warning("It seems the VM is gone, certainly due to migration. Stopping cpu usage collector.")
+                return
+
+        if not self.is_migrating: # for some reason this is not working...
+            Timer(interval, self.cputime_sampling_timer, [interval]).start()
 
     def compute_cpu_usage(self):
         """
@@ -1017,7 +1026,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         Migrate vm which is not running.
         """
-
+        self.is_migrating = True
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "soft_alloc"})
         iq.getTag("query").getTag("archipel").addChild(node=self.xmldesc(mask_description=False))
@@ -1031,6 +1040,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         free locally.
         """
         if resp.getType() == "error":
+            self.is_migrating = False
             self.shout("migration", "Cannot define vm on remote hypervisor")
             self.log.error("MIGRATION: cannot define vm on remote hypervisor: reply : %s" % resp)
             return
