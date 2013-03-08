@@ -368,9 +368,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus" specialCondition:isOnline];
     [self setControl:buttonKill enabledAccordingToPermission:@"free"];
     [self setControl:buttonPark enabledAccordingToPermission:@"vmparking_park"];
-
-    [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"])];
-    [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"])];
+    [self setControl:_migrateButton enabledAccordingToPermission:@"migrate"];
 
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarPlay enabledAccordingToPermission:@"create"];
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarStop enabledAccordingToPermission:@"shutdown"];
@@ -800,7 +798,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [fieldInfoMem setTextColor:[CPColor blackColor]];
     [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
-    [sliderMemory setToolTip:@"Adjust live memory (" + Math.round([sliderMemory intValue]/[sliderMemory maxValue]*100) + "%)"];
+    [sliderMemory setToolTip:@"Adjust live memory (" + Math.round([sliderMemory intValue] / [sliderMemory maxValue] * 100) + "%)"];
     [fieldInfoConsumedCPU setStringValue:cpuPrct + @" %"];
 
     [stepperCPU setDoubleValue:[nvCPUs intValue]];
@@ -831,12 +829,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
                                            selector:@selector(getThumbnailScreenshot:)
                                            userInfo:nil
                                             repeats:NO];
-        }
-
-        if ([self currentEntityHasPermission:@"migrate"])
-        {
-            [viewTableHypervisorsContainer setHidden:NO];
-            [filterHypervisors setHidden:NO];
         }
     }
     else
@@ -1394,6 +1386,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)migrate
 {
+    if (![self currentEntityHasPermission:@"migrate"])
+        return;
+
     if ([tableHypervisors numberOfSelectedRows] != 1)
         return;
 
