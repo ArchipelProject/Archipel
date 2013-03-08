@@ -355,10 +355,17 @@ var TNConnectionControllerForceResource,
 */
 - (void)onStropheDisconnecting:(TNStropheIMClient)aStropheClient
 {
-    [imageViewSpinning setHidden:NO];
-    [labelMessage setStringValue:CPLocalizedString(@"disconnecting", @"disconnecting")];
-
-    CPLog.info(@"XMPP is disconnecting");
+    var currentConnectionStatus = [[aStropheClient connection] currentStatus];
+    if (currentConnectionStatus && currentConnectionStatus != Strophe.Status.CONNECTED)
+    {
+        [self onStropheDisconnected:aStropheClient];
+    }
+    else
+    {
+        [imageViewSpinning setHidden:NO];
+        [labelMessage setStringValue:CPLocalizedString(@"disconnecting", @"disconnecting")];
+        CPLog.info(@"XMPP is disconnecting");
+    }
 }
 
 /*! delegate of TNStropheIMClient

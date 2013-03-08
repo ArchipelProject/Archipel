@@ -141,11 +141,11 @@
         <key>major</key>
         <integer>0</integer>
         <key>minor</key>
-        <integer>5</integer>
+        <integer>6</integer>
         <key>revision</key>
         <integer>0</integer>
         <key>codeName</key>
-        <string>Moon</string>
+        <string>Apophis</string>
     </dict>
 
 </dict>

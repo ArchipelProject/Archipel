@@ -175,9 +175,9 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         if not os.path.exists(self.configuration.get("VMCASTING", "own_vmcast_path")):
             os.makedirs(self.configuration.get("VMCASTING", "own_vmcast_path"))
         self.entity.log.info("TNHypervisorRepoManager: opening vmcasting database file %s" % self.database_path)
-        self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.configuration.get("VMCASTING", "own_vmcast_name").replace("$HOSTAME", self.entity.resource),
+        self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.configuration.get("VMCASTING", "own_vmcast_name").replace("$HOSTNAME", self.entity.resource),
                                                         self.configuration.get("VMCASTING", "own_vmcast_uuid"),
-                                                        self.configuration.get("VMCASTING", "own_vmcast_description").replace("$HOSTAME", self.entity.resource),
+                                                        self.configuration.get("VMCASTING", "own_vmcast_description").replace("$HOSTNAME", self.entity.resource),
                                                         self.configuration.get("VMCASTING", "own_vmcast_lang"),
                                                         self.configuration.get("VMCASTING", "own_vmcast_url"),
                                                         self.configuration.get("VMCASTING", "own_vmcast_path"))

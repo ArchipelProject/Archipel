@@ -85,12 +85,6 @@
 /* You have made some changes in the virtual machine definition. Would you like save these changes? */
 "You have made some changes in the virtual machine definition. Would you like save these changes?" = "You have made some changes in the virtual machine definition. Would you like save these changes?";
 
-/* You must select a drive */
-"You must select a drive" = "You must select a drive";
-
-/* You must select a network interface */
-"You must select a network interface" = "You must select a network interface";
-
 /* You started the virtual machine, but you haven't save the current changes. */
 "You started the virtual machine, but you haven't save the current changes." = "You started the virtual machine, but you haven't save the current changes.";
 

@@ -29,7 +29,7 @@
 /* Class = "NSTextFieldCell"; title = "Configure basics behaviours of the virtual machine"; ObjectID = "15"; */
 "15.title" = "Configure basics behaviours of the virtual machine";
 
-/* Class = "NSTextFieldCell"; title = "Memory"; ObjectID = "17"; */
+/* Class = "NSTextFieldCell"; title = "Memory (MB)"; ObjectID = "17"; */
 "17.title" = "Memory:";
 
 /* Class = "NSTextFieldCell"; title = "Virtual CPUs"; ObjectID = "19"; */
@@ -46,9 +46,6 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "Memory"; ObjectID = "24"; */
 "24.placeholderString" = "1024";
-
-/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "27"; */
-"27.title" = "MB";
 
 /* Class = "NSTextFieldCell"; title = "VNC password"; ObjectID = "40"; */
 "40.title" = "VNC password:";
@@ -686,7 +683,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Swap Hard"; ObjectID = "896"; */
 "896.placeholderString" = "1024";
 
-/* Class = "NSTextFieldCell"; title = "Swap hard limit"; ObjectID = "897"; */
+/* Class = "NSTextFieldCell"; title = "Swap limit"; ObjectID = "897"; */
 "897.title" = "Swap hard limit:";
 
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "898"; */
@@ -713,7 +710,7 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1116"; */
 "1116.title" = "Text Cell";
 
-/* Class = "NSTextFieldCell"; title = "Set the input devices you want for this virtual machine"; ObjectID = "1119"; */
+/* Class = "NSTextFieldCell"; title = "Set the input devices for this virtual machine"; ObjectID = "1119"; */
 "1119.title" = "Set the input devices you want for this virtual machine";
 
 /* Class = "NSTextFieldCell"; title = "Input devices"; ObjectID = "1120"; */
@@ -779,7 +776,7 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1222"; */
 "1222.title" = "Text Cell";
 
-/* Class = "NSTextFieldCell"; title = "Set the graphic devices you want for this virtual machine"; ObjectID = "1223"; */
+/* Class = "NSTextFieldCell"; title = "Set the graphic devices for this virtual machine"; ObjectID = "1223"; */
 "1223.title" = "Set the graphic devices you want for this virtual machine";
 
 /* Class = "NSTextFieldCell"; title = "Graphic devices"; ObjectID = "1224"; */
@@ -907,9 +904,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1438"; */
 "1438.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "To edit definition, stop the virtual machine"; ObjectID = "1442"; */
-"1442.title" = "To edit definition, stop the virtual machine";
 
 /* Class = "NSButtonCell"; title = "Transient"; ObjectID = "1446"; */
 "1446.title" = "Transient";
@@ -1268,7 +1262,7 @@
 /* Class = "NSTextFieldCell"; title = "Kernel path"; ObjectID = "1884"; */
 "1884.title" = "Kernel path:";
 
-/* Class = "NSTextFieldCell"; title = "You can configure the direct kernel boot informations."; ObjectID = "1885"; */
+/* Class = "NSTextFieldCell"; title = "You can configure the direct kernel boot infos."; ObjectID = "1885"; */
 "1885.title" = "You can configure the direct kernel boot informations.";
 
 /* Class = "NSTextFieldCell"; title = "Direct kernel boot"; ObjectID = "1886"; */
@@ -1292,7 +1286,7 @@
 /* Class = "NSTextFieldCell"; title = "Arguments"; ObjectID = "1919"; */
 "1919.title" = "Arguments";
 
-/* Class = "NSTextFieldCell"; title = "You can configure the host bootl oader informations."; ObjectID = "1920"; */
+/* Class = "NSTextFieldCell"; title = "You can configure the host bootl oader infos."; ObjectID = "1920"; */
 "1920.title" = "You can configure the host bootl oader informations.";
 
 /* Class = "NSTextFieldCell"; title = "Host boot loader"; ObjectID = "1921"; */

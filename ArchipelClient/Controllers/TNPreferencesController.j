@@ -98,6 +98,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     _mainWindow = [[CPPanel alloc] initWithContentRect:CGRectMake(0.0, 0.0, 700.0, 543.0) styleMask:CPDocModalWindowMask];
     [_mainWindow setContentView:viewContentWindowPreferences];
 
+    //@TODO: this is a temp fix to work around Cappuccino bug. just remove that when fixed
+    [viewContentWindowPreferences setAutoresizingMask:CPViewNotSizable];
+
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
         scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
         moduleViewFrame = [viewPreferencesGeneral frame];
@@ -485,6 +488,11 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     newFrame.size.height += 100;
 
     [_mainWindow setFrame:newFrame display:NO animate:YES];
+
+    //@TODO: this is a temp fix to work around Cappuccino bug. just remove that when fixed
+    newFrame.origin.x = 0;
+    newFrame.origin.y = 0;
+    [viewContentWindowPreferences setFrame:newFrame];
 }
 
 /*! CPWindow modal end delegate
