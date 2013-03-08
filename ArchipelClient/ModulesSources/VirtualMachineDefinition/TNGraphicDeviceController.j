@@ -99,7 +99,7 @@
     if (![[_table dataSource] containsObject:_graphicDevice])
         [[_table dataSource] addObject:_graphicDevice];
 
-    [_delegate handleDefinitionEdition:YES];
+    [_delegate setDefinitionEdited:YES];
     [_table reloadData];
     [mainPopover close];
 }

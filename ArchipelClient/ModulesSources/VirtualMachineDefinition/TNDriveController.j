@@ -217,9 +217,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if (![[_table dataSource] containsObject:_drive])
         [[_table dataSource] addObject:_drive];
 
+    [_delegate setDefinitionEdited:YES];
     [_table reloadData];
 
-    [_delegate handleDefinitionEdition:YES];
     [mainPopover close];
 }
 
