@@ -5,7 +5,7 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "18"; */
 "18.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "You can move virtual machine to another hypervisor."; ObjectID = "23"; */
+/* Class = "NSTextFieldCell"; title = "You can move VM to another hypervisor."; ObjectID = "23"; */
 "23.title" = "You can move virtual machine to another hypervisor.";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "24"; */
@@ -65,17 +65,14 @@
 /* Class = "NSSegmentedControl"; ibShadowedToolTip = "Controls the VM"; ObjectID = "59"; */
 "59.ibShadowedToolTip" = "Controls the VM";
 
-/* Class = "NSTextFieldCell"; title = "Live migration"; ObjectID = "62"; */
+/* Class = "NSTextFieldCell"; title = "Migration"; ObjectID = "62"; */
 "62.title" = "Live migration";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "64"; */
 "64.title" = "...";
 
-/* Class = "NSTextFieldCell"; title = "Advanced controls"; ObjectID = "71"; */
+/* Class = "NSTextFieldCell"; title = "Dangerous controls"; ObjectID = "71"; */
 "71.title" = "Advanced controls";
-
-/* Class = "NSTextFieldCell"; title = "These advanced commands can affect the availability of the virtual machine."; ObjectID = "73"; */
-"73.title" = "These advanced commands can affect the availability of the virtual machine.";
 
 /* Class = "NSTextFieldCell"; title = "Virtual machine controls preferences"; ObjectID = "96"; */
 "96.title" = "Virtual machine controls preferences";
@@ -89,14 +86,11 @@
 /* Class = "NSTextFieldCell"; title = "You first need to define it using the \"definition\" tab."; ObjectID = "134"; */
 "134.title" = "You first need to define it using the \"definition\" tab.";
 
-/* Class = "NSButton"; ibShadowedToolTip = "Completely destroy, undefine, and remove data of the virtual machine"; ObjectID = "138"; */
+/* Class = "NSButton"; ibShadowedToolTip = "Completely destroy, undefine, and remove data of the virtual machine.\n\nThere is no coming back!"; ObjectID = "138"; */
 "138.ibShadowedToolTip" = "Completely destroy, undefine, and remove data of the virtual machine";
 
 /* Class = "NSButtonCell"; title = "Kill"; ObjectID = "139"; */
 "139.title" = "Kill";
-
-/* Class = "NSTextFieldCell"; title = "To enable live migration, you must start the virtual machine."; ObjectID = "143"; */
-"143.title" = "To enable live migration, you must start the virtual machine.";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling new screenshot"; ObjectID = "156"; */
 "156.ibShadowedToolTip" = "Delay before polling new screenshot";
@@ -145,4 +139,7 @@
 
 /* Class = "NSTextFieldCell"; title = "CPU Usage refresh time"; ObjectID = "220"; */
 "220.title" = "CPU Usage refresh time";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "227"; */
+"227.title" = "Box";
 

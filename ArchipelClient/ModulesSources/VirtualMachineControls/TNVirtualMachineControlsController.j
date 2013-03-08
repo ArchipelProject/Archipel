@@ -110,6 +110,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPSlider                sliderMemory;
     @outlet CPTableView             tableHypervisors;
     @outlet CPTextField             fieldInfoConsumedCPU;
+    @outlet CPTextField             fieldTableHypervisorHidden;
     @outlet CPTextField             fieldInfoMem;
     @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldOOMAdjust;
@@ -285,8 +286,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [tableHypervisors setDelegate:nil];
     [tableHypervisors setDelegate:self];
 
-    [viewTableHypervisorsContainer setHidden:YES];
-    [filterHypervisors setHidden:YES];
     [switchAutoStart setEnabled:NO];
     [switchAutoStart setOn:NO animated:YES sendAction:NO];
     [sliderMemory setEnabled:NO];
@@ -369,9 +368,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus" specialCondition:isOnline];
     [self setControl:buttonKill enabledAccordingToPermission:@"free"];
     [self setControl:buttonPark enabledAccordingToPermission:@"vmparking_park"];
-
-    [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
-    [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
+    [self setControl:_migrateButton enabledAccordingToPermission:@"migrate"];
 
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarPlay enabledAccordingToPermission:@"create"];
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarStop enabledAccordingToPermission:@"shutdown"];
@@ -801,7 +798,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [fieldInfoMem setTextColor:[CPColor blackColor]];
     [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
-    [sliderMemory setToolTip:@"Adjust live memory (" + Math.round([sliderMemory intValue]/[sliderMemory maxValue]*100) + "%)"];
+    [sliderMemory setToolTip:@"Adjust live memory (" + Math.round([sliderMemory intValue] / [sliderMemory maxValue] * 100) + "%)"];
     [fieldInfoConsumedCPU setStringValue:cpuPrct + @" %"];
 
     [stepperCPU setDoubleValue:[nvCPUs intValue]];
@@ -832,12 +829,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
                                            selector:@selector(getThumbnailScreenshot:)
                                            userInfo:nil
                                             repeats:NO];
-        }
-
-        if ([self currentEntityHasPermission:@"migrate"])
-        {
-            [viewTableHypervisorsContainer setHidden:NO];
-            [filterHypervisors setHidden:NO];
         }
     }
     else
@@ -1395,6 +1386,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)migrate
 {
+    if (![self currentEntityHasPermission:@"migrate"])
+        return;
+
     if ([tableHypervisors numberOfSelectedRows] != 1)
         return;
 
