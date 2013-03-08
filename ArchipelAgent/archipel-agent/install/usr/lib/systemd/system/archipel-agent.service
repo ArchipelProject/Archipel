@@ -1,0 +1,12 @@
+[Unit]
+Description=Archipel Agent
+Requires=libvirtd.service
+After=libvirtd.service
+
+[Service]
+ExecStart=/usr/bin/runarchipel --config=/etc/archipel/archipel.conf
+Type=forking
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
