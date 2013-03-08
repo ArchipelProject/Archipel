@@ -308,7 +308,7 @@
         [entryStatusIcon bind:@"image" toObject:_entity withKeyPath:@"statusIcon" options:nil];
         [entryName bind:@"objectValue" toObject:_entity withKeyPath:@"nickname" options:nil];
         [entryDomain bind:@"objectValue" toObject:_entity withKeyPath:@"JID.domain" options:nil];
-        [entryResource bind:@"objectValue" toObject:_entity withKeyPath:@"resources" options:nil];
+        [entryResource bind:@"objectValue" toObject:_entity withKeyPath:@"JID.resource" options:nil];
         [entryStatus bind:@"objectValue" toObject:_entity withKeyPath:@"XMPPStatus" options:nil];
         [entryNode bind:@"objectValue" toObject:_entity withKeyPath:@"JID.node" options:nil];
 
