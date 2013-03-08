@@ -180,7 +180,7 @@
 "748.title" = "Zone name";
 
 /* Class = "NSTextFieldCell"; placeholderString = "https://api.cna.com/"; ObjectID = "772"; */
-"772.placeholderString" = "https://api.cna.com/";
+"772.placeholderString" = "https://api.nuagenetworks.net/";
 
 /* Class = "NSTextFieldCell"; placeholderString = "primalmotion"; ObjectID = "773"; */
 "773.placeholderString" = "primalmotion";

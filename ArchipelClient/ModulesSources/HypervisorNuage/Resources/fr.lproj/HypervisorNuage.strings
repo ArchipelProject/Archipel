@@ -179,8 +179,8 @@
 /* Class = "NSTextFieldCell"; title = "Zone name"; ObjectID = "748"; */
 "748.title" = "Zone name";
 
-/* Class = "NSTextFieldCell"; placeholderString = "https://api.cna.com/"; ObjectID = "772"; */
-"772.placeholderString" = "http://cna.com/cna-rest/rest/CloudMgmt/";
+/* Class = "NSTextFieldCell"; placeholderString = "https://api.nuagenetworks.net/"; ObjectID = "772"; */
+"772.placeholderString" = "http://nuagenetworks.net/rest/nuage/";
 
 /* Class = "NSTextFieldCell"; placeholderString = "primalmotion"; ObjectID = "773"; */
 "773.placeholderString" = "joesmith";
