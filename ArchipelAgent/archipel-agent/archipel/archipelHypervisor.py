@@ -631,10 +631,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param password: the password of the migrated VM to alloc
         """
         uuid = jid.getNode()
+
+        jid.setResource(self.jid.getNode().lower())
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
         vm_thread = self.create_threaded_vm(jid, password, name , organizationInfo)
         vm = vm_thread.get_instance()
-        vm.resource = self.jid.getNode().lower();
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
         self.database.commit()
