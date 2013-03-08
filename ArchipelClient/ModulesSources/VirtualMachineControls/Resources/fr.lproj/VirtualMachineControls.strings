@@ -65,7 +65,7 @@
 /* Class = "NSSegmentedControl"; ibShadowedToolTip = "Controls the VM"; ObjectID = "59"; */
 "59.ibShadowedToolTip" = "Controls the VM";
 
-/* Class = "NSTextFieldCell"; title = "Live migration"; ObjectID = "62"; */
+/* Class = "NSTextFieldCell"; title = "Migration"; ObjectID = "62"; */
 "62.title" = "Live migration";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "64"; */
@@ -91,9 +91,6 @@
 
 /* Class = "NSButtonCell"; title = "Kill"; ObjectID = "139"; */
 "139.title" = "Kill";
-
-/* Class = "NSTextFieldCell"; title = "To enable live migration VM must be started"; ObjectID = "143"; */
-"143.title" = "To enable live migration, you must start the virtual machine.";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling new screenshot"; ObjectID = "156"; */
 "156.ibShadowedToolTip" = "Delay before polling new screenshot";

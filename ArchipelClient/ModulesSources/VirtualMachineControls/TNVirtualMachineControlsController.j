@@ -286,8 +286,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [tableHypervisors setDelegate:nil];
     [tableHypervisors setDelegate:self];
 
-    [viewTableHypervisorsContainer setHidden:YES];
-    [filterHypervisors setHidden:YES];
     [switchAutoStart setEnabled:NO];
     [switchAutoStart setOn:NO animated:YES sendAction:NO];
     [sliderMemory setEnabled:NO];
@@ -371,8 +369,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:buttonKill enabledAccordingToPermission:@"free"];
     [self setControl:buttonPark enabledAccordingToPermission:@"vmparking_park"];
 
-    [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
-    [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
+    [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"])];
+    [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"])];
 
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarPlay enabledAccordingToPermission:@"create"];
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarStop enabledAccordingToPermission:@"shutdown"];

@@ -74,39 +74,6 @@
 										<int key="NSvFlags">274</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
-											<object class="NSTextField" id="810005415">
-												<reference key="NSNextResponder" ref="698090630"/>
-												<int key="NSvFlags">269</int>
-												<string key="NSFrame">{{16, 72}, {435, 38}}</string>
-												<reference key="NSSuperview" ref="698090630"/>
-												<reference key="NSNextKeyView" ref="911079387"/>
-												<bool key="NSEnabled">YES</bool>
-												<object class="NSTextFieldCell" key="NSCell" id="182903603">
-													<int key="NSCellFlags">68157504</int>
-													<int key="NSCellFlags2">138413056</int>
-													<string key="NSContents">To enable live migration, you must start the virtual machine.</string>
-													<object class="NSFont" key="NSSupport">
-														<string key="NSName">LucidaGrande-Bold</string>
-														<double key="NSSize">15</double>
-														<int key="NSfFlags">16</int>
-													</object>
-													<reference key="NSControlView" ref="810005415"/>
-													<object class="NSColor" key="NSBackgroundColor" id="977635433">
-														<int key="NSColorSpace">6</int>
-														<string key="NSCatalogName">System</string>
-														<string key="NSColorName">controlColor</string>
-														<object class="NSColor" key="NSColor" id="308882047">
-															<int key="NSColorSpace">3</int>
-															<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-														</object>
-													</object>
-													<object class="NSColor" key="NSTextColor">
-														<int key="NSColorSpace">2</int>
-														<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
-													</object>
-												</object>
-												<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-											</object>
 											<object class="NSTextField" id="842917504">
 												<reference key="NSNextResponder" ref="698090630"/>
 												<int key="NSvFlags">268</int>
@@ -124,7 +91,15 @@
 														<int key="NSfFlags">16</int>
 													</object>
 													<reference key="NSControlView" ref="842917504"/>
-													<reference key="NSBackgroundColor" ref="977635433"/>
+													<object class="NSColor" key="NSBackgroundColor" id="977635433">
+														<int key="NSColorSpace">6</int>
+														<string key="NSCatalogName">System</string>
+														<string key="NSColorName">controlColor</string>
+														<object class="NSColor" key="NSColor" id="308882047">
+															<int key="NSColorSpace">3</int>
+															<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+														</object>
+													</object>
 													<object class="NSColor" key="NSTextColor" id="96033734">
 														<int key="NSColorSpace">6</int>
 														<string key="NSCatalogName">System</string>
@@ -158,7 +133,7 @@
 																		<object class="NSMutableArray" key="NSSubviews">
 																			<bool key="EncodedWithXMLCoder">YES</bool>
 																		</object>
-																		<string key="NSFrameSize">{425, 118}</string>
+																		<string key="NSFrameSize">{419, 118}</string>
 																		<reference key="NSSuperview" ref="724696483"/>
 																		<reference key="NSNextKeyView" ref="186012459"/>
 																		<string key="NSReuseIdentifierKey">_NS:1197</string>
@@ -168,7 +143,7 @@
 																		<object class="NSTableHeaderView" key="NSHeaderView" id="666955799">
 																			<reference key="NSNextResponder" ref="186012459"/>
 																			<int key="NSvFlags">256</int>
-																			<string key="NSFrameSize">{425, 17}</string>
+																			<string key="NSFrameSize">{419, 17}</string>
 																			<reference key="NSSuperview" ref="186012459"/>
 																			<reference key="NSNextKeyView" ref="724696483"/>
 																			<string key="NSReuseIdentifierKey">_NS:1199</string>
@@ -222,7 +197,7 @@
 																			</object>
 																			<object class="NSTableColumn" id="1000632998">
 																				<string key="NSIdentifier">nickname</string>
-																				<double key="NSWidth">403</double>
+																				<double key="NSWidth">397</double>
 																				<double key="NSMinWidth">40</double>
 																				<double key="NSMaxWidth">99999</double>
 																				<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -288,7 +263,7 @@
 																		<int key="NSTableViewGroupRowStyle">1</int>
 																	</object>
 																</object>
-																<string key="NSFrame">{{0, 17}, {425, 118}}</string>
+																<string key="NSFrame">{{0, 17}, {419, 118}}</string>
 																<reference key="NSSuperview" ref="995159657"/>
 																<reference key="NSNextKeyView" ref="262603946"/>
 																<string key="NSReuseIdentifierKey">_NS:1195</string>
@@ -329,7 +304,7 @@
 																	<bool key="EncodedWithXMLCoder">YES</bool>
 																	<reference ref="666955799"/>
 																</object>
-																<string key="NSFrameSize">{425, 17}</string>
+																<string key="NSFrameSize">{419, 17}</string>
 																<reference key="NSSuperview" ref="995159657"/>
 																<reference key="NSNextKeyView" ref="666955799"/>
 																<string key="NSReuseIdentifierKey">_NS:1200</string>
@@ -338,7 +313,7 @@
 																<int key="NScvFlags">4</int>
 															</object>
 														</object>
-														<string key="NSFrame">{{0, 24}, {425, 135}}</string>
+														<string key="NSFrame">{{0, 24}, {419, 135}}</string>
 														<reference key="NSSuperview" ref="911079387"/>
 														<reference key="NSNextKeyView" ref="724696483"/>
 														<string key="NSReuseIdentifierKey">_NS:1193</string>
@@ -355,13 +330,13 @@
 													<object class="NSCustomView" id="597178269">
 														<reference key="NSNextResponder" ref="911079387"/>
 														<int key="NSvFlags">290</int>
-														<string key="NSFrameSize">{425, 26}</string>
+														<string key="NSFrameSize">{419, 26}</string>
 														<reference key="NSSuperview" ref="911079387"/>
 														<reference key="NSNextKeyView" ref="871356984"/>
 														<string key="NSClassName">CPButtonBar</string>
 													</object>
 												</object>
-												<string key="NSFrame">{{18, 12}, {425, 159}}</string>
+												<string key="NSFrame">{{18, 12}, {419, 159}}</string>
 												<reference key="NSSuperview" ref="698090630"/>
 												<reference key="NSNextKeyView" ref="995159657"/>
 												<string key="NSClassName">NSView</string>
@@ -371,7 +346,6 @@
 												<int key="NSvFlags">265</int>
 												<string key="NSFrame">{{285, 181}, {158, 22}}</string>
 												<reference key="NSSuperview" ref="698090630"/>
-												<reference key="NSNextKeyView" ref="810005415"/>
 												<bool key="NSEnabled">YES</bool>
 												<object class="NSSearchFieldCell" key="NSCell" id="1016342060">
 													<int key="NSCellFlags">342884416</int>
@@ -2337,7 +2311,6 @@ IHBhcmsuA</string>
 							<reference ref="842917504"/>
 							<reference ref="911079387"/>
 							<reference ref="321440825"/>
-							<reference ref="810005415"/>
 						</object>
 						<reference key="parent" ref="932508617"/>
 					</object>
@@ -2368,20 +2341,6 @@ IHBhcmsuA</string>
 							<reference ref="1016342060"/>
 						</object>
 						<reference key="parent" ref="450556798"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">142</int>
-						<reference key="object" ref="810005415"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="182903603"/>
-						</object>
-						<reference key="parent" ref="450556798"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">143</int>
-						<reference key="object" ref="182903603"/>
-						<reference key="parent" ref="810005415"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">69</int>
@@ -2497,8 +2456,6 @@ IHBhcmsuA</string>
 					<string>138.IBAttributePlaceholdersKey</string>
 					<string>138.IBPluginDependency</string>
 					<string>139.IBPluginDependency</string>
-					<string>142.IBPluginDependency</string>
-					<string>143.IBPluginDependency</string>
 					<string>155.IBPluginDependency</string>
 					<string>156.IBAttributePlaceholdersKey</string>
 					<string>156.IBPluginDependency</string>
@@ -2624,8 +2581,6 @@ IHBhcmsuA</string>
 							<string key="toolTip">Completely destroy, undefine, and remove data of the virtual machine</string>
 						</object>
 					</object>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3016,6 +2971,7 @@ IHBhcmsuA</string>
 							<string>fieldOOMScore</string>
 							<string>fieldPreferencesCpuUsageRefresh</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
+							<string>fieldTableHypervisorHidden</string>
 							<string>filterHypervisors</string>
 							<string>imageState</string>
 							<string>imageViewFullScreenshot</string>
@@ -3036,6 +2992,7 @@ IHBhcmsuA</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>CPCheckBox</string>
+							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
@@ -3073,6 +3030,7 @@ IHBhcmsuA</string>
 							<string>fieldOOMScore</string>
 							<string>fieldPreferencesCpuUsageRefresh</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
+							<string>fieldTableHypervisorHidden</string>
 							<string>filterHypervisors</string>
 							<string>imageState</string>
 							<string>imageViewFullScreenshot</string>
@@ -3140,6 +3098,10 @@ IHBhcmsuA</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldPreferencesScreenshotRefresh</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldTableHypervisorHidden</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
