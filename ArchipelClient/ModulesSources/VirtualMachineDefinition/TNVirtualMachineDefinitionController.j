@@ -1482,8 +1482,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSLoader setStringValue:[[_libvirtDomain OS] loader] || @""];
 
     // HOST BOOTLOADER
-    [fieldBootloader setStringValue:[_libvirtDomain bootloader]];
-    [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs]];
+    [fieldBootloader setStringValue:[_libvirtDomain bootloader] || @""];
+    [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs] || @""];
 
     // BLOCK IO TUNING
     [fieldBlockIOTuningWeight setIntValue:[[_libvirtDomain blkiotune] weight] || @""];
@@ -2291,6 +2291,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBoot:(id)aSender
 {
+    if ([aSender title] == [[_libvirtDomain OS] boot])
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setBoot:[aSender title]];
@@ -2303,6 +2306,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSKernel:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] kernel] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setKernel:[aSender stringValue]];
@@ -2315,6 +2321,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSInitrd:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] initrd] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setInitrd:[aSender stringValue]];
@@ -2327,6 +2336,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSCommandLine:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] commandLine] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setCommandLine:[aSender stringValue]];
@@ -2339,6 +2351,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSLoader:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] loader] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setLoader:[aSender stringValue]];
@@ -2351,6 +2366,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBootloader:(id)aSender
 {
+    if ([aSender stringValue] == ([_libvirtDomain bootloader] || @""))
+        return;
+
     [_libvirtDomain setBootloader:[aSender stringValue]];
 
     _definitionEdited = YES;
@@ -2361,6 +2379,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBootloaderArgs:(id)aSender
 {
+    if ([aSender stringValue] == ([_libvirtDomain bootloaderArgs] || @""))
+        return;
+
     [_libvirtDomain setBootloaderArgs:[aSender stringValue]];
 
     _definitionEdited = YES;
@@ -2372,6 +2393,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOnPowerOff:(id)aSender
 {
+    if ([aSender title] == [_libvirtDomain onPowerOff])
+        return;
+
     [_libvirtDomain setOnPowerOff:[aSender title]];
 
     _definitionEdited = YES;
@@ -2382,6 +2406,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOnReboot:(id)aSender
 {
+    if ([aSender title] == [_libvirtDomain onReboot])
+        return;
+
     [_libvirtDomain setOnReboot:[aSender title]];
 
     _definitionEdited = YES;
@@ -2392,6 +2419,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOnCrash:(id)aSender
 {
+    if ([aSender title] == [_libvirtDomain onCrash])
+        return;
+
     [_libvirtDomain setOnCrash:[aSender title]];
 
     _definitionEdited = YES;
@@ -2543,6 +2573,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemory:(id)aSender
 {
+    if (([aSender intValue] * 1024) == [_libvirtDomain memory])
+        return;
+
     [_libvirtDomain setMemory:([aSender intValue] * 1024)];
     // we must set value of current memory too, for more info take a
     // look at https://github.com/ArchipelProject/Archipel/issues/591
@@ -2556,6 +2589,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVCPU:(id)aSender
 {
+    if ([aSender intValue] == [_libvirtDomain VCPU])
+        return;
+
     [_libvirtDomain setVCPU:[aSender intValue]];
 
     _definitionEdited = YES;
@@ -2566,6 +2602,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneSoftLimit:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] softLimit])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2584,6 +2623,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneHardLimit:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] hardLimit])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2602,6 +2644,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneGuarantee:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] minGuarantee])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2619,6 +2664,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneSwapHardLimit:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] swapHardLimit])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2637,6 +2685,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBlockIOTuningWeight:(id)aSender
 {
+    if ([aSender intValue] == [[_libvirtDomain blkiotune] weight])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain blkiotune])
