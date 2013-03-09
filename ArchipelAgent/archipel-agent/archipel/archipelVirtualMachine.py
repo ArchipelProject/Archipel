@@ -916,6 +916,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.log.warning("Virtual machine is already undefined.")
             return
         self.domain.undefine()
+        self.domain = None
         self.log.info("Virtual machine undefined.")
 
     def undefine_and_disconnect(self):
