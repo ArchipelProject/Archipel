@@ -1002,6 +1002,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives reloadData];
     [tableInputDevices reloadData];
     [tableGraphicsDevices reloadData];
+
+    [fieldOSKernel setStringValue:@""];
+    [fieldOSInitrd setStringValue:@""];
+    [fieldOSLoader setStringValue:@""];
+    [fieldBootloaderArgs setStringValue:@""];
+    [fieldOSCommandLine setStringValue:@""];
+    [fieldBootloader setStringValue:@""];
+    [fieldMemoryTuneSoftLimit setStringValue:@""];
+    [fieldMemoryTuneHardLimit setStringValue:@""];
+    [fieldMemoryTuneGuarantee setStringValue:@""];
+    [fieldMemoryTuneSwapHardLimit setStringValue:@""];
+    [fieldBlockIOTuningWeight setStringValue:@""];
 }
 
 /*! get the domain of the current guest with given type
@@ -1831,17 +1843,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (BOOL)didUndefineXML:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
-                                                         message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
-        _libvirtDomain = nil;
-        [self getXMLDesc];
-    }
-    else if ([aStanza type] == @"error")
+    if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
+        return NO;
     }
+
+
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+                                                     message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
+    _libvirtDomain = nil;
+    [self getXMLDesc];
 
     return NO;
 }
