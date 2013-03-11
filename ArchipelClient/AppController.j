@@ -1634,7 +1634,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         moduleLabel = [[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"] objectForKey:@"en"];
 
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [[viewLoading viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
+    [[viewLoading viewWithTag:1] setStringValue:moduleLabel];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
