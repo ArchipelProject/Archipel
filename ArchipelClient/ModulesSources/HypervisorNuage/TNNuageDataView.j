@@ -24,7 +24,8 @@
 
 @import "../../Views/TNBasicDataView.j"
 
-var TNNuageDataViewIcon;
+var TNNuageDataViewIcon,
+    TNNuageDataViewIconWhite;
 
 /*! @ingroup hypervisornetworks
     This class represent a network DataView
@@ -56,6 +57,7 @@ var TNNuageDataViewIcon;
     var bundle = [CPBundle bundleForClass:TNNuageDataView];
 
     TNNuageDataViewIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nuage.png"]]
+    TNNuageDataViewIconWhite = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nuage-white.png"]]
 }
 
 /*! Message used by CPOutlineView to set the value of the object
@@ -64,8 +66,6 @@ var TNNuageDataViewIcon;
 - (void)setObjectValue:(id)aNuage
 {
     _nuage = aNuage;
-
-    [imageIcon setImage:TNNuageDataViewIcon];
 
     [fieldName setStringValue:[_nuage name]];
     [fieldType setStringValue:[_nuage type] || @""];
@@ -102,6 +102,22 @@ var TNNuageDataViewIcon;
 }
 
 
+- (void)setThemeState:(int)aThemeState
+{
+    [super setThemeState:aThemeState];
+
+    if (aThemeState == CPThemeStateSelectedDataView)
+        [imageIcon setImage:TNNuageDataViewIconWhite];
+}
+
+- (void)unsetThemeState:(int)aThemeState
+{
+    [super unsetThemeState:aThemeState];
+
+    if (aThemeState == CPThemeStateSelectedDataView)
+        [imageIcon setImage:TNNuageDataViewIcon];
+}
+
 #pragma mark -
 #pragma mark CPCoding compliance
 
@@ -127,6 +143,8 @@ var TNNuageDataViewIcon;
 
         labelInLimit = [aCoder decodeObjectForKey:@"labelInLimit"];
         labelOutLimit = [aCoder decodeObjectForKey:@"labelOutLimit"];
+
+        [imageIcon setImage:TNNuageDataViewIcon];
     }
 
     return self;
