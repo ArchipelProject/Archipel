@@ -130,8 +130,6 @@
 	<string>Locale change</string>
 	<key>Log out</key>
 	<string>Log out</string>
-	<key>Logon</key>
-	<string>Logon</string>
 	<key>MB</key>
 	<string>MB</string>
 	<key>Make a donation</key>
@@ -142,6 +140,8 @@
 	<string>Navigation</string>
 	<key>Nevermind</key>
 	<string>Nevermind</string>
+	<key>Node only JID required</key>
+	<string>Node only JID required</string>
 	<key>Notifications</key>
 	<string>Notifications</string>
 	<key>OK</key>
