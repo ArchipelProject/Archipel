@@ -534,7 +534,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="219999202">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">268436480</int>
-									<string key="NSContents">You can configure the host bootl oader infos.</string>
+									<string key="NSContents">You can configure the host boot loader infos.</string>
 									<object class="NSFont" key="NSSupport" id="22">
 										<string key="NSName">LucidaGrande</string>
 										<double key="NSSize">9</double>
