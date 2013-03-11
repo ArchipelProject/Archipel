@@ -111,7 +111,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
     [[tableViewNuage tableColumnWithIdentifier:@"self"] setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
     [tableViewNuage setTarget:self];
     [tableViewNuage setDoubleAction:@selector(editNuage:)];
-    [tableViewNuage setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableViewNuage setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_datasourceNuages setTable:tableViewNuage];
     [_datasourceNuages setSearchableKeyPaths:[@"name", @"type"]];
