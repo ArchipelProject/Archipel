@@ -6,7 +6,7 @@
 "10.title" = "Manage Nuage Networks";
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
-"19.title" = "Name:";
+"19.title" = "Name";
 
 /* Class = "NSTextFieldCell"; title = "Nuage Network"; ObjectID = "21"; */
 "21.title" = "Nuage Network";
@@ -24,10 +24,10 @@
 "37.title" = "Item 3";
 
 /* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "39"; */
-"39.title" = "Type:";
+"39.title" = "Type";
 
 /* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "62"; */
-"62.title" = "Address:";
+"62.title" = "Address";
 
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "64"; */
 "64.placeholderString" = "auto";
@@ -36,7 +36,7 @@
 "67.placeholderString" = "auto";
 
 /* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
-"68.title" = "Netmask:";
+"68.title" = "Netmask";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "72"; */
 "72.title" = "Box";
@@ -51,7 +51,7 @@
 "206.title" = "Network name";
 
 /* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "210"; */
-"210.title" = "Address:";
+"210.title" = "Address";
 
 /* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "212"; */
 "212.title" = "x.x.x.x";
@@ -60,10 +60,10 @@
 "215.title" = "x.x.x.x";
 
 /* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "216"; */
-"216.title" = "Gateway:";
+"216.title" = "Gateway";
 
 /* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "232"; */
-"232.title" = "Netmask:";
+"232.title" = "Netmask";
 
 /* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "238"; */
 "238.title" = "x.x.x.x";
@@ -93,7 +93,7 @@
 "580.title" = "Average";
 
 /* Class = "NSTextFieldCell"; title = "Outbound:"; ObjectID = "581"; */
-"581.title" = "Outbound:";
+"581.title" = "Outbound";
 
 /* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "582"; */
 "582.placeholderString" = "100";
@@ -108,7 +108,7 @@
 "602.title" = "Message";
 
 /* Class = "NSTextFieldCell"; title = "In limit:"; ObjectID = "615"; */
-"615.title" = "In limit:";
+"615.title" = "In limit";
 
 /* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "616"; */
 "616.title" = "1000/1000/1000";
@@ -117,7 +117,7 @@
 "617.title" = "1000/1000/1000";
 
 /* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "618"; */
-"618.title" = "Out limit:";
+"618.title" = "Out limit";
 
 /* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "633"; */
 "633.title" = "Burst";
@@ -129,7 +129,7 @@
 "635.title" = "Average";
 
 /* Class = "NSTextFieldCell"; title = "Inbound:"; ObjectID = "636"; */
-"636.title" = "Inbound:";
+"636.title" = "Inbound";
 
 /* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "637"; */
 "637.placeholderString" = "100";
@@ -156,7 +156,7 @@
 "672.title" = "Manual edition of a network can be dangerous. Use with caution.";
 
 /* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "704"; */
-"704.title" = "Type:";
+"704.title" = "Type";
 
 /* Class = "NSTextFieldCell"; title = "IPV4"; ObjectID = "705"; */
 "705.title" = "IPV4";
@@ -165,7 +165,7 @@
 "712.placeholderString" = "auto";
 
 /* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "713"; */
-"713.title" = "Gateway:";
+"713.title" = "Gateway";
 
 /* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "745"; */
 "745.title" = "Domain";
@@ -179,7 +179,7 @@
 /* Class = "NSTextFieldCell"; title = "Zone name"; ObjectID = "748"; */
 "748.title" = "Zone name";
 
-/* Class = "NSTextFieldCell"; placeholderString = "https://api.cna.com/"; ObjectID = "772"; */
+/* Class = "NSTextFieldCell"; placeholderString = "https://api.nuagenetworks.net/"; ObjectID = "772"; */
 "772.placeholderString" = "https://api.nuagenetworks.net/";
 
 /* Class = "NSTextFieldCell"; placeholderString = "primalmotion"; ObjectID = "773"; */
@@ -192,16 +192,16 @@
 "776.title" = "You can configure preferences for the Nuage module.";
 
 /* Class = "NSTextFieldCell"; title = "CNA API URL:"; ObjectID = "777"; */
-"777.title" = "CNA API URL:";
+"777.title" = "CNA API URL";
 
 /* Class = "NSTextFieldCell"; title = "User name:"; ObjectID = "778"; */
-"778.title" = "User name:";
+"778.title" = "User name";
 
 /* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "779"; */
-"779.title" = "Password:";
+"779.title" = "Password";
 
 /* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "780"; */
-"780.title" = "Company:";
+"780.title" = "Company";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Alcatel-Lucent"; ObjectID = "785"; */
 "785.placeholderString" = "Alcatel-Lucent";
