@@ -144,6 +144,7 @@ var TNModuleStatusImageReady,
     _initialPermissionsReceived = [CPArray array];
     _registredSelectors         = [CPDictionary dictionary];
 
+    [[self view] applyShadow];
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 

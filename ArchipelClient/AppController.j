@@ -314,7 +314,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
-    _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0); -moz-linear-gradient(top, #2F2727, #1a82f7)";
+    _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0)";
+    _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(top, #2F2727, #1a82f7)";
+
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
