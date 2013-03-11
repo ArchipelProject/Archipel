@@ -277,6 +277,11 @@
     if (events.length <= 0)
         return;
 
+    [_dataSourceDomains removeAllObjects];
+    [tableViewDomains reloadData];
+    [_dataSourceZones removeAllObjects];
+    [tableViewZones reloadData];
+
     for (var i = 0; i < events.length; i++)
     {
         var eventType = events[i].type,
