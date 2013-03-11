@@ -101,7 +101,6 @@ TNArchipelEntityTypeGroup           = @"group";
 */
 TNArchipelEntityTypes               = nil;
 
-
 /*! @global
     @group TNArchipelAction
     notification send when item selection changes in roster
@@ -315,16 +314,17 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
-    _rosterOutlineView._DOMElement.style.WebkitTransition = "opacity 0.3s";
+    _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0); -moz-linear-gradient(top, #2F2727, #1a82f7)";
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
-    [_rosterOutlineView setBackgroundColor:[CPColor colorWithHexString:@"E0E4EA"]];
+    //[_rosterOutlineView setBackgroundColor:[CPColor colorWithHexString:@"E0E4EA"]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
     [_outlineScrollView setDelegate:_rosterOutlineView];
+
 
     /* left view */
     [leftView addSubview:_outlineScrollView];
