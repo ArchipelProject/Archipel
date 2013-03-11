@@ -228,7 +228,7 @@ var TNRosterDataViewContactImageUnknownUser,
 */
 - (id)_initTheme
 {
-    [name setTextColor:[CPColor colorWithHexString:@"707E8B"]];
+    [name setTextColor:[CPColor colorWithHexString:@"757F8C"]];
     [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     [name setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
