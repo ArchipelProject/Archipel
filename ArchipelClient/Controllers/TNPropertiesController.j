@@ -108,9 +108,10 @@
     _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
 
-    [mainSwipeView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
-    [viewVCard setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
-    [viewXMPPInfos setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
+    [viewVCard setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
+    [viewVCard applyShadow];
+    [viewXMPPInfos setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
+    [viewXMPPInfos applyShadow];
 
     [mainSwipeView setViews:[viewXMPPInfos, viewVCard]];
 
@@ -163,6 +164,7 @@
 
     [buttonViewXMPPInfosSwipe setTarget:mainSwipeView];
     [buttonViewXMPPInfosSwipe setBordered:NO];
+    [buttonViewXMPPInfosSwipe setButtonType:CPMomentaryChangeButton];
     [buttonViewXMPPInfosSwipe setAction:@selector(nextView:)];
     [buttonViewXMPPInfosSwipe setImage:imageArrowRight]; // this avoid the blinking..
     [buttonViewXMPPInfosSwipe setValue:imageArrowRight forThemeAttribute:@"image"];
@@ -170,6 +172,7 @@
 
     [buttonViewVCardSwipe setTarget:mainSwipeView];
     [buttonViewVCardSwipe setBordered:NO];
+    [buttonViewVCardSwipe setButtonType:CPMomentaryChangeButton];
     [buttonViewVCardSwipe setAction:@selector(nextView:)];
     [buttonViewVCardSwipe setImage:imageArrowLeft]; // this avoid the blinking..
     [buttonViewVCardSwipe setValue:imageArrowLeft forThemeAttribute:@"image"];

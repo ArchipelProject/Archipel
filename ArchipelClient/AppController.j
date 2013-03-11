@@ -320,10 +320,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
+    [_rosterOutlineView setBackgroundColor:[CPColor colorWithHexString:@"E0E4EA"]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
     [_outlineScrollView setDelegate:_rosterOutlineView];
 
