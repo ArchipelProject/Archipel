@@ -235,7 +235,8 @@ def test_xmlrpc_connection(jid, password):
     xmlrpc_port         = "4560"
     xmlrpc_user         = jid.getNode()
     xmlrpc_password     = password
-    xmlrpc_call         = "http://%s:%s@%s:%s/" % (xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
+    xmlrpc_prefix       = "https" if self.configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
+    xmlrpc_call         = "%s://%s:%s@%s:%s/" % (xmlrpc_prefix, xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
     xmlrpc_server       = xmlrpclib.ServerProxy(xmlrpc_call)
     try:
         answer = xmlrpc_server.registered_users({"host": xmlrpc_host})
@@ -252,7 +253,8 @@ def test_xmlrpc_modadminextra(jid, password):
     xmlrpc_port         = "4560"
     xmlrpc_user         = jid.getNode()
     xmlrpc_password     = password
-    xmlrpc_call         = "http://%s:%s@%s:%s/" % (xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
+    xmlrpc_prefix       = "https" if self.configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
+    xmlrpc_call         = "%s://%s:%s@%s:%s/" % (xmlrpc_prefix, xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
     xmlrpc_server       = xmlrpclib.ServerProxy(xmlrpc_call)
     try:
         answer = xmlrpc_server.srg_list({"host": xmlrpc_host})

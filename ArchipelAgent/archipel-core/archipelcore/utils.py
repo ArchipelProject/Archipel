@@ -119,6 +119,8 @@ def init_conf(paths):
     for section in conf.sections():
         for option in conf.options(section):
             value = conf.get(section, option, raw=True)
+            if (not value):
+                raise Exception("Missing value for option %s in section [%s]" %(option,section))
             value = value.replace("@HOSTNAME@", socket.gethostname())
             conf.set(section, "%s" % option, value)
     return conf
