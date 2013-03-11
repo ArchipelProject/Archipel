@@ -242,22 +242,24 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     // paramaters tabView
     var mainBundle = [CPBundle mainBundle],
-        imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
         tabViewItemStandard = [[CPTabViewItem alloc] initWithIdentifier:@"standard"],
         tabViewItemAdvanced = [[CPTabViewItem alloc] initWithIdentifier:@"advanced"],
         tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
         tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"],
         tabViewItemCharacter = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemCharacters"];
 
-    [tabViewParameters setContentBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
+    [tabViewParameters setContentBackgroundColor:[CPColor colorWithHexString:@"f5f5f5"]];
 
     var scrollViewParametersStandard = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]],
         scrollViewParametersAdvanced = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]];
 
     [viewParametersStandard setAutoresizingMask:CPViewWidthSizable];
-    [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
     [viewParametersStandard setFrameSize:CGSizeMake([scrollViewParametersStandard frameSize].width, [viewParametersStandard frameSize].height)];
+    [viewParametersStandard applyShadow];
+
+    [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
     [viewParametersAdvanced setFrameSize:CGSizeMake([scrollViewParametersAdvanced frameSize].width, [viewParametersAdvanced frameSize].height)];
+    [viewParametersAdvanced applyShadow];
 
     [scrollViewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [scrollViewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
@@ -321,7 +323,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives setDataSource:_drivesDatasource];
     [tableDrives setTarget:self];
     [tableDrives setDoubleAction:@selector(editDrive:)];
-    [tableDrives setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableDrives setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -359,7 +361,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInterfaces setDataSource:_nicsDatasource];
     [tableInterfaces setTarget:self];
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
-    [tableInterfaces setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableInterfaces setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -394,7 +396,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableInputDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewInputDevicePrototype duplicate]];
     [tableInputDevices setTarget:self];
     [tableInputDevices setDoubleAction:@selector(editInputDevice:)];
-    [tableInputDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableInputDevices setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_inputDevicesDatasource setTable:tableInputDevices];
     [tableInputDevices setDataSource:_inputDevicesDatasource];
@@ -426,7 +428,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableGraphicsDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewGraphicDevicePrototype duplicate]];
     [tableGraphicsDevices setTarget:self];
     [tableGraphicsDevices setDoubleAction:@selector(editGraphicDevice:)];
-    [tableGraphicsDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableGraphicsDevices setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_graphicDevicesDatasource setTable:tableGraphicsDevices];
     [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
@@ -461,7 +463,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableCharacterDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewCharacterDevicePrototype duplicate]];
     [tableCharacterDevices setTarget:self];
     [tableCharacterDevices setDoubleAction:@selector(editCharacterDevice:)];
-    [tableCharacterDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableCharacterDevices setBackgroundColor:TNArchipelDefaultColorsTableView];
 
 
     [_characterDevicesDatasource setTable:tableCharacterDevices];
@@ -1002,6 +1004,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives reloadData];
     [tableInputDevices reloadData];
     [tableGraphicsDevices reloadData];
+
+    [fieldOSKernel setStringValue:@""];
+    [fieldOSInitrd setStringValue:@""];
+    [fieldOSLoader setStringValue:@""];
+    [fieldBootloaderArgs setStringValue:@""];
+    [fieldOSCommandLine setStringValue:@""];
+    [fieldBootloader setStringValue:@""];
+    [fieldMemoryTuneSoftLimit setStringValue:@""];
+    [fieldMemoryTuneHardLimit setStringValue:@""];
+    [fieldMemoryTuneGuarantee setStringValue:@""];
+    [fieldMemoryTuneSwapHardLimit setStringValue:@""];
+    [fieldBlockIOTuningWeight setStringValue:@""];
 }
 
 /*! get the domain of the current guest with given type
@@ -1482,8 +1496,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSLoader setStringValue:[[_libvirtDomain OS] loader] || @""];
 
     // HOST BOOTLOADER
-    [fieldBootloader setStringValue:[_libvirtDomain bootloader]];
-    [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs]];
+    [fieldBootloader setStringValue:[_libvirtDomain bootloader] || @""];
+    [fieldBootloaderArgs setStringValue:[_libvirtDomain bootloaderArgs] || @""];
 
     // BLOCK IO TUNING
     [fieldBlockIOTuningWeight setIntValue:[[_libvirtDomain blkiotune] weight] || @""];
@@ -1831,17 +1845,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (BOOL)didUndefineXML:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
-                                                         message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
-        _libvirtDomain = nil;
-        [self getXMLDesc];
-    }
-    else if ([aStanza type] == @"error")
+    if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
+        return NO;
     }
+
+
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+                                                     message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
+    _libvirtDomain = nil;
+    [self getXMLDesc];
 
     return NO;
 }
@@ -2291,6 +2305,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBoot:(id)aSender
 {
+    if ([aSender title] == [[_libvirtDomain OS] boot])
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setBoot:[aSender title]];
@@ -2303,6 +2320,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSKernel:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] kernel] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setKernel:[aSender stringValue]];
@@ -2315,6 +2335,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSInitrd:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] initrd] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setInitrd:[aSender stringValue]];
@@ -2327,6 +2350,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSCommandLine:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] commandLine] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setCommandLine:[aSender stringValue]];
@@ -2339,6 +2365,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOSLoader:(id)aSender
 {
+    if ([aSender stringValue] == ([[_libvirtDomain OS] loader] || @""))
+        return;
+
     if (![_libvirtDomain OS])
         [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setLoader:[aSender stringValue]];
@@ -2351,6 +2380,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBootloader:(id)aSender
 {
+    if ([aSender stringValue] == ([_libvirtDomain bootloader] || @""))
+        return;
+
     [_libvirtDomain setBootloader:[aSender stringValue]];
 
     _definitionEdited = YES;
@@ -2361,6 +2393,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBootloaderArgs:(id)aSender
 {
+    if ([aSender stringValue] == ([_libvirtDomain bootloaderArgs] || @""))
+        return;
+
     [_libvirtDomain setBootloaderArgs:[aSender stringValue]];
 
     _definitionEdited = YES;
@@ -2372,6 +2407,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOnPowerOff:(id)aSender
 {
+    if ([aSender title] == [_libvirtDomain onPowerOff])
+        return;
+
     [_libvirtDomain setOnPowerOff:[aSender title]];
 
     _definitionEdited = YES;
@@ -2382,6 +2420,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOnReboot:(id)aSender
 {
+    if ([aSender title] == [_libvirtDomain onReboot])
+        return;
+
     [_libvirtDomain setOnReboot:[aSender title]];
 
     _definitionEdited = YES;
@@ -2392,6 +2433,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeOnCrash:(id)aSender
 {
+    if ([aSender title] == [_libvirtDomain onCrash])
+        return;
+
     [_libvirtDomain setOnCrash:[aSender title]];
 
     _definitionEdited = YES;
@@ -2543,6 +2587,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemory:(id)aSender
 {
+    if (([aSender intValue] * 1024) == [_libvirtDomain memory])
+        return;
+
     [_libvirtDomain setMemory:([aSender intValue] * 1024)];
     // we must set value of current memory too, for more info take a
     // look at https://github.com/ArchipelProject/Archipel/issues/591
@@ -2556,6 +2603,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVCPU:(id)aSender
 {
+    if ([aSender intValue] == [_libvirtDomain VCPU])
+        return;
+
     [_libvirtDomain setVCPU:[aSender intValue]];
 
     _definitionEdited = YES;
@@ -2566,6 +2616,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneSoftLimit:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] softLimit])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2584,6 +2637,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneHardLimit:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] hardLimit])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2602,6 +2658,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneGuarantee:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] minGuarantee])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2619,6 +2678,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemoryTuneSwapHardLimit:(id)aSender
 {
+    if ([aSender intValue] * 1024 == [[_libvirtDomain memoryTuning] swapHardLimit])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain memoryTuning])
@@ -2637,6 +2699,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBlockIOTuningWeight:(id)aSender
 {
+    if ([aSender intValue] == [[_libvirtDomain blkiotune] weight])
+        return;
+
     if ([aSender intValue] > 0)
     {
         if (![_libvirtDomain blkiotune])

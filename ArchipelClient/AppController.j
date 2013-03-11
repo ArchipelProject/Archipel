@@ -101,7 +101,6 @@ TNArchipelEntityTypeGroup           = @"group";
 */
 TNArchipelEntityTypes               = nil;
 
-
 /*! @global
     @group TNArchipelAction
     notification send when item selection changes in roster
@@ -144,7 +143,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 @implementation AppController : CPObject
 {
     @outlet CPButtonBar                         buttonBarLeft;
-    @outlet CPImageView                         imageViewBundleLoading;
     @outlet CPImageView                         imageViewLogoAbout;
     @outlet CPImageView                         ledIn;
     @outlet CPImageView                         ledOut;
@@ -165,8 +163,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     @outlet TNAvatarController                  avatarController;
     @outlet TNConnectionController              connectionController;
     @outlet TNContactsController                contactsController;
-    @outlet TNFlipView                          leftView;
-    @outlet TNFlipView                          rightView;
+    @outlet CPView                              leftView;
+    @outlet CPView                              rightView;
     @outlet TNGroupsController                  groupsController;
     @outlet TNHintController                    hintController;
     @outlet TNModuleController                  moduleController;
@@ -200,7 +198,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPTimer                                     _ledInTimer;
     CPTimer                                     _ledOutTimer;
     CPTimer                                     _moduleLoadingDelay;
-    CPView                                      _viewGradientAnimation;
     CPWindow                                    _helpWindow;
     TNOutlineViewRoster                         _rosterOutlineView;
     TNPubSubController                          _pubSubController;
@@ -258,7 +255,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
 
-    var commonImageModuleBackground = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]],
+    var commonImageModuleBackground = [CPColor colorWithHexString:@"F6F6F6"],
         commonImageDarkBackground = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
 
     /* register defaults defaults */
@@ -317,51 +314,41 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
-    _rosterOutlineView._DOMElement.style.WebkitTransition = "opacity 0.3s";
+    _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0)";
+    _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(top, #2F2727, #1a82f7)";
+
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
+    //[_rosterOutlineView setBackgroundColor:[CPColor colorWithHexString:@"E0E4EA"]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
     [_outlineScrollView setDelegate:_rosterOutlineView];
 
+
     /* left view */
-    [leftView setFrontView:_outlineScrollView];
+    [leftView addSubview:_outlineScrollView];
     [leftView setBackgroundColor:[CPColor colorWithPatternImage:commonImageDarkBackground]];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setBackgroundColor:commonImageModuleBackground];
-    [rightView setAnimationDuration:1.0];
-    [rightView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[TNTabView alloc] initWithFrame:CGRectMakeZero()];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setContentBackgroundColor:commonImageModuleBackground];
-    [rightView setBackView:_moduleTabView];
+
 
     /* loading view */
-    var archipelBundleIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pluginIconArchipel.png"]];
-
-    _viewGradientAnimation = [[CPView alloc] initWithFrame:[viewLoading frame]];
-
-    [_viewGradientAnimation setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    _viewGradientAnimation._DOMElement.style.WebkitTransition = "0.4s";
-    _viewGradientAnimation._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
-    [viewLoading addSubview:_viewGradientAnimation positioned:CPWindowBelow relativeTo:nil];
-
-    [imageViewBundleLoading setImage:archipelBundleIcon];
     [viewLoading setFrame:[rightView bounds]];
-    [viewLoading setBackgroundColor:[CPColor colorWithPatternImage:commonImageDarkBackground]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [rightView setFrontView:viewLoading];
+    viewLoading._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
+    [rightView addSubview:viewLoading];
 
     [progressIndicatorModulesLoading setMinValue:0.0];
     [progressIndicatorModulesLoading setMaxValue:1.0];
@@ -1648,9 +1635,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         moduleLabel = [[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"] objectForKey:@"en"];
 
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [[viewLoading viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
-
-    _viewGradientAnimation._DOMElement.style.opacity = (1 - percent) + 0.3;
+    [[viewLoading viewWithTag:1] setStringValue:moduleLabel];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
@@ -1658,15 +1643,13 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 - (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
 {
     CPLog.info(@"All modules have been loaded");
-
-    _rosterOutlineView._DOMElement.style.WebkitTransition = "";
-    _viewGradientAnimation._DOMElement.style.WebkitTransition = "";
-
-    _viewGradientAnimation._DOMElement.style.opacity = 0;
-
     [_mainToolbar reloadToolbarItems];
     [_rosterOutlineView setEnabled:YES];
-    [rightView flip:nil];
+
+    [viewLoading removeFromSuperview];
+    [_moduleTabView setFrame:[viewLoading frame]];
+    [rightView addSubview:_moduleTabView];
+
     [updateController check];
     [self performModuleChange:nil];
     [[[CPApp mainMenu] itemWithTitle:CPLocalizedString(@"Modules", @"Modules")] setEnabled:YES];

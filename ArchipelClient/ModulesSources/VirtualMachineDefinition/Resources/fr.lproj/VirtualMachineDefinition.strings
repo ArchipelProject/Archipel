@@ -1286,7 +1286,7 @@
 /* Class = "NSTextFieldCell"; title = "Arguments"; ObjectID = "1919"; */
 "1919.title" = "Arguments";
 
-/* Class = "NSTextFieldCell"; title = "You can configure the host bootl oader infos."; ObjectID = "1920"; */
+/* Class = "NSTextFieldCell"; title = "You can configure the host boot loader infos."; ObjectID = "1920"; */
 "1920.title" = "You can configure the host bootl oader informations.";
 
 /* Class = "NSTextFieldCell"; title = "Host boot loader"; ObjectID = "1921"; */

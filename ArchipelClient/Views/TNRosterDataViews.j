@@ -96,23 +96,22 @@ var TNRosterDataViewContactImageUnknownUser,
     [events setBackgroundColor:TNRosterDataViewContactImageNormalCartoucheColor];
     [events setVerticalAlignment:CPCenterVerticalTextAlignment];
     [events setValue:[CPColor colorWithHexString:@"6D96EE"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-
     [events setValue:TNRosterDataViewContactImageNormalCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
     [events setValue:TNRosterDataViewContactImageSelectedCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
     [events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"content-inset"];
     [events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
     [events setHidden:YES];
 
-    [name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [name setValue:[CPColor colorWithHexString:@"426ABF"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
     [name setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
     [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-    [name setValue:CGSizeMake(0.0, .0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
 
-    [status setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [status setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [status setValue:[CPColor colorWithHexString:@"426ABF"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
     [status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
     [status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
     [status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-    [status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
 }
 
 #pragma mark -
@@ -229,11 +228,11 @@ var TNRosterDataViewContactImageUnknownUser,
 */
 - (id)_initTheme
 {
-    [name setTextColor:[CPColor colorWithHexString:@"5F676F"]];
+    [name setTextColor:[CPColor colorWithHexString:@"757F8C"]];
     [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
     [name setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [name setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
+    [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [name setValue:[CPColor colorWithHexString:@"426ABF"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
     [name setVerticalAlignment:CPCenterVerticalTextAlignment];
 }
 

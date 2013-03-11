@@ -224,9 +224,6 @@
 /* Log out */
 "Log out" = "Log out";
 
-/* Logon */
-"Logon" = "Logon";
-
 /* Make a donation */
 "Make a donation" = "Make a donation";
 
@@ -241,6 +238,9 @@
 
 /* Nevermind */
 "Nevermind" = "Nevermind";
+
+/* Node only JID required */
+"Node only JID required" = "Node only JID required";
 
 /* Notification */
 "Notifications" = "Notifications";

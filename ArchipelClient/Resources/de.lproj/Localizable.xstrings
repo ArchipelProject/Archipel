@@ -130,8 +130,6 @@
 	<string>Gebietsschema ändern</string>
 	<key>Log out</key>
 	<string>Abmelden</string>
-	<key>Logon</key>
-	<string>Login</string>
 	<key>MB</key>
 	<string>MB</string>
 	<key>Make a donation</key>
@@ -142,6 +140,8 @@
 	<string>Navigation</string>
 	<key>Nevermind</key>
 	<string>Unwichtig</string>
+	<key>Node only JID required</key>
+	<string>Node only JID required</string>
 	<key>Notifications</key>
 	<string>Benachrichtigungen</string>
 	<key>OK</key>

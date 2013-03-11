@@ -138,7 +138,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setTarget:self];
     [tableVirtualMachines setDoubleAction:@selector(openEditVirtualMachineWindow:)];
     [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
-    [tableVirtualMachines setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableVirtualMachines setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_virtualMachinesDatasource setTable:tableVirtualMachines];
     [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
@@ -209,7 +209,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesNotManaged setTarget:self];
     [tableVirtualMachinesNotManaged setDoubleAction:@selector(didNotManagedTableDoubleClick:)];
     [[tableVirtualMachinesNotManaged tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
-    [tableVirtualMachinesNotManaged setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableVirtualMachinesNotManaged setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_virtualMachinesNotManagedDatasource setTable:tableVirtualMachinesNotManaged];
     [_virtualMachinesNotManagedDatasource setSearchableKeyPaths:[@"JID.bare"]];
@@ -234,7 +234,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachinesParked setTarget:self];
     [tableVirtualMachinesParked setDoubleAction:@selector(openParkedXMLEditor:)];
     [[tableVirtualMachinesParked tableColumnWithIdentifier:@"self"] setDataView:[dataViewParkedVMPrototype duplicate]];
-    [tableVirtualMachinesParked setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableVirtualMachinesParked setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_virtualMachinesParkedDatasource setTable:tableVirtualMachinesParked];
     [_virtualMachinesParkedDatasource setSearchableKeyPaths:[@"name", @"UUID", @"parker"]];
@@ -938,7 +938,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             }
             else
             {
-                var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil];
+                var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil],
                     name = [[queryItems objectAtIndex:i] valueForAttribute:@"name"];
 
                 [contact setNickname: name + @" is not managed by Archipel. Double click on it to manage."];

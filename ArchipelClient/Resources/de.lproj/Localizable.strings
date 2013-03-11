@@ -224,9 +224,6 @@
 /* Log out */
 "Log out" = "Abmelden";
 
-/* Logon */
-"Logon" = "Login";
-
 /* Make a donation */
 "Make a donation" = "Spenden";
 
@@ -241,6 +238,9 @@
 
 /* Nevermind */
 "Nevermind" = "Unwichtig";
+
+/* Node only JID required */
+"Node only JID required" = "Node only JID required";
 
 /* Notification */
 "Notifications" = "Benachrichtigungen";

@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D68</string>
+		<string key="IBDocument.SystemVersion">12D76</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -353,7 +353,7 @@
 																	</object>
 																</object>
 																<double key="NSRowHeight">17</double>
-																<int key="NSTvFlags">-692060160</int>
+																<int key="NSTvFlags">-557842432</int>
 																<reference key="NSDelegate"/>
 																<reference key="NSDataSource"/>
 																<int key="NSColumnAutoresizingStyle">4</int>
@@ -580,7 +580,7 @@
 																<reference key="NSBackgroundColor" ref="835591828"/>
 																<reference key="NSGridColor" ref="1006392325"/>
 																<double key="NSRowHeight">17</double>
-																<int key="NSTvFlags">-692060160</int>
+																<int key="NSTvFlags">-557842432</int>
 																<reference key="NSDelegate"/>
 																<reference key="NSDataSource"/>
 																<int key="NSColumnAutoresizingStyle">4</int>

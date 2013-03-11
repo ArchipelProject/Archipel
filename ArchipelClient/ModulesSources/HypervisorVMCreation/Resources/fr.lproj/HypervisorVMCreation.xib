@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D68</string>
+		<string key="IBDocument.SystemVersion">12D76</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -2158,7 +2158,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="848385124">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">This the list of virtual machines managed by Archipel.</string>
+							<string key="NSContents">This is the list of virtual machines managed by Archipel.</string>
 							<reference key="NSSupport" ref="940602514"/>
 							<reference key="NSControlView" ref="692855865"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>
@@ -2439,7 +2439,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="227389892">
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">This the list of existing virtual machines not managed by Archipel.</string>
+							<string key="NSContents">This is the list of existing virtual machines not managed by Archipel.</string>
 							<reference key="NSSupport" ref="940602514"/>
 							<reference key="NSControlView" ref="731144614"/>
 							<reference key="NSBackgroundColor" ref="202471193"/>

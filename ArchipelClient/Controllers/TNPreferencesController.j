@@ -133,9 +133,10 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     _excludedTokens = [CPDictionary dictionary];
 
     // @TODO: this should not be added statically here. but by modules that implements theses keys.
-    _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelXMPPJID",
+    _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelXMPPJID",
                             @"TNArchipelXMPPPassword", @"TNArchipelXMPPService", @"TNArchipelRememberCredentials",
                             @"TNArchipelTagsVisible", @"TNArchipelModuleControllerOpenedTabRegistry",
+                            @"TNArchipelForceJIDDomain", @"TNArchipelForcedJIDDomain",
                             @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups", @"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
 }
 

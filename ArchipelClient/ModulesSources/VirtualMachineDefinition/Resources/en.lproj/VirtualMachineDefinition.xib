@@ -534,7 +534,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="219999202">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">268436480</int>
-									<string key="NSContents">You can configure the host bootl oader infos.</string>
+									<string key="NSContents">You can configure the host boot loader infos.</string>
 									<object class="NSFont" key="NSSupport" id="22">
 										<string key="NSName">LucidaGrande</string>
 										<double key="NSSize">9</double>
@@ -11086,7 +11086,7 @@ A</string>
 						<reference key="source" ref="190246114"/>
 						<reference key="destination" ref="556292822"/>
 					</object>
-					<int key="connectionID">921</int>
+					<int key="connectionID">1995</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -11094,7 +11094,7 @@ A</string>
 						<reference key="source" ref="556292822"/>
 						<reference key="destination" ref="1038678631"/>
 					</object>
-					<int key="connectionID">922</int>
+					<int key="connectionID">1996</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -11102,7 +11102,7 @@ A</string>
 						<reference key="source" ref="1038678631"/>
 						<reference key="destination" ref="652750642"/>
 					</object>
-					<int key="connectionID">923</int>
+					<int key="connectionID">1997</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -11110,7 +11110,7 @@ A</string>
 						<reference key="source" ref="652750642"/>
 						<reference key="destination" ref="393364307"/>
 					</object>
-					<int key="connectionID">1908</int>
+					<int key="connectionID">1998</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -11118,7 +11118,7 @@ A</string>
 						<reference key="source" ref="393364307"/>
 						<reference key="destination" ref="998340749"/>
 					</object>
-					<int key="connectionID">1909</int>
+					<int key="connectionID">1999</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -12148,17 +12148,49 @@ A</string>
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="1001487454"/>
-						<reference key="destination" ref="683684724"/>
+						<reference key="destination" ref="69780469"/>
 					</object>
-					<int key="connectionID">1905</int>
+					<int key="connectionID">2000</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="683684724"/>
+						<reference key="destination" ref="1024065021"/>
+					</object>
+					<int key="connectionID">1992</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="69780469"/>
+						<reference key="destination" ref="683684724"/>
+					</object>
+					<int key="connectionID">1991</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="244227962"/>
 						<reference key="destination" ref="190246114"/>
 					</object>
-					<int key="connectionID">1907</int>
+					<int key="connectionID">1994</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="1024065021"/>
+						<reference key="destination" ref="244227962"/>
+					</object>
+					<int key="connectionID">1993</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="708105622"/>
+						<reference key="destination" ref="69780469"/>
+					</object>
+					<int key="connectionID">1988</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -20612,7 +20644,7 @@ A</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1986</int>
+			<int key="maxID">2000</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

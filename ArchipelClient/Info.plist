@@ -34,11 +34,25 @@
     <key>TNArchipelForceService</key>
     <integer>0</integer>
 
+    <!-- Set this to one to force using a specific JID domain
+        So your users will only have to enter their JID node instead
+        of the bare JID. THIS IS NOT A SECURITY PARAMETER!
+        This is only UI flavor
+     -->
+    <key>TNArchipelForceJIDDomain</key>
+    <integer>0</integer>
+
     <!-- This will be used a forced service URL if
         TNArchipelForceService is set to 1
     -->
     <key>TNArchipelForcedServiceURL</key>
     <string>ws://archipelproject.org:5280</string>
+
+    <!-- This will be used a forced JID domain if
+        TNArchipelForceJIDDomain is set to 1
+        -->
+    <key>TNArchipelForcedJIDDomain</key>
+    <string>archipelproject.org</string>
 
 
     <!--

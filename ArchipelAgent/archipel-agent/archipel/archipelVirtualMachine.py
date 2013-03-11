@@ -465,6 +465,33 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         self.create()
 
+    def _listen_migration_progress(self):
+        """
+        Will periodically update the VM XMPP status with the migration progress
+        """
+        try:
+            jobInfo = self.domain.jobInfo()
+            total = jobInfo[3]
+            remaining = jobInfo[5]
+            progress = 0
+
+            if (total == 0):
+               progress = 0
+            else:
+                if remaining == 0:
+                    progress = 100;
+                else:
+                    progress = int(float(100) - float(remaining) * float(100.0) / float(total))
+                    if progress >= 100:
+                        progress = 99
+            if progress > 0: # we save une presence :)
+                self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating - %d%%" % progress)
+
+            if self.is_migrating:
+                Timer(3, self._listen_migration_progress, []).start()
+        except Exception as ex:
+            pass
+
 
     ### Process IQ
 
@@ -889,6 +916,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.log.warning("Virtual machine is already undefined.")
             return
         self.domain.undefine()
+        self.domain = None
         self.log.info("Virtual machine undefined.")
 
     def undefine_and_disconnect(self):
@@ -961,6 +989,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.migrate_not_running_step1(destination_jid)
         else:
             self.migrate_running_step1(destination_jid)
+        self._listen_migration_progress()
 
     def migrate_running_step1(self, destination_jid):
         """
@@ -999,7 +1028,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.log.error("MIGRATION: unable to get remote libvirt URI: %s" % str(ex))
             self.is_migrating = False
 
-        self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
+        self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating - 0%")
         thread.start_new_thread(self.migrate_running_step3, (remote_hypervisor_uri, ))
 
     def migrate_running_step3(self, remote_hypervisor_uri):

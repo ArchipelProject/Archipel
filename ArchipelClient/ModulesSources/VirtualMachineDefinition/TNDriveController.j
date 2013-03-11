@@ -190,6 +190,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
         case TNLibvirtDeviceDiskTypeFile:
             [[_drive source] setFile:[[buttonSourcePath selectedItem] representedObject].path];
+            [[_drive driver] setType:[[buttonSourcePath selectedItem] representedObject].format];
             [[_drive source] setDevice:nil];
             [[_drive source] setHosts:nil];
             [[_drive source] setProtocol:nil];
@@ -206,7 +207,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     }
 
     [[_drive driver] setCache:[buttonDriverCache title]];
-    [[_drive driver] setType:[[buttonSourcePath selectedItem] representedObject].format];
     [[_drive target] setBus:[buttonTargetBus title]];
     [[_drive target] setDevice:[buttonTargetDevice title]];
 

@@ -811,6 +811,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         [self setControl:sliderMemory enabledAccordingToPermission:@"memory"];
         [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus"];
+        [self setControl:_migrateButton enabledAccordingToPermission:@"migrate"];
 
         if (!_cpuUsageTimer && [self isVisible])
         {
@@ -844,6 +845,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         [sliderMemory setMaxValue:100];
         [sliderMemory setIntValue:0];
         [stepperCPU setEnabled:NO];
+        [_migrateButton setEnabled:NO];
     }
 
     [self setControl:switchAutoStart enabledAccordingToPermission:@"autostart"];
@@ -1542,14 +1544,13 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (selectedRow == -1)
     {
         [_migrateButton setEnabled:NO];
-
-        return
+        return;
     }
 
     var item = [_datasourceHypervisors objectAtIndex:selectedRow];
 
-    if ([item fullJID] != _currentHypervisorJID)
-        [_migrateButton setEnabled:YES];
+    if ([item fullJID] != _currentHypervisorJID && [_entity XMPPStatus] != @"Not defined")
+        [self setControl:_migrateButton enabledAccordingToPermission:@"migrate"];
     else
         [_migrateButton setEnabled:NO];
 }

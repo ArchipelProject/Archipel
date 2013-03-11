@@ -48,6 +48,8 @@ TNArchipelModuleStatusError             = 1;
 TNArchipelModuleStatusReady             = 3;
 TNArchipelModuleStatusWaiting           = 2;
 
+TNArchipelDefaultColorsTableView        = nil;
+
 var TNModuleStatusImageReady,
     TNModuleStatusImageWaiting,
     TNModuleStatusImageError;
@@ -130,6 +132,8 @@ var TNModuleStatusImageReady,
     TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
     TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
     TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CGSizeMake(8.0, 8.0)];
+
+    TNArchipelDefaultColorsTableView = [CPColor whiteColor];
 }
 
 - (BOOL)initializeModule
@@ -140,6 +144,7 @@ var TNModuleStatusImageReady,
     _initialPermissionsReceived = [CPArray array];
     _registredSelectors         = [CPDictionary dictionary];
 
+    [[self view] applyShadow];
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 

@@ -36,7 +36,9 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
 
 var TNConnectionControllerForceResource,
+    TNConnectionControllerForceJIDDomain,
     TNArchipelForcedServiceURL,
+    TNArchipelForcedJIDDomain,
     TNArchipelServiceTemplate;
 
 /*! @ingroup archipelcore
@@ -67,7 +69,9 @@ var TNConnectionControllerForceResource,
 
     TNArchipelServiceTemplate            = [bundle objectForInfoDictionaryKey:@"TNArchipelServiceTemplate"];
     TNConnectionControllerForceResource  = !![bundle objectForInfoDictionaryKey:@"TNArchipelForceService"];
-    TNArchipelForcedServiceURL  = [bundle objectForInfoDictionaryKey:@"TNArchipelForcedServiceURL"];
+    TNArchipelForcedServiceURL           = [bundle objectForInfoDictionaryKey:@"TNArchipelForcedServiceURL"];
+    TNConnectionControllerForceJIDDomain = !![bundle objectForInfoDictionaryKey:@"TNArchipelForceJIDDomain"];
+    TNArchipelForcedJIDDomain            = [bundle objectForInfoDictionaryKey:@"TNArchipelForcedJIDDomain"];
 }
 
 /*! initialize the window when CIB is loaded
@@ -229,14 +233,31 @@ var TNConnectionControllerForceResource,
         return;
     }
 
-    try
+    if (!TNConnectionControllerForceJIDDomain)
     {
-        connectionJID = [TNStropheJID stropheJIDWithString:[[fieldJID stringValue] lowercaseString]];
+        try
+        {
+            connectionJID = [TNStropheJID stropheJIDWithString:[[fieldJID stringValue] lowercaseString]];
+        }
+        catch (e)
+        {
+            [labelMessage setStringValue:CPLocalizedString(@"Full JID required", @"Full JID required")];
+            return;
+        }
     }
-    catch (e)
+    else
     {
-        [labelMessage setStringValue:CPLocalizedString(@"Full JID required", @"Full JID required")];
-        return;
+        try
+        {
+            connectionJID = [[TNStropheJID alloc] init];
+            [connectionJID setNode:[[fieldJID stringValue] lowercaseString]];
+            [connectionJID setDomain:TNArchipelForcedJIDDomain];
+        }
+        catch (e)
+        {
+            [labelMessage setStringValue:CPLocalizedString(@"Node only JID required", @"Node only JID required")];
+            return;
+        }
     }
 
     [self _saveCredentials];
