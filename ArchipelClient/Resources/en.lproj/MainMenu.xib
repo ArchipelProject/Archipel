@@ -109,7 +109,7 @@
 													<string key="NSFrameSize">{201, 311.5}</string>
 													<reference key="NSSuperview" ref="514451280"/>
 													<reference key="NSNextKeyView" ref="277425941"/>
-													<string key="NSClassName">TNFlipView</string>
+													<string key="NSClassName">NSView</string>
 												</object>
 												<object class="NSCustomView" id="277425941">
 													<reference key="NSNextResponder" ref="514451280"/>
@@ -257,7 +257,7 @@
 													<string key="NSFrame">{{0, 32}, {633, 468}}</string>
 													<reference key="NSSuperview" ref="776793842"/>
 													<reference key="NSNextKeyView" ref="180490562"/>
-													<string key="NSClassName">TNFlipView</string>
+													<string key="NSClassName">NSView</string>
 												</object>
 											</object>
 											<string key="NSFrameSize">{633, 500}</string>
@@ -3536,12 +3536,13 @@
 						</object>
 						<string key="NSFrame">{{20, 20}, {563, 217}}</string>
 						<reference key="NSSuperview" ref="59994350"/>
+						<reference key="NSNextKeyView" ref="524538268"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{603, 257}</string>
-				<reference key="NSNextKeyView" ref="524538268"/>
+				<reference key="NSNextKeyView" ref="799826340"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomObject" id="438457053">
@@ -10414,7 +10415,7 @@
 							<string>TNPreferencesController</string>
 							<string>NSProgressIndicator</string>
 							<string>TNPropertiesController</string>
-							<string>TNFlipView</string>
+							<string>NSView</string>
 							<string>TNRosterDataViewContact</string>
 							<string>TNRosterDataViewGroup</string>
 							<string>NSSplitView</string>
@@ -10562,7 +10563,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">rightView</string>
-								<string key="candidateClassName">TNFlipView</string>
+								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">rosterDataViewForContacts</string>
