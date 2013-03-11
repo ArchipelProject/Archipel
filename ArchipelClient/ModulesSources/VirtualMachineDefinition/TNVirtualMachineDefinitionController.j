@@ -242,22 +242,24 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     // paramaters tabView
     var mainBundle = [CPBundle mainBundle],
-        imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
         tabViewItemStandard = [[CPTabViewItem alloc] initWithIdentifier:@"standard"],
         tabViewItemAdvanced = [[CPTabViewItem alloc] initWithIdentifier:@"advanced"],
         tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
         tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"],
         tabViewItemCharacter = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemCharacters"];
 
-    [tabViewParameters setContentBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
+    [tabViewParameters setContentBackgroundColor:[CPColor colorWithHexString:@"f5f5f5"]];
 
     var scrollViewParametersStandard = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]],
         scrollViewParametersAdvanced = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]];
 
     [viewParametersStandard setAutoresizingMask:CPViewWidthSizable];
-    [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
     [viewParametersStandard setFrameSize:CGSizeMake([scrollViewParametersStandard frameSize].width, [viewParametersStandard frameSize].height)];
+    [viewParametersStandard applyShadow];
+
+    [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
     [viewParametersAdvanced setFrameSize:CGSizeMake([scrollViewParametersAdvanced frameSize].width, [viewParametersAdvanced frameSize].height)];
+    [viewParametersAdvanced applyShadow];
 
     [scrollViewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [scrollViewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
@@ -321,7 +323,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableDrives setDataSource:_drivesDatasource];
     [tableDrives setTarget:self];
     [tableDrives setDoubleAction:@selector(editDrive:)];
-    [tableDrives setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableDrives setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -359,7 +361,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInterfaces setDataSource:_nicsDatasource];
     [tableInterfaces setTarget:self];
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
-    [tableInterfaces setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableInterfaces setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -394,7 +396,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableInputDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewInputDevicePrototype duplicate]];
     [tableInputDevices setTarget:self];
     [tableInputDevices setDoubleAction:@selector(editInputDevice:)];
-    [tableInputDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableInputDevices setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_inputDevicesDatasource setTable:tableInputDevices];
     [tableInputDevices setDataSource:_inputDevicesDatasource];
@@ -426,7 +428,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableGraphicsDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewGraphicDevicePrototype duplicate]];
     [tableGraphicsDevices setTarget:self];
     [tableGraphicsDevices setDoubleAction:@selector(editGraphicDevice:)];
-    [tableGraphicsDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableGraphicsDevices setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_graphicDevicesDatasource setTable:tableGraphicsDevices];
     [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
@@ -461,7 +463,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[tableCharacterDevices tableColumnWithIdentifier:@"self"] setDataView:[dataViewCharacterDevicePrototype duplicate]];
     [tableCharacterDevices setTarget:self];
     [tableCharacterDevices setDoubleAction:@selector(editCharacterDevice:)];
-    [tableCharacterDevices setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableCharacterDevices setBackgroundColor:TNArchipelDefaultColorsTableView];
 
 
     [_characterDevicesDatasource setTable:tableCharacterDevices];

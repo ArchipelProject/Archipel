@@ -256,7 +256,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
 
-    var commonImageModuleBackground = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]],
+    var commonImageModuleBackground = [CPColor colorWithHexString:@"F6F6F6"],
         commonImageDarkBackground = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
 
     /* register defaults defaults */

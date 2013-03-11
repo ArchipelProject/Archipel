@@ -83,7 +83,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
-        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-tags.png"]],
+        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]],
         imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CGSizeMake(16, 16)],
         tokenFrame;
 

@@ -215,7 +215,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     _datasourcePartitions = [[TNTableViewDataSource alloc] init];
 
     [tablePartitions setDataSource:_datasourcePartitions];
-    [tablePartitions setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tablePartitions setBackgroundColor:TNArchipelDefaultColorsTableView];
     [_datasourcePartitions setTable:tablePartitions];
 
     [[tablePartitions tableColumnWithIdentifier:@"self"] setDataView:[partitionDataViewPrototype duplicate]];
@@ -223,7 +223,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     // logs tables
     _datasourceLogs = [[TNTableViewDataSource alloc] init];
     [tableLogs setDelegate:self];
-    [tableLogs setBackgroundColor:[CPColor colorWithHexString:@"F7F7F7"]];
+    [tableLogs setBackgroundColor:TNArchipelDefaultColorsTableView];
     [tableLogs setDataSource:_datasourceLogs];
 
     [_datasourceLogs setTable:tableLogs];
