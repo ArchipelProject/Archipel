@@ -43,6 +43,6 @@
     <integer>1</integer>
 
     <key>RESTServerBaseURLResource</key>
-    <string>rest/nuage/v1_0/</string>
+    <string>nuage/api/v1_0/</string>
 </dict>
 </plist>
