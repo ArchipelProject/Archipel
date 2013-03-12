@@ -104,7 +104,7 @@
 /* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to manage its drives."; ObjectID = "107"; */
 "107.title" = "You need to stop the virtual machine to be able to manage its drives.";
 
-/* Class = "NSTextFieldCell"; title = "Virtual machine is running"; ObjectID = "108"; */
+/* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "108"; */
 "108.title" = "Virtual machine is running";
 
 /* Class = "NSButtonCell"; title = "Use master drive:"; ObjectID = "123"; */

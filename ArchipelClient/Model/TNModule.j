@@ -735,11 +735,20 @@ var TNModuleStatusImageReady,
         {
             if (![viewMask backgroundColor])
             {
-                [viewMask setBackgroundColor:[CPColor whiteColor]];
-                [viewMask setAlphaValue:0.8];
+                [viewMask setBackgroundColor:[CPColor colorWithCalibratedWhite:0 alpha:0.4]];
+                for (var i = 0; i < [[viewMask subviews] count]; i++)
+                {
+                    var v = [[viewMask subviews] objectAtIndex:i];
+                    if ([v isKindOfClass:CPTextField])
+                    {
+                        [v setTextShadowColor:[CPColor colorWithHexString:@"333"]];
+                        [v setTextShadowOffset:CGSizeMake(0.0, -1.0)];
+                    }
+                }
             }
             [viewMask setFrame:[[self view] bounds]];
             [[self view] addSubview:viewMask];
+            viewMask._DOMElement.style.backgroundImage = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.8)))";
         }
     }
     else

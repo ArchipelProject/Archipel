@@ -222,6 +222,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imageScreenShutDown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdown.png"] size:CGSizeMake(216, 162)];
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
+    buttonScreenshot._DOMElement.style.borderRadius = "5px";
+    buttonScreenshot._DOMElement.style.border = "6px solid #222";
+    buttonScreenshot._DOMElement.style.boxShadow = "0px 0px 1px 1px #DCDCDC";
+
 }
 
 
@@ -456,6 +460,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     [self getThumbnailScreenshot];
 }
+
 
 #pragma mark -
 #pragma mark Utilities
