@@ -985,15 +985,17 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 n.addData(vm.jid.getStripped())
                 managed_vm_uuids.append(vm.jid.getNode())
                 nodes.append(n)
+
             allDomainIDs = self.libvirt_connection.listDomainsID()
-            for name in allDomainIDs:
-                dom = self.libvirt_connection.lookupByID(name)
+            for domID in allDomainIDs:
+                dom = self.libvirt_connection.lookupByID(domID)
                 uuid = dom.UUIDString()
                 persistant = dom.isPersistent()
                 if persistant and not uuid in managed_vm_uuids:
-                    n = xmpp.Node("item", attrs={"managed": "False"})
+                    n = xmpp.Node("item", attrs={"managed": "False", "name": dom.name()})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
+
             allDomainNames = self.libvirt_connection.listDefinedDomains()
             for name in allDomainNames:
                 uuid = self.libvirt_connection.lookupByName(name).UUIDString()
@@ -1001,6 +1003,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                     n = xmpp.Node("item", attrs={"managed": "False", "name":name})
                     n.addData("%s@%s" % (uuid, self.jid.getDomain()))
                     nodes.append(n)
+
             reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
