@@ -293,6 +293,7 @@
 								</object>
 								<string key="NSFrame">{{63, 0}, {444, 37}}</string>
 								<reference key="NSSuperview" ref="798677276"/>
+								<reference key="NSNextKeyView" ref="1055932367"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<string key="NSClassName">NSView</string>
 							</object>
@@ -317,10 +318,6 @@
 								<object class="NSImageCell" key="NSCell" id="904556000">
 									<int key="NSCellFlags">134217728</int>
 									<int key="NSCellFlags2">33554432</int>
-									<object class="NSCustomResource" key="NSContents">
-										<string key="NSClassName">NSImage</string>
-										<string key="NSResourceName">secure</string>
-									</object>
 									<int key="NSAlign">0</int>
 									<int key="NSScale">0</int>
 									<int key="NSStyle">0</int>
@@ -332,7 +329,7 @@
 						</object>
 						<string key="NSFrameSize">{570, 37}</string>
 						<reference key="NSSuperview" ref="927006720"/>
-						<reference key="NSNextKeyView" ref="1055932367"/>
+						<reference key="NSNextKeyView" ref="211286806"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 					<object class="NSCustomView" id="1071846967">
@@ -634,6 +631,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {585, 5}}</string>
 						<reference key="NSSuperview" ref="670153015"/>
+						<reference key="NSNextKeyView" ref="80558798"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -1180,12 +1178,13 @@
 						</object>
 						<string key="NSFrame">{{20, 20}, {348, 90}}</string>
 						<reference key="NSSuperview" ref="805125363"/>
+						<reference key="NSNextKeyView" ref="329966109"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{388, 130}</string>
-				<reference key="NSNextKeyView" ref="329966109"/>
+				<reference key="NSNextKeyView" ref="400041035"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
@@ -3013,17 +3012,8 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<bool key="EncodedWithXMLCoder">YES</bool>
-			<object class="NSArray" key="dict.sortedKeys">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>NSSwitch</string>
-				<string>secure</string>
-			</object>
-			<object class="NSArray" key="dict.values">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{15, 15}</string>
-				<string>{32, 32}</string>
-			</object>
+			<string key="NS.key.0">NSSwitch</string>
+			<string key="NS.object.0">{15, 15}</string>
 		</object>
 	</data>
 </archive>

@@ -929,6 +929,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{460, 411}</string>
+				<reference key="NSNextKeyView" ref="843434848"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomObject" id="47423511">
@@ -1067,6 +1068,7 @@
 							<int key="NSvFlags">269</int>
 							<string key="NSFrame">{{153, 147}, {254, 22}}</string>
 							<reference key="NSSuperview" ref="204611370"/>
+							<reference key="NSNextKeyView" ref="366929574"/>
 							<int key="NSTag">3</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="142124761">
@@ -1087,6 +1089,7 @@
 							<int key="NSvFlags">269</int>
 							<string key="NSFrame">{{52, 149}, {96, 17}}</string>
 							<reference key="NSSuperview" ref="204611370"/>
+							<reference key="NSNextKeyView" ref="274798215"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="638583405">
 								<int key="NSCellFlags">68157504</int>
@@ -2100,6 +2103,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {423, 5}}</string>
 						<reference key="NSSuperview" ref="635409784"/>
+						<reference key="NSNextKeyView" ref="230941535"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -2327,6 +2331,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {424, 5}}</string>
 						<reference key="NSSuperview" ref="552871700"/>
+						<reference key="NSNextKeyView" ref="848391559"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -3326,6 +3331,7 @@
 						</object>
 						<string key="NSFrame">{{20, 22}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="184143354"/>
+						<reference key="NSNextKeyView" ref="1007976838"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="484720758">
 							<int key="NSCellFlags">134217728</int>
@@ -4434,10 +4440,6 @@
 						<object class="NSImageCell" key="NSCell" id="445806944">
 							<int key="NSCellFlags">134217728</int>
 							<int key="NSCellFlags2">33554432</int>
-							<object class="NSCustomResource" key="NSContents">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">green</string>
-							</object>
 							<string key="NSCellIdentifier">_NS:9</string>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">0</int>
@@ -11982,7 +11984,6 @@
 				<string>NSMenuCheckmark</string>
 				<string>NSMenuMixedState</string>
 				<string>NSSwitch</string>
-				<string>green</string>
 				<string>hints/hint1.png</string>
 				<string>lock.png</string>
 				<string>spinner.gif</string>
@@ -11993,7 +11994,6 @@
 				<string>{11, 11}</string>
 				<string>{10, 3}</string>
 				<string>{15, 15}</string>
-				<string>{16, 16}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
