@@ -39,7 +39,6 @@ var TNVirtualMachineDataViewAvatarUnknown;
     @outlet CPTextField fieldHypervisor;
     @outlet CPTextField fieldJID;
     @outlet CPTextField fieldLocality;
-    @outlet CPTextField fieldLocality;
     @outlet CPTextField fieldName;
     @outlet CPTextField fieldNickName;
     @outlet CPTextField fieldOwner;
@@ -48,6 +47,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     @outlet CPTextField fieldUnit;
     @outlet CPTextField labelCategories;
     @outlet CPTextField labelCompany;
+    @outlet CPTextField labelFieldsHidden;
     @outlet CPTextField labelHypervisor;
     @outlet CPTextField labelLocality;
     @outlet CPTextField labelName;
@@ -83,6 +83,13 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [labelUnit setHidden:shouldHide];
     [labelOwner setHidden:shouldHide];
     [labelCategories setHidden:shouldHide];
+    [labelHypervisor setHidden:shouldHide];
+    [labelOwner setHidden:shouldHide];
+    [fieldServer setHidden:shouldHide];
+    [fieldHypervisor setHidden:shouldHide];
+    [labelServer setHidden:shouldHide];
+
+    [labelFieldsHidden setHidden:!shouldHide];
 }
 
 #pragma mark -
@@ -113,7 +120,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     else
     {
         [fieldNickName setStringValue:[aContact nickname] || @"This machine is not in your roster"];
-        [imageAvatar setImage:TNVirtualMachineDataViewAvatarUnknown];
+        [imageAvatar setImage:[aContact avatar] || TNVirtualMachineDataViewAvatarUnknown];
         [self shouldHideLabels:YES];
     }
 
@@ -150,6 +157,9 @@ var TNVirtualMachineDataViewAvatarUnknown;
         labelName = [aCoder decodeObjectForKey:@"labelName"];
         labelServer = [aCoder decodeObjectForKey:@"labelServer"];
         labelStatus = [aCoder decodeObjectForKey:@"labelStatus"];
+        labelUnit  = [aCoder decodeObjectForKey:@"labelUnit"];
+        labelOwner = [aCoder decodeObjectForKey:@"labelOwner"];
+        labelFieldsHidden = [aCoder decodeObjectForKey:@"labelFieldsHidden"];
 
         imageStatusIcon = [aCoder decodeObjectForKey:@"imageStatusIcon"];
         imageAvatar = [aCoder decodeObjectForKey:@"imageAvatar"];
@@ -184,6 +194,9 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [aCoder encodeObject:labelName forKey:@"labelName"];
     [aCoder encodeObject:labelServer forKey:@"labelServer"];
     [aCoder encodeObject:labelStatus forKey:@"labelStatus"];
+    [aCoder encodeObject:labelUnit forKey:@"labelUnit"];
+    [aCoder encodeObject:labelOwner forKey:@"labelOwner"];
+    [aCoder encodeObject:labelFieldsHidden forKey:@"labelFieldsHidden"];
 }
 
 @end

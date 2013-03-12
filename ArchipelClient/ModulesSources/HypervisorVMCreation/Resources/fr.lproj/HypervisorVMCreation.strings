@@ -221,3 +221,6 @@
 /* Class = "NSComboBoxCell"; placeholderString = "LAMP Stack"; ObjectID = "566"; */
 "566.placeholderString" = "LAMP Stack";
 
+/* Class = "NSTextFieldCell"; title = "Double click on this VM to manage it with Archipel"; ObjectID = "584"; */
+"584.title" = "Double click on this VM to manage it with Archipel";
+

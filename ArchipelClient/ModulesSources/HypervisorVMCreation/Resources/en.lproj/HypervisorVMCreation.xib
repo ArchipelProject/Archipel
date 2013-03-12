@@ -1548,6 +1548,28 @@
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="895061588">
+						<reference key="NSNextResponder" ref="938073405"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{60, 20}, {744, 17}}</string>
+						<reference key="NSSuperview" ref="938073405"/>
+						<string key="NSReuseIdentifierKey">_NS:1535</string>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="736832215">
+							<int key="NSCellFlags">68157504</int>
+							<int key="NSCellFlags2">4195328</int>
+							<string key="NSContents">Double click on this VM to manage it with Archipel</string>
+							<reference key="NSSupport" ref="456577882"/>
+							<string key="NSCellIdentifier">_NS:1535</string>
+							<reference key="NSControlView" ref="895061588"/>
+							<reference key="NSBackgroundColor" ref="202471193"/>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">1</int>
+								<bytes key="NSRGB">MC4zNDU1Mjg0ODM0IDAuMzQ1NTI4NDgzNCAwLjM0NTUyODQ4MzQAA</bytes>
+							</object>
+						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+					</object>
 					<object class="NSTextField" id="177841957">
 						<reference key="NSNextResponder" ref="938073405"/>
 						<int key="NSvFlags">268</int>
@@ -1933,7 +1955,7 @@
 					<object class="NSTextField" id="778706450">
 						<reference key="NSNextResponder" ref="938073405"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{73, 64}, {726, 17}}</string>
+						<string key="NSFrame">{{73, 64}, {731, 17}}</string>
 						<reference key="NSSuperview" ref="938073405"/>
 						<reference key="NSNextKeyView" ref="820284542"/>
 						<string key="NSReuseIdentifierKey">_NS:3936</string>
@@ -3493,6 +3515,14 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">labelFieldsHidden</string>
+						<reference key="source" ref="938073405"/>
+						<reference key="destination" ref="895061588"/>
+					</object>
+					<int key="connectionID">585</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">mainPopover</string>
 						<reference key="source" ref="347229760"/>
 						<reference key="destination" ref="316947884"/>
@@ -4158,6 +4188,7 @@
 							<reference ref="275621875"/>
 							<reference ref="437062672"/>
 							<reference ref="740863057"/>
+							<reference ref="895061588"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -5114,6 +5145,20 @@
 						<reference key="object" ref="626107377"/>
 						<reference key="parent" ref="872659149"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">583</int>
+						<reference key="object" ref="895061588"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="736832215"/>
+						</object>
+						<reference key="parent" ref="938073405"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">584</int>
+						<reference key="object" ref="736832215"/>
+						<reference key="parent" ref="895061588"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -5317,6 +5362,8 @@
 					<string>566.IBPluginDependency</string>
 					<string>57.IBPluginDependency</string>
 					<string>58.IBPluginDependency</string>
+					<string>583.IBPluginDependency</string>
+					<string>584.IBPluginDependency</string>
 					<string>59.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 					<string>60.IBPluginDependency</string>
@@ -5610,6 +5657,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -5624,7 +5673,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">582</int>
+			<int key="maxID">585</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -6241,6 +6290,7 @@
 							<string>imageStatusIcon</string>
 							<string>labelCategories</string>
 							<string>labelCompany</string>
+							<string>labelFieldsHidden</string>
 							<string>labelHypervisor</string>
 							<string>labelLocality</string>
 							<string>labelName</string>
@@ -6273,6 +6323,7 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
+							<string>NSTextField</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -6294,6 +6345,7 @@
 							<string>imageStatusIcon</string>
 							<string>labelCategories</string>
 							<string>labelCompany</string>
+							<string>labelFieldsHidden</string>
 							<string>labelHypervisor</string>
 							<string>labelLocality</string>
 							<string>labelName</string>
@@ -6362,6 +6414,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">labelCompany</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelFieldsHidden</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">

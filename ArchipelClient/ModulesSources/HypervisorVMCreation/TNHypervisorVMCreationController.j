@@ -44,6 +44,7 @@
 @global TNArchipelEntityTypeVirtualMachine
 @global TNArchipelRosterOutlineViewSelectItemNotification
 
+var TNHypervisorVMCreationControllerLibvirtIcon = nil;
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
@@ -271,6 +272,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [VMCloneController setDelegate:self];
     [VMManagerController setDelegate:self];
     [VMParkingController setDelegate:self];
+
+    TNHypervisorVMCreationControllerLibvirtIcon = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"libvirt-icon.png"]];
 }
 
 
@@ -901,9 +904,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         {
             var JID = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]];
 
-            // @TODO: do not check for nil value later
-            // but for the moment, keep compatibility with older version of Agent
-            if (![[queryItems objectAtIndex:i] valueForAttribute:@"managed"] || [[queryItems objectAtIndex:i] valueForAttribute:@"managed"] == "True")
+            if ([[queryItems objectAtIndex:i] valueForAttribute:@"managed"] == "True")
             {
                 var entry = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
                 if (entry)
@@ -941,7 +942,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                 var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil],
                     name = [[queryItems objectAtIndex:i] valueForAttribute:@"name"];
 
-                [contact setNickname: name + @" is not managed by Archipel. Double click on it to manage."];
+                [contact setNickname:name];
+                [contact setAvatar:TNHypervisorVMCreationControllerLibvirtIcon];
 
                 [_virtualMachinesNotManagedDatasource addObject:contact];
             }
