@@ -43,8 +43,9 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.xmlrpc_port        = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
         self.xmlrpc_user        = self.configuration.get("XMPPSERVER", "xmlrpc_user")
         self.xmlrpc_password    = self.configuration.get("XMPPSERVER", "xmlrpc_password")
-        self.xmlrpc_prefix       = "https://" if self.configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http://"
+        self.xmlrpc_prefix       = "https" if self.configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
         self.xmlrpc_call        = "%s://%s:%s@%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
+        print self.xmlrpc_call
         self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
         self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
 
