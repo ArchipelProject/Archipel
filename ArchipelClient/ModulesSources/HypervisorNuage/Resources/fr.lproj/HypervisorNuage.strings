@@ -224,9 +224,9 @@
 /* Class = "NSTextFieldCell"; title = "Domain and Zone configuration"; ObjectID = "820"; */
 "820.title" = "Domain and Zone configuration";
 
-/* Class = "NSTextFieldCell"; title = "Not authenticated"; ObjectID = "832"; */
-"832.title" = "Not authenticated";
+/* Class = "NSTextFieldCell"; title = "Not authenticated."; ObjectID = "843"; */
+"843.title" = "Not authenticated.";
 
-/* Class = "NSTextFieldCell"; title = "You must enter valid CNA credentials in the Nuage module preferences."; ObjectID = "833"; */
-"833.title" = "You must enter valid CNA credentials in the Nuage module preferences.";
+/* Class = "NSTextFieldCell"; title = "Archipel is unable to VSD Server. Please check your credentials in the Preferences."; ObjectID = "844"; */
+"844.title" = "Archipel is unable to VSD Server. Please check your credentials in the Preferences.";
 

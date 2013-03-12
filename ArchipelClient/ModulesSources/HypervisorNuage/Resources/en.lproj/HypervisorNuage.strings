@@ -5,7 +5,7 @@
 /* Class = "NSTextFieldCell"; title = "Manage Nuage Networks"; ObjectID = "10"; */
 "10.title" = "Manage Nuage Networks";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "19"; */
 "19.title" = "Name";
 
 /* Class = "NSTextFieldCell"; title = "Nuage Network"; ObjectID = "21"; */
@@ -23,10 +23,10 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "37"; */
 "37.title" = "Item 3";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "39"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "39"; */
 "39.title" = "Type";
 
-/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "62"; */
+/* Class = "NSTextFieldCell"; title = "Address"; ObjectID = "62"; */
 "62.title" = "Address";
 
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "64"; */
@@ -35,7 +35,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "67"; */
 "67.placeholderString" = "auto";
 
-/* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
+/* Class = "NSTextFieldCell"; title = "Netmask"; ObjectID = "68"; */
 "68.title" = "Netmask";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "72"; */
@@ -50,7 +50,7 @@
 /* Class = "NSTextFieldCell"; title = "Network name"; ObjectID = "206"; */
 "206.title" = "Network name";
 
-/* Class = "NSTextFieldCell"; title = "Address:"; ObjectID = "210"; */
+/* Class = "NSTextFieldCell"; title = "Address"; ObjectID = "210"; */
 "210.title" = "Address";
 
 /* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "212"; */
@@ -59,10 +59,10 @@
 /* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "215"; */
 "215.title" = "x.x.x.x";
 
-/* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "216"; */
+/* Class = "NSTextFieldCell"; title = "Gateway"; ObjectID = "216"; */
 "216.title" = "Gateway";
 
-/* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "232"; */
+/* Class = "NSTextFieldCell"; title = "Netmask"; ObjectID = "232"; */
 "232.title" = "Netmask";
 
 /* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "238"; */
@@ -92,7 +92,7 @@
 /* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "580"; */
 "580.title" = "Average";
 
-/* Class = "NSTextFieldCell"; title = "Outbound:"; ObjectID = "581"; */
+/* Class = "NSTextFieldCell"; title = "Outbound"; ObjectID = "581"; */
 "581.title" = "Outbound";
 
 /* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "582"; */
@@ -107,7 +107,7 @@
 /* Class = "NSTextFieldCell"; title = "Message"; ObjectID = "602"; */
 "602.title" = "Message";
 
-/* Class = "NSTextFieldCell"; title = "In limit:"; ObjectID = "615"; */
+/* Class = "NSTextFieldCell"; title = "In limit"; ObjectID = "615"; */
 "615.title" = "In limit";
 
 /* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "616"; */
@@ -116,7 +116,7 @@
 /* Class = "NSTextFieldCell"; title = "1000/1000/1000"; ObjectID = "617"; */
 "617.title" = "1000/1000/1000";
 
-/* Class = "NSTextFieldCell"; title = "Out limit:"; ObjectID = "618"; */
+/* Class = "NSTextFieldCell"; title = "Out limit"; ObjectID = "618"; */
 "618.title" = "Out limit";
 
 /* Class = "NSTextFieldCell"; title = "Burst"; ObjectID = "633"; */
@@ -128,7 +128,7 @@
 /* Class = "NSTextFieldCell"; title = "Average"; ObjectID = "635"; */
 "635.title" = "Average";
 
-/* Class = "NSTextFieldCell"; title = "Inbound:"; ObjectID = "636"; */
+/* Class = "NSTextFieldCell"; title = "Inbound"; ObjectID = "636"; */
 "636.title" = "Inbound";
 
 /* Class = "NSTextFieldCell"; placeholderString = "100"; ObjectID = "637"; */
@@ -155,7 +155,7 @@
 /* Class = "NSTextFieldCell"; title = "Manual edition of a network can be dangerous. Use with caution."; ObjectID = "672"; */
 "672.title" = "Manual edition of a network can be dangerous. Use with caution.";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "704"; */
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "704"; */
 "704.title" = "Type";
 
 /* Class = "NSTextFieldCell"; title = "IPV4"; ObjectID = "705"; */
@@ -164,7 +164,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "712"; */
 "712.placeholderString" = "auto";
 
-/* Class = "NSTextFieldCell"; title = "Gateway:"; ObjectID = "713"; */
+/* Class = "NSTextFieldCell"; title = "Gateway"; ObjectID = "713"; */
 "713.title" = "Gateway";
 
 /* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "745"; */
@@ -191,16 +191,16 @@
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for the Nuage module."; ObjectID = "776"; */
 "776.title" = "You can configure preferences for the Nuage module.";
 
-/* Class = "NSTextFieldCell"; title = "CNA API URL:"; ObjectID = "777"; */
+/* Class = "NSTextFieldCell"; title = "CNA API URL"; ObjectID = "777"; */
 "777.title" = "CNA API URL";
 
-/* Class = "NSTextFieldCell"; title = "User name:"; ObjectID = "778"; */
+/* Class = "NSTextFieldCell"; title = "User name"; ObjectID = "778"; */
 "778.title" = "User name";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "779"; */
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "779"; */
 "779.title" = "Password";
 
-/* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "780"; */
+/* Class = "NSTextFieldCell"; title = "Company"; ObjectID = "780"; */
 "780.title" = "Company";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Alcatel-Lucent"; ObjectID = "785"; */
@@ -224,9 +224,9 @@
 /* Class = "NSTextFieldCell"; title = "Domain and Zone configuration"; ObjectID = "820"; */
 "820.title" = "Domain and Zone configuration";
 
-/* Class = "NSTextFieldCell"; title = "Not authenticated"; ObjectID = "832"; */
-"832.title" = "Not authenticated";
+/* Class = "NSTextFieldCell"; title = "Not authenticated."; ObjectID = "843"; */
+"843.title" = "Not authenticated.";
 
-/* Class = "NSTextFieldCell"; title = "You must enter valid CNA credentials in the Nuage module preferences."; ObjectID = "833"; */
-"833.title" = "You must enter valid CNA credentials in the Nuage module preferences.";
+/* Class = "NSTextFieldCell"; title = "Archipel is unable to VSD Server. Please check your credentials in the Preferences."; ObjectID = "844"; */
+"844.title" = "Archipel is unable to VSD Server. Please check your credentials in the Preferences.";
 
