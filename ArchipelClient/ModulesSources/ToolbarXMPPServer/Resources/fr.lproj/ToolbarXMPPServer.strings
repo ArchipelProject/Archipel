@@ -41,9 +41,6 @@
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "43"; */
 "43.title" = "Create";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "44"; */
-"44.title" = "Cancel";
-
 /* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "45"; */
 "45.title" = "Username:";
 
@@ -77,9 +74,6 @@
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "124"; */
 "124.title" = "Name:";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "125"; */
-"125.title" = "Cancel";
-
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "126"; */
 "126.title" = "Create";
 
@@ -109,9 +103,6 @@
 
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "152"; */
 "152.title" = "Add";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "153"; */
-"153.title" = "Cancel";
 
 /* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "205"; */
 "205.headerCell.title" = "Name";

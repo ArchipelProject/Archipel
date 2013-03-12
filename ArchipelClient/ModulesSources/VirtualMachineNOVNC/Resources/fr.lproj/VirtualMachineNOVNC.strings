@@ -92,9 +92,6 @@
 /* Class = "NSTextFieldCell"; title = "Please copy in the following area what you want to send to virtual machine's clipboard."; ObjectID = "86"; */
 "86.title" = "Please copy in the following area what you want to send to virtual machine's clipboard.";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "149"; */
-"149.title" = "Cancel";
-
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "161"; */
 "161.title" = "Label";
 

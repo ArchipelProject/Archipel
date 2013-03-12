@@ -11,9 +11,6 @@
 /* Class = "NSTextField"; ibShadowedToolTip = "New group name"; ObjectID = "863"; */
 "863.ibShadowedToolTip" = "New group name";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "870"; */
-"870.title" = "Abbrechen";
-
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "871"; */
 "871.title" = "Erstellen";
 
@@ -40,9 +37,6 @@
 
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "892"; */
 "892.title" = "Hinzufügen";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "893"; */
-"893.title" = "Abbrechen";
 
 /* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "894"; */
 "894.title" = "JID";
@@ -76,9 +70,6 @@
 
 /* Class = "NSButtonCell"; title = "Choose"; ObjectID = "931"; */
 "931.title" = "Auswählen";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "932"; */
-"932.title" = "Abbrechen";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "944"; */
 "944.title" = "Abbrechen";

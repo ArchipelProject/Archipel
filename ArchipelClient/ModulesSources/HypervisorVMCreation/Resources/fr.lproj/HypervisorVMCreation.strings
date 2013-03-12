@@ -20,9 +20,6 @@
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "24"; */
 "24.title" = "Ajouter";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "25"; */
-"25.title" = "Annuler";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "34"; */
 "34.title" = "Box";
 
@@ -38,14 +35,8 @@
 /* Class = "NSButtonCell"; title = "Remove"; ObjectID = "38"; */
 "38.title" = "Supprimer";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
-"39.title" = "Annuler";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "43"; */
 "43.title" = "Box";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "49"; */
-"49.title" = "Annuler";
 
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "50"; */
 "50.title" = "Créer";
@@ -85,9 +76,6 @@
 
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "107"; */
 "107.title" = "Créer";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "108"; */
-"108.title" = "Annuler";
 
 /* Class = "NSTableColumn"; headerCell.title = "Virtual Machines"; ObjectID = "130"; */
 "130.headerCell.title" = "Virtual Machines";
@@ -184,9 +172,6 @@
 
 /* Class = "NSButtonCell"; title = "Update"; ObjectID = "477"; */
 "477.title" = "Update";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "478"; */
-"478.title" = "Cancel";
 
 /* Class = "NSTextFieldCell"; title = "Organization"; ObjectID = "500"; */
 "500.title" = "Organization:";

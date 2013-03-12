@@ -74,9 +74,6 @@
 /* Class = "NSButtonCell"; title = "Save"; ObjectID = "74"; */
 "74.title" = "Save";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "76"; */
-"76.title" = "Cancel";
-
 /* Class = "NSTextFieldCell"; title = "Network name"; ObjectID = "206"; */
 "206.title" = "Network name";
 

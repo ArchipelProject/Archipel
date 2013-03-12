@@ -8,9 +8,6 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "18"; */
 "18.title" = "Box";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "26"; */
-"26.title" = "Cancel";
-
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "27"; */
 "27.title" = "Create";
 

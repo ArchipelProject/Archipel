@@ -562,7 +562,7 @@
 			<object class="NSPopover" id="381698769">
 				<nil key="NSNextResponder"/>
 				<int key="NSAppearance">0</int>
-				<int key="NSBehavior">0</int>
+				<int key="NSBehavior">1</int>
 				<double key="NSContentWidth">0.0</double>
 				<double key="NSContentHeight">0.0</double>
 				<bool key="NSAnimates">YES</bool>
@@ -634,7 +634,6 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {585, 5}}</string>
 						<reference key="NSSuperview" ref="670153015"/>
-						<reference key="NSNextKeyView" ref="745808752"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -670,29 +669,6 @@
 							<reference key="NSAlternateImage" ref="820393570"/>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">400</int>
-							<int key="NSPeriodicInterval">75</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSButton" id="745808752">
-						<reference key="NSNextResponder" ref="670153015"/>
-						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{335, 12}, {118, 32}}</string>
-						<reference key="NSSuperview" ref="670153015"/>
-						<reference key="NSNextKeyView" ref="80558798"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="486659397">
-							<int key="NSCellFlags">-2080374784</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
-							<reference key="NSSupport" ref="820393570"/>
-							<reference key="NSControlView" ref="745808752"/>
-							<int key="NSButtonFlags">-2038022144</int>
-							<int key="NSButtonFlags2">129</int>
-							<reference key="NSAlternateImage" ref="820393570"/>
-							<string key="NSAlternateContents"/>
-							<string type="base64-UTF8" key="NSKeyEquivalent">Gw</string>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
 						</object>
@@ -1353,14 +1329,6 @@
 					<int key="connectionID">134</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closePasteBoardWindow:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="745808752"/>
-					</object>
-					<int key="connectionID">151</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">popoverPasteBoard</string>
 						<reference key="source" ref="1001"/>
@@ -1891,7 +1859,6 @@
 							<reference ref="629704245"/>
 							<reference ref="80558798"/>
 							<reference ref="883054498"/>
-							<reference ref="745808752"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">View pasteboard</string>
@@ -1970,20 +1937,6 @@
 						<int key="objectID">65</int>
 						<reference key="object" ref="862200709"/>
 						<reference key="parent" ref="960358207"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">148</int>
-						<reference key="object" ref="745808752"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="486659397"/>
-						</object>
-						<reference key="parent" ref="670153015"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">149</int>
-						<reference key="object" ref="486659397"/>
-						<reference key="parent" ref="745808752"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">155</int>
@@ -2400,8 +2353,6 @@
 					<string>13.IBPluginDependency</string>
 					<string>135.IBPluginDependency</string>
 					<string>14.IBPluginDependency</string>
-					<string>148.IBPluginDependency</string>
-					<string>149.IBPluginDependency</string>
 					<string>15.IBPluginDependency</string>
 					<string>155.IBPluginDependency</string>
 					<string>156.IBPluginDependency</string>
@@ -2511,8 +2462,6 @@
 				</object>
 				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3073,7 +3022,7 @@
 			<object class="NSArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{15, 15}</string>
-				<string>{128, 128}</string>
+				<string>{32, 32}</string>
 			</object>
 		</object>
 	</data>

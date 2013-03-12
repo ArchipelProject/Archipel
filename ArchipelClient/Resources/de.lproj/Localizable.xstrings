@@ -124,8 +124,6 @@
 	<string>KB</string>
 	<key>Later</key>
 	<string>Später</string>
-	<key>Loaded </key>
-	<string>Geladen </string>
 	<key>Locale change</key>
 	<string>Gebietsschema ändern</string>
 	<key>Log out</key>
