@@ -23,12 +23,6 @@
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "32"; */
 "32.title" = "Name:";
 
-/* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "51"; */
-"51.title" = "Virtual machine is running.";
-
-/* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to manage the appliances."; ObjectID = "52"; */
-"52.title" = "You need to stop the virtual machine to be able to manage the appliances.";
-
 /* Class = "NSTextFieldCell"; title = "Compress"; ObjectID = "66"; */
 "66.title" = "Compress:";
 
@@ -49,4 +43,10 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "84"; */
 "84.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "126"; */
+"126.title" = "Virtual machine is running.";
+
+/* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to manage the appliances."; ObjectID = "127"; */
+"127.title" = "You need to stop the virtual machine to be able to manage the appliances.";
 
