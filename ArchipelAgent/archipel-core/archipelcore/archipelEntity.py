@@ -630,6 +630,21 @@ class TNArchipelEntity (object):
 
     ### XMPP Utilities
 
+    def change_name(self, newname, publish=True):
+        """
+        Rename the current entity
+        @type newname: string
+        @param newname: the new name
+        @type publish: Boolean
+        @param publish: if False, you need to manually publish the vCard if you want to
+        """
+        if self.name == newname:
+            return
+        self.name = newname
+        if publish:
+            self.set_vcard()
+
+
     def change_presence(self, presence_show=None, presence_status=None, callback=None):
         """
         Change the presence of the entity.
