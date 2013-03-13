@@ -124,8 +124,6 @@
 	<string>KB</string>
 	<key>Later</key>
 	<string>Later</string>
-	<key>Loaded </key>
-	<string>Loaded </string>
 	<key>Locale change</key>
 	<string>Locale change</string>
 	<key>Log out</key>
@@ -150,10 +148,6 @@
 	<string>Password error</string>
 	<key>Paste</key>
 	<string>Paste</string>
-	<key>Please select a contact first.</key>
-	<string>Please select a contact first.</string>
-	<key>Please select a group first.</key>
-	<string>Please select a group first.</string>
 	<key>Preferences</key>
 	<string>Preferences</string>
 	<key>Preferences saved</key>
@@ -166,10 +160,6 @@
 	<string>Release note</string>
 	<key>Remove subscribtion</key>
 	<string>Remove subscribtion</string>
-	<key>Rename contact</key>
-	<string>Rename contact</string>
-	<key>Rename group</key>
-	<string>Rename group</string>
 	<key>Report a bug</key>
 	<string>Report a bug</string>
 	<key>Reset</key>
@@ -178,10 +168,6 @@
 	<string>Resource</string>
 	<key>Search entity</key>
 	<string>Search entity</string>
-	<key>Select a contact</key>
-	<string>Select a contact</string>
-	<key>Select a group</key>
-	<string>Select a group</string>
 	<key>Select all</key>
 	<string>Select all</string>
 	<key>Select next entity</key>

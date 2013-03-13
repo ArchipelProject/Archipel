@@ -215,9 +215,6 @@
 /* Later */
 "Later" = "Later";
 
-/* Loaded  */
-"Loaded " = "Loaded ";
-
 /* Locale change */
 "Locale change" = "Locale change";
 
@@ -254,12 +251,6 @@
 /* Paste */
 "Paste" = "Paste";
 
-/* Please select a contact first. */
-"Please select a contact first." = "Please select a contact first.";
-
-/* Please select a group first. */
-"Please select a group first." = "Please select a group first.";
-
 /* Preferences */
 "Preferences" = "Preferences";
 
@@ -278,12 +269,6 @@
 /* Remove subscribtion */
 "Remove subscribtion" = "Remove subscribtion";
 
-/* Rename contact */
-"Rename contact" = "Rename contact";
-
-/* Rename group */
-"Rename group" = "Rename group";
-
 /* Report a bug */
 "Report a bug" = "Report a bug";
 
@@ -295,12 +280,6 @@
 
 /* Search entity */
 "Search entity" = "Search entity";
-
-/* Select a contact */
-"Select a contact" = "Select a contact";
-
-/* Select a group */
-"Select a group" = "Select a group";
 
 /* Select all */
 "Select all" = "Select all";

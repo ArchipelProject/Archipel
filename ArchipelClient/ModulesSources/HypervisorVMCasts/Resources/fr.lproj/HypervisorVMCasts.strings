@@ -29,9 +29,6 @@
 /* Class = "NSButtonCell"; title = "Register"; ObjectID = "37"; */
 "37.title" = "S'abonner";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
-"39.title" = "Annuler";
-
 /* Class = "NSTextFieldCell"; title = "URL"; ObjectID = "47"; */
 "47.title" = "URL:";
 
@@ -55,10 +52,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Download queue for"; ObjectID = "113"; */
 "113.title" = "Queue de téléchargement pour ";
-
-/* Class = "NSBox"; title = "Box"; ObjectID = "114"; */
-"114.title" = "Box";
-
-/* Class = "NSButtonCell"; title = "Close"; ObjectID = "118"; */
-"118.title" = "Fermer";
 

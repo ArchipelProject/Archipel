@@ -11,9 +11,6 @@
 /* Class = "NSTextField"; ibShadowedToolTip = "New group name"; ObjectID = "863"; */
 "863.ibShadowedToolTip" = "New group name";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "870"; */
-"870.title" = "Cancel";
-
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "871"; */
 "871.title" = "Create";
 
@@ -40,9 +37,6 @@
 
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "892"; */
 "892.title" = "Add";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "893"; */
-"893.title" = "Cancel";
 
 /* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "894"; */
 "894.title" = "JID";
@@ -76,9 +70,6 @@
 
 /* Class = "NSButtonCell"; title = "Choose"; ObjectID = "931"; */
 "931.title" = "Choose";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "932"; */
-"932.title" = "Cancel";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "944"; */
 "944.title" = "Cancel";
@@ -158,8 +149,8 @@
 /* Class = "NSTextField"; ibShadowedToolTip = "enter your ejabberd BOSH URL"; ObjectID = "1000"; */
 "1000.ibShadowedToolTip" = "enter your ejabberd BOSH URL";
 
-/* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
-"1002.title" = "BOSH service";
+/* Class = "NSTextFieldCell"; title = "XMPP Service"; ObjectID = "1002"; */
+"1002.title" = "XMPP Service";
 
 /* Class = "NSTextFieldCell"; placeholderString = "http://domain.com:5280/http-bind"; ObjectID = "1003"; */
 "1003.placeholderString" = "http://domain.com:5280/http-bind";

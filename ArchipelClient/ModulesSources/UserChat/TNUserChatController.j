@@ -177,9 +177,9 @@
     {
         if ([stanza containsChildrenWithName:@"body"])
         {
-            var from    = ([stanza valueForAttribute:@"from"] == @"me") ? @"me" : [_entity nickname],
+            var from    = ([stanza valueForAttribute:@"from"] == @"me") ? @"me" : [_entity name],
                 message = [[stanza firstChildWithName:@"body"] text],
-                color   = ([stanza valueForAttribute:@"from"] == @"me") ? [CPColor ] : [_entity nickname];
+                color   = ([stanza valueForAttribute:@"from"] == @"me") ? [CPColor ] : [_entity name];
 
             [self appendMessageToBoard:message from:from];
         }
@@ -236,7 +236,7 @@
             var messageBody = [[stanza firstChildWithName:@"body"] text];
 
             [imageSpinnerWriting setHidden:YES];
-            [self appendMessageToBoard:messageBody from:[_entity nickname]];
+            [self appendMessageToBoard:messageBody from:[_entity name]];
             CPLog.info(@"message received : " + messageBody);
             if (![_detachedChats containsKey:[[aNotification object] JID]])
                 [_soundReceived play];

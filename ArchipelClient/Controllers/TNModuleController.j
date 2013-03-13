@@ -246,7 +246,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
     var vCard = [[aNotification object] vCard],
-        moduleType = [vCard firstChildWithName:@"ROLE"] ? [[vCard firstChildWithName:@"ROLE"] text] : nil;
+        moduleType = [vCard role] || nil;
 
     if (moduleType != _moduleType)
     {

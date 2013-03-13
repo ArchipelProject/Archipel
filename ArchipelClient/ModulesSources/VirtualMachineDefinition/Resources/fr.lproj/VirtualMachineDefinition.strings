@@ -29,7 +29,7 @@
 /* Class = "NSTextFieldCell"; title = "Configure basics behaviours of the virtual machine"; ObjectID = "15"; */
 "15.title" = "Configure basics behaviours of the virtual machine";
 
-/* Class = "NSTextFieldCell"; title = "Memory (MB)"; ObjectID = "17"; */
+/* Class = "NSTextFieldCell"; title = "Memory"; ObjectID = "17"; */
 "17.title" = "Memory:";
 
 /* Class = "NSTextFieldCell"; title = "Virtual CPUs"; ObjectID = "19"; */
@@ -62,7 +62,7 @@
 /* Class = "NSTextFieldCell"; title = "Domain type"; ObjectID = "70"; */
 "70.title" = "Domain type:";
 
-/* Class = "NSTextFieldCell"; title = "Set how the hypervisor manages this virtual machine"; ObjectID = "71"; */
+/* Class = "NSTextFieldCell"; title = "Set how the hypervisor manages this VM"; ObjectID = "71"; */
 "71.title" = "Set how the hypervisor manages this virtual machine";
 
 /* Class = "NSTextFieldCell"; title = "Hypervisor management"; ObjectID = "72"; */
@@ -113,9 +113,6 @@
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "137"; */
 "137.title" = "OK";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "138"; */
-"138.title" = "Cancel";
-
 /* Class = "NSTextFieldCell"; title = "Drive type"; ObjectID = "154"; */
 "154.title" = "Drive type:";
 
@@ -136,9 +133,6 @@
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "192"; */
 "192.title" = "Box";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "197"; */
-"197.title" = "Cancel";
 
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "198"; */
 "198.title" = "OK";
@@ -178,9 +172,6 @@
 
 /* Class = "NSButtonCell"; title = "Define"; ObjectID = "229"; */
 "229.title" = "Define";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "231"; */
-"231.title" = "Cancel";
 
 /* Class = "NSTextFieldCell"; title = "Virtual drives"; ObjectID = "238"; */
 "238.title" = "Virtual drives";
@@ -743,9 +734,6 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "1180"; */
 "1180.title" = "Box";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1183"; */
-"1183.title" = "Cancel";
-
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "1184"; */
 "1184.title" = "OK";
 
@@ -787,9 +775,6 @@
 
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "1240"; */
 "1240.title" = "OK";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1241"; */
-"1241.title" = "Cancel";
 
 /* Class = "NSTextFieldCell"; title = "Graphic device"; ObjectID = "1242"; */
 "1242.title" = "Graphic device";
@@ -955,9 +940,6 @@
 
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "1540"; */
 "1540.title" = "OK";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1541"; */
-"1541.title" = "Cancel";
 
 /* Class = "NSTextFieldCell"; title = "Character device"; ObjectID = "1554"; */
 "1554.title" = "Character device";
@@ -1336,4 +1318,16 @@
 
 /* Class = "NSButtonCell"; title = "Huge page"; ObjectID = "1971"; */
 "1971.title" = "Huge page";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Change the VM name. You can ony change the name once the VM as been defined."; ObjectID = "2001"; */
+"2001.ibShadowedToolTip" = "Change the VM name. You can ony change the name once the VM as been defined.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My Super VM"; ObjectID = "2002"; */
+"2002.placeholderString" = "My Super VM";
+
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "2006"; */
+"2006.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "2008"; */
+"2008.title" = "MB";
 

@@ -121,6 +121,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
+        self.inhibit_domain_event = False
         self.cputime_samples=[]
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_timer(self.cputime_sampling_Interval)
@@ -182,6 +183,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         vCard.append(xmpp.Node("LOCALITY", payload=self.vcard_infos["LOCALITY"]))
         vCard.append(xmpp.Node("USERID", payload=self.vcard_infos["USERID"]))
         vCard.append(xmpp.Node("CATEGORIES", payload=self.vcard_infos["CATEGORIES"]))
+
 
     def get_custom_vcard_information(self, vCard):
         """
@@ -324,6 +326,28 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         if os.path.exists(self.permfolder):
             shutil.rmtree(self.permfolder)
 
+    def rename_virtual_machine(self, newname, publish=True):
+        """
+        Rename the virtual machine with the given name.
+        @type newname: String
+        @param newname: the new name of the VM
+        @type publish: Boolean
+        @param publish: If True, the vCard with new name will be published right away
+        """
+        self.hypervisor.libvirt_contains_domain_with_name(newname, raise_error=True)
+
+        self.log.info("renaming VM from %s to %s" % (self.name, newname))
+        self.change_name(newname, publish)
+
+        if self.domain:
+            self.inhibit_domain_event = True
+            old_definition = self.definition
+            self.undefine()
+            self.definition = old_definition
+            if self.definition:
+                self.definition.getTag("name").setData(newname)
+            self.inhibit_domain_event = False
+
     def set_automatic_libvirt_description(self, xmldesc):
         """
         Set the XML description's description of the VM.
@@ -334,10 +358,17 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             xmldesc.delChild("description")
             xmldesc.addChild(name='description')
         xmldesc.getTag('description').setData("%s::::%s" % (self.jid.getStripped(), self.password))
-        if not xmldesc.getTag('name'):
+
+        provided_name_tag = xmldesc.getTag('name')
+
+        if not provided_name_tag:
             xmldesc.addChild(name='name')
+        elif self.definition and not provided_name_tag.getData() == self.name:
+            self.rename_virtual_machine(provided_name_tag.getData(), publish=True)
+
         xmldesc.getTag('name').setData(self.name.encode("ascii", "replace"))
         ret = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+
         self.log.debug("Generated XML desc is : %s" % ret)
         return ret
 
@@ -400,9 +431,15 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         @param detail: the detail associated to the event
         """
         self.log.info("LIBVIRTEVENT: Libvirt event received: %d with detail %s" % (event, detail))
+
         if self.is_migrating:
             self.log.info("LIBVIRTEVENT: Event received but virtual machine is migrating. Ignoring.")
             return
+
+        if self.inhibit_domain_event:
+            self.log.info("LIBVIRTEVENT: VM has inihibited its event reaction. Ignoring")
+            return
+
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
@@ -433,7 +470,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.push_change("virtualmachine:definition", "undefined")
                 self.perform_hooks("HOOK_VM_UNDEFINE")
                 self.domain = None
-                self.description = None
+                self.definition = None
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.set_presence_according_to_libvirt_info()
                 self.push_change("virtualmachine:definition", "defined")

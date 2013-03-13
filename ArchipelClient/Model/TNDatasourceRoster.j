@@ -93,11 +93,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
     @param aVCard TNXMLNode containing the vCard
     @return value of TNArchipelEntityType
 */
-- (CPString)analyseVCard:(TNXMLNode)aVCard
+- (CPString)analyseVCard:(TNStropheVCard)aVCard
 {
     if (aVCard)
     {
-        var itemType = [[aVCard firstChildWithName:@"ROLE"] text];
+        var itemType = [aVCard role];
 
         if ([TNArchipelEntityTypes containsKey:itemType])
             return itemType;
@@ -216,7 +216,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         var entry = [theEntries objectAtIndex:i];
 
-        if ([[entry nickname] uppercaseString].indexOf([_filter uppercaseString]) != -1
+        if ([[entry name] uppercaseString].indexOf([_filter uppercaseString]) != -1
             || [[[entry JID] bare] uppercaseString].indexOf([_filter uppercaseString]) != -1
             || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[_filter lowercaseString]])
         {

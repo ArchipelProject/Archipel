@@ -122,7 +122,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 - (void)_entityNicknameUpdated:(CPNotification)aNotification
 {
-    [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
+    [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity name] + " (" + [_entity JID] + ")"];
 }
 
 
@@ -153,7 +153,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
                                                  name:TNStropheContactNicknameUpdatedNotification
                                                object:_entity];
 
-    [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
+    [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity name] + " (" + [_entity JID] + ")"];
 
     var domWindow = [[self platformWindow] DOMWindow],
         unloadFunction = function() {
@@ -316,7 +316,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
             [aScreenView setHidden:YES];
             var growl = [[TNGrowlCenter alloc] init];
             [growl setView:[self contentView]];
-            [growl pushNotificationWithTitle:[_entity nickname]
+            [growl pushNotificationWithTitle:[_entity name]
                                      message:CPBundleLocalizedString(@"Error connecting to the VNC screen. Use the VNC tab for more information.", @"Error connecting to the VNC screen. Use the VNC tab for more information.")
                                         icon:TNGrowlIconError];
 
@@ -363,7 +363,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 {
     var growl = [[TNGrowlCenter alloc] init];
     [growl setView:[self contentView]];
-    [growl pushNotificationWithTitle:[_entity nickname]
+    [growl pushNotificationWithTitle:[_entity name]
                              message:CPBundleLocalizedString(@"Your browser does not support javascript fullscreen", @"Your browser does not support javascript fullscreen")
                                 icon:TNGrowlIconWarning];
 }

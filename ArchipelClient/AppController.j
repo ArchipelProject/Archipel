@@ -313,7 +313,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_rosterOutlineView setEnabled:NO];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
-    [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
     _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0)";
     _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(top, #2F2727, #1a82f7)";
 
@@ -503,10 +502,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     {
         [[groupsMenu addItemWithTitle:CPLocalizedString(@"Add group", @"Add group") action:@selector(addGroup:) keyEquivalent:@"G"] setTarget:self];
         [[groupsMenu addItemWithTitle:CPLocalizedString(@"Delete group", @"Delete group") action:@selector(deleteEntities:) keyEquivalent:@"D"] setTarget:self];
-        [groupsMenu addItem:[CPMenuItem separatorItem]];
     }
 
-    [[groupsMenu addItemWithTitle:CPLocalizedString(@"Rename group", @"Rename group") action:@selector(renameGroup:) keyEquivalent:@"R"] setTarget:self];
     [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
 
     // Contacts
@@ -517,10 +514,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         [contactsMenu addItem:[CPMenuItem separatorItem]]
         [[contactsMenu addItemWithTitle:CPLocalizedString(@"Ask subscribtion", @"Ask subscribtion") action:@selector(askSubscription:) keyEquivalent:@"'"] setTarget:self];
         [[contactsMenu addItemWithTitle:CPLocalizedString(@"Remove subscribtion", @"Remove subscribtion") action:@selector(removeSubscription:) keyEquivalent:@"\""] setTarget:self];
-        [contactsMenu addItem:[CPMenuItem separatorItem]];
     }
 
-    [[contactsMenu addItemWithTitle:CPLocalizedString(@"Rename contact", @"Rename contact") action:@selector(renameContact:) keyEquivalent:@"R"] setTarget:self];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
 
     // navigation
@@ -1114,42 +1109,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_rosterOutlineView moveLeft];
 }
 
-/*! Make the property view rename field active
-    @param the sender of the action
-*/
-- (IBAction)renameContact:(id)sender
-{
-    if ([[_rosterOutlineView selectedRowIndexes] firstIndex] == -1)
-    {
-        [TNAlert showAlertWithMessage:CPLocalizedString(@"Select a contact", @"Select a contact")
-                          informative:CPLocalizedString(@"Please select a contact first.", @"Please select a contact first.")];
-        return;
-    }
-
-    if ([propertiesController isCollapsed])
-        [self toggleShowPropertiesView:sender];
-
-    [[propertiesController entryName] mouseDown:nil];
-}
-
-/*! Make the property view rename field active
-    @param the sender of the action
-*/
-- (IBAction)renameGroup:(id)sender
-{
-    if ([[_rosterOutlineView selectedRowIndexes] firstIndex] == -1)
-    {
-        [TNAlert showAlertWithMessage:CPLocalizedString(@"Select a group", @"Select a group")
-                          informative:CPLocalizedString(@"Please select a group first.", @"Please select a group first.")];
-        return;
-    }
-
-    if ([propertiesController isCollapsed])
-        [self toggleShowPropertiesView:sender];
-
-    [[propertiesController entryName] mouseDown:nil];
-}
-
 /*! simulate a click on the focus filter
     @param the sender of the action
 */
@@ -1379,13 +1338,11 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 - (void)didRetreiveUserVCard:(CPNotification)aNotification
 {
-    var vCard = [connectionController userVCard],
-        photoNode;
+    var vCard = [connectionController userVCard];
 
-    if (photoNode = [vCard firstChildWithName:@"PHOTO"])
+    if ([vCard photo])
     {
-        var data            = [[photoNode firstChildWithName:@"BINVAL"] text],
-            currentAvatar   = [[CPImage alloc] initWithData:[CPData dataWithBase64:data]];
+        var currentAvatar = [vCard photo];
 
         [currentAvatar setDelegate:self];
 

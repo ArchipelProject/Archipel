@@ -224,24 +224,24 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     switch (change)
     {
         case @"packaging":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                              message:CPBundleLocalizedString(@"Packaging started.", @"Packaging started.")];
             break;
 
         case @"packagingerror":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                              message:CPBundleLocalizedString(@"Unable to create package. Check agent logs", @"Unable to create package. Check agent logs")
                                                                 icon:TNGrowlIconError];
             break;
 
         case @"packaged":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                              message:CPBundleLocalizedString(@"Packaging successful.", @"Packaging successful.")];
             [self getInstalledAppliances];
             break
 
         case @"applianceinstalled":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                              message:CPBundleLocalizedString(@"Appliance is installed.", @"Appliance is installed.")];
             [self getInstalledAppliances];
             break;
@@ -448,7 +448,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Instanciation has started", @"Instanciation has started")];
     }
     else
@@ -506,7 +506,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Appliance has been detached", @"Appliance has been detached")];
 
         [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];

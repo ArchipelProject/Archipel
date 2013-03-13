@@ -11,9 +11,6 @@
 /* Class = "NSTextFieldCell"; title = "UUID"; ObjectID = "27"; */
 "27.title" = "UUID:";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "28"; */
-"28.title" = "Cancel";
-
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "29"; */
 "29.title" = "Create";
 

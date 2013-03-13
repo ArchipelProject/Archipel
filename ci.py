@@ -169,7 +169,6 @@ if __name__ == "__main__":
     """
     Simple script that can be run using CruiseControl.rb to make continuous integration
     """
-
     ret, out = commands.getstatusoutput("git log -n1")
     if "#nobuild" in out:
         os.system("echo \* Build skipped according to last commit message (contains #nobuild)")

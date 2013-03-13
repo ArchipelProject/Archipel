@@ -229,7 +229,7 @@ var _iconEntityTypeHuman,
                 newItem;
 
             if (contact)
-                name = [contact nickname];
+                name = [contact name];
 
             var icon = _iconEntityTypeHuman;
             switch (usertype)

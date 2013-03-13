@@ -150,7 +150,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Added new subscription to virtual machine", @"Added new subscription to virtual machine")];
     }
     else
@@ -217,7 +217,7 @@ var TNArchipelTypeSubscription                  = @"archipel:subscription",
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Subscription have been removed", @"Subscription have been removed")];
     }
     else

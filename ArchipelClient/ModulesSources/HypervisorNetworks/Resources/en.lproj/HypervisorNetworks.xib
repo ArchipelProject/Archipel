@@ -1789,7 +1789,7 @@
 			<object class="NSPopover" id="802441286">
 				<nil key="NSNextResponder"/>
 				<int key="NSAppearance">0</int>
-				<int key="NSBehavior">0</int>
+				<int key="NSBehavior">1</int>
 				<double key="NSContentWidth">0.0</double>
 				<double key="NSContentHeight">0.0</double>
 				<bool key="NSAnimates">YES</bool>
@@ -2305,9 +2305,8 @@
 					<object class="NSTextField" id="371363148">
 						<reference key="NSNextResponder" ref="101047790"/>
 						<int key="NSvFlags">290</int>
-						<string key="NSFrame">{{7, 22}, {524, 17}}</string>
+						<string key="NSFrame">{{7, 22}, {642, 17}}</string>
 						<reference key="NSSuperview" ref="101047790"/>
-						<reference key="NSNextKeyView" ref="159830380"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="666294880">
 							<int key="NSCellFlags">68157504</int>
@@ -2679,29 +2678,6 @@
 							<string key="NSContents">Save</string>
 							<reference key="NSSupport" ref="5247702"/>
 							<reference key="NSControlView" ref="204776721"/>
-							<int key="NSButtonFlags">-2038022144</int>
-							<int key="NSButtonFlags2">129</int>
-							<reference key="NSAlternateImage" ref="5247702"/>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">400</int>
-							<int key="NSPeriodicInterval">75</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSButton" id="159830380">
-						<reference key="NSNextResponder" ref="101047790"/>
-						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{530, 13}, {118, 32}}</string>
-						<reference key="NSSuperview" ref="101047790"/>
-						<reference key="NSNextKeyView" ref="204776721"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="511731036">
-							<int key="NSCellFlags">-2080374784</int>
-							<int key="NSCellFlags2">134217728</int>
-							<string key="NSContents">Cancel</string>
-							<reference key="NSSupport" ref="5247702"/>
-							<reference key="NSControlView" ref="159830380"/>
 							<int key="NSButtonFlags">-2038022144</int>
 							<int key="NSButtonFlags2">129</int>
 							<reference key="NSAlternateImage" ref="5247702"/>
@@ -3166,14 +3142,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="159830380"/>
-						<reference key="destination" ref="204776721"/>
-					</object>
-					<int key="connectionID">125</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldNetworkName</string>
 						<reference key="source" ref="416875448"/>
 						<reference key="destination" ref="396097288"/>
@@ -3323,14 +3291,6 @@
 						<reference key="destination" ref="1032407584"/>
 					</object>
 					<int key="connectionID">352</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">closeWindow:</string>
-						<reference key="source" ref="416875448"/>
-						<reference key="destination" ref="159830380"/>
-					</object>
-					<int key="connectionID">418</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -4498,7 +4458,6 @@
 							<reference ref="44947341"/>
 							<reference ref="290417860"/>
 							<reference ref="204776721"/>
-							<reference ref="159830380"/>
 							<reference ref="713238818"/>
 							<reference ref="309539125"/>
 							<reference ref="125186147"/>
@@ -4717,20 +4676,6 @@
 							<reference ref="845902540"/>
 						</object>
 						<reference key="parent" ref="101047790"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">75</int>
-						<reference key="object" ref="159830380"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="511731036"/>
-						</object>
-						<reference key="parent" ref="101047790"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">76</int>
-						<reference key="object" ref="511731036"/>
-						<reference key="parent" ref="159830380"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">74</int>
@@ -5752,8 +5697,6 @@
 					<string>72.IBPluginDependency</string>
 					<string>73.IBPluginDependency</string>
 					<string>74.IBPluginDependency</string>
-					<string>75.IBPluginDependency</string>
-					<string>76.IBPluginDependency</string>
 					<string>77.IBPluginDependency</string>
 					<string>8.IBPluginDependency</string>
 					<string>83.IBPluginDependency</string>
@@ -6003,8 +5946,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -6035,6 +5976,80 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">TNHypervisorNetworksController</string>
 					<string key="superclassName">TNModule</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>activateNetwork:</string>
+							<string>addNetwork:</string>
+							<string>deactivateNetwork:</string>
+							<string>defineNetworkXML:</string>
+							<string>defineXMLString:</string>
+							<string>delNetwork:</string>
+							<string>editNetwork:</string>
+							<string>openXMLEditor:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>activateNetwork:</string>
+							<string>addNetwork:</string>
+							<string>deactivateNetwork:</string>
+							<string>defineNetworkXML:</string>
+							<string>defineXMLString:</string>
+							<string>delNetwork:</string>
+							<string>editNetwork:</string>
+							<string>openXMLEditor:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">activateNetwork:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">addNetwork:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deactivateNetwork:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">defineNetworkXML:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">defineXMLString:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">delNetwork:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">editNetwork:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openXMLEditor:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">

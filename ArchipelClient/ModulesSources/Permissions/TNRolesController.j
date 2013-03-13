@@ -91,7 +91,7 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                      message:CPBundleLocalizedString(@"Your role has been sucessfully saved.", @"Your role has been sucessfully saved.")];
 }
 
@@ -102,7 +102,7 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                      message:CPBundleLocalizedString(@"Your role cannot be saved.", @"Your role cannot be saved.")
                                                         icon:TNGrowlIconError];
 }
@@ -114,7 +114,7 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                      message:CPBundleLocalizedString(@"Your role has been sucessfully deleted.", @"Your role has been sucessfully deleted.")];
 }
 
@@ -125,7 +125,7 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                      message:CPBundleLocalizedString(@"Your role cannot be deleted.", @"Your role cannot be deleted.")
                                                         icon:TNGrowlIconError];
 }

@@ -9,19 +9,19 @@
 "8.title" = "Disk usage:";
 
 /* Class = "NSTextFieldCell"; title = "Load averag"; ObjectID = "11"; */
-"11.title" = "Load average:";
+"11.title" = "Load average";
 
 /* Class = "NSTextFieldCell"; title = "Free memory"; ObjectID = "12"; */
-"12.title" = "Free memory:";
+"12.title" = "Free memory";
 
 /* Class = "NSTextFieldCell"; title = "Machine"; ObjectID = "15"; */
-"15.title" = "Machine:";
+"15.title" = "Machine";
 
 /* Class = "NSTextFieldCell"; title = "Swapped"; ObjectID = "16"; */
-"16.title" = "Swapped:";
+"16.title" = "Swapped";
 
 /* Class = "NSTextFieldCell"; title = "Uptime"; ObjectID = "20"; */
-"20.title" = "Uptime:";
+"20.title" = "Uptime";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "22"; */
 "22.title" = "...";
@@ -99,16 +99,16 @@
 "138.title" = "You can configure preferences for the health module.";
 
 /* Class = "NSTextFieldCell"; title = "Auto refresh interval"; ObjectID = "140"; */
-"140.title" = "Auto refresh interval:";
+"140.title" = "Auto refresh interval";
 
 /* Class = "NSTextFieldCell"; title = "Max items in history"; ObjectID = "142"; */
-"142.title" = "Max items in history:";
+"142.title" = "Max items in history";
 
 /* Class = "NSTextFieldCell"; title = "Max log lines"; ObjectID = "144"; */
-"144.title" = "Max log lines:";
+"144.title" = "Max log lines";
 
 /* Class = "NSTextFieldCell"; title = "Auto refresh stats"; ObjectID = "150"; */
-"150.title" = "Auto refresh stats:";
+"150.title" = "Auto refresh stats";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling stats"; ObjectID = "151"; */
 "151.ibShadowedToolTip" = "Delay before polling stats";
@@ -129,10 +129,10 @@
 "185.title" = "...";
 
 /* Class = "NSTextFieldCell"; title = "Driver version"; ObjectID = "186"; */
-"186.title" = "Driver version:";
+"186.title" = "Driver version";
 
 /* Class = "NSTextFieldCell"; title = "Libvirt version"; ObjectID = "187"; */
-"187.title" = "Libvirt version:";
+"187.title" = "Libvirt version";
 
 /* Class = "NSTableColumn"; headerCell.title = "Logs messages"; ObjectID = "209"; */
 "209.headerCell.title" = "Logs messages";

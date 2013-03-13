@@ -441,6 +441,50 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vm = self.get_vm_by_uuid(identifier)
         return vm
 
+    def get_raw_libvirt_domains(self, only_persistant=True):
+        """
+        Returns a list of defined domain managed by libvirt
+        that are not managed by Archipel.
+        """
+        domains = []
+        allDomainIDs = self.libvirt_connection.listDomainsID()
+        for domID in allDomainIDs:
+            dom = self.libvirt_connection.lookupByID(domID)
+            uuid = dom.UUIDString()
+            if not uuid in self.virtualmachines:
+                if dom.isPersistent() or not only_persistant:
+                    domains.append(dom)
+
+        allDomainNames = self.libvirt_connection.listDefinedDomains()
+        for name in allDomainNames:
+            dom = self.libvirt_connection.lookupByName(name)
+            uuid = dom.UUIDString()
+            if not uuid in self.virtualmachines:
+                domains.append(dom)
+
+        return domains
+
+    def libvirt_contains_domain_with_name(self, name, raise_error=False):
+        """
+        Check if there is already a domain with the same name,
+        managed, or not.
+        @type name: String
+        @param name: the name to check
+        @type raise_error: Boolean
+        @param raise_error: If set to True, raise an error instead of returning a boolean
+        @rtype: Boolean
+        @return: True if a domain has been found
+        """
+        if self.get_vm_by_name(name):
+            if raise_error: raise Exception("Archipel already manages a virtual machine named %s." % name)
+            return True
+
+        unamanaged_doms = self.get_raw_libvirt_domains()
+        for dom in unamanaged_doms:
+            if dom.name() == name:
+                if raise_error: raise Exception("There is already a non managed virtual machine named %s declared in Libvirt." % name)
+                return True
+        return False
 
     ### LIBVIRT events Processing
 
@@ -475,7 +519,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 # Otherwise, we transfer the event to the vm if we manage it
                 vm = self.get_vm_by_uuid(dom.UUIDString())
-                if vm:
+                if vm and not vm.inhibit_domain_event:
                     vm.on_domain_event(event, detail)
             except Exception as ex:
                 self.log.error("EVENTVIRTUALMACHINE: Exception while running on_domain_event for vm %s: %s" % (dom.UUIDString(), str(ex)))
@@ -577,10 +621,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 requested_name = requested_name.replace(" ", "-")
             if strip_unhandled_chars_in_name:
                 requested_name = filter(lambda c: c not in self.bad_chars_in_name, requested_name)
-            if not self.get_vm_by_name(requested_name):
-                name = requested_name
-            else:
-                raise Exception("This hypervisor already has virtual machine named %s. Please, choose another one." % requested_name)
+            self.libvirt_contains_domain_with_name(requested_name, raise_error=True)
+            name = requested_name
 
         if disallow_spaces_in_name:
             name = name.replace(" ", "-")
@@ -979,28 +1021,17 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         try:
             reply = iq.buildReply("result")
             nodes = []
-            managed_vm_uuids = []
             for uuid, vm in self.virtualmachines.iteritems():
                 n = xmpp.Node("item", attrs={"managed": "True", "name": vm.name})
                 n.addData(vm.jid.getStripped())
-                managed_vm_uuids.append(vm.jid.getNode())
                 nodes.append(n)
-            allDomainIDs = self.libvirt_connection.listDomainsID()
-            for name in allDomainIDs:
-                dom = self.libvirt_connection.lookupByID(name)
-                uuid = dom.UUIDString()
-                persistant = dom.isPersistent()
-                if persistant and not uuid in managed_vm_uuids:
-                    n = xmpp.Node("item", attrs={"managed": "False"})
-                    n.addData("%s@%s" % (uuid, self.jid.getDomain()))
-                    nodes.append(n)
-            allDomainNames = self.libvirt_connection.listDefinedDomains()
-            for name in allDomainNames:
-                uuid = self.libvirt_connection.lookupByName(name).UUIDString()
-                if not uuid in managed_vm_uuids:
-                    n = xmpp.Node("item", attrs={"managed": "False", "name":name})
-                    n.addData("%s@%s" % (uuid, self.jid.getDomain()))
-                    nodes.append(n)
+
+            unanaged_domains = self.get_raw_libvirt_domains(only_persistant=True)
+            for dom in unanaged_domains:
+                n = xmpp.Node("item", attrs={"managed": "False", "name": dom.name()})
+                n.addData("%s@%s" % (uuid, self.jid.getDomain()))
+                nodes.append(n)
+
             reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
@@ -1204,9 +1235,19 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if not target_vm:
                 raise Exception("No VM with UUID %s" % target_uuid);
 
-            dominfo = target_vm.domain.info()
-            if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
-                raise Exception('The VM has to be stopped in order to change its information.')
+            if target_vm.domain:
+                dominfo = target_vm.domain.info()
+                if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
+                    raise Exception('The VM has to be stopped in order to change its information.')
+
+            ## Name changing, using custom thing for that
+            ## We need to change the VM name using rename_virtual_machine
+            ## in order to manage the domain libvirt connection.
+            ## Plus to avoid setting the vCard twice, we disable auto publishing
+            if archipel_tag.getTag("FN"):
+                new_name = archipel_tag.getTag("FN").getData()
+                if not new_name == target_vm.name:
+                    target_vm.rename_virtual_machine(new_name, publish=False)
 
             info = {}
             if archipel_tag.getTag("ORGNAME"):
@@ -1220,7 +1261,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if archipel_tag.getTag("CATEGORIES"):
                 info["CATEGORIES"] = archipel_tag.getTag("CATEGORIES").getData()
 
-            target_vm.set_organization_info(info)
+            target_vm.set_organization_info(info, publish=True)
 
             if target_vm.definition:
                 target_vm.define(target_vm.definition)
