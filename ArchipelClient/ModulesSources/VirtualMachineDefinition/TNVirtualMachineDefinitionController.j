@@ -139,6 +139,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField                 fieldMemoryTuneHardLimit;
     @outlet CPTextField                 fieldMemoryTuneSoftLimit;
     @outlet CPTextField                 fieldMemoryTuneSwapHardLimit;
+    @outlet CPTextField                 fieldName;
     @outlet CPTextField                 fieldOSInitrd;
     @outlet CPTextField                 fieldOSKernel;
     @outlet CPTextField                 fieldOSLoader;
@@ -926,6 +927,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldOSLoader setEnabled:shouldEnableGUI];
     [fieldBootloader setEnabled:shouldEnableGUI];
     [fieldBootloaderArgs setEnabled:shouldEnableGUI];
+    [fieldName setEnabled:shouldEnableGUI];
 
     if (shouldEnableGUI)
     {
@@ -1016,6 +1018,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldMemoryTuneGuarantee setStringValue:@""];
     [fieldMemoryTuneSwapHardLimit setStringValue:@""];
     [fieldBlockIOTuningWeight setStringValue:@""];
+
+    [fieldName setStringValue:[_entity name]];
 }
 
 /*! get the domain of the current guest with given type
@@ -1202,6 +1206,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (void)_simulateControlsChanges
 {
+    [self didChangeName:fieldName];
     [self didChangeMemory:fieldMemory];
     [self didChangeGuest:buttonGuests];
     [self didChangeVCPU:stepperNumberCPUs];
@@ -1342,7 +1347,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:[buttonDomainType title] osType:[buttonMachines title]];
 
-    [_libvirtDomain setName:[_entity name]];
+    [_libvirtDomain setName:[fieldName stringValue]];
+
     [_libvirtDomain setUUID:[[_entity JID] node]];
 
     [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
@@ -1364,6 +1370,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableCharacterDevices reloadData];
 
     [self setEnableAllControls:YES];
+    [fieldName setEnabled:NO];
 }
 
 /*! Prepare the UI according to received defined domain
@@ -1374,6 +1381,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
 
     [self _selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
+
+    // VM Name
+    [fieldName setStringValue:[_libvirtDomain name]];
+    [fieldName setEnabled:YES];
 
     // button domainType
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
@@ -2296,6 +2307,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_libvirtDomain setType:[aSender title]];
     [[_libvirtDomain devices] setEmulator:nil];
     [self _updateUIFromDomainType];
+
+    _definitionEdited = YES;
+}
+
+/*! update the value for boot
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeName:(id)aSender
+{
+    if ([aSender stringValue] == [_libvirtDomain name])
+        return;
+
+    [_libvirtDomain setName:[aSender stringValue]];
 
     _definitionEdited = YES;
 }
