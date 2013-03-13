@@ -302,6 +302,28 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             ret.append(row[0])
         return ret
 
+    def get_vms_using_network_with_name(self, name):
+        """
+        Return the list of ArchipelVM that are using the network with given name.
+        @type name: String
+        @param name: The network name
+        """
+        vms = []
+        for uuid, vm in self.entity.virtualmachines.iteritems():
+            if not vm.definition:
+                continue
+            try:
+                nuage_networks_xml = vm.definition.getTag("metadata").getTag("nuage").getTags("nuage_network")
+            except:
+                continue
+            for nuage_network in nuage_networks_xml:
+                if nuage_network.getAttr("name").upper() == name.upper():
+                    vms.append(vm)
+                    continue
+
+        return vms
+
+
     def add_network(self, name, network):
         """
         Add a Network
@@ -320,6 +342,12 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         self.database.execute("delete from nuagenetworks where name=?", (name,))
         self.database.commit()
+
+        ## We now redifine the VMs using this domain
+        vms_using_this_network = self.get_vms_using_network_with_name(name)
+        for vm in vms_using_this_network:
+            vm.define(vm.definition)
+
         self.entity.push_change("nuagenetwork", "deleted")
 
     def update_network(self, name, new_network):
@@ -332,6 +360,12 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         self.database.execute("update nuagenetworks set network=? where name=?", (str(new_network).replace('xmlns=\"archipel:hypervisor:nuage:network\"', ''), name))
         self.database.commit()
+
+        ## We now redifine the VMs using this domain
+        vms_using_this_network = self.get_vms_using_network_with_name(name)
+        for vm in vms_using_this_network:
+            vm.define(vm.definition)
+
         self.entity.push_change("nuagenetwork", "updated")
 
     ### XMPP Processing
