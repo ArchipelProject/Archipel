@@ -29,7 +29,6 @@
 @import <StropheCappuccino/TNStropheContact.j>
 @import <TNKit/TNSwipeView.j>
 
-@import "../Views/TNEditableLabel.j"
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
 
@@ -359,13 +358,13 @@
 
             [buttonViewVCardSwipe setHidden:NO];
 
-            [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
-            [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
-            [labelVCardCompany setStringValue:[[[vCard firstChildWithName:@"ORGNAME"] text] capitalizedString]];
-            [labelVCardCompanyUnit setStringValue:[[[vCard firstChildWithName:@"ORGUNIT"] text] capitalizedString]];
-            [labelVCardRole setStringValue:[[[vCard firstChildWithName:@"TITLE"] text] capitalizedString]];
-            [labelVCardEmail setStringValue:[[vCard firstChildWithName:@"USERID"] text]]
-            [labelVCardCategory setStringValue:[[vCard firstChildWithName:@"CATEGORIES"] text]];
+            [labelVCardFN setStringValue:[[vCard fullName] capitalizedString]];
+            [labelVCardLocality setStringValue:[[vCard locality] capitalizedString]];
+            [labelVCardCompany setStringValue:[[vCard organizationName] capitalizedString]];
+            [labelVCardCompanyUnit setStringValue:[[vCard organizationUnit] capitalizedString]];
+            [labelVCardRole setStringValue:[[vCard title] capitalizedString]];
+            [labelVCardEmail setStringValue:[vCard userID]];
+            [labelVCardCategory setStringValue:[vCard categories]];
             [imageViewVCardPhoto setImage:[_entity avatar] || _unknownUserImage];
         }
 

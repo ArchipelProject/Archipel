@@ -24,6 +24,7 @@
 
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
+@import <StropheCappuccino/TNStropheVCard.j>
 
 @import "../Utils/EKShakeAnimation.j"
 @import "../Views/TNModalWindow.j"
@@ -57,7 +58,7 @@ var TNConnectionControllerForceResource,
 
     @outlet TNModalWindow       mainWindow              @accessors(readonly);
 
-    TNStropheStanza             _userVCard              @accessors(property=userVCard);
+    TNStropheVCard              _userVCard              @accessors(property=userVCard);
 }
 
 #pragma mark -
@@ -104,7 +105,7 @@ var TNConnectionControllerForceResource,
 
 - (void)_didReceiveUserVCard:(CPNotification)aNotification
 {
-    _userVCard = [[aNotification userInfo] firstChildWithName:@"vCard"];
+    _userVCard = [[TNStropheVCard alloc] initWithXMLNode:[[aNotification userInfo] firstChildWithName:@"vCard"]];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNConnectionControllerCurrentUserVCardRetreived object:self];
 }
 

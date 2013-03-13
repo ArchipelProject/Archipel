@@ -1379,13 +1379,11 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 - (void)didRetreiveUserVCard:(CPNotification)aNotification
 {
-    var vCard = [connectionController userVCard],
-        photoNode;
+    var vCard = [connectionController userVCard];
 
-    if (photoNode = [vCard firstChildWithName:@"PHOTO"])
+    if ([vCard photo])
     {
-        var data            = [[photoNode firstChildWithName:@"BINVAL"] text],
-            currentAvatar   = [[CPImage alloc] initWithData:[CPData dataWithBase64:data]];
+        var currentAvatar = [vCard photo];
 
         [currentAvatar setDelegate:self];
 

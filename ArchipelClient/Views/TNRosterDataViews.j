@@ -55,6 +55,7 @@ var TNRosterDataViewContactImageUnknownUser,
 @end
 
 
+
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
 */
@@ -129,7 +130,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
     var opts = [CPDictionary dictionaryWithObjectsAndKeys:@"TNNoAvatarValueTransformer", CPValueTransformerNameBindingOption];
 
-    [name bind:@"objectValue" toObject:aContact withKeyPath:@"nickname" options:nil];
+    [name bind:@"objectValue" toObject:aContact withKeyPath:@"name" options:nil];
     [status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];
     [statusIcon bind:@"objectValue" toObject:aContact withKeyPath:@"statusIcon" options:nil];
     [avatar bind:@"objectValue" toObject:aContact withKeyPath:@"avatar" options:opts];

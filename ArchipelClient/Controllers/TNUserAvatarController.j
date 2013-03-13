@@ -116,15 +116,9 @@
 */
 - (void)setAvatarImage:(CPImage)anAvatarImage withName:(CPString)anAvatarName
 {
-    var base64Avatar    = [[anAvatarImage data] base64],
-        vCard           = [TNXMLNode nodeWithName:@"vCard" andAttributes:{@"xmlns": @"vcard-temp"}];
+    var vCard = [[TNStropheVCard alloc] init];
 
-    [vCard addChildWithName:@"PHOTO"];
-    [vCard addChildWithName:@"TYPE"];
-    [vCard addTextNode:@"image/png"];
-    [vCard up]
-    [vCard addChildWithName:@"BINVAL"];
-    [vCard addTextNode:base64Avatar];
+    [vCard setPhoto:anAvatarImage];
 
     [[TNStropheIMClient defaultClient] setVCard:vCard object:self selector:@selector(_didSetAvatar:image:) userInfo:anAvatarImage];
 }
