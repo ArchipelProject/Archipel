@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D76</string>
+		<string key="IBDocument.SystemVersion">12D78</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -241,7 +241,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="582262101">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Driver version:</string>
+							<string key="NSContents">Driver version</string>
 							<object class="NSFont" key="NSSupport" id="176063901">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -263,7 +263,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="580127032">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Libvirt version:</string>
+							<string key="NSContents">Libvirt version</string>
 							<reference key="NSSupport" ref="176063901"/>
 							<reference key="NSControlView" ref="433683398"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
@@ -353,7 +353,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="633342891">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Uptime:</string>
+							<string key="NSContents">Uptime</string>
 							<reference key="NSSupport" ref="176063901"/>
 							<reference key="NSControlView" ref="426637324"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
@@ -371,7 +371,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="530872397">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Machine:</string>
+							<string key="NSContents">Machine</string>
 							<reference key="NSSupport" ref="176063901"/>
 							<reference key="NSControlView" ref="465493635"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
@@ -389,7 +389,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="837736011">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Swapped:</string>
+							<string key="NSContents">Swapped</string>
 							<reference key="NSSupport" ref="176063901"/>
 							<reference key="NSControlView" ref="1070054357"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
@@ -407,7 +407,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="231165187">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Load average:</string>
+							<string key="NSContents">Load average</string>
 							<reference key="NSSupport" ref="176063901"/>
 							<reference key="NSControlView" ref="884213443"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
@@ -425,7 +425,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="775550328">
 							<int key="NSCellFlags">67108928</int>
 							<int key="NSCellFlags2">4196352</int>
-							<string key="NSContents">Free memory:</string>
+							<string key="NSContents">Free memory</string>
 							<reference key="NSSupport" ref="176063901"/>
 							<reference key="NSControlView" ref="623513048"/>
 							<reference key="NSBackgroundColor" ref="301951145"/>
@@ -1557,7 +1557,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="86951286">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">1077937152</int>
-									<string key="NSContents">Auto refresh stats:</string>
+									<string key="NSContents">Auto refresh stats</string>
 									<reference key="NSSupport" ref="176063901"/>
 									<reference key="NSControlView" ref="351954962"/>
 									<reference key="NSBackgroundColor" ref="301951145"/>
@@ -1575,7 +1575,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="847713459">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">1077937152</int>
-									<string key="NSContents">Max log lines:</string>
+									<string key="NSContents">Max log lines</string>
 									<reference key="NSSupport" ref="176063901"/>
 									<reference key="NSControlView" ref="324890971"/>
 									<reference key="NSBackgroundColor" ref="301951145"/>
@@ -1593,7 +1593,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="407083786">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">1077937152</int>
-									<string key="NSContents">Max items in history:</string>
+									<string key="NSContents">Max items in history</string>
 									<reference key="NSSupport" ref="176063901"/>
 									<reference key="NSControlView" ref="897123201"/>
 									<reference key="NSBackgroundColor" ref="301951145"/>
@@ -1611,7 +1611,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="62587362">
 									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">1077937152</int>
-									<string key="NSContents">Auto refresh interval:</string>
+									<string key="NSContents">Auto refresh interval</string>
 									<reference key="NSSupport" ref="176063901"/>
 									<reference key="NSControlView" ref="283474162"/>
 									<reference key="NSBackgroundColor" ref="301951145"/>
