@@ -138,12 +138,12 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
 
     var vCard = [_virtualMachine vCard];
 
-    [fieldNewVMRequestedName setStringValue:[[vCard firstChildWithName:@"FN"] text] || @""];
-    [fieldNewVMRequestedOrganization setStringValue:[[vCard firstChildWithName:@"ORGNAME"] text] ||@""];
-    [fieldNewVMRequestedOrganizationUnit setStringValue:[[vCard firstChildWithName:@"ORGUNIT"] text] || @""];
-    [fieldNewVMRequestedLocality setStringValue:[[vCard firstChildWithName:@"LOCALITY"] text] || @""];
-    [fieldNewVMRequestedOwner setStringValue:[[vCard firstChildWithName:@"USERID"] text] || @""];
-    [fieldNewVMRequestedCategories setStringValue:[[vCard firstChildWithName:@"CATEGORIES"] text] || @""];
+    [fieldNewVMRequestedName setStringValue:[vCard fullName] || @""];
+    [fieldNewVMRequestedOrganization setStringValue:[vCard organizationName] ||@""];
+    [fieldNewVMRequestedOrganizationUnit setStringValue:[vCard organizationUnit] || @""];
+    [fieldNewVMRequestedLocality setStringValue:[vCard locality] || @""];
+    [fieldNewVMRequestedOwner setStringValue:[vCard userID] || @""];
+    [fieldNewVMRequestedCategories setStringValue:[vCard categories] || @""];
 
 
     if ([aSender isKindOfClass:CPTableView])
@@ -163,13 +163,11 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     {
         [buttonAlloc setTitle:@"Update"];
         [buttonAlloc setAction:@selector(update:)];
-        [fieldNewVMRequestedName setEnabled:NO];
     }
     else
     {
         [buttonAlloc setTitle:@"Create"];
         [buttonAlloc setAction:@selector(alloc:)];
-        [fieldNewVMRequestedName setEnabled:YES];
     }
 }
 
@@ -252,6 +250,10 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlSetOrgInfo,
         "target": [[_virtualMachine JID] node]}];
+
+    [stanza addChildWithName:"FN"];
+    [stanza addTextNode:[fieldNewVMRequestedName stringValue]];
+    [stanza up];
 
     [stanza addChildWithName:"ORGNAME"];
     [stanza addTextNode:[fieldNewVMRequestedOrganization stringValue]];
