@@ -475,7 +475,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 # Otherwise, we transfer the event to the vm if we manage it
                 vm = self.get_vm_by_uuid(dom.UUIDString())
-                if vm:
+                if vm and not vm.inhibit_domain_event:
                     vm.on_domain_event(event, detail)
             except Exception as ex:
                 self.log.error("EVENTVIRTUALMACHINE: Exception while running on_domain_event for vm %s: %s" % (dom.UUIDString(), str(ex)))
@@ -1207,9 +1207,19 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if not target_vm:
                 raise Exception("No VM with UUID %s" % target_uuid);
 
-            dominfo = target_vm.domain.info()
-            if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
-                raise Exception('The VM has to be stopped in order to change its information.')
+            if target_vm.domain:
+                dominfo = target_vm.domain.info()
+                if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
+                    raise Exception('The VM has to be stopped in order to change its information.')
+
+            ## Name changing, using custom thing for that
+            ## We need to change the VM name using rename_virtual_machine
+            ## in order to manage the domain libvirt connection.
+            ## Plus to avoid setting the vCard twice, we disable auto publishing
+            if archipel_tag.getTag("FN"):
+                new_name = archipel_tag.getTag("FN").getData()
+                if not new_name == target_vm.name:
+                    target_vm.rename_virtual_machine(new_name, publish=False)
 
             info = {}
             if archipel_tag.getTag("ORGNAME"):
@@ -1223,7 +1233,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if archipel_tag.getTag("CATEGORIES"):
                 info["CATEGORIES"] = archipel_tag.getTag("CATEGORIES").getData()
 
-            target_vm.set_organization_info(info)
+            target_vm.set_organization_info(info, publish=True)
 
             if target_vm.definition:
                 target_vm.define(target_vm.definition)
