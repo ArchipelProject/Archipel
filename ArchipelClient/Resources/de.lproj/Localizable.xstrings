@@ -148,10 +148,6 @@
 	<string>Passwortfehler</string>
 	<key>Paste</key>
 	<string>Einfügen</string>
-	<key>Please select a contact first.</key>
-	<string>Bitte wählen sie zuerst einen Kontakt aus</string>
-	<key>Please select a group first.</key>
-	<string>Bitte wählen sie zuerst eine Gruppe aus</string>
 	<key>Preferences</key>
 	<string>Einstellungen</string>
 	<key>Preferences saved</key>
@@ -164,10 +160,6 @@
 	<string>Freigabevermerk</string>
 	<key>Remove subscribtion</key>
 	<string>Remove subscribtion</string>
-	<key>Rename contact</key>
-	<string>Kontakt umbenennen</string>
-	<key>Rename group</key>
-	<string>Gruppe umbenennen</string>
 	<key>Report a bug</key>
 	<string>Einen Fehler melden</string>
 	<key>Reset</key>
@@ -176,10 +168,6 @@
 	<string>Ressource</string>
 	<key>Search entity</key>
 	<string>Suche Entität</string>
-	<key>Select a contact</key>
-	<string>Kontakt auswählen</string>
-	<key>Select a group</key>
-	<string>Gruppe auswählen</string>
 	<key>Select all</key>
 	<string>Alles auswählen</string>
 	<key>Select next entity</key>

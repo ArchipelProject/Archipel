@@ -29,7 +29,7 @@
 /* Class = "NSTextFieldCell"; title = "Configure basics behaviours of the virtual machine"; ObjectID = "15"; */
 "15.title" = "Configure basics behaviours of the virtual machine";
 
-/* Class = "NSTextFieldCell"; title = "Memory (MB)"; ObjectID = "17"; */
+/* Class = "NSTextFieldCell"; title = "Memory"; ObjectID = "17"; */
 "17.title" = "Memory:";
 
 /* Class = "NSTextFieldCell"; title = "Virtual CPUs"; ObjectID = "19"; */
@@ -62,7 +62,7 @@
 /* Class = "NSTextFieldCell"; title = "Domain type"; ObjectID = "70"; */
 "70.title" = "Domain type:";
 
-/* Class = "NSTextFieldCell"; title = "Set how the hypervisor manages this virtual machine"; ObjectID = "71"; */
+/* Class = "NSTextFieldCell"; title = "Set how the hypervisor manages this VM"; ObjectID = "71"; */
 "71.title" = "Set how the hypervisor manages this virtual machine";
 
 /* Class = "NSTextFieldCell"; title = "Hypervisor management"; ObjectID = "72"; */
@@ -1318,4 +1318,16 @@
 
 /* Class = "NSButtonCell"; title = "Huge page"; ObjectID = "1971"; */
 "1971.title" = "Huge page";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "Change the VM name. You can ony change the name once the VM as been defined."; ObjectID = "2001"; */
+"2001.ibShadowedToolTip" = "Change the VM name. You can ony change the name once the VM as been defined.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My Super VM"; ObjectID = "2002"; */
+"2002.placeholderString" = "My Super VM";
+
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "2006"; */
+"2006.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "2008"; */
+"2008.title" = "MB";
 

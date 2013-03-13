@@ -260,7 +260,7 @@
 /* Class = "NSTextFieldCell"; title = "You do not seem to have the minimal required permissions"; ObjectID = "1088"; */
 "1088.title" = "Sie scheinen nicht die minimal benötigten Rechte zu besitzen";
 
-/* Class = "NSTextFieldCell"; title = "vCard"; ObjectID = "1108"; */
+/* Class = "NSTextFieldCell"; title = "VCard"; ObjectID = "1108"; */
 "1108.title" = "vCard";
 
 /* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "1111"; */

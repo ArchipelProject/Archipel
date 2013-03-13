@@ -251,12 +251,6 @@
 /* Paste */
 "Paste" = "Einfügen";
 
-/* Please select a contact first. */
-"Please select a contact first." = "Bitte wählen sie zuerst einen Kontakt aus";
-
-/* Please select a group first. */
-"Please select a group first." = "Bitte wählen sie zuerst eine Gruppe aus";
-
 /* Preferences */
 "Preferences" = "Einstellungen";
 
@@ -275,12 +269,6 @@
 /* Remove subscribtion */
 "Remove subscribtion" = "Remove subscribtion";
 
-/* Rename contact */
-"Rename contact" = "Kontakt umbenennen";
-
-/* Rename group */
-"Rename group" = "Gruppe umbenennen";
-
 /* Report a bug */
 "Report a bug" = "Einen Fehler melden";
 
@@ -292,12 +280,6 @@
 
 /* Search entity */
 "Search entity" = "Suche Entität";
-
-/* Select a contact */
-"Select a contact" = "Kontakt auswählen";
-
-/* Select a group */
-"Select a group" = "Gruppe auswählen";
 
 /* Select all */
 "Select all" = "Alles auswählen";
