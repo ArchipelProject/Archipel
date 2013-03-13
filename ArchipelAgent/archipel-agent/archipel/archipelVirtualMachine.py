@@ -329,9 +329,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
     def rename_virtual_machine(self, newname, publish=True):
         """
         Rename the virtual machine with the given name.
+        @type newname: String
+        @param newname: the new name of the VM
+        @type publish: Boolean
+        @param publish: If True, the vCard with new name will be published right away
         """
-        if self.hypervisor.get_vm_by_name(newname):
-            raise Exception("There is already a VM named %s" % newname)
+        self.hypervisor.libvirt_contains_domain_with_name(newname, raise_error=True)
 
         self.log.info("renaming VM from %s to %s" % (self.name, newname))
         self.change_name(newname, publish)
