@@ -149,8 +149,8 @@
 /* Class = "NSTextField"; ibShadowedToolTip = "enter your ejabberd BOSH URL"; ObjectID = "1000"; */
 "1000.ibShadowedToolTip" = "enter your ejabberd BOSH URL";
 
-/* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
-"1002.title" = "BOSH service";
+/* Class = "NSTextFieldCell"; title = "XMPP Service"; ObjectID = "1002"; */
+"1002.title" = "XMPP Service";
 
 /* Class = "NSTextFieldCell"; placeholderString = "http://domain.com:5280/http-bind"; ObjectID = "1003"; */
 "1003.placeholderString" = "http://domain.com:5280/http-bind";
