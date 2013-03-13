@@ -330,6 +330,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         Rename the virtual machine with the given name.
         """
+        if self.hypervisor.get_vm_by_name(newname):
+            raise Exception("There is already a VM named %s" % newname)
+
         self.log.info("renaming VM from %s to %s" % (self.name, newname))
         self.change_name(newname, publish)
 
