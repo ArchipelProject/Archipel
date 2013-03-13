@@ -1309,7 +1309,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([guests count] == 0)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.", @"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.")
                                                             icon:TNGrowlIconError];
     }
@@ -1813,7 +1813,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonDefine setStringValue:CPLocalizedString(@"Validate", @"Validate")];
     if (responseType == @"result")
     {
-        CPLog.info(@"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated")
+        CPLog.info(@"Definition of virtual machine " + [_entity name] + " sucessfuly updated")
         [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelDefinitionUpdatedNotification object:self];
     }
     else if (responseType == @"error")
@@ -1863,7 +1863,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
 
 
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                      message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
     _libvirtDomain = nil;
     [self getXMLDesc];

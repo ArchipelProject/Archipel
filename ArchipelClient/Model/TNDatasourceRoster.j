@@ -216,7 +216,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         var entry = [theEntries objectAtIndex:i];
 
-        if ([[entry nickname] uppercaseString].indexOf([_filter uppercaseString]) != -1
+        if ([[entry name] uppercaseString].indexOf([_filter uppercaseString]) != -1
             || [[[entry JID] bare] uppercaseString].indexOf([_filter uppercaseString]) != -1
             || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[_filter lowercaseString]])
         {

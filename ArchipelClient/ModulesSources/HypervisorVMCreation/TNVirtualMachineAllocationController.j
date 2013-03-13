@@ -231,7 +231,7 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
         var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
         CPLog.info(@"sucessfully create a virtual machine");
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + vmJID + CPBundleLocalizedString(@" has been created", @" has been created")];
     }
     else
@@ -288,7 +288,7 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
         var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
         CPLog.info(@"sucessfully create a virtual machine");
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + vmJID + CPBundleLocalizedString(@" has been updated", @" has been updated")];
 
         [_delegate getHypervisorRoster];
@@ -371,7 +371,7 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     {
         CPLog.info(@"sucessfully deallocating a virtual machine");
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Virtual machine has been removed", @"Virtual machine has been removed")];
     }
     else

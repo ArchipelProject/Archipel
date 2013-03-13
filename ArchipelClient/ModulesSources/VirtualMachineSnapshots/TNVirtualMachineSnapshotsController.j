@@ -472,7 +472,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Snapshoting sucessfull", @"Snapshoting sucessfull")];
     }
     else
@@ -491,7 +491,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     if ([selectedIndexes count] > 1)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"You must select only one snapshot", @"You must select only one snapshot")
                                                             icon:TNGrowlIconError];
 
@@ -500,7 +500,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"You must select one snapshot", @"You must select one snapshot")
                                                             icon:TNGrowlIconError];
 
@@ -540,7 +540,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Snapshot deleted", @"Snapshot deleted")];
     }
     else if ([aStanza type] == @"error")
@@ -557,7 +557,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"You must select one snapshot", @"You must select one snapshot")
                                                             icon:TNGrowlIconError];
 
@@ -580,7 +580,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     if ([selectedIndexes count] > 1)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"You must select only one snapshot", @"You must select only one snapshot")
                                                             icon:TNGrowlIconError];
 
@@ -605,7 +605,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Snapshot sucessfully reverted", @"Snapshot sucessfully reverted")];
     }
     else

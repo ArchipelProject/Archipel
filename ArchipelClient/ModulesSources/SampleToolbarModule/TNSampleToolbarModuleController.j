@@ -77,7 +77,7 @@
     if (![super willShow])
         return NO;
 
-    [fieldName setStringValue:[_entity nickname]];
+    [fieldName setStringValue:[_entity name]];
     [fieldJID setStringValue:[_entity JID]];
 
     return YES;
@@ -116,7 +116,7 @@
 */
 - (void)_didUpdateNickName:(CPNotification)aNotification
 {
-    [fieldName setStringValue:[_entity nickname]];
+    [fieldName setStringValue:[_entity name]];
 }
 
 /*! this message is used to flush the UI
@@ -144,7 +144,7 @@
 {
     // You can use Growl if you want to notify the user about something.
     // Do not forget to localize your strings using CPLocalizedString (defined at the end of this file)
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                      message:CPBundleLocalizedString(@"Hello world!", @"Hello world!")];
 }
 

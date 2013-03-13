@@ -237,7 +237,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 {
     if (!_scheduledDate)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"You must select a date", @"You must select a date")
                                                             icon:TNGrowlIconError];
         return;
@@ -293,7 +293,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Action has been scheduled", @"Action has been scheduled")];
     }
     else

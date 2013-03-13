@@ -193,7 +193,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)setOriginHypervisor:(id)anItem
 {
     _originHypervisor = anItem;
-    [textFieldOriginName setStringValue:[anItem nickname]];
+    [textFieldOriginName setStringValue:[anItem name]];
     [self rosterOfHypervisor:anItem];
 }
 
@@ -203,7 +203,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)setDestinationHypervisor:(id)anItem
 {
     _destinationHypervisor= anItem;
-    [textFieldDestinationName setStringValue:[anItem nickname]];
+    [textFieldDestinationName setStringValue:[anItem name]];
     [self rosterOfHypervisor:anItem];
 }
 
@@ -358,7 +358,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Migration has started. It can take a while", @"Migration has started. It can take a while")];
     }
     else
@@ -393,7 +393,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     var item    = [someUserInfo objectForKey:@"rosterItem"],
         alert   = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Define path", @"Define path")
-                                informative:CPBundleLocalizedString(@"Please choose if this ", @"Please choose if this ") + [item nickname] + CPBundleLocalizedString(@" is origin or destination of the migration.", @" is origin or destination of the migration.")
+                                informative:CPBundleLocalizedString(@"Please choose if this ", @"Please choose if this ") + [item name] + CPBundleLocalizedString(@" is origin or destination of the migration.", @" is origin or destination of the migration.")
                                  target:self
                                  actions:[[CPBundleLocalizedString(@"Cancel", @"Cancel"), nil], [CPBundleLocalizedString("Destination", "Destination"),  @selector(setDestinationHypervisor:)], [CPBundleLocalizedString("Origin", "Origin"), @selector(setOriginHypervisor:)]]];
     [alert setUserInfo:item];

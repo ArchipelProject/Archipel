@@ -302,7 +302,7 @@
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[member JID]])
     {
         var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Adding contact", @"Adding contact")
-                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [member nickname] + CPBundleLocalizedString(@" to your roster", @" to your roster")
+                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [member name] + CPBundleLocalizedString(@" to your roster", @" to your roster")
                                      target:self
                                     actions:[[CPBundleLocalizedString(@"Add contact", @"Add contact"), @selector(performAddToRoster:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
         [alert setUserInfo:member];
@@ -319,7 +319,7 @@
         JID     = [member JID];
 
     [JID setDomain:[JID domain].replace("conference.", "")];
-    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:[member nickname] inGroupWithPath:nil];
+    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:[member name] inGroupWithPath:nil];
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:JID];
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:JID];
 }
@@ -353,7 +353,7 @@
     }
 
     [_messageBoard addMessage:[aMessage objectForKey:"body"]
-                         from:[[aMessage objectForKey:"from"] nickname]
+                         from:[[aMessage objectForKey:"from"] name]
                          date:[aMessage objectForKey:"time"]
                         color:color
                         avatar:avatar

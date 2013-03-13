@@ -74,7 +74,7 @@ else
             _window = [[CPWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
         else
             _window = [[CPWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
-        [_window setTitle:@"Archipel - Chat with " + [_entity nickname] || [[_entity JID] bare]];
+        [_window setTitle:@"Archipel - Chat with " + [_entity name] || [[_entity JID] bare]];
         [[_window contentView] setBackgroundColor:[CPColor colorWithHexString:@"f4f4f4"]];
         [[_window contentView] setAutoresizingMask:nil];
         [_window setDelegate:self];
@@ -141,7 +141,7 @@ else
         {
             var messageBody = [[stanza firstChildWithName:@"body"] text];
 
-            [self appendMessageToBoard:messageBody from:[_entity nickname]];
+            [self appendMessageToBoard:messageBody from:[_entity name]];
         }
     }
 
@@ -163,7 +163,7 @@ else
 */
 - (void)_didUpdateNickname:(CPNotification)aNotification
 {
-    [_window setTitle:@"Archipel - Chat with " + [_entity nickname] || [[_entity JID] bare]];
+    [_window setTitle:@"Archipel - Chat with " + [_entity name] || [[_entity JID] bare]];
 }
 
 

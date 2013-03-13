@@ -89,7 +89,7 @@ var TNArchipelTypeDummyNamespace = @"archipel:dummy",
     if (![super willShow])
         return NO;
 
-    [fieldName setStringValue:[_entity nickname]];
+    [fieldName setStringValue:[_entity name]];
     [fieldJID setStringValue:[_entity JID]];
 
     return YES;
@@ -137,7 +137,7 @@ var TNArchipelTypeDummyNamespace = @"archipel:dummy",
 */
 - (void)_didUpdateNickName:(CPNotification)aNotification
 {
-    [fieldName setStringValue:[_entity nickname]];
+    [fieldName setStringValue:[_entity name]];
 }
 
 
@@ -185,7 +185,7 @@ var TNArchipelTypeDummyNamespace = @"archipel:dummy",
     {
         // You can use Growl if you want to notify the user about something.
         // Do not forget to localize your strings using CPLocalizedString (defined at the end of this file)
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity nickname]
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Hello sent!", @"Hello sent!")];
     }
     else

@@ -573,7 +573,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
     {
         var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Adding contact", @"Adding contact")
-                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [vm nickname] + CPBundleLocalizedString(@" to your roster", @" to your roster")
+                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [vm name] + CPBundleLocalizedString(@" to your roster", @" to your roster")
                                      target:self
                                      actions:[[CPBundleLocalizedString(@"Add contact", @"Add contact"), @selector(performAddToRoster:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
         [alert setUserInfo:vm];
