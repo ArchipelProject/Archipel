@@ -41,7 +41,6 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
 {
     CPSearchField   _searchField        @accessors(property=searchField);
     CPTabView       _tabViewModules     @accessors(property=modulesTabView);
-    CPTextField     _entityRenameField  @accessors(property=entityRenameField);
 }
 
 #pragma mark -
@@ -249,16 +248,6 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     {
         case CPEscapeKeyCode:
             [[_searchField cancelButton] performClick:self];
-            break;
-
-        case CPReturnKeyCode:
-            if ([_entityRenameField isEnabled])
-            {
-                [_entityRenameField setPreviousResponder:self];
-                [_entityRenameField mouseDown:nil];
-                [_entityRenameField _inputElement].focus();
-                [[self window] makeFirstResponder:_entityRenameField];
-            }
             break;
 
         case CPDownArrowKeyCode:

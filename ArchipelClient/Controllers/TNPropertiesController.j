@@ -32,7 +32,6 @@
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
 
-
 @class CPLocalizedString
 @global TNArchipelRememberOpenedGroup
 @global TNArchipelPropertiesViewDidShowNotification
@@ -45,14 +44,15 @@
 */
 @implementation TNPropertiesController: CPObject
 {
-    @outlet CPButton                buttonViewVCardSwipe;
     @outlet CPButton                buttonEventSubscription;
+    @outlet CPButton                buttonViewVCardSwipe;
     @outlet CPButton                buttonViewXMPPInfosSwipe;
     @outlet CPButton                entryAvatar;
     @outlet CPImageView             entryStatusIcon;
     @outlet CPImageView             imageVCardIcon;
     @outlet CPImageView             imageViewVCardPhoto;
     @outlet CPTextField             entryDomain;
+    @outlet CPTextField             entryName;
     @outlet CPTextField             entryNode;
     @outlet CPTextField             entryResource;
     @outlet CPTextField             entryStatus;
@@ -63,20 +63,20 @@
     @outlet CPTextField             labelStatus;
     @outlet CPTextField             labelType;
     @outlet CPTextField             labelVCard;
+    @outlet CPTextField             labelVCardCategory;
     @outlet CPTextField             labelVCardCompany;
     @outlet CPTextField             labelVCardCompanyUnit;
     @outlet CPTextField             labelVCardEmail;
     @outlet CPTextField             labelVCardFN;
     @outlet CPTextField             labelVCardLocality;
     @outlet CPTextField             labelVCardRole;
-    @outlet CPTextField             labelVCardCategory;
-    @outlet CPView                  viewVCard;
-    @outlet CPView                  viewXMPPInfos;
     @outlet CPView                  viewNicknameContainer;
+    @outlet CPView                  viewVCard;
     @outlet CPView                  viewVCardContainer;
+    @outlet CPView                  viewXMPPInfos;
     @outlet TNContactsController    contactsController;
-    @outlet TNEditableLabel         entryName           @accessors(readonly);
     @outlet TNSwipeView             mainSwipeView;
+
 
     BOOL                            _enabled            @accessors(getter=isEnabled);
     BOOL                            _isCollapsed        @accessors(getter=isCollapsed);
@@ -120,26 +120,6 @@
 
     [imageVCardIcon setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vcard-icon.png"]]];
 
-    [labelVCard setFont:[CPFont boldSystemFontOfSize:13]];
-    [labelVCard setTextColor:[CPColor colorWithHexString:@"576066"]];
-    [labelVCard setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
-    [labelVCard setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
-    [labelVCard setLineBreakMode:CPLineBreakByTruncatingTail];
-
-    [entryName setFont:[CPFont boldSystemFontOfSize:13]];
-    [entryName setTextColor:[CPColor colorWithHexString:@"576066"]];
-    [entryName setTarget:self];
-    [entryName setAction:@selector(changeNickName:)];
-    [entryName setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
-    [entryName setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
-    [entryName setLineBreakMode:CPLineBreakByTruncatingTail];
-
-    [labelResource setTextColor:[CPColor blackColor]];
-    [labelStatus setTextColor:[CPColor blackColor]];
-    [labelType setTextColor:[CPColor blackColor]];
-    [labelDomain setTextColor:[CPColor blackColor]];
-    [labelNode setTextColor:[CPColor blackColor]];
-
     [entryNode setSelectable:YES];
     [entryNode setLineBreakMode:CPLineBreakByTruncatingTail];
 
@@ -153,8 +133,6 @@
     [buttonEventSubscription setHidden:YES];
 
     [imageViewVCardPhoto setImageScaling:CPScaleProportionally];
-
-    [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
 
     var imageArrowLeft = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-left.png"] size:CGSizeMake(14.0, 14.0)],
         imageArrowLeftPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-left.png"] size:CGSizeMake(14.0, 14.0)],
@@ -176,14 +154,6 @@
     [buttonViewVCardSwipe setImage:imageArrowLeft]; // this avoid the blinking..
     [buttonViewVCardSwipe setValue:imageArrowLeft forThemeAttribute:@"image"];
     [buttonViewVCardSwipe setValue:imageArrowLeftPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-
-    [labelVCardCompany setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardCompanyUnit setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardEmail setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardFN setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardLocality setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardRole setLineBreakMode:CPLineBreakByTruncatingTail];
-    [labelVCardCategory setLineBreakMode:CPLineBreakByTruncatingTail];
 }
 
 
@@ -197,27 +167,6 @@
     [self reload]
 }
 
-/*! triggered when contact change the nickname
-    @param aNotification the notification
-*/
-- (void)changeNickNameNotification:(CPNotification)aNotification
-{
-    var roster = [[TNStropheIMClient defaultClient] roster];
-
-    if (([_entity isKindOfClass:TNStropheContact]) && ([_entity nickname] != [entryName stringValue]))
-    {
-        [roster changeNickname:[entryName stringValue] ofContact:_entity];
-    }
-    else if (([_entity isKindOfClass:TNStropheGroup]) && ([_entity name] != [entryName stringValue]))
-    {
-        var defaults    = [CPUserDefaults standardUserDefaults],
-            oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
-
-        [roster changeName:[entryName stringValue] ofGroup:_entity];
-
-        [defaults removeObjectForKey:oldKey];
-    }
-}
 
 #pragma mark -
 #pragma mark Setters
@@ -308,7 +257,7 @@
         [buttonEventSubscription setHidden:NO];
 
         [entryStatusIcon bind:@"image" toObject:_entity withKeyPath:@"statusIcon" options:nil];
-        [entryName bind:@"objectValue" toObject:_entity withKeyPath:@"nickname" options:nil];
+        [entryName bind:@"objectValue" toObject:_entity withKeyPath:@"name" options:nil];
         [entryDomain bind:@"objectValue" toObject:_entity withKeyPath:@"JID.domain" options:nil];
         [entryResource bind:@"objectValue" toObject:_entity withKeyPath:@"JID.resource" options:nil];
         [entryStatus bind:@"objectValue" toObject:_entity withKeyPath:@"XMPPStatus" options:nil];
@@ -408,14 +357,6 @@
 {
     if (_avatarManager && [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]] != TNArchipelEntityTypeUser)
         [_avatarManager showWindow:sender];
-}
-
-/*! action sent by the TNEditableLabel when ok. Will blur it
-    @param sender the sender
-*/
-- (IBAction)changeNickName:(id)sender
-{
-    [[mainSwipeView window] makeFirstResponder:[entryName previousResponder]];
 }
 
 @end
