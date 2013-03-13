@@ -1236,14 +1236,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainScrollView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1071846967"/>
-					</object>
-					<int key="connectionID">99</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldPassword</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="248718457"/>

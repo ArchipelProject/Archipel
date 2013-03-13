@@ -1676,7 +1676,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{224, 85}, {176, 18}}</string>
 								<reference key="NSSuperview" ref="311602706"/>
-								<reference key="NSNextKeyView" ref="748829007"/>
+								<reference key="NSNextKeyView" ref="583311556"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="205869754">
 									<int key="NSCellFlags">-2080374784</int>
@@ -1700,7 +1700,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{220, 50}, {124, 32}}</string>
 								<reference key="NSSuperview" ref="311602706"/>
-								<reference key="NSNextKeyView" ref="645066038"/>
+								<reference key="NSNextKeyView" ref="748829007"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="313506578">
 									<int key="NSCellFlags">-2080374784</int>
@@ -1723,7 +1723,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{15, 59}, {197, 17}}</string>
 								<reference key="NSSuperview" ref="311602706"/>
-								<reference key="NSNextKeyView" ref="583311556"/>
+								<reference key="NSNextKeyView" ref="645066038"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="787818801">
 									<int key="NSCellFlags">68157504</int>
@@ -2007,6 +2007,7 @@
 						</object>
 						<string key="NSFrame">{{1, 0}, {582, 371}}</string>
 						<reference key="NSSuperview" ref="408339116"/>
+						<reference key="NSNextKeyView" ref="874345940"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -2015,7 +2016,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{18, 377}, {549, 20}}</string>
 						<reference key="NSSuperview" ref="408339116"/>
-						<reference key="NSNextKeyView" ref="874345940"/>
+						<reference key="NSNextKeyView" ref="311602706"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="885183074">
 							<int key="NSCellFlags">68157504</int>
@@ -4384,7 +4385,7 @@
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{0.25, 0}, {27, 27}}</string>
+						<string key="NSFrame">{{4.25, 3}, {20, 20}}</string>
 						<reference key="NSSuperview" ref="719030386"/>
 						<reference key="NSNextKeyView" ref="160232522"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -5232,22 +5233,6 @@
 						<reference key="destination" ref="959593025"/>
 					</object>
 					<int key="connectionID">1213</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">labelVCardWebiste</string>
-						<reference key="source" ref="765536987"/>
-						<reference key="destination" ref="150318128"/>
-					</object>
-					<int key="connectionID">1214</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">changeNickName:</string>
-						<reference key="source" ref="765536987"/>
-						<reference key="destination" ref="355978882"/>
-					</object>
-					<int key="connectionID">1215</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">

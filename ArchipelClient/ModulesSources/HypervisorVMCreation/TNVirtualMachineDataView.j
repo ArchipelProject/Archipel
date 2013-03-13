@@ -51,6 +51,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     @outlet CPTextField labelHypervisor;
     @outlet CPTextField labelLocality;
     @outlet CPTextField labelName;
+    @outlet CPTextField labelNickName;
     @outlet CPTextField labelOwner;
     @outlet CPTextField labelServer;
     @outlet CPTextField labelStatus;
@@ -88,6 +89,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [fieldServer setHidden:shouldHide];
     [fieldHypervisor setHidden:shouldHide];
     [labelServer setHidden:shouldHide];
+    [labelNickName setHidden:shouldHide];
 
     [labelFieldsHidden setHidden:!shouldHide];
 }
@@ -161,6 +163,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
         labelUnit  = [aCoder decodeObjectForKey:@"labelUnit"];
         labelOwner = [aCoder decodeObjectForKey:@"labelOwner"];
         labelFieldsHidden = [aCoder decodeObjectForKey:@"labelFieldsHidden"];
+        labelNickName = [aCoder decodeObjectForKey:@"labelNickName"];
 
         imageStatusIcon = [aCoder decodeObjectForKey:@"imageStatusIcon"];
         imageAvatar = [aCoder decodeObjectForKey:@"imageAvatar"];
@@ -198,6 +201,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [aCoder encodeObject:labelUnit forKey:@"labelUnit"];
     [aCoder encodeObject:labelOwner forKey:@"labelOwner"];
     [aCoder encodeObject:labelFieldsHidden forKey:@"labelFieldsHidden"];
+    [aCoder encodeObject:labelNickName forKey:@"labelNickName"];
 }
 
 @end
