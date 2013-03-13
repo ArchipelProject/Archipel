@@ -74,7 +74,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [fieldOwner setHidden:shouldHide];
     [fieldUnit setHidden:shouldHide];
     [fieldStatus setHidden:shouldHide];
-    [fieldName setHidden:shouldHide];
+    [fieldNickName setHidden:shouldHide];
     [labelCompany setHidden:shouldHide];
     [fieldCategories setHidden:shouldHide];
     [labelLocality setHidden:shouldHide];
@@ -104,22 +104,23 @@ var TNVirtualMachineDataViewAvatarUnknown;
     [fieldServer setStringValue:[[aContact JID] domain]];
     [fieldHypervisor setStringValue:[[aContact JID] resource]];
 
-    if ([aContact vCard])
+    var vCard = [aContact vCard];
+    if (vCard)
     {
         [self shouldHideLabels:NO];
-        [fieldName setStringValue:[[[aContact vCard] firstChildWithName:@"FN"] text]];
-        [fieldLocality setStringValue:[[[aContact vCard] firstChildWithName:@"LOCALITY"] text]];
-        [fieldCompany setStringValue:[[[aContact vCard] firstChildWithName:@"ORGNAME"] text]];
-        [fieldUnit setStringValue:[[[aContact vCard] firstChildWithName:@"ORGUNIT"] text]];
-        [fieldOwner setStringValue:[[[aContact vCard] firstChildWithName:@"USERID"] text]];
-        [fieldCategories setStringValue:[[[aContact vCard] firstChildWithName:@"CATEGORIES"] text]];
+        [fieldName setStringValue:[aContact name]];
+        [fieldLocality setStringValue:[vCard locality]];
+        [fieldCompany setStringValue:[vCard organizationName]];
+        [fieldUnit setStringValue:[vCard organizationUnit]];
+        [fieldOwner setStringValue:[vCard userID]];
+        [fieldCategories setStringValue:[vCard categories]];
         [fieldNickName setStringValue:[aContact nickname]];
         [fieldStatus setStringValue:[aContact XMPPStatus]];
         [imageAvatar setImage:[aContact avatar]];
     }
     else
     {
-        [fieldNickName setStringValue:[aContact nickname] || @"This machine is not in your roster"];
+        [fieldName setStringValue:[aContact nickname] || @"This machine is not in your roster"];
         [imageAvatar setImage:[aContact avatar] || TNVirtualMachineDataViewAvatarUnknown];
         [self shouldHideLabels:YES];
     }
