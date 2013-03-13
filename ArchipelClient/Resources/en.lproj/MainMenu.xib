@@ -2510,7 +2510,7 @@
 							<object class="NSTextField" id="671941229">
 								<reference key="NSNextResponder" ref="921438075"/>
 								<int key="NSvFlags">266</int>
-								<string key="NSFrame">{{25, 7}, {139, 17}}</string>
+								<string key="NSFrame">{{25, 6}, {139, 17}}</string>
 								<reference key="NSSuperview" ref="921438075"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="1250504"/>
@@ -2518,7 +2518,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="886070747">
 									<int key="NSCellFlags">67108928</int>
 									<int key="NSCellFlags2">272631808</int>
-									<string key="NSContents">vCard</string>
+									<string key="NSContents">VCard</string>
 									<reference key="NSSupport" ref="779242604"/>
 									<reference key="NSControlView" ref="671941229"/>
 									<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2937,7 +2937,7 @@
 							<object class="NSTextField" id="355978882">
 								<reference key="NSNextResponder" ref="382131064"/>
 								<int key="NSvFlags">266</int>
-								<string key="NSFrame">{{21, 7}, {153, 17}}</string>
+								<string key="NSFrame">{{21, 6}, {153, 17}}</string>
 								<reference key="NSSuperview" ref="382131064"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="893057"/>
