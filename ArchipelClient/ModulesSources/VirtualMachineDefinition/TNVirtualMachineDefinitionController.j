@@ -1342,7 +1342,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:[buttonDomainType title] osType:[buttonMachines title]];
 
-    [_libvirtDomain setName:[_entity nickname]];
+    [_libvirtDomain setName:[_entity name]];
     [_libvirtDomain setUUID:[[_entity JID] node]];
 
     [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
