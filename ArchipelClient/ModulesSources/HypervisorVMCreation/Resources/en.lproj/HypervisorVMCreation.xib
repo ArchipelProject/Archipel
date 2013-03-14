@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D76</string>
+		<string key="IBDocument.SystemVersion">12D78</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -2231,7 +2231,7 @@
 												</object>
 												<reference key="NSGridColor" ref="914950799"/>
 												<double key="NSRowHeight">84</double>
-												<int key="NSTvFlags">-633339904</int>
+												<int key="NSTvFlags">-624951296</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -2495,7 +2495,7 @@
 												</object>
 												<reference key="NSGridColor" ref="914950799"/>
 												<double key="NSRowHeight">84</double>
-												<int key="NSTvFlags">-633339904</int>
+												<int key="NSTvFlags">-624951296</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -2759,7 +2759,7 @@
 												</object>
 												<reference key="NSGridColor" ref="914950799"/>
 												<double key="NSRowHeight">77</double>
-												<int key="NSTvFlags">-633339904</int>
+												<int key="NSTvFlags">-624951296</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -6294,6 +6294,7 @@
 							<string>labelHypervisor</string>
 							<string>labelLocality</string>
 							<string>labelName</string>
+							<string>labelNickName</string>
 							<string>labelOwner</string>
 							<string>labelServer</string>
 							<string>labelStatus</string>
@@ -6314,6 +6315,7 @@
 							<string>NSTextField</string>
 							<string>NSImageView</string>
 							<string>NSImageView</string>
+							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
@@ -6349,6 +6351,7 @@
 							<string>labelHypervisor</string>
 							<string>labelLocality</string>
 							<string>labelName</string>
+							<string>labelNickName</string>
 							<string>labelOwner</string>
 							<string>labelServer</string>
 							<string>labelStatus</string>
@@ -6430,6 +6433,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">labelName</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">labelNickName</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">

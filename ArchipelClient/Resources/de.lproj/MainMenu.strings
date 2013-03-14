@@ -128,9 +128,6 @@
 /* Class = "NSTextFieldCell"; placeholderString = "user@domain.com"; ObjectID = "989"; */
 "989.placeholderString" = "user@domain.com";
 
-/* Class = "NSTextFieldCell"; title = "Logon"; ObjectID = "991"; */
-"991.title" = "Login";
-
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "992"; */
 "992.title" = "Verbinden";
 
@@ -529,4 +526,7 @@
 
 /* Class = "NSTextFieldCell"; title = "Group Name"; ObjectID = "1666"; */
 "1666.title" = "Group Name";
+
+/* Class = "NSTextFieldCell"; title = "Login"; ObjectID = "1699"; */
+"1699.title" = "Login";
 
