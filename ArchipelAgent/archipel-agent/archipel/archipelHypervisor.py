@@ -61,6 +61,9 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATION_INFO   = -9012
 ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO     = -9013
 ARCHIPEL_ERROR_CODE_HYPERVISOR_NODE_INFO        = -9014
 
+ARCHIPEL_VM_NAME_CHECK_INTERNAL                 = 1
+ARCHIPEL_VM_NAME_CHECK_ALL                      = 2
+
 # Namespace
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 
@@ -464,7 +467,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         return domains
 
-    def libvirt_contains_domain_with_name(self, name, raise_error=False):
+    def libvirt_contains_domain_with_name(self, name, raise_error=False, name_check_level=ARCHIPEL_VM_NAME_CHECK_ALL):
         """
         Check if there is already a domain with the same name,
         managed, or not.
@@ -472,12 +475,17 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param name: the name to check
         @type raise_error: Boolean
         @param raise_error: If set to True, raise an error instead of returning a boolean
+        @type name_check_level: int
+        @param name_check_level: Check all existing VM (including libvirt domain) or just internal VMs
         @rtype: Boolean
         @return: True if a domain has been found
         """
         if self.get_vm_by_name(name):
             if raise_error: raise Exception("Archipel already manages a virtual machine named %s." % name)
             return True
+
+        if not name_check_level == ARCHIPEL_VM_NAME_CHECK_ALL:
+            return False
 
         unamanaged_doms = self.get_raw_libvirt_domains()
         for dom in unamanaged_doms:
@@ -587,7 +595,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ###  Hypervisor controls
 
-    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None, xml_description=None, organizationInfo=None):
+    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None, xml_description=None, organizationInfo=None, name_check_level=ARCHIPEL_VM_NAME_CHECK_ALL):
         """
         Alloc a new XMPP entity.
         @type requester: xmpp.JID
@@ -602,6 +610,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @param xml_description: Optional description
         @type organizationInfo: Dict
         @param organizationInfo: Dict containing locality, company name, company unit and owner
+        @type name_check_level: integer
+        @param name_check_level: Level of name checking when allocating the VM
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
@@ -621,7 +631,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 requested_name = requested_name.replace(" ", "-")
             if strip_unhandled_chars_in_name:
                 requested_name = filter(lambda c: c not in self.bad_chars_in_name, requested_name)
-            self.libvirt_contains_domain_with_name(requested_name, raise_error=True)
+            self.libvirt_contains_domain_with_name(requested_name, raise_error=True, name_check_level=name_check_level)
             name = requested_name
 
         if disallow_spaces_in_name:
@@ -1184,7 +1194,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 vm = self.libvirt_connection.lookupByUUIDString(uuid)
                 xmldesc = vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
                 descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode, organizationInfo=self.vcard_infos)
+                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode, organizationInfo=self.vcard_infos, name_check_level=ARCHIPEL_VM_NAME_CHECK_INTERNAL)
                 self.log.info("manage new virtual machine with UUID: %s" % uuid)
             self.push_change("hypervisor", "manage")
         except Exception as ex:
