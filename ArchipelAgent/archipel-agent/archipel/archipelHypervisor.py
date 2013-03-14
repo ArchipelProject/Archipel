@@ -1029,7 +1029,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             unanaged_domains = self.get_raw_libvirt_domains(only_persistant=True)
             for dom in unanaged_domains:
                 n = xmpp.Node("item", attrs={"managed": "False", "name": dom.name()})
-                n.addData("%s@%s" % (uuid, self.jid.getDomain()))
+                n.addData("%s@%s" % (dom.UUIDString(), self.jid.getDomain()))
                 nodes.append(n)
 
             reply.setQueryPayload(sorted(nodes, cmp=lambda x, y: cmp(x.getData(), y.getData())))
