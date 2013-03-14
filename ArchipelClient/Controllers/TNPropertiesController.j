@@ -107,9 +107,7 @@
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
 
     [viewVCard setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
-    [viewVCard applyShadow];
     [viewXMPPInfos setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
-    [viewXMPPInfos applyShadow];
 
     [mainView setFrontView:viewXMPPInfos];
     [mainView setBackView:viewVCard];

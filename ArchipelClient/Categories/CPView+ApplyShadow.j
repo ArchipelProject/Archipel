@@ -66,4 +66,10 @@
     self._DOMElement.style.WebkitBoxShadow = CSSString;
 }
 
+- (void)setHasWhiteShadow:(BOOL)shouldHaveWhiteShadow
+{
+    if (shouldHaveWhiteShadow)
+        [self applyShadow];
+}
+
 @end

@@ -150,13 +150,10 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
     [sliderScaling setMaxValue:2];
 
     [buttonAddCertificateException setThemeState:CPThemeStateDefault];
-    [viewConnectionErrorHelp applyShadow];
 
     // [viewVNCContainer setClipsToBounds:NO];
 
     [self _showConnectionHelp:NO];
-
-    [[self view] applyShadow];
 }
 
 

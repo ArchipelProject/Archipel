@@ -256,11 +256,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [viewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [viewParametersStandard setFrameSize:CGSizeMake([scrollViewParametersStandard frameSize].width, [viewParametersStandard frameSize].height)];
-    [viewParametersStandard applyShadow];
 
     [viewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
     [viewParametersAdvanced setFrameSize:CGSizeMake([scrollViewParametersAdvanced frameSize].width, [viewParametersAdvanced frameSize].height)];
-    [viewParametersAdvanced applyShadow];
 
     [scrollViewParametersStandard setAutoresizingMask:CPViewWidthSizable];
     [scrollViewParametersAdvanced setAutoresizingMask:CPViewWidthSizable];
@@ -554,12 +552,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setDoubleValue:1];
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
-
-    [viewParametersStandard applyShadow];
-    [viewParametersAdvanced applyShadow];
-    [viewParametersDrives applyShadow];
-    [viewParametersNICs applyShadow];
-    [viewParametersCharacterDevices applyShadow];
 }
 
 
