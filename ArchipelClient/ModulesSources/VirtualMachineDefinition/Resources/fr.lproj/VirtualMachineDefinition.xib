@@ -18878,7 +18878,9 @@ A</string>
 					<string>1971.IBPluginDependency</string>
 					<string>198.IBPluginDependency</string>
 					<string>1980.IBPluginDependency</string>
+					<string>1981.IBAttributePlaceholdersKey</string>
 					<string>1981.IBPluginDependency</string>
+					<string>1982.IBAttributePlaceholdersKey</string>
 					<string>1982.IBPluginDependency</string>
 					<string>199.IBPluginDependency</string>
 					<string>2.IBPluginDependency</string>
@@ -19971,7 +19973,37 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="66533478"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="708105622"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -20456,35 +20488,15 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
-						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-							<reference key="object" ref="248807684"/>
-							<object class="NSArray" key="userDefinedRuntimeAttributes">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="IBUserDefinedRuntimeAttribute">
-									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
-									<string key="keyPath">hasWhiteShadow</string>
-									<boolean value="YES" key="value"/>
-								</object>
-							</object>
-						</object>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<reference key="dict.sortedKeys" ref="0"/>
+						<reference key="dict.values" ref="0"/>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
-						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-							<reference key="object" ref="927575755"/>
-							<object class="NSArray" key="userDefinedRuntimeAttributes">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="IBUserDefinedRuntimeAttribute">
-									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
-									<string key="keyPath">hasWhiteShadow</string>
-									<boolean value="YES" key="value"/>
-								</object>
-							</object>
-						</object>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<reference key="dict.sortedKeys" ref="0"/>
+						<reference key="dict.values" ref="0"/>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
