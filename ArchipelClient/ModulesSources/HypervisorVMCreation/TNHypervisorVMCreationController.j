@@ -745,8 +745,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         return;
     }
 
-    var titleMessage = CPLocalizedString("Manage virtual machine", "Manage virtual machine"),
-        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to manage this virtual machine?", @"Are you sure you want Archipel to manage this virtual machine?");
+    var titleMessage = CPLocalizedString("Unmanage virtual machine", "Unmanage virtual machine"),
+        informativeMessage = CPLocalizedString(@"Are you sure you want Archipel to unmanage this virtual machine?", @"Are you sure you want Archipel to unmanage this virtual machine?");
 
     if ([tableVirtualMachines numberOfSelectedRows] > 1)
     {
