@@ -26,12 +26,12 @@
 
 - (void)unfocusedSelectionGradientColors
 {
-    return [self selectionGradientColors];
+    return [self currentValueForThemeAttribute:@"sourcelist-selection-color"];
 }
 
 - (void)unfocusedSelectionHighlightColor
 {
-    [self selectionHighlightColor];
+    return [self currentValueForThemeAttribute:@"selection-color"];
 }
 
 @end
