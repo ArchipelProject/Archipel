@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D76</string>
+		<string key="IBDocument.SystemVersion">12D78</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.37</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
@@ -1399,7 +1399,7 @@
 															</object>
 														</object>
 														<double key="NSRowHeight">51</double>
-														<int key="NSTvFlags">-767557632</int>
+														<int key="NSTvFlags">-759169024</int>
 														<reference key="NSDelegate"/>
 														<reference key="NSDataSource"/>
 														<int key="NSColumnAutoresizingStyle">4</int>
@@ -1615,7 +1615,7 @@
 														</object>
 														<reference key="NSGridColor" ref="849767385"/>
 														<double key="NSRowHeight">41</double>
-														<int key="NSTvFlags">-767557632</int>
+														<int key="NSTvFlags">-759169024</int>
 														<reference key="NSDelegate"/>
 														<reference key="NSDataSource"/>
 														<int key="NSColumnAutoresizingStyle">4</int>
@@ -2763,7 +2763,7 @@
 												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">78</double>
-												<int key="NSTvFlags">-633339904</int>
+												<int key="NSTvFlags">-624951296</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -3047,7 +3047,7 @@
 												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">78</double>
-												<int key="NSTvFlags">-633339904</int>
+												<int key="NSTvFlags">-624951296</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -3275,7 +3275,7 @@
 												</object>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">78</double>
-												<int key="NSTvFlags">-767557632</int>
+												<int key="NSTvFlags">-759169024</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -6370,7 +6370,7 @@
 												<reference key="NSBackgroundColor" ref="624669266"/>
 												<reference key="NSGridColor" ref="849767385"/>
 												<double key="NSRowHeight">17</double>
-												<int key="NSTvFlags">-767557632</int>
+												<int key="NSTvFlags">-759169024</int>
 												<reference key="NSDelegate"/>
 												<reference key="NSDataSource"/>
 												<int key="NSColumnAutoresizingStyle">4</int>
@@ -18369,11 +18369,14 @@ A</string>
 					<string>-1.IBPluginDependency</string>
 					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
+					<string>1.IBAttributePlaceholdersKey</string>
 					<string>1.IBPluginDependency</string>
 					<string>10.IBPluginDependency</string>
+					<string>1007.IBAttributePlaceholdersKey</string>
 					<string>1007.IBPluginDependency</string>
 					<string>106.IBPluginDependency</string>
 					<string>107.IBPluginDependency</string>
+					<string>1075.IBAttributePlaceholdersKey</string>
 					<string>1075.IBPluginDependency</string>
 					<string>1093.IBPluginDependency</string>
 					<string>1094.IBPluginDependency</string>
@@ -18400,6 +18403,7 @@ A</string>
 					<string>1150.IBPluginDependency</string>
 					<string>1155.IBPluginDependency</string>
 					<string>1156.IBPluginDependency</string>
+					<string>1158.IBAttributePlaceholdersKey</string>
 					<string>1158.IBPluginDependency</string>
 					<string>1159.IBPluginDependency</string>
 					<string>1160.IBPluginDependency</string>
@@ -18450,6 +18454,7 @@ A</string>
 					<string>1224.IBPluginDependency</string>
 					<string>1228.IBPluginDependency</string>
 					<string>1229.IBPluginDependency</string>
+					<string>1231.IBAttributePlaceholdersKey</string>
 					<string>1231.IBPluginDependency</string>
 					<string>1236.IBPluginDependency</string>
 					<string>1238.IBPluginDependency</string>
@@ -18599,6 +18604,7 @@ A</string>
 					<string>1526.IBPluginDependency</string>
 					<string>1527.IBPluginDependency</string>
 					<string>153.IBPluginDependency</string>
+					<string>1530.IBAttributePlaceholdersKey</string>
 					<string>1530.IBPluginDependency</string>
 					<string>1532.IBPluginDependency</string>
 					<string>1538.IBPluginDependency</string>
@@ -18606,6 +18612,7 @@ A</string>
 					<string>154.IBPluginDependency</string>
 					<string>1540.IBPluginDependency</string>
 					<string>1554.IBPluginDependency</string>
+					<string>1562.IBAttributePlaceholdersKey</string>
 					<string>1562.IBPluginDependency</string>
 					<string>1564.IBPluginDependency</string>
 					<string>1565.IBPluginDependency</string>
@@ -18871,7 +18878,9 @@ A</string>
 					<string>1971.IBPluginDependency</string>
 					<string>198.IBPluginDependency</string>
 					<string>1980.IBPluginDependency</string>
+					<string>1981.IBAttributePlaceholdersKey</string>
 					<string>1981.IBPluginDependency</string>
+					<string>1982.IBAttributePlaceholdersKey</string>
 					<string>1982.IBPluginDependency</string>
 					<string>199.IBPluginDependency</string>
 					<string>2.IBPluginDependency</string>
@@ -18883,6 +18892,7 @@ A</string>
 					<string>2006.IBPluginDependency</string>
 					<string>2007.IBPluginDependency</string>
 					<string>2008.IBPluginDependency</string>
+					<string>2009.IBAttributePlaceholdersKey</string>
 					<string>2009.IBPluginDependency</string>
 					<string>201.IBPluginDependency</string>
 					<string>205.IBPluginDependency</string>
@@ -18908,6 +18918,7 @@ A</string>
 					<string>229.IBPluginDependency</string>
 					<string>23.IBAttributePlaceholdersKey</string>
 					<string>23.IBPluginDependency</string>
+					<string>233.IBAttributePlaceholdersKey</string>
 					<string>233.IBPluginDependency</string>
 					<string>234.IBPluginDependency</string>
 					<string>235.IBPluginDependency</string>
@@ -18918,6 +18929,7 @@ A</string>
 					<string>24.IBPluginDependency</string>
 					<string>241.IBPluginDependency</string>
 					<string>242.IBPluginDependency</string>
+					<string>253.IBAttributePlaceholdersKey</string>
 					<string>253.IBPluginDependency</string>
 					<string>254.IBPluginDependency</string>
 					<string>255.IBPluginDependency</string>
@@ -18927,6 +18939,7 @@ A</string>
 					<string>259.IBPluginDependency</string>
 					<string>261.IBPluginDependency</string>
 					<string>262.IBPluginDependency</string>
+					<string>289.IBAttributePlaceholdersKey</string>
 					<string>289.IBPluginDependency</string>
 					<string>296.IBPluginDependency</string>
 					<string>297.IBPluginDependency</string>
@@ -19211,7 +19224,9 @@ A</string>
 					<string>8.IBPluginDependency</string>
 					<string>80.IBPluginDependency</string>
 					<string>84.IBPluginDependency</string>
+					<string>841.IBAttributePlaceholdersKey</string>
 					<string>841.IBPluginDependency</string>
+					<string>842.IBAttributePlaceholdersKey</string>
 					<string>842.IBPluginDependency</string>
 					<string>85.IBPluginDependency</string>
 					<string>851.IBPluginDependency</string>
@@ -19259,6 +19274,7 @@ A</string>
 					<string>914.IBPluginDependency</string>
 					<string>915.IBPluginDependency</string>
 					<string>916.IBPluginDependency</string>
+					<string>938.IBAttributePlaceholdersKey</string>
 					<string>938.IBPluginDependency</string>
 				</object>
 				<object class="NSArray" key="dict.values">
@@ -19266,11 +19282,56 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="1005"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="281604653"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="526484131"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19297,6 +19358,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="731697080"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19347,6 +19423,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="151298211"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19496,6 +19587,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="956572652"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19503,6 +19609,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="608202278"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19852,7 +19973,37 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="66533478"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="708105622"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19871,6 +20022,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="396904908"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19910,6 +20076,21 @@ A</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="177137201"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19920,6 +20101,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="333089055"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -19929,6 +20125,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="276050800"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -20276,7 +20487,17 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<reference key="dict.sortedKeys" ref="0"/>
+						<reference key="dict.values" ref="0"/>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<reference key="dict.sortedKeys" ref="0"/>
+						<reference key="dict.values" ref="0"/>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -20359,6 +20580,21 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+						<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
+							<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
+							<reference key="object" ref="286755511"/>
+							<object class="NSArray" key="userDefinedRuntimeAttributes">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="IBUserDefinedRuntimeAttribute">
+									<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.boolean</string>
+									<string key="keyPath">hasWhiteShadow</string>
+									<boolean value="YES" key="value"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>

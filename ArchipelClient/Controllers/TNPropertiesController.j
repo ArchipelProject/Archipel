@@ -27,7 +27,7 @@
 
 @import <StropheCappuccino/PubSub/TNPubSubController.j>
 @import <StropheCappuccino/TNStropheContact.j>
-@import <TNKit/TNSwipeView.j>
+@import <TNKit/TNFlipView.j>
 
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
@@ -50,7 +50,6 @@
     @outlet CPButton                entryAvatar;
     @outlet CPImageView             entryStatusIcon;
     @outlet CPImageView             imageVCardIcon;
-    @outlet CPImageView             imageViewVCardPhoto;
     @outlet CPTextField             entryDomain;
     @outlet CPTextField             entryName;
     @outlet CPTextField             entryNode;
@@ -75,7 +74,7 @@
     @outlet CPView                  viewVCardContainer;
     @outlet CPView                  viewXMPPInfos;
     @outlet TNContactsController    contactsController;
-    @outlet TNSwipeView             mainSwipeView;
+    @outlet TNFlipView              mainView;
 
 
     BOOL                            _enabled            @accessors(getter=isEnabled);
@@ -108,11 +107,11 @@
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
 
     [viewVCard setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
-    [viewVCard applyShadow];
     [viewXMPPInfos setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
-    [viewXMPPInfos applyShadow];
 
-    [mainSwipeView setViews:[viewXMPPInfos, viewVCard]];
+    [mainView setFrontView:viewXMPPInfos];
+    [mainView setBackView:viewVCard];
+    [mainView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
     var gradColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-nickname.png"]]];
     [viewNicknameContainer setBackgroundColor:gradColor];
@@ -132,25 +131,23 @@
     [buttonEventSubscription setImageScaling:CPScaleProportionally];
     [buttonEventSubscription setHidden:YES];
 
-    [imageViewVCardPhoto setImageScaling:CPScaleProportionally];
-
     var imageArrowLeft = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-left.png"] size:CGSizeMake(14.0, 14.0)],
         imageArrowLeftPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-left.png"] size:CGSizeMake(14.0, 14.0)],
         imageArrowRight = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-right.png"] size:CGSizeMake(14.0, 14.0)],
         imageArrowRightPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-right.png"] size:CGSizeMake(14.0, 14.0)];
 
-    [buttonViewXMPPInfosSwipe setTarget:mainSwipeView];
+    [buttonViewXMPPInfosSwipe setTarget:mainView];
     [buttonViewXMPPInfosSwipe setBordered:NO];
     [buttonViewXMPPInfosSwipe setButtonType:CPMomentaryChangeButton];
-    [buttonViewXMPPInfosSwipe setAction:@selector(nextView:)];
+    [buttonViewXMPPInfosSwipe setAction:@selector(flip:)];
     [buttonViewXMPPInfosSwipe setImage:imageArrowRight]; // this avoid the blinking..
     [buttonViewXMPPInfosSwipe setValue:imageArrowRight forThemeAttribute:@"image"];
     [buttonViewXMPPInfosSwipe setValue:imageArrowRightPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
-    [buttonViewVCardSwipe setTarget:mainSwipeView];
+    [buttonViewVCardSwipe setTarget:mainView];
     [buttonViewVCardSwipe setBordered:NO];
     [buttonViewVCardSwipe setButtonType:CPMomentaryChangeButton];
-    [buttonViewVCardSwipe setAction:@selector(nextView:)];
+    [buttonViewVCardSwipe setAction:@selector(flip:)];
     [buttonViewVCardSwipe setImage:imageArrowLeft]; // this avoid the blinking..
     [buttonViewVCardSwipe setValue:imageArrowLeft forThemeAttribute:@"image"];
     [buttonViewVCardSwipe setValue:imageArrowLeftPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
@@ -216,7 +213,7 @@
 
     _isCollapsed = YES;
 
-    [[mainSwipeView superview] setPosition:[[mainSwipeView superview] bounds].size.height ofDividerAtIndex:0];
+    [[mainView superview] setPosition:[[mainView superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 /*! show the panel
@@ -228,7 +225,7 @@
 
     _isCollapsed = NO;
 
-    [[mainSwipeView superview] setPosition:([[mainSwipeView superview] bounds].size.height - _height) ofDividerAtIndex:0];
+    [[mainView superview] setPosition:([[mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelPropertiesViewDidShowNotification object:self];
 
 }
@@ -299,7 +296,6 @@
         [labelVCardRole setStringValue:@""];
         [labelVCardEmail setStringValue:@""]
         [labelVCardCategory setStringValue:@""];
-        [imageViewVCardPhoto setImage:nil];
 
         if ([_entity vCard])
         {
@@ -314,7 +310,6 @@
             [labelVCardRole setStringValue:[[vCard title] capitalizedString]];
             [labelVCardEmail setStringValue:[vCard userID]];
             [labelVCardCategory setStringValue:[vCard categories]];
-            [imageViewVCardPhoto setImage:[_entity avatar] || _unknownUserImage];
         }
 
     }
@@ -339,7 +334,7 @@
         [entryResource setStringValue:population];
         [entryStatus setStringValue:@""];
 
-        [mainSwipeView slideToViewIndex:0];
+        [mainView showFront];
         [buttonViewVCardSwipe setHidden:YES];
     }
 

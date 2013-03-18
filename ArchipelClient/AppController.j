@@ -1401,7 +1401,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
 /*! called the roster outlineView to ask the dataView it should use for given item.
 */
-- (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
+- (void)outlineView:(CPOutlineView)anOutlineView viewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
 {
     var key = [anItem className],
         view = [_rosterOutlineView makeViewWithIdentifier:key owner:self];
