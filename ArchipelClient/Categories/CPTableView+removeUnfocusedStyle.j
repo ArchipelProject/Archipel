@@ -1,5 +1,5 @@
 /*
- * TNCategories.j
+ * CPTableView+removeUnfocusedStyle.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,23 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <AppKit/CPTableView.j>
 
-/*! @defgroup categories Archipel Utilities
-    @desc Simples categories made to live ina better world
+
+/*! @ingroup categories
+    Make CPTabView border editable
 */
+@implementation CPTableView (removeUglyChange)
 
+- (void)unfocusedSelectionGradientColors
+{
+    return [self selectionGradientColors];
+}
 
-@import "CPDate+Format.j"
-@import "CPObject+Duplication.j"
-@import "CPOutlineView+Extend.j"
-@import "CPPlatformWindow+Title.j"
-@import "CPPopover+TNAttachedWindowAPI.j"
-@import "CPSegmentedControl+SegmentView.j"
-@import "CPString+FormatByteSize.j"
-@import "CPString+UUIDRFC4122.j"
-@import "CPTableView+removeUnfocusedStyle.j"
-@import "CPTabView+Border.j"
-@import "CPView+ApplyShadow.j"
-@import "CPView+Border.j"
-@import "TNStropheClient+Singleton.j"
-@import "TNStropheGroup+Capitalized.j"
+- (void)unfocusedSelectionHighlightColor
+{
+    [self selectionHighlightColor];
+}
+
+@end
