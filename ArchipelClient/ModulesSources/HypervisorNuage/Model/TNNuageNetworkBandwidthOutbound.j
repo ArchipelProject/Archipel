@@ -24,7 +24,6 @@
 */
 @implementation TNNuageNetworkBandwidthOutbound : TNNuageNetworkBase
 {
-    CPString        _average    @accessors(property=average);
     CPString        _burst      @accessors(property=burst);
     CPString        _peak       @accessors(property=peak);
 }
@@ -34,15 +33,13 @@
 #pragma mark Class Method
 
 /*! Create a new TNNuageNetworkBandwidthOutbound object
-    @param anAverage the value of average
     @param aPeak the value of peak
     @param aBurst the value of burst
 */
-+ (TNNuageNetworkBandwidthOutbound)defaultNetworkBandwidthOutboundWithAverage:(CPString)anAverage peak:(CPString)aPeak burst:(CPString)aBurst
++ (TNNuageNetworkBandwidthOutbound)defaultNetworkBandwidthOutboundWithPeak:(CPString)aPeak burst:(CPString)aBurst
 {
     var outbound = [[TNNuageNetworkBandwidthOutbound alloc] init];
 
-    [outbound setAverage:anAverage];
     [outbound setPeak:aPeak];
     [outbound setBurst:aBurst];
 
@@ -63,7 +60,6 @@
         if ([aNode name] != @"outbound")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid outbound"];
 
-        _average    = [aNode valueForAttribute:@"average"];
         _peak       = [aNode valueForAttribute:@"peak"];
         _burst      = [aNode valueForAttribute:@"burst"];
     }
@@ -80,13 +76,8 @@
 */
 - (TNXMLNode)XMLNode
 {
-    if (!_average)
-        [CPException raise:@"Missing average" reason:@"average is required"];
-
     var node = [TNXMLNode nodeWithName:@"outbound"];
 
-    if (_average)
-        [node setValue:_average forAttribute:@"average"];
     if (_peak)
         [node setValue:_peak forAttribute:@"peak"];
     if (_burst)

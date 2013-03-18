@@ -80,10 +80,9 @@ var TNNuageDataViewIcon,
     [labelInLimit setHidden:YES];
     if ([[_nuage bandwidth] inbound])
     {
-        var average = [[[_nuage bandwidth] inbound] average] || @"None",
-            peak = [[[_nuage bandwidth] inbound] peak] || @"None",
+        var peak = [[[_nuage bandwidth] inbound] peak] || @"None",
             burst = [[[_nuage bandwidth] inbound] burst] || @"None";
-        [fieldInLimit setStringValue:[CPString stringWithFormat:@"%s/%s/%s", average, peak, burst]];
+        [fieldInLimit setStringValue:[CPString stringWithFormat:@"%s/%s", peak, burst]];
         [fieldInLimit setHidden:NO];
         [labelInLimit setHidden:NO];
     }
@@ -92,10 +91,9 @@ var TNNuageDataViewIcon,
     [labelOutLimit setHidden:YES];
     if ([[_nuage bandwidth] outbound])
     {
-        var average = [[[_nuage bandwidth] outbound] average] || @"None",
-            peak = [[[_nuage bandwidth] outbound] peak] || @"None",
+        var peak = [[[_nuage bandwidth] outbound] peak] || @"None",
             burst = [[[_nuage bandwidth] outbound] burst] || @"None";
-        [fieldOutLimit setStringValue:[CPString stringWithFormat:@"%s/%s/%s", average, peak, burst]];
+        [fieldOutLimit setStringValue:[CPString stringWithFormat:@"%s/%s", peak, burst]];
         [fieldOutLimit setHidden:NO];
         [labelOutLimit setHidden:NO];
     }

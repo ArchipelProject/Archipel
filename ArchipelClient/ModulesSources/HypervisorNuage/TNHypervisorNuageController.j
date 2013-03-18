@@ -435,7 +435,7 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
         XMLString = [_nuagesRAW objectForKey:[nuage name]];
 
     XMLString  = XMLString.replace("\n  \n", "\n");
-    XMLString  = XMLString.replace(" xmlns='http://www.gajim.org/xmlns/undeclared'", "");
+    XMLString  = XMLString.replace(" xmlns=\"http://www.gajim.org/xmlns/undeclared\"", "");
     [fieldXMLString setStringValue:XMLString];
     [nuageController closeWindow:nil];
     [popoverXMLString close];

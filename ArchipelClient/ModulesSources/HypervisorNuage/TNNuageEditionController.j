@@ -49,10 +49,8 @@
     @outlet CPPopover           mainPopover;
     @outlet CPPopUpButton       buttonNuageType;
     @outlet CPTextField         fieldAddress;
-    @outlet CPTextField         fieldBandwidthInboundAverage;
     @outlet CPTextField         fieldBandwidthInboundBurst;
     @outlet CPTextField         fieldBandwidthInboundPeak;
-    @outlet CPTextField         fieldBandwidthOutboundAverage;
     @outlet CPTextField         fieldBandwidthOutboundBurst;
     @outlet CPTextField         fieldBandwidthOutboundPeak;
     @outlet CPTextField         fieldErrorMessage;
@@ -120,11 +118,9 @@
     [checkBoxBandwidthOutbound setState:[[_nuage bandwidth] outbound] ? CPOnState : CPOffState];
     [self outboundLimitChange:nil];
 
-    [fieldBandwidthInboundAverage setStringValue:[[[_nuage bandwidth] inbound] average] || @""];
     [fieldBandwidthInboundPeak setStringValue:[[[_nuage bandwidth] inbound] peak] || @""];
     [fieldBandwidthInboundBurst setStringValue:[[[_nuage bandwidth] inbound] burst] || @""];
 
-    [fieldBandwidthOutboundAverage setStringValue:[[[_nuage bandwidth] outbound] average] || @""];
     [fieldBandwidthOutboundPeak setStringValue:[[[_nuage bandwidth] outbound] peak] || @""];
     [fieldBandwidthOutboundBurst setStringValue:[[[_nuage bandwidth] outbound] burst] || @""];
 
@@ -217,12 +213,6 @@
         if (![[_nuage bandwidth] inbound])
             [[_nuage bandwidth] setInbound:[[TNNuageNetworkBandwidthInbound alloc] init]];
 
-        if ([fieldBandwidthInboundAverage stringValue] == @"")
-        {
-            [fieldErrorMessage setStringValue:CPLocalizedString(@"You must set at least the \"average\" value for inbound limit", @"You must set at least the \"average\" value for inbound limit")];
-            return;
-        }
-        [[[_nuage bandwidth] inbound] setAverage:[fieldBandwidthInboundAverage intValue]];
         [[[_nuage bandwidth] inbound] setPeak:[fieldBandwidthInboundPeak intValue]];
         [[[_nuage bandwidth] inbound] setBurst:[fieldBandwidthInboundBurst intValue]];
     }
@@ -239,12 +229,6 @@
         if (![[_nuage bandwidth] outbound])
             [[_nuage bandwidth] setOutbound:[[TNNuageNetworkBandwidthOutbound alloc] init]];
 
-        if ([fieldBandwidthOutboundAverage stringValue] == @"")
-        {
-            [fieldErrorMessage setStringValue:CPLocalizedString(@"You must set at least the \"average\" value for outbound limit", @"You must set at least the \"average\" value for outbound limit")];
-            return;
-        }
-        [[[_nuage bandwidth] outbound] setAverage:[fieldBandwidthOutboundAverage intValue]];
         [[[_nuage bandwidth] outbound] setPeak:[fieldBandwidthOutboundPeak intValue]];
         [[[_nuage bandwidth] outbound] setBurst:[fieldBandwidthOutboundBurst intValue]];
     }
@@ -415,7 +399,6 @@
 {
     if ([checkBoxBandwidthInbound state] == CPOnState)
     {
-        [fieldBandwidthInboundAverage setEnabled:YES];
         [fieldBandwidthInboundPeak setEnabled:YES];
         [fieldBandwidthInboundBurst setEnabled:YES];
         if (![_nuage bandwidth])
@@ -423,10 +406,8 @@
     }
     else
     {
-        [fieldBandwidthInboundAverage setEnabled:NO];
         [fieldBandwidthInboundPeak setEnabled:NO];
         [fieldBandwidthInboundBurst setEnabled:NO];
-        [fieldBandwidthInboundAverage setStringValue:@""];
         [fieldBandwidthInboundPeak setStringValue:@""];
         [fieldBandwidthInboundBurst setStringValue:@""];
 
@@ -442,7 +423,6 @@
 {
     if ([checkBoxBandwidthOutbound state] == CPOnState)
     {
-        [fieldBandwidthOutboundAverage setEnabled:YES];
         [fieldBandwidthOutboundPeak setEnabled:YES];
         [fieldBandwidthOutboundBurst setEnabled:YES];
         if (![_nuage bandwidth])
@@ -450,10 +430,8 @@
     }
     else
     {
-        [fieldBandwidthOutboundAverage setEnabled:NO];
         [fieldBandwidthOutboundPeak setEnabled:NO];
         [fieldBandwidthOutboundBurst setEnabled:NO];
-        [fieldBandwidthOutboundAverage setStringValue:@""];
         [fieldBandwidthOutboundPeak setStringValue:@""];
         [fieldBandwidthOutboundBurst setStringValue:@""];
 
@@ -471,7 +449,6 @@
         return;
 
     var selectedObject = [_dataSourceDomains objectAtIndex:[tableViewDomains selectedRow]];
-
 
     [[TNCNACommunicator defaultCNACommunicator] fetchZonesInDomainWithID:[selectedObject objectForKey:@"ID"]
                                                          andCallSelector:@selector(_didFetchZones:)
