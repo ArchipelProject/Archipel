@@ -446,6 +446,9 @@
 */
 - (IBAction)removeDHCPRange:(id)sender
 {
+    if ([tableViewRanges numberOfSelectedRows] <= 0)
+        return;
+
     var selectedIndex   = [[tableViewRanges selectedRowIndexes] firstIndex],
         rangeObject     = [_datasourceDHCPRanges removeObjectAtIndex:selectedIndex];
 
@@ -470,6 +473,9 @@
 */
 - (IBAction)removeDHCPHost:(id)sender
 {
+    if ([tableViewHosts numberOfSelectedRows] <= 0)
+        return;
+
     var selectedIndex   = [[tableViewHosts selectedRowIndexes] firstIndex],
         hostsObject     = [_datasourceDHCPHosts removeObjectAtIndex:selectedIndex];
 
@@ -548,7 +554,9 @@
         [_datasourceDHCPRanges setContent:[[[_network IP] DHCP] ranges]];
         [tableViewRanges setEnabled:YES];
         [tableViewHosts setEnabled:YES];
+
         [[buttonBarControlDHCPRanges buttons] makeObjectsPerformSelector:@selector(setEnabled:) withObject:YES];
+        [[buttonBarControlDHCPHosts buttons] makeObjectsPerformSelector:@selector(setEnabled:) withObject:YES];
     }
     else
     {
@@ -559,7 +567,13 @@
         [[_network IP] setDHCP:nil];
         [tableViewRanges setEnabled:NO];
         [tableViewHosts setEnabled:NO];
+        [_plusButtonDHCPHosts setEnabled:NO];
+        [_minusButtonDHCPHosts setEnabled:NO];
+        [_plusButtonDHCPRanges setEnabled:NO];
+        [_minusButtonDHCPRanges setEnabled:NO];
+
         [[buttonBarControlDHCPRanges buttons] makeObjectsPerformSelector:@selector(setEnabled:) withObject:NO];
+        [[buttonBarControlDHCPHosts buttons] makeObjectsPerformSelector:@selector(setEnabled:) withObject:NO];
     }
 }
 
