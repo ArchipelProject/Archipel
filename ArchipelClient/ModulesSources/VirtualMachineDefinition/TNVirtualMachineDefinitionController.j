@@ -552,6 +552,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setDoubleValue:1];
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
+    [stepperNumberCPUs setTarget:self];
+    [stepperNumberCPUs setAction:@selector(didChangeVCPU:)];
 }
 
 
@@ -2619,11 +2621,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVCPU:(id)aSender
 {
-    if ([aSender intValue] == [_libvirtDomain VCPU])
+    if ([aSender doubleValue] == [_libvirtDomain VCPU])
         return;
 
-    [_libvirtDomain setVCPU:[aSender intValue]];
-
+    [_libvirtDomain setVCPU:parseInt([aSender doubleValue])];
     _definitionEdited = YES;
 }
 
