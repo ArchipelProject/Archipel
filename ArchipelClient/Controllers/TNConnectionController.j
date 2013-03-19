@@ -234,6 +234,9 @@ var TNConnectionControllerForceResource,
         return;
     }
 
+    if (![[fieldJID stringValue] length])
+        return;
+
     if (!TNConnectionControllerForceJIDDomain)
     {
         try
