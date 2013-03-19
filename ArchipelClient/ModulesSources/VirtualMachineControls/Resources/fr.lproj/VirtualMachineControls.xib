@@ -196,7 +196,7 @@
 																				<reference key="NSTableView" ref="262603946"/>
 																			</object>
 																			<object class="NSTableColumn" id="1000632998">
-																				<string key="NSIdentifier">nickname</string>
+																				<string key="NSIdentifier">name</string>
 																				<double key="NSWidth">397</double>
 																				<double key="NSMinWidth">40</double>
 																				<double key="NSMaxWidth">99999</double>
@@ -230,7 +230,7 @@
 																				<bool key="NSIsResizeable">YES</bool>
 																				<reference key="NSTableView" ref="262603946"/>
 																				<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-																					<string key="NSKey">nickname</string>
+																					<string key="NSKey">name</string>
 																					<bool key="NSAscending">YES</bool>
 																					<string key="NSSelector">compare:</string>
 																				</object>

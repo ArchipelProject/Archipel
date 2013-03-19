@@ -201,6 +201,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [tableHypervisors setTarget:self];
     [tableHypervisors setDoubleAction:@selector(migrate:)];
     [_datasourceHypervisors setTable:tableHypervisors];
+    [_datasourceHypervisors setSearchableKeyPaths:[@"name"]];
+    [filterHypervisors setTarget:_datasourceHypervisors];
+    [filterHypervisors setAction:@selector(filterObjects:)];
     [tableHypervisors setDataSource:_datasourceHypervisors];
 
     // button bar migration
@@ -492,7 +495,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[item vCard]] == TNArchipelEntityTypeHypervisor)
         {
-            var o = [[TNExtendedContact alloc] initWithNickName:[item name] fullJID:[[item JID] full]];
+            var o = [[TNExtendedContact alloc] initWithName:[item name] fullJID:[[item JID] full]];
 
             [_datasourceHypervisors addObject:o];
         }

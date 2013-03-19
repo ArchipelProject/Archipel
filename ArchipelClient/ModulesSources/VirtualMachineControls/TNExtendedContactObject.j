@@ -31,7 +31,7 @@ var TNExtendedContactImageSelected;
 */
 @implementation TNExtendedContact: CPObject
 {
-    CPString    _nickname   @accessors(property=nickname);
+    CPString    _name       @accessors(property=name);
     CPString    _fullJID    @accessors(property=fullJID);
     BOOL        _selected   @accessors(setter=setSelected:);
 }
@@ -46,15 +46,15 @@ var TNExtendedContactImageSelected;
 }
 
 /*! intialize a TNExtendedContact with given values
-    @param aNickname contact nickname
+    @param aName contact nickname
     @param aFullJID the full JID of the contact
     @return initialized contact
 */
-- (id)initWithNickName:(CPString)aNickname fullJID:(CPString)aFullJID
+- (id)initWithName:(CPString)aName fullJID:(CPString)aFullJID
 {
     if (self = [super init])
     {
-        _nickname       = aNickname;
+        _name           = aName;
         _fullJID        = aFullJID;
         _selected       = NO;
     }
