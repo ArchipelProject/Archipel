@@ -103,7 +103,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     /* table Users */
     _datasourceUsers  = [[TNTableViewLazyDataSource alloc] init];
     [_datasourceUsers setTable:tableUsers];
-    [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
+    [_datasourceUsers setSearchableKeyPaths:[@"name", @"JID"]];
     [tableUsers setDataSource:_datasourceUsers];
 
     // user fetcher
@@ -136,7 +136,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     /* table users in group */
     _datasourceUsersInGroup  = [[TNTableViewDataSource alloc] init];
     [_datasourceUsersInGroup setTable:tableUsersInGroup];
-    [_datasourceUsersInGroup setSearchableKeyPaths:[@"jid"]];
+    [_datasourceUsersInGroup setSearchableKeyPaths:[@"name", @"JID"]];
     [tableUsersInGroup setDataSource:_datasourceUsersInGroup];
     [tableUsersInGroup setDelegate:self];
 
@@ -485,7 +485,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     for (var i = 0; i < [someJIDs count]; i++)
     {
-        [stanza addChildWithName:@"user" andAttributes:{"jid": [[someJIDs objectAtIndex:i] objectForKey:@"jid"]}];
+        [stanza addChildWithName:@"user" andAttributes:{"jid": [[someJIDs objectAtIndex:i] objectForKey:@"JID"]}];
         [stanza up];
     }
 
@@ -518,7 +518,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     for (var i = 0; i < [someJIDs count]; i++)
     {
-        [stanza addChildWithName:@"user" andAttributes:{"jid": [[someJIDs objectAtIndex:i] objectForKey:@"jid"]}];
+        [stanza addChildWithName:@"user" andAttributes:{"jid": [[someJIDs objectAtIndex:i] objectForKey:@"JID"]}];
         [stanza up];
     }
 
@@ -568,7 +568,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
             for (var i = 0; i < [users count]; i++)
             {
                 var user    = [users objectAtIndex:i],
-                    newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"jid"]];
+                    newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"JID"]];
                 [_datasourceUsersInGroup addObject:newItem];
             }
             [tableUsersInGroup reloadData];

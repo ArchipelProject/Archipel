@@ -86,7 +86,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     // table users
     _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
     [_datasourceUsers setTable:tableUsers];
-    [_datasourceUsers setSearchableKeyPaths:[@"name", @"jid"]];
+    [_datasourceUsers setSearchableKeyPaths:[@"name", @"JID"]];
     [tableUsers setDataSource:_datasourceUsers];
 
     // user fetcher
@@ -321,7 +321,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     for (var i = 0; i < [users count]; i ++)
     {
         var user = [users objectAtIndex:i];
-        [usernames addObject:[user objectForKey:@"jid"]];
+        [usernames addObject:[user objectForKey:@"JID"]];
     }
 
     var thealert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unregister", @"Unregister")
@@ -344,7 +344,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     for (var i = 0; i < [users count]; i ++)
     {
         var user = [users objectAtIndex:i];
-        [[TNPermissionsCenter defaultCenter] addAdminAccount:[user objectForKey:@"jid"]];
+        [[TNPermissionsCenter defaultCenter] addAdminAccount:[user objectForKey:@"JID"]];
     }
 }
 
@@ -359,8 +359,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     for (var i = 0; i < [users count]; i ++)
     {
         var user = [users objectAtIndex:i];
-        if (![[user objectForKey:@"jid"] bareEquals:[[TNStropheIMClient defaultClient] JID]])
-            [[TNPermissionsCenter defaultCenter] removeAdminAccount:[user objectForKey:@"jid"]];
+        if (![[user objectForKey:@"JID"] bareEquals:[[TNStropheIMClient defaultClient] JID]])
+            [[TNPermissionsCenter defaultCenter] removeAdminAccount:[user objectForKey:@"JID"]];
         else
         {
             [TNAlert showAlertWithMessage:CPLocalizedString(@"Admin rights", @"Admin rights")
