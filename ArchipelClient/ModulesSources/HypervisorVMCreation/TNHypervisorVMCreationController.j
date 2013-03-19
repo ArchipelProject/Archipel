@@ -142,7 +142,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_virtualMachinesDatasource setTable:tableVirtualMachines];
-    [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
+    [_virtualMachinesDatasource setSearchableKeyPaths:[@"name", @"JID.bare"]];
 
     [fieldFilterVM setTarget:_virtualMachinesDatasource];
     [fieldFilterVM setAction:@selector(filterObjects:)];
@@ -951,7 +951,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
-        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]]]
+        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]]
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
