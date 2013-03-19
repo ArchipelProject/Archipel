@@ -243,13 +243,14 @@
 								</object>
 								<string key="NSFrame">{{168, 0}, {281, 37}}</string>
 								<reference key="NSSuperview" ref="498345990"/>
+								<reference key="NSNextKeyView" ref="665202016"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<string key="NSClassName">NSView</string>
 							</object>
 						</object>
 						<string key="NSFrame">{{0, -3}, {617, 37}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="665202016"/>
+						<reference key="NSNextKeyView" ref="367998791"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
@@ -520,7 +521,7 @@
 														</object>
 													</object>
 													<object class="NSTableColumn" id="14172087">
-														<string key="NSIdentifier">jid</string>
+														<string key="NSIdentifier">JID</string>
 														<double key="NSWidth">373</double>
 														<double key="NSMinWidth">40</double>
 														<double key="NSMaxWidth">1000</double>
@@ -545,7 +546,7 @@
 														<bool key="NSIsResizeable">YES</bool>
 														<reference key="NSTableView" ref="53746584"/>
 														<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-															<string key="NSKey">jid</string>
+															<string key="NSKey">JID</string>
 															<bool key="NSAscending">YES</bool>
 															<string key="NSSelector">compare:</string>
 														</object>
@@ -1133,7 +1134,7 @@
 																<object class="NSMutableArray" key="NSTableColumns">
 																	<bool key="EncodedWithXMLCoder">YES</bool>
 																	<object class="NSTableColumn" id="1011189764">
-																		<string key="NSIdentifier">jid</string>
+																		<string key="NSIdentifier">JID</string>
 																		<double key="NSWidth">279.9765625</double>
 																		<double key="NSMinWidth">40</double>
 																		<double key="NSMaxWidth">1000</double>
@@ -1161,7 +1162,7 @@
 																		<bool key="NSIsResizeable">YES</bool>
 																		<reference key="NSTableView" ref="592224764"/>
 																		<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-																			<string key="NSKey">jid</string>
+																			<string key="NSKey">JID</string>
 																			<bool key="NSAscending">YES</bool>
 																			<string key="NSSelector">compare:</string>
 																		</object>
@@ -1403,6 +1404,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {423, 5}}</string>
 						<reference key="NSSuperview" ref="1003662678"/>
+						<reference key="NSNextKeyView" ref="81589311"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -1625,6 +1627,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {423, 5}}</string>
 						<reference key="NSSuperview" ref="65672009"/>
+						<reference key="NSNextKeyView" ref="1032722372"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -1786,6 +1789,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {498, 5}}</string>
 						<reference key="NSSuperview" ref="234123777"/>
+						<reference key="NSNextKeyView" ref="684655494"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -1987,7 +1991,7 @@
 												</object>
 											</object>
 											<object class="NSTableColumn" id="367599578">
-												<string key="NSIdentifier">jid</string>
+												<string key="NSIdentifier">JID</string>
 												<double key="NSWidth">180.8125</double>
 												<double key="NSMinWidth">10</double>
 												<double key="NSMaxWidth">3.4028234663852886e+38</double>
@@ -2012,7 +2016,7 @@
 												<bool key="NSIsResizeable">YES</bool>
 												<reference key="NSTableView" ref="334598255"/>
 												<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-													<string key="NSKey">jid</string>
+													<string key="NSKey">JID</string>
 													<bool key="NSAscending">YES</bool>
 													<string key="NSSelector">compare:</string>
 												</object>
@@ -2191,6 +2195,7 @@ IGFwcGxpY2F0aW9uIGFmdGVyIGNoYW5naW5nIHRoaXMuA</string>
 						</object>
 						<string key="NSFrame">{{20, 20}, {422, 107}}</string>
 						<reference key="NSSuperview" ref="410998790"/>
+						<reference key="NSNextKeyView" ref="153338842"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -2199,7 +2204,7 @@ IGFwcGxpY2F0aW9uIGFmdGVyIGNoYW5naW5nIHRoaXMuA</string>
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 135}, {428, 20}}</string>
 						<reference key="NSSuperview" ref="410998790"/>
-						<reference key="NSNextKeyView" ref="153338842"/>
+						<reference key="NSNextKeyView" ref="619250620"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="315984439">
 							<int key="NSCellFlags">68157504</int>

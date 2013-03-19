@@ -10,8 +10,8 @@
 	<string>Ajoute le contact</string>
 	<key>Cancel</key>
 	<string>Annuler</string>
-	<key>Nickname</key>
-	<string>Surnom</string>
+	<key>Name</key>
+	<string>Name</string>
 	<key>Would you like to add </key>
 	<string>Voulez-vous ajouter </string>
 </dict>
