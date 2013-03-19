@@ -53,7 +53,7 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var columnLabel     = [[CPTableColumn alloc] initWithIdentifier:"nickname"],
+        var columnLabel     = [[CPTableColumn alloc] initWithIdentifier:"name"],
             columnOutline   = [[CPTableColumn alloc] initWithIdentifier:"outline"];
 
         [columnLabel setWidth:aFrame.size.width];
