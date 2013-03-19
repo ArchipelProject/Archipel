@@ -84,7 +84,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
     [tableVirtualMachines setTarget:self];
     [_datasourceGroupVM setTable:tableVirtualMachines];
-    [_datasourceGroupVM setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
+    [_datasourceGroupVM setSearchableKeyPaths:[@"name", @"JID.bare"]];
     [tableVirtualMachines setDataSource:_datasourceGroupVM];
 
     var createButton    = [CPButtonBar plusButton],
