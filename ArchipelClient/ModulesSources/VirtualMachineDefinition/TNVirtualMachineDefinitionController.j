@@ -468,7 +468,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_characterDevicesDatasource setTable:tableCharacterDevices];
     [tableCharacterDevices setDataSource:_characterDevicesDatasource];
     [viewCharacterDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
-
+    [_characterDevicesDatasource setSearchableKeyPaths:[@"type", @"kind", @"protocol.type", @"target.type", @"target.address", @"target.port", @"target.name", @"source.path", @"source.mode", @"source.host", @"source.service"]]
     [fieldFilterCharacters setTarget:_characterDevicesDatasource];
     [fieldFilterCharacters setAction:@selector(filterObjects:)];
 
