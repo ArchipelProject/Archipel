@@ -346,8 +346,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* loading view */
     [viewLoading setFrame:[rightView bounds]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    viewLoading._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
     viewLoading._DOMElement.style.background = "url(Resources/Backgrounds/dark-bg.png)";
+    viewLoading._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
     [rightView addSubview:viewLoading];
 
     [progressIndicatorModulesLoading setMinValue:0.0];
