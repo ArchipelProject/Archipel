@@ -314,7 +314,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0)";
-    _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(top, #2F2727, #1a82f7)";
+    _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(-90deg, #E0E4EA, #D1D8E0)";
 
 
     /* init scroll view of the outline view */
@@ -347,6 +347,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [viewLoading setFrame:[rightView bounds]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     viewLoading._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
+    viewLoading._DOMElement.style.background = "url(Resources/Backgrounds/dark-bg.png)";
     [rightView addSubview:viewLoading];
 
     [progressIndicatorModulesLoading setMinValue:0.0];
