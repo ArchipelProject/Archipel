@@ -325,7 +325,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     var cid = [tableColumn identifier];
 
-    if (cid == @"nickname")
+    if (cid == @"name")
         return item;
 }
 

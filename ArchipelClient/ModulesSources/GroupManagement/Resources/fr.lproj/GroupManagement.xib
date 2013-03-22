@@ -140,7 +140,7 @@
 														<reference key="NSTableView" ref="677151237"/>
 													</object>
 													<object class="NSTableColumn" id="492136637">
-														<string key="NSIdentifier">nickname</string>
+														<string key="NSIdentifier">name</string>
 														<double key="NSWidth">209.91015625</double>
 														<double key="NSMinWidth">40</double>
 														<double key="NSMaxWidth">1000</double>
@@ -182,7 +182,7 @@
 														<bool key="NSIsResizeable">YES</bool>
 														<reference key="NSTableView" ref="677151237"/>
 														<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-															<string key="NSKey">nickname</string>
+															<string key="NSKey">name</string>
 															<bool key="NSAscending">YES</bool>
 															<string key="NSSelector">compare:</string>
 														</object>
@@ -600,6 +600,7 @@
 						<int key="NSvFlags">34</int>
 						<string key="NSFrame">{{0, 58}, {580, 5}}</string>
 						<reference key="NSSuperview" ref="1055382019"/>
+						<reference key="NSNextKeyView" ref="697876774"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67108864</int>
@@ -659,7 +660,7 @@
 										<object class="NSMutableArray" key="NSTableColumns">
 											<bool key="EncodedWithXMLCoder">YES</bool>
 											<object class="NSTableColumn" id="661189211">
-												<string key="NSIdentifier">nickname</string>
+												<string key="NSIdentifier">name</string>
 												<double key="NSWidth">218.25390625</double>
 												<double key="NSMinWidth">40</double>
 												<double key="NSMaxWidth">1000</double>
@@ -687,7 +688,7 @@
 												<bool key="NSIsResizeable">YES</bool>
 												<reference key="NSTableView" ref="1001377736"/>
 												<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-													<string key="NSKey">nickname</string>
+													<string key="NSKey">name</string>
 													<bool key="NSAscending">YES</bool>
 													<string key="NSSelector">compare:</string>
 												</object>

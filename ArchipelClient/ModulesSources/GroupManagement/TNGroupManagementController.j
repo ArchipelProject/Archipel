@@ -84,7 +84,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
     [tableVirtualMachines setTarget:self];
     [_datasourceGroupVM setTable:tableVirtualMachines];
-    [_datasourceGroupVM setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
+    [_datasourceGroupVM setSearchableKeyPaths:[@"name", @"JID.bare"]];
     [tableVirtualMachines setDataSource:_datasourceGroupVM];
 
     var createButton    = [CPButtonBar plusButton],
@@ -151,7 +151,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
 
@@ -205,6 +204,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [_datasourceGroupVM removeAllObjects];
 
     var contacts = [[[TNStropheIMClient defaultClient] roster] getAllContactsTreeFromGroup:_entity];
+
     for (var i = 0; i < [contacts count]; i++)
     {
         var contact = [contacts objectAtIndex:i],

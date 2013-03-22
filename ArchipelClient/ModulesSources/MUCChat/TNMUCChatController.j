@@ -90,12 +90,12 @@
     [_tableViewPeople setTarget:self];
     [_tableViewPeople setDoubleAction:@selector(didDoubleClick:)]
 
-    var columnNickname    = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+    var columnName    = [[CPTableColumn alloc] initWithIdentifier:@"name"];
 
-    [columnNickname setWidth:250];
-    [[columnNickname headerView] setStringValue:CPBundleLocalizedString(@"Nickname", @"Nickname")];
-    [columnNickname setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
-    [_tableViewPeople addTableColumn:columnNickname];
+    [columnName setWidth:250];
+    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
+    [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
+    [_tableViewPeople addTableColumn:columnName];
 
     [_peopleDatasource setTable:_tableViewPeople];
     [_peopleDatasource setSearchableKeyPaths:[@"JID.bare"]];

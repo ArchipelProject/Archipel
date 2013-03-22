@@ -129,7 +129,7 @@ def clean_installation(prefix=""):
         error(str(ex))
 
 
-def install_init_script(prefix, init_script, systemd_script):
+def install_init_script(prefix, init_script, systemd_script, force_initd=False):
     """
     Install the init script
     @type prefix: string
@@ -138,8 +138,10 @@ def install_init_script(prefix, init_script, systemd_script):
     @param init_script: origin path of the init script
     @type systemd_script : string
     @param systemd_script : origin path of service script
+    @type force_initd: Boolean
+    @param force_initd: If true, force initd script install even if systemd is present
     """
-    if os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
+    if not force_initd and os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
         msg("Installing Service script to %s/usr/lib/systemd/system" % prefix)
         if os.path.isfile("%s/usr/lib/systemd/system/archipel-agent.service" % (prefix)):
             warn("Service script already exists. Leaving as it is.")
@@ -260,13 +262,13 @@ def get_data_files(prefix):
     return (init_script, systemd_script, conf_folder, lib_folder)
 
 
-def install(prefix="", xmpp_server="auto", hypervisor_name="auto"):
+def install(prefix="", xmpp_server="auto", hypervisor_name="auto", force_initd=False):
 
     init_script, systemd_script, conf_folder, lib_folder = get_data_files(prefix)
 
     msg("Installation initialization started")
     try:
-        install_init_script(prefix, init_script, systemd_script)
+        install_init_script(prefix, init_script, systemd_script, force_initd)
         if install_config_folder(prefix, conf_folder):
             pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
         install_data_folder(prefix,lib_folder )
@@ -302,10 +304,15 @@ if __name__ == "__main__":
                         help="set the name of the hypervisor (left part of the JID), defaults to <hostname>",
                         metavar="SERVER",
                         default="auto")
+    parser.add_option("-i", "--force-initd",
+                        dest="force_initd",
+                        help="tell installation to force using initd even if systemd is present",
+                        action="store_true",
+                        default=False)
 
     options, args = parser.parse_args()
 
     if options.clean:
         clean_installation(options.prefix)
     else:
-        install(options.prefix, options.xmpp_server, options.hypervisor_name)
+        install(options.prefix, options.xmpp_server, options.hypervisor_name, options.force_initd)

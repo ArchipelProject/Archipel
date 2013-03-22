@@ -142,7 +142,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [tableVirtualMachines setBackgroundColor:TNArchipelDefaultColorsTableView];
 
     [_virtualMachinesDatasource setTable:tableVirtualMachines];
-    [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID.bare"]];
+    [_virtualMachinesDatasource setSearchableKeyPaths:[@"name", @"JID.bare"]];
 
     [fieldFilterVM setTarget:_virtualMachinesDatasource];
     [fieldFilterVM setAction:@selector(filterObjects:)];
@@ -895,8 +895,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if ([aStanza type] == @"result")
     {
-        var queryItems  = [aStanza childrenWithName:@"item"],
-            center      = [CPNotificationCenter defaultCenter];
+        var queryItems  = [aStanza childrenWithName:@"item"];
 
         [_virtualMachinesDatasource removeAllObjects];
         [_virtualMachinesNotManagedDatasource removeAllObjects];
@@ -909,24 +908,20 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
                 var entry = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
                 if (entry)
                 {
-                   if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
-                   {
-                       // Remove any vcard obeserver here
-                       [[CPNotificationCenter defaultCenter] removeObserver:self
-                                                                    name:TNStropheContactVCardReceivedNotification
-                                                                  object:entry];
+                    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] != TNArchipelEntityTypeVirtualMachine)
+                        [entry getVCard];
 
-                       [_virtualMachinesDatasource addObject:entry];
-                       [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
-                   }
-                   else
-                   {
-                       // Maybe it's a VM and it's still configuring its VCARD
-                       [[CPNotificationCenter defaultCenter] addObserver:self
-                                                                selector:@selector(populateVirtualMachinesTable:)
-                                                                    name:TNStropheContactVCardReceivedNotification
-                                                                  object:entry];
-                   }
+                    [_virtualMachinesDatasource addObject:entry];
+
+                    [[CPNotificationCenter defaultCenter] addObserver:self
+                                                             selector:@selector(populateVirtualMachinesTable:)
+                                                                 name:TNStropheContactVCardReceivedNotification
+                                                               object:entry];
+
+                    [[CPNotificationCenter defaultCenter] addObserver:self
+                                                             selector:@selector(_didChangeVMStatus:)
+                                                                 name:TNStropheContactPresenceUpdatedNotification
+                                                               object:entry];
                 }
                 else
                 {
@@ -951,7 +946,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
-        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]]]
+        [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]]
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
