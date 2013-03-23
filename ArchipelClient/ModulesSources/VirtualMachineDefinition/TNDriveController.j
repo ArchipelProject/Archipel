@@ -163,6 +163,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     switch ([buttonType title])
     {
+        case TNLibvirtDeviceDiskTypeDir:
         case TNLibvirtDeviceDiskTypeBlock:
             [[_drive source] setDevice:[fieldDevicePath stringValue]];
             [[_drive source] setFile:nil];
