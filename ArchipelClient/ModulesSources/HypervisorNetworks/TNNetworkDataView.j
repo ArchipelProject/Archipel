@@ -108,7 +108,7 @@ var TNNetworkDataViewStatusImageActive,
     [fieldName setStringValue:[aNetwork name]];
     [fieldBridgeName setStringValue:[[aNetwork bridge] name] || @"No bridge"];
     [fieldBridgeForwardDevice setStringValue:[[aNetwork forward] dev]];
-    [fieldBridgeForwardMode setStringValue:([[aNetwork forward] mode] != @"") ? [[aNetwork forward] mode] : @"Nothing"];
+    [fieldBridgeForwardMode setStringValue:([aNetwork forward]) ? [[aNetwork forward] mode] : @"isolated"];
     [fieldBridgeIP setStringValue:[[aNetwork IP] address] || @"No IP"];
     [fieldBridgeNetmask setStringValue:[[aNetwork IP] netmask] || @"No Netmask"];
     [fieldBridgeSTP setStringValue:[[aNetwork bridge] isSTPEnabled] ? @"Yes" : @"No"];
