@@ -179,7 +179,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         hypervisor_nuage_plugin = self.entity.hypervisor.get_plugin("hypervisor_nuage_network")
 
         # We now create the root nuage metadata node, and we put common information coming from the VM's VCARD
-        nuage_node = xmpp.Node("nuage", attrs={"xmlns": "http://www.nuagenetworks.net/2013/tor/Request/Metadata"})
+        nuage_node = xmpp.Node("nuage", attrs={"xmlns": "http://www.nuagenetworks.net/2013/Vm/Metadata"})
         nuage_node.addChild("user", attrs={"name": self.entity.vcard_infos["USERID"]})
         nuage_node.addChild("enterprise", attrs={"name": self.entity.vcard_infos["ORGNAME"]})
         nuage_node.addChild("application", attrs={"name": self.entity.vcard_infos["CATEGORIES"]})
