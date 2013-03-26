@@ -1740,6 +1740,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
 
+    [self _simulateControlsChanges];
+
     // dirty way to avoid having zombie consoles.
     // As we don't support adding console, we'll see a better
     // way later.
@@ -2244,7 +2246,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     [[CPApp mainWindow] makeFirstResponder:nil];
 
-    [self _simulateControlsChanges];
     [self defineXML];
 }
 

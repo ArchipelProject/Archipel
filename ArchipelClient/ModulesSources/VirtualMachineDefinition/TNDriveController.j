@@ -163,6 +163,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     switch ([buttonType title])
     {
+        case TNLibvirtDeviceDiskTypeDir:
         case TNLibvirtDeviceDiskTypeBlock:
             [[_drive source] setDevice:[fieldDevicePath stringValue]];
             [[_drive source] setFile:nil];
@@ -172,23 +173,32 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             break;
 
         case TNLibvirtDeviceDiskTypeNetwork:
-            var host = [[TNLibvirtDeviceDiskSourceHost alloc] init],
-                hostName = [fieldDevicePath stringValue].split("-")[0].split(":")[0],
-                hostPort = [fieldDevicePath stringValue].split("-")[0].split(":")[1],
-                hostProtocol = [fieldDevicePath stringValue].split("-")[1].split("/")[0],
-                hostProtocolName = [fieldDevicePath stringValue].split("-")[1].split("/")[1];
+            try
+            {
+                var host = [[TNLibvirtDeviceDiskSourceHost alloc] init],
+                    hostName = [fieldDevicePath stringValue].split("-")[0].split(":")[0],
+                    hostPort = [fieldDevicePath stringValue].split("-")[0].split(":")[1],
+                    hostProtocol = [fieldDevicePath stringValue].split("-")[1].split("/")[0],
+                    hostProtocolName = [fieldDevicePath stringValue].split("/")[1];
 
-            [host setName:hostName];
-            [host setPort:hostPort];
-            [[_drive source] setHosts:[]];
-            [[[_drive source] hosts] addObject:host];
-            [[_drive source] setDevice:nil];
-            [[_drive source] setFile:nil];
-            [[_drive source] setProtocol:hostProtocol];
-            [[_drive source] setName:hostProtocolName];
+                [host setName:hostName];
+                [host setPort:hostPort];
+                [[_drive source] setHosts:[]];
+                [[[_drive source] hosts] addObject:host];
+                [[_drive source] setDevice:nil];
+                [[_drive source] setFile:nil];
+                [[_drive source] setProtocol:hostProtocol];
+                [[_drive source] setName:hostProtocolName];
+            }
+            catch(e)
+            {
+                [[_drive source] setHosts:nil];
+            }
             break;
 
         case TNLibvirtDeviceDiskTypeFile:
+            if (![buttonSourcePath selectedItem])
+                break;
             [[_drive source] setFile:[[buttonSourcePath selectedItem] representedObject].path];
             [[_drive driver] setType:[[buttonSourcePath selectedItem] representedObject].format];
             [[_drive source] setDevice:nil];
@@ -198,11 +208,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             break;
     }
 
-    if (![[_drive source] sourceObject] || [[_drive source] sourceObject] == @"")
+    if (![[_drive source] sourceObject] || [[_drive source] sourceObject] == @"" || [[_drive source] sourceObject] == @"/dev/null")
     {
-        [TNAlert showAlertWithMessage:CPLocalizedString(@"Source is not selected", @"Source is not selected")
-                          informative:CPLocalizedString(@"You must select a source for your drive", @"You must select a source for your drive")];
-        [mainPopover close];
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Invalid source selected", @"Invalid source selected")
+                          informative:CPLocalizedString(@"You must select a valid source for your drive", @"You must select a valid source for your drive")];
         return;
     }
 
