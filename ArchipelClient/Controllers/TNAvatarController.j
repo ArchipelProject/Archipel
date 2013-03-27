@@ -235,6 +235,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     if ([aStanza type] == @"result")
     {
         CPLog.info("Avatar changed for entity " + [_entity JID]);
+        [collectionViewAvatars setSelectionIndexes:nil];
         [mainPopover close];
     }
 }
