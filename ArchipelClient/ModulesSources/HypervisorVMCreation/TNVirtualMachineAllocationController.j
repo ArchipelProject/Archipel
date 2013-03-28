@@ -286,7 +286,7 @@ TNVirtualMachineVMCreationAddFieldDelegateNotification = @"TNVirtualMachineVMCre
     if ([aStanza type] == @"result")
     {
         var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
-        CPLog.info(@"sucessfully create a virtual machine");
+        CPLog.info(@"sucessfully update a virtual machine");
 
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + vmJID + CPBundleLocalizedString(@" has been updated", @" has been updated")];
