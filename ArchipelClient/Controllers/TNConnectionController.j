@@ -228,7 +228,7 @@ var TNConnectionControllerForceResource,
         currentConnectionStatus = [[[TNStropheIMClient defaultClient] connection] currentStatus],
         connectionJID;
 
-    if (currentConnectionStatus && currentConnectionStatus != Strophe.Status.DISCONNECTED)
+    if (currentConnectionStatus && currentConnectionStatus != Strophe.Status.DISCONNECTED && currentConnectionStatus != Strophe.Status.DISCONNECTING)
     {
         [[TNStropheIMClient defaultClient] disconnect];
         return;
