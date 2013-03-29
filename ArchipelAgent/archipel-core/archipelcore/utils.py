@@ -28,6 +28,7 @@ functionalities or others common stuffs
 import ConfigParser
 import socket
 import struct
+import fcntl
 import inspect
 import logging
 import logging.handlers
@@ -188,4 +189,15 @@ def get_default_gateway_interface():
             if fields[1] != '00000000' or not int(fields[3], 16) & 2:
                 continue
 
-            return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
+            return get_ip_address(fields[0])
+
+def get_ip_address(ifname):
+    """
+    Returns the IP address associated with the given interface
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
