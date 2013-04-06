@@ -51,6 +51,22 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor",
     TNArchipelPushNotificationHypervisorPark    = @"archipel:push:vmparking";
 
+var TNModuleControlForSubscribe                 = @"Subscribe",
+    TNModuleControlForUnSubscribe               = @"UnSubscribe",
+    TNModuleControlForNewVM                     = @"NewVM",
+    TNModuleControlForClone                     = @"Clone",
+    TNModuleControlForEditVcard                 = @"EditVcard",
+    TNModuleControlForManage                    = @"Manage",
+    TNModuleControlForUnmanage                  = @"Unmanage",
+    TNModuleControlForEditXML                   = @"EditXML",
+    TNModuleControlForRemove                    = @"Remove",
+    TNModuleControlForJump                      = @"Jump",
+    TNModuleControlForPark                      = @"Park",
+    TNModuleControlForUnpark                    = @"Unpark",
+    TNModuleControlForRemoveparked              = @"Removeparked";
+
+
+
 /*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
     @desc This module allow to create and delete virtual machines
 */
@@ -85,18 +101,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet TNVirtualMachineParkingController       VMParkingController;
     @outlet TNVirtualMachineSubscriptionController  VMSubscriptionController;
 
-    CPButton                                        _addSubscriptionButton;
-    CPButton                                        _cloneButton;
-    CPButton                                        _editParkedXMLButton;
-    CPButton                                        _manageButton;
-    CPButton                                        _minusButton;
-    CPButton                                        _parkButton;
-    CPButton                                        _parkDeleteButton;
-    CPButton                                        _plusButton;
-    CPButton                                        _removeSubscriptionButton;
-    CPButton                                        _jumpButton;
-    CPButton                                        _unmanageButton;
-    CPButton                                        _unparkButton;
     TNTableViewDataSource                           _virtualMachinesDatasource;
     TNTableViewDataSource                           _virtualMachinesNotManagedDatasource;
     TNTableViewDataSource                           _virtualMachinesParkedDatasource;
@@ -148,61 +152,69 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [fieldFilterVM setAction:@selector(filterObjects:)];
     [tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 
-    _plusButton = [CPButtonBar plusButton];
-    [_plusButton setTarget:self];
-    [_plusButton setAction:@selector(openNewVirtualMachineWindow:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Add a new VM", @"Add a new VM")]
+    // create the control items
 
-    _minusButton = [CPButtonBar minusButton];
-    [_minusButton setTarget:self];
-    [_minusButton setAction:@selector(deleteVirtualMachine:)];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Remove completely selected vms", @"Remove completely selected vms")];
+    [self addControlsWithIdentifier:TNModuleControlForNewVM
+                              title:CPBundleLocalizedString(@"Add a new Virtual Machine", @"Add a new Virtual Machine")
+                             target:self
+                             action:@selector(openNewVirtualMachineWindow:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, [CPBundle mainBundle])];
 
-    _addSubscriptionButton = [CPButtonBar plusButton];
-    [_addSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-add.png"] size:CGSizeMake(16, 16)]];
-    [_addSubscriptionButton setTarget:self];
-    [_addSubscriptionButton setAction:@selector(openAddSubscriptionWindow:)];
-    [_addSubscriptionButton setToolTip:CPBundleLocalizedString(@"VM will ask subscription to given user", @"VM will ask subscription to given user")];
+    [self addControlsWithIdentifier:TNModuleControlForRemove
+                              title:CPBundleLocalizedString(@"Remove this Virtual Machine", @"Remove this Virtual Machine")
+                             target:self
+                             action:@selector(deleteVirtualMachine:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
 
-    _removeSubscriptionButton = [CPButtonBar plusButton];
-    [_removeSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-remove.png"] size:CGSizeMake(16, 16)]];
-    [_removeSubscriptionButton setTarget:self];
-    [_removeSubscriptionButton setAction:@selector(openRemoveSubscriptionWindow:)];
-    [_removeSubscriptionButton setToolTip:CPBundleLocalizedString(@"VM will remove subscription from given user", @"VM will remove subscription from given user")];
+    [self addControlsWithIdentifier:TNModuleControlForSubscribe
+                              title:CPBundleLocalizedString(@"Add a subsription", @"Add a subsription")
+                             target:self
+                             action:@selector(openAddSubscriptionWindow:)
+                              image:CPImageInBundle(@"IconsButtons/subscription-add.png",nil, [CPBundle mainBundle])];
 
-    _cloneButton = [CPButtonBar minusButton];
-    [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/branch.png"] size:CGSizeMake(16, 16)]];
-    [_cloneButton setTarget:self];
-    [_cloneButton setAction:@selector(openCloneVirtualMachineWindow:)];
-    [_cloneButton setToolTip:CPBundleLocalizedString(@"Clone selected VM", @"Clone selected VM")];
+    [self addControlsWithIdentifier:TNModuleControlForUnSubscribe
+                              title:CPBundleLocalizedString(@"Remove a subsription", @"Remove a subsription")
+                             target:self
+                             action:@selector(openRemoveSubscriptionWindow:)
+                              image:CPImageInBundle(@"IconsButtons/subscription-remove.png",nil, [CPBundle mainBundle])];
 
-    [_minusButton setEnabled:NO];
-    [_addSubscriptionButton setEnabled:NO];
-    [_removeSubscriptionButton setEnabled:NO];
+    [self addControlsWithIdentifier:TNModuleControlForClone
+                              title:CPBundleLocalizedString(@"Clone this Virtual Machine", @"Clone this Virtual Machine")
+                             target:self
+                             action:@selector(openCloneVirtualMachineWindow:)
+                              image:CPImageInBundle(@"IconsButtons/branch.png",nil, [CPBundle mainBundle])];
 
-    _unmanageButton = [CPButtonBar minusButton];
-    [_unmanageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unmanage.png"] size:CGSizeMake(16, 16)]];
-    [_unmanageButton setTarget:self];
-    [_unmanageButton setAction:@selector(unmanageVirtualMachine:)];
-    [_unmanageButton setEnabled:NO];
-    [_unmanageButton setToolTip:CPBundleLocalizedString(@"Do not use Archipel to manage selected vms. Vms will still be there", @"Do not use Archipel to manage selected vms. Vms will still be there")];
+    [self addControlsWithIdentifier:TNModuleControlForUnmanage
+                              title:CPBundleLocalizedString(@"Unmanage this Virtual Machine", @"Unmanage this Virtual Machine")
+                             target:self
+                             action:@selector(unmanageVirtualMachine:)
+                              image:CPImageInBundle(@"IconsButtons/unmanage.png",nil, [CPBundle mainBundle])];
 
-    _parkButton = [CPButtonBar plusButton];
-    [_parkButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"park.png"] size:CGSizeMake(16, 16)]];
-    [_parkButton setTarget:self];
-    [_parkButton setAction:@selector(parkVirtualMachines:)];
-    [_parkButton setEnabled:NO];
-    [_parkButton setToolTip:CPBundleLocalizedString(@"Park selected VMs", @"Park selected VMs")];
+    [self addControlsWithIdentifier:TNModuleControlForPark
+                              title:CPBundleLocalizedString(@"Park this Virtual Machine", @"Park this Virtual Machine")
+                             target:self
+                             action:@selector(parkVirtualMachines:)
+                              image:CPImageInBundle(@"park.png",nil, [CPBundle bundleForClass:[self class]])];
 
-    _jumpButton = [CPButtonBar plusButton];
-    [_jumpButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"jump.png"] size:CGSizeMake(16, 16)]];
-    [_jumpButton setTarget:self];
-    [_jumpButton setAction:@selector(addSelectedVMToRoster:)];
-    [_jumpButton setEnabled:NO];
-    [_jumpButton setToolTip:CPBundleLocalizedString(@"If vm is in roster, jump to it, otherwhise, ask subscription", @"If vm is in roster, jump to it, otherwhise, ask subscription")];
+    [self addControlsWithIdentifier:TNModuleControlForJump
+                              title:CPBundleLocalizedString(@"Jump to this Virtual Machine", @"Jump to this Virtual Machine")
+                             target:self
+                             action:@selector(addSelectedVMToRoster:)
+                              image:CPImageInBundle(@"jump.png",nil, [CPBundle bundleForClass:[self class]])];
 
+    [[self buttonWithIdentifier:TNModuleControlForRemove] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForSubscribe] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForUnSubscribe] setEnabled:NO];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton, _unmanageButton, _parkButton, _jumpButton]];
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForNewVM],
+        [self buttonWithIdentifier:TNModuleControlForRemove],
+        [self buttonWithIdentifier:TNModuleControlForClone],
+        [self buttonWithIdentifier:TNModuleControlForSubscribe],
+        [self buttonWithIdentifier:TNModuleControlForUnSubscribe],
+        [self buttonWithIdentifier:TNModuleControlForUnmanage],
+        [self buttonWithIdentifier:TNModuleControlForPark],
+        [self buttonWithIdentifier:TNModuleControlForJump]]];
 
     // Not managed VM Table View
     _virtualMachinesNotManagedDatasource = [[TNTableViewDataSource alloc] init];
@@ -219,15 +231,13 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [fieldFilterVMNotManaged setAction:@selector(filterObjects:)];
     [tableVirtualMachinesNotManaged setDataSource:_virtualMachinesNotManagedDatasource];
 
-    _manageButton = [CPButtonBar plusButton];
-    [_manageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/manage.png"] size:CGSizeMake(16, 16)]];
-    [_manageButton setTarget:self];
-    [_manageButton setAction:@selector(manageVirtualMachine:)];
-    [_manageButton setEnabled:NO];
-    [_manageButton setToolTip:CPBundleLocalizedString(@"Make Archipel manage selected VMs", @"Make Archipel manage selected VMs")]
+    [self addControlsWithIdentifier:TNModuleControlForManage
+                              title:CPBundleLocalizedString(@"Manage this Virtual Machine", @"Manage this Virtual Machine")
+                             target:self
+                             action:@selector(manageVirtualMachine:)
+                              image:CPImageInBundle(@"IconsButtons/manage.png",nil, [CPBundle mainBundle])];
 
-    [buttonBarNotManagedVMControl setButtons:[_manageButton]];
-
+    [buttonBarNotManagedVMControl setButtons:[[self buttonWithIdentifier:TNModuleControlForManage]]];
 
     // Parked VM Table View
     _virtualMachinesParkedDatasource = [[TNTableViewDataSource alloc] init];
@@ -244,28 +254,28 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [fieldFilterVMParked setAction:@selector(filterObjects:)];
     [tableVirtualMachinesParked setDataSource:_virtualMachinesParkedDatasource];
 
+    [self addControlsWithIdentifier:TNModuleControlForUnpark
+                              title:CPBundleLocalizedString(@"Unpark this Virtual Machine", @"Unpark this Virtual Machine")
+                             target:self
+                             action:@selector(unparkVirtualMachines:)
+                              image:CPImageInBundle(@"unpark.png",nil, [CPBundle bundleForClass:[self class]])];
 
-    _unparkButton = [CPButtonBar plusButton];
-    [_unparkButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"unpark.png"] size:CGSizeMake(16, 16)]];
-    [_unparkButton setTarget:self];
-    [_unparkButton setAction:@selector(unparkVirtualMachines:)];
-    [_unparkButton setEnabled:NO];
-    [_unparkButton setToolTip:CPBundleLocalizedString(@"Unpark selected VMs into this hypervisor", @"Unpark selected VMs into this hypervisor")];
+    [self addControlsWithIdentifier:TNModuleControlForEditXML
+                              title:CPBundleLocalizedString(@"Edit this Virtual Machine XML definition", @"Edit this Virtual Machine XML definition")
+                             target:self
+                             action:@selector(openParkedXMLEditor:)
+                              image:CPImageInBundle(@"IconsButtons/editxml.png",nil, [CPBundle mainBundle])];
 
-    _editParkedXMLButton = [CPButtonBar plusButton];
-    [_editParkedXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CGSizeMake(16, 16)]];
-    [_editParkedXMLButton setTarget:self];
-    [_editParkedXMLButton setAction:@selector(openParkedXMLEditor:)];
-    [_editParkedXMLButton setEnabled:NO];
-    [_editParkedXMLButton setToolTip:CPBundleLocalizedString(@"Edit parked VM's XML definition", @"Edit parked VM's XML definition")];
+    [self addControlsWithIdentifier:TNModuleControlForRemoveparked
+                              title:CPBundleLocalizedString(@"Delete this parked Virtual Machine", @"Delete this parked Virtual Machine")
+                             target:self
+                             action:@selector(deleteParkedVirtualMachines:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
 
-    _parkDeleteButton = [CPButtonBar minusButton];
-    [_parkDeleteButton setTarget:self];
-    [_parkDeleteButton setAction:@selector(deleteParkedVirtualMachines:)];
-    [_parkDeleteButton setEnabled:NO];
-    [_parkDeleteButton setToolTip:CPBundleLocalizedString(@"Delete selected parked VMs. All data will be lost", @"Delete selected parked VMs. All data will be lost")]
-
-    [buttonBarParkedVMControl setButtons:[_unparkButton, _editParkedXMLButton, _parkDeleteButton]];
+    [buttonBarParkedVMControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForUnpark],
+        [self buttonWithIdentifier:TNModuleControlForEditXML],
+        [self buttonWithIdentifier:TNModuleControlForRemoveparked]]];
 
     [VMAllocationController setDelegate:self];
     [VMSubscriptionController setDelegate:self];
@@ -335,19 +345,19 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         tableNotManagedCondition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0),
         tableParkedCondition = ([tableVirtualMachinesParked numberOfSelectedRows] > 0);
 
-    [self setControl:_manageButton enabledAccordingToPermission:@"manage" specialCondition:tableNotManagedCondition];
-    [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage" specialCondition:tableManagedCondition];
-    [self setControl:_parkButton enabledAccordingToPermission:@"vmparking_park" specialCondition:tableManagedCondition];
-    [self setControl:_unparkButton enabledAccordingToPermission:@"vmparking_unpark" specialCondition:tableParkedCondition];
-    [self setControl:_editParkedXMLButton enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:tableParkedCondition];
-    [self setControl:_parkDeleteButton enabledAccordingToPermission:@"vmparking_delete" specialCondition:tableParkedCondition];
-    [self setControl:_plusButton enabledAccordingToPermission:@"alloc"];
-    [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:tableManagedCondition];
-    [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
-    [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:tableManagedCondition];
-    [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:tableManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForManage] enabledAccordingToPermission:@"manage" specialCondition:tableNotManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForUnmanage] enabledAccordingToPermission:@"unmanage" specialCondition:tableManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForPark] enabledAccordingToPermission:@"vmparking_park" specialCondition:tableManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForUnpark] enabledAccordingToPermission:@"vmparking_unpark" specialCondition:tableParkedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForEditXML] enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:tableParkedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveparked] enabledAccordingToPermission:@"vmparking_delete" specialCondition:tableParkedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForNewVM] enabledAccordingToPermission:@"alloc"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForRemove] enabledAccordingToPermission:@"free" specialCondition:tableManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForClone] enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForSubscribe] enabledAccordingToPermission:@"subscription_add" specialCondition:tableManagedCondition];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForUnSubscribe] enabledAccordingToPermission:@"subscription_remove" specialCondition:tableManagedCondition];
 
-    [_jumpButton setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
+    [[self buttonWithIdentifier:TNModuleControlForJump] setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
 
     if (![self currentEntityHasPermission:@"alloc"])
         [VMAllocationController closeWindow:nil];
@@ -476,35 +486,35 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     switch ([aNotification object])
     {
         case tableVirtualMachines:
-            [_minusButton setEnabled:NO];
-            [_cloneButton setEnabled:NO];
-            [_unmanageButton setEnabled:NO];
-            [_parkButton setEnabled:NO];
-            [_addSubscriptionButton setEnabled:NO];
-            [_removeSubscriptionButton setEnabled:NO];
-            [_jumpButton setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
+            [[self buttonWithIdentifier:TNModuleControlForRemove] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForClone] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForUnmanage] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForPark] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForSubscribe] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForUnSubscribe] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForJump] setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
 
             var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
-            [self setControl:_minusButton enabledAccordingToPermission:@"free" specialCondition:condition];
-            [self setControl:_cloneButton enabledAccordingToPermission:@"clone" specialCondition:condition];
-            [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add" specialCondition:condition];
-            [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove" specialCondition:condition];
-            [self setControl:_unmanageButton enabledAccordingToPermission:@"unmanage" specialCondition:condition];
-            [self setControl:_parkButton enabledAccordingToPermission:@"vmparking_park" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForRemove] enabledAccordingToPermission:@"free" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForClone] enabledAccordingToPermission:@"clone" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForSubscribe] enabledAccordingToPermission:@"subscription_add" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForUnSubscribe] enabledAccordingToPermission:@"subscription_remove" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForUnmanage] enabledAccordingToPermission:@"unmanage" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForPark] enabledAccordingToPermission:@"vmparking_park" specialCondition:condition];
 
         case tableVirtualMachinesNotManaged:
-            [_manageButton setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForManage] setEnabled:NO];
             var condition = ([tableVirtualMachinesNotManaged numberOfSelectedRows] > 0);
-            [self setControl:_manageButton enabledAccordingToPermission:@"manage" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForManage] enabledAccordingToPermission:@"manage" specialCondition:condition];
 
         case tableVirtualMachinesParked:
-            [_unparkButton setEnabled:NO];
-            [_editParkedXMLButton setEnabled:NO];
-            [_parkDeleteButton setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForUnpark] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForEditXML] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForRemoveparked] setEnabled:NO];
             var condition = ([tableVirtualMachinesParked numberOfSelectedRows] > 0);
-            [self setControl:_unparkButton enabledAccordingToPermission:@"vmparking_unpark" specialCondition:condition];
-            [self setControl:_editParkedXMLButton enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:condition];
-            [self setControl:_parkDeleteButton enabledAccordingToPermission:@"vmparking_delete" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForUnpark] enabledAccordingToPermission:@"vmparking_unpark" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForEditXML] enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:condition];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveparked] enabledAccordingToPermission:@"vmparking_delete" specialCondition:condition];
     }
 }
 
@@ -774,7 +784,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
          return;
     }
 
-    [VMCloneController openWindow:_cloneButton];
+    [VMCloneController openWindow:[self buttonWithIdentifier:TNModuleControlForClone]];
 }
 
 /*! open the add virtual machine window
@@ -787,7 +797,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     if ([self isVisible])
     {
         [VMAllocationController setVirtualMachine:nil];
-        [VMAllocationController openWindow:_plusButton];
+        [VMAllocationController openWindow:[self buttonWithIdentifier:TNModuleControlForNewVM]];
     }
 }
 
@@ -829,7 +839,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
          return;
     }
 
-    [VMSubscriptionController openAddSubsctiptionWindow:_addSubscriptionButton];
+    [VMSubscriptionController openAddSubsctiptionWindow:[self buttonWithIdentifier:TNModuleControlForSubscribe]];
 }
 
 /*! open the add subscription window
@@ -848,7 +858,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
          return;
     }
 
-    [VMSubscriptionController openRemoveSubscriptionWindow:_removeSubscriptionButton];
+    [VMSubscriptionController openRemoveSubscriptionWindow:[self buttonWithIdentifier:TNModuleControlForUnSubscribe]];
 }
 
 
