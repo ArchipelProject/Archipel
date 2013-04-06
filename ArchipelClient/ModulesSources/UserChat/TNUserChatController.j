@@ -211,14 +211,6 @@
     [fieldPreferencesMaxChatMessage setIntValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clear history", @"Clear history") action:@selector(clearHistory:) keyEquivalent:@""] setTarget:self];
-}
-
-
 #pragma mark -
 #pragma mark Notification handlers
 

@@ -319,19 +319,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [super willHide];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual machine", @"Create new virtual machine") action:@selector(openNewVirtualMachineWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete virtual machine", @"Delete virtual machine") action:@selector(deleteVirtualMachine:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clone this virtual machine", @"Clone this virtual machine") action:@selector(openCloneVirtualMachineWindow:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add a user subscription", @"Add a user subscription") action:@selector(openAddSubscriptionWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Remove a user subscription", @"Remove a user subscription") action:@selector(openRemoveSubscriptionWindow:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when permissions changes
 */
 - (void)permissionsChanged

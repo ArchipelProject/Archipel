@@ -259,17 +259,6 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
     [switchPreferencesPreferSSL setOn:[defaults boolForKey:@"NOVNCPreferSSL"] animated:YES sendAction:NO];
 }
 
-/*! call when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Fit screen to window", @"Fit screen to window") action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reset zoom", @"Reset zoom") action:@selector(resetZoom:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Open external VNC program", @"Open external VNC program") action:@selector(openExternalWindow:) keyEquivalent:@""] setTarget:self];
-}
-
-
 #pragma mark -
 #pragma mark Notification handlers
 

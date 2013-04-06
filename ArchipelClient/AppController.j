@@ -189,7 +189,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPImage                                     _imageLedNoData;
     CPImage                                     _imageLedOutData;
     CPMenu                                      _mainMenu;
-    CPMenu                                      _modulesMenu;
     CPMenu                                      _rosterMenuForContacts;
     CPMenu                                      _rosterMenuForGroups;
     CPPlatformWindow                            _platformHelpWindow;
@@ -419,7 +418,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [moduleController setInfoTextField:_rightViewTextField];
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
-    [moduleController setModulesMenu:_modulesMenu];
     [moduleController setRosterGroupsMenu:_rosterMenuForGroups];
     [moduleController setRosterContactsMenu:_rosterMenuForContacts];
     [moduleController setToolbarModuleBackgroundColor:commonImageModuleBackground];
@@ -465,7 +463,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         contactsItem    = [_mainMenu addItemWithTitle:CPLocalizedString(@"Contacts", @"Contact") action:nil keyEquivalent:@""],
         groupsItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Groups", @"Groups") action:nil keyEquivalent:@""],
         navigationItem  = [_mainMenu addItemWithTitle:CPLocalizedString(@"Navigation", @"Navigation") action:nil keyEquivalent:@""],
-        moduleItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Modules", @"Modules") action:nil keyEquivalent:@""],
         helpItem        = [_mainMenu addItemWithTitle:CPLocalizedString(@"Help", @"Help") action:nil keyEquivalent:@""],
         archipelMenu    = [[CPMenu alloc] init],
         editMenuItem    = [[CPMenu alloc] init],
@@ -540,11 +537,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [[navigationMenu addItemWithTitle:CPLocalizedString(@"Toggle tag view", @"Toggle tag view") action:@selector(toolbarItemTagsClick:) keyEquivalent:@"T"] setTarget:self];
 
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
-
-    // Modules
-    _modulesMenu = [[CPMenu alloc] init];
-    [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
-    [moduleItem setEnabled:NO];
 
     // help
     [[helpMenu addItemWithTitle:CPLocalizedString(@"Archipel Help", @"Archipel Help") action:@selector(openWiki:) keyEquivalent:@"?"] setTarget:self];

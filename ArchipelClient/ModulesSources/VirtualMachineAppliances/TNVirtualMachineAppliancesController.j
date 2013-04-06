@@ -161,16 +161,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [super willHide];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Attach selected appliance", @"Attach selected appliance") action:@selector(attach:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Dettach from selected appliance", @"Dettach from selected appliance") action:@selector(detach:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create appliance from this virtual machine", @"Create appliance from this virtual machine") action:@selector(package:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged

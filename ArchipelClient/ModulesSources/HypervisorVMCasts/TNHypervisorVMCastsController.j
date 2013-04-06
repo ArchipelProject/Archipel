@@ -203,19 +203,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [super willHide];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Register to a new VMCasts", @"Register to a new VMCasts") action:@selector(openNewVMCastURLWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unregister from selected VMCast", @"Unregister from selected VMCast") action:@selector(removeVMCast:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Download selected appliance", @"Download selected appliance") action:@selector(download:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Remove selected appliance", @"Remove selected appliance") action:@selector(removeAppliance:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Show activity monitor", @"Show activity monitor") action:@selector(showDownloadQueue:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when permissions changes
 */
 - (void)permissionsChanged

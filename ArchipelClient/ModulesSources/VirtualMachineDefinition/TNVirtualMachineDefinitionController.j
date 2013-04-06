@@ -717,15 +717,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [checkboxPreferencesHugePages setState:[defaults boolForKey:@"TNDescDefaultHugePages"]];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Undefine", @"Undefine") action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged

@@ -208,16 +208,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [super willUnload];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Take a snapshot", @"Take a snapshot") action:@selector(openWindowNewSnapshot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Revert to selected drive", @"Revert to selected drive") action:@selector(revertSnapshot:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected snapshot", @"Delete selected snapshot") action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged

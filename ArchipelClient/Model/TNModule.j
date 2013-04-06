@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPMenu.j>
@@ -68,7 +69,6 @@ var TNModuleStatusImageReady,
      - <b>willUnload</b>: This message is sent when user change roster selection. It can be reloaded instant later, with another roster and entity.
      - <b>willShow</b>: This message is sent when user will display the GUI of the module.
      - <b>willHide</b>: This message is sent when user displays other module.
-     - <b>menuReady</b>: This message is sent when the the Main Menu is ready. So if module wants to have a menu, it can implement it from its own _menu property
      - <b>savePreferences</b> this message is sent when user have change the preferences. If module has some, it must save them in the current default.
      - <b>loadPreferences</b> this message is sent when user call the preferences window. All modules prefs *MUST* be refreshed
      - <b>permissionsChanged</b> this message is sent when permissions of user has changed. This allow to updated GUI if needed
@@ -100,10 +100,9 @@ var TNModuleStatusImageReady,
     CPArray                         _mandatoryPermissions       @accessors(property=mandatoryPermissions);
     CPArray                         _supportedEntityTypes       @accessors(property=supportedEntityTypes);
     CPBundle                        _bundle                     @accessors(property=bundle);
-    CPMenu                          _menu                       @accessors(property=menu);
+    CPMenu                          _contextualMenu             @accessors(property=contextualMenu);
     CPMenu                          _rosterContactsMenu         @accessors(property=rosterContactsMenu);
     CPMenu                          _rosterGroupsMenu           @accessors(property=rosterGroupsMenu);
-    CPMenuItem                      _menuItem                   @accessors(property=menuItem);
     CPString                        _identifier                 @accessors(property=identifier);
     CPString                        _label                      @accessors(property=label);
     CPString                        _name                       @accessors(property=name);
@@ -119,6 +118,8 @@ var TNModuleStatusImageReady,
 
     CPArray                         _initialPermissionsReceived;
     CPDictionary                    _registredSelectors;
+    CPDictionary                    _buttonsBarButtonsRegistry;
+    CPDictionary                    _contextualMenuItemRegistry;
 }
 
 
@@ -143,6 +144,9 @@ var TNModuleStatusImageReady,
     _isCurrentSelectedIndex     = NO;
     _initialPermissionsReceived = [CPArray array];
     _registredSelectors         = [CPDictionary dictionary];
+    _buttonsBarButtonsRegistry  = [CPDictionary dictionary];
+    _contextualMenuItemRegistry = [CPDictionary dictionary];
+    _contextualMenu             = [[CPMenu alloc] init];
 
     [[self view] applyShadow];
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
@@ -151,6 +155,67 @@ var TNModuleStatusImageReady,
 
 #pragma mark -
 #pragma mark Setters and Getters
+
+/* add controls to create button / menuItems
+    @param anIdentifier the identifier of the control
+    @param aTitle the title of the control
+    @param aTarget the target of the control
+    @param aSelector the selector to perform
+    @param aKeyEquivalent the shortcut key equivalence
+    @param anImage the image to use for control
+*/
+- (void)addControlsWithIdentifier:(CPString)anIdentifier title:(CPString)aTitle target:(id)aTarget action:(SEL)aSelector image:(CPImage)anImage
+{
+    [anImage setSize:CPSizeMake(16.0, 16.0)];
+
+    // add a new buttonbar to dict
+    var _button = [CPButtonBar plusButton];
+    [_button setTarget:aTarget];
+    [_button setAction:aSelector];
+    [_button setToolTip:aTitle];
+    [_button setImage:anImage];
+
+    [_buttonsBarButtonsRegistry setObject:_button forKey:anIdentifier];
+
+    // add a new CPMenuItem to dict
+    var _item = [[CPMenuItem alloc] initWithTitle:(@"  " + aTitle) action:aSelector keyEquivalent:nil];
+    [_item setImage:anImage];
+    [_item setTarget:aTarget];
+    [_item bind:@"enabled" toObject:_button withKeyPath:@"enabled" options:nil];
+
+    [_contextualMenuItemRegistry setObject:_item forKey:anIdentifier];
+
+}
+
+/* return the button with identifier
+    @param anIdentifier the identifier of the item
+*/
+- (CPButtonBar)buttonWithIdentifier:(CPString)anIdentifier
+{
+    return [_buttonsBarButtonsRegistry objectForKey:anIdentifier];
+}
+
+/* return an array with all button
+*/
+- (CPArray)allButtonsBarButtons
+{
+    return [_buttonsBarButtonsRegistry allValues];
+}
+
+/* return the MenuItem with identifier
+    @param anIdentifier the identifier of the item
+*/
+- (CPMenuItem)menuItemWithIdentifier:(CPString)anIdentifier
+{
+    return [_contextualMenuItemRegistry objectForKey:anIdentifier];
+}
+
+/* return an array with all menu items
+*/
+- (CPArray)allMenuItems
+{
+    return [_contextualMenuItemRegistry allValues];
+}
 
 /*! @ignore
     we need to archive and unarchive to get a proper copy of the view
@@ -452,7 +517,6 @@ var TNModuleStatusImageReady,
     [self _hidePermissionDeniedView];
 
     _animationDuration = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"];
-    [_menuItem setEnabled:YES];
 
     return YES;
 }
@@ -480,8 +544,6 @@ var TNModuleStatusImageReady,
 
     // flush registred selectors
     [_registredSelectors removeAllObjects];
-
-    [_menuItem setEnabled:NO];
 
     [self flushUI];
 
@@ -521,14 +583,6 @@ var TNModuleStatusImageReady,
 - (BOOL)shouldHideAndSelectItem:(anItem)nextItem ofObject:(id)anObject
 {
     return YES;
-}
-
-/*! this message is sent when the MainMenu is ready
-    i.e. you can insert your module menu items;
-*/
-- (void)menuReady
-{
-    // executed when menu is ready
 }
 
 /*! this message is sent when the user changes the preferences. Implement this method to store

@@ -181,19 +181,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [super willHide];
 }
 
-/*! called by module loader when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Start selected virtual machines", @"Start selected virtual machines") action:@selector(create:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shutdown selected virtual machines", @"Shutdown selected virtual machines") action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Pause selected virtual machines", @"Pause selected virtual machines") action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Resume selected virtual machines", @"Resume selected virtual machines") action:@selector(resume:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reboot selected virtual machines", @"Reboot selected virtual machines") action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Destroy selected virtual machines", @"Destroy selected virtual machines") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
-}
-
-
 #pragma mark -
 #pragma mark Notification hanlders
 

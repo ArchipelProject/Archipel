@@ -189,18 +189,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [super willHide];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual network", @"Create new virtual network") action:@selector(addNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network", @"Edit selected network") action:@selector(editNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected network", @"Delete selected network") action:@selector(delNetwork:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Activate this network", @"Activate this network") action:@selector(activateNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Deactivate this network", @"Deactivate this network") action:@selector(deactivateNetwork:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when permissions changes
 */
 - (void)permissionsChanged

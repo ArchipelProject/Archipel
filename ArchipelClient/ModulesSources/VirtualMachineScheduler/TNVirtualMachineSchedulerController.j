@@ -121,15 +121,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [super willHide];
 }
 
-
-/*! called by module loader when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Schedule new action", @"Schedule new action") action:@selector(openNewJobWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unschedule selected action", @"Unschedule selected action") action:@selector(unschedule:) keyEquivalent:@""] setTarget:schedulerController];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged

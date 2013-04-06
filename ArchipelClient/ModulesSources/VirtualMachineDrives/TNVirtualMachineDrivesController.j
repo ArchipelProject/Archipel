@@ -178,16 +178,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [super willHide];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create a drive", @"Create a drive") action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive") action:@selector(openEditWindow:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected drive", @"Delete selected drive") action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged
