@@ -359,6 +359,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [self setControl:[self buttonWithIdentifier:TNModuleControlForEditXML] enabledAccordingToPermission:@"vmparking_updatexml" specialCondition:tableParkedCondition];
     [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveparked] enabledAccordingToPermission:@"vmparking_delete" specialCondition:tableParkedCondition];
     [self setControl:[self buttonWithIdentifier:TNModuleControlForNewVM] enabledAccordingToPermission:@"alloc"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForEditVcard] enabledAccordingToPermission:@"alloc" specialCondition:tableManagedCondition];
     [self setControl:[self buttonWithIdentifier:TNModuleControlForRemove] enabledAccordingToPermission:@"free" specialCondition:tableManagedCondition];
     [self setControl:[self buttonWithIdentifier:TNModuleControlForClone] enabledAccordingToPermission:@"clone" specialCondition:tableManagedCondition];
     [self setControl:[self buttonWithIdentifier:TNModuleControlForSubscribe] enabledAccordingToPermission:@"subscription_add" specialCondition:tableManagedCondition];
@@ -494,6 +495,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     {
         case tableVirtualMachines:
             [[self buttonWithIdentifier:TNModuleControlForRemove] setEnabled:NO];
+            [[self buttonWithIdentifier:TNModuleControlForEditVcard] setEnabled:NO];
             [[self buttonWithIdentifier:TNModuleControlForClone] setEnabled:NO];
             [[self buttonWithIdentifier:TNModuleControlForUnmanage] setEnabled:NO];
             [[self buttonWithIdentifier:TNModuleControlForPark] setEnabled:NO];
@@ -502,6 +504,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
             [[self buttonWithIdentifier:TNModuleControlForJump] setEnabled:[tableVirtualMachines numberOfSelectedRows] == 1];
 
             var condition = ([tableVirtualMachines numberOfSelectedRows] > 0);
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForEditVcard] enabledAccordingToPermission:@"alloc" specialCondition:condition];
             [self setControl:[self buttonWithIdentifier:TNModuleControlForRemove] enabledAccordingToPermission:@"free" specialCondition:condition];
             [self setControl:[self buttonWithIdentifier:TNModuleControlForClone] enabledAccordingToPermission:@"clone" specialCondition:condition];
             [self setControl:[self buttonWithIdentifier:TNModuleControlForSubscribe] enabledAccordingToPermission:@"subscription_add" specialCondition:condition];
