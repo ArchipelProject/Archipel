@@ -202,6 +202,12 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
                              action:@selector(addSelectedVMToRoster:)
                               image:CPImageInBundle(@"jump.png",nil, [CPBundle bundleForClass:[self class]])];
 
+    [self addControlsWithIdentifier:TNModuleControlForEditVcard
+                              title:CPBundleLocalizedString(@"Edit Virtual Machine informations", @"Edit Virtual Machine informations")
+                             target:self
+                             action:@selector(openEditVirtualMachineWindow:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, [CPBundle mainBundle])];
+
     [[self buttonWithIdentifier:TNModuleControlForRemove] setEnabled:NO];
     [[self buttonWithIdentifier:TNModuleControlForSubscribe] setEnabled:NO];
     [[self buttonWithIdentifier:TNModuleControlForUnSubscribe] setEnabled:NO];
@@ -210,6 +216,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
         [self buttonWithIdentifier:TNModuleControlForNewVM],
         [self buttonWithIdentifier:TNModuleControlForRemove],
         [self buttonWithIdentifier:TNModuleControlForClone],
+        [self buttonWithIdentifier:TNModuleControlForEditVcard],
         [self buttonWithIdentifier:TNModuleControlForSubscribe],
         [self buttonWithIdentifier:TNModuleControlForUnSubscribe],
         [self buttonWithIdentifier:TNModuleControlForUnmanage],
@@ -670,7 +677,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     }
 
     [VMParkingController setCurrentItem:[_virtualMachinesParkedDatasource objectAtIndex:[tableVirtualMachinesParked selectedRow]]];
-    [VMParkingController openWindow:aSender];
+    [VMParkingController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachinesParked : aSender];
 }
 
 - (IBAction)deleteParkedVirtualMachines:(id)aSender
@@ -784,7 +791,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
          return;
     }
 
-    [VMCloneController openWindow:[self buttonWithIdentifier:TNModuleControlForClone]];
+    [VMCloneController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
 }
 
 /*! open the add virtual machine window
@@ -797,7 +804,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     if ([self isVisible])
     {
         [VMAllocationController setVirtualMachine:nil];
-        [VMAllocationController openWindow:[self buttonWithIdentifier:TNModuleControlForNewVM]];
+        [VMAllocationController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
     }
 }
 
@@ -818,7 +825,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     {
         var vm = [_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]];
         [VMAllocationController setVirtualMachine:vm];
-        [VMAllocationController openWindow:aSender];
+        [VMAllocationController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
     }
 }
 
@@ -839,7 +846,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
          return;
     }
 
-    [VMSubscriptionController openAddSubsctiptionWindow:[self buttonWithIdentifier:TNModuleControlForSubscribe]];
+    [VMSubscriptionController openAddSubsctiptionWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
 }
 
 /*! open the add subscription window
@@ -858,7 +865,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
          return;
     }
 
-    [VMSubscriptionController openRemoveSubscriptionWindow:[self buttonWithIdentifier:TNModuleControlForUnSubscribe]];
+    [VMSubscriptionController openRemoveSubscriptionWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
 }
 
 
@@ -984,6 +991,72 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
             [VMParkingController listParkedVirtualMachines];
             break;
     }
+}
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
+{
+
+    if ([aTableView numberOfSelectedRows] > 1)
+        return;
+
+    [_contextualMenu removeAllItems];
+
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableVirtualMachines))
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNewVM]];
+
+        return _contextualMenu;
+    }
+
+    switch (aTableView)
+    {
+        case tableVirtualMachines:
+            var itemRow = [tableVirtualMachines rowAtPoint:aRow];
+            if ([tableVirtualMachines selectedRow] != aRow)
+                [tableVirtualMachines selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+            if ([[_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]] vCard])
+                {
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForJump]];
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForClone]];
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForEditVcard]];
+                    [_contextualMenu addItem:[CPMenuItem separatorItem]];
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForSubscribe]];
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForUnSubscribe]];
+                    [_contextualMenu addItem:[CPMenuItem separatorItem]];
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForUnmanage]];
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemove]];
+                }
+            else
+                {
+                    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForJump]];
+                }
+            break;
+
+        case tableVirtualMachinesNotManaged:
+            var itemRow = [tableVirtualMachinesNotManaged rowAtPoint:aRow];
+            if ([tableVirtualMachinesNotManaged selectedRow] != aRow)
+                [tableVirtualMachinesNotManaged selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+            [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForManage]];
+            break;
+
+        case tableVirtualMachinesParked:
+            var itemRow = [tableVirtualMachinesParked rowAtPoint:aRow];
+            if ([tableVirtualMachinesParked selectedRow] != aRow)
+                [tableVirtualMachinesParked selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+            [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForUnpark]];
+            [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForEditXML]];
+            [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveparked]];
+            break;
+
+        default:
+            return;
+    }
+
+    return _contextualMenu;
 }
 
 @end
