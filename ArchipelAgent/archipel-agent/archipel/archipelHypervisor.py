@@ -1033,7 +1033,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             nodes = []
             for uuid, vm in self.virtualmachines.iteritems():
                 n = xmpp.Node("item", attrs={"managed": "True", "name": vm.name})
-                n.addData(vm.jid.getStripped())
+                n.addData(vm.jid)
                 nodes.append(n)
 
             unanaged_domains = self.get_raw_libvirt_domains(only_persistant=True)
@@ -1275,6 +1275,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
             if target_vm.definition:
                 target_vm.define(target_vm.definition)
+
+            reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": target_vm.jid})])
 
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_SET_ORG_INFO)

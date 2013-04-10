@@ -117,7 +117,8 @@ setup(name='archipel-agent',
       data_files=[
         ('install/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
         ('install/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
-        ('install/etc/init.d'              , ['install/etc/init.d/archipel']),
+        ('install/etc/init.d/'             , ['install/etc/init.d/archipel']),
+        ('install/usr/lib/systemd/system/' , ['install/usr/lib/systemd/system/archipel-agent.service']),
         ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )

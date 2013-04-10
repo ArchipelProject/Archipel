@@ -560,7 +560,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 #pragma mark -
 #pragma mark Actions
 
-/*! add double clicked vm to roster if not present or go to virtual machine
+/*! add vm to roster if not present or go to virtual machine
     @param sender the sender of the action
 */
 - (IBAction)addSelectedVMToRoster:(id)aSender
@@ -585,7 +585,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     }
 }
 
-/*! add double clicked vm to roster if not present or go to virtual machine
+/*! manage the selected virtual machine
     @param sender the sender of the action
 */
 - (IBAction)didNotManagedTableDoubleClick:(id)aSender
@@ -809,6 +809,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (IBAction)openEditVirtualMachineWindow:(id)aSender
 {
+    if (![[_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]] vCard])
+    {
+        [self addSelectedVMToRoster:aSender];
+        return;
+    }
+
     [self requestVisible];
 
     if ([self isVisible])
