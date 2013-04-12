@@ -44,6 +44,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     TNArchipelTypeVirtualMachineVMCastingPackage    = @"package",
     TNArchipelPushNotificationVMCasting             = @"archipel:push:vmcasting";
 
+var TNModuleControlForAttachAppliance               = @"AttachAppliance",
+    TNModuleControlForDetachAppliance               = @"DetachAppliance",
+    TNModuleControlForCreateAppliance               = @"CreateAppliance";
+
 /*! @defgroup  virtualmachinepackaging Module VirtualMachine Appliances
     @desc Allow to attach virtual machine from installed appliances
 */
@@ -62,9 +66,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     @outlet CPTextField                 fieldNewApplianceName;
     @outlet CPView                      viewTableContainer;
 
-    CPButton                            _detachButton;
-    CPButton                            _attachButton;
-    CPButton                            _packageButton;
     TNTableViewDataSource               _appliancesDatasource;
 }
 
@@ -81,6 +82,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     // table appliances
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
     [tableAppliances setTarget:self];
+    [tableAppliances setDelegate:self];
     [tableAppliances setDoubleAction:@selector(tableDoubleClicked:)];
     [_appliancesDatasource setTable:tableAppliances];
     [_appliancesDatasource setSearchableKeyPaths:[@"name", @"path", @"comment"]]
@@ -88,32 +90,29 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [fieldFilterAppliance setTarget:_appliancesDatasource];
     [fieldFilterAppliance setAction:@selector(filterObjects:)];
 
-    var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:@"Install" action:@selector(attach:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Detach" action:@selector(detach:) keyEquivalent:@""];
-    [tableAppliances setMenu:menu];
 
-    _packageButton  = [CPButtonBar plusButton];
-    [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/package.png"] size:CGSizeMake(16, 16)]];
-    [_packageButton setTarget:self];
-    [_packageButton setAction:@selector(openNewApplianceWindow:)];
-    [_packageButton setToolTip:CPBundleLocalizedString(@"Package current VM into hypervisor's VMCast", @"Package current VM into hypervisor's VMCast")];
+    [self addControlsWithIdentifier:TNModuleControlForAttachAppliance
+                              title:CPBundleLocalizedString(@"Use the selected appliance", @"Use the selected appliance")
+                             target:self
+                             action:@selector(attach:)
+                              image:CPImageInBundle(@"IconsButtons/lock.png",nil, [CPBundle mainBundle])];
 
-    _attachButton  = [CPButtonBar plusButton];
-    [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/lock.png"] size:CGSizeMake(16, 16)]];
-    [_attachButton setTarget:self];
-    [_attachButton setAction:@selector(attach:)];
-    [_attachButton setEnabled:NO];
-    [_attachButton setToolTip:CPBundleLocalizedString(@"Use selected package for VM. Any changes will be lost", @"Use selected package for VM. Any changes will be lost")];
+    [self addControlsWithIdentifier:TNModuleControlForDetachAppliance
+                              title:CPBundleLocalizedString(@"Detach the selected appliance", @"Detach the selected appliance")
+                             target:self
+                             action:@selector(detach:)
+                              image:CPImageInBundle(@"IconsButtons/unlock.png",nil, [CPBundle mainBundle])];
 
-    _detachButton  = [CPButtonBar plusButton];
-    [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unlock.png"] size:CGSizeMake(16, 16)]];
-    [_detachButton setTarget:self];
-    [_detachButton setAction:@selector(detach:)];
-    [_detachButton setEnabled:NO];
-    [_detachButton setToolTip:CPBundleLocalizedString(@"Detach current VM from selected appliance", @"Detach current VM from selected appliance")];
+    [self addControlsWithIdentifier:TNModuleControlForCreateAppliance
+                              title:CPBundleLocalizedString(@"Create a new appliance from current virtual machine", @"Create a new appliance from current virtual machine")
+                             target:self
+                             action:@selector(openNewApplianceWindow:)
+                              image:CPImageInBundle(@"IconsButtons/package.png",nil, [CPBundle mainBundle])];
 
-    [buttonBarControl setButtons:[_attachButton, _detachButton, _packageButton]];
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForAttachAppliance],
+        [self buttonWithIdentifier:TNModuleControlForDetachAppliance],
+        [self buttonWithIdentifier:TNModuleControlForCreateAppliance]]];
 }
 
 
@@ -173,9 +172,9 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)setUIAccordingToPermissions
 {
-    [self setControl:_packageButton enabledAccordingToPermission:@"appliance_package"];
-    [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
-    [self setControl:_detachButton enabledAccordingToPermission:@"appliance_detach"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForCreateAppliance] enabledAccordingToPermission:@"appliance_package"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForAttachAppliance] enabledAccordingToPermission:@"appliance_attach"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForDetachAppliance] enabledAccordingToPermission:@"appliance_detach"];
 
     if ([self currentEntityHasPermission:@"appliance_package"])
         [popoverNewAppliances close];
@@ -270,10 +269,18 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [checkBoxShouldGZIP setState:CPOnState];
 
     [popoverNewAppliances close];
-    [popoverNewAppliances showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    if ([aSender isKindOfClass:CPMenuItem])
+    {
+        var rect = [tableAppliances rectOfRow:[tableAppliances selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [popoverNewAppliances showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableAppliances preferredEdge:nil];
+    }
+    else
+        [popoverNewAppliances showRelativeToRect:nil ofView:aSender preferredEdge:nil]
+
     [popoverNewAppliances makeFirstResponder:fieldNewApplianceName];
     [popoverNewAppliances setDefaultButton:buttonCreate];
-
 }
 
 /*! close the new appliance window
@@ -300,7 +307,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         [self detach];
     else
         [self attach];
-
 }
 
 /*! attach the selected appliance
@@ -408,8 +414,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
                                  target:self
                                  actions:[[CPBundleLocalizedString(@"Attach", @"Attach"), @selector(performAttach:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert runModal];
-
-
 }
 
 /*! attach the selected appliance
@@ -426,7 +430,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         "uuid": [appliance UUID]}];
 
     if ([self currentEntityHasPermission:@"appliance_attach"])
-        [_attachButton setEnabled:NO];
+        [[self buttonWithIdentifier:TNModuleControlForAttachAppliance] setEnabled:NO];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didAttach:) ofObject:self];
 }
@@ -484,7 +488,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         "action": TNArchipelTypeVirtualMachineVMCastingDetach}];
 
     if ([self currentEntityHasPermission:@"appliance_attach"])
-        [_detachButton setEnabled:NO];
+        [[self buttonWithIdentifier:TNModuleControlForDetachAppliance] setEnabled:NO];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didDetach:) ofObject:self];
 }
@@ -499,7 +503,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[_entity name]
                                                          message:CPBundleLocalizedString(@"Appliance has been detached", @"Appliance has been detached")];
 
-        [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
+        [self setControl:[self buttonWithIdentifier:TNModuleControlForAttachAppliance] enabledAccordingToPermission:@"appliance_attach"];
     }
     else
     {
@@ -552,8 +556,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
-    [_attachButton setEnabled:NO];
-    [_detachButton setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForAttachAppliance] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForDetachAppliance] setEnabled:NO];
 
     if ([tableAppliances numberOfSelectedRows] <= 0)
         return;
@@ -562,12 +566,44 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
 
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
-        [self setControl:_detachButton enabledAccordingToPermission:@"appliance_detach"];
+        [self setControl:[self buttonWithIdentifier:TNModuleControlForDetachAppliance] enabledAccordingToPermission:@"appliance_detach"];
     else
-        [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
+        [self setControl:[self buttonWithIdentifier:TNModuleControlForAttachAppliance] enabledAccordingToPermission:@"appliance_attach"];
+}
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
+{
+    if ([aTableView numberOfSelectedRows] > 1)
+        return;
+
+    [_contextualMenu removeAllItems];
+
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableAppliances))
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCreateAppliance]];
+
+        return _contextualMenu;
+    }
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    var selectedIndex   = [[tableAppliances selectedRowIndexes] firstIndex],
+        appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
+
+    if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDetachAppliance]];
+    else
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForAttachAppliance]];
+
+    return _contextualMenu;
 }
 
 @end
+
 
 
 // add this code to make the CPLocalizedString looking at

@@ -47,8 +47,8 @@ var TNInstalledApplianceIconUsed,
 + (void)initialize
 {
     var bundle = [CPBundle mainBundle];
-    TNInstalledApplianceIconUsed       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CGSizeMake(12, 12)];
-    TNInstalledApplianceIconInstalling = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CGSizeMake(16, 16)];
+    TNInstalledApplianceIconUsed       = CPImageInBundle(@"IconsButtons/check.png", CGSizeMake(12, 12), bundle);
+    TNInstalledApplianceIconInstalling = CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), bundle);
     TNInstalledApplianceIconNone       = nil;
 
 }
