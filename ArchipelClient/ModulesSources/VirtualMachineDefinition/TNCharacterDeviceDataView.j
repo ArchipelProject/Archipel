@@ -74,10 +74,10 @@ var TNCharacterDeviceDataViewIconCONSOLE,
 {
     var bundle = [CPBundle bundleForClass:TNCharacterDeviceDataView];
 
-    TNCharacterDeviceDataViewIconCONSOLE    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_console.png"]];
-    TNCharacterDeviceDataViewIconSERIAL     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_serial.png"]];
-    TNCharacterDeviceDataViewIconCHANNEL    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_channel.png"]];
-    TNCharacterDeviceDataViewIconPARALLEL   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"character_parallel.png"]];
+    TNCharacterDeviceDataViewIconCONSOLE    = CPImageInBundle(@"character_console.png", nil, bundle);
+    TNCharacterDeviceDataViewIconSERIAL     = CPImageInBundle(@"character_serial.png", nil, bundle);
+    TNCharacterDeviceDataViewIconCHANNEL    = CPImageInBundle(@"character_channel.png", nil, bundle);
+    TNCharacterDeviceDataViewIconPARALLEL   = CPImageInBundle(@"character_parallel.png", nil, bundle);
 }
 
 #pragma mark -
