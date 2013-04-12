@@ -38,6 +38,7 @@ ARCHIPEL_ERROR_CODE_VMAPPLIANCES_GET        = -4002
 ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH     = -4003
 ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE    = -4004
 
+ARCHIPEL_XMPP_SHOW_NOT_DEFINED = "Not defined"
 
 class TNVMApplianceManager (TNArchipelPlugin):
 
@@ -144,7 +145,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.is_installed = True
         self.is_installing = False
         self.installing_media_uuid = None
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status, callback=presence_callback)
+        self.entity.change_presence(presence_show=self.old_show, presence_status="Off" if (self.old_status == ARCHIPEL_XMPP_SHOW_NOT_DEFINED) else self.old_status, callback=presence_callback)
 
     def error_installing(self, exception):
         """

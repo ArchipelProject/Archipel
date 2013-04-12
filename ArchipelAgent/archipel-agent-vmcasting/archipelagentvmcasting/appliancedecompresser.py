@@ -172,7 +172,7 @@ class TNApplianceDecompresser (Thread):
                     mac.setAttr("address", generate_mac_adress())
                 else:
                     nic.addChild(name="mac", attrs={"address" : generate_mac_adress()})
-        name_node.setData(self.entity.uuid)
+        name_node.setData(self.entity.name)
         uuid_node.setData(self.entity.uuid)
         self.description_node = xml_desc
         return True
