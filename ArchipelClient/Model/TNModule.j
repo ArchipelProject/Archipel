@@ -130,9 +130,9 @@ var TNModuleStatusImageReady,
 {
     var mainBundle = [CPBundle mainBundle];
 
-    TNModuleStatusImageReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
-    TNModuleStatusImageWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
-    TNModuleStatusImageError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsStatus/red.png"] size:CGSizeMake(8.0, 8.0)];
+    TNModuleStatusImageReady   = CPImageInBundle(@"IconsStatus/green.png" , CGSizeMake(8.0, 8.0), mainBundle);
+    TNModuleStatusImageWaiting = CPImageInBundle(@"IconsStatus/orange.png", CGSizeMake(8.0, 8.0), mainBundle);
+    TNModuleStatusImageError   = CPImageInBundle(@"IconsStatus/red.png"   , CGSizeMake(8.0, 8.0), mainBundle);
 
     TNArchipelDefaultColorsTableView = [CPColor whiteColor];
 }
