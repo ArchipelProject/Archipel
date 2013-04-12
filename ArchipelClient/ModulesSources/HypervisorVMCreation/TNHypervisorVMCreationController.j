@@ -1013,12 +1013,13 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
         return _contextualMenu;
     }
 
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
     switch (aTableView)
     {
         case tableVirtualMachines:
-            var itemRow = [tableVirtualMachines rowAtPoint:aRow];
-            if ([tableVirtualMachines selectedRow] != aRow)
-                [tableVirtualMachines selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
             if ([[_virtualMachinesDatasource objectAtIndex:[tableVirtualMachines selectedRow]] vCard])
                 {
@@ -1039,17 +1040,11 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
             break;
 
         case tableVirtualMachinesNotManaged:
-            var itemRow = [tableVirtualMachinesNotManaged rowAtPoint:aRow];
-            if ([tableVirtualMachinesNotManaged selectedRow] != aRow)
-                [tableVirtualMachinesNotManaged selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
             [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForManage]];
             break;
 
         case tableVirtualMachinesParked:
-            var itemRow = [tableVirtualMachinesParked rowAtPoint:aRow];
-            if ([tableVirtualMachinesParked selectedRow] != aRow)
-                [tableVirtualMachinesParked selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
             [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForUnpark]];
             [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForEditXML]];
             [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveparked]];
