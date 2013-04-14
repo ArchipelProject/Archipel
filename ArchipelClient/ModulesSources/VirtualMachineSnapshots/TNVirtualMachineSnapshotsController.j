@@ -87,6 +87,9 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
     _outlineViewSnapshots   = [[CPOutlineView alloc] initWithFrame:[scrollViewSnapshots bounds]];
 
+    [_datasourceSnapshots setParentKeyPath:@"parent"];
+    [_datasourceSnapshots setChildCompKeyPath:@"name"];
+
     [scrollViewSnapshots setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewSnapshots setAutohidesScrollers:YES];
     [scrollViewSnapshots setDocumentView:_outlineViewSnapshots];
@@ -97,7 +100,7 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     [_outlineViewSnapshots setAllowsEmptySelection:YES];
     [_outlineViewSnapshots setAllowsMultipleSelection:NO];
     [_outlineViewSnapshots setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    // [_outlineViewSnapshots setRowHeight:50.0];
+    [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
 
     var outlineColumn = [[CPTableColumn alloc] initWithIdentifier:@"outline"],
         columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
@@ -126,24 +129,18 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     [columnState setWidth:16];
     [[columnState headerView] setStringValue:@""];
 
-    // [_outlineViewSnapshots addTableColumn:outlineColumn];
     [_outlineViewSnapshots addTableColumn:columnState];
     [_outlineViewSnapshots addTableColumn:columnDescription];
     [_outlineViewSnapshots addTableColumn:columnCreationTime];
     [_outlineViewSnapshots addTableColumn:columnName];
     [_outlineViewSnapshots setOutlineTableColumn:columnDescription];
     [_outlineViewSnapshots setDelegate:self];
+    [_outlineViewSnapshots setDoubleAction:@selector(revertSnapshot:)]; //FIXME not working dunno why...
 
-    [_datasourceSnapshots setParentKeyPath:@"parent"];
-    [_datasourceSnapshots setChildCompKeyPath:@"name"];
-    [_datasourceSnapshots setSearchableKeyPaths:[@"name", @"description", @"creationTime"]];
+    [fieldFilter setSendsSearchStringImmediately:YES];
+    [fieldFilter setTarget:self];
+    [fieldFilter setAction:@selector(fieldFilterDidChange:)];
 
-    // @TODO: this doesn't work because the datasourve sucks.
-    // while waiting for me to fix it, let's just deactivate this
-    //[fieldFilter setTarget:_datasourceSnapshots];
-    //[fieldFilter setAction:@selector(filterObjects:)];
-
-    [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
 
     [self addControlsWithIdentifier:TNModuleControlForTakeSnapshot
                               title:CPBundleLocalizedString(@"Create a new snapshot", @"Create a new snapshot")
@@ -255,6 +252,16 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
 
 #pragma mark -
 #pragma mark  Actions
+
+/*! update filter
+    @param sender the sender of the action
+*/
+- (IBAction)fieldFilterDidChange:(id)aSender
+{
+    [_datasourceSnapshots setFilter:[fieldFilter stringValue]];
+    [_outlineViewSnapshots reloadData];
+    [_outlineViewSnapshots recoverExpandedWithBaseKey:TNArchipelSnapshotsOpenedSnapshots itemKeyPath:@"name"];
+}
 
 /*! opens the new snapshot window
     @param aSender the sender of the action
