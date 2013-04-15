@@ -316,7 +316,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 }
 
 
-/*! schedule a new job, but before ask user confirmation
+/*! unschedule a new job, but before ask user confirmation
 */
 - (void)unschedule
 {
@@ -348,7 +348,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [alert runModal];
 }
 
-/*! schedule a new job
+/*! unschedule a new job
 */
 - (void)performUnschedule:(id)userInfo
 {

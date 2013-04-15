@@ -373,7 +373,6 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="966007610"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 						</object>
@@ -586,7 +585,6 @@
 						<string key="NSFrame">{{362, 12}, {118, 32}}</string>
 						<reference key="NSSuperview" ref="155689248"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="588188350">
 							<int key="NSCellFlags">-2080374784</int>
@@ -773,7 +771,6 @@
 						<string key="NSFrame">{{157, 61}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="946740024">
@@ -1133,7 +1130,7 @@
 						<string key="NSFrame">{{137, 83}, {195, 165}}</string>
 						<reference key="NSSuperview" ref="80957552"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
+						<reference key="NSNextKeyView" ref="169327472"/>
 						<string key="NSClassName">TNCalendarView</string>
 					</object>
 					<object class="NSCustomView" id="650072836">
@@ -1160,7 +1157,6 @@
 						<string key="NSFrame">{{329, 25}, {22, 20}}</string>
 						<reference key="NSSuperview" ref="80957552"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="844399828"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="981855152">
 							<int key="NSCellFlags">68157504</int>
@@ -1226,7 +1222,7 @@
 						<string key="NSFrame">{{17, 256}, {281, 20}}</string>
 						<reference key="NSSuperview" ref="80957552"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="169327472"/>
+						<reference key="NSNextKeyView" ref="844399828"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="484456034">
 							<int key="NSCellFlags">68157504</int>
@@ -1305,14 +1301,6 @@
 						<reference key="destination" ref="953738438"/>
 					</object>
 					<int key="connectionID">277</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="399064852"/>
-						<reference key="destination" ref="266563233"/>
-					</object>
-					<int key="connectionID">205</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">

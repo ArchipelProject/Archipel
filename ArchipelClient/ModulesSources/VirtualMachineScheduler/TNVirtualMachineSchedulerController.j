@@ -75,6 +75,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
     [_datasourceJobs setTable:tableJobs];
     [_datasourceJobs setSearchableKeyPaths:[@"comment", @"action", @"date"]];
     [tableJobs setDataSource:_datasourceJobs];
+    [tableJobs setAllowsMultipleSelection:YES];
     [tableJobs setDelegate:self];
 
     [self addControlsWithIdentifier:TNModuleControlForSchedule
@@ -247,9 +248,6 @@ var TNModuleControlForSchedule                    = @"Schedule",
 */
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
 {
-
-    if ([aTableView numberOfSelectedRows] > 1)
-        return;
 
     [_contextualMenu removeAllItems];
 
