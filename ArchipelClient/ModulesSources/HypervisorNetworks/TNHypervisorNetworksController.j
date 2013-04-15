@@ -119,25 +119,25 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, [CPBundle mainBundle])];
 
     [self addControlsWithIdentifier:TNModuleControlForRemoveNetwork
-                              title:CPBundleLocalizedString(@"Delete selected network", @"Delete selected network")
+                              title:CPBundleLocalizedString(@"Remove", @"Remove")
                              target:self
                              action:@selector(delNetwork:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
 
     [self addControlsWithIdentifier:TNModuleControlForEditNetwork
-                              title:CPBundleLocalizedString(@"Edit selected network", @"Edit selected network")
+                              title:CPBundleLocalizedString(@"Edit network settings", @"Edit network settings")
                              target:self
                              action:@selector(editNetwork:)
                               image:CPImageInBundle(@"IconsButtons/edit.png",nil, [CPBundle mainBundle])];
 
     [self addControlsWithIdentifier:TNModuleControlForActivateNetwork
-                              title:CPBundleLocalizedString(@"Activate selected network", @"Activate selected network")
+                              title:CPBundleLocalizedString(@"Enable", @"Enable")
                              target:self
                              action:@selector(activateNetwork:)
                               image:CPImageInBundle(@"IconsButtons/check.png",nil, [CPBundle mainBundle])];
 
     [self addControlsWithIdentifier:TNModuleControlForDeactivateNetwork
-                              title:CPBundleLocalizedString(@"Deactivate selected network", @"Deactivate selected network")
+                              title:CPBundleLocalizedString(@"Disable", @"Disable")
                              target:self
                              action:@selector(deactivateNetwork:)
                               image:CPImageInBundle(@"IconsButtons/cancel.png",nil, [CPBundle mainBundle])];
@@ -766,16 +766,13 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
 {
     var itemRow = [tableViewNetworks rowAtPoint:aRow];
-            if ([tableViewNetworks selectedRow] != aRow)
-                [tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+    if ([tableViewNetworks selectedRow] != aRow)
+        [tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
     var selectedIndex = [[tableViewNetworks selectedRowIndexes] firstIndex],
         conditionTableSelectedRow = ([tableViewNetworks numberOfSelectedRows] != 0),
         networkObject = conditionTableSelectedRow ? [_datasourceNetworks objectAtIndex:selectedIndex] : nil,
         conditionNetworkActive = [networkObject isActive];
-
-    if ([aTableView numberOfSelectedRows] > 1)
-        return;
 
     [_contextualMenu removeAllItems];
 
