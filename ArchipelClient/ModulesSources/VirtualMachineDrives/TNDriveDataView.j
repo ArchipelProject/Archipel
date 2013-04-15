@@ -54,11 +54,11 @@ var TNDriveDataViewIconQCOW2,
 + (void)initialize
 {
     var bundle = [CPBundle bundleForClass:[self class]];
-    TNDriveDataViewIconQCOW2    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_qcow2.png"]];
-    TNDriveDataViewIconQCOW     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_qcow.png"]];
-    TNDriveDataViewIconCOW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_cow.png"]];
-    TNDriveDataViewIconVMDK     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_vmdk.png"]];
-    TNDriveDataViewIconRAW      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"drive_raw.png"]];
+    TNDriveDataViewIconQCOW2    = CPImageInBundle(@"drive_qcow2.png", nil, bundle);
+    TNDriveDataViewIconQCOW     = CPImageInBundle(@"drive_qcow.png", nil, bundle);
+    TNDriveDataViewIconCOW      = CPImageInBundle(@"drive_cow.png", nil, bundle);
+    TNDriveDataViewIconVMDK     = CPImageInBundle(@"drive_vmdk.png", nil, bundle);
+    TNDriveDataViewIconRAW      = CPImageInBundle(@"drive_raw.png", nil, bundle);
 }
 
 

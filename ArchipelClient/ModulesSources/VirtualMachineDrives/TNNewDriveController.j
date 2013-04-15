@@ -91,7 +91,17 @@ var TNArchipelTypeVirtualMachineDisk            = @"archipel:vm:disk",
     [checkBoxUseQCOW2Preallocation setState:CPOffState];
 
     [mainPopover close];
-    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+    }
+    else
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
     [mainPopover setDefaultButton:buttonOK];
     [mainPopover makeFirstResponder:fieldNewDiskName];
 }
