@@ -1535,7 +1535,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     if (anOutlineView != _rosterOutlineView)
         return;
 
-    if ([anOutlineView numberOfSelectedRows] != 1)
+    if ([anOutlineView numberOfSelectedRows] == 0)
         return;
 
     var itemRow = [_rosterOutlineView rowForItem:anItem];
