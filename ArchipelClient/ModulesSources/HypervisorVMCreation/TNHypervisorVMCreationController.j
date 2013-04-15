@@ -1025,6 +1025,29 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     return _contextualMenu;
 }
 
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+  if ([aTableView numberOfSelectedRows] == 0)
+      return;
+
+  switch(aTableView)
+  {
+    case tableVirtualMachines:
+      [self deleteVirtualMachine:aTableView];
+      break;
+
+    case tableVirtualMachinesParked:
+      [self deleteParkedVirtualMachines:aTableView];
+      break;
+
+    default:
+      return
+  }
+
+}
+
 @end
 
 
