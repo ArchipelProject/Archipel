@@ -338,13 +338,13 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
     [self addControlsWithIdentifier:TNModuleControlForDriveRemove
-                              title:CPBundleLocalizedString(@"Remove selected drives", @"Remove selected drives")
+                              title:CPBundleLocalizedString(@"Remove selected drive(s)", @"Remove selected drive(s)")
                              target:self
                              action:@selector(deleteDrive:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
 
     [self addControlsWithIdentifier:TNModuleControlForDriveEdit
-                              title:CPBundleLocalizedString(@"Edit selected drives", @"Edit selected drives")
+                              title:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")
                              target:self
                              action:@selector(editDrive:)
                               image:CPImageInBundle(@"IconsButtons/edit.png",nil, mainBundle)];
@@ -380,7 +380,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
     [self addControlsWithIdentifier:TNModuleControlForNicRemove
-                              title:CPBundleLocalizedString(@"Remove selected network interface", @"Remove selected network interface")
+                              title:CPBundleLocalizedString(@"Remove selected network interface(s)", @"Remove selected network interface(s)")
                              target:self
                              action:@selector(deleteInterface:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
@@ -416,7 +416,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
     [self addControlsWithIdentifier:TNModuleControlForInputDeviceRemove
-                              title:CPBundleLocalizedString(@"Remove selected input device", @"Remove selected input device")
+                              title:CPBundleLocalizedString(@"Remove selected input device(s)", @"Remove selected input device(s)")
                              target:self
                              action:@selector(deleteInputDevice:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
@@ -453,7 +453,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
     [self addControlsWithIdentifier:TNModuleControlForGraphicDeviceRemove
-                              title:CPBundleLocalizedString(@"Remove selected Graphic device", @"Remove selected Graphic device")
+                              title:CPBundleLocalizedString(@"Remove selected Graphic device(s)", @"Remove selected Graphic device(s)")
                              target:self
                              action:@selector(deleteGraphicDevice:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
@@ -498,7 +498,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
     [self addControlsWithIdentifier:TNModuleControlForCharacterDeviceRemove
-                              title:CPBundleLocalizedString(@"Remove selected Character device", @"Remove selected Character device")
+                              title:CPBundleLocalizedString(@"Remove selected Character device(s)", @"Remove selected Character device(s)")
                              target:self
                              action:@selector(deleteCharacterDevice:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
@@ -1910,69 +1910,86 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
 {
 
-    if ([aTableView numberOfSelectedRows] > 1)
-        return;
-
     [_contextualMenu removeAllItems];
 
     var itemRow = [aTableView rowAtPoint:aRow];
-        if ([aTableView selectedRow] != aRow)
-            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
     switch (aTableView)
     {
         case tableDrives:
             if ([aTableView numberOfSelectedRows] == 0)
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveAdd]];
-            else
+            else if ([aTableView numberOfSelectedRows] == 1)
                 {
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveEdit]];
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveRemove]];
                 }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveRemove]];
+            }
 
             break;
 
         case tableInterfaces:
             if ([aTableView numberOfSelectedRows] == 0)
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicAdd]];
-            else
+            else if ([aTableView numberOfSelectedRows] == 1)
                 {
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicEdit]];
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicRemove]];
                 }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicRemove]];
+            }
 
             break;
 
         case tableGraphicsDevices:
             if ([aTableView numberOfSelectedRows] == 0)
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceAdd]];
-            else
+            else if ([aTableView numberOfSelectedRows] == 1)
                 {
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceEdit]];
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
                 }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+            }
 
             break;
 
         case tableInputDevices:
             if ([aTableView numberOfSelectedRows] == 0)
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForInputDeviceAdd]];
-            else
+            else if ([aTableView numberOfSelectedRows] == 1)
                 {
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForInputDeviceEdit]];
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForInputDeviceRemove]];
                 }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+            }
 
             break;
 
         case tableCharacterDevices:
             if ([aTableView numberOfSelectedRows] == 0)
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCharacterDeviceAdd]];
-            else
+            else if ([aTableView numberOfSelectedRows] == 1)
                 {
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCharacterDeviceEdit]];
                 [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCharacterDeviceRemove]];
                 }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+            }
 
             break;
 
