@@ -1548,6 +1548,19 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         return _rosterMenuForGroups;
 }
 
+/* Delegate of CPOutlineView for delete key event
+*/
+- (void)outlineViewDeleteKeyPressed:(CPOutlineView)anOutlineView
+{
+    if (anOutlineView != _rosterOutlineView)
+        return;
+
+    if ([anOutlineView numberOfSelectedRows] == 0)
+        return;
+
+    [self deleteEntities:anOutlineView];
+}
+
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults
 */
 - (float)splitView:(CPSlipView)aSplitView constrainMaxCoordinate:(int)position ofSubviewAt:(int)index
