@@ -135,7 +135,8 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     [_outlineViewSnapshots addTableColumn:columnName];
     [_outlineViewSnapshots setOutlineTableColumn:columnDescription];
     [_outlineViewSnapshots setDelegate:self];
-    [_outlineViewSnapshots setDoubleAction:@selector(revertSnapshot:)]; //FIXME not working dunno why...
+    [_outlineViewSnapshots setTarget:self];
+    [_outlineViewSnapshots setDoubleAction:@selector(revertSnapshot:)];
 
     [fieldFilter setSendsSearchStringImmediately:YES];
     [fieldFilter setTarget:self];
