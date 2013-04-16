@@ -718,7 +718,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 
         if ([networkObject isActive])
         {
-            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
+            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't delete a running network", @"You can't delete a running network") style:CPCriticalAlertStyle];
             return;
         }
 
@@ -798,6 +798,15 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
     return _contextualMenu;
 }
 
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+        [self delNetwork:aTableView];
+}
 
 @end
 
