@@ -2001,6 +2001,40 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     return _contextualMenu;
 }
 
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+    switch (aTableView)
+    {
+        case tableDrives:
+            [self deleteDrive:aTableView];
+            break;
+
+        case tableInterfaces:
+            [self deleteInterface:aTableView];
+            break;
+
+        case tableGraphicsDevices:
+            [self deleteGraphicDevice:aTableView];
+            break;
+
+        case tableInputDevices:
+            [self deleteInputDevice:aTableView];
+            break;
+
+        case tableCharacterDevices:
+            [self deleteCharacterDevice:aTableView];
+            break;
+
+        default:
+            return;
+    }
+}
+
 @end
 
 
@@ -2311,8 +2345,12 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     if ([tableCharacterDevices numberOfSelectedRows] <= 0)
         return;
 
-    [_characterDevicesDatasource removeObjectAtIndex:[tableCharacterDevices selectedRow]];
+    var selectedIndexes = [tableCharacterDevices selectedRowIndexes];
+
+    [_characterDevicesDatasource removeObjectsAtIndexes:selectedIndexes];
+
     [tableCharacterDevices reloadData];
+    [tableCharacterDevices deselectAll];
 
     _definitionEdited = YES;
 }
