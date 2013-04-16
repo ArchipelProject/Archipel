@@ -508,10 +508,12 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
         currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
 
     if ([currentVMCast isKindOfClass:TNVMCast])
-        [self removeAppliance];
+    {
+        if ([currentVMCast status] == TNArchipelApplianceInstalled)
+            [self removeAppliance];
+    }
     else if ([currentVMCast isKindOfClass:TNVMCastSource])
         [VMCastRegistrationController removeVMCast];
-
 }
 
 /*! ask hypervisor to add remove an Appliance. but before ask user if he is sure.
@@ -688,6 +690,16 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
     }
 
     return _contextualMenu;
+}
+
+/* Delegate of CPOutlineView for delete key event
+*/
+- (void)outlineViewDeleteKeyPressed:(CPOutlineView)anOutlineView
+{
+    if (anOutlineView != _mainOutlineView)
+        return;
+
+    [self remove:anOutlineView];
 }
 
 @end
