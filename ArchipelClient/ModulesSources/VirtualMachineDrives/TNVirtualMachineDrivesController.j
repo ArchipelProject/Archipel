@@ -482,6 +482,16 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     return _contextualMenu;
 }
 
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+        [self removeDisk:aTableView];
+}
+
 @end
 
 
