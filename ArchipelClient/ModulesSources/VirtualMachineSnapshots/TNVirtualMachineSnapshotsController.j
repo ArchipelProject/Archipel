@@ -671,6 +671,16 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     return _contextualMenu;
 }
 
+/* Delegate of CPOutlineView for delete key event
+*/
+- (void)outlineViewDeleteKeyPressed:(CPOutlineView)anOutlineView
+{
+    if ([anOutlineView numberOfSelectedRows] == 0)
+        return;
+
+    [self deleteSnapshot:anOutlineView];
+}
+
 @end
 
 
