@@ -85,7 +85,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
                               image:CPImageInBundle(@"IconsButtons/plus.png",nil, [CPBundle mainBundle])];
 
     [self addControlsWithIdentifier:TNModuleControlForUnSchedule
-                              title:CPBundleLocalizedString(@"Remove the selected scheduled action", @"Remove the selected scheduled action")
+                              title:CPBundleLocalizedString(@"Remove the selected scheduled action(s)", @"Remove the selected scheduled action(s)")
                              target:schedulerController
                              action:@selector(unschedule:)
                               image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
@@ -267,6 +267,15 @@ var TNModuleControlForSchedule                    = @"Schedule",
     return _contextualMenu;
 }
 
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+        [schedulerController unschedule:aTableView];
+}
 
 @end
 
