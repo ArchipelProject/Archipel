@@ -763,7 +763,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 
 /*! Delegate of CPTableView - This will be called when context menu is triggered with right click
 */
-- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
     var itemRow = [tableViewNetworks rowAtPoint:aRow];
     if ([tableViewNetworks selectedRow] != aRow)

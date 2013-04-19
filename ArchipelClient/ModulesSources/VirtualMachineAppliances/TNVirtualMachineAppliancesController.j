@@ -573,7 +573,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 
 /*! Delegate of CPTableView - This will be called when context menu is triggered with right click
 */
-- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow;
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
     if ([aTableView numberOfSelectedRows] > 1)
         return;
