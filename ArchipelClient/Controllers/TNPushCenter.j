@@ -111,11 +111,13 @@ var __defaultPushCenter;
         pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
         pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"],
         pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"],
-        infoDict    = [CPDictionary dictionaryWithObjectsAndKeys:   nodeOwner,  @"owner",
-                                                                    pushType,   @"type",
-                                                                    pushDate,   @"date",
-                                                                    pushChange, @"change",
-                                                                    aStanza,    @"rawStanza"];
+        infoDict    = @{
+                        @"owner"    :nodeOwner,
+                        @"type"     :pushType,
+                        @"date"     :pushDate,
+                        @"change"   :pushChange,
+                        @"rawStanza":aStanza
+                    };
 
     for (var i = 0; i < [_pubsubRegistrar count]; i++)
     {

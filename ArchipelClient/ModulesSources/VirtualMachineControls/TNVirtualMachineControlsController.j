@@ -150,11 +150,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsCpuUsageRefresh"], @"TNArchipelControlsCpuUsageRefresh",
-           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"], @"TNArchipelControlsMaxVCPUs",
-           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsScreenshotRefresh"], @"TNArchipelControlsScreenshotRefresh"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNArchipelControlsCpuUsageRefresh"  :[bundle objectForInfoDictionaryKey:@"TNArchipelControlsCpuUsageRefresh"],
+        @"TNArchipelControlsMaxVCPUs"         :[bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"],
+        @"TNArchipelControlsScreenshotRefresh":[bundle objectForInfoDictionaryKey:@"TNArchipelControlsScreenshotRefresh"]
+    }];
 
     [boxAdvancedCommands setCornerRadius:3.0];
 

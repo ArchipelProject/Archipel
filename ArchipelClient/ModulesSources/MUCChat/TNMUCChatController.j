@@ -127,10 +127,10 @@
 
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-        [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultService"], @"TNArchipelMUCDefaultService",
-        [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultRoom"], @"TNArchipelMUCDefaultRoom"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNArchipelMUCDefaultService":[bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultService"],
+        @"TNArchipelMUCDefaultRoom"   :[bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultRoom"]
+    }];
 }
 
 

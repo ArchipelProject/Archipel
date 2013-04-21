@@ -35,29 +35,31 @@
                         ]
                     isVertical:NO]];
 
-    return [CPDictionary dictionaryWithObjectsAndKeys:  [CPColor colorWithHexString:@"ccc"],    @"grid-color",
-                                                        bgImage,                                @"background-color",
-                                                        40,                                     @"header-height",
-                                                        headerBgImage,                          @"header-background-color",
-                                                        [CPFont boldSystemFontOfSize:11.0],     @"header-font",
-                                                        [CPColor colorWithHexString:@"333"],    @"header-text-color",
-                                                        [CPColor whiteColor],                   @"header-text-shadow-color",
-                                                        CGSizeMake(1.0, 1.0),                   @"header-text-shadow-offset",
-                                                        CPCenterTextAlignment,                  @"header-alignment",
-                                                        CGSizeMake(10, 7),                      @"header-button-offset",
-                                                        prevImage,                              @"header-prev-button-image",
-                                                        nextImage,                              @"header-next-button-image",
-                                                        25,                                     @"header-weekday-offset",
-                                                        [CPFont systemFontOfSize:9.0],          @"header-weekday-label-font",
-                                                        [CPColor colorWithWhite:0 alpha:0.57],  @"header-weekday-label-color",
-                                                        [CPColor colorWithWhite:1 alpha:0.8],   @"header-weekday-label-shadow-color",
-                                                        CGSizeMake(0.0, 1.0),                   @"header-weekday-label-shadow-offset",
-                                                        CGSizeMake(27, 21),                     @"tile-size",
-                                                        [CPFont boldSystemFontOfSize:11.0],     @"tile-font",
-                                                        [CPColor colorWithHexString:@"333"],    @"tile-text-color",
-                                                        [CPColor colorWithWhite:1 alpha:0.8],   @"tile-text-shadow-color",
-                                                        CGSizeMake(1.0, 1.0),                   @"tile-text-shadow-offset",
-                                                        bezelColor,                             @"tile-bezel-color"];
+    return @{
+                                                        @"grid-color"                        :[CPColor colorWithHexString:@"ccc"],
+                                                        @"background-color"                  :bgImage,
+                                                        @"header-height"                     :40,
+                                                        @"header-background-color"           :headerBgImage,
+                                                        @"header-font"                       :[CPFont boldSystemFontOfSize:11.0],
+                                                        @"header-text-color"                 :[CPColor colorWithHexString:@"333"],
+                                                        @"header-text-shadow-color"          :[CPColor whiteColor],
+                                                        @"header-text-shadow-offset"         :CGSizeMake(1.0, 1.0),
+                                                        @"header-alignment"                  :CPCenterTextAlignment,
+                                                        @"header-button-offset"              :CGSizeMake(10, 7),
+                                                        @"header-prev-button-image"          :prevImage,
+                                                        @"header-next-button-image"          :nextImage,
+                                                        @"header-weekday-offset"             :25,
+                                                        @"header-weekday-label-font"         :[CPFont systemFontOfSize:9.0],
+                                                        @"header-weekday-label-color"        :[CPColor colorWithWhite:0 alpha:0.57],
+                                                        @"header-weekday-label-shadow-color" :[CPColor colorWithWhite:1 alpha:0.8],
+                                                        @"header-weekday-label-shadow-offset":CGSizeMake(0.0, 1.0),
+                                                        @"tile-size"                         :CGSizeMake(27, 21),
+                                                        @"tile-font"                         :[CPFont boldSystemFontOfSize:11.0],
+                                                        @"tile-text-color"                   :[CPColor colorWithHexString:@"333"],
+                                                        @"tile-text-shadow-color"            :[CPColor colorWithWhite:1 alpha:0.8],
+                                                        @"tile-text-shadow-offset"           :CGSizeMake(1.0, 1.0),
+                                                        @"tile-bezel-color"                  :bezelColor
+            };
 }
 
 

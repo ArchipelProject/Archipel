@@ -104,11 +104,11 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
     [imageViewSecureConnection setImage:CPImageInBundle(@"secure.png", CGSizeMake(16.0, 16.0), bundle)];
 
     // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"], @"NOVNCPreferSSL",
-            [bundle objectForInfoDictionaryKey:@"NOVNCFBURate"], @"NOVNCFBURate",
-            [bundle objectForInfoDictionaryKey:@"NOVNCheckRate"], @"NOVNCheckRate"
-    ]];
+    [defaults registerDefaults:@{
+        @"NOVNCPreferSSL":[bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"],
+        @"NOVNCFBURate"  :[bundle objectForInfoDictionaryKey:@"NOVNCFBURate"],
+        @"NOVNCheckRate" :[bundle objectForInfoDictionaryKey:@"NOVNCheckRate"]
+    }];
 
     var imageBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]],
         imageZoomFit = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] size:CGSizeMake(16, 16)],

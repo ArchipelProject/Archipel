@@ -285,7 +285,7 @@
         var role        = [[_nodeRolesTemplates content] objectAtIndex:i],
             name        = [[role firstChildWithName:@"role"] valueForAttribute:@"name"],
             description = [[role firstChildWithName:@"role"] valueForAttribute:@"description"],
-            newRole     = [CPDictionary dictionaryWithObjectsAndKeys:name, @"name", description, @"description", CPOffState, @"state", role, @"role"];
+            newRole     = @{@"name":name,@"description":description, @"state":CPOffState, @"role":role};
 
         [_datasourceRoles addObject:newRole];
     }

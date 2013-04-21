@@ -258,20 +258,20 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         commonImageDarkBackground = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
 
     /* register defaults defaults */
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelXMPPResource"], @"TNArchipelXMPPResource",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
-            [bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"], @"TNHideOfflineContacts",
-            [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"], @"TNArchipelPropertyControllerEnabled",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelScrollersStyle"], @"TNArchipelScrollersStyle",
-            [CPDictionary dictionary], @"TNOutlineViewsExpandedGroups"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNArchipelVersion"                  :[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"],
+        @"TNArchipelModuleLoadingDelay"       :[bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"],
+        @"TNArchipelConsoleDebugLevel"        :[bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"],
+        @"TNArchipelXMPPResource"             :[bundle objectForInfoDictionaryKey:@"TNArchipelXMPPResource"],
+        @"TNArchipelUseAnimations"            :[bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"],
+        @"TNArchipelAutoCheckUpdate"          :[bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"],
+        @"TNArchipelMonitorStanza"            :[bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"],
+        @"TNHideOfflineContacts"              :[bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"],
+        @"CPBundleLocale"                     :[bundle objectForInfoDictionaryKey:@"CPBundleLocale"],
+        @"TNArchipelPropertyControllerEnabled":[bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"],
+        @"TNArchipelScrollersStyle"           :[bundle objectForInfoDictionaryKey:@"TNArchipelScrollersStyle"],
+        @"TNOutlineViewsExpandedGroups"       :[CPDictionary dictionary]
+    }];
 
     /* images */
     [imageViewLogoAbout setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-icon.png"]]];
@@ -1491,7 +1491,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [propertiesController reload];
 
     if (loadDelay == 0)
-        [self performModuleChange:[CPDictionary dictionaryWithObjectsAndKeys:item, @"userInfo"]]; // fake the timer
+        [self performModuleChange:@{@"userInfo":item}]; // fake the timer
     else
        _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }

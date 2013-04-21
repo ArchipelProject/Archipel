@@ -225,7 +225,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
                 comment         = [job valueForAttribute:@"comment"],
                 date            = [job valueForAttribute:@"date"],
 
-                newJob    = [CPDictionary dictionaryWithObjectsAndKeys:action, @"action", uid, @"uid", comment, @"comment", date, @"date"];
+                newJob    = @{@"action":action, @"uid":uid, @"comment":comment, @"date":date};
 
             [_datasourceJobs addObject:newJob];
         }

@@ -243,7 +243,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             [marker setDraggable:NO];
             [marker setClickable:YES];
             [marker setDelegate:self];
-            [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
+            [marker setUserInfo:@{@"rosterItem":item}];
             [marker addToMapView:_mainMapView];
             [_mainMapView setCenter:loc];
         }

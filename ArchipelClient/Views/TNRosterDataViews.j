@@ -128,7 +128,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
     _contact = aContact;
 
-    var opts = [CPDictionary dictionaryWithObjectsAndKeys:@"TNNoAvatarValueTransformer", CPValueTransformerNameBindingOption];
+    var opts = @{CPValueTransformerNameBindingOption:@"TNNoAvatarValueTransformer"};
 
     [name bind:@"objectValue" toObject:aContact withKeyPath:@"name" options:nil];
     [status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];

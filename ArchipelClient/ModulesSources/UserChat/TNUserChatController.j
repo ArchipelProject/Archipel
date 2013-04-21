@@ -89,10 +89,10 @@
     [buttonDetach setValue:inset forThemeAttribute:@"content-inset"];
 
     // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore",
-            [CPDictionary dictionary], @"TNUserChatMessageStore"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNUserChatMaxMessageStore":[bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"],
+        @"TNUserChatMessageStore"   :[CPDictionary dictionary]
+    }];
 
     _detachedChats = [CPDictionary dictionary];
     _messages = [CPArray array];
@@ -351,7 +351,7 @@
 {
     var color           = (aSender == @"me") ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
         date            = [CPDate date],
-        newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
+        newMessageDict  = @{@"name":aSender, @"message":aMessage, @"color":color, @"date":date},
         frame           = [[messagesScrollView documentView] frame],
         avatar          = nil,
         position        = nil;

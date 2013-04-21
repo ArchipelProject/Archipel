@@ -126,12 +126,12 @@ var TNHypervisorHealthControllerVMXImageEnabled,
         defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"], @"TNArchipelHealthRefreshStatsInterval",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"], @"TNArchipelHealthStatsHistoryCollectionSize",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"], @"TNArchipelHealthMaxLogEntry",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"], @"TNArchipelHealthAutoRefreshStats"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNArchipelHealthRefreshStatsInterval"      :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"],
+        @"TNArchipelHealthStatsHistoryCollectionSize":[bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"],
+        @"TNArchipelHealthMaxLogEntry"               :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"],
+        @"TNArchipelHealthAutoRefreshStats"          :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"]
+    }];
 
     TNHypervisorHealthControllerVMXImageEnabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-enabled.png"]];
     TNHypervisorHealthControllerVMXImageDisabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-disabled.png"]];
