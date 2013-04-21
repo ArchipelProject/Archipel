@@ -207,9 +207,7 @@ var TNModuleStatusImageReady,
 */
 - (CPMenuItem)menuItemWithIdentifier:(CPString)anIdentifier
 {
-    var item = [_contextualMenuItemRegistry objectForKey:anIdentifier];
-    [[item _menuItemView] highlight:NO]; // @TODO : Workaround for bug #1899 in Cappuccino
-    return item;
+    return [_contextualMenuItemRegistry objectForKey:anIdentifier];
 }
 
 /* return an array with all menu items
