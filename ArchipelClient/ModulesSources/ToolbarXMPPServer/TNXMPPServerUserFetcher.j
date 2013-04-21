@@ -57,10 +57,10 @@ var _iconEntityTypeHuman,
 + (void)initialize
 {
     var bundle = [CPBundle bundleForClass:TNXMPPServerUserFetcher];
-    _iconEntityTypeHuman = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CGSizeMake(16, 16)];
-    _iconEntityTypeVM = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CGSizeMake(16, 16)];
-    _iconEntityTypeHypervisor = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CGSizeMake(16, 16)];
-    _iconUserAdmin = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-admin.png"] size:CGSizeMake(16, 16)];
+    _iconEntityTypeHuman = CPImageInBundle(@"type-human.png", CGSizeMake(16, 16), bundle);
+    _iconEntityTypeVM = CPImageInBundle(@"type-vm.png", CGSizeMake(16, 16), bundle);
+    _iconEntityTypeHypervisor = CPImageInBundle(@"type-hypervisor.png", CGSizeMake(16, 16), bundle);
+    _iconUserAdmin = CPImageInBundle(@"user-admin.png", CGSizeMake(16, 16), bundle);
 }
 
 /*! Instaciate the class

@@ -498,6 +498,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     if (toolbarOnly)
     {
         currentModuleController = [[[aBundle principalClass] alloc] init];
+
+        [currentModuleController initializeModule];
         [currentModuleController setHasCIB:NO];
 
         [moduleToolbarItem setTarget:currentModuleController];
@@ -506,8 +508,9 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     else
     {
         currentModuleController = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
-
+        [currentModuleController initializeModule];
         [currentModuleController setHasCIB:YES];
+
         [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [[currentModuleController view] setBackgroundColor:_toolbarModuleBackgroundColor];
 
@@ -518,7 +521,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleIdentifier];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleIdentifier];
 
-    [currentModuleController initializeModule];
     [currentModuleController setFullscreen:isFullscreen];
     [currentModuleController setIdentifier:moduleIdentifier];
     [currentModuleController setLabel:moduleLabel];

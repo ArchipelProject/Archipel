@@ -42,9 +42,13 @@
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
-    TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",
-    TNArchipelXMPPUserAdminImage,
-    TNArchipelXMPPUserNormalImage;
+    TNArchipelTypeXMPPServerUsersUnregister         = @"unregister";
+
+var TNModuleControlForRegisterUser                  = @"RegisterUser",
+    TNModuleControlForUnregisterUser                = @"UnregisterUser",
+    TNModuleControlForGrantAdmin                    = @"GrantAdmin",
+    TNModuleControlForRevokeAdmin                   = @"RevokeAdmin";
+
 
 /*! @ingroup toolbarxmppserver
     XMPP user controller implementation
@@ -66,12 +70,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     id                          _delegate                       @accessors(property=delegate);
 
+    CPMenuItem                  _contextualMenu                 @accessors(property=contextualMenu);
+
     TNStropheContact            _entity;
     TNTableViewLazyDataSource   _datasourceUsers;
-    CPButton                    _addButton;
-    CPButton                    _deleteButton;
-    CPButton                    _grantAdminButton;
-    CPButton                    _revokeAdminButton;
     TNXMPPServerUserFetcher     _usersFetcher;
 }
 
@@ -81,45 +83,19 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CGSizeMake(16, 16)]];
+    [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
     // table users
     _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
     [_datasourceUsers setTable:tableUsers];
     [_datasourceUsers setSearchableKeyPaths:[@"name", @"JID"]];
     [tableUsers setDataSource:_datasourceUsers];
-
+    [tableUsers setDelegate:self];
     // user fetcher
     _usersFetcher = [[TNXMPPServerUserFetcher alloc] init];
     [_usersFetcher setDataSource:_datasourceUsers];
     [_usersFetcher setDelegate:self];
     [_usersFetcher setDisplaysOnlyHumans:YES];
-
-    _addButton = [CPButtonBar plusButton];
-    [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CGSizeMake(16, 16)]];
-    [_addButton setTarget:self];
-    [_addButton setAction:@selector(openRegisterUserWindow:)];
-    [_addButton setToolTip:CPBundleLocalizedString(@"Register a new user", @"Register a new user")];
-
-    _deleteButton = [CPButtonBar plusButton];
-    [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CGSizeMake(16, 16)]];
-    [_deleteButton setTarget:self];
-    [_deleteButton setAction:@selector(unregisterUser:)];
-    [_deleteButton setToolTip:CPBundleLocalizedString(@"Unregister selected users", @"Unregister selected users")];
-
-    _grantAdminButton = [CPButtonBar plusButton];
-    [_grantAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/star.png"] size:CGSizeMake(16, 16)]];
-    [_grantAdminButton setTarget:self];
-    [_grantAdminButton setAction:@selector(grantAdmin:)];
-    [_grantAdminButton setToolTip:CPBundleLocalizedString(@"Make selected users as admins", @"Make selected users as admins")];
-
-    _revokeAdminButton = [CPButtonBar minusButton];
-    [_revokeAdminButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unstar.png"] size:CGSizeMake(16, 16)]];
-    [_revokeAdminButton setTarget:self];
-    [_revokeAdminButton setAction:@selector(revokeAdmin:)];
-    [_revokeAdminButton setToolTip:CPBundleLocalizedString(@"Remove admin rights to selected users", @"Remove admin rights to selected users")];
-
-    [buttonBarControl setButtons:[_addButton, _deleteButton, _grantAdminButton, _revokeAdminButton]];
 
     [filterField setTarget:_datasourceUsers];
     [filterField setAction:@selector(filterObjects:)];
@@ -127,7 +103,22 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [fieldNewUserPassword setSecure:YES];
     [fieldNewUserPasswordConfirm setSecure:YES];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didAdminAccountsListUpdate:) name:TNPermissionsAdminListUpdatedNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(_didAdminAccountsListUpdate:)
+                                                     name:TNPermissionsAdminListUpdatedNotification
+                                                   object:nil];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(_didUsernameChanged:)
+                                                     name:CPControlTextDidChangeNotification
+                                                   object:fieldNewUserUsername];
+}
+
+/*! Called when the username is typped, this is to append the current selected domain
+*/
+- (void)_didUsernameChanged:(CPNotification)aNotification
+{
+    [fieldNewUserUsername setStringValue:[fieldNewUserUsername stringValue].split("@")[0] + @"@" + [[_entity JID] domain]];
 }
 
 /*! Called when the list of Admin accounts has been updated.
@@ -184,6 +175,41 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 #pragma mark -
 #pragma mark Utilities
 
+/*! populateViewWithControls - Add controls (buttonbarbuttons and contextual menu item) to the current controller.
+*/
+- (void)populateViewWithControls
+{
+        [_delegate addControlsWithIdentifier:TNModuleControlForRegisterUser
+                              title:CPBundleLocalizedString(@"Register a new user", @"Register a new user")
+                             target:self
+                             action:@selector(openRegisterUserWindow:)
+                              image:CPImageInBundle(@"IconsButtons/user-add.png",nil, [CPBundle mainBundle])];
+
+        [_delegate addControlsWithIdentifier:TNModuleControlForUnregisterUser
+                              title:CPBundleLocalizedString(@"Unregister selected user(s)", @"Unregister selected user(s)")
+                             target:self
+                             action:@selector(unregisterUser:)
+                              image:CPImageInBundle(@"IconsButtons/user-remove.png",nil, [CPBundle mainBundle])];
+
+        [_delegate addControlsWithIdentifier:TNModuleControlForGrantAdmin
+                              title:CPBundleLocalizedString(@"Grand selected user(s) as admin", @"Grand selected user(s) as admin")
+                             target:self
+                             action:@selector(grantAdmin:)
+                              image:CPImageInBundle(@"IconsButtons/star.png",nil, [CPBundle mainBundle])];
+
+        [_delegate addControlsWithIdentifier:TNModuleControlForRevokeAdmin
+                              title:CPBundleLocalizedString(@"Remove admin rights on selected user(s)", @"Remove admin rights on selected user(s)")
+                             target:self
+                             action:@selector(revokeAdmin:)
+                              image:CPImageInBundle(@"IconsButtons/unstar.png",nil, [CPBundle mainBundle])];
+
+        [buttonBarControl setButtons:[
+            [_delegate buttonWithIdentifier:TNModuleControlForRegisterUser],
+            [_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser],
+            [_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin],
+            [_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin]]];
+}
+
 /*! clean stuff when hidden
 */
 - (void)willHide
@@ -205,11 +231,11 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     // this will check against a non existing permissions
     // As these controls are only for admins, we don't really care about the permission
-    [_delegate setControl:_revokeAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
-    [_delegate setControl:_grantAdminButton enabledAccordingToPermissions:[@"dummy_permission"]];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin] enabledAccordingToPermissions:[@"dummy_permission"]];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin] enabledAccordingToPermissions:[@"dummy_permission"]];
 
-    [_delegate setControl:_addButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
-    [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
         [popoverNewUser close];
@@ -253,7 +279,17 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [fieldNewUserPasswordConfirm setStringValue:@""];
 
     [popoverNewUser close];
-    [popoverNewUser showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    if ([aSender isKindOfClass:CPMenuItem])
+    {
+        var rect = [tableUsers rectOfRow:[tableUsers selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [popoverNewUser showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableUsers preferredEdge:nil];
+    }
+    else
+        [popoverNewUser showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
     [popoverNewUser setDefaultButton:buttonCreate];
     [popoverNewUser makeFirstResponder:fieldNewUserUsername];
 }
@@ -452,6 +488,41 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 #pragma mark -
 #pragma mark Delegates
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    [_contextualMenu removeAllItems];
+
+    if ([aTableView numberOfSelectedRows] == 0)
+    {
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRegisterUser]];
+    }
+    else
+    {
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForUnregisterUser]];
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForGrantAdmin]];
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRevokeAdmin]];
+    }
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+  if ([aTableView numberOfSelectedRows] == 0)
+      return;
+
+  [self unregisterUser:aTableView];
+}
 
 /*! delegate of TNXMPPServerUserFetcher
 */
