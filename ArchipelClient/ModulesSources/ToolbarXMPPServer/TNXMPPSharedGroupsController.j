@@ -168,7 +168,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
                           image:CPImageInBundle(@"IconsButtons/group-add.png",nil, [CPBundle mainBundle])];
 
     [_delegate addControlsWithIdentifier:TNModuleControlForRemoveSharedGroup
-                          title:CPBundleLocalizedString(@"Delete selected shared group(s)", @"Delete selected shared group(s)")
+                          title:CPBundleLocalizedString(@"Delete selected shared group", @"Delete selected shared group")
                          target:self
                          action:@selector(deleteGroup:)
                           image:CPImageInBundle(@"IconsButtons/group-remove.png",nil, [CPBundle mainBundle])];
@@ -432,7 +432,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
                 name        = [group valueForAttribute:@"displayed_name"],
                 desc        = [group valueForAttribute:@"description"],
                 users       = [group childrenWithName:@"user"],
-                newItem     = [CPDictionary dictionaryWithObjects:[gid, name, desc, users] forKeys:[@"id", @"name", @"description", @"users"]];
+                newItem     = @{@"id":gid, @"name":name, @"description":desc, @"users":users};
             [_datasourceGroups addObject:newItem];
         }
 
@@ -599,7 +599,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
             for (var i = 0; i < [users count]; i++)
             {
                 var user    = [users objectAtIndex:i],
-                    newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"JID"]];
+                    newItem = @{@"JID":[user valueForAttribute:@"jid"]};
                 [_datasourceUsersInGroup addObject:newItem];
             }
             [tableUsersInGroup reloadData];

@@ -245,7 +245,7 @@ var _iconEntityTypeHuman,
             if ([[TNPermissionsCenter defaultCenter] isJIDInAdminList:jid])
                 userAdminIcon = _iconUserAdmin;
 
-            newItem = [CPDictionary dictionaryWithObjects:[name, jid, usertype, icon, userAdminIcon] forKeys:[@"name", @"JID", @"type", @"icon", @"admin"]]
+            newItem = @{@"name":name, @"JID":jid, @"type":usertype, @"icon":icon, @"admin":userAdminIcon}
 
             [_dataSource addObject:newItem];
         }
