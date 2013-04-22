@@ -33,9 +33,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
 + (void)initialize
 {
-    var bundle  = [CPBundle mainBundle];
-
-    TNRosterDataViewContactImageUnknownUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    TNRosterDataViewContactImageUnknownUser = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 }
 
 + (Class)transformedValueClass

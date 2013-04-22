@@ -61,8 +61,8 @@
 
     var bundle = [CPBundle mainBundle];
 
-    [_localAvatars setObject:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Avatars/RemoteAvatars/defaultvm.png"]] forKey:@"vm"];
-    [_localAvatars setObject:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Avatars/RemoteAvatars/defaulthypervisor.png"]] forKey:@"hypervisor"];
+    [_localAvatars setObject:CPImageInBundle(@"Avatars/RemoteAvatars/defaultvm.png", nil, bundle) forKey:@"vm"];
+    [_localAvatars setObject:CPImageInBundle(@"Avatars/RemoteAvatars/defaulthypervisor.png", nil, bundle) forKey:@"hypervisor"];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];

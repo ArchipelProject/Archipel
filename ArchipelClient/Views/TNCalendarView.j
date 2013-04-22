@@ -22,43 +22,37 @@
 
 + (id)themeAttributes
 {
-    var mainBundle = [CPBundle mainBundle],
-        bgImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/background.png"] size:CGSizeMake(1.0, 21.0)]],
-        headerBgImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/header-background.png"] size:CGSizeMake(182.0, 40.0)]],
-        prevImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/previous.png"] size:CGSizeMake(16.0, 16.0)]],
-        nextImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/next.png"] size:CGSizeMake(16.0, 16.0)]],
-        bezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-                        [
-                            [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/default-tile-bezel-left.png"] size:CGSizeMake(1.0, 21.0)],
-                            [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/default-tile-bezel-center.png"] size:CGSizeMake(21.0, 21.0)],
-                            nil
-                        ]
-                    isVertical:NO]];
+    var mainBundle    = [CPBundle mainBundle],
+        bgImage       = CPColorWithImages(@"LPCalendarView/background.png", 1.0, 21.0, mainBundle),
+        headerBgImage = CPColorWithImages(@"LPCalendarView/header-background.png", 182.0, 40.0, mainBundle),
+        prevImage     = CPColorWithImages(@"LPCalendarView/previous.png", 16.0, 16.0, mainBundle),
+        nextImage     = CPColorWithImages(@"LPCalendarView/next.png", 16.0, 16.0, mainBundle),
+        bezelColor    = CPColorWithImages([[@"LPCalendarView/default-tile-bezel-left.png", 1.0, 21.0, mainBundle], [@"LPCalendarView/default-tile-bezel-center.png", 21.0, 21.0, mainBundle], nil]);
 
     return @{
-                                                        @"grid-color"                        :[CPColor colorWithHexString:@"ccc"],
-                                                        @"background-color"                  :bgImage,
-                                                        @"header-height"                     :40,
-                                                        @"header-background-color"           :headerBgImage,
-                                                        @"header-font"                       :[CPFont boldSystemFontOfSize:11.0],
-                                                        @"header-text-color"                 :[CPColor colorWithHexString:@"333"],
-                                                        @"header-text-shadow-color"          :[CPColor whiteColor],
-                                                        @"header-text-shadow-offset"         :CGSizeMake(1.0, 1.0),
-                                                        @"header-alignment"                  :CPCenterTextAlignment,
-                                                        @"header-button-offset"              :CGSizeMake(10, 7),
-                                                        @"header-prev-button-image"          :prevImage,
-                                                        @"header-next-button-image"          :nextImage,
-                                                        @"header-weekday-offset"             :25,
-                                                        @"header-weekday-label-font"         :[CPFont systemFontOfSize:9.0],
-                                                        @"header-weekday-label-color"        :[CPColor colorWithWhite:0 alpha:0.57],
-                                                        @"header-weekday-label-shadow-color" :[CPColor colorWithWhite:1 alpha:0.8],
-                                                        @"header-weekday-label-shadow-offset":CGSizeMake(0.0, 1.0),
-                                                        @"tile-size"                         :CGSizeMake(27, 21),
-                                                        @"tile-font"                         :[CPFont boldSystemFontOfSize:11.0],
-                                                        @"tile-text-color"                   :[CPColor colorWithHexString:@"333"],
-                                                        @"tile-text-shadow-color"            :[CPColor colorWithWhite:1 alpha:0.8],
-                                                        @"tile-text-shadow-offset"           :CGSizeMake(1.0, 1.0),
-                                                        @"tile-bezel-color"                  :bezelColor
+            @"grid-color"                        :[CPColor colorWithHexString:@"ccc"],
+            @"background-color"                  :bgImage,
+            @"header-height"                     :40,
+            @"header-background-color"           :headerBgImage,
+            @"header-font"                       :[CPFont boldSystemFontOfSize:11.0],
+            @"header-text-color"                 :[CPColor colorWithHexString:@"333"],
+            @"header-text-shadow-color"          :[CPColor whiteColor],
+            @"header-text-shadow-offset"         :CGSizeMake(1.0, 1.0),
+            @"header-alignment"                  :CPCenterTextAlignment,
+            @"header-button-offset"              :CGSizeMake(10, 7),
+            @"header-prev-button-image"          :prevImage,
+            @"header-next-button-image"          :nextImage,
+            @"header-weekday-offset"             :25,
+            @"header-weekday-label-font"         :[CPFont systemFontOfSize:9.0],
+            @"header-weekday-label-color"        :[CPColor colorWithWhite:0 alpha:0.57],
+            @"header-weekday-label-shadow-color" :[CPColor colorWithWhite:1 alpha:0.8],
+            @"header-weekday-label-shadow-offset":CGSizeMake(0.0, 1.0),
+            @"tile-size"                         :CGSizeMake(27, 21),
+            @"tile-font"                         :[CPFont boldSystemFontOfSize:11.0],
+            @"tile-text-color"                   :[CPColor colorWithHexString:@"333"],
+            @"tile-text-shadow-color"            :[CPColor colorWithWhite:1 alpha:0.8],
+            @"tile-text-shadow-offset"           :CGSizeMake(1.0, 1.0),
+            @"tile-bezel-color"                  :bezelColor
             };
 }
 
@@ -70,35 +64,11 @@
 
     if (self = [super initWithFrame:aFrame])
     {
-        var mainBundle  = [CPBundle mainBundle],
-            highlightedBezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-                    [
-                        nil,
-                        [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/highlighted-tile-bezel.png"] size:CGSizeMake(21.0, 21.0)],
-                        nil
-                    ]
-                isVertical:NO]],
-            selectedBezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-                    [
-                        nil,
-                        [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/selected-tile-bezel.png"] size:CGSizeMake(15.0, 15.0)],
-                        nil
-                    ]
-                isVertical:NO]],
-            selectedHighlightedBezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-                    [
-                        nil,
-                        [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/selected-highlighted-tile-bezel.png"] size:CGSizeMake(15.0, 15.0)],
-                        nil
-                    ]
-                isVertical:NO]],
-            disabledSelectedBezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-                    [
-                        nil,
-                        [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPCalendarView/selected-disabled-tile-bezel.png"] size:CGSizeMake(21.0, 21.0)],
-                        nil
-                    ]
-                isVertical:NO]];
+        var mainBundle                    = [CPBundle mainBundle],
+            highlightedBezelColor         = CPColorWithImages([nil, [@"LPCalendarView/highlighted-tile-bezel.png",          21.0, 21.0, mainBundle], nil]),
+            selectedBezelColor            = CPColorWithImages([nil, [@"LPCalendarView/selected-tile-bezel.png",             15.0, 15.0, mainBundle], nil]),
+            selectedHighlightedBezelColor = CPColorWithImages([nil, [@"LPCalendarView/selected-highlighted-tile-bezel.png", 15.0, 15.0, mainBundle], nil]),
+            disabledSelectedBezelColor    = CPColorWithImages([nil, [@"LPCalendarView/selected-disabled-tile-bezel.png",    21.0, 21.0, mainBundle], nil]);
 
         [self setValue:highlightedBezelColor forThemeAttribute:@"tile-bezel-color" inState:CPThemeStateHighlighted];
         [self setValue:[CPColor colorWithHexString:@"555"] forThemeAttribute:@"tile-text-color" inState:CPThemeStateHighlighted];

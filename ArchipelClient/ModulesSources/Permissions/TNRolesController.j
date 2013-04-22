@@ -70,7 +70,7 @@
     [tableRoles setDataSource:_datasourceRoles];
 
     var buttonDelete = [CPButtonBar plusButton];
-    [buttonDelete setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CGSizeMake(16, 16)]];
+    [buttonDelete setImage:CPImageInBundle(@"IconsButtons/minus.png", CGSizeMake(16, 16), [CPBundle mainBundle])];
     [buttonDelete setTarget:self];
     [buttonDelete setAction:@selector(deleteSelectedRole:)];
 

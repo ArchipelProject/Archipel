@@ -290,7 +290,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [VMManagerController setDelegate:self];
     [VMParkingController setDelegate:self];
 
-    TNHypervisorVMCreationControllerLibvirtIcon = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"libvirt-icon.png"]];
+    TNHypervisorVMCreationControllerLibvirtIcon = CPImageInBundle(@"libvirt-icon.png", nil, [CPBundle bundleForClass:[self class]]);
 }
 
 

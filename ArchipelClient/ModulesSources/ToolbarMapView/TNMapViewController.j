@@ -87,12 +87,12 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (id)awakeFromCib
 {
     var posy,
-        defaults    = [CPUserDefaults standardUserDefaults],
-        bundle      = [CPBundle bundleForClass:[self class]],
-        gradBG      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
+        defaults         = [CPUserDefaults standardUserDefaults],
+        bundle           = [CPBundle bundleForClass:[self class]],
+        gradBGColor      = CPColorWithImages(@"gradientbg.png", nil, nil, bundle);
 
-    [viewOrigin setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
-    [viewDestination setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
+    [viewOrigin setBackgroundColor:gradBGColor];
+    [viewDestination setBackgroundColor:gradBGColor];
 
     [textFieldOriginNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldDestinationNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];

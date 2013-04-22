@@ -490,8 +490,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleToolTip = [moduleToolTip objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
 
     [moduleToolbarItem setLabel:moduleLabel];
-    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CGSizeMake(32, 32)]];
-    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CGSizeMake(32, 32)]];
+    [moduleToolbarItem setImage:CPImageInBundle(@"icon.png", CGSizeMake(32, 32), aBundle)];
+    [moduleToolbarItem setAlternateImage:CPImageInBundle(@"icon-alt.png", CGSizeMake(32, 32), aBundle)];
     [moduleToolbarItem setToolTip:moduleToolTip];
 
     // if toolbar item only, no cib

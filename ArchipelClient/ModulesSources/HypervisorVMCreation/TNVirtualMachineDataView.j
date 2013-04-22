@@ -64,8 +64,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
 
 + (void)initialize
 {
-    var bundle = [CPBundle mainBundle];
-    TNVirtualMachineDataViewAvatarUnknown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    TNVirtualMachineDataViewAvatarUnknown = CPImageInBundle(@"user-unknown.png", nil , [CPBundle mainBundle]);
 }
 
 - (void)shouldHideLabels:(BOOL)shouldHide

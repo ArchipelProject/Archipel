@@ -106,18 +106,18 @@
 
     _audioTagReceive = [[CPSound alloc] initWithContentsOfFile:sound byReference:NO];
 
-    [viewMessage setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]]]];
-    [viewConferenceInfo setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-info.png"]]]];
+    [viewMessage setBackgroundColor:CPColorWithImages(@"bg-controls.png", nil, nil, bundle)];
+    [viewConferenceInfo setBackgroundColor:CPColorWithImages(@"bg-info.png", nil, nil, bundle)];
     [viewConferenceInfo applyShadow];
 
     _toolbarItemImages = [
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon.png"] size:CGSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon-x.png"] size:CGSizeMake(32,32)]
+        CPImageInBundle(@"icon.png", CGSizeMake(32,32), bundle),
+        CPImageInBundle(@"icon-x.png", CGSizeMake(32,32), bundle),
+        CPImageInBundle(@"icon-x.png", CGSizeMake(32,32), bundle),
+        CPImageInBundle(@"icon-x.png", CGSizeMake(32,32), bundle),
+        CPImageInBundle(@"icon-x.png", CGSizeMake(32,32), bundle),
+        CPImageInBundle(@"icon-x.png", CGSizeMake(32,32), bundle),
+        CPImageInBundle(@"icon-x.png", CGSizeMake(32,32), bundle)
     ];
 
     _numberOfNotices = 0;

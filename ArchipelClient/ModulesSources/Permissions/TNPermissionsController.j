@@ -98,10 +98,10 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 - (void)awakeFromCib
 {
     _currentUserPermissions = [CPArray array];
-    _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
+    _defaultAvatar          = CPImageInBundle(@"user-unknown.png", nil [CPBundle mainBundle]);
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CGSizeMake(16, 16)]];
+    [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
     [splitView setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -171,10 +171,10 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
     [filterRosterUsers setTarget:_datasourceRosterUsers];
     [filterRosterUsers setAction:@selector(filterObjects:)];
 
-    var filterBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/background-filter.png"]];
-    [[filterUsers superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
-    [[filterRosterUsers superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
-    [[filterField superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
+    var filterBgColor = CPColorWithImages(@"Backgrounds/background-filter.png", nil, nil, [CPBundle mainBundle]);
+    [[filterUsers superview] setBackgroundColor:filterBgColor];
+    [[filterRosterUsers superview] setBackgroundColor:filterBgColor];
+    [[filterField superview] setBackgroundColor:filterBgColor];
 }
 
 

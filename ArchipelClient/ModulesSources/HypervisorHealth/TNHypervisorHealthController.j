@@ -122,7 +122,7 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
-        spinner     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]],
+        spinner     = CPImageInBundle(@"loading.gif", nil, bundle),
         defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults
@@ -133,8 +133,8 @@ var TNHypervisorHealthControllerVMXImageEnabled,
         @"TNArchipelHealthAutoRefreshStats"          :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"]
     }];
 
-    TNHypervisorHealthControllerVMXImageEnabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-enabled.png"]];
-    TNHypervisorHealthControllerVMXImageDisabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-disabled.png"]];
+    TNHypervisorHealthControllerVMXImageEnabled = CPImageInBundle(@"vmx-enabled.png", nil , bundle);
+    TNHypervisorHealthControllerVMXImageDisabled = CPImageInBundle(@"vmx-disabled.png", nil , bundle);
     [imageVMX setImage:TNHypervisorHealthControllerVMXImageDisabled];
 
     [imageCPULoading setImage:spinner];

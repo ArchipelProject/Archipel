@@ -147,6 +147,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
+        mainBundle  = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults defaults
@@ -167,11 +168,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [stepperCPU setAutorepeat:NO];
     [fieldInfoConsumedCPU setStringValue:"..."];
 
-    _imagePlay      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
-    _imageStop      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
-    _imageDestroy   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/destroy.png"] size:CGSizeMake(16, 16)];
-    _imagePause     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(16, 16)];
-    _imageReboot    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reboot.png"] size:CGSizeMake(16, 16)];
+    _imagePlay      = CPImageInBundle(@"IconsButtons/play.png", CGSizeMake(16, 16), mainBundle);
+    _imageStop      = CPImageInBundle(@"IconsButtons/stop.png", CGSizeMake(16, 16), mainBundle);
+    _imageDestroy   = CPImageInBundle(@"IconsButtons/destroy.png", CGSizeMake(16, 16), mainBundle);
+    _imagePause     = CPImageInBundle(@"IconsButtons/pause.png", CGSizeMake(16, 16), mainBundle);
+    _imageReboot    = CPImageInBundle(@"IconsButtons/reboot.png", CGSizeMake(16, 16), mainBundle);
 
     [buttonBarTransport setSegmentCount:5];
     [buttonBarTransport setLabel:CPBundleLocalizedString(@"Play", @"Play") forSegment:TNArchipelTransportBarPlay];
@@ -208,7 +209,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     // button bar migration
     _migrateButton  = [CPButtonBar plusButton];
-    [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CGSizeMake(16, 16)]];
+    [_migrateButton setImage:CPImageInBundle(@"IconsButtons/migrate.png", CGSizeMake(16, 16), mainBundle)];
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
     [_migrateButton setEnabled:NO];
@@ -222,7 +223,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
 
     // screenshot image
-    _imageScreenShutDown = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdown.png"] size:CGSizeMake(216, 162)];
+    _imageScreenShutDown = CPImageInBundle(@"shutdown.png", CGSizeMake(216, 162), bundle);
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
     buttonScreenshot._DOMElement.style.borderRadius = "5px";

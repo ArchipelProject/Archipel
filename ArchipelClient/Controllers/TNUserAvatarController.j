@@ -78,7 +78,7 @@
     for (var i = 0; i < [avatarsArray count]; i++)
     {
         var avatarInfo  = [avatarsArray objectAtIndex:i],
-            image       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:[avatarInfo objectForKey:@"path"]] size:TNUserAvatarSize];
+            image       = CPImageInBundle([avatarInfo objectForKey:@"path"], TNUserAvatarSize, bundle);
 
         [_avatars setObject:image forKey:[avatarInfo objectForKey:@"name"]];
 
