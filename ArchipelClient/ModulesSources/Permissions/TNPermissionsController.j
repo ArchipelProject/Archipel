@@ -98,7 +98,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 - (void)awakeFromCib
 {
     _currentUserPermissions = [CPArray array];
-    _defaultAvatar          = CPImageInBundle(@"user-unknown.png", nil [CPBundle mainBundle]);
+    _defaultAvatar          = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];

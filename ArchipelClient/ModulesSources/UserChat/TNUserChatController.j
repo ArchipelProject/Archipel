@@ -72,13 +72,13 @@
     var bundle      = [CPBundle bundleForClass:[self class]],
         mainBundle  = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
-        frame       = [[messagesScrollView contentView] bounds],
+        frame       = [[messagesScrollView contentView] bounds];
 
     [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", nil, nil, bundle)];
 
     //controls buttons
-    var imageClear  = CPImageInBundle(@"IconsButtons/clean.png", CGSizeMake(16, 16), mainBundle],
-        imageDetach = CPImageInBundle(@"IconsButtons/fullscreen.png", CGSizeMake(16, 16), mainBundle];
+    var imageClear  = CPImageInBundle(@"IconsButtons/clean.png", CGSizeMake(16, 16), mainBundle),
+        imageDetach = CPImageInBundle(@"IconsButtons/fullscreen.png", CGSizeMake(16, 16), mainBundle);
 
     [buttonClear setImage:imageClear];
     [buttonDetach setImage:imageDetach];
