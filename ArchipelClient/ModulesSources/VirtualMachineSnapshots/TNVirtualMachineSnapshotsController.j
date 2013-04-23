@@ -659,7 +659,7 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     if ([anOutlineView selectedRow] != itemRow)
         [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
 
-    if([anOutlineView numberOfSelectedRows] == 0)
+    if ([anOutlineView numberOfSelectedRows] == 0)
         {
            [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForTakeSnapshot]];
         }

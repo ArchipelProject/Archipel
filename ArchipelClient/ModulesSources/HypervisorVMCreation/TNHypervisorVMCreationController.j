@@ -1032,7 +1032,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
   if ([aTableView numberOfSelectedRows] == 0)
       return;
 
-  switch(aTableView)
+  switch (aTableView)
   {
     case tableVirtualMachines:
       [self deleteVirtualMachine:aTableView];

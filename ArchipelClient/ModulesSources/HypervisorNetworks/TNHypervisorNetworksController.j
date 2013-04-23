@@ -816,3 +816,4 @@ function CPBundleLocalizedString(key, comment)
 {
     return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNHypervisorNetworksController], comment);
 }
+

@@ -667,7 +667,7 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
 
     [_contextualMenu removeAllItems];
 
-    if([anOutlineView numberOfSelectedRows] == 0)
+    if ([anOutlineView numberOfSelectedRows] == 0)
     {
        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRegisterVmCast]];
        return _contextualMenu;
