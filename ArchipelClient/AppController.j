@@ -189,7 +189,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPImage                                     _imageLedNoData;
     CPImage                                     _imageLedOutData;
     CPMenu                                      _mainMenu;
-    CPMenu                                      _modulesMenu;
     CPMenu                                      _rosterMenuForContacts;
     CPMenu                                      _rosterMenuForGroups;
     CPPlatformWindow                            _platformHelpWindow;
@@ -255,27 +254,26 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
 
-    var commonImageModuleBackground = [CPColor colorWithHexString:@"F6F6F6"],
-        commonImageDarkBackground = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
+    var commonImageModuleBackground = [CPColor colorWithHexString:@"F6F6F6"];
 
     /* register defaults defaults */
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelXMPPResource"], @"TNArchipelXMPPResource",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
-            [bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"], @"TNHideOfflineContacts",
-            [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"], @"TNArchipelPropertyControllerEnabled",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelScrollersStyle"], @"TNArchipelScrollersStyle",
-            [CPDictionary dictionary], @"TNOutlineViewsExpandedGroups"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNArchipelVersion"                  :[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"],
+        @"TNArchipelModuleLoadingDelay"       :[bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"],
+        @"TNArchipelConsoleDebugLevel"        :[bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"],
+        @"TNArchipelXMPPResource"             :[bundle objectForInfoDictionaryKey:@"TNArchipelXMPPResource"],
+        @"TNArchipelUseAnimations"            :[bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"],
+        @"TNArchipelAutoCheckUpdate"          :[bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"],
+        @"TNArchipelMonitorStanza"            :[bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"],
+        @"TNHideOfflineContacts"              :[bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"],
+        @"CPBundleLocale"                     :[bundle objectForInfoDictionaryKey:@"CPBundleLocale"],
+        @"TNArchipelPropertyControllerEnabled":[bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"],
+        @"TNArchipelScrollersStyle"           :[bundle objectForInfoDictionaryKey:@"TNArchipelScrollersStyle"],
+        @"TNOutlineViewsExpandedGroups"       :[CPDictionary dictionary]
+    }];
 
     /* images */
-    [imageViewLogoAbout setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-icon.png"]]];
+    [imageViewLogoAbout setImage:CPImageInBundle(@"Backgrounds/background-icon.png", nil, bundle)];
     [viewAboutWindowLogoContainer setBackgroundColor:[CPColor blackColor]];
 
     /* main split views */
@@ -329,7 +327,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     /* left view */
     [leftView addSubview:_outlineScrollView];
-    [leftView setBackgroundColor:[CPColor colorWithPatternImage:commonImageDarkBackground]];
+    [leftView setBackgroundColor:CPColorWithImages(@"Backgrounds/dark-bg.png", nil, nil, bundle)];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
@@ -368,7 +366,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
-    [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]]]];
+
+    [filterView setBackgroundColor:CPColorWithImages(@"Backgrounds/background-filter.png", nil, nil, bundle)];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
 
@@ -378,9 +377,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     /* traffic LEDs */
     CPLog.trace(@"Initializing the traffic status LED");
-    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green.png"] size:CGSizeMake(8.0, 8.0)];
-    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange.png"] size:CGSizeMake(8.0, 8.0)];
-    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/gray.png"] size:CGSizeMake(8.0, 8.0)];
+    _imageLedInData = CPImageInBundle(@"IconsStatus/green.png", CGSizeMake(8.0, 8.0), bundle);
+    _imageLedOutData = CPImageInBundle(@"IconsStatus/orange.png", CGSizeMake(8.0, 8.0), bundle);
+    _imageLedNoData = CPImageInBundle(@"IconsStatus/gray.png", CGSizeMake(8.0, 8.0), bundle);
 
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
@@ -419,7 +418,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [moduleController setInfoTextField:_rightViewTextField];
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
-    [moduleController setModulesMenu:_modulesMenu];
     [moduleController setRosterGroupsMenu:_rosterMenuForGroups];
     [moduleController setRosterContactsMenu:_rosterMenuForContacts];
     [moduleController setToolbarModuleBackgroundColor:commonImageModuleBackground];
@@ -428,7 +426,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
 
     /* status bar */
-    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/statusbar-bg.png"]]]];
+    [statusBar setBackgroundColor:CPColorWithImages(@"Backgrounds/statusbar-bg.png", nil, nil, bundle)];
     [statusBar applyShadow:[CPColor colorWithHexString:@"f3f3f3"] offset:CGSizeMake(0.0, 1.0)];
 
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
@@ -465,7 +463,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         contactsItem    = [_mainMenu addItemWithTitle:CPLocalizedString(@"Contacts", @"Contact") action:nil keyEquivalent:@""],
         groupsItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Groups", @"Groups") action:nil keyEquivalent:@""],
         navigationItem  = [_mainMenu addItemWithTitle:CPLocalizedString(@"Navigation", @"Navigation") action:nil keyEquivalent:@""],
-        moduleItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Modules", @"Modules") action:nil keyEquivalent:@""],
         helpItem        = [_mainMenu addItemWithTitle:CPLocalizedString(@"Help", @"Help") action:nil keyEquivalent:@""],
         archipelMenu    = [[CPMenu alloc] init],
         editMenuItem    = [[CPMenu alloc] init],
@@ -540,11 +537,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [[navigationMenu addItemWithTitle:CPLocalizedString(@"Toggle tag view", @"Toggle tag view") action:@selector(toolbarItemTagsClick:) keyEquivalent:@"T"] setTarget:self];
 
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
-
-    // Modules
-    _modulesMenu = [[CPMenu alloc] init];
-    [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
-    [moduleItem setEnabled:NO];
 
     // help
     [[helpMenu addItemWithTitle:CPLocalizedString(@"Archipel Help", @"Archipel Help") action:@selector(openWiki:) keyEquivalent:@"?"] setTarget:self];
@@ -625,19 +617,19 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/green-large.png"] size:CGSizeMake(10.0, 8.0)]];
+    [availableItem setImage:CPImageInBundle(@"IconsStatus/green-large.png", CGSizeMake(10.0, 8.0), bundle)];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/orange-large.png"] size:CGSizeMake(10.0, 8.0)]];
+    [awayItem setImage:CPImageInBundle(@"IconsStatus/orange-large.png", CGSizeMake(10.0, 8.0), bundle)];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/red-large.png"] size:CGSizeMake(10.0, 8.0)]];
+    [busyItem setImage:CPImageInBundle(@"IconsStatus/red-large.png", CGSizeMake(10.0, 8.0), bundle)];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/black-large.png"] size:CGSizeMake(10.0, 8.0)]];
+    [DNDItem setImage:CPImageInBundle(@"IconsStatus/black-large.png", CGSizeMake(10.0, 8.0), bundle)];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CGSizeMake(123.0, 25.0)];
@@ -673,7 +665,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_userAvatarButton setAction:@selector(toolbarItemAvatarClick:)];
     [_userAvatarButton setMenu:userAvatarMenu];
     [_userAvatarButton setValue:CPScaleProportionally forThemeAttribute:@"image-scaling"];
-    [_userAvatarButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"] size:TNUserAvatarSize]];
+    [_userAvatarButton setImage:CPImageInBundle(@"user-unknown.png", TNUserAvatarSize, bundle)];
 
     [[_mainToolbar customSubViews] addObject:_userAvatarButton];
     [_mainToolbar reloadToolbarItems];
@@ -689,21 +681,21 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
-        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(1, 26)],
-        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
-        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(1, 26)],
-        buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
-        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(1, 26)],
-        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
-        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(1, 26)],
-        buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
+    var bezelColor              = CPColorWithImages(@"TNButtonBar/buttonBarBackground.png", CGSizeMake(1, 27), bundle),
+        leftBezel               = CPImageInBundle(@"TNButtonBar/buttonBarLeftBezel.png", CGSizeMake(1, 26), bundle),
+        centerBezel             = CPImageInBundle(@"TNButtonBar/buttonBarCenterBezel.png", CGSizeMake(1, 26), bundle),
+        rightBezel              = CPImageInBundle(@"TNButtonBar/buttonBarRightBezel.png", CGSizeMake(1, 26), bundle),
+        buttonBezel             = CPColorWithImages([leftBezel, centerBezel, rightBezel]),
+        leftBezelHighlighted    = CPImageInBundle(@"TNButtonBar/buttonBarLeftBezelHighlighted.png", CGSizeMake(1, 26), bundle),
+        centerBezelHighlighted  = CPImageInBundle(@"TNButtonBar/buttonBarCenterBezelHighlighted.png", CGSizeMake(1, 26), bundle),
+        rightBezelHighlighted   = CPImageInBundle(@"TNButtonBar/buttonBarRightBezelHighlighted.png", CGSizeMake(1, 26), bundle),
+        buttonBezelHighlighted  = CPColorWithImages([leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted]),
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
     _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CGSizeMake(20, 20)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CGSizeMake(20, 20)];
+    _hideButtonImageEnable  = CPImageInBundle(@"IconsButtonBar/show.png", CGSizeMake(20, 20), bundle);
+    _hideButtonImageDisable = CPImageInBundle(@"IconsButtonBar/hide.png", CGSizeMake(20, 20), bundle);
 
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
@@ -711,14 +703,14 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CGRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CGSizeMake(20, 20)]];
+    [_plusButton setImage:CPImageInBundle(@"IconsButtonBar/plus.png", CGSizeMake(20, 20), bundle)];
     [[plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@"C"] setTarget:self];
     [[plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@"D"] setTarget:self];
     [_plusButton setMenu:plusMenu];
     [_plusButton setToolTip:CPLocalizedString(@"Add a new contact or group", @"Add a new contact or group")];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CGSizeMake(20, 20)]];
+    [minusButton setImage:CPImageInBundle(@"IconsButtonBar/minus.png", CGSizeMake(20, 20), bundle)];
     [minusButton setAction:@selector(deleteEntities:)];
     [minusButton setToolTip:CPLocalizedString(@"Delete selected contacts or groups", @"Delete selected contacts or groups")];
 
@@ -1499,7 +1491,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [propertiesController reload];
 
     if (loadDelay == 0)
-        [self performModuleChange:[CPDictionary dictionaryWithObjectsAndKeys:item, @"userInfo"]]; // fake the timer
+        [self performModuleChange:@{@"userInfo":item}]; // fake the timer
     else
        _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }
@@ -1543,7 +1535,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     if (anOutlineView != _rosterOutlineView)
         return;
 
-    if ([anOutlineView numberOfSelectedRows] != 1)
+    if ([anOutlineView numberOfSelectedRows] == 0)
         return;
 
     var itemRow = [_rosterOutlineView rowForItem:anItem];
@@ -1554,6 +1546,19 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
         return _rosterMenuForContacts;
     else if ([anItem isKindOfClass:TNStropheGroup])
         return _rosterMenuForGroups;
+}
+
+/* Delegate of CPOutlineView for delete key event
+*/
+- (void)outlineViewDeleteKeyPressed:(CPOutlineView)anOutlineView
+{
+    if (anOutlineView != _rosterOutlineView)
+        return;
+
+    if ([anOutlineView numberOfSelectedRows] == 0)
+        return;
+
+    [self deleteEntities:anOutlineView];
 }
 
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults

@@ -46,8 +46,7 @@
 {
     if (self = [super init])
     {
-        var bundle      = [CPBundle mainBundle];
-        _currentIcon    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CGSizeMake(16, 16)];
+        _currentIcon    = CPImageInBundle(@"IconsButtons/check.png", CGSizeMake(16, 16), [CPBundle mainBundle]);
     }
 
     return self;

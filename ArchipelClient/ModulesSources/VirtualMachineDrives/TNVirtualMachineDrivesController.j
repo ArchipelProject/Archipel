@@ -46,6 +46,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelPushNotificationAppliance     = @"archipel:push:vmcasting",
     TNArchipelPushNotificationDiskCreated   = @"created";
 
+var TNModuleControlForAddDisk                 = @"AddDisk",
+    TNModuleControlForRemoveDisk              = @"RemoveDisk",
+    TNModuleControlForEditDisk                = @"EditDisk";
+
 TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
 /*! @defgroup  virtualmachinedrives Module VirtualMachine Drives
@@ -65,10 +69,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     @outlet TNDriveDataView         dataViewDrivePrototype;
     @outlet CPTableView             tableMedias;
     BOOL                            _isEntityOnline               @accessors(getter=isEntityOnline);
-
-    CPButton                        _editButton;
-    CPButton                        _minusButton;
-    CPButton                        _plusButton;
 
     id                              _registredDiskListeningId;
     TNTableViewDataSource           _mediasDatasource;
@@ -101,25 +101,28 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [fieldFilter setTarget:_mediasDatasource];
     [fieldFilter setAction:@selector(filterObjects:)];
 
-    _plusButton  = [CPButtonBar plusButton];
-    [_plusButton setTarget:self];
-    [_plusButton setAction:@selector(openNewDiskWindow:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new disk", @"Create a new disk")];
+    [self addControlsWithIdentifier:TNModuleControlForAddDisk
+                              title:CPBundleLocalizedString(@"Create a new disk", @"Create a new disk")
+                             target:self
+                             action:@selector(openNewDiskWindow:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, [CPBundle mainBundle])];
 
-    _minusButton  = [CPButtonBar minusButton];
-    [_minusButton setTarget:self];
-    [_minusButton setAction:@selector(removeDisk:)];
-    [_minusButton setEnabled:NO];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected disks", @"Delete selected disks")];
+    [self addControlsWithIdentifier:TNModuleControlForRemoveDisk
+                              title:CPBundleLocalizedString(@"Delete selected disk(s)", @"Delete selected disk(s)")
+                             target:self
+                             action:@selector(removeDisk:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
 
-    _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButton setTarget:self];
-    [_editButton setAction:@selector(openEditWindow:)];
-    [_editButton setEnabled:NO];
-    [_editButton setToolTip:CPBundleLocalizedString(@"Edit selected disk", @"Edit selected disk")]
+    [self addControlsWithIdentifier:TNModuleControlForEditDisk
+                              title:CPBundleLocalizedString(@"Edit selected disk", @"Edit selected disk")
+                             target:self
+                             action:@selector(openEditWindow:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, [CPBundle mainBundle])];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForAddDisk],
+        [self buttonWithIdentifier:TNModuleControlForRemoveDisk],
+        [self buttonWithIdentifier:TNModuleControlForEditDisk]]];
 
     [newDriveController setDelegate:self];
     [editDriveController setDelegate:self];
@@ -176,16 +179,6 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [newDriveController closeWindow:nil];
 
     [super willHide];
-}
-
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create a drive", @"Create a drive") action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive") action:@selector(openEditWindow:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected drive", @"Delete selected drive") action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when user permissions changed
@@ -285,7 +278,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     if (![self isVisible])
         return;
 
-    [newDriveController openWindow:_plusButton];
+    [newDriveController openWindow:[self buttonWithIdentifier:TNModuleControlForAddDisk]];
 }
 
 /*! opens the rename window
@@ -324,10 +317,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
         [editDriveController setCurrentEditedDisk:diskObject];
 
-        if ([aSender isKindOfClass:CPMenuItem])
-            aSender = _editButton;
-
-        [editDriveController openWindow:aSender];
+        [editDriveController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableMedias : aSender];
     }
 }
 
@@ -456,11 +446,51 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
-    [self setControl:_plusButton enabledAccordingToPermission:@"drives_create"];
-    [self setControl:_minusButton enabledAccordingToPermission:@"drives_delete" specialCondition:([tableMedias numberOfSelectedRows] > 0)];
-    [self setControl:_editButton enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([tableMedias numberOfSelectedRows] > 0)];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForAddDisk] enabledAccordingToPermission:@"drives_create"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveDisk] enabledAccordingToPermission:@"drives_delete" specialCondition:([tableMedias numberOfSelectedRows] > 0)];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForEditDisk] enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([tableMedias numberOfSelectedRows] > 0)];
 }
 
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    [_contextualMenu removeAllItems];
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    if ([aTableView numberOfSelectedRows] > 1)
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveDisk]];
+
+        return _contextualMenu;
+    }
+
+    if ([aTableView numberOfSelectedRows] == 0)
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForAddDisk]];
+
+        return _contextualMenu;
+    }
+
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveDisk]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForEditDisk]];
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+        [self removeDisk:aTableView];
+}
 
 @end
 

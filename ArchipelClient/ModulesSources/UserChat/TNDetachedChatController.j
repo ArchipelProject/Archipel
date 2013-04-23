@@ -226,7 +226,7 @@ else
 {
     var color           = (aSender == @"me") ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
         date            = [CPDate date],
-        newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
+        newMessageDict  = @{@"name":aSender, @"message":aMessage, @"color":color, @"date":date},
         frame           = [[_scrollView documentView] frame],
         avatar          = nil,
         position        = nil;

@@ -33,9 +33,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
 + (void)initialize
 {
-    var bundle  = [CPBundle mainBundle];
-
-    TNRosterDataViewContactImageUnknownUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    TNRosterDataViewContactImageUnknownUser = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 }
 
 + (Class)transformedValueClass
@@ -128,7 +126,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
     _contact = aContact;
 
-    var opts = [CPDictionary dictionaryWithObjectsAndKeys:@"TNNoAvatarValueTransformer", CPValueTransformerNameBindingOption];
+    var opts = @{CPValueTransformerNameBindingOption:@"TNNoAvatarValueTransformer"};
 
     [name bind:@"objectValue" toObject:aContact withKeyPath:@"name" options:nil];
     [status bind:@"objectValue" toObject:aContact withKeyPath:@"XMPPStatus" options:nil];

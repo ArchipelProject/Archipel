@@ -40,13 +40,17 @@
 @global CPLocalizedStringFromTableInBundle
 
 
-var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
-    TNArchipelTypeXMPPServerGroupsCreate        = @"create",
-    TNArchipelTypeXMPPServerGroupsDelete        = @"delete",
-    TNArchipelTypeXMPPServerGroupsAddUsers      = @"addusers",
-    TNArchipelTypeXMPPServerGroupsDeleteUsers   = @"deleteusers",
-    TNArchipelTypeXMPPServerGroupsList          = @"list";
+var TNArchipelTypeXMPPServerGroups               = @"archipel:xmppserver:groups",
+    TNArchipelTypeXMPPServerGroupsCreate         = @"create",
+    TNArchipelTypeXMPPServerGroupsDelete         = @"delete",
+    TNArchipelTypeXMPPServerGroupsAddUsers       = @"addusers",
+    TNArchipelTypeXMPPServerGroupsDeleteUsers    = @"deleteusers",
+    TNArchipelTypeXMPPServerGroupsList           = @"list";
 
+var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
+    TNModuleControlForRemoveSharedGroup          = @"RemoveSharedGroup",
+    TNModuleControlForAddUsersInSharedGroup      = @"AddUsersInSharedGroup",
+    TNModuleControlForRemoveUsersFromSharedGroup = @"RemoveUsersFromSharedGroup";
 
 /*! @ingroup toolbarxmppserver
     Shared groups controller implementation
@@ -74,12 +78,10 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     id                          _delegate                   @accessors(property=delegate);
     TNXMPPUsersController       _usersController            @accessors(setter=setUsersController:);
+    CPMenuItem                  _contextualMenu             @accessors(property=contextualMenu);
+
 
     TNStropheContact            _entity;
-    CPButton                    _addGroupButton;
-    CPButton                    _addUserInGroupButton;
-    CPButton                    _deleteGroupButton;
-    CPButton                    _deleteUserFromGroupButton;
     id                          _currentSelectedGroup;
     int                         _oldSelectedIndexesForGroupTable;
     TNTableViewDataSource       _datasourceGroups;
@@ -119,40 +121,12 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [tableGroups setDataSource:_datasourceGroups];
     [tableGroups setDelegate:self];
 
-    _addGroupButton = [CPButtonBar plusButton];
-    [_addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-add.png"] size:CGSizeMake(16, 16)]];
-    [_addGroupButton setTarget:self];
-    [_addGroupButton setAction:@selector(openNewGroupWindow:)];
-    [_addGroupButton setToolTip:CPBundleLocalizedString(@"Add a new shared group", @"Add a new shared group")];
-
-    _deleteGroupButton = [CPButtonBar plusButton];
-    [_deleteGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-remove.png"] size:CGSizeMake(16, 16)]];
-    [_deleteGroupButton setTarget:self];
-    [_deleteGroupButton setAction:@selector(deleteGroup:)];
-    [_deleteGroupButton setToolTip:CPBundleLocalizedString(@"Delete selected shared groups", @"Delete selected shared groups")];
-
-    [buttonBarGroups setButtons:[_addGroupButton, _deleteGroupButton]];
-
     /* table users in group */
     _datasourceUsersInGroup  = [[TNTableViewDataSource alloc] init];
     [_datasourceUsersInGroup setTable:tableUsersInGroup];
     [_datasourceUsersInGroup setSearchableKeyPaths:[@"name", @"JID"]];
     [tableUsersInGroup setDataSource:_datasourceUsersInGroup];
     [tableUsersInGroup setDelegate:self];
-
-    _addUserInGroupButton = [CPButtonBar plusButton];
-    [_addUserInGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CGSizeMake(16, 16)]];
-    [_addUserInGroupButton setTarget:self];
-    [_addUserInGroupButton setAction:@selector(openAddUserInGroupWindow:)];
-    [_addUserInGroupButton setToolTip:CPBundleLocalizedString(@"Add selected users to shared group", @"Add selected users to shared group")];
-
-    _deleteUserFromGroupButton = [CPButtonBar plusButton];
-    [_deleteUserFromGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CGSizeMake(16, 16)]];
-    [_deleteUserFromGroupButton setTarget:self];
-    [_deleteUserFromGroupButton setAction:@selector(removeUsersFromGroup:)];
-    [_deleteUserFromGroupButton setToolTip:CPBundleLocalizedString(@"Remove selected users from shared group", @"Remove selected users from shared group")];
-
-    [buttonBarUsersInGroups setButtons:[_addUserInGroupButton, _deleteUserFromGroupButton]];
 
     [filterFieldGroups setTarget:_datasourceGroups];
     [filterFieldGroups setAction:@selector(filterObjects:)];
@@ -164,8 +138,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
 
-
-    var filterBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/background-filter.png"]];
+    var filterBg = CPImageInBundle(@"Backgrounds/background-filter.png", nil, [CPBundle mainBundle]);
     [[viewTableGroupsContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
     [[viewTableUsersInGroupContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
 }
@@ -183,6 +156,43 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! populateViewWithControls - Add controls (buttonbarbuttons and contextual menu item) to the current controller.
+*/
+- (void)populateViewWithControls
+{
+    [_delegate addControlsWithIdentifier:TNModuleControlForAddSharedGroup
+                          title:CPBundleLocalizedString(@"Create a new shared group", @"Create a new shared group")
+                         target:self
+                         action:@selector(openNewGroupWindow:)
+                          image:CPImageInBundle(@"IconsButtons/group-add.png",nil, [CPBundle mainBundle])];
+
+    [_delegate addControlsWithIdentifier:TNModuleControlForRemoveSharedGroup
+                          title:CPBundleLocalizedString(@"Delete selected shared group", @"Delete selected shared group")
+                         target:self
+                         action:@selector(deleteGroup:)
+                          image:CPImageInBundle(@"IconsButtons/group-remove.png",nil, [CPBundle mainBundle])];
+
+    [_delegate addControlsWithIdentifier:TNModuleControlForAddUsersInSharedGroup
+                          title:CPBundleLocalizedString(@"Add user(s) to shared group", @"Add user(s) to shared group")
+                         target:self
+                         action:@selector(openAddUserInGroupWindow:)
+                          image:CPImageInBundle(@"IconsButtons/user-add.png",nil, [CPBundle mainBundle])];
+
+    [_delegate addControlsWithIdentifier:TNModuleControlForRemoveUsersFromSharedGroup
+                          title:CPBundleLocalizedString(@"Remove selected user(s) from shared group", @"Remove selected user(s) from shared group")
+                         target:self
+                         action:@selector(removeUsersFromGroup:)
+                          image:CPImageInBundle(@"IconsButtons/user-remove.png",nil, [CPBundle mainBundle])];
+
+    [buttonBarGroups setButtons:[
+        [_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup],
+        [_delegate buttonWithIdentifier:TNModuleControlForRemoveSharedGroup]]];
+
+    [buttonBarUsersInGroups setButtons:[
+        [_delegate buttonWithIdentifier:TNModuleControlForAddUsersInSharedGroup],
+        [_delegate buttonWithIdentifier:TNModuleControlForRemoveUsersFromSharedGroup]]];
+}
 
 /*! clean stuff when hidden
 */
@@ -208,11 +218,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     var condition1 = ([tableGroups numberOfSelectedRows] > 0),
         condition2 = condition1 && ([tableUsersInGroup numberOfSelectedRows] > 0);
 
-    [_delegate setControl:_addGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
-    [_delegate setControl:_deleteGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"] specialCondition:condition1];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRemoveSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"] specialCondition:condition1];
 
-    [_delegate setControl:_addUserInGroupButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"] specialCondition:condition1];
-    [_delegate setControl:_deleteUserFromGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"] specialCondition:condition2];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForAddUsersInSharedGroup] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"] specialCondition:condition1];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRemoveUsersFromSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"] specialCondition:condition2];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]])
         [popoverAddUserInGroup close];
@@ -256,7 +266,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [fieldNewGroupDescription setStringValue:@""];
 
     [popoverNewGroup close];
-    [popoverNewGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverNewGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] preferredEdge:nil];
     [popoverNewGroup setDefaultButton:buttonCreate];
     [popoverNewGroup makeFirstResponder:fieldNewGroupName];
 }
@@ -281,7 +291,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_usersFetcher getXMPPUsers];
 
     [popoverAddUserInGroup close];
-    [popoverAddUserInGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverAddUserInGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddUsersInSharedGroup] preferredEdge:nil];
     [popoverAddUserInGroup setDefaultButton:buttonAdd];
 }
 
@@ -401,7 +411,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
                 name        = [group valueForAttribute:@"displayed_name"],
                 desc        = [group valueForAttribute:@"description"],
                 users       = [group childrenWithName:@"user"],
-                newItem     = [CPDictionary dictionaryWithObjects:[gid, name, desc, users] forKeys:[@"id", @"name", @"description", @"users"]];
+                newItem     = @{@"id":gid, @"name":name, @"description":desc, @"users":users};
             [_datasourceGroups addObject:newItem];
         }
 
@@ -568,7 +578,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
             for (var i = 0; i < [users count]; i++)
             {
                 var user    = [users objectAtIndex:i],
-                    newItem = [CPDictionary dictionaryWithObjects:[[user valueForAttribute:@"jid"]] forKeys:[@"JID"]];
+                    newItem = @{@"JID":[user valueForAttribute:@"jid"]};
                 [_datasourceUsersInGroup addObject:newItem];
             }
             [tableUsersInGroup reloadData];
@@ -576,6 +586,64 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     }
 
     [self setUIAccordingToPermissions];
+}
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    [_contextualMenu removeAllItems];
+
+    switch (aTableView)
+    {
+        case tableUsersInGroup:
+            if ([aTableView numberOfSelectedRows] == 0)
+            {
+                [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForAddUsersInSharedGroup]];
+            }
+            else
+            {
+                [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRemoveUsersFromSharedGroup]];
+            }
+            break;
+
+        case tableGroups:
+            if ([aTableView numberOfSelectedRows] == 0)
+            {
+                [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForAddSharedGroup]];
+            }
+            else
+            {
+                [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRemoveSharedGroup]];
+            }
+            break;
+    }
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+  if ([aTableView numberOfSelectedRows] == 0)
+      return;
+
+  switch (aTableView)
+  {
+    case tableUsersInGroup:
+        [self removeUsersFromGroup];
+        break;
+
+    case tableGroups:
+        [self RemoveSharedGroup];
+        break;
+  }
 }
 
 /*! delegate of TNXMPPServerUserFetcher

@@ -123,7 +123,7 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"],
         uid     = [_connection getUniqueId],
-        params  = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+        params  = @{@"id":uid};
 
     [stanza setTo:aJid];
     [stanza setID:uid];
@@ -208,7 +208,7 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
         requestUUID         = [answerNode valueForAttribute:@"uuid"],
         score               = [[answerNode valueForAttribute:@"score"] floatValue],
         publisher           = [[aStanza firstChildWithName:@"item"] valueForAttribute:@"publisher"],
-        infos               = [CPDictionary dictionaryWithObjectsAndKeys:publisher, @"publisher", score, @"score"];
+        infos               = @{@"publisher":publisher, @"score":score};
 
     [[_currentRequests objectForKey:requestUUID] addObject:infos];
 }

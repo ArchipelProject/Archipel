@@ -48,6 +48,14 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     TNArchipelTypeHypervisorNetworkDestroy      = @"destroy",
     TNArchipelTypeHypervisorNetworkGetNics      = @"getnics";
 
+var TNModuleControlForAddNework                 = @"AddNetwork",
+    TNModuleControlForRemoveNetwork             = @"RemoveNetwork",
+    TNModuleControlForEditNetwork               = @"EditNetwork",
+    TNModuleControlForActivateNetwork           = @"ActivateNetwork",
+    TNModuleControlForDeactivateNetwork         = @"DeactivateNetwork",
+    TNModuleControlForEditXML                   = @"EditXML";
+
+/*! @ingroup hypervisornetworks
 
 /*! @defgroup  hypervisornetworks Module Hypervisor Networks
     @desc This manages hypervisors' virtual networks
@@ -68,12 +76,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     @outlet TNNetworkEditionController  networkController;
     @outlet CPPopover                   popoverXMLString;
 
-    CPButton                            _activateButton;
-    CPButton                            _deactivateButton;
-    CPButton                            _editButton;
-    CPButton                            _minusButton;
-    CPButton                            _plusButton;
-    CPButton                            _editXMLButton;
     TNLibvirtNetwork                    _networkHolder;
     TNTableViewDataSource               _datasourceNetworks;
     CPDictionary                        _networksRAW;
@@ -108,47 +110,57 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [fieldFilterNetworks setTarget:_datasourceNetworks];
     [fieldFilterNetworks setAction:@selector(filterObjects:)];
 
-    _plusButton = [CPButtonBar plusButton];
-    [_plusButton setTarget:self];
-    [_plusButton setAction:@selector(addNetwork:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new network", @"Create a new network")];
+    // create the control items
 
-    _minusButton = [CPButtonBar minusButton];
-    [_minusButton setTarget:self];
-    [_minusButton setAction:@selector(delNetwork:)];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected networks", @"Delete selected networks")]
+    [self addControlsWithIdentifier:TNModuleControlForAddNework
+                              title:CPBundleLocalizedString(@"Create a new network", @"Create a new network")
+                             target:self
+                             action:@selector(addNetwork:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, [CPBundle mainBundle])];
 
-    _activateButton = [CPButtonBar plusButton];
-    [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CGSizeMake(16, 16)]];
-    [_activateButton setTarget:self];
-    [_activateButton setAction:@selector(activateNetwork:)];
-    [_activateButton setToolTip:CPBundleLocalizedString(@"Activate selected networks", @"Activate selected networks")];
+    [self addControlsWithIdentifier:TNModuleControlForRemoveNetwork
+                              title:CPBundleLocalizedString(@"Remove", @"Remove")
+                             target:self
+                             action:@selector(delNetwork:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
 
-    _deactivateButton = [CPButtonBar plusButton];
-    [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/cancel.png"] size:CGSizeMake(16, 16)]];
-    [_deactivateButton setTarget:self];
-    [_deactivateButton setAction:@selector(deactivateNetwork:)];
-    [_deactivateButton setToolTip:CPBundleLocalizedString(@"Deactivate selected networks", @"Deactivate selected networks")];
+    [self addControlsWithIdentifier:TNModuleControlForEditNetwork
+                              title:CPBundleLocalizedString(@"Edit network settings", @"Edit network settings")
+                             target:self
+                             action:@selector(editNetwork:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, [CPBundle mainBundle])];
 
-    _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButton setTarget:self];
-    [_editButton setAction:@selector(editNetwork:)];
-    [_editButton setToolTip:CPBundleLocalizedString(@"Edit selected network", @"Edit selected network")];
+    [self addControlsWithIdentifier:TNModuleControlForActivateNetwork
+                              title:CPBundleLocalizedString(@"Enable", @"Enable")
+                             target:self
+                             action:@selector(activateNetwork:)
+                              image:CPImageInBundle(@"IconsButtons/check.png",nil, [CPBundle mainBundle])];
 
-    _editXMLButton = [CPButtonBar plusButton];
-    [_editXMLButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CGSizeMake(16, 16)]];
-    [_editXMLButton setTarget:self];
-    [_editXMLButton setAction:@selector(openXMLEditor:)];
-    [_editXMLButton setToolTip:CPBundleLocalizedString(@"Open manual XML editor", @"Open manual XML editor")];
+    [self addControlsWithIdentifier:TNModuleControlForDeactivateNetwork
+                              title:CPBundleLocalizedString(@"Disable", @"Disable")
+                             target:self
+                             action:@selector(deactivateNetwork:)
+                              image:CPImageInBundle(@"IconsButtons/cancel.png",nil, [CPBundle mainBundle])];
 
-    [_minusButton setEnabled:NO];
-    [_activateButton setEnabled:NO];
-    [_deactivateButton setEnabled:NO];
-    [_editButton setEnabled:NO];
-    [_editXMLButton setEnabled:NO];
+    [self addControlsWithIdentifier:TNModuleControlForEditXML
+                              title:CPBundleLocalizedString(@"Open manual XML editor", @"Open manual XML editor")
+                             target:self
+                             action:@selector(openXMLEditor:)
+                              image:CPImageInBundle(@"IconsButtons/editxml.png",nil, [CPBundle mainBundle])];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton, _activateButton, _deactivateButton, _editXMLButton]];
+    [[self buttonWithIdentifier:TNModuleControlForRemoveNetwork] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForActivateNetwork] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForDeactivateNetwork] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForEditNetwork] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForEditXML] setEnabled:NO];
+
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForAddNework],
+        [self buttonWithIdentifier:TNModuleControlForRemoveNetwork],
+        [self buttonWithIdentifier:TNModuleControlForEditNetwork],
+        [self buttonWithIdentifier:TNModuleControlForActivateNetwork],
+        [self buttonWithIdentifier:TNModuleControlForDeactivateNetwork],
+        [self buttonWithIdentifier:TNModuleControlForEditXML]]];
 
     [fieldXMLString setTextColor:[CPColor blackColor]];
     [fieldXMLString setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
@@ -189,18 +201,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [super willHide];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual network", @"Create new virtual network") action:@selector(addNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network", @"Edit selected network") action:@selector(editNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected network", @"Delete selected network") action:@selector(delNetwork:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Activate this network", @"Activate this network") action:@selector(activateNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Deactivate this network", @"Deactivate this network") action:@selector(deactivateNetwork:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when permissions changes
 */
 - (void)permissionsChanged
@@ -223,15 +223,15 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         conditionNetworkActive = [networkObject isActive],
         conditionTableSelectedOnlyOnRow = ([tableViewNetworks numberOfSelectedRows] == 1);
 
-    [self setControl:_plusButton enabledAccordingToPermission:@"network_define"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForAddNework] enabledAccordingToPermission:@"network_define"];
 
-    [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy" specialCondition:conditionTableSelectedRow && conditionNetworkActive];
-    [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && conditionNetworkActive];
-    [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine" specialCondition:conditionTableSelectedRow && !conditionNetworkActive];
-    [self setControl:_editButton enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
-    [self setControl:_activateButton enabledAccordingToPermission:@"network_create" specialCondition:conditionTableSelectedRow && !conditionNetworkActive];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForDeactivateNetwork] enabledAccordingToPermission:@"network_destroy" specialCondition:conditionTableSelectedRow && conditionNetworkActive];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForEditXML] enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && conditionNetworkActive];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveNetwork] enabledAccordingToPermission:@"network_undefine" specialCondition:conditionTableSelectedRow && !conditionNetworkActive];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForEditNetwork] enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForActivateNetwork] enabledAccordingToPermission:@"network_create" specialCondition:conditionTableSelectedRow && !conditionNetworkActive];
     [self setControl:buttonDefineXMLString enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
-    [self setControl:_editXMLButton enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForEditXML] enabledAccordingToPermission:@"network_define" specialCondition:conditionTableSelectedOnlyOnRow && !conditionNetworkActive];
 }
 
 /*! this message is used to flush the UI
@@ -298,7 +298,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [[newNetwork IP] setNetmask:@"255.255.0.0"];
 
     [networkController setNetwork:newNetwork];
-    [networkController openWindow:_plusButton];
+    [networkController openWindow:[self buttonWithIdentifier:TNModuleControlForAddNework]];
 }
 
 /*! delete a network
@@ -355,11 +355,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         }
 
         [networkController setNetwork:networkObject];
-
-        if ([aSender isKindOfClass:CPMenuItem])
-            aSender = _editButton;
         [popoverXMLString close];
-        [networkController openWindow:aSender];
+        [networkController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableViewNetworks : aSender];
     }
 }
 
@@ -452,7 +449,17 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [fieldXMLString setStringValue:XMLString];
     [networkController closeWindow:nil];
     [popoverXMLString close];
-    [popoverXMLString showRelativeToRect:nil ofView:_editXMLButton preferredEdge:nil]
+
+    if ([aSender isKindOfClass:CPMenuItem])
+    {
+        var rect = [tableViewNetworks rectOfRow:[tableViewNetworks selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [popoverXMLString showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableViewNetworks preferredEdge:nil];
+    }
+    else
+        [popoverXMLString showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
     [popoverXMLString setDefaultButton:buttonDefineXMLString];
 }
 
@@ -711,7 +718,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
         if ([networkObject isActive])
         {
-            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
+            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't delete a running network", @"You can't delete a running network") style:CPCriticalAlertStyle];
             return;
         }
 
@@ -754,6 +761,53 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [self setUIAccordingToPermissions];
 }
 
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+    var itemRow = [tableViewNetworks rowAtPoint:aRow];
+    if ([tableViewNetworks selectedRow] != aRow)
+        [tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    var selectedIndex = [[tableViewNetworks selectedRowIndexes] firstIndex],
+        conditionTableSelectedRow = ([tableViewNetworks numberOfSelectedRows] != 0),
+        networkObject = conditionTableSelectedRow ? [_datasourceNetworks objectAtIndex:selectedIndex] : nil,
+        conditionNetworkActive = [networkObject isActive];
+
+    [_contextualMenu removeAllItems];
+
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableViewNetworks))
+    {
+        [_contextualMenu removeAllItems];
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForAddNework]];
+        return _contextualMenu;
+    }
+
+    if (!conditionNetworkActive)
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForEditNetwork]];
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForActivateNetwork]];
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveNetwork]];
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForEditXML]];
+    }
+    else
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDeactivateNetwork]];
+    }
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+        [self delNetwork:aTableView];
+}
+
 @end
 
 // add this code to make the CPLocalizedString looking at
@@ -762,3 +816,4 @@ function CPBundleLocalizedString(key, comment)
 {
     return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNHypervisorNetworksController], comment);
 }
+

@@ -51,6 +51,9 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     TNArchipelPushNotificationPermissions       = @"archipel:push:permissions",
     TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users";
 
+var TNModuleControlForApplyRole                 = @"ApplyRole",
+    TNModuleControlForSaveAsTemplate            = @"SaveAsTemplate",
+    TNModuleControlForApplyPermissions          = @"ApplyPermissions";
 
 /*! @defgroup  permissionsmodule Module Permissions
     @desc This module allow to manages entity permissions
@@ -79,9 +82,6 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
 
     CPArray                         _currentUserPermissions;
-    CPButton                        _applyRoleButton;
-    CPButton                        _saveAsTemplateButton;
-    CPButton                        _saveButton;
     CPImage                         _defaultAvatar;
     CPOutlineView                   _outlineViewUsers;
     TNPermissionUserFetcher         _userFetcher;
@@ -98,10 +98,10 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 - (void)awakeFromCib
 {
     _currentUserPermissions = [CPArray array];
-    _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
+    _defaultAvatar          = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [imageFecthingUsers setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"spinner.gif"] size:CGSizeMake(16, 16)]];
+    [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
     [splitView setBorderedWithHexColor:@"#C0C7D2"];
 
@@ -115,25 +115,30 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [[tablePermissions tableColumnWithIdentifier:@"self"] setDataView:[permissionDataViewPrototype duplicate]];
     [tablePermissions setIntercellSpacing:CGSizeMakeZero()];
 
-    _saveButton = [CPButtonBar plusButton];
-    [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CGSizeMake(16, 16)]];
-    [_saveButton setTarget:self];
-    [_saveButton setAction:@selector(changePermissionsState:)];
-    [_saveButton setToolTip:CPBundleLocalizedString(@"Save current permission set", @"Save current permission set")];
+    // create the control items
 
-    _saveAsTemplateButton = [CPButtonBar plusButton];
-    [_saveAsTemplateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/role_add.png"] size:CGSizeMake(16, 16)]];
-    [_saveAsTemplateButton setTarget:rolesController];
-    [_saveAsTemplateButton setAction:@selector(openNewTemplateWindow:)];
-    [_saveAsTemplateButton setToolTip:CPBundleLocalizedString(@"Save current permission set as template", @"Save current permission set as template")];
+    [self addControlsWithIdentifier:TNModuleControlForApplyPermissions
+                              title:CPBundleLocalizedString(@"Save current permission set", @"Save current permission set")
+                             target:self
+                             action:@selector(changePermissionsState:)
+                              image:CPImageInBundle(@"IconsButtons/save.png",nil, [CPBundle mainBundle])];
 
-    _applyRoleButton = [CPButtonBar plusButton];
-    [_applyRoleButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/roles.png"] size:CGSizeMake(16, 16)]];
-    [_applyRoleButton setTarget:self];
-    [_applyRoleButton setAction:@selector(openRolesWindow:)];
-    [_applyRoleButton setToolTip:CPBundleLocalizedString(@"Apply a role", @"Apply a role")];
+    [self addControlsWithIdentifier:TNModuleControlForSaveAsTemplate
+                              title:CPBundleLocalizedString(@"Save current permission set as template", @"Save current permission set as template")
+                             target:self
+                             action:@selector(openNewTemplateWindow:)
+                              image:CPImageInBundle(@"IconsButtons/role_add.png",nil, [CPBundle mainBundle])];
 
-    [buttonBarControl setButtons:[_saveButton, _saveAsTemplateButton, _applyRoleButton]];
+    [self addControlsWithIdentifier:TNModuleControlForApplyRole
+                              title:CPBundleLocalizedString(@"Apply a role", @"Apply a role")
+                             target:self
+                             action:@selector(openRolesWindow:)
+                              image:CPImageInBundle(@"IconsButtons/roles.png",nil, [CPBundle mainBundle])];
+
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForApplyPermissions],
+        [self buttonWithIdentifier:TNModuleControlForSaveAsTemplate],
+        [self buttonWithIdentifier:TNModuleControlForApplyRole]]];
 
     [filterField setTarget:_datasourcePermissions];
     [filterField setAction:@selector(filterObjects:)];
@@ -166,10 +171,10 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     [filterRosterUsers setTarget:_datasourceRosterUsers];
     [filterRosterUsers setAction:@selector(filterObjects:)];
 
-    var filterBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/background-filter.png"]];
-    [[filterUsers superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
-    [[filterRosterUsers superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
-    [[filterField superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
+    var filterBgColor = CPColorWithImages(@"Backgrounds/background-filter.png", nil, nil, [CPBundle mainBundle]);
+    [[filterUsers superview] setBackgroundColor:filterBgColor];
+    [[filterRosterUsers superview] setBackgroundColor:filterBgColor];
+    [[filterField superview] setBackgroundColor:filterBgColor];
 }
 
 
@@ -252,12 +257,12 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
     if (hasSet || hasSetOwn)
     {
         if (hasSetOwn)
-            [self setControl:_saveButton enabledAccordingToPermission:@"permission_setown"];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForApplyPermissions] enabledAccordingToPermission:@"permission_setown"];
         if (hasSet)
-            [self setControl:_saveButton enabledAccordingToPermission:@"permission_set"];
+            [self setControl:[self buttonWithIdentifier:TNModuleControlForApplyPermissions] enabledAccordingToPermission:@"permission_set"];
     }
     else
-        [self setControl:_saveButton enabledAccordingToPermission:@"permission_FAKE!"];
+        [self setControl:[self buttonWithIdentifier:TNModuleControlForApplyPermissions] enabledAccordingToPermission:@"permission_FAKE!"];
 }
 
 /*! this message is used to flush the UI
@@ -446,7 +451,7 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
 */
 - (IBAction)openRolesWindow:(id)aSender
 {
-    [rolesController openWindow:aSender];
+    [rolesController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableUsers : aSender];
 }
 
 
@@ -648,6 +653,27 @@ var TNArchipelTypePermissions                   = @"archipel:permissions",
                 [self changeCurrentUser:tableRosterUsers];
             break;
     }
+}
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    [_contextualMenu removeAllItems];
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    if (([aTableView numberOfSelectedRows] >= 1) && (aTableView == tableUsers))
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForApplyRole]];
+
+        return _contextualMenu;
+    }
+
+    return
 }
 
 /*! delegate of TNPermissionUserFetcher

@@ -102,9 +102,9 @@
 
     _height                 = 180;
     _isCollapsed            = YES;
-    _unknownUserImage       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
-    _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
-    _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
+    _unknownUserImage       = CPImageInBundle(@"user-unknown.png", nil, bundle);
+    _groupUserImage         = CPImageInBundle(@"groups.png", CGSizeMake(16,16), bundle);
+    _pubsubImage            = CPImageInBundle(@"pubsub.png", nil, bundle);
 
     [viewVCard setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
     [viewXMPPInfos setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
@@ -113,11 +113,11 @@
     [mainView setBackView:viewVCard];
     [mainView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
-    var gradColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-nickname.png"]]];
+    var gradColor = CPColorWithImages(@"Backgrounds/background-nickname.png", nil, nil, bundle);
     [viewNicknameContainer setBackgroundColor:gradColor];
     [viewVCardContainer setBackgroundColor:gradColor];
 
-    [imageVCardIcon setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vcard-icon.png"]]];
+    [imageVCardIcon setImage:CPImageInBundle(@"vcard-icon.png", nil, bundle)];
 
     [entryNode setSelectable:YES];
     [entryNode setLineBreakMode:CPLineBreakByTruncatingTail];
@@ -131,10 +131,10 @@
     [buttonEventSubscription setImageScaling:CPScaleProportionally];
     [buttonEventSubscription setHidden:YES];
 
-    var imageArrowLeft = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-left.png"] size:CGSizeMake(14.0, 14.0)],
-        imageArrowLeftPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-left.png"] size:CGSizeMake(14.0, 14.0)],
-        imageArrowRight = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-right.png"] size:CGSizeMake(14.0, 14.0)],
-        imageArrowRightPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-right.png"] size:CGSizeMake(14.0, 14.0)];
+    var imageArrowLeft = CPImageInBundle(@"buttonArrows/button-arrow-left.png", CGSizeMake(14.0, 14.0), bundle),
+        imageArrowLeftPressed = CPImageInBundle(@"buttonArrows/button-arrow-pressed-left.png", CGSizeMake(14.0, 14.0), bundle),
+        imageArrowRight = CPImageInBundle(@"buttonArrows/button-arrow-right.png", CGSizeMake(14.0, 14.0), bundle),
+        imageArrowRightPressed = CPImageInBundle(@"buttonArrows/button-arrow-pressed-right.png", CGSizeMake(14.0, 14.0), bundle);
 
     [buttonViewXMPPInfosSwipe setTarget:mainView];
     [buttonViewXMPPInfosSwipe setBordered:NO];

@@ -64,7 +64,7 @@
         {
             var name = [[paramNodes objectAtIndex:i] valueForAttribute:@"name"],
                 value = [[paramNodes objectAtIndex:i] valueForAttribute:@"value"];
-            [_parameters addObject:[CPDictionary dictionaryWithObjectsAndKeys:name, @"name", value, @"value"]];
+            [_parameters addObject:@{@"name":name, @"value":value}];
         }
     }
 

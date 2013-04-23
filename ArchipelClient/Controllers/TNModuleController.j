@@ -70,7 +70,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     BOOL                            _moduleLoadingStarted           @accessors(getter=isModuleLoadingStarted);
     CPColor                         _toolbarModuleBackgroundColor   @accessors(property=toolbarModuleBackgroundColor);
-    CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
     CPMenu                          _rosterContactsMenu             @accessors(property=rosterContactsMenu);
     CPMenu                          _rosterGroupsMenu               @accessors(property=rosterGroupsMenu);
     CPString                        _modulesPath                    @accessors(property=modulesPath);
@@ -85,7 +84,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     BOOL                            _allowToolbarSwitching;
     BOOL                            _deactivateModuleTabItemPositionStorage;
-    CPDictionary                    _modulesMenuItems;
     CPDictionary                    _openedTabsRegistry;
     CPDictionary                    _tabModules;
     CPDictionary                    _toolbarModules;
@@ -117,7 +115,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     {
         var defaults = [CPUserDefaults standardUserDefaults];
 
-        _modulesMenuItems                       = [CPDictionary dictionary];
         _toolbarModules                         = [CPDictionary dictionary];
         _tabModules                             = [CPDictionary dictionary];
         _numberOfModulesToLoad                  = 0;
@@ -441,22 +438,8 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     if (useMenu)
     {
-        [moduleItem setTitle:moduleLabel];
-        [moduleItem setTarget:currentModuleController];
-        [_modulesMenu setAutoenablesItems:NO];
-        [_modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
         [currentModuleController setRosterGroupsMenu:_rosterGroupsMenu];
         [currentModuleController setRosterContactsMenu:_rosterContactsMenu];
-        [currentModuleController setMenuItem:moduleItem];
-        [currentModuleController setMenu:moduleRootMenu];
-        [currentModuleController menuReady];
-
-        [moduleItem setEnabled:NO];
-
-        if (![_modulesMenuItems containsKey:supportedTypes])
-            [_modulesMenuItems setObject:[CPArray array] forKey:supportedTypes];
-
-        [[_modulesMenuItems objectForKey:supportedTypes] addObject:moduleItem];
     }
 
     // we now create the tabView item that will be inserted in the tab view when needed
@@ -507,14 +490,16 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         moduleToolTip = [moduleToolTip objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
 
     [moduleToolbarItem setLabel:moduleLabel];
-    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CGSizeMake(32, 32)]];
-    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CGSizeMake(32, 32)]];
+    [moduleToolbarItem setImage:CPImageInBundle(@"icon.png", CGSizeMake(32, 32), aBundle)];
+    [moduleToolbarItem setAlternateImage:CPImageInBundle(@"icon-alt.png", CGSizeMake(32, 32), aBundle)];
     [moduleToolbarItem setToolTip:moduleToolTip];
 
     // if toolbar item only, no cib
     if (toolbarOnly)
     {
         currentModuleController = [[[aBundle principalClass] alloc] init];
+
+        [currentModuleController initializeModule];
         [currentModuleController setHasCIB:NO];
 
         [moduleToolbarItem setTarget:currentModuleController];
@@ -523,8 +508,9 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     else
     {
         currentModuleController = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
-
+        [currentModuleController initializeModule];
         [currentModuleController setHasCIB:YES];
+
         [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [[currentModuleController view] setBackgroundColor:_toolbarModuleBackgroundColor];
 
@@ -535,7 +521,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleIdentifier];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleIdentifier];
 
-    [currentModuleController initializeModule];
     [currentModuleController setFullscreen:isFullscreen];
     [currentModuleController setIdentifier:moduleIdentifier];
     [currentModuleController setLabel:moduleLabel];
@@ -549,26 +534,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     [_toolbarModules setObject:currentModuleController forKey:moduleIdentifier];
 
     [currentModuleController _beforeWillLoad];
-}
-
-/*! Insert all modules' MainMenu items
-*/
-- (void)_insertModulesMenuItems
-{
-    var modulesNames    = [_modulesMenuItems allKeys].sort(), // it would be better to also use a sort desc but it doesn't work..
-        sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
-
-    for (var k = 0; k < [modulesNames count] ; k++)
-    {
-        var menuItems       = [_modulesMenuItems objectForKey:[modulesNames objectAtIndex:k]],
-            sortedMenuItems = [menuItems sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
-
-        for (var i = 0; i < [sortedMenuItems count]; i++)
-            [_modulesMenu addItem:[sortedMenuItems objectAtIndex:i]];
-
-        if (k + 1 < [modulesNames count])
-            [_modulesMenu addItem:[CPMenuItem separatorItem]];
-    }
 }
 
 /*! Get the loacalized version of the bundle
@@ -648,7 +613,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
         if ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
             [_delegate moduleLoaderLoadingComplete:self];
-        [self _insertModulesMenuItems];
 
         // run post-loading method if any
         var idx = [[_tabModules allValues] count];
