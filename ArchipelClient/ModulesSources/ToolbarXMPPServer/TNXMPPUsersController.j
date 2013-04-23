@@ -279,17 +279,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     [fieldNewUserPasswordConfirm setStringValue:@""];
 
     [popoverNewUser close];
-
-    if ([aSender isKindOfClass:CPMenuItem])
-    {
-        var rect = [tableUsers rectOfRow:[tableUsers selectedRow]];
-        rect.origin.y += rect.size.height / 2;
-        rect.origin.x += rect.size.width / 2;
-        [popoverNewUser showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableUsers preferredEdge:nil];
-    }
-    else
-        [popoverNewUser showRelativeToRect:nil ofView:aSender preferredEdge:nil];
-
+    [popoverNewUser showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] preferredEdge:nil];
     [popoverNewUser setDefaultButton:buttonCreate];
     [popoverNewUser makeFirstResponder:fieldNewUserUsername];
 }

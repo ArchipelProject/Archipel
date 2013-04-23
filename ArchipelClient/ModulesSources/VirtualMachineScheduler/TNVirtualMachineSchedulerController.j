@@ -185,7 +185,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
     if (![self isVisible])
         return;
 
-    [schedulerController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableJobs : aSender];
+    [schedulerController openWindow:[self buttonWithIdentifier:TNModuleControlForSchedule]];
 }
 
 

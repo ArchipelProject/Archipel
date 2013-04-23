@@ -791,7 +791,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     if ([self isVisible])
     {
         [VMAllocationController setVirtualMachine:nil];
-        [VMAllocationController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
+        [VMAllocationController openWindow:[self buttonWithIdentifier:TNModuleControlForNewVM]];
     }
 }
 

@@ -278,7 +278,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     if (![self isVisible])
         return;
 
-    [newDriveController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableMedias : aSender];
+    [newDriveController openWindow:[self buttonWithIdentifier:TNModuleControlForAddDisk]];
 }
 
 /*! opens the rename window

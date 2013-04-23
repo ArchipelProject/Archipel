@@ -298,7 +298,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
     [[newNetwork IP] setNetmask:@"255.255.0.0"];
 
     [networkController setNetwork:newNetwork];
-    [networkController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableViewNetworks : aSender];
+    [networkController openWindow:[self buttonWithIdentifier:TNModuleControlForAddNework]];
 }
 
 /*! delete a network

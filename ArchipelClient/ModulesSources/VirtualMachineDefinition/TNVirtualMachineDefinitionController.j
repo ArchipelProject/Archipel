@@ -2066,7 +2066,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     }
 
     [graphicDeviceController setGraphicDevice:graphicDevice];
-    [graphicDeviceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableGraphicsDevices : aSender];
+    [graphicDeviceController openWindow:[self buttonWithIdentifier:TNModuleControlForGraphicDeviceAdd]];
 }
 
 /*! edit the selected graphic device
@@ -2116,7 +2116,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
     [inputDeviceController setInputDevice:inputDevice];
-    [inputDeviceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableInputDevices : aSender];
+    [inputDeviceController openWindow:[self buttonWithIdentifier:TNModuleControlForInputDeviceAdd]];
 }
 
 /*! edit current selected input device or create a new one
@@ -2186,7 +2186,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     else
         [driveController setOtherDrives:nil];
 
-    [driveController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableDrives : aSender];
+    [driveController openWindow:[self buttonWithIdentifier:TNModuleControlForDriveAdd]];
 }
 
 /*! open the drive editor
@@ -2253,7 +2253,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     if ([_libvirtDomain metadata])
         [interfaceController setMetadata:[_libvirtDomain metadata]];
-    [interfaceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableInterfaces : aSender];
+    [interfaceController openWindow:[self buttonWithIdentifier:TNModuleControlForNicAdd]];
 }
 
 /*! open the network editor
@@ -2317,7 +2317,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
     [characterDeviceController setCharacterDevice:characterDevice];
-    [characterDeviceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableCharacterDevices : aSender];
+    [characterDeviceController openWindow:[self buttonWithIdentifier:TNModuleControlForCharacterDeviceAdd]];
 }
 
 /*! edit the selected character device

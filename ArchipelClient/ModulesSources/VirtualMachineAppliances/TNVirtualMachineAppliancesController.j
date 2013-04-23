@@ -269,16 +269,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
     [checkBoxShouldGZIP setState:CPOnState];
 
     [popoverNewAppliances close];
-    if ([aSender isKindOfClass:CPMenuItem])
-    {
-        var rect = [tableAppliances rectOfRow:[tableAppliances selectedRow]];
-        rect.origin.y += rect.size.height / 2;
-        rect.origin.x += rect.size.width / 2;
-        [popoverNewAppliances showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableAppliances preferredEdge:nil];
-    }
-    else
-        [popoverNewAppliances showRelativeToRect:nil ofView:aSender preferredEdge:nil]
-
+    [popoverNewAppliances showRelativeToRect:nil ofView:[self buttonWithIdentifier:TNModuleControlForCreateAppliance] preferredEdge:nil]
     [popoverNewAppliances makeFirstResponder:fieldNewApplianceName];
     [popoverNewAppliances setDefaultButton:buttonCreate];
 }

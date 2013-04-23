@@ -266,17 +266,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [fieldNewGroupDescription setStringValue:@""];
 
     [popoverNewGroup close];
-
-    if ([aSender isKindOfClass:CPMenuItem])
-    {
-        var rect = [tableGroups rectOfRow:[tableGroups selectedRow]];
-        rect.origin.y += rect.size.height / 2;
-        rect.origin.x += rect.size.width / 2;
-        [popoverNewGroup showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableGroups preferredEdge:nil];
-    }
-    else
-        [popoverNewGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
-
+    [popoverNewGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] preferredEdge:nil];
     [popoverNewGroup setDefaultButton:buttonCreate];
     [popoverNewGroup makeFirstResponder:fieldNewGroupName];
 }
@@ -301,18 +291,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [_usersFetcher getXMPPUsers];
 
     [popoverAddUserInGroup close];
-
-    if ([aSender isKindOfClass:CPMenuItem])
-    {
-        var rect = [tableUsersInGroup rectOfRow:[tableUsersInGroup selectedRow]];
-        rect.origin.y += rect.size.height / 2;
-        rect.origin.x += rect.size.width / 2;
-        [popoverAddUserInGroup showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableUsersInGroup preferredEdge:nil];
-    }
-    else
-        [popoverAddUserInGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
-
-    [popoverAddUserInGroup showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+    [popoverAddUserInGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddUsersInSharedGroup] preferredEdge:nil];
     [popoverAddUserInGroup setDefaultButton:buttonAdd];
 }
 
