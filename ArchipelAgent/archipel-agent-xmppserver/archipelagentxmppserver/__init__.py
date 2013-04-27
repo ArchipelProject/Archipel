@@ -35,10 +35,7 @@ def make_archipel_plugin(configuration, entity, group):
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
     """
-    if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
-        import xmppserver_xmlrpc as xmppserver
-    else:
-        import xmppserver_xmpp as xmppserver
+    import xmppserver
 
     return [{"info": xmppserver.TNXMPPServerController.plugin_info(),
              "plugin": xmppserver.TNXMPPServerController(configuration, entity, group)}]
