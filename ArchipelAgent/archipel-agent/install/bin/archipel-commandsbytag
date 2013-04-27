@@ -22,7 +22,7 @@
 
 
 from optparse import OptionParser
-import pubsub
+import archipelcore.pubsub
 import xmpp
 
 def xmpp_connect(jid, password, auth=True):
