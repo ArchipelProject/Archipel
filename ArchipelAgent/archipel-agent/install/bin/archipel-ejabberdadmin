@@ -54,8 +54,11 @@ def _fecth_acls(xmppclient):
     result = xmppclient.SendAndWaitForResponse(iq)
     if result.getType() == "result":
         items = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
-        admins = map(lambda x: xmpp.JID(x.getData().split(",")[3].strip("\"") + "@" + x.getData().split(",")[4].split("}")[0].strip("\"")) , items)
-        return admins
+        try:
+            admins = map(lambda x: xmpp.JID(x.getData().split(",")[3].strip("\"") + "@" + x.getData().split(",")[4].split("}")[0].strip("\"")) , items)
+            return admins
+        except:
+            return []
 
 def _update_acls(current_admins):
     """
@@ -83,9 +86,12 @@ def list_jid(xmppclient):
     List current xmpp admin
     """
     admins = _fecth_acls(xmppclient)
-    print "The following users are actually admin of %s xmpp domain :" % xmppclient.Server
-    for admin in admins:
-        print "-> %s" % admin
+    if admins:
+        print "The following users are actually admin of %s xmpp domain :" % xmppclient.Server
+        for admin in admins:
+            print "-> %s" % admin
+    else:
+        print "No admin has been found for domain %s" % xmppclient.Server
 
 def insert_jid(xmppclient, jid):
     """
@@ -121,6 +127,7 @@ def remove_jid(xmppclient, jid):
     result = _update_acls(current_admins)
 
     if result.getType() == "result":
+        print "-> %s as been removed from acls" % jid
         list_jid(xmppclient)
     else:
         print "!! Error when trying to delete %s from admin on %s" %(jid, xmppclient.Server)
