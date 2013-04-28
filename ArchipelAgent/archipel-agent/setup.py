@@ -111,6 +111,7 @@ setup(name='archipel-agent',
         'install/bin/archipel-testxmppserver',
         'install/bin/archipel-commandsbytag',
         'install/bin/archipel-adminaccounts',
+        'install/bin/archipel-ejabberdadmin',
         'install/bin/archipel-command',
         'install/bin/runarchipel'
         ],
