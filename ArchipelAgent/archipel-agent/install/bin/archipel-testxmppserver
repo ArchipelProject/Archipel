@@ -284,7 +284,6 @@ def test_xmlrpc_connection(jid, password):
         return TEST_SUCCESS
     except Exception as ex:
         print_error("Unable to authenticate on xmlrpc over https, I will try anonymously")
-        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
     try:
         answer = _xmlrpc_command(xmlrpc_server, "registered_users", {"host": xmlrpc_host})
         print_success("Successfully contacted anonymously ejabberd_xmlrpc module")
@@ -292,7 +291,8 @@ def test_xmlrpc_connection(jid, password):
         print_error("Managing Shared Roster Group from UI will not work anymore with anonymous xmlrpc_host")
         return TEST_ERROR_XMLRPC_CANNOT_CONNECT
     except Exception as ex:
-        print_error("Unable to contact the ejabberd_xmlrpc module on both http or https: %s" % str(ex))
+        print_error("Unable to contact the ejabberd_xmlrpc module on both http or https")
+        print_error("Please check the module is listenning and access rules are well configured")
         return TEST_ERROR_XMLRPC_CANNOT_CONNECT
 
 
@@ -329,7 +329,6 @@ def test_xmlrpc_modadminextra(jid, password):
         return TEST_SUCCESS
     except Exception as ex:
         print_error("Unable to authenticate on xmlrpc over https, I will try anonymously")
-        return TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA
     try:
         answer = _xmlrpc_command(xmlrpc_server, "srg_list", {"host": xmlrpc_host})
         print_success("Successfully contacted anonymously mod_admin_extra over ejabberd_xmlrpc module")
@@ -337,7 +336,8 @@ def test_xmlrpc_modadminextra(jid, password):
         print_error("Managing Shared Roster Group from UI will not work anymore with anonymous xmlrpc_host")
         return TEST_ERROR_XMLRPC_CANNOT_CONNECT
     except Exception as ex:
-        print_error("Unable to contact the mod_admin_extra over ejabberd_xmlrpc module on both http or https: %s" % str(ex))
+        print_error("Unable to contact the mod_admin_extra over ejabberd_xmlrpc module on both http or https")
+        print_error("Please check the module is listenning and access rules are well configured")
         return TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA
 
 
