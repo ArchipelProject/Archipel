@@ -73,10 +73,11 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
             self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
             self.xmlrpc_prefix      = "https" if configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
-            self.xmlrpc_call        = "%s://%s:%s@%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
+            self.xmlrpc_call        = "%s://%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_host, self.xmlrpc_port)
+            self.xmlrpc_auth        = {'user':self.xmlrpc_user, 'server': self.xmlrpc_host, 'password': self.xmlrpc_password}
             self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
             try :
-                answer = self.xmlrpc_server.srg_list({"host":self.xmlrpc_host})
+                answer = self._send_xmlrpc_call("srg_list", {"host":self.xmlrpc_host})
                 self.management_capabilities["xmlrpc"] = True
                 self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing Shared Roster Groups")
                 if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
@@ -242,8 +243,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         @rtype: dict
         @return: the xmlrpc reply
         """
+        fn = getattr(self.xmlrpc_server, method)
         try:
-            return method(args)
+            return fn(self.xmlrpc_auth, args)
         except Exception as ex:
             raise Exception(str(ex).replace(self.xmlrpc_password, "[PASSWORD_HIDDEN]"))
 
@@ -409,7 +411,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param description: the description of the group
         """
         server = self.entity.jid.getDomain()
-        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_create, {"host": server, "display": ID, "name": name, "description": description, "group": ID})
+        answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": ID, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Creating a new shared group %s" % ID)
@@ -441,7 +443,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param ID: the ID of the group to delete
         """
         server = self.entity.jid.getDomain()
-        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_delete, {"host": server, "group": ID})
+        answer = self._send_xmlrpc_call("srg_delete", {"host": server, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Removing a shared group %s" % ID)
@@ -477,12 +479,12 @@ class TNXMPPServerController (TNArchipelPlugin):
         Returns a list of existing groups
         """
         server = self.entity.jid.getDomain()
-        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_list, {"host": server})
+        answer = self._send_xmlrpc_call("srg_list", {"host": server})
         groups = answer["groups"]
         ret = []
 
         for group in groups:
-            answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_get_info, {"host": server, "group": group["id"]})
+            answer = self._send_xmlrpc_call("srg_get_info", {"host": server, "group": group["id"]})
             informations = answer["informations"]
             for info in informations:
                 if info['information'][0]["key"] == "name":
@@ -490,7 +492,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 if info['information'][0]["key"] == "description":
                     description = info['information'][1]["value"]
             info = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", ""), "members": []}
-            answer  = self._send_xmlrpc_call(self.xmlrpc_server.srg_get_members, {"host": server, "group": group["id"]})
+            answer  = self._send_xmlrpc_call("srg_get_members", {"host": server, "group": group["id"]})
             members = answer["members"]
             for member in members:
                 info["members"].append(member["member"])
@@ -525,7 +527,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         server = self.entity.jid.getDomain()
         for user in users:
             userJID = xmpp.JID(user)
-            answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_user_add, {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
+            answer = self._send_xmlrpc_call("srg_user_add", {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot add user to shared roster group. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Adding user %s into shared group %s" % (userJID, ID))
@@ -559,7 +561,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         server = self.entity.jid.getDomain()
         for user in users:
             userJID = xmpp.JID(user)
-            answer  = self._send_xmlrpc_call(self.xmlrpc_server.srg_user_del, {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
+            answer  = self._send_xmlrpc_call("srg_user_del", {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot remove user from shared roster group. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, ID))
