@@ -51,16 +51,17 @@ LABEL_RESET                             = "\033[0m"
 ## Error codes
 
 TEST_SUCCESS                            = 0
-TEST_ERROR_CONNECTION_CANNOT_CONNECT    = 1000000000
-TEST_ERROR_CONNECTION_CANNOT_AUTH       = 1100000000
-TEST_ERROR_INBAND_CANNOT_REGISTER       = 1110000000
-TEST_ERROR_INBAND_CANNOT_UNREGISTER     = 1111000000
-TEST_ERROR_PUBSUB_CANNOT_CREATE         = 1111100000
-TEST_ERROR_PUBSUB_CANNOT_FIND           = 1111110000
-TEST_ERROR_PUBSUB_CANNOT_CONFIGURE      = 1111111000
-TEST_ERROR_PUBSUB_CANNOT_DELETE         = 1111111100
-TEST_ERROR_XMLRPC_CANNOT_CONNECT        = 1111111110
-TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA  = 1111111111
+TEST_ERROR_CONNECTION_CANNOT_CONNECT    = 10000000000
+TEST_ERROR_CONNECTION_CANNOT_AUTH       = 11000000000
+TEST_ERROR_INBAND_CANNOT_REGISTER       = 11100000000
+TEST_ERROR_INBAND_CANNOT_UNREGISTER     = 11110000000
+TEST_ERROR_PUBSUB_CANNOT_CREATE         = 11111000000
+TEST_ERROR_PUBSUB_CANNOT_FIND           = 11111100000
+TEST_ERROR_PUBSUB_CANNOT_CONFIGURE      = 11111110000
+TEST_ERROR_PUBSUB_CANNOT_DELETE         = 11111111000
+TEST_ERROR_XMLRPC_CANNOT_CONNECT        = 11111111100
+TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA  = 11111111110
+TEST_ERROR_XMPPCOMMAND_CANNOT_MANAGE    = 11111111111
 
 
 ## Utilities
@@ -228,6 +229,28 @@ def test_pubsub_deletion(jid, password):
         print_error("Unable to delete the pubsub. This is weird.")
         return TEST_ERROR_PUBSUB_CANNOT_DELETE
 
+def test_user_management(jid,password):
+    print_info("Trying to list registered users using XMPP admin commands (XEP-133)")
+    xmpp_client = xmpp_connect(jid, password)
+    iq = (xmpp.Iq(typ='get', to=jid.getDomain()))
+    iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
+    print_info("Command sent. Wait for response...")
+    resp_iq = xmpp_client.SendAndWaitForResponse(iq)
+    if resp_iq.getType() == "error":
+        print_error("Unable to list registered users. This jid cannot manage users. Be sure the given jid is admin to do so.")
+        return TEST_ERROR_XMPPCOMMAND_CANNOT_MANAGE
+    else:
+        print_success("User Management is enabled")
+        return TEST_SUCCESS
+
+def _xmlrpc_command(server, command, data, auth=None):
+    fn = getattr(server, command)
+    if auth == None:
+        return fn(data)
+    else:
+        return fn(auth, data)
+
+
 def test_xmlrpc_connection(jid, password):
     import xmlrpclib
     print_info("Trying to connect the ejabberd_xmlrpc module...")
@@ -235,22 +258,44 @@ def test_xmlrpc_connection(jid, password):
     xmlrpc_port         = "4560"
     xmlrpc_user         = jid.getNode()
     xmlrpc_password     = password
-    xmlrpc_call         = "http://%s:%s@%s:%s/" % (xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
+    xmlrpc_call         = "http://%s:%s/" % (xmlrpc_host, xmlrpc_port)
+    xmlrpc_auth         = {'user':xmlrpc_user, 'server': xmlrpc_host, 'password': xmlrpc_password}
     xmlrpc_server       = xmlrpclib.ServerProxy(xmlrpc_call)
+
     try:
-        answer = xmlrpc_server.registered_users({"host": xmlrpc_host})
+        answer = _xmlrpc_command(xmlrpc_server, "registered_users", {"host": xmlrpc_host}, xmlrpc_auth)
         print_success("Successfully contacted ejabberd_xmlrpc module")
         return TEST_SUCCESS
+    except Exception as ex:
+        print_warning("Unable to authenticate on xmlrpc over http, I will try anonymously")
+    try:
+        answer = _xmlrpc_command(xmlrpc_server, "registered_users", {"host": xmlrpc_host})
+        print_success("Successfully contacted anonymously ejabberd_xmlrpc module")
+        print_warning("This is NOT secure, you should use Access Controls Rules")
+        print_error("Managing Shared Roster Group from UI will not work anymore with anonymous xmlrpc_host")
+        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
     except Exception as ex:
         print_warning("Unable to reach xmlrpc over http, I will try over https")
         xmlrpc_server = xmlrpclib.ServerProxy(xmlrpc_call.replace("http","https"))
+
     try:
-        answer = xmlrpc_server.registered_users({"host": xmlrpc_host})
+        answer = _xmlrpc_command(xmlrpc_server, "registered_users", {"host": xmlrpc_host}, xmlrpc_auth)
         print_success("Successfully contacted ejabberd_xmlrpc module")
         return TEST_SUCCESS
     except Exception as ex:
+        print_error("Unable to authenticate on xmlrpc over https, I will try anonymously")
+        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
+    try:
+        answer = _xmlrpc_command(xmlrpc_server, "registered_users", {"host": xmlrpc_host})
+        print_success("Successfully contacted anonymously ejabberd_xmlrpc module")
+        print_warning("This is NOT secure, you should use Access Controls Rules")
+        print_error("Managing Shared Roster Group from UI will not work anymore with anonymous xmlrpc_host")
+        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
+    except Exception as ex:
         print_error("Unable to contact the ejabberd_xmlrpc module on both http or https: %s" % str(ex))
         return TEST_ERROR_XMLRPC_CANNOT_CONNECT
+
+
 
 def test_xmlrpc_modadminextra(jid, password):
     import xmlrpclib
@@ -259,21 +304,40 @@ def test_xmlrpc_modadminextra(jid, password):
     xmlrpc_port         = "4560"
     xmlrpc_user         = jid.getNode()
     xmlrpc_password     = password
-    xmlrpc_call         = "http://%s:%s@%s:%s/" % (xmlrpc_user, xmlrpc_password, xmlrpc_host, xmlrpc_port)
+    xmlrpc_call         = "http://%s:%s/" % (xmlrpc_host, xmlrpc_port)
+    xmlrpc_auth         = {'user':xmlrpc_user, 'server': xmlrpc_host, 'password': xmlrpc_password}
     xmlrpc_server       = xmlrpclib.ServerProxy(xmlrpc_call)
     try:
-        answer = xmlrpc_server.srg_list({"host": xmlrpc_host})
-        print_success("mod_admin_extra is present.")
+        answer = _xmlrpc_command(xmlrpc_server, "srg_list", {"host": xmlrpc_host}, xmlrpc_auth)
+        print_success("Successfully contacted mod_admin_extra over ejabberd_xmlrpc module")
         return TEST_SUCCESS
     except Exception as ex:
-        print_warning("Unable to reach xmlrpc over http, I will try over https")
-        xmlrpc_server = xmlrpclib.ServerProxy(xmlrpc_call.replace("http","https"))
+        print_warning("Unable to authenticate on xmlrpc over http, I will try anonymously")
     try:
-        answer = xmlrpc_server.srg_list({"host": xmlrpc_host})
-        print_success("mod_admin_extra is present.")
+        answer = _xmlrpc_command(xmlrpc_server, "srg_list", {"host": xmlrpc_host})
+        print_success("Successfully contacted anonymously mod_admin_extra over ejabberd_xmlrpc module")
+        print_warning("This is NOT secure, you should use Access Controls Rules")
+        print_error("Managing Shared Roster Group from UI will not work anymore with anonymous xmlrpc_host")
+        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
+    except Exception as ex:
+        print_warning("Unable to reach mod_admin_extra over ejabberd_xmlrpc module through http, I will try over https")
+        xmlrpc_server = xmlrpclib.ServerProxy(xmlrpc_call.replace("http","https"))
+
+    try:
+        answer = _xmlrpc_command(xmlrpc_server, "srg_list", {"host": xmlrpc_host}, xmlrpc_auth)
+        print_success("Successfully contacted mod_admin_extra over ejabberd_xmlrpc module")
         return TEST_SUCCESS
     except Exception as ex:
-        print_error("Unable to access mod_admin_extra features: %s" % str(ex))
+        print_error("Unable to authenticate on xmlrpc over https, I will try anonymously")
+        return TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA
+    try:
+        answer = _xmlrpc_command(xmlrpc_server, "srg_list", {"host": xmlrpc_host})
+        print_success("Successfully contacted anonymously mod_admin_extra over ejabberd_xmlrpc module")
+        print_warning("This is NOT secure, you should use Access Controls Rules")
+        print_error("Managing Shared Roster Group from UI will not work anymore with anonymous xmlrpc_host")
+        return TEST_ERROR_XMLRPC_CANNOT_CONNECT
+    except Exception as ex:
+        print_error("Unable to contact the mod_admin_extra over ejabberd_xmlrpc module on both http or https: %s" % str(ex))
         return TEST_ERROR_XMLRPC_CANNOT_MODADMINEXTRA
 
 
@@ -324,6 +388,8 @@ if __name__ == "__main__":
     final_ret = final_ret + test_xmlrpc_connection(xmpp.JID(options.jid), options.password)
     print_title("TEST 9 : CHECKING FOR MOD_ADMIN_EXTRA")
     final_ret = final_ret + test_xmlrpc_modadminextra(xmpp.JID(options.jid), options.password)
+    print_title("TEST 10 : CHECKING FOR USER MANAGEMENT THROUGH XMPP API")
+    final_ret = final_ret + test_user_management(xmpp.JID(options.jid), options.password)
 
     if final_ret == 0:
         print "\n\033[32myour XMPP server should be ready!%s\n" %  LABEL_RESET
