@@ -27,7 +27,7 @@ from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
 
-
+ARCHIPEL_NS_XMPPSERVER          = "archipel:xmppserver"
 ARCHIPEL_NS_XMPPSERVER_GROUPS   = "archipel:xmppserver:groups"
 ARCHIPEL_NS_XMPPSERVER_USERS    = "archipel:xmppserver:users"
 
@@ -64,7 +64,8 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.user_page_size = 50
         self.need_user_refresh = True
         self.entities_types_cache = {}
-        self.management_capabilities = {"xmpp":False,"xmlrpc":False}
+        self.users_management_capabilities  = {"xmpp":False,"xmlrpc":False}
+        self.groups_management_capabilities = {"xmpp":False,"xmlrpc":False}
 
         if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
             self.xmpp_server        = entity.jid.getDomain()
@@ -78,7 +79,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
             try :
                 answer = self._send_xmlrpc_call("srg_list", {"host":self.xmlrpc_host})
-                self.management_capabilities["xmlrpc"] = True
+                self.groups_management_capabilities["xmlrpc"] = True
                 self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing Shared Roster Groups")
                 if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
                     self.autogroup_name_hypervisors = "All Hypervisors"
@@ -137,6 +138,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER)
             self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
             self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
@@ -147,6 +149,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER)
             self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
             self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
@@ -221,10 +224,10 @@ class TNXMPPServerController (TNArchipelPlugin):
         def on_receive_info(conn, iq):
             if iq.getType() == "result":
                 self.entity.log.info("XMMP user management is allowed to this hypervisor through XEP-133")
-                self.management_capabilities["xmpp"] = True
+                self.users_management_capabilities["xmpp"] = True
             else:
                 self.entity.log.warning("XMPP user management is not allowed to this hypervisor through XEP-133")
-                self.management_capabilities["xmpp"] = False
+                self.users_management_capabilities["xmpp"] = False
 
         user_iq = xmpp.Iq(typ="get", to=entity.jid.getDomain())
         user_iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
@@ -357,7 +360,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             - list
             - addusers
             - deleteusers
-            - managementcapability
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -376,8 +378,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             reply = self.iq_group_add_users(iq)
         elif action == "deleteusers":
             reply = self.iq_group_delete_users(iq)
-        elif action == "managementcapability":
-            reply = self.iq_group_management_capability(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -567,18 +567,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, ID))
         self.entity.push_change("xmppserver:groups", "usersdeleted")
 
-    def iq_group_management_capability(self, iq):
-        """
-        Reply the hypervisor admin capabitilies
-        """
-        try :
-            reply = iq.buildReply("result")
-            reply.getTag("query").addChild(name="managementcapability", payload=str(self.management_capabilities["xmlrpc"]))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_MANAGEMENT)
-        return reply
-
-
     ### XMPP Processing for users
 
     def process_users_iq_for_virtualmachines(self, conn, iq):
@@ -621,7 +609,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             - list
             - filter
             - number
-            - managementcapability
             - changepassword
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -645,10 +632,6 @@ class TNXMPPServerController (TNArchipelPlugin):
                 raise xmpp.protocol.NodeProcessed
         elif action == "filter":
             reply = self.iq_users_filter(iq)
-            if not reply:
-                raise xmpp.protocol.NodeProcessed
-        elif action == "managementcapability":
-            reply = self.iq_users_management_capability(iq)
             if not reply:
                 raise xmpp.protocol.NodeProcessed
         elif action == "changepassword":
@@ -875,17 +858,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         else:
             send_filtered_users(base_reply)
 
-    def iq_users_management_capability(self, iq):
-        """
-        Reply the hypervisor admin capabitilies
-        """
-        try :
-            reply = iq.buildReply("result")
-            reply.getTag("query").addChild(name="managementcapability", payload=str(self.management_capabilities["xmpp"]))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_XMPP_MANAGEMENT)
-        return reply
-
     def iq_users_change_password(self, iq):
         """
         Change password for users.
@@ -931,3 +903,40 @@ class TNXMPPServerController (TNArchipelPlugin):
             else:
                 self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_password_changed)
             self.entity.log.info("XMPPSERVER: Changing password for user %s@%s" % (user["jid"], server))
+
+
+    def process_iq_for_hypervisors(self, conn, iq):
+        """
+        This method is invoked when a ARCHIPEL_NS_XMPPSERVER IQ is received.
+        It understands IQ of type:
+            - managementcapabilities
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_")
+        reply = None
+        if action == "managementcapabilities":
+            reply = self.iq_management_capabilities(iq)
+            if not reply:
+                raise xmpp.protocol.NodeProcessed
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+    def iq_management_capabilities(self, iq):
+        """
+        Reply the hypervisor xmpp management capabitilies
+        """
+        try :
+            reply = iq.buildReply("result")
+            users_node  = xmpp.Node("users", attrs={"xmpp": self.users_management_capabilities["xmpp"], "xmlrpc": self.users_management_capabilities["xmlrpc"]})
+            groups_node = xmpp.Node("groups", attrs={"xmpp": self.groups_management_capabilities["xmpp"], "xmlrpc": self.groups_management_capabilities["xmlrpc"]})
+            reply.setQueryPayload([users_node, groups_node])
+
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_XMPP_MANAGEMENT)
+        return reply
+
