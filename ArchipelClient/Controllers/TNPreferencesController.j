@@ -137,7 +137,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
                             @"TNArchipelXMPPPassword", @"TNArchipelXMPPService", @"TNArchipelRememberCredentials",
                             @"TNArchipelTagsVisible", @"TNArchipelModuleControllerOpenedTabRegistry",
                             @"TNArchipelForceJIDDomain", @"TNArchipelForcedJIDDomain",
-                            @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups", @"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert"];
+                            @"TNUserChatMessageStore", @"TNOutlineViewsExpandedGroups", @"TNArchipelTypeVirtualMachineControlDoNotShowDestroyAlert",@"TNArchipelXMPPServerSaved"];
 }
 
 /*! initialize the XMPP storage

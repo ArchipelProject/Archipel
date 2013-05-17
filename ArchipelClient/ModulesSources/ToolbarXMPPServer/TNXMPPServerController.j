@@ -35,6 +35,9 @@
 
 var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users";
 
+var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
+    TNArchipelTypeXMPPServerManagementCapabilities  = @"managementcapabilities";
+
 /*! @defgroup  toolbarxmppserver Module XMPP Server
     @desc module to manage XMPP servers
 */
@@ -53,10 +56,11 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     @outlet TNXMPPUsersController           usersController;
 
     BOOL                                    _pushRegistred;
+    CPDictionary                            _currentDomains;
+    CPDictionary                            _savedDomains;
     CPImage                                 _defaultAvatar;
     CPTabViewItem                           _itemViewGroups;
     CPTabViewItem                           _itemViewUsers;
-
 }
 
 #pragma mark -
@@ -71,6 +75,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     // register defaults defaults
     [defaults registerDefaults:@{@"TNArchipelUseEjabberdSharedRosterGroups":[bundle objectForInfoDictionaryKey:@"TNArchipelUseEjabberdSharedRosterGroups"]}];
+
+    _currentDomains = [[CPDictionary alloc] init];
+    _savedDomains   = [[CPDictionary alloc] init];
 
     _defaultAvatar  = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 
@@ -113,16 +120,16 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     if (![super willShow])
         return NO;
 
-    [self populateHypervisors];
+    // Try to fetch some savedDomains if we don't have one use currentDomains
+    _savedDomains = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPServerSaved"];
+
+    [self checkHypervisors];
 
     if (!_pushRegistred)
     {
         [self registerSelector:@selector(_didReceiveUsersPush:) ofObject:usersController forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
         _pushRegistred = YES;
     }
-
-    // simulate tab view item change
-    [self tabView:tabViewMain didSelectTabViewItem:[tabViewMain selectedTabViewItem]];
 
     return YES;
 }
@@ -139,6 +146,10 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
 
+    // Save the currentDomains for later
+
+    [[CPUserDefaults standardUserDefaults] setObject:[_currentDomains copy] forKey:@"TNArchipelXMPPServerSaved"];
+
     [super willHide];
 }
 
@@ -147,18 +158,18 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)permissionsChanged
 {
     [super permissionsChanged];
+    [usersController permissionsChanged];
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
         [sharedGroupsController permissionsChanged];
-    [usersController permissionsChanged];
 }
 
 /*! called when the UI needs to be updated according to the permissions
 */
 - (void)setUIAccordingToPermissions
 {
+    [usersController setUIAccordingToPermissions];
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
         [sharedGroupsController setUIAccordingToPermissions];
-    [usersController setUIAccordingToPermissions];
 }
 
 /*! called when user saves preferences
@@ -168,7 +179,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setBool:([checkBoxPreferencesUseSRG state] == CPOnState) forKey:@"TNArchipelUseEjabberdSharedRosterGroups"];
-
     [self manageToolbarItems];
 }
 
@@ -179,6 +189,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [checkBoxPreferencesUseSRG setState:[defaults boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] ? CPOnState : CPOffState];
+
 }
 
 /*! this message is used to flush the UI
@@ -199,7 +210,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)_didHypervisorPresenceUpdate:(CPNotification)aNotification
 {
-    [self populateHypervisors];
+    [self checkHypervisors];
     [usersController reload];
     if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
         [sharedGroupsController reload];
@@ -230,44 +241,80 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [tabViewMain setDelegate:self];
 }
 
-/*! populate the hypervisor pop up button according to roster
+/*! check the hypervisors for management purpose
 */
-- (void)populateHypervisors
+- (void)checkHypervisors
 {
-    [buttonHypervisors removeAllItems];
+    var checkForDomain = nil,
+        enumerator = [_savedDomains keyEnumerator],
+        key;
 
-    var servers = [CPArray array],
-        items = [CPArray array];
+    [_currentDomains removeAllObjects];
+
+    if (key = [enumerator nextObject])
+    {
+        checkForDomain = [_savedDomains valueForKey:key];
+        [_savedDomains removeObjectForKey:key];
+    }
 
     for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
     {
-        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i],
-            item = [[CPMenuItem alloc] init];
+        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
         if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
-            && ([contact XMPPShow] != TNStropheContactStatusOffline)
-            && ![servers containsObject:[[contact JID] domain]])
+            && ([contact XMPPShow] != TNStropheContactStatusOffline))
         {
+                if ((checkForDomain != nil) && ([[contact JID] compare:[[checkForDomain valueForKey:@"jid"] JID]] == 0))
+                {
+                    [self fetchManagementCapabilitiesFor:contact];
 
-            [servers addObject:[[contact JID] domain]];
+                    if ((([checkForDomain valueForKey:@"users" ]) && ([checkForDomain valueForKey:@"groups"])) || ! ([[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"]))
+                        return;
 
-            [item setTitle:[[contact JID] domain]]; // sic..
-            [item setRepresentedObject:contact];
-            [items addObject:item];
-
-            [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:contact];
-            [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didHypervisorPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:contact];
+                    checkForDomain = nil;
+                    continue;
+                }
+                else if (checkForDomain == nil)
+                {
+                    [self fetchManagementCapabilitiesFor:contact];
+                }
         }
+    }
+}
+
+/*! populate the hypervisor pop up button according to dictionnary
+*/
+
+- (void)populateHypervisors
+{
+    var items = [CPArray array],
+        enumerator = [_currentDomains keyEnumerator],
+        key;
+
+    while (key = [enumerator nextObject])
+    {
+        var item = [[CPMenuItem alloc] init],
+            contact = [[_currentDomains objectForKey:key] objectForKey:@"jid"];
+        [item setTitle:[[contact JID] domain]];
+        [item setRepresentedObject:contact];
+        [items addObject:item];
+        [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:contact];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didHypervisorPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:contact];
     }
 
     var sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"title.uppercaseString" ascending:YES],
         sortedItems     = [items sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
+
+    [buttonHypervisors removeAllItems];
 
     for (var i = 0; i < [sortedItems count]; i++)
         [buttonHypervisors addItem:[sortedItems objectAtIndex:i]];
 
     [buttonHypervisors selectItemAtIndex:0];
     _entity = [[buttonHypervisors selectedItem] representedObject];
+
+    // simulate tab view item change
+    [self tabView:tabViewMain didSelectTabViewItem:[tabViewMain selectedTabViewItem]];
 }
 
 
@@ -289,6 +336,50 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [self permissionsChanged];
 }
 
+#pragma mark -
+#pragma mark XMPP Management
+
+
+/*! get the group management capabilities
+*/
+- (void)fetchManagementCapabilitiesFor:(id)aContact
+{
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{@"xmlns": TNArchipelTypeXMPPServer}];
+    [stanza addChildWithName:@"archipel" andAttributes:{@"action": TNArchipelTypeXMPPServerManagementCapabilities}];
+
+    [aContact sendStanza:stanza andRegisterSelector:@selector(_didfetchManagementCapabilities:forContact:) ofObject:self userInfo:aContact];
+}
+
+/*! compute the answer
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (void)_didfetchManagementCapabilities:(TNStropheStanza)aStanza forContact:(id)aContact
+{
+    if ([aStanza type] == @"result")
+    {
+
+        var usersManagement  = (([[aStanza firstChildWithName:@"users"] valueForAttribute:@"xmpp"]    == @"True") ? true : false) || (([[aStanza firstChildWithName:@"users"] valueForAttribute:@"xmlrpc"]  == @"True") ? true : false),
+            groupsManagement = (([[aStanza firstChildWithName:@"groups"] valueForAttribute:@"xmpp"]   == @"True") ? true : false) || (([[aStanza firstChildWithName:@"groups"] valueForAttribute:@"xmlrpc"] == @"True") ? true : false);
+
+        if (usersManagement && groupsManagement)
+            {
+                [_currentDomains setValue:@{@"jid":aContact, @"users":usersManagement, @"groups":groupsManagement}  forKey:[[aContact JID] domain]];
+                [self populateHypervisors];
+            }
+        else if (usersManagement && ! groupsManagement && ! ([_currentDomains containsKey:[[aContact JID] domain]]))
+            {
+                [_currentDomains setValue:@{@"jid":aContact, @"users":usersManagement, @"groups":groupsManagement}  forKey:[[aContact JID] domain]];
+                [self populateHypervisors];
+            }
+    }
+
+    // if we have still domains in savedDomains, we process them
+    if ([_savedDomains count] > 0)
+        [self checkHypervisors];
+
+}
 
 #pragma mark -
 #pragma mark Delegate
