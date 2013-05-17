@@ -31,19 +31,19 @@ ARCHIPEL_NS_XMPPSERVER          = "archipel:xmppserver"
 ARCHIPEL_NS_XMPPSERVER_GROUPS   = "archipel:xmppserver:groups"
 ARCHIPEL_NS_XMPPSERVER_USERS    = "archipel:xmppserver:users"
 
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_MANAGEMENT     = -10001
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS       = -10002
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE         = -10003
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE         = -10004
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS    = -10005
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST           = -10006
+ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT           = -10000
 
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_MANAGEMENT     = -20001
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -20002
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -20003
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -20004
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER         = -20005
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_CHANGEPASSWORD = -20006
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST           = -20000
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE         = -20001
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS       = -20002
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE         = -20003
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS    = -20004
+
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -30000
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -30001
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -30002
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER         = -30003
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_CHANGEPASSWORD = -30004
 
 
 class TNXMPPServerController (TNArchipelPlugin):
@@ -64,8 +64,8 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.user_page_size = 50
         self.need_user_refresh = True
         self.entities_types_cache = {}
-        self.users_management_capabilities  = {"xmpp":False,"xmlrpc":False}
-        self.groups_management_capabilities = {"xmpp":False,"xmlrpc":False}
+        self.users_management_capabilities  = {"xmpp": False, "xmlrpc": False}
+        self.groups_management_capabilities = {"xmpp": False, "xmlrpc": False}
 
         if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
             self.xmpp_server        = entity.jid.getDomain()
@@ -73,12 +73,12 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.xmlrpc_port        = configuration.getint("XMPPSERVER", "xmlrpc_port")
             self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
             self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
-            self.xmlrpc_prefix      = "https" if configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
+            self.xmlrpc_prefix      = "https" if configuration.getboolean("XMPPSERVER", "xmlrpc_sslonly") else "http"
             self.xmlrpc_call        = "%s://%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_host, self.xmlrpc_port)
             self.xmlrpc_auth        = {'user':self.xmlrpc_user, 'server': self.xmlrpc_host, 'password': self.xmlrpc_password}
             self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
-            try :
-                answer = self._send_xmlrpc_call("srg_list", {"host":self.xmlrpc_host})
+            try:
+                answer = self._send_xmlrpc_call("srg_list", {"host": self.xmlrpc_host})
                 self.groups_management_capabilities["xmlrpc"] = True
                 self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing Shared Roster Groups")
                 if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
@@ -107,7 +107,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                         self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
             except Exception as ex:
-               self.entity.log.warning("Shared Roster Group management is not allowed to this hypervisor through XMLRPC and mod_admin_extra : %s" % ex)
+                self.entity.log.warning("Shared Roster Group management is not allowed to this hypervisor through XMLRPC and mod_admin_extra : %s" % ex)
 
         else:
             self.entity.log.info("XMLRPC module for Shared Roster Group management is disabled for this hypervisor")
@@ -127,9 +127,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
         self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
 
-
     ### Plugin interface
-
     def register_handlers(self):
         """
         This method will be called by the plugin user when it will be
@@ -278,6 +276,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         self.users = []
         self.need_user_refresh = False
+
         def on_receive_users_num(conn, iq):
             if iq.getType() != "result":
                 self.entity.log.error("unable to get user number: %s" % str(iq))
@@ -293,6 +292,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 def manage_received_users(conn, iq):
                     items = iq.getTag("query").getTags("item")
                     users = map(lambda x: x.getAttr("jid"), items)
+
                     def on_receive_vcard(conn, iq):
                         try:
                             entity_type = self._extract_entity_type(iq.getTag("vCard"))
@@ -418,7 +418,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.entity.push_change("xmppserver:groups", "created")
         return True
 
-
     def iq_group_delete(self, iq):
         """
         Delete a shared group.
@@ -435,7 +434,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE)
         return reply
 
-
     def group_delete(self, ID):
         """
         Destroy a shared roster group
@@ -448,7 +446,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Removing a shared group %s" % ID)
         self.entity.push_change("xmppserver:groups", "deleted")
-
 
     def iq_group_list(self, iq):
         """
@@ -492,7 +489,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 if info['information'][0]["key"] == "description":
                     description = info['information'][1]["value"]
             info = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", ""), "members": []}
-            answer  = self._send_xmlrpc_call("srg_get_members", {"host": server, "group": group["id"]})
+            answer = self._send_xmlrpc_call("srg_get_members", {"host": server, "group": group["id"]})
             members = answer["members"]
             for member in members:
                 info["members"].append(member["member"])
@@ -561,7 +558,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         server = self.entity.jid.getDomain()
         for user in users:
             userJID = xmpp.JID(user)
-            answer  = self._send_xmlrpc_call("srg_user_del", {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
+            answer = self._send_xmlrpc_call("srg_user_del", {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot remove user from shared roster group. %s" % str(answer))
             self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, ID))
@@ -727,15 +724,14 @@ class TNXMPPServerController (TNArchipelPlugin):
         iq_command_x.addChild("field", attrs={"type": "hidden", "var": "FORM_TYPE"}).addChild("value").setData("http://jabber.org/protocol/admin")
         accountjids_node = iq_command_x.addChild("field", attrs={"var": "accountjids"})
         for jid in users:
-             accountjids_node.addChild("value").setData(jid.getStripped())
-             if jid.getStripped() in self.entities_types_cache:
-                 del self.entities_types_cache[jid.getStripped()]
+            accountjids_node.addChild("value").setData(jid.getStripped())
+            if jid.getStripped() in self.entities_types_cache:
+                del self.entities_types_cache[jid.getStripped()]
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
         else:
             self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
         self.entity.log.info("XMPPSERVER: Unregistring some users %s" % str(users))
-
 
     def iq_users_number(self, iq):
         """
@@ -904,7 +900,6 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_password_changed)
             self.entity.log.info("XMPPSERVER: Changing password for user %s@%s" % (user["jid"], server))
 
-
     def process_iq_for_hypervisors(self, conn, iq):
         """
         This method is invoked when a ARCHIPEL_NS_XMPPSERVER IQ is received.
@@ -930,13 +925,13 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         Reply the hypervisor xmpp management capabitilies
         """
-        try :
+        try:
             reply = iq.buildReply("result")
             users_node  = xmpp.Node("users", attrs={"xmpp": self.users_management_capabilities["xmpp"], "xmlrpc": self.users_management_capabilities["xmlrpc"]})
             groups_node = xmpp.Node("groups", attrs={"xmpp": self.groups_management_capabilities["xmpp"], "xmlrpc": self.groups_management_capabilities["xmlrpc"]})
             reply.setQueryPayload([users_node, groups_node])
 
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_XMPP_MANAGEMENT)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT)
         return reply
 
