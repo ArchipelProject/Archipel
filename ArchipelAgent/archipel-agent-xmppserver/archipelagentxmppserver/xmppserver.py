@@ -934,4 +934,3 @@ class TNXMPPServerController (TNArchipelPlugin):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT)
         return reply
-
