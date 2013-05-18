@@ -261,7 +261,6 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 - (void)flushUI
 {
     [_usersFetcher reset];
-    [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
 }
 

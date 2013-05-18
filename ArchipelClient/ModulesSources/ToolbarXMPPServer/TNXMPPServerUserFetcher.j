@@ -215,6 +215,8 @@ var _iconEntityTypeHuman,
     {
         var users = [aStanza childrenWithName:@"user"];
 
+        [_dataSource removeAllObjects];
+
         for (var i = 0; i < [users count]; i++)
         {
             var user = [users objectAtIndex:i],
