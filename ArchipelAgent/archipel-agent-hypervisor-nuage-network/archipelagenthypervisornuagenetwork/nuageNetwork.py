@@ -340,13 +340,17 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         """
         Remove a network from the db
         """
-        self.database.execute("delete from nuagenetworks where name=?", (name,))
-        self.database.commit()
-
         ## We now redifine the VMs using this domain
         vms_using_this_network = self.get_vms_using_network_with_name(name)
-        for vm in vms_using_this_network:
-            vm.define(vm.definition)
+        if len(vms_using_this_network):
+            exception_string = "Unable to delete the network. Following VMs are using it:\n"
+            for vm in vms_using_this_network:
+                exception_string = "%s - %s\n" % (exception_string, vm.name)
+            exception_string = "%sPlease update their networks before removing it" % (exception_string)
+            raise Exception(exception_string)
+
+        self.database.execute("delete from nuagenetworks where name=?", (name,))
+        self.database.commit()
 
         self.entity.push_change("nuagenetwork", "deleted")
 
