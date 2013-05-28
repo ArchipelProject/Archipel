@@ -125,7 +125,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 
     [self addControlsWithIdentifier:TNModuleControlForSaveAsTemplate
                               title:CPBundleLocalizedString(@"Save current permission set as template", @"Save current permission set as template")
-                             target:self
+                             target:rolesController
                              action:@selector(openNewTemplateWindow:)
                               image:CPImageInBundle(@"IconsButtons/role_add.png",nil, [CPBundle mainBundle])];
 
