@@ -45,6 +45,10 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     TNArchipelTypeHypervisorSnapshotDelete      = @"delete",
     TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
+var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
+    TNModuleControlForRevertToSnapshot           = @"RevertToSnapshot",
+    TNModuleControlForRemoveSnapshot             = @"RemoveSnapshot";
+
 
 /*! @defgroup  virtualmachinesnapshoting Module VirtualMachine Snapshots
     @desc Module to handle Virtual Machine snapshoting
@@ -65,10 +69,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     @outlet CPView                      viewTableContainer;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
 
-
-    CPButton                            _minusButton;
-    CPButton                            _plusButton;
-    CPButton                            _revertButton;
     CPOutlineView                       _outlineViewSnapshots;
     TNSnapshot                          _currentSnapshot;
     TNSnapshotsDatasource               _datasourceSnapshots;
@@ -83,12 +83,12 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
-    [fieldNewSnapshotDescription setFrameSize:CGSizeMake(366, 120)];
-
     // VM table view
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
     _outlineViewSnapshots   = [[CPOutlineView alloc] initWithFrame:[scrollViewSnapshots bounds]];
+
+    [_datasourceSnapshots setParentKeyPath:@"parent"];
+    [_datasourceSnapshots setChildCompKeyPath:@"name"];
 
     [scrollViewSnapshots setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewSnapshots setAutohidesScrollers:YES];
@@ -100,7 +100,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_outlineViewSnapshots setAllowsEmptySelection:YES];
     [_outlineViewSnapshots setAllowsMultipleSelection:NO];
     [_outlineViewSnapshots setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    // [_outlineViewSnapshots setRowHeight:50.0];
+    [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
 
     var outlineColumn = [[CPTableColumn alloc] initWithIdentifier:@"outline"],
         columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
@@ -129,46 +129,42 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [columnState setWidth:16];
     [[columnState headerView] setStringValue:@""];
 
-    // [_outlineViewSnapshots addTableColumn:outlineColumn];
     [_outlineViewSnapshots addTableColumn:columnState];
     [_outlineViewSnapshots addTableColumn:columnDescription];
     [_outlineViewSnapshots addTableColumn:columnCreationTime];
     [_outlineViewSnapshots addTableColumn:columnName];
     [_outlineViewSnapshots setOutlineTableColumn:columnDescription];
     [_outlineViewSnapshots setDelegate:self];
+    [_outlineViewSnapshots setTarget:self];
+    [_outlineViewSnapshots setDoubleAction:@selector(revertSnapshot:)];
 
-    [_datasourceSnapshots setParentKeyPath:@"parent"];
-    [_datasourceSnapshots setChildCompKeyPath:@"name"];
-    [_datasourceSnapshots setSearchableKeyPaths:[@"name", @"description", @"creationTime"]];
+    [fieldFilter setSendsSearchStringImmediately:YES];
+    [fieldFilter setTarget:self];
+    [fieldFilter setAction:@selector(fieldFilterDidChange:)];
 
-    // @TODO: this doesn't work because the datasourve sucks.
-    // while waiting for me to fix it, let's just deactivate this
-    //[fieldFilter setTarget:_datasourceSnapshots];
-    //[fieldFilter setAction:@selector(filterObjects:)];
 
-    [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
+    [self addControlsWithIdentifier:TNModuleControlForTakeSnapshot
+                              title:CPBundleLocalizedString(@"Create a new snapshot", @"Create a new snapshot")
+                             target:self
+                             action:@selector(openWindowNewSnapshot:)
+                              image:CPImageInBundle(@"IconsButtons/photo-add.png",nil, [CPBundle mainBundle])];
 
-    _plusButton = [CPButtonBar plusButton];
-    [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CGSizeMake(14, 14)]];
-    [_plusButton setAction:@selector(openWindowNewSnapshot:)];
-    [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new snapshot", @"Create a new snapshot")];
+    [self addControlsWithIdentifier:TNModuleControlForRemoveSnapshot
+                              title:CPBundleLocalizedString(@"Remove selected snapshot", @"Remove selected snapshot")
+                             target:self
+                             action:@selector(deleteSnapshot:)
+                              image:CPImageInBundle(@"IconsButtons/photo-remove.png",nil, [CPBundle mainBundle])];
 
-    _minusButton = [CPButtonBar minusButton];
-    [_minusButton setTarget:self];
-    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CGSizeMake(14, 14)]];
-    [_minusButton setAction:@selector(deleteSnapshot:)];
-    [_minusButton setEnabled:NO];
-    [_minusButton setToolTip:CPBundleLocalizedString(@"Remove selected snapshot", @"Remove selected snapshot")];
+    [self addControlsWithIdentifier:TNModuleControlForRevertToSnapshot
+                              title:CPBundleLocalizedString(@"Revert state to selected snapshot", @"Revert state to selected snapshot")
+                             target:self
+                             action:@selector(revertSnapshot:)
+                              image:CPImageInBundle(@"IconsButtons/subscription-add.png",nil, [CPBundle mainBundle])];
 
-    _revertButton = [CPButtonBar minusButton];
-    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CGSizeMake(14, 14)]];
-    [_revertButton setTarget:self];
-    [_revertButton setAction:@selector(revertSnapshot:)];
-    [_revertButton setEnabled:NO];
-    [_revertButton setToolTip:CPBundleLocalizedString(@"Revert VM state to selected snapshot", @"Revert VM state to selected snapshot")];
-
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _revertButton]];
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForTakeSnapshot],
+        [self buttonWithIdentifier:TNModuleControlForRemoveSnapshot],
+        [self buttonWithIdentifier:TNModuleControlForRevertToSnapshot]]];
 }
 
 
@@ -201,21 +197,11 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_datasourceSnapshots removeAllObjects];
     [_outlineViewSnapshots reloadData];
     [_outlineViewSnapshots deselectAll];
-    [_revertButton setEnabled:NO];
-    [_minusButton setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForRevertToSnapshot] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForRemoveSnapshot] setEnabled:NO];
     [popoverNewSnapshot close];
 
     [super willUnload];
-}
-
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Take a snapshot", @"Take a snapshot") action:@selector(openWindowNewSnapshot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Revert to selected drive", @"Revert to selected drive") action:@selector(revertSnapshot:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected snapshot", @"Delete selected snapshot") action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when user permissions changed
@@ -229,9 +215,9 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)setUIAccordingToPermissions
 {
-    [self setControl:_plusButton enabledAccordingToPermission:@"snapshot_take"];
-    [self setControl:_minusButton enabledAccordingToPermission:@"snapshot_delete" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
-    [self setControl:_revertButton enabledAccordingToPermission:@"snapshot_revert" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForTakeSnapshot] enabledAccordingToPermission:@"snapshot_take"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveSnapshot] enabledAccordingToPermission:@"snapshot_delete" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForRevertToSnapshot] enabledAccordingToPermission:@"snapshot_revert" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
 
     if (![self currentEntityHasPermission:@"snapshot_take"])
         [popoverNewSnapshot close];
@@ -268,6 +254,16 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 #pragma mark -
 #pragma mark  Actions
 
+/*! update filter
+    @param sender the sender of the action
+*/
+- (IBAction)fieldFilterDidChange:(id)aSender
+{
+    [_datasourceSnapshots setFilter:[fieldFilter stringValue]];
+    [_outlineViewSnapshots reloadData];
+    [_outlineViewSnapshots recoverExpandedWithBaseKey:TNArchipelSnapshotsOpenedSnapshots itemKeyPath:@"name"];
+}
+
 /*! opens the new snapshot window
     @param aSender the sender of the action
 */
@@ -282,7 +278,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
 
     [popoverNewSnapshot close];
-    [popoverNewSnapshot showRelativeToRect:nil ofView:_plusButton preferredEdge:nil];
+    [popoverNewSnapshot showRelativeToRect:nil ofView:[self buttonWithIdentifier:TNModuleControlForTakeSnapshot] preferredEdge:nil];
     [popoverNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [popoverNewSnapshot setDefaultButton:buttonSnapshotTake];
 }
@@ -622,13 +618,13 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {
-    [_revertButton setEnabled:NO];
-    [_minusButton setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForRevertToSnapshot] setEnabled:NO];
+    [[self buttonWithIdentifier:TNModuleControlForRemoveSnapshot] setEnabled:NO];
 
     if ([_outlineViewSnapshots numberOfSelectedRows] > 0)
     {
-        [self setControl:_minusButton enabledAccordingToPermission:@"snapshot_delete"];
-        [self setControl:_revertButton enabledAccordingToPermission:@"snapshot_revert"];
+        [self setControl:[self buttonWithIdentifier:TNModuleControlForRemoveSnapshot] enabledAccordingToPermission:@"snapshot_delete"];
+        [self setControl:[self buttonWithIdentifier:TNModuleControlForRevertToSnapshot] enabledAccordingToPermission:@"snapshot_revert"];
     }
 }
 
@@ -650,10 +646,40 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [defaults setObject:"collapsed" forKey:key];
 }
 
-- (int)tableView:(CPTableView)aTableView heightOfRow:(int)aRow
+/*! Delegate of CPOutlineView for Menu
+*/
+- (CPMenu)outlineView:(CPOutlineView)anOutlineView menuForTableColumn:(CPTableColumn)aTableColumn item:(int)anItem
 {
-    // FIXME : wait for Cappuccino to implement this.
-    return 10.0;
+    if ((anOutlineView != _outlineViewSnapshots) && ([anOutlineView numberOfSelectedRows] > 1))
+        return;
+
+    [_contextualMenu removeAllItems];
+
+    var itemRow = [anOutlineView rowForItem:anItem];
+    if ([anOutlineView selectedRow] != itemRow)
+        [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
+
+    if ([anOutlineView numberOfSelectedRows] == 0)
+        {
+           [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForTakeSnapshot]];
+        }
+    else
+        {
+           [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveSnapshot]];
+           [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRevertToSnapshot]];
+        }
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPOutlineView for delete key event
+*/
+- (void)outlineViewDeleteKeyPressed:(CPOutlineView)anOutlineView
+{
+    if ([anOutlineView numberOfSelectedRows] == 0)
+        return;
+
+    [self deleteSnapshot:anOutlineView];
 }
 
 @end

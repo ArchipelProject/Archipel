@@ -72,14 +72,13 @@
     var bundle      = [CPBundle bundleForClass:[self class]],
         mainBundle  = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
-        frame       = [[messagesScrollView contentView] bounds],
-        controlsBg  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]];
+        frame       = [[messagesScrollView contentView] bounds];
 
-    [viewControls setBackgroundColor:[CPColor colorWithPatternImage:controlsBg]];
+    [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", nil, nil, bundle)];
 
     //controls buttons
-    var imageClear  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/clean.png"] size:CGSizeMake(16, 16)],
-        imageDetach = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] size:CGSizeMake(16, 16)];
+    var imageClear  = CPImageInBundle(@"IconsButtons/clean.png", CGSizeMake(16, 16), mainBundle),
+        imageDetach = CPImageInBundle(@"IconsButtons/fullscreen.png", CGSizeMake(16, 16), mainBundle);
 
     [buttonClear setImage:imageClear];
     [buttonDetach setImage:imageDetach];
@@ -89,10 +88,10 @@
     [buttonDetach setValue:inset forThemeAttribute:@"content-inset"];
 
     // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore",
-            [CPDictionary dictionary], @"TNUserChatMessageStore"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNUserChatMaxMessageStore":[bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"],
+        @"TNUserChatMessageStore"   :[CPDictionary dictionary]
+    }];
 
     _detachedChats = [CPDictionary dictionary];
     _messages = [CPArray array];
@@ -107,7 +106,7 @@
     [messagesScrollView setDocumentView:_messageBoard];
 
 
-    [imageSpinnerWriting setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
+    [imageSpinnerWriting setImage:CPImageInBundle(@"spinner.gif", nil, mainBundle)];
     [imageSpinnerWriting setHidden:YES];
 
     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
@@ -210,14 +209,6 @@
 
     [fieldPreferencesMaxChatMessage setIntValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
 }
-
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Clear history", @"Clear history") action:@selector(clearHistory:) keyEquivalent:@""] setTarget:self];
-}
-
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -359,7 +350,7 @@
 {
     var color           = (aSender == @"me") ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
         date            = [CPDate date],
-        newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
+        newMessageDict  = @{@"name":aSender, @"message":aMessage, @"color":color, @"date":date},
         frame           = [[messagesScrollView documentView] frame],
         avatar          = nil,
         position        = nil;

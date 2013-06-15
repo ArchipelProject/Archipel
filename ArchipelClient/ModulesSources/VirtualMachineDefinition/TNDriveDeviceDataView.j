@@ -70,15 +70,17 @@ var TNDriveDeviceDataViewIconQCOW2,
 */
 + (void)initialize
 {
-    TNDriveDeviceDataViewIconQCOW2      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow2.png"]];
-    TNDriveDeviceDataViewIconQCOW       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_qcow.png"]];
-    TNDriveDeviceDataViewIconCOW        = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cow.png"]];
-    TNDriveDeviceDataViewIconVMDK       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_vmdk.png"]];
-    TNDriveDeviceDataViewIconRAW        = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_raw.png"]];
-    TNDriveDeviceDataViewIconCDROM      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_cdrom.png"]];
-    TNDriveDeviceDataViewIconDISK       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_dev.png"]];
-    TNDriveDeviceDataViewIconNETWORK    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_net.png"]];
-    TNDriveDeviceDataViewIconFLOPPY     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNDriveDeviceDataView] pathForResource:@"drive_floppy.png"]];
+    var bundle = [CPBundle bundleForClass:TNDriveDeviceDataView];
+
+    TNDriveDeviceDataViewIconQCOW2      = CPImageInBundle(@"drive_qcow2.png", nil, bundle);
+    TNDriveDeviceDataViewIconQCOW       = CPImageInBundle(@"drive_qcow.png", nil, bundle);
+    TNDriveDeviceDataViewIconCOW        = CPImageInBundle(@"drive_cow.png", nil, bundle);
+    TNDriveDeviceDataViewIconVMDK       = CPImageInBundle(@"drive_vmdk.png", nil, bundle);
+    TNDriveDeviceDataViewIconRAW        = CPImageInBundle(@"drive_raw.png", nil, bundle);
+    TNDriveDeviceDataViewIconCDROM      = CPImageInBundle(@"drive_cdrom.png", nil, bundle);
+    TNDriveDeviceDataViewIconDISK       = CPImageInBundle(@"drive_dev.png", nil, bundle);
+    TNDriveDeviceDataViewIconNETWORK    = CPImageInBundle(@"drive_net.png", nil, bundle);
+    TNDriveDeviceDataViewIconFLOPPY     = CPImageInBundle(@"drive_floppy.png", nil, bundle);
 }
 
 

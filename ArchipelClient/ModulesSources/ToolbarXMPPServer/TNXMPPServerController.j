@@ -70,11 +70,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
         defaults = [CPUserDefaults standardUserDefaults];
 
     // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelUseEjabberdSharedRosterGroups"], @"TNArchipelUseEjabberdSharedRosterGroups"
-    ]];
+    [defaults registerDefaults:@{@"TNArchipelUseEjabberdSharedRosterGroups":[bundle objectForInfoDictionaryKey:@"TNArchipelUseEjabberdSharedRosterGroups"]}];
 
-    _defaultAvatar  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
+    _defaultAvatar  = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 
     _itemViewUsers   = [[CPTabViewItem alloc] initWithIdentifier:@"itemUsers"],
     _itemViewGroups  = [[CPTabViewItem alloc] initWithIdentifier:@"itemGroups"];
@@ -86,17 +84,21 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [_itemViewGroups setView:[sharedGroupsController mainView]];
 
     [self manageToolbarItems];
-
     [usersController setDelegate:self];
+    [usersController setContextualMenu:_contextualMenu]
+    [usersController populateViewWithControls];
+
     [sharedGroupsController setDelegate:self];
+    [sharedGroupsController setContextualMenu:_contextualMenu];
     [sharedGroupsController setUsersController:usersController];
+    [sharedGroupsController populateViewWithControls];
 
     _pushRegistred = NO;
 
     [buttonHypervisors setTarget:self];
     [buttonHypervisors setAction:@selector(changeCurrentHypervisor:)];
 
-    var imageBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];
+    var imageBg = CPImageInBundle(@"bg-controls.png", nil, [CPBundle bundleForClass:[self class]]);
     [viewBottom setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 }
 

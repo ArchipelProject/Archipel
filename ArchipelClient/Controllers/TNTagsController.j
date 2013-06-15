@@ -83,11 +83,10 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
-        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]],
-        imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CGSizeMake(16, 16)],
+        imageTag = CPImageInBundle(@"IconsButtons/tag-set.png", CGSizeMake(16, 16), bundle),
         tokenFrame;
 
-    [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
+    [mainView setBackgroundColor:CPColorWithImages(@"Backgrounds/background-filter.png", nil, nil, bundle)];
     [mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
     _currentRosterItem  = nil;

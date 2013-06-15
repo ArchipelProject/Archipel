@@ -86,6 +86,21 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     VIR_DOMAIN_SHUTOFF                                  =   5,
     VIR_DOMAIN_CRASHED                                  =   6;
 
+var TNModuleControlForDriveAdd                          = @"DriveAdd",
+    TNModuleControlForDriveRemove                       = @"DriveRemove",
+    TNModuleControlForDriveEdit                         = @"DriveEdit",
+    TNModuleControlForNicAdd                            = @"NicAdd",
+    TNModuleControlForNicRemove                         = @"NicRemove",
+    TNModuleControlForNicEdit                           = @"NicEdit",
+    TNModuleControlForCharacterDeviceAdd                = @"CharacterDeviceAdd",
+    TNModuleControlForCharacterDeviceRemove             = @"CharacterDeviceRemove",
+    TNModuleControlForCharacterDeviceEdit               = @"CharacterDeviceEdit",
+    TNModuleControlForGraphicDeviceAdd                  = @"GraphicDeviceAdd",
+    TNModuleControlForGraphicDeviceRemove               = @"GraphicDeviceRemove",
+    TNModuleControlForGraphicDeviceEdit                 = @"GraphicDeviceEdit",
+    TNModuleControlForInputDeviceAdd                    = @"InputDeviceAdd",
+    TNModuleControlForInputDeviceRemove                 = @"InputDeviceRemove",
+    TNModuleControlForInputDeviceEdit                   = @"InputDeviceEdit";
 
 /*! @defgroup virtualmachinedefinition Module VirtualMachine Definition
     @desc Allow to define virtual machines
@@ -186,21 +201,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     BOOL                                _definitionEdited              @accessors(setter=setDefinitionEdited:);
 
-    CPButton                            _editButtonCharacterDevice;
-    CPButton                            _editButtonDrives;
-    CPButton                            _editButtonGraphicDevice;
-    CPButton                            _editButtonInputDevice;
-    CPButton                            _editButtonNics;
-    CPButton                            _minusButtonCharacterDevice;
-    CPButton                            _minusButtonDrives;
-    CPButton                            _minusButtonGraphicDevice;
-    CPButton                            _minusButtonInputDevice;
-    CPButton                            _minusButtonNics;
-    CPButton                            _plusButtonCharacterDevice;
-    CPButton                            _plusButtonDrives;
-    CPButton                            _plusButtonGraphicDevice;
-    CPButton                            _plusButtonInputDevice;
-    CPButton                            _plusButtonNics;
     CPPredicate                         _consoleFilterPredicate;
     CPString                            _stringXMLDesc;
     TNTableViewDataSource               _characterDevicesDatasource;
@@ -221,8 +221,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
+        mainBundle  = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
-        imageBg     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];
+        imageBg     = CPImageInBundle(@"bg-controls.png", nil, bundle);
 
     [scrollViewContentView setDocumentView:viewMainContent];
     [scrollViewContentView setAutohidesScrollers:YES];
@@ -233,17 +234,16 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [viewBottomControl setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 
      var inset = CGInsetMake(2, 2, 2, 5);
-    [buttonUndefine setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"undefine.png"] size:CGSizeMake(16, 16)]];
+    [buttonUndefine setImage:CPImageInBundle(@"undefine.png", CGSizeMake(16, 16), bundle)];
     [buttonUndefine setValue:inset forThemeAttribute:@"content-inset"];
-    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/editxml.png"] size:CGSizeMake(16, 16)]];
+    [buttonXMLEditor setImage:CPImageInBundle(@"IconsButtons/editxml.png", CGSizeMake(16, 16), mainBundle)];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
     // set theme of buttonXMLEditorDefine to default
     [buttonXMLEditorDefine setThemeState:CPThemeStateDefault];
 
     // paramaters tabView
-    var mainBundle = [CPBundle mainBundle],
-        tabViewItemStandard = [[CPTabViewItem alloc] initWithIdentifier:@"standard"],
+    var tabViewItemStandard = [[CPTabViewItem alloc] initWithIdentifier:@"standard"],
         tabViewItemAdvanced = [[CPTabViewItem alloc] initWithIdentifier:@"advanced"],
         tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
         tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"],
@@ -283,36 +283,36 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tabViewParameters addTabViewItem:tabViewItemCharacter];
     [tabViewParameters setDelegate:self];
 
-    var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CGSizeMake(1.0, 10.0)],
-        shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CGSizeMake(1.0, 10.0)];
+    var shadowTop    = CPImageInBundle(@"shadow-top.png", CGSizeMake(1.0, 10.0), bundle),
+        shadowBottom = CPImageInBundle(@"shadow-bottom.png", CGSizeMake(1.0, 10.0), bundle);
+
     [viewParametersEffectTop setBackgroundColor:[CPColor colorWithPatternImage:shadowTop]];
     [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
-
-    // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultNumberCPU"], @"TNDescDefaultNumberCPU",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultMemory"], @"TNDescDefaultMemory",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultBoot"], @"TNDescDefaultBoot",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultVNCKeymap"], @"TNDescDefaultVNCKeymap",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnPowerOff"], @"TNDescDefaultOnPowerOff",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"], @"TNDescDefaultOnReboot",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"], @"TNDescDefaultOnCrash",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"], @"TNDescDefaultClockOffset",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"], @"TNDescDefaultHugePages",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultEnableVNC"], @"TNDescDefaultEnableVNC",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultDomainType"], @"TNDescDefaultDomainType",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultGuest"], @"TNDescDefaultGuest",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultMachine"], @"TNDescDefaultMachine",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultDriveCacheMode"], @"TNDescDefaultDriveCacheMode",
-            [bundle objectForInfoDictionaryKey:@"TNDescMaxNumberCPU"], @"TNDescMaxNumberCPU"
-    ]];
-
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
 
     _stringXMLDesc = @"";
+
+    // register defaults defaults
+    [defaults registerDefaults:@{
+            @"TNDescDefaultNumberCPU"     : [bundle objectForInfoDictionaryKey:@"TNDescDefaultNumberCPU"],
+            @"TNDescDefaultMemory"        : [bundle objectForInfoDictionaryKey:@"TNDescDefaultMemory"],
+            @"TNDescDefaultBoot"          : [bundle objectForInfoDictionaryKey:@"TNDescDefaultBoot"],
+            @"TNDescDefaultVNCKeymap"     : [bundle objectForInfoDictionaryKey:@"TNDescDefaultVNCKeymap"],
+            @"TNDescDefaultOnPowerOff"    : [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnPowerOff"],
+            @"TNDescDefaultOnReboot"      : [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"],
+            @"TNDescDefaultOnCrash"       : [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"],
+            @"TNDescDefaultClockOffset"   : [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"],
+            @"TNDescDefaultHugePages"     : [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"],
+            @"TNDescDefaultEnableVNC"     : [bundle objectForInfoDictionaryKey:@"TNDescDefaultEnableVNC"],
+            @"TNDescDefaultInputType"     : [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"],
+            @"TNDescDefaultDomainType"    : [bundle objectForInfoDictionaryKey:@"TNDescDefaultDomainType"],
+            @"TNDescDefaultGuest"         : [bundle objectForInfoDictionaryKey:@"TNDescDefaultGuest"],
+            @"TNDescDefaultMachine"       : [bundle objectForInfoDictionaryKey:@"TNDescDefaultMachine"],
+            @"TNDescDefaultDriveCacheMode": [bundle objectForInfoDictionaryKey:@"TNDescDefaultDriveCacheMode"],
+            @"TNDescMaxNumberCPU"         : [bundle objectForInfoDictionaryKey:@"TNDescMaxNumberCPU"]
+    }];
 
     // DRIVES
     _drivesDatasource = [[TNTableViewDataSource alloc] init];
@@ -331,25 +331,29 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldFilterDrives setTarget:_drivesDatasource];
     [fieldFilterDrives setAction:@selector(filterObjects:)];
 
-    _plusButtonDrives = [CPButtonBar plusButton];
-    [_plusButtonDrives setTarget:self];
-    [_plusButtonDrives setAction:@selector(addDrive:)];
-    [_plusButtonDrives setToolTip:CPBundleLocalizedString(@"Add a new drive", @"Add a new drive")];
+    [self addControlsWithIdentifier:TNModuleControlForDriveAdd
+                              title:CPBundleLocalizedString(@"Add a new drive", @"Add a new drive")
+                             target:self
+                             action:@selector(addDrive:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
-    _minusButtonDrives = [CPButtonBar minusButton];
-    [_minusButtonDrives setTarget:self];
-    [_minusButtonDrives setAction:@selector(deleteDrive:)];
-    [_minusButtonDrives setEnabled:NO];
-    [_minusButtonDrives setToolTip:CPBundleLocalizedString(@"Remove selected drives", @"Remove selected drives")];
+    [self addControlsWithIdentifier:TNModuleControlForDriveRemove
+                              title:CPBundleLocalizedString(@"Remove selected drive(s)", @"Remove selected drive(s)")
+                             target:self
+                             action:@selector(deleteDrive:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
 
-    _editButtonDrives = [CPButtonBar plusButton];
-    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButtonDrives setTarget:self];
-    [_editButtonDrives setAction:@selector(editDrive:)];
-    [_editButtonDrives setEnabled:NO];
-    [_editButtonDrives setToolTip:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")];
+    [self addControlsWithIdentifier:TNModuleControlForDriveEdit
+                              title:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")
+                             target:self
+                             action:@selector(editDrive:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, mainBundle)];
 
-    [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
+    [buttonBarControlDrives setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForDriveAdd],
+        [self buttonWithIdentifier:TNModuleControlForDriveRemove],
+        [self buttonWithIdentifier:TNModuleControlForDriveEdit]]];
+
     [driveController setTable:tableDrives];
 
     // NICs
@@ -369,25 +373,29 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldFilterNics setTarget:_nicsDatasource];
     [fieldFilterNics setAction:@selector(filterObjects:)];
 
-    _plusButtonNics = [CPButtonBar plusButton];
-    [_plusButtonNics setTarget:self];
-    [_plusButtonNics setAction:@selector(addInterface:)];
-    [_plusButtonNics setToolTip:CPBundleLocalizedString(@"Add new network interface", @"Add new network interface")];
+    [self addControlsWithIdentifier:TNModuleControlForNicAdd
+                              title:CPBundleLocalizedString(@"Add a new network interface", @"Add a new network interface")
+                             target:self
+                             action:@selector(addInterface:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
-    _minusButtonNics = [CPButtonBar minusButton];
-    [_minusButtonNics setTarget:self];
-    [_minusButtonNics setAction:@selector(deleteInterface:)];
-    [_minusButtonNics setEnabled:NO];
-    [_minusButtonNics setToolTip:CPBundleLocalizedString(@"Remove selected network interfaces", @"Remove selected network interfaces")];
+    [self addControlsWithIdentifier:TNModuleControlForNicRemove
+                              title:CPBundleLocalizedString(@"Remove selected network interface(s)", @"Remove selected network interface(s)")
+                             target:self
+                             action:@selector(deleteInterface:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
 
-    _editButtonNics = [CPButtonBar plusButton];
-    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButtonNics setTarget:self];
-    [_editButtonNics setAction:@selector(editInterface:)];
-    [_editButtonNics setEnabled:NO];
-    [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected network interface", @"Edit selected network interface")];
+    [self addControlsWithIdentifier:TNModuleControlForNicEdit
+                              title:CPBundleLocalizedString(@"Edit selected network interface", @"Edit selected network interface")
+                             target:self
+                             action:@selector(editInterface:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, mainBundle)];
 
-    [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
+    [buttonBarControlNics setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForNicAdd],
+        [self buttonWithIdentifier:TNModuleControlForNicRemove],
+        [self buttonWithIdentifier:TNModuleControlForNicEdit]]];
+
     [interfaceController setTable:tableInterfaces];
 
     // Input Devices
@@ -401,23 +409,28 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableInputDevices setDataSource:_inputDevicesDatasource];
     [viewInputDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    _plusButtonInputDevice = [CPButtonBar plusButton];
-    [_plusButtonInputDevice setTarget:self];
-    [_plusButtonInputDevice setAction:@selector(addInputDevice:)];
-    [_plusButtonInputDevice setToolTip:CPBundleLocalizedString(@"Add new input device", @"Add new input device")];
+    [self addControlsWithIdentifier:TNModuleControlForInputDeviceAdd
+                              title:CPBundleLocalizedString(@"Add a new input device", @"Add a new input device")
+                             target:self
+                             action:@selector(addInputDevice:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
-    _minusButtonInputDevice = [CPButtonBar minusButton];
-    [_minusButtonInputDevice setTarget:self];
-    [_minusButtonInputDevice setAction:@selector(deleteInputDevice:)];
-    [_minusButtonInputDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
+    [self addControlsWithIdentifier:TNModuleControlForInputDeviceRemove
+                              title:CPBundleLocalizedString(@"Remove selected input device(s)", @"Remove selected input device(s)")
+                             target:self
+                             action:@selector(deleteInputDevice:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
 
-    _editButtonInputDevice = [CPButtonBar plusButton];
-    [_editButtonInputDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButtonInputDevice setTarget:self];
-    [_editButtonInputDevice setAction:@selector(editInputDevice:)];
-    [_editButtonInputDevice setToolTip:CPBundleLocalizedString(@"Edit selected input device", @"Edit selected input device")];
+    [self addControlsWithIdentifier:TNModuleControlForInputDeviceEdit
+                              title:CPBundleLocalizedString(@"Edit selected input device", @"Edit selected input device")
+                             target:self
+                             action:@selector(editInputDevice:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, mainBundle)];
 
-    [buttonBarInputDevices setButtons:[_plusButtonInputDevice, _minusButtonInputDevice, _editButtonInputDevice]];
+    [buttonBarInputDevices setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForInputDeviceAdd],
+        [self buttonWithIdentifier:TNModuleControlForInputDeviceRemove],
+        [self buttonWithIdentifier:TNModuleControlForDriveEdit]]];
 
     [inputDeviceController setDelegate:self];
     [inputDeviceController setTable:tableInputDevices];
@@ -433,23 +446,29 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
     [viewGraphicDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    _plusButtonGraphicDevice = [CPButtonBar plusButton];
-    [_plusButtonGraphicDevice setTarget:self];
-    [_plusButtonGraphicDevice setAction:@selector(addGraphicDevice:)];
-    [_plusButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Add a new graphic device", @"Add a new graphic device")];
+    [self addControlsWithIdentifier:TNModuleControlForGraphicDeviceAdd
+                              title:CPBundleLocalizedString(@"Add a new Graphic device", @"Add a new Graphic device")
+                             target:self
+                             action:@selector(addGraphicDevice:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
-    _minusButtonGraphicDevice = [CPButtonBar minusButton];
-    [_minusButtonGraphicDevice setTarget:self];
-    [_minusButtonGraphicDevice setAction:@selector(deleteGraphicDevice:)];
-    [_minusButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Remove selected input devices", @"Remove selected input devices")];
+    [self addControlsWithIdentifier:TNModuleControlForGraphicDeviceRemove
+                              title:CPBundleLocalizedString(@"Remove selected Graphic device(s)", @"Remove selected Graphic device(s)")
+                             target:self
+                             action:@selector(deleteGraphicDevice:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
 
-    _editButtonGraphicDevice = [CPButtonBar plusButton];
-    [_editButtonGraphicDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButtonGraphicDevice setTarget:self];
-    [_editButtonGraphicDevice setAction:@selector(editGraphicDevice:)];
-    [_editButtonGraphicDevice setToolTip:CPBundleLocalizedString(@"Edit selected graphic device", @"Edit selected graphic device")];
+    [self addControlsWithIdentifier:TNModuleControlForGraphicDeviceEdit
+                              title:CPBundleLocalizedString(@"Edit selected Graphic device", @"Edit selected Graphic device")
+                             target:self
+                             action:@selector(editGraphicDevice:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, mainBundle)];
 
-    [buttonBarGraphicDevices setButtons:[_plusButtonGraphicDevice, _minusButtonGraphicDevice, _editButtonGraphicDevice]];
+    [buttonBarGraphicDevices setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForGraphicDeviceAdd],
+        [self buttonWithIdentifier:TNModuleControlForGraphicDeviceRemove],
+        [self buttonWithIdentifier:TNModuleControlForGraphicDeviceEdit]]];
+
     [graphicDeviceController setDelegate:self];
     [graphicDeviceController setTable:tableGraphicsDevices];
 
@@ -472,23 +491,28 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [fieldFilterCharacters setTarget:_characterDevicesDatasource];
     [fieldFilterCharacters setAction:@selector(filterObjects:)];
 
-    _plusButtonCharacterDevice = [CPButtonBar plusButton];
-    [_plusButtonCharacterDevice setTarget:self];
-    [_plusButtonCharacterDevice setAction:@selector(addCharacterDevice:)];
-    [_plusButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Add new character device", @"Add new character device")];
+    [self addControlsWithIdentifier:TNModuleControlForCharacterDeviceAdd
+                              title:CPBundleLocalizedString(@"Add a new Character device", @"Add a new Character device")
+                             target:self
+                             action:@selector(addCharacterDevice:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, mainBundle)];
 
-    _minusButtonCharacterDevice = [CPButtonBar minusButton];
-    [_minusButtonCharacterDevice setTarget:self];
-    [_minusButtonCharacterDevice setAction:@selector(deleteCharacterDevice:)];
-    [_minusButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Remove selected character devices", @"Remove selected character devices")];
+    [self addControlsWithIdentifier:TNModuleControlForCharacterDeviceRemove
+                              title:CPBundleLocalizedString(@"Remove selected Character device(s)", @"Remove selected Character device(s)")
+                             target:self
+                             action:@selector(deleteCharacterDevice:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, mainBundle)];
 
-    _editButtonCharacterDevice = [CPButtonBar plusButton];
-    [_editButtonCharacterDevice setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CGSizeMake(16, 16)]];
-    [_editButtonCharacterDevice setTarget:self];
-    [_editButtonCharacterDevice setAction:@selector(editCharacterDevice:)];
-    [_editButtonCharacterDevice setToolTip:CPBundleLocalizedString(@"Edit selected character device", @"Edit selected character device")];
+    [self addControlsWithIdentifier:TNModuleControlForCharacterDeviceEdit
+                              title:CPBundleLocalizedString(@"Edit selected Character device", @"Edit selected Character device")
+                             target:self
+                             action:@selector(editCharacterDevice:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, mainBundle)];
 
-    [buttonBarCharacterDevices setButtons:[_plusButtonCharacterDevice, _minusButtonCharacterDevice, _editButtonCharacterDevice]];
+    [buttonBarCharacterDevices setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForCharacterDeviceAdd],
+        [self buttonWithIdentifier:TNModuleControlForCharacterDeviceRemove],
+        [self buttonWithIdentifier:TNModuleControlForCharacterDeviceEdit]]];
 
     [characterDeviceController setDelegate:self];
     [characterDeviceController setTable:tableCharacterDevices];
@@ -717,15 +741,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [checkboxPreferencesHugePages setState:[defaults boolForKey:@"TNDescDefaultHugePages"]];
 }
 
-/*! called when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Undefine", @"Undefine") action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged
@@ -933,21 +948,21 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
     else
     {
-        [_editButtonDrives setEnabled:shouldEnableGUI];
-        [_editButtonGraphicDevice setEnabled:shouldEnableGUI];
-        [_editButtonInputDevice setEnabled:shouldEnableGUI];
-        [_editButtonNics setEnabled:shouldEnableGUI];
-        [_editButtonCharacterDevice setEnabled:shouldEnableGUI];
-        [_minusButtonDrives setEnabled:shouldEnableGUI];
-        [_minusButtonGraphicDevice setEnabled:shouldEnableGUI];
-        [_minusButtonInputDevice setEnabled:shouldEnableGUI];
-        [_minusButtonNics setEnabled:shouldEnableGUI];
-        [_minusButtonCharacterDevice setEnabled:shouldEnableGUI];
-        [_plusButtonDrives setEnabled:shouldEnableGUI];
-        [_plusButtonGraphicDevice setEnabled:shouldEnableGUI];
-        [_plusButtonInputDevice setEnabled:shouldEnableGUI];
-        [_plusButtonNics setEnabled:shouldEnableGUI];
-        [_plusButtonCharacterDevice setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForDriveEdit] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForGraphicDeviceEdit] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForDriveEdit] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForNicEdit] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForCharacterDeviceEdit] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForDriveRemove] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForGraphicDeviceRemove] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForInputDeviceRemove] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForNicRemove] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForCharacterDeviceRemove] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForDriveAdd] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForGraphicDeviceAdd] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForInputDeviceAdd] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForNicAdd] setEnabled:shouldEnableGUI];
+        [[self buttonWithIdentifier:TNModuleControlForCharacterDeviceAdd] setEnabled:shouldEnableGUI];
     }
 }
 
@@ -1241,37 +1256,37 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         case tableDrives:
             currentController = driveController;
-            currentAddButton = _plusButtonDrives;
-            currentDeleteButton = _minusButtonDrives;
-            currentEditButton = _editButtonDrives;
+            currentAddButton = [self buttonWithIdentifier:TNModuleControlForDriveAdd];
+            currentDeleteButton = [self buttonWithIdentifier:TNModuleControlForDriveRemove];
+            currentEditButton = [self buttonWithIdentifier:TNModuleControlForDriveEdit];
             break;
 
         case tableInterfaces:
             currentController = interfaceController;
-            currentAddButton = _plusButtonNics;
-            currentDeleteButton = _minusButtonNics;
-            currentEditButton = _editButtonNics;
+            currentAddButton = [self buttonWithIdentifier:TNModuleControlForNicAdd];
+            currentDeleteButton = [self buttonWithIdentifier:TNModuleControlForNicRemove];
+            currentEditButton = [self buttonWithIdentifier:TNModuleControlForNicEdit];
             break;
 
         case tableCharacterDevices:
             currentController = characterDeviceController;
-            currentAddButton = _plusButtonCharacterDevice;
-            currentDeleteButton = _minusButtonCharacterDevice;
-            currentEditButton = _editButtonCharacterDevice;
+            currentAddButton = [self buttonWithIdentifier:TNModuleControlForCharacterDeviceAdd];
+            currentDeleteButton = [self buttonWithIdentifier:TNModuleControlForCharacterDeviceRemove];
+            currentEditButton = [self buttonWithIdentifier:TNModuleControlForCharacterDeviceEdit];
             break;
 
         case tableGraphicsDevices:
             currentController = graphicDeviceController;
-            currentAddButton = _plusButtonGraphicDevice;
-            currentDeleteButton = _minusButtonGraphicDevice;
-            currentEditButton = _editButtonGraphicDevice;
+            currentAddButton = [self buttonWithIdentifier:TNModuleControlForGraphicDeviceAdd];
+            currentDeleteButton = [self buttonWithIdentifier:TNModuleControlForGraphicDeviceRemove];
+            currentEditButton = [self buttonWithIdentifier:TNModuleControlForGraphicDeviceEdit];
             break;
 
         case tableInputDevices:
             currentController = inputDeviceController;
-            currentAddButton = _plusButtonInputDevice;
-            currentDeleteButton = _minusButtonInputDevice;
-            currentEditButton = _editButtonInputDevice;
+            currentAddButton = [self buttonWithIdentifier:TNModuleControlForInputDeviceAdd];
+            currentDeleteButton = [self buttonWithIdentifier:TNModuleControlForInputDeviceRemove];
+            currentEditButton = [self buttonWithIdentifier:TNModuleControlForDriveEdit];
             break;
     }
 
@@ -1890,6 +1905,136 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [popoverXMLEditor close];
 }
 
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    [_contextualMenu removeAllItems];
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    switch (aTableView)
+    {
+        case tableDrives:
+            if ([aTableView numberOfSelectedRows] == 0)
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveAdd]];
+            else if ([aTableView numberOfSelectedRows] == 1)
+                {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveEdit]];
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveRemove]];
+                }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDriveRemove]];
+            }
+
+            break;
+
+        case tableInterfaces:
+            if ([aTableView numberOfSelectedRows] == 0)
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicAdd]];
+            else if ([aTableView numberOfSelectedRows] == 1)
+                {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicEdit]];
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicRemove]];
+                }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNicRemove]];
+            }
+
+            break;
+
+        case tableGraphicsDevices:
+            if ([aTableView numberOfSelectedRows] == 0)
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceAdd]];
+            else if ([aTableView numberOfSelectedRows] == 1)
+                {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceEdit]];
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+                }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+            }
+
+            break;
+
+        case tableInputDevices:
+            if ([aTableView numberOfSelectedRows] == 0)
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForInputDeviceAdd]];
+            else if ([aTableView numberOfSelectedRows] == 1)
+                {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForInputDeviceEdit]];
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForInputDeviceRemove]];
+                }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+            }
+
+            break;
+
+        case tableCharacterDevices:
+            if ([aTableView numberOfSelectedRows] == 0)
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCharacterDeviceAdd]];
+            else if ([aTableView numberOfSelectedRows] == 1)
+                {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCharacterDeviceEdit]];
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCharacterDeviceRemove]];
+                }
+            else
+            {
+                [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForGraphicDeviceRemove]];
+            }
+
+            break;
+
+
+        default:
+            return;
+    }
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+    switch (aTableView)
+    {
+        case tableDrives:
+            [self deleteDrive:aTableView];
+            break;
+
+        case tableInterfaces:
+            [self deleteInterface:aTableView];
+            break;
+
+        case tableGraphicsDevices:
+            [self deleteGraphicDevice:aTableView];
+            break;
+
+        case tableInputDevices:
+            [self deleteInputDevice:aTableView];
+            break;
+
+        case tableCharacterDevices:
+            [self deleteCharacterDevice:aTableView];
+            break;
+
+        default:
+            return;
+    }
+}
+
 @end
 
 
@@ -1921,7 +2066,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
 
     [graphicDeviceController setGraphicDevice:graphicDevice];
-    [graphicDeviceController openWindow:aSender];
+    [graphicDeviceController openWindow:[self buttonWithIdentifier:TNModuleControlForGraphicDeviceAdd]];
 }
 
 /*! edit the selected graphic device
@@ -1938,7 +2083,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var graphicDevice = [_graphicDevicesDatasource objectAtIndex:[tableGraphicsDevices selectedRow]];
 
     [graphicDeviceController setGraphicDevice:graphicDevice];
-    [graphicDeviceController openWindow:aSender];
+    [graphicDeviceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableGraphicsDevices : aSender];
 }
 
 /*! remove the selected graphic device
@@ -1971,7 +2116,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
     [inputDeviceController setInputDevice:inputDevice];
-    [inputDeviceController openWindow:aSender];
+    [inputDeviceController openWindow:[self buttonWithIdentifier:TNModuleControlForInputDeviceAdd]];
 }
 
 /*! edit current selected input device or create a new one
@@ -1988,7 +2133,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var inputDevice = [_inputDevicesDatasource objectAtIndex:[tableInputDevices selectedRow]];
 
     [inputDeviceController setInputDevice:inputDevice];
-    [inputDeviceController openWindow:aSender];
+    [inputDeviceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableInputDevices : aSender];
 }
 
 /*! remove the selected input device
@@ -2041,7 +2186,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     else
         [driveController setOtherDrives:nil];
 
-    [driveController openWindow:_plusButtonDrives];
+    [driveController openWindow:[self buttonWithIdentifier:TNModuleControlForDriveAdd]];
 }
 
 /*! open the drive editor
@@ -2064,10 +2209,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     else
         [driveController setOtherDrives:nil];
 
-    if ([aSender isKindOfClass:CPMenuItem])
-        aSender = _minusButtonDrives;
-
-    [driveController openWindow:aSender];
+    [driveController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableDrives : aSender];
 }
 
 /*! delete a drive
@@ -2111,7 +2253,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     if ([_libvirtDomain metadata])
         [interfaceController setMetadata:[_libvirtDomain metadata]];
-    [interfaceController openWindow:_plusButtonNics];
+    [interfaceController openWindow:[self buttonWithIdentifier:TNModuleControlForNicAdd]];
 }
 
 /*! open the network editor
@@ -2131,10 +2273,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([_libvirtDomain metadata])
         [interfaceController setMetadata:[_libvirtDomain metadata]];
 
-    if ([aSender isKindOfClass:CPMenuItem])
-        aSender = _editButtonNics;
-
-    [interfaceController openWindow:aSender];
+    [interfaceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableInterfaces : aSender];
 }
 
 /*! delete a network card
@@ -2178,7 +2317,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
 
     [characterDeviceController setCharacterDevice:characterDevice];
-    [characterDeviceController openWindow:aSender];
+    [characterDeviceController openWindow:[self buttonWithIdentifier:TNModuleControlForCharacterDeviceAdd]];
 }
 
 /*! edit the selected character device
@@ -2195,7 +2334,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var characterDevice = [_characterDevicesDatasource objectAtIndex:[tableCharacterDevices selectedRow]];
 
     [characterDeviceController setCharacterDevice:characterDevice];
-    [characterDeviceController openWindow:aSender];
+    [characterDeviceController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableCharacterDevices : aSender];
 }
 
 /*! remove the selected character device
@@ -2206,8 +2345,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if ([tableCharacterDevices numberOfSelectedRows] <= 0)
         return;
 
-    [_characterDevicesDatasource removeObjectAtIndex:[tableCharacterDevices selectedRow]];
+    var selectedIndexes = [tableCharacterDevices selectedRowIndexes];
+
+    [_characterDevicesDatasource removeObjectsAtIndexes:selectedIndexes];
+
     [tableCharacterDevices reloadData];
+    [tableCharacterDevices deselectAll];
 
     _definitionEdited = YES;
 }

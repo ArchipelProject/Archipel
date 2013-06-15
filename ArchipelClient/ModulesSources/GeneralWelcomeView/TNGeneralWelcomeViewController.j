@@ -57,11 +57,9 @@
         defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL"
-    ]];
+    [defaults registerDefaults:@{@"TNArchipelHelpWindowURL":[bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"]}];
 
-    [imageViewBrowser setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"browser.png"]]];
+    [imageViewBrowser setImage:CPImageInBundle(@"browser.png", nil, bundle)];
     [fieldLoading setValue:[CPColor colorWithHexString:@"eee"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [fieldLoading setValue:CGSizeMake(0.0, -1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
     [fieldLoading setTextColor:[CPColor colorWithHexString:@"929292"]];

@@ -52,6 +52,14 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     TNArchipelActionTypeResume                      = @"Resume",
     TNArchipelActionTypeReboot                      = @"Reboot";
 
+var TNModuleControlForStart                         = @"Start",
+    TNModuleControlForPause                         = @"Pause",
+    TNModuleControlForResume                        = @"Resume",
+    TNModuleControlForShutdown                      = @"Stop",
+    TNModuleControlForDestroy                       = @"Destroy",
+    TNModuleControlForReboot                        = @"Reboot",
+    TNModuleControlForMigrate                       = @"Migrate";
+
 /*! @defgroup  groupmanagement Module Group Management
     @desc This module allows to send controls to a list a virtual machine present in a Roster group
 */
@@ -86,51 +94,58 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [_datasourceGroupVM setTable:tableVirtualMachines];
     [_datasourceGroupVM setSearchableKeyPaths:[@"name", @"JID.bare"]];
     [tableVirtualMachines setDataSource:_datasourceGroupVM];
+    [tableVirtualMachines setDelegate:self];
 
-    var createButton    = [CPButtonBar plusButton],
-        shutdownButton  = [CPButtonBar plusButton],
-        destroyButton   = [CPButtonBar plusButton],
-        suspendButton   = [CPButtonBar plusButton],
-        resumeButton    = [CPButtonBar plusButton],
-        rebootButton    = [CPButtonBar plusButton],
-        migrateButton   = [CPButtonBar plusButton];
+    [self addControlsWithIdentifier:TNModuleControlForStart
+                              title:CPBundleLocalizedString(@"Start", @"Start")
+                             target:self
+                             action:@selector(create:)
+                              image:CPImageInBundle(@"IconsButtons/play.png",nil, [CPBundle mainBundle])];
 
-    [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)]];
-    [createButton setTarget:self];
-    [createButton setAction:@selector(create:)];
-    [createButton setToolTip:CPBundleLocalizedString(@"Send all selected VM start event", @"Send all selected VM start event")];
+    [self addControlsWithIdentifier:TNModuleControlForPause
+                              title:CPBundleLocalizedString(@"Pause", @"Pause")
+                             target:self
+                             action:@selector(suspend:)
+                              image:CPImageInBundle(@"IconsButtons/pause.png",nil, [CPBundle mainBundle])];
 
-    [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)]];
-    [shutdownButton setTarget:self];
-    [shutdownButton setAction:@selector(shutdown:)];
-    [shutdownButton setToolTip:CPBundleLocalizedString(@"Send all selected VM shutdown event", @"Send all selected VM shutdown event")];
+    [self addControlsWithIdentifier:TNModuleControlForResume
+                              title:CPBundleLocalizedString(@"Resume", @"Resume")
+                             target:self
+                             action:@selector(resume:)
+                              image:CPImageInBundle(@"IconsButtons/resume.png",nil, [CPBundle mainBundle])];
 
-    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/destroy.png"] size:CGSizeMake(16, 16)]];
-    [destroyButton setTarget:self];
-    [destroyButton setAction:@selector(destroy:)];
-    [destroyButton setToolTip:CPBundleLocalizedString(@"Send all selected VM destroy event", @"Send all selected VM destroy event")];
+    [self addControlsWithIdentifier:TNModuleControlForShutdown
+                              title:CPBundleLocalizedString(@"Shutdown", @"Shutdown")
+                             target:self
+                             action:@selector(shutdown:)
+                              image:CPImageInBundle(@"IconsButtons/stop.png",nil, [CPBundle mainBundle])];
 
-    [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(16, 16)]];
-    [suspendButton setTarget:self];
-    [suspendButton setAction:@selector(suspend:)];
-    [suspendButton setToolTip:CPBundleLocalizedString(@"Send all selected VM pause event", @"Send all selected VM pause event")];
+    [self addControlsWithIdentifier:TNModuleControlForDestroy
+                              title:CPBundleLocalizedString(@"Force Off", @"Force Off")
+                             target:self
+                             action:@selector(destroy:)
+                              image:CPImageInBundle(@"IconsButtons/destroy.png",nil, [CPBundle mainBundle])];
 
-    [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/resume.png"] size:CGSizeMake(16, 16)]];
-    [resumeButton setTarget:self];
-    [resumeButton setAction:@selector(resume:)];
-    [resumeButton setToolTip:CPBundleLocalizedString(@"Send all selected VM resume event", @"Send all selected VM resume event")];
+    [self addControlsWithIdentifier:TNModuleControlForReboot
+                              title:CPBundleLocalizedString(@"Reboot", @"Reboot")
+                             target:self
+                             action:@selector(reboot:)
+                              image:CPImageInBundle(@"IconsButtons/reboot.png",nil, [CPBundle mainBundle])];
 
-    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reboot.png"] size:CGSizeMake(16, 16)]];
-    [rebootButton setTarget:self];
-    [rebootButton setAction:@selector(reboot:)];
-    [rebootButton setToolTip:CPBundleLocalizedString(@"Send all selected VM reboot event", @"Send all selected VM reboot event")];
+    [self addControlsWithIdentifier:TNModuleControlForMigrate
+                              title:CPBundleLocalizedString(@"Migrate", @"Migrate")
+                             target:self
+                             action:@selector(migrate:)
+                              image:CPImageInBundle(@"IconsButtons/migrate.png",nil, [CPBundle mainBundle])];
 
-    [migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CGSizeMake(16, 16)]];
-    [migrateButton setTarget:self];
-    [migrateButton setAction:@selector(migrate:)];
-    [migrateButton setToolTip:CPBundleLocalizedString(@"Migrate all selected VMs", @"Migrate all selected VMs")];
-
-    [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton, migrateButton]];
+    [buttonBarControl setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForStart],
+        [self buttonWithIdentifier:TNModuleControlForPause],
+        [self buttonWithIdentifier:TNModuleControlForResume],
+        [self buttonWithIdentifier:TNModuleControlForShutdown],
+        [self buttonWithIdentifier:TNModuleControlForDestroy],
+        [self buttonWithIdentifier:TNModuleControlForReboot],
+        [self buttonWithIdentifier:TNModuleControlForMigrate]]];
 
     [filterField setTarget:_datasourceGroupVM];
     [filterField setAction:@selector(filterObjects:)];
@@ -180,19 +195,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [groupedMigrationController closeWindow:nil];
     [super willHide];
 }
-
-/*! called by module loader when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Start selected virtual machines", @"Start selected virtual machines") action:@selector(create:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shutdown selected virtual machines", @"Shutdown selected virtual machines") action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Pause selected virtual machines", @"Pause selected virtual machines") action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Resume selected virtual machines", @"Resume selected virtual machines") action:@selector(resume:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reboot selected virtual machines", @"Reboot selected virtual machines") action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Destroy selected virtual machines", @"Destroy selected virtual machines") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
-}
-
 
 #pragma mark -
 #pragma mark Notification hanlders
@@ -281,7 +283,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (IBAction)migrate:(id)aSender
 {
-    [groupedMigrationController openWindow:aSender];
+    [groupedMigrationController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
 }
 
 
@@ -397,6 +399,37 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     return NO;
 }
 
+#pragma mark -
+#pragma mark delegate
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    [_contextualMenu removeAllItems];
+
+    var itemRow = [aTableView rowAtPoint:aRow];
+    if ([aTableView selectedRow] != aRow)
+        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableVirtualMachines))
+        return;
+
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForStart]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForResume]];
+    [_contextualMenu addItem:[CPMenuItem separatorItem]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForPause]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForShutdown]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForDestroy]];
+    [_contextualMenu addItem:[CPMenuItem separatorItem]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForReboot]];
+    [_contextualMenu addItem:[CPMenuItem separatorItem]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForMigrate]];
+
+
+    return _contextualMenu;
+}
 
 @end
 

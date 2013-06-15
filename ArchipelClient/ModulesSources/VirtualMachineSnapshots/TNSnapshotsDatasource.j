@@ -24,11 +24,10 @@
 */
 @implementation TNSnapshotsDatasource : CPObject
 {
-    BOOL            filterInstalled     @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
     CPArray         _contents           @accessors(property=contents);
-    CPArray         _searchableKeyPaths @accessors(property=searchableKeyPaths);
     CPString        _childCompKeyPath   @accessors(property=childCompKeyPath);
     CPString        _parentKeyPath      @accessors(property=parentKeyPath);
+    CPString        _filter             @accessors(property=filter);
 }
 
 
@@ -121,6 +120,29 @@
     return array;
 }
 
+#pragma mark -
+#pragma mark Filtering
+
+/*! Message use internally for filtering
+    @param aFilter CPString containing the filter
+    @return a CPArray containing the items that matches the filters
+*/
+- (CPArray)_getEntriesMatching
+{
+    var filteredEntries = [CPArray array];
+
+    for (var i = 0; i < [_contents count]; i++)
+    {
+        var entry = [_contents objectAtIndex:i];
+
+        if ([[entry description] uppercaseString].indexOf([_filter uppercaseString]) != -1
+            || [[entry creationTime] uppercaseString].indexOf([_filter uppercaseString]) != -1)
+        {
+            [filteredEntries addObject:entry];
+        }
+    }
+    return filteredEntries;
+}
 
 #pragma mark -
 #pragma mark Data manipulation
@@ -146,6 +168,9 @@
 
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
+    if (_filter)
+        return [[self _getEntriesMatching] count];
+
     if (!item)
         return [[self getRootObjects] count];
     else
@@ -154,6 +179,9 @@
 
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
+     if (_filter)
+        return NO;
+
     if (!item)
         return YES;
 
@@ -162,6 +190,9 @@
 
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
+     if (_filter)
+        return [[self _getEntriesMatching].sort() objectAtIndex:index];
+
     if (!item)
         return [[self getRootObjects] objectAtIndex:index];
     else

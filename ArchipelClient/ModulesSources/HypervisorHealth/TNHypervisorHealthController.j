@@ -122,19 +122,19 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
-        spinner     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]],
+        spinner     = CPImageInBundle(@"loading.gif", nil, bundle),
         defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"], @"TNArchipelHealthRefreshStatsInterval",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"], @"TNArchipelHealthStatsHistoryCollectionSize",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"], @"TNArchipelHealthMaxLogEntry",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"], @"TNArchipelHealthAutoRefreshStats"
-    ]];
+    [defaults registerDefaults:@{
+        @"TNArchipelHealthRefreshStatsInterval"      :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"],
+        @"TNArchipelHealthStatsHistoryCollectionSize":[bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"],
+        @"TNArchipelHealthMaxLogEntry"               :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"],
+        @"TNArchipelHealthAutoRefreshStats"          :[bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"]
+    }];
 
-    TNHypervisorHealthControllerVMXImageEnabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-enabled.png"]];
-    TNHypervisorHealthControllerVMXImageDisabled = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vmx-disabled.png"]];
+    TNHypervisorHealthControllerVMXImageEnabled = CPImageInBundle(@"vmx-enabled.png", nil , bundle);
+    TNHypervisorHealthControllerVMXImageDisabled = CPImageInBundle(@"vmx-disabled.png", nil , bundle);
     [imageVMX setImage:TNHypervisorHealthControllerVMXImageDisabled];
 
     [imageCPULoading setImage:spinner];

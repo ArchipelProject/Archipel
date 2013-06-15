@@ -51,10 +51,10 @@
     /* hint window */
     var bundle = [CPBundle mainBundle];
 
-    [imageViewLogo setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-icon.png"]]];
-    [imageViewHint1 setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"hints/hint1.png"]]];
-    [imageViewHint2 setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"hints/hint2.png"]]];
-    [imageViewHint3 setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"hints/hint3.png"]]];
+    [imageViewLogo setImage:CPImageInBundle(@"Backgrounds/background-icon.png", nil, bundle)];
+    [imageViewHint1 setImage:CPImageInBundle(@"hints/hint1.png", nil, bundle)];
+    [imageViewHint2 setImage:CPImageInBundle(@"hints/hint2.png", nil, bundle)];
+    [imageViewHint3 setImage:CPImageInBundle(@"hints/hint3.png", nil, bundle)];
 
     [buttonOpenWiki setTheme:[CPTheme defaultHudTheme]];
 

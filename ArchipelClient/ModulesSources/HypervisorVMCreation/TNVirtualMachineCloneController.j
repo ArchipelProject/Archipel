@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
@@ -57,7 +58,17 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [fieldCloneVirtualMachineName setStringValue:@""];
 
     [mainPopover close];
-    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+    }
+    else
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
     [mainPopover makeFirstResponder:fieldCloneVirtualMachineName];
     [mainPopover setDefaultButton:buttonClone];
 }

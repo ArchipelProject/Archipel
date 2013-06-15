@@ -45,6 +45,9 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     TNArchipelTypeEntityScheduleJobs        = @"jobs";
 
+var TNModuleControlForSchedule                    = @"Schedule",
+    TNModuleControlForUnSchedule                  = @"UnSchedule";
+
 /*! @ingroup virtualmachinescheduler
     Main controller of the module
 */
@@ -56,8 +59,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     @outlet CPView                  viewTableContainer;
     @outlet TNSchedulerController   schedulerController;
 
-    CPButton                        _buttonSchedule;
-    CPButton                        _buttonUnschedule;
     CPDate                          _scheduledDate;
     TNTableViewDataSource           _datasourceJobs;
 }
@@ -74,18 +75,24 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [_datasourceJobs setTable:tableJobs];
     [_datasourceJobs setSearchableKeyPaths:[@"comment", @"action", @"date"]];
     [tableJobs setDataSource:_datasourceJobs];
+    [tableJobs setAllowsMultipleSelection:YES];
+    [tableJobs setDelegate:self];
 
-    _buttonSchedule    = [CPButtonBar plusButton];
-    [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CGSizeMake(16, 16)]];
-    [_buttonSchedule setTarget:self];
-    [_buttonSchedule setAction:@selector(openNewJobWindow:)];
+    [self addControlsWithIdentifier:TNModuleControlForSchedule
+                              title:CPBundleLocalizedString(@"Add a scheduled action", @"Add a scheduled action")
+                             target:self
+                             action:@selector(openNewJobWindow:)
+                              image:CPImageInBundle(@"IconsButtons/plus.png",nil, [CPBundle mainBundle])];
 
-    _buttonUnschedule  = [CPButtonBar plusButton];
-    [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CGSizeMake(16, 16)]];
-    [_buttonUnschedule setTarget:schedulerController];
-    [_buttonUnschedule setAction:@selector(unschedule:)];
+    [self addControlsWithIdentifier:TNModuleControlForUnSchedule
+                              title:CPBundleLocalizedString(@"Remove the selected scheduled action(s)", @"Remove the selected scheduled action(s)")
+                             target:schedulerController
+                             action:@selector(unschedule:)
+                              image:CPImageInBundle(@"IconsButtons/minus.png",nil, [CPBundle mainBundle])];
 
-    [buttonBarJobs setButtons:[_buttonSchedule, _buttonUnschedule]];
+    [buttonBarJobs setButtons:[
+        [self buttonWithIdentifier:TNModuleControlForSchedule],
+        [self buttonWithIdentifier:TNModuleControlForUnSchedule]]];
 
     [filterFieldJobs setTarget:_datasourceJobs];
     [filterFieldJobs setAction:@selector(filterObjects:)];
@@ -121,15 +128,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [super willHide];
 }
 
-
-/*! called by module loader when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Schedule new action", @"Schedule new action") action:@selector(openNewJobWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unschedule selected action", @"Unschedule selected action") action:@selector(unschedule:) keyEquivalent:@""] setTarget:schedulerController];
-}
-
 /*! called when user permissions changed
 */
 - (void)permissionsChanged
@@ -141,8 +139,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 - (void)setUIAccordingToPermissions
 {
-    [self setControl:_buttonSchedule enabledAccordingToPermission:@"scheduler_schedule"];
-    [self setControl:_buttonUnschedule enabledAccordingToPermission:@"scheduler_unschedule"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForSchedule] enabledAccordingToPermission:@"scheduler_schedule"];
+    [self setControl:[self buttonWithIdentifier:TNModuleControlForUnSchedule] enabledAccordingToPermission:@"scheduler_unschedule"];
 
     if (![self currentEntityHasPermission:@"scheduler_schedule"])
         [schedulerController closeWindow:nil];
@@ -187,7 +185,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     if (![self isVisible])
         return;
 
-    [schedulerController openWindow:_buttonSchedule];
+    [schedulerController openWindow:[self buttonWithIdentifier:TNModuleControlForSchedule]];
 }
 
 
@@ -227,7 +225,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
                 comment         = [job valueForAttribute:@"comment"],
                 date            = [job valueForAttribute:@"date"],
 
-                newJob    = [CPDictionary dictionaryWithObjectsAndKeys:action, @"action", uid, @"uid", comment, @"comment", date, @"date"];
+                newJob    = @{@"action":action, @"uid":uid, @"comment":comment, @"date":date};
 
             [_datasourceJobs addObject:newJob];
         }
@@ -243,6 +241,41 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     return NO;
 }
 
+#pragma mark -
+#pragma mark delegate
+
+/*! Delegate of CPTableView - This will be called when context menu is triggered with right click
+*/
+- (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+
+    [_contextualMenu removeAllItems];
+
+    var itemRow = [tableJobs rowAtPoint:aRow];
+    if ([tableJobs selectedRow] != aRow)
+        [tableJobs selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableJobs))
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForSchedule]];
+    }
+    else
+    {
+        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForUnSchedule]];
+    }
+
+    return _contextualMenu;
+}
+
+/* Delegate of CPTableView - this will be triggered on delete key events
+*/
+- (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
+{
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
+
+        [schedulerController unschedule:aTableView];
+}
 
 @end
 

@@ -85,7 +85,7 @@ var __defaultPermissionCenter;
 
         [self resetAdminAccounts];
 
-        [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CGSizeMake(16.0, 16.0)]];
+        [_imageViewControlDisabledPrototype setImage:CPImageInBundle(@"denied.png", CGSizeMake(16.0, 16.0), [CPBundle mainBundle])];
     }
 
     return self;

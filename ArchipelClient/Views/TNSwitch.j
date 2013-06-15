@@ -27,19 +27,29 @@
 
 + (id)themeAttributes
 {
-    var mainBundle = [CPBundle mainBundle],
-        switchSize = CGSizeMake(77, 25),
-        offBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-off-background.png"] size:switchSize]],
-        onBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-on-background.png"] size:switchSize]],
-        knobBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob.png"] size:switchSize]],
-        highlightedKnobBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob-highlighted.png"] size:switchSize]];
+    var mainBundle                     = [CPBundle mainBundle],
+        switchWidth                    = 77,
+        switchHeight                   = 25,
+        offBackgroundImage             = CPColorWithImages(@"LPSwitch/switch-off-background.png",   switchWidth, switchHeight, mainBundle),
+        onBackgroundImage              = CPColorWithImages(@"LPSwitch/switch-on-background.png",    switchWidth, switchHeight, mainBundle),
+        knobBackgroundImage            = CPColorWithImages(@"LPSwitch/switch-knob.png",             switchWidth, switchHeight, mainBundle),
+        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchWidth, switchHeight, mainBundle);
 
-    return [CPDictionary dictionaryWithObjects:[offBackgroundImage, onBackgroundImage, knobBackgroundImage, CGSizeMake(30,25), CGSizeMake(12,6),
-                                                [CPFont boldSystemFontOfSize:11], [CPColor colorWithWhite:0 alpha:0.7], [CPColor colorWithWhite:1 alpha:0.8], CGSizeMake(0,1),
-                                                [CPFont boldSystemFontOfSize:11], [CPColor colorWithWhite:1 alpha:1.0], [CPColor colorWithWhite:0.3 alpha:0.8], CGSizeMake(0,1)]
-                                       forKeys:[@"off-background-color", @"on-background-color", @"knob-background-color", @"knob-size", @"label-offset",
-                                                @"off-label-font", @"off-label-text-color", @"off-label-text-shadow-color", @"off-label-text-shadow-offset",
-                                                @"on-label-font", @"on-label-text-color", @"on-label-text-shadow-color", @"on-label-text-shadow-offset"]];
+    return @{
+            @"off-background-color"         :offBackgroundImage,
+            @"on-background-color"          :onBackgroundImage,
+            @"knob-background-color"        :knobBackgroundImage,
+            @"knob-size"                    :CGSizeMake(30,25),
+            @"label-offset"                 :CGSizeMake(12,6),
+            @"off-label-font"               :[CPFont boldSystemFontOfSize:11],
+            @"off-label-text-color"         :[CPColor colorWithWhite:0 alpha:0.7],
+            @"off-label-text-shadow-color"  :[CPColor colorWithWhite:1 alpha:0.8],
+            @"off-label-text-shadow-offset" :CGSizeMake(0,1),
+            @"on-label-font"                :[CPFont boldSystemFontOfSize:11],
+            @"on-label-text-color"          :[CPColor colorWithWhite:1 alpha:1.0],
+            @"on-label-text-shadow-color"   :[CPColor colorWithWhite:0.3 alpha:0.8],
+            @"on-label-text-shadow-offset"  :CGSizeMake(0,1),
+           }
 }
 
 
@@ -47,8 +57,9 @@
 {
     var mainBundle  = [CPBundle mainBundle],
         aSwitch     = [[TNSwitch alloc] initWithFrame:aFrame],
-        switchSize  = CGSizeMake(77, 25),
-        highlightedKnobBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob-highlighted.png"] size:switchSize]];
+        switchWidth                    = 77,
+        switchHeight                   = 25,
+        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchWidth, switchHeight, mainBundle);
 
     [aSwitch setValue:highlightedKnobBackgroundImage forThemeAttribute:@"knob-background-color" inState:CPThemeStateNormal | CPThemeStateHighlighted];
 
@@ -62,11 +73,10 @@
 
     if (self = [super initWithFrame:aFrame])
     {
-        var mainBundle  = [CPBundle mainBundle],
-            switchSize  = CGSizeMake(aFrame.size.width, aFrame.size.height),
-            highlightedKnobBackgroundImage = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob-highlighted.png"] size:switchSize]],
-            offBackgroundImageDisabled = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-off-background-disabled.png"] size:switchSize]],
-            knobBackgroundDisabled = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob-disabled.png"] size:switchSize]];
+        var mainBundle                     = [CPBundle mainBundle],
+            highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png",        aFrame.size.width, aFrame.size.height, mainBundle),
+            offBackgroundImageDisabled     = CPColorWithImages(@"LPSwitch/switch-off-background-disabled.png", aFrame.size.width, aFrame.size.height, mainBundle),
+            knobBackgroundDisabled         = CPColorWithImages(@"LPSwitch/switch-knob-disabled.png",           aFrame.size.width, aFrame.size.height, mainBundle);
 
         [self setValue:highlightedKnobBackgroundImage forThemeAttribute:@"knob-background-color" inState:CPThemeStateNormal | CPThemeStateHighlighted];
 

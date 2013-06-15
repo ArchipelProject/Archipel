@@ -20,6 +20,7 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPTableView.j>
 @import <AppKit/CPTabViewItem.j>
 
 @import <GrowlCappuccino/TNGrowlCenter.j>
@@ -129,7 +130,17 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [stepperNewRecurrentJobSecond setDoubleValue:0.0];
 
     [mainPopover close];
-    [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    if ([aSender isKindOfClass:CPTableView])
+    {
+        var rect = [aSender rectOfRow:[aSender selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [mainPopover showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:aSender preferredEdge:nil];
+    }
+    else
+        [mainPopover showRelativeToRect:nil ofView:aSender preferredEdge:nil]
+
     [mainPopover makeFirstResponder:fieldNewJobComment];
     [mainPopover setDefaultButton:buttonNewJobOK];
 }
@@ -305,7 +316,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 }
 
 
-/*! schedule a new job, but before ask user confirmation
+/*! unschedule a new job, but before ask user confirmation
 */
 - (void)unschedule
 {
@@ -337,7 +348,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [alert runModal];
 }
 
-/*! schedule a new job
+/*! unschedule a new job
 */
 - (void)performUnschedule:(id)userInfo
 {

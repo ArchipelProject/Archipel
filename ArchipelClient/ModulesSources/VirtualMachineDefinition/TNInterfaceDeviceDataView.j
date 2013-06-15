@@ -65,11 +65,11 @@ var TNInterfaceDeviceDataViewIconNetwork,
 {
     var bundle = [CPBundle bundleForClass:TNInterfaceDeviceDataView];
 
-    TNInterfaceDeviceDataViewIconNetwork = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_network.png"]];
-    TNInterfaceDeviceDataViewIconUser = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_user.png"]];
-    TNInterfaceDeviceDataViewIconBridge = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_bridge.png"]];
-    TNInterfaceDeviceDataViewIconDirect = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_direct.png"]];
-    TNInterfaceDeviceDataViewIconNuage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nic_nuage.png"]];
+    TNInterfaceDeviceDataViewIconNetwork = CPImageInBundle(@"nic_network.png", nil, bundle);
+    TNInterfaceDeviceDataViewIconUser    = CPImageInBundle(@"nic_user.png",    nil, bundle);
+    TNInterfaceDeviceDataViewIconBridge  = CPImageInBundle(@"nic_bridge.png",  nil, bundle);
+    TNInterfaceDeviceDataViewIconDirect  = CPImageInBundle(@"nic_direct.png",  nil, bundle);
+    TNInterfaceDeviceDataViewIconNuage   = CPImageInBundle(@"nic_nuage.png",   nil, bundle);
 }
 
 

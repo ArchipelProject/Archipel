@@ -104,21 +104,20 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
     [imageViewSecureConnection setImage:CPImageInBundle(@"secure.png", CGSizeMake(16.0, 16.0), bundle)];
 
     // register defaults defaults
-    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"], @"NOVNCPreferSSL",
-            [bundle objectForInfoDictionaryKey:@"NOVNCFBURate"], @"NOVNCFBURate",
-            [bundle objectForInfoDictionaryKey:@"NOVNCheckRate"], @"NOVNCheckRate"
-    ]];
+    [defaults registerDefaults:@{
+        @"NOVNCPreferSSL":[bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"],
+        @"NOVNCFBURate"  :[bundle objectForInfoDictionaryKey:@"NOVNCFBURate"],
+        @"NOVNCheckRate" :[bundle objectForInfoDictionaryKey:@"NOVNCheckRate"]
+    }];
 
-    var imageBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]],
-        imageZoomFit = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] size:CGSizeMake(16, 16)],
-        imageZoomReset = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/reset.png"] size:CGSizeMake(16, 16)],
-        imageDirectAccess = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/screen.png"] size:CGSizeMake(16, 16)],
-        imageCtrlAltDel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"skull.png"] size:CGSizeMake(16, 16)],
-        imageSendPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sendPasteBoard.png"] size:CGSizeMake(16, 16)],
-        imageGetPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"getPasteBoard.png"] size:CGSizeMake(16, 16)];
+    var imageZoomFit = CPImageInBundle(@"IconsButtons/fullscreen.png", CGSizeMake(16, 16), [CPBundle mainBundle]),
+        imageZoomReset = CPImageInBundle(@"IconsButtons/reset.png", CGSizeMake(16, 16), [CPBundle mainBundle]),
+        imageDirectAccess = CPImageInBundle(@"IconsButtons/screen.png", CGSizeMake(16, 16), [CPBundle mainBundle]),
+        imageCtrlAltDel = CPImageInBundle(@"skull.png", CGSizeMake(16, 16), bundle),
+        imageSendPasteBoard = CPImageInBundle(@"sendPasteBoard.png", CGSizeMake(16, 16), bundle),
+        imageGetPasteBoard = CPImageInBundle(@"getPasteBoard.png", CGSizeMake(16, 16), bundle);
 
-    [viewControls setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
+    [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", nil, nil, bundle)];
     [buttonZoomFitToWindow setImage:imageZoomFit];
     [buttonZoomReset setImage:imageZoomReset];
     [buttonExternalWindow setImage:imageDirectAccess];
@@ -258,17 +257,6 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
     [fieldPreferencesCheckRate setIntValue:[defaults integerForKey:@"NOVNCheckRate"]];
     [switchPreferencesPreferSSL setOn:[defaults boolForKey:@"NOVNCPreferSSL"] animated:YES sendAction:NO];
 }
-
-/*! call when MainMenu is ready
-*/
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Fit screen to window", @"Fit screen to window") action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reset zoom", @"Reset zoom") action:@selector(resetZoom:) keyEquivalent:@""] setTarget:self];
-    [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Open external VNC program", @"Open external VNC program") action:@selector(openExternalWindow:) keyEquivalent:@""] setTarget:self];
-}
-
 
 #pragma mark -
 #pragma mark Notification handlers

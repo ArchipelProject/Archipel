@@ -168,7 +168,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
 */
 - (void)addNWFilterParameter:(id)aSender
 {
-    [_datasourceNWFilterParameters addObject:[CPDictionary dictionaryWithObjectsAndKeys:@"parameter", @"name", @"value", @"value"]];
+    [_datasourceNWFilterParameters addObject:@{@"name":@"parameter",@"value":@"value"}];
     [tableViewNetworkFilterParameters reloadData];
 }
 
