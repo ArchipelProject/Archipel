@@ -1,7 +1,7 @@
 #
 # setup.py
 #
-# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright (C) 2013 Nicolas Ochem <nicolas.ochem@free.fr>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,20 +21,18 @@ from setuptools import setup, find_packages
 VERSION             = '0.6.0'
 
 DESCRIPTION="""\
-** Archipel Agent **
+** Archipel Central Agent **
 
-Copyright (c) 2011 Antoine Mercadal
+Copyright (c) 2013 Nicolas Ochem
 
-This package contains the agent you need to install on your hypervisor
-in order to use them with Archipel. You need a running XMPP agent in
-order to use Archipel and a recent version of Libvirt.
+This package contains the central agent of archipel, to be installed
+in your environment, for monitoring of your whole system.
 
 For more information, please go to http://archipelproject.org
 """
 
-#RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt-python"
-RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt, libvirt-python"
-RPM_POST_INSTALL = "%post\narchipel-initinstall -i\n"
+RPM_REQUIRED_DEPS = "archipel-core, python-imaging"
+RPM_POST_INSTALL = "%post\narchipel-central-agent-initinstall\n"
 
 ## HACK FOR DEPS IN RPMS
 from setuptools.command.bdist_rpm import bdist_rpm
@@ -54,9 +52,9 @@ def create_avatar_list(folder):
         ret.append("%s%s" % (folder, avatar))
     return ret
 
-setup(name='archipel-agent',
+setup(name='archipel-central-agent',
       version=VERSION,
-      description="The hypervisor's agent part of Archipel",
+      description="Central agent maintaining Archipel central db",
       long_description=DESCRIPTION,
       classifiers=[
         'Development Status :: 4 - Beta',
@@ -82,45 +80,20 @@ setup(name='archipel-agent',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      provides=["archipel"],
+      provides=["archipelcentral"],
       install_requires=[
         "archipel-core>=0.6.0beta",
-        "archipel-agent-action-scheduler>=0.6.0beta",
-        "archipel-agent-centraldb>=0.6.0beta",
-        "archipel-agent-hypervisor-geolocalization>=0.6.0beta",
-        "archipel-agent-hypervisor-health>=0.6.0beta",
-        "archipel-agent-hypervisor-network>=0.6.0beta",
-        "archipel-agent-iphone-notification>=0.6.0beta",
-        "archipel-agent-virtualmachine-oomkiller>=0.6.0beta",
-        "archipel-agent-virtualmachine-snapshoting>=0.6.0beta",
-        "archipel-agent-virtualmachine-storage>=0.6.0beta",
-        "archipel-agent-vmcasting>=0.6.0beta",
-        "archipel-agent-xmppserver>=0.6.0beta",
-        "archipel-agent-virtualmachine-vnc>=0.6.0beta",
-        "archipel-agent-vmparking>=0.6.0beta",
         "PIL"
       ],
       entry_points="""
         # -*- Entry points: -*-
         """,
       scripts = [
-        'install/bin/archipel-importvirtualmachine',
-        'install/bin/archipel-rolesnode',
-        'install/bin/archipel-tagnode',
-        'install/bin/archipel-updatedomain',
-        'install/bin/archipel-initinstall',
-        'install/bin/archipel-testxmppserver',
-        'install/bin/archipel-commandsbytag',
-        'install/bin/archipel-adminaccounts',
-        'install/bin/archipel-centralagentnode',
-        'install/bin/archipel-command',
-        'install/bin/runarchipel'
+        'install/bin/runcentralagent',
+        'install/bin/archipel-central-agent-initinstall'
         ],
       data_files=[
-        ('install/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
-        ('install/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
-        ('install/etc/init.d/'             , ['install/etc/init.d/archipel']),
-        ('install/usr/lib/systemd/system/' , ['install/usr/lib/systemd/system/archipel-agent.service']),
-        ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
+        ('install/etc/init.d'              , ['install/etc/init.d/archipel-central-agent']),
+        ('install/etc/archipel/'           , ['install/etc/archipel/archipel-central-agent.conf'])
         ]
       )

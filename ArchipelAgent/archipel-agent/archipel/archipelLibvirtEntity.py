@@ -24,6 +24,7 @@ import libvirt
 import time
 import random
 import sys
+import traceback
 
 ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR = "libvirt:error:generic"
 
@@ -167,6 +168,8 @@ class TNArchipelLibvirtEntity (object):
                 self.libvirt_failure(False)
                 self.libvirt_connected = True
         except:
+            t, v, tr = sys.exc_info()
+            self.log.debug("TRACEBACK: %s" % "\n".join(traceback.format_exception(t, v, tr)))
             # hmm, it seems that we've lost the connection to libvirt
             if self.libvirt_connected:
                 # update status of entity if we are disconnected
