@@ -4,6 +4,7 @@
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# Copyright, 2013 - Nicolas Ochem <nicolas.ochem@free.fr>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -70,6 +71,8 @@ ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
+# number of xmpp ticks before central agent is considered AWOL
+ARCHIPEL_CENTRAL_AGENT_TIMEOUT                  = 20
 
 class TNThreadedVirtualMachine (Thread):
     """
@@ -143,6 +146,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
         self.bad_chars_in_name = '(){}[]<>!@#$'
+        self.wait_for_central_agent = 1
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -205,8 +209,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
-        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
-        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
+        if not self.get_plugin("centraldb"):
+            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
+            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
+        else:
+            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence_initialization)
 
 
     ### Overrides
@@ -241,7 +248,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ### Utilities
 
-    def update_presence(self, origin=None, user_info=None, parameters=None):
+    def update_presence(self, origin=None, user_info=None, parameters=None, initializing=False):
         """
         Set the presence of the hypervisor.
         @type origin: L{TNArchipelEntity}
@@ -251,13 +258,22 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        count = len(self.virtualmachines)
-        if self.has_vmx:
-            status = "%s (%d)" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+        if initializing:
+            minor_info = "Initializing VMs..."
         else:
-            status = "%s (%d) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, count)
+            minor_info = len(self.virtualmachines)
+        if self.has_vmx:
+            status = "%s (%s)" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
+        else:
+            status = "%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
 
         self.change_presence(self.xmppstatusshow, status)
+
+    def update_presence_initialization(self, origin=None, user_info=None, parameters=None):
+        """
+        Set the initial presence of the hypervisor.
+        """
+        self.update_presence(origin=origin, user_info=user_info, parameters=parameters, initializing=True)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
         """
@@ -269,8 +285,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        self.manage_persistance()
-        self.perform_hooks("HOOK_HYPERVISOR_WOKE_UP", self)
+        self.manage_persistence(self.get_vms_from_local_db(), [])
 
     def register_handlers(self):
         """
@@ -354,11 +369,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.permission_center.create_permission("unmanage", "Authorizes users to make Archipel able to unmanage virtual machines", False)
         self.permission_center.create_permission("setorginfo", "Authorizes users to change VM Organization information of virtual machines", False)
 
-    def manage_persistance(self):
+    def get_vms_from_local_db(self):
         """
-        If the database_file parameter contains a valid populated sqlite3 database,
-        this method will recreate all the old L{TNArchipelVirtualMachine}. If not, it will create a
-        blank database file.
+        Get vms from local database
         """
         self.log.info("opening database file %s" % self.database_file)
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
@@ -366,14 +379,52 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text, name text)")
         c = self.database.cursor()
         c.execute("select * from virtualmachines")
+
+        vms = []
         for vm in c:
             string_jid, password, date, comment, name = vm
+            vms.append({"string_jid":string_jid, "password":password, "date": date, "comment": comment, "name": name})
+        return vms
+
+    def manage_persistence(self, vms, vms_started_elsewhere):
+        """
+        After getting the status of local vms from central db (were they started
+        else where or not ?), we proceed to start vms
+        """
+ 
+        self.database = sqlite3.connect(self.database_file, check_same_thread=False)
+        c = self.database.cursor()
+        vms_started_elsewhere_uuids = []
+        for vm in vms_started_elsewhere:
+            vms_started_elsewhere_uuids.append(vm["uuid"])
+        for vm in vms: 
+            string_jid = vm["string_jid"]
             jid = xmpp.JID(string_jid)
-            jid.setResource(self.jid.getNode().lower())
-            vm_thread = self.create_threaded_vm(jid, password, name, self.vcard_infos)
-            self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
-            vm_thread.start()
-            self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())
+            uuid = jid.getNode()
+            if uuid not in vms_started_elsewhere_uuids:
+                self.log.info("Starting vm %s" % string_jid)
+                jid.setResource(self.jid.getNode().lower())
+                vm_thread = self.create_threaded_vm(jid, vm["password"], vm["name"], self.vcard_infos)
+                self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
+                vm_thread.start()
+                self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())
+            else:
+                self.log.warning("Vm %s is already started on another hypervisor, removing from local db and local libvirt." % string_jid)
+                c.execute("delete from virtualmachines where jid='%s'" % string_jid)
+                self.database.commit()
+                for vm in vms_started_elsewhere:
+                    vm_uuid = xmpp.JID(string_jid).getNode()
+                    if vm_uuid:
+                        try:
+                            libvirt_vm = self.libvirt_connection.lookupByUUIDString(vm_uuid)
+                            if libvirt_vm.info()[0] in [1, 2, 3]:
+                                libvirt_vm.destroy()
+                            libvirt_vm.undefine()
+                        except libvirt.libvirtError:
+                             self.log.warning("Libvirt gave error while trying to destroy vm started somewhere else")
+
+        self.perform_hooks("HOOK_HYPERVISOR_WOKE_UP", self)
+        self.update_presence()
 
     def create_threaded_vm(self, jid, password, name, organizationInfo=None):
         """
@@ -1283,7 +1334,25 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         return reply
 
     def on_xmpp_loop_tick(self):
+        if self.wait_for_central_agent:
+            self.wait_for_central_agent += 1
+            if self.get_plugin("centraldb").central_agent_jid():
+                self.wait_for_central_agent = None
+                return
+            if self.wait_for_central_agent > ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
+                self.log.error("HYPERVISOR: did not detect any central agent after %s ticks, starting vms based on local db info only." % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
+                self.wake_up_virtual_machines_hook()
+                self.wait_for_central_agent = None
+
+    def exit_proc(self):
         """
-        trigger that will be called in each execution of run loop
+        Called when Archipel exits gracefully (by init script or system shutdown)
         """
-        self.check_libvirt_connection()
+        self.log.info("Archipel is terminating.")
+        if self.get_plugin("centraldb"):
+            try:
+                self.get_plugin("centraldb").update_hypervisors([{"jid":str(self.jid), "last_seen":datetime.datetime.now(), "status":"Off"}])
+            except Exception as ex:
+                self.log.error("CENTRALDB: error when executing exit proc: %s"%ex)
+
+        self.disconnect()

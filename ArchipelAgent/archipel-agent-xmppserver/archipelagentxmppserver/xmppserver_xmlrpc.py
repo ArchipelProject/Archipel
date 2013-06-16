@@ -43,7 +43,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         self.xmlrpc_port        = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
         self.xmlrpc_user        = self.configuration.get("XMPPSERVER", "xmlrpc_user")
         self.xmlrpc_password    = self.configuration.get("XMPPSERVER", "xmlrpc_password")
-        self.xmlrpc_prefix       = "https" if self.configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
+        self.xmlrpc_prefix      = "https" if self.configuration.getboolean("XMPPSERVER","xmlrpc_sslonly") else "http"
         self.xmlrpc_call        = "%s://%s:%s@%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
         self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
         self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing XMPP server")
@@ -164,7 +164,7 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         base_reply.setQueryPayload(nodes)
         self.entity.xmppclient.send(base_reply)
 
-    def group_create(self, ID, name, description):
+    def group_create(self, ID, name, description, display=""):
         """
         Create a new shared roster group
         @type ID: string
@@ -173,9 +173,11 @@ class TNXMPPServerController (TNXMPPServerControllerBase):
         @param name: the name of the group
         @type description: string
         @param description: the description of the group
+        @type display: string
+        @param display: what group can see the group
         """
         server = self.entity.jid.getDomain()
-        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_create, {"host": server, "display": ID, "name": name, "description": description, "group": ID})
+        answer = self._send_xmlrpc_call(self.xmlrpc_server.srg_create, {"host": server, "display": display, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Creating a new shared group %s" % ID)
