@@ -153,18 +153,25 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         @param parameters: runtime argument
         """
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_users)
+            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_users)
             self.group_create(self.autogroup_users_id, self.autogroup_name_users, "Automatic group", "%s\\n%s" % (self.autogroup_hypervisors_id, self.autogroup_vms_id))
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_users, ex))
 
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_vms)
+            self.entity.log.info("XMPPSERVER: Adding declared admins in archipel.conf to the autogroup %s if needed" % self.autogroup_name_users)
+            admins_accounts = self.configuration.get("GLOBAL", "archipel_root_admins").split()
+            self.group_add_users(self.autogroup_users_id, admins_accounts)
+        except Exception as ex:
+            self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_users, ex))
+
+        try:
+            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_vms)
             self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group", self.autogroup_users_id)
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_vms, ex))
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_hypervisors)
+            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_hypervisors)
             self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group", self.autogroup_users_id)
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_hypervisors, ex))
