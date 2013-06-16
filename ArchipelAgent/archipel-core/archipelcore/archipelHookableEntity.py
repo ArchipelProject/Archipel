@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys,traceback
 
 class TNHookableEntity (object):
     """
@@ -127,7 +128,10 @@ class TNHookableEntity (object):
                     self.log.info("HOOK: this hook was oneshot. registering for deletion.")
                     hook_to_remove.append(m)
             except Exception as ex:
-                self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
+                    self.log.error("HOOK: error when performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
+                    t, v, tr = sys.exc_info()
+                    self.log.debug("\n".join(traceback.format_exception(t,v,tr)))
+
 
         for hook_method in hook_to_remove:
             self.log.info("HOOK: removing registred hook for deletion %s" % (hook_method.__name__))

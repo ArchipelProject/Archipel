@@ -33,6 +33,9 @@ class TNBasicPlatformScoreComputing (object):
         """
         Put custom initialization here.
         """
+        # required_stats to be written to central db regularly for score computing
+        # should be in the form i.e. [ { "major": "(memory|cpu|load)", "minor": "free" } ]
+        required_stats = []
         pass
 
     ## Plugin
@@ -55,17 +58,21 @@ class TNBasicPlatformScoreComputing (object):
 
     ## Score computing
 
-    def score(self, action=None):
+    def score(self, database, limit=10):
         """
         Perform the score. The highest score is, the highest chance
         you got to perform the action. If you want to decline
         the performing of the action, return 0.0 or None. the max score
         you can return is 1.0 (so basically see it as a percentage).
-        @type action: string
-        @param action: the name of the action if you want to use it to compute the score (optionnal)
-        @rtype: float
-        @return: the score
+        @type limit: float
+        @param limit: max numbers of hypervisors to suggest
+        @rtype: list
+        @return: scores of the top hypervisors
         """
         ## awesome computing goes here
         import random
-        return random.random() # yeah! that's a big computing!
+        hyp_list = []
+        rows = database.execute("select jid from hypervisors where status='Online' limit %s" % limit)
+        for row in rows:
+            hyp_list.append({"jid":row[0], "score": random.random()}) # yeah! that's a big computing
+        return hyp_list

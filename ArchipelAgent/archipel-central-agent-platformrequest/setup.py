@@ -23,13 +23,13 @@ AUTHOR              = 'Antoine Mercadal'
 MAIL                = 'antoine.mercadal@archipelproject.org'
 URL                 = 'http://archipelproject.org'
 LICENSE             = 'AGPL'
-NAME                = 'archipel-agent-hypervisor-platformrequest'
+NAME                = 'archipel-central-agent-platformrequest'
 SHORTDESCRIPTION    = "Manage platform wide operation requests"
 LONGDESCRIPTION     = ""
-ENTRY_POINTS        = { 'archipel.plugin.hypervisor' : [
-                            'factory=archipelagenthypervisorplatformrequest:make_archipel_plugin'],
+ENTRY_POINTS        = { 'archipel.plugin.centralagent' : [
+                            'factory=archipelcentralagentplatformrequest:make_archipel_plugin'],
                         'archipel.plugin' : [
-                            'version=archipelagenthypervisorplatformrequest:version']}
+                            'version=archipelcentralagentplatformrequest:version']}
 RPM_REQUIRED_DEPS   = "archipel-core"
 
 ## HACK FOR DEPS IN RPMS
@@ -75,7 +75,5 @@ setup(name=NAME,
           "archipel-core>=0.6.0beta"
       ],
       entry_points=ENTRY_POINTS,
-      scripts = [
-        'install/bin/archipel-vmrequestnode',
-      ]
+      scripts = []
       )

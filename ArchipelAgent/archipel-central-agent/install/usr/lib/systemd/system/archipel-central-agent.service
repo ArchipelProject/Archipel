@@ -1,0 +1,12 @@
+[Unit]
+Description=Archipel Central Agent
+Requires=libvirtd.service
+After=libvirtd.service
+
+[Service]
+ExecStart=/usr/bin/runcentralagent --config=/etc/archipel/archipel-central-agent.conf
+Type=forking
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

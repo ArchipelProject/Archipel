@@ -1,7 +1,7 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
 # -*- coding: utf-8 -*-
 #
-# runarchipel
+# runcentralagent
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # Copyright (C) 2013 Nicolas Ochem <nicolas.ochem@free.fr>
@@ -49,25 +49,9 @@ except ImportError as ex:
 try:
     from archipelcore.utils import init_log
     from archipelcore.runutils import format_version, versions, initialize_config
-    from archipel.archipelHypervisor import TNArchipelHypervisor
-    from archipel.libvirtEventLoop import virEventLoopNativeStart
+    from archipelcentral.archipelCentralAgent import TNArchipelCentralAgent
 except ImportError as ex:
-    error("Bad archipel installation. You need archipel-core and archipel-agent: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
-
-
-def test_libvirt():
-    """
-    test if all needed libvirt's functions are present
-    """
-    try:
-        import libvirt
-    except:
-        error("You need python libvirt module. I can't import it.", code=ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
-    try:
-        getattr(libvirt.virConnect, "domainEventRegisterAny")
-    except:
-        error("Your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.", code=ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
-
+    error("Bad archipel installation. You need archipel-core and archipel-central-agent: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 def main(config):
     """
@@ -75,29 +59,25 @@ def main(config):
     @type config: ConfigParser
     @param config: the configuration
     """
-    jid = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
-    password = config.get("HYPERVISOR", "hypervisor_xmpp_password")
-    database = config.get("HYPERVISOR", "hypervisor_database_path")
-    name = config.get("HYPERVISOR", "hypervisor_name")
+    jid = xmpp.JID(config.get("CENTRALAGENT", "central_agent_xmpp_jid"))
     # Set the resource
     jid.setResource(socket.gethostname())
 
-    # Starting the libvirt event loop
-    virEventLoopNativeStart()
 
-    # Create the archipel hypervisor instance
-    hypervisor = TNArchipelHypervisor(jid, password, config, name, database)
+    # Create the archipel main xmpp entity instance
+    password = config.get("CENTRALAGENT", "central_agent_xmpp_password")
+    centralagent = TNArchipelCentralAgent (jid, password, config)
 
-    # Try to connect to XMPP and Libvirt
+    # Try to connect to XMPP
     try:
-        hypervisor.connect()
+        centralagent.connect()
     except Exception as ex:
         error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)), code=ARCHIPEL_INIT_ERROR_CONNECTION)
 
     def exit_handler(exit_code, exit_frame):
         try:
             print "Archipel interrupted : executing exit proc"
-            hypervisor.exit_proc()
+            centralagent.exit_proc()
         except Exception as e:
             print "Error while executing exit proc"
         finally:
@@ -108,11 +88,11 @@ def main(config):
 
     # Main runloop
     try:
-        hypervisor.loop()
+        centralagent.loop()
     except Exception as ex:
-        if hypervisor.xmppclient.isConnected():
-            hypervisor.xmppclient.disconnect()
-        error("Exception has stopped the hypervisor main loop: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
+        if centralagent.xmppclient.isConnected():
+            centralagent.xmppclient.disconnect()
+        error("Exception has stopped the main xmpp entity main loop: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
 
 
 if __name__ == "__main__":
@@ -124,7 +104,7 @@ if __name__ == "__main__":
                         dest="config",
                         help="the config file to use",
                         metavar="CONFIG",
-                        default="/etc/archipel/archipel.conf")
+                        default="/etc/archipel/archipel-central-agent.conf")
     parser.add_option("-v", "--version",
                         action="callback",
                         help="display the version of all components",
@@ -144,8 +124,6 @@ if __name__ == "__main__":
                         default=False)
 
     options, args = parser.parse_args()
-    # Sanity checks
-    test_libvirt()
 
     # Read configuration
     config = initialize_config(options.config.split(","), options.cmdline_path, options.prepare_only)
