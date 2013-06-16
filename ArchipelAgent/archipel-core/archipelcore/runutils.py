@@ -32,6 +32,10 @@ import subprocess
 from archipelcore.scriptutils import error, msg, success
 from archipelcore.utils import init_conf
 
+## Error codes
+ARCHIPEL_INIT_ERROR_NO_CONFIG = 1
+ARCHIPEL_INIT_ERROR_STATELESS_MODE = 7
+
 def format_version(info):
     """
     Format the version info
