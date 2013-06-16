@@ -270,7 +270,7 @@ class TNXMPPServerController (xmppserver_base.TNXMPPServerControllerBase):
         else:
             send_filtered_users(base_reply)
 
-    def group_create(self, ID, name, description):
+    def group_create(self, ID, name, description, display=None):
         """
         Not supported in XMPP API
         """

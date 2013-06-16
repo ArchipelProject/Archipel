@@ -58,18 +58,22 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
             self.autogroup_name_hypervisors = "All Hypervisors"
             self.autogroup_name_vms = "All Virtual Machines"
+            self.autogroup_name_users = "All Users"
             if configuration.has_option("XMPPSERVER", "auto_group_name_virtualmachines"):
                 self.autogroup_name_vms = configuration.get("XMPPSERVER", "auto_group_name_virtualmachines")
             if configuration.has_option("XMPPSERVER", "auto_group_name_hypervisors"):
                 self.autogroup_name_hypervisors = configuration.get("XMPPSERVER", "auto_group_name_hypervisors")
+            if configuration.has_option("XMPPSERVER", "auto_group_name_users"):
+                self.autogroup_name_users = configuration.get("XMPPSERVER", "auto_group_name_users")
 
             auto_group_filter = "all"
             if configuration.has_option("XMPPSERVER", "auto_group_filter"):
                 auto_group_filter = configuration.get("XMPPSERVER", "auto_group_filter")
                 if not auto_group_filter in ("virtualmachines", "hypervisors", "all"):
                     raise Exception("Bad configuration", "auto_group_filter must be virtualmachines, hypervisors or all.")
-            self.autogroup_vms_id = "AUTOGROUP_SYSTEM_VM"
-            self.autogroup_hypervisors_id = "AUTOGROUP_SYSTEM_HYPERVISORS"
+            self.autogroup_vms_id = self.autogroup_name_vms
+            self.autogroup_hypervisors_id = self.autogroup_name_hypervisors
+            self.autogroup_users_id = self.autogroup_name_users
 
             self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
             if auto_group_filter in ("all", "hypervisors"):
@@ -149,15 +153,22 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         @param parameters: runtime argument
         """
         try:
+            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_users)
+            self.group_create(self.autogroup_users_id, self.autogroup_name_users, "Automatic group", "%s\\n%s" % (self.autogroup_hypervisors_id, self.autogroup_vms_id))
+        except Exception as ex:
+            self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_users, ex))
+
+        try:
             self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_vms)
-            self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group")
+            self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group", self.autogroup_users_id)
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_vms, ex))
         try:
             self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s in needed" % self.autogroup_name_hypervisors)
-            self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group")
+            self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group", self.autogroup_users_id)
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_hypervisors, ex))
+
 
     def handle_autogroup_for_entity(self, origin, user_info, entity):
         """
@@ -232,7 +243,7 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
         """
         raise Exception("Not Implemented")
 
-    def group_create(self, ID, name, description):
+    def group_create(self, ID, name, description, display=""):
         """
         Create a new shared roster group
         @type ID: string
@@ -325,7 +336,8 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
             groupID = iq.getTag("query").getTag("archipel").getAttr("id")
             groupName = iq.getTag("query").getTag("archipel").getAttr("name")
             groupDesc = iq.getTag("query").getTag("archipel").getAttr("description")
-            self.group_create(groupID, groupName, groupDesc)
+            groupDisplay = iq.getTag("query").getTag("archipel").getAttr("display")
+            self.group_create(groupID, groupName, groupDesc, groupDisplay)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
         return reply
