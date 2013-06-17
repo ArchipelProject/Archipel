@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D78</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1012,7 +1012,6 @@
 						<string key="NSFrame">{{17, 176}, {361, 17}}</string>
 						<reference key="NSSuperview" ref="101047790"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="943695761">
 							<int key="NSCellFlags">68157504</int>
@@ -1279,7 +1278,6 @@
 						<string key="NSFrame">{{224, 139}, {76, 22}}</string>
 						<reference key="NSSuperview" ref="101047790"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="519267796">
 							<int key="NSCellFlags">-1804599231</int>
@@ -1593,7 +1591,6 @@
 						<string key="NSFrame">{{96, 95}, {34, 18}}</string>
 						<reference key="NSSuperview" ref="101047790"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="996687188">
 							<int key="NSCellFlags">-2080374784</int>
@@ -2541,6 +2538,14 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
+						<reference key="source" ref="396097288"/>
+						<reference key="destination" ref="884205983"/>
+					</object>
+					<int key="connectionID">847</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
 						<reference key="source" ref="884205983"/>
 						<reference key="destination" ref="784852908"/>
 					</object>
@@ -2553,14 +2558,6 @@
 						<reference key="destination" ref="188495116"/>
 					</object>
 					<int key="connectionID">798</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
-						<reference key="source" ref="204776721"/>
-						<reference key="destination" ref="396097288"/>
-					</object>
-					<int key="connectionID">126</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2688,7 +2685,15 @@
 						<reference key="source" ref="649313860"/>
 						<reference key="destination" ref="653598119"/>
 					</object>
-					<int key="connectionID">680</int>
+					<int key="connectionID">849</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="653598119"/>
+						<reference key="destination" ref="554134887"/>
+					</object>
+					<int key="connectionID">850</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2696,7 +2701,7 @@
 						<reference key="source" ref="554134887"/>
 						<reference key="destination" ref="794798432"/>
 					</object>
-					<int key="connectionID">683</int>
+					<int key="connectionID">851</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2704,7 +2709,7 @@
 						<reference key="source" ref="794798432"/>
 						<reference key="destination" ref="396097288"/>
 					</object>
-					<int key="connectionID">800</int>
+					<int key="connectionID">852</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2733,18 +2738,18 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
-						<reference key="source" ref="685171644"/>
-						<reference key="destination" ref="396097288"/>
-					</object>
-					<int key="connectionID">660</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">nextKeyView</string>
 						<reference key="source" ref="294896998"/>
 						<reference key="destination" ref="685171644"/>
 					</object>
 					<int key="connectionID">659</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="188495116"/>
+						<reference key="destination" ref="649313860"/>
+					</object>
+					<int key="connectionID">848</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -4753,7 +4758,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">846</int>
+			<int key="maxID">852</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
