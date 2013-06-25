@@ -146,7 +146,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
         self.bad_chars_in_name = '(){}[]<>!@#$'
-        self.wait_for_central_agent = 1
+        if self.get_plugin("centraldb"):
+            self.wait_for_central_agent = 1
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
