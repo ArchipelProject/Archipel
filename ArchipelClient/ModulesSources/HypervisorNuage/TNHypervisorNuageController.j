@@ -305,6 +305,9 @@ var TNArchipelPushNotificationNuage             = @"archipel:push:nuagenetwork",
 
 - (void)_initCNACommunicatorWithURLString:(CPString)aBaseURLString
 {
+    if (!aBaseURLString)
+        return;
+
     var APIEndpoint = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"RESTServerBaseURLResource"],
         baseURL = [CPURL URLWithString:aBaseURLString[aBaseURLString.lenght - 1] != @"/" ? aBaseURLString + @"/" : aBaseURLString],
         anURL = [CPURL URLWithString:APIEndpoint relativeToURL:baseURL];
