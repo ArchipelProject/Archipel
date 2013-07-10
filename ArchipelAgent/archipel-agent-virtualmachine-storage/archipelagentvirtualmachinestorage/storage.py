@@ -179,7 +179,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @param path: the path of the file to check
         """
         output = self.magicObject.from_file(path).lower()
-        return "iso 9660" in output
+        return "iso 9660" in output or "x86 boot sector" in output
 
 
     ### XMPP Processing
