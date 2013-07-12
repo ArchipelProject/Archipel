@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# A POSIX variable
+OPTIND=1         # Reset in case getopts has been used previously in the shell.
+
+# Initialize our own variables:
+output_file=""
+verbose=0
+
+function show_help {
+    echo "archipel-central-server is a helper script to set up a central server for archipel.\
+Syntax : archipel-central-server command -param"
+}
+
+while getopts "h?vf:" opt; do
+    case "$opt" in
+    h|\?)
+        show_help
+        exit 0
+        ;;
+    f)  output_file=$OPTARG
+        ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+[ "$1" = "--" ] && shift
+
+script_command=$@
+
+if [ "$script_command" == "install" ] 
+then
+    echo "now installing central server"
+    sed -e "s/FQDN/archipel-test.archipel.priv/" /etc/ejabberd/ejabberd.cfg.template > /etc/ejabberd/ejabberd.cfg
+    service ejabberd stop
+    echo "purgin ejabberd db"
+    rm -rvf /var/lib/ejabberd/*
+    service ejabberd start
+    ejabberd register admin archipel-test.archipel.priv admin
+    # mount developer env
+    mkdir /archipel_dev/
+    mount -t cifs -o user=smbuser,password=archipel //192.168.137.1/archipel /archipel_dev
+    cd /archipel_dev/ArchipelAgent/
+    ./buildCentralAgent -d
+fi
+
+# End of file

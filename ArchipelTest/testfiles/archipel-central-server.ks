@@ -27,6 +27,8 @@ logvol  /  --vgname=system  --size=100  --grow  --name=root_vol
 rootpw archipel
 reboot
 
+services --enabled ejabberd
+
 %packages
 @core
 ejabberd

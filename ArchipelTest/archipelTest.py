@@ -231,7 +231,7 @@ class ArchipelTest:
                     self.log("did not found mount of archipel working directory, mounting now")
                     console.sendline("mkdir /archipel_dev")
                     console.expect("\[root@")
-                    console.sendline("mount -t cifs -o password=password //192.168.122.1/archipel /archipel_dev")
+                    console.sendline("mount -t cifs -o password=archipel //192.168.137.1/archipel /archipel_dev")
                     console.expect("\[root@")
                     console.sendline("cd /archipel_dev/ArchipelAgent")
                     console.expect("\[root@")
