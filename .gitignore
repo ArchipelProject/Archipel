@@ -23,3 +23,4 @@ ArchipelTest/stateless/*
 ArchipelTest/tftpboot/*
 ArchipelTest/vm/*
 ArchipelTest/testfiles/archipel-hyp-*.xml
+ArchipelTest/testfiles/archipel-central-server.qcow2
