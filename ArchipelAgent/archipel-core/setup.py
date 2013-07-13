@@ -82,5 +82,12 @@ setup(name=NAME,
         "xmpppy>=0.5.0rc1",
         "sqlalchemy>=0.6.6"
       ],
-      entry_points=ENTRY_POINTS
+      entry_points=ENTRY_POINTS,
+      scripts=[
+         'install/bin/archipel-tagnode',
+         'install/bin/archipel-rolesnode',
+         'install/bin/archipel-adminaccounts',
+         'install/bin/archipel-centralagentnode',
+         'install/bin/archipel-testxmppserver'
+      ]
       )
