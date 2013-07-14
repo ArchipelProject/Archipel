@@ -32,6 +32,7 @@ services --enabled ejabberd
 %packages
 @core
 ejabberd
+gcc
 
 # for xmlrpc
 #erlang-dev
@@ -39,6 +40,9 @@ erlang-xmerl
 erlang-xmlrpc
 erlang-tools
 python-setuptools
+svn
+#python-xmpp
+#python-sqlalchemy
 
 %end
 

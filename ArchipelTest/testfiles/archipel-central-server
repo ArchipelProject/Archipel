@@ -36,13 +36,28 @@ then
     service ejabberd stop
     echo "purgin ejabberd db"
     rm -rvf /var/lib/ejabberd/*
+
+    echo "installing xmlrpc beam"
+    svn checkout http://svn.process-one.net/ejabberd-modules/
     service ejabberd start
     ejabberd register admin archipel-test.archipel.priv admin
     # mount developer env
     mkdir /archipel_dev/
     mount -t cifs -o user=smbuser,password=archipel //192.168.137.1/archipel /archipel_dev
     cd /archipel_dev/ArchipelAgent/
+
+    # developer mode only
     ./buildCentralAgent -d
+    easy_install sqlalchemy
+    archipel-central-agent-initinstall -x $(hostname)
+    chkconfig archipel-central-agent on
+    # create archipel pubsubs
+    archipel-centralagentnode -j admin@$(hostname) -p admin -c
+    archipel-adminaccounts -j admin@$(hostname) -p admin -c
+    archipel-tagnode -j admin@$(hostname) -p admin -c
+    archipel-rolesnode -j admin@$(hostname) -p admin -c
+    ejabberdctl register professeur $(hostname) professeur
+    archipel-adminaccounts -j admin@$(hostname) -p admin -a professeur@$(hostname)
 fi
 
 # End of file
