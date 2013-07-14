@@ -23,5 +23,6 @@ guestmount -a testfiles/archipel-central-server.qcow2 -i virtimage/ ||  echo "ER
 # copying extra files to the virt image
 cp testfiles/ejabberd.cfg virtimage/etc/ejabberd/ejabberd.cfg.template
 cp testfiles/archipel-central-server virtimage/usr/bin/
+sed -i "s/disable.*=.*yes/disable = no/" virtimage/etc/xinetd.d/tftp
 
 umount virtimage/

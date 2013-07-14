@@ -44,14 +44,9 @@ svn
 #python-xmpp
 #python-sqlalchemy
 
-%end
-
-%post
-
-
-%end
-
-%post --nochroot
-cp testfiles/ejabberd.cfg $INSTALL_ROOT/etc/ejabberd/
+# for pxe boot
+tftp-server
+#livecd-tools
 
 %end
+

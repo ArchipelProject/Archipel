@@ -22,6 +22,7 @@
   <ip address='192.168.137.1' netmask='255.255.255.0'>
     <dhcp>
       <range start='192.168.137.20' end='192.168.137.254' />
+      <bootp file="/pxelinux.0" server="192.168.137.31" />
       <host mac='52:54:00:00:01:31' name='archipel-hyp-1.archipel.priv' ip='192.168.137.29' />
       <host mac='52:54:00:00:01:32' name='archipel-hyp-2.archipel.priv' ip='192.168.137.30' />
       <host mac='52:54:00:00:01:33' name='archipel-test.archipel.priv' ip='192.168.137.31' />
