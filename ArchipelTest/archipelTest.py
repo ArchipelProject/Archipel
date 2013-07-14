@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys,os,xmpp,time,select,uuid,sqlite3,datetime,pexpect,random,shutil
 sys.path.append("../ArchipelAgent/archipel-core/archipelcore")
-from archipelcore import pubsub
+import pubsub
 ARCHIPEL_KEEPALIVE_PUBSUB="/archipel/centralagentkeepalive"
 
 class XmppClient:
