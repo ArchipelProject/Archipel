@@ -82,8 +82,7 @@ setup(name='archipel-central-agent',
       zip_safe=False,
       provides=["archipelcentral"],
       install_requires=[
-        "archipel-core>=0.6.0beta",
-        "PIL"
+        "archipel-core>=0.6.0beta"
       ],
       entry_points="""
         # -*- Entry points: -*-
