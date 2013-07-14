@@ -215,7 +215,7 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto", force_initd=F
         sys.exit(1)
 
     success("Archipel installation complete")
-    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf top match your informations")
+    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf to match your info")
     msg("IMPORTANT NOTE 2: If you have used --name=auto and/or --xmpp-server=auto, please check values for xmpp_server and hypervisor_xmpp_jid")
     msg("IMPORTANT NOTE 3: if this is not already done, you need to run archipel-tagnode, archipel-rolesnode, archipel-adminaccount, archipel-vmparkingnode and archipel-vmrequestnode")
 
