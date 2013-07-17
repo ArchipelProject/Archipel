@@ -39,6 +39,10 @@ then
 
     echo "installing xmlrpc beam"
     svn checkout http://svn.process-one.net/ejabberd-modules/
+    cd /usr/local/src/ejabberd-modules/ejabberd_xmlrpc/trunk
+    ./build.sh
+    cp ebin/ejabberd_xmlrpc.beam  /usr/lib64/ejabberd/ebin/
+
     service ejabberd start
     ejabberd register admin archipel-test.archipel.priv admin
     # mount developer env
@@ -58,6 +62,21 @@ then
     archipel-rolesnode -j admin@$(hostname) -p admin -c
     ejabberdctl register professeur $(hostname) professeur
     archipel-adminaccounts -j admin@$(hostname) -p admin -a professeur@$(hostname)
+
+    # configure central agent log to where other logs are
+    sed -i 's&logging_file_path.*=.*&logging_file_path=/stateless/logs/archipel.archipel-central-server.archipel.priv.log&' /etc/archipel/archipel-central-agent.conf
+
+    # tftp config
+    # selinux fix
+    restorecon -r /tftpboot
+
+    # samba config
+    useradd -M smbuser
+    (echo archipel; echo archipel) | smbpasswd -s smbuser
+    chown -R smbuser /stateless/
+    chgrp -R smbuser /stateless/
+    #selinux fix
+    chcon -t samba_share_t /stateless/
 fi
 
 # End of file

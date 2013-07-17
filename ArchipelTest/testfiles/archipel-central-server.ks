@@ -27,7 +27,7 @@ logvol  /  --vgname=system  --size=100  --grow  --name=root_vol
 rootpw archipel
 reboot
 
-services --enabled ejabberd
+services --enabled ejabberd,xinetd
 
 %packages
 @core
@@ -41,12 +41,13 @@ erlang-xmlrpc
 erlang-tools
 python-setuptools
 svn
-#python-xmpp
-#python-sqlalchemy
+samba
+python-xmpp
+python-sqlalchemy0.7
 
 # for pxe boot
 tftp-server
-#livecd-tools
+samba
 
 %end
 

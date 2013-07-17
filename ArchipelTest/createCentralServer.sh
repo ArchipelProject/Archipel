@@ -24,5 +24,13 @@ guestmount -a testfiles/archipel-central-server.qcow2 -i virtimage/ ||  echo "ER
 cp testfiles/ejabberd.cfg virtimage/etc/ejabberd/ejabberd.cfg.template
 cp testfiles/archipel-central-server virtimage/usr/bin/
 sed -i "s/disable.*=.*yes/disable = no/" virtimage/etc/xinetd.d/tftp
+mkdir -p virtimage/stateless/{config,logs,qemu,lib,scripts}
+chmod -R 755 virtimage/stateless/
+echo "[stateless]
+comment = Archipel Stateless Solid storage
+path = /stateless
+public = yes
+writable = yes
+browsable = yes" >> virtimage/etc/samba/smb.conf
 
 umount virtimage/

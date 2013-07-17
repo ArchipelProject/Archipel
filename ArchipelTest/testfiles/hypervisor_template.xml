@@ -6,10 +6,7 @@
   <vcpu>1</vcpu>
   <os>
     <type arch='x86_64' machine='pc-1.0'>hvm</type>
-    <kernel><%kernel_path%></kernel>
-    <initrd><%initrd_path%></initrd>
-    <cmdline>rootflags=loop initrd=initrd0.img root=live:/archipel-node-image.iso rootfstype=auto ro liveimg nomodeset check rootflags=ro crashkernel=512M-2G:64M,2G-:128M elevator=deadline install quiet rd_NO_LVM stateless=1 rhgb rd_NO_LUKS rd_NO_MD rd_NO_DM BOOTIF=eth0 hostname=<%hostname%> ARCHIPEL_MOUNT_ADDRESS=//192.168.122.1/stateless ARCHIPEL_MOUNT_OPTIONS=user=smbuser,password=tigris rdshell serial console=ttyS0,115200</cmdline>
-    <boot dev='hd'/>
+    <boot dev='network'/>
   </os>
   <features>
     <acpi/>
@@ -36,7 +33,7 @@
     </controller>
     <interface type='network'>
 	<mac address='<%mac%>'/>
-      <source network='default'/>
+      <source network='archipel-test-network'/>
       <model type='virtio'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
