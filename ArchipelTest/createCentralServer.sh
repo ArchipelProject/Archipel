@@ -31,6 +31,28 @@ comment = Archipel Stateless Solid storage
 path = /stateless
 public = yes
 writable = yes
-browsable = yes" >> virtimage/etc/samba/smb.conf
+browsable = yes
+guest ok = yes
+create mask = 777
+directory mask = 777
+force user=smbuser
+create mask = 0777
+force create mode = 0777
+force directory mode = 0777
+
+[centraldb]
+comment = Centraldb for test
+path = /var/lib/archipel
+public = yes
+writable = yes
+browsable = yes
+guest ok = yes
+create mask = 777
+directory mask = 777
+force user=smbuser
+create mask = 0777
+force create mode = 0777
+force directory mode = 0777
+" >> virtimage/etc/samba/smb.conf
 
 umount virtimage/

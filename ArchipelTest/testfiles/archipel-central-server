@@ -12,6 +12,24 @@ function show_help {
 Syntax : archipel-central-server command -param"
 }
 
+function initialize_ejabberd {
+    echo "(Re)initializing ejabberd"
+    service ejabberd stop
+    echo "purgin ejabberd db"
+    rm -rvf /var/lib/ejabberd/*
+
+
+    service ejabberd start
+    ejabberdctl register admin archipel-test.archipel.priv admin
+    # create archipel pubsubs
+    archipel-centralagentnode -j admin@$(hostname) -p admin -c
+    archipel-adminaccounts -j admin@$(hostname) -p admin -c
+    archipel-tagnode -j admin@$(hostname) -p admin -c
+    archipel-rolesnode -j admin@$(hostname) -p admin -c
+    ejabberdctl register professeur $(hostname) professeur
+    archipel-adminaccounts -j admin@$(hostname) -p admin -a professeur@$(hostname)
+}
+
 while getopts "h?vf:" opt; do
     case "$opt" in
     h|\?)
@@ -34,17 +52,14 @@ then
     echo "now installing central server"
     sed -e "s/FQDN/archipel-test.archipel.priv/" /etc/ejabberd/ejabberd.cfg.template > /etc/ejabberd/ejabberd.cfg
     service ejabberd stop
-    echo "purgin ejabberd db"
-    rm -rvf /var/lib/ejabberd/*
-
     echo "installing xmlrpc beam"
     svn checkout http://svn.process-one.net/ejabberd-modules/
     cd /usr/local/src/ejabberd-modules/ejabberd_xmlrpc/trunk
     ./build.sh
     cp ebin/ejabberd_xmlrpc.beam  /usr/lib64/ejabberd/ebin/
 
-    service ejabberd start
-    ejabberd register admin archipel-test.archipel.priv admin
+    initialize_ejabberd
+
     # mount developer env
     mkdir /archipel_dev/
     mount -t cifs -o user=smbuser,password=archipel //192.168.137.1/archipel /archipel_dev
@@ -55,14 +70,6 @@ then
     easy_install sqlalchemy
     archipel-central-agent-initinstall -x $(hostname)
     chkconfig archipel-central-agent on
-    # create archipel pubsubs
-    archipel-centralagentnode -j admin@$(hostname) -p admin -c
-    archipel-adminaccounts -j admin@$(hostname) -p admin -c
-    archipel-tagnode -j admin@$(hostname) -p admin -c
-    archipel-rolesnode -j admin@$(hostname) -p admin -c
-    ejabberdctl register professeur $(hostname) professeur
-    archipel-adminaccounts -j admin@$(hostname) -p admin -a professeur@$(hostname)
-
     # configure central agent log to where other logs are
     sed -i 's&logging_file_path.*=.*&logging_file_path=/stateless/logs/archipel.archipel-central-server.archipel.priv.log&' /etc/archipel/archipel-central-agent.conf
 
@@ -77,6 +84,10 @@ then
     chgrp -R smbuser /stateless/
     #selinux fix
     chcon -t samba_share_t /stateless/
+elif [ "$script_command" == "initialize" ]
+then
+    initialize_ejabberd
+    echo "archipel central server reinitialized"
 fi
 
 # End of file
