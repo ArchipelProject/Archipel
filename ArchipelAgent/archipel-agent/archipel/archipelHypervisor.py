@@ -146,7 +146,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
         self.bad_chars_in_name = '(){}[]<>!@#$'
-        self.log.debug("CENTRALDB: wait for central agent ?")
         self.wait_for_central_agent = False
         try:
             central_db_configured = self.configuration.getboolean("MODULES", "centraldb")
