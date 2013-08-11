@@ -21,8 +21,8 @@
 
 import xmpp
 
-from archipel.archipelHypervisor import TNArchipelHypervisor
-from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
+#from archipel.archipelHypervisor import TNArchipelHypervisor
+#from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
 
@@ -96,8 +96,9 @@ class TNXMPPServerControllerBase (TNArchipelPlugin):
             self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
 
-        self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
-        self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
+        if self.entity.__class__.__name__ != "TNArchipelCentralAgent":
+            self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
 
 
     ### Plugin interface

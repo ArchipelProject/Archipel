@@ -83,7 +83,7 @@ setup(name='archipel-central-agent',
       provides=["archipelcentral"],
       install_requires=[
         "archipel-core>=0.6.0beta",
-        "PIL"
+        "archipel-agent-xmppserver>=0.6.0beta"
       ],
       entry_points="""
         # -*- Entry points: -*-
