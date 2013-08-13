@@ -75,7 +75,7 @@ def parse_repo(path):
     """
     paths = []
     for plugin_folder in os.listdir(path):
-        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-central-agent") or plugin_folder.startswith("archipel-core") or plugin_folder.startswith("archipel-platformrequest")):
+        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-central-agent") or plugin_folder.startswith("archipel-core") or plugin_folder.startswith("archipel-platformrequest") or plugin_folder.startswith("archipel-agent-xmppserver")):
             paths.append(os.path.join(path, plugin_folder))
     return paths
 

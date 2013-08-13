@@ -147,7 +147,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.vcard_infos = {}
         self.bad_chars_in_name = '(){}[]<>!@#$'
         self.wait_for_central_agent = False
-        if self.get_plugin("centraldb"):
+        try:
+            central_db_configured = self.configuration.getboolean("MODULES", "centraldb")
+        except:
+            central_db_configured = False
+        if central_db_configured:
             self.wait_for_central_agent = 1
 
         # VMX extensions check
@@ -393,13 +397,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         After getting the status of local vms from central db (were they started
         else where or not ?), we proceed to start vms
         """
- 
+
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         c = self.database.cursor()
         vms_started_elsewhere_uuids = []
         for vm in vms_started_elsewhere:
             vms_started_elsewhere_uuids.append(vm["uuid"])
-        for vm in vms: 
+        for vm in vms:
             string_jid = vm["string_jid"]
             jid = xmpp.JID(string_jid)
             uuid = jid.getNode()

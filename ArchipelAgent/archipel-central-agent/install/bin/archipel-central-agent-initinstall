@@ -184,12 +184,16 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto"):
         install_init_script(prefix, init_script, systemd_script)
         if install_config_folder(prefix, conf_folder):
             pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
+        if os.path.isdir("%s/var/lib/archipel" % prefix):
+            warn("Lib folder already exists. Leaving as it is.")
+        else:
+            os.makedirs("%s/var/lib/archipel" % prefix)
     except Exception as ex :
         error(str(ex))
         sys.exit(1)
 
     success("Archipel installation complete")
-    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel-central-agent.conf top match your informations")
+    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel-central-agent.conf to match your info")
     msg("IMPORTANT NOTE 2: If you have used --name=auto and/or --xmpp-server=auto, please check values for xmpp_server and hypervisor_xmpp_jid")
 
 

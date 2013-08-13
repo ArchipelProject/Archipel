@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-TEST_HYP_LIST="1 2 3"
+TEST_HYP_LIST="1 2"
 SCRIPT_LOCATION=$(pwd)
 
 
@@ -17,8 +17,6 @@ for i in $TEST_HYP_LIST; do
 	sed -e "s,<%name%>,archipel-hyp-$i,"|\
         sed -e "s,<%uuid%>,$(uuidgen),"|\
         sed -e "s,<%hostname%>,archipel-hyp-$i.archipel.priv,"|\
-        sed -e "s,<%kernel_path%>,$SCRIPT_LOCATION/tftpboot/vmlinuz0," |\
-        sed -e "s,<%initrd_path%>,$SCRIPT_LOCATION/tftpboot/initrd0.img," |\
         sed -e "s,<%mac%>,52:54:00:00:01:3$i," > testfiles/archipel-hyp-$i.xml
     virsh define testfiles/archipel-hyp-$i.xml
     virsh start archipel-hyp-$i
@@ -29,7 +27,7 @@ done
 # TODO : predictable ip addresses; see how libvirt nw xml dhcp works
 # and create fixed mapping
 # for now, we hard-code addresses
-TEST_HYP_IP="192.168.122.29 192.168.122.30 192.168.122.31"
+TEST_HYP_IP="192.168.137.29 192.168.137.30"
 
 for ip in $TEST_HYP_IP; do
     while true; do
