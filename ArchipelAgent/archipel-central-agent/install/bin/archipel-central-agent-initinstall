@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import getpass
 import os
 import uuid
 import string
@@ -26,6 +27,7 @@ from optparse import OptionParser
 from pkg_resources import Requirement, resource_filename
 from random import choice
 from socket import gethostname, getfqdn
+from time import sleep
 
 try:
     from archipelcore.initinstallutils import success, warn, error, msg, ask, ask_bool
@@ -43,10 +45,10 @@ def clean_installation(prefix=""):
         warn("Do this only if you are completely sure.")
 
         if not ask_bool("Do you really want to force the reinstallation?", default="n"):
-            print "ouf.."
+            print "Exiting.."
             sys.exit(0)
         if not ask_bool("Really really sure (last chance)?", default="n"):
-            print "ouf.."
+            print "Exiting.."
             sys.exit(0)
 
         warn("Ok. you have been warned...")
@@ -59,6 +61,11 @@ def clean_installation(prefix=""):
         os.system("rm -rf %s/etc/archipel" % prefix)
         msg("Cleaning log files %s/var/log/archipel" % prefix)
         os.system("rm -rf %s/var/log/archipel" % prefix)
+        msg("Cleaning ejabberd database")
+        os.system("service ejabberd stop")
+        sleep(3)
+        os.system("rm -rvf /var/lib/ejabberd/*")
+        os.system("service ejabberd start")
         success("Previous installation cleaned")
     except Exception as ex:
         error(str(ex))
@@ -125,15 +132,13 @@ def install_config_folder(prefix, conf_folder):
     return True
 
 
-def pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server):
+def pre_configure(prefix, conf_folder, xmpp_server):
     """
     Pre-configure the config file
     @type prefix: string
     @param prefix: the installation prefix
     @type conf_file: string
     @param conf_file: the path of conf file
-    @type hypervisor_name: string
-    @param hypervisor_name: requested name for hypervisor (Default: auto)
     @type xmpp_server: string
     @param xmpp_server: desired XMPP server FQDN (Default: auto)
     """
@@ -141,15 +146,12 @@ def pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server):
     conf_in = open("%s/archipel-central-agent.conf" % conf_folder)
     conf_out = open("%s/etc/archipel/archipel-central-agent.conf" % prefix, "w")
     uuidgen = str(uuid.uuid4())
-    if hypervisor_name == "auto":
-        hypervisor_name = gethostname()
     if xmpp_server == "auto":
         xmpp_server = getfqdn()
-    hypervisor_password = ''.join([choice(string.letters + string.digits) for i in xrange(8)])
+    central_agent_password = ''.join([choice(string.letters + string.digits) for i in xrange(8)])
     for line in conf_in:
         line = line.replace("PARAM_UUID",uuidgen)
-        line = line.replace("PARAM_HYPERVISOR_NAME", hypervisor_name)
-        line = line.replace("PARAM_HYPERVISOR_PASSWORD", hypervisor_password)
+        line = line.replace("PARAM_CENTRAL_AGENT_PASSWORD", central_agent_password)
         line = line.replace("PARAM_XMPP_SERVER", xmpp_server)
         conf_out.write(line)
     conf_in.close()
@@ -174,16 +176,41 @@ def get_data_files(prefix):
         conf_folder = "%s/usr/install/etc/archipel" % prefix
     return (init_script, systemd_script, conf_folder)
 
+def configure_ejabberd(password):
+    """
+    Configure ejabberd server for Archipel
+    """
+    msg("Registering admin user")
+    os.system("ejabberdctl register admin $(hostname) %s" % password)
+    msg("Adding Archipel pubsubs")
+    os.system("archipel-tagnode -j admin@$(hostname) -p %s -c" % password)
+    os.system("archipel-rolesnode -j admin@$(hostname) -p %s -c" % password)
+    os.system("archipel-centralagentnode -j admin@$(hostname) -p %s -c" % password)
+    os.system("archipel-adminaccounts -j admin@$(hostname) -p %s -c" % password)
 
-def install(prefix="", xmpp_server="auto", hypervisor_name="auto"):
+
+def install(prefix="", xmpp_server="auto", password=None):
 
     init_script, systemd_script, conf_folder = get_data_files(prefix)
 
     msg("Installation initialization started")
     try:
+        if xmpp_server == "auto":
+            if password == "":
+                password2  = ""
+                first_time = True
+                while password == "" or password != password2:
+                    if not first_time:
+                        warn("Passwords do not match")
+                    password=getpass.getpass("Enter password for Archipel administrator: ")
+                    password2=getpass.getpass("Confirm password: ")
+                    first_time = False
+            configure_ejabberd(password)
+        else:
+            msg("Skipping xmpp server configuration as it is not in this machine.")
         install_init_script(prefix, init_script, systemd_script)
         if install_config_folder(prefix, conf_folder):
-            pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
+            pre_configure(prefix, conf_folder, xmpp_server)
         if os.path.isdir("%s/var/lib/archipel" % prefix):
             warn("Lib folder already exists. Leaving as it is.")
         else:
@@ -193,8 +220,7 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto"):
         sys.exit(1)
 
     success("Archipel installation complete")
-    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel-central-agent.conf to match your info")
-    msg("IMPORTANT NOTE 2: If you have used --name=auto and/or --xmpp-server=auto, please check values for xmpp_server and hypervisor_xmpp_jid")
+    msg("You may now edit /etc/archipel/archipel-central-agent.conf to match your info")
 
 
 if __name__ == "__main__":
@@ -204,9 +230,14 @@ if __name__ == "__main__":
                         help="all installation folders and files will be prefixed with given value",
                         metavar="PREFIX",
                         default="")
+    parser.add_option("-P", "--password",
+                        dest="admin_password",
+                        help="password for Archipel admin. Will be asked interactively if not set",
+                        metavar="PASSWORD",
+                        default="")
     parser.add_option("-f", "--force",
                         dest="clean",
-                        help="before installing, clean all existing folder and files. IT WILL DESTROY YOUR CURRENT INSTALLATION, VM DRIVES etc. Be warned!",
+                        help="before installing, clean all existing folder and files. IT WILL DESTROY YOUR CURRENT INSTALLATION, CENTRAL DATABASE, AND EJABBERD DATABASE. Be warned!",
                         action="store_true",
                         default=False)
     parser.add_option("-x", "--xmpp-server",
@@ -214,15 +245,9 @@ if __name__ == "__main__":
                         help="set the fqdn of the XMPP server, defaults to local fqdn",
                         metavar="FQDN",
                         default="auto")
-    parser.add_option("-n", "--hypervisor-name",
-                        dest="hypervisor_name",
-                        help="set the name of the hypervisor (left part of the JID), defaults to <hostname>",
-                        metavar="SERVER",
-                        default="auto")
-
     options, args = parser.parse_args()
 
     if options.clean:
         clean_installation(options.prefix)
     else:
-        install(options.prefix, options.xmpp_server, options.hypervisor_name)
+        install(options.prefix, options.xmpp_server, options.admin_password)
