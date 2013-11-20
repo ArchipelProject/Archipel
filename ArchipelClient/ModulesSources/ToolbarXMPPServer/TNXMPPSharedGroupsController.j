@@ -149,8 +149,8 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 
 - (void)setEntity:(TNStropheContact)anEntity
 {
-    _entity = anEntity;
-    [_usersFetcher setEntity:_entity];
+    _entity = [anEntity objectForKey:@"contact"];
+     [_usersFetcher setEntity:_entity];
 }
 
 

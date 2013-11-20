@@ -97,6 +97,7 @@ var _iconEntityTypeHuman,
 - (void)reset
 {
     _maxLoadedPage = 0;
+    [_dataSource removeAllObjects];
     [_dataSource setTotalCount:-1];
     [_dataSource setCurrentlyLoading:NO];
     if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])

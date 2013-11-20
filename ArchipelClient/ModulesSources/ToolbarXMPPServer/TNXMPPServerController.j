@@ -57,6 +57,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 
     BOOL                                    _pushRegistred;
     CPDictionary                            _currentDomains;
+    CPDictionary                            _entityCapabilities
     CPDictionary                            _savedDomains;
     CPImage                                 _defaultAvatar;
     CPTabViewItem                           _itemViewGroups;
@@ -76,8 +77,9 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     // register defaults defaults
     [defaults registerDefaults:@{@"TNArchipelUseEjabberdSharedRosterGroups":[bundle objectForInfoDictionaryKey:@"TNArchipelUseEjabberdSharedRosterGroups"]}];
 
-    _currentDomains = [[CPDictionary alloc] init];
-    _savedDomains   = [[CPDictionary alloc] init];
+    _currentDomains   = [[CPDictionary alloc] init];
+    _savedDomains     = [[CPDictionary alloc] init];
+    _entityCapabilities = [[CPDictionary alloc] init];
 
     _defaultAvatar  = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 
@@ -159,7 +161,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 {
     [super permissionsChanged];
     [usersController permissionsChanged];
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] && [_entityCapabilities valueForKey:@"canManageSharedRostergroups"])
         [sharedGroupsController permissionsChanged];
 }
 
@@ -168,7 +170,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 - (void)setUIAccordingToPermissions
 {
     [usersController setUIAccordingToPermissions];
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] && [_entityCapabilities valueForKey:@"canManageSharedRostergroups"])
         [sharedGroupsController setUIAccordingToPermissions];
 }
 
@@ -196,10 +198,9 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 */
 - (void)flushUI
 {
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
-        [sharedGroupsController flushUI];
     [usersController flushUI];
-
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] && [_entityCapabilities valueForKey:@"canManageSharedRostergroups"])
+        [sharedGroupsController flushUI];
 }
 
 #pragma mark -
@@ -227,7 +228,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     if (![[tabViewMain tabViewItems] containsObject:_itemViewUsers])
         [tabViewMain addTabViewItem:_itemViewUsers];
 
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"] && [_entityCapabilities valueForKey:@"canManageSharedRostergroups"])
     {
         if (![[tabViewMain tabViewItems] containsObject:_itemViewGroups])
             [tabViewMain addTabViewItem:_itemViewGroups];
@@ -264,11 +265,11 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
             && ([contact XMPPShow] != TNStropheContactStatusOffline))
         {
-                if ((checkForDomain != nil) && ([[contact JID] compare:[[checkForDomain valueForKey:@"jid"] JID]] == 0))
+                if ((checkForDomain != nil) && ([[contact JID] compare:[[checkForDomain objectForKey:@"contact"] JID]] == 0))
                 {
                     [self fetchManagementCapabilitiesFor:contact];
 
-                    if ((([checkForDomain valueForKey:@"users" ]) && ([checkForDomain valueForKey:@"groups"])) || ! ([[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"]))
+                    if ((([checkForDomain valueForKey:@"canManageUsers" ]) && ([checkForDomain valueForKey:@"canManageSharedRostergroups"])) || ! ([[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"]))
                         return;
 
                     checkForDomain = nil;
@@ -280,6 +281,8 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
                 }
         }
     }
+
+    [self populateHypervisors];
 }
 
 /*! populate the hypervisor pop up button according to dictionnary
@@ -294,9 +297,10 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     while (key = [enumerator nextObject])
     {
         var item = [[CPMenuItem alloc] init],
-            contact = [[_currentDomains objectForKey:key] objectForKey:@"jid"];
-        [item setTitle:[[contact JID] domain]];
-        [item setRepresentedObject:contact];
+            contact = [[_currentDomains objectForKey:key] objectForKey:@"contact"];
+
+        [item setTitle:key];
+        [item setRepresentedObject:[_currentDomains objectForKey:key]];
         [items addObject:item];
         [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:contact];
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didHypervisorPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:contact];
@@ -311,10 +315,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         [buttonHypervisors addItem:[sortedItems objectAtIndex:i]];
 
     [buttonHypervisors selectItemAtIndex:0];
-    _entity = [[buttonHypervisors selectedItem] representedObject];
-
-    // simulate tab view item change
-    [self tabView:tabViewMain didSelectTabViewItem:[tabViewMain selectedTabViewItem]];
+    [self changeCurrentHypervisor:buttonHypervisors];
 }
 
 
@@ -326,14 +327,21 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 */
 - (IBAction)changeCurrentHypervisor:(id)aSender
 {
-    _entity = [[buttonHypervisors selectedItem] representedObject];
+    _entity = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"contact"];
+    _entityCapabilities = @{@"canManageUsers":[[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageUsers"], @"canManageSharedRostergroups":[[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageSharedRostergroups"]}
+
+    [buttonHypervisors setToolTip:CPBundleLocalizedString([[_entity JID] domain] + @" managed by " + [[_entity JID] bare], [[_entity JID] domain] + @" managed by " + [[_entity JID] bare])];
 
     [usersController setEntity:[[buttonHypervisors selectedItem] representedObject]];
 
-    if ([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"])
+    if (([[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelUseEjabberdSharedRosterGroups"]) && [_entityCapabilities valueForKey:@"canManageSharedRostergroups"])
         [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] representedObject]];
 
+    [self flushUI];
+    [self manageToolbarItems];
     [self permissionsChanged];
+    [self tabView:tabViewMain didSelectTabViewItem:[tabViewMain selectedTabViewItem]];
+
 }
 
 #pragma mark -
@@ -363,14 +371,9 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         var usersManagement  = (([[aStanza firstChildWithName:@"users"] valueForAttribute:@"xmpp"]    == @"True") ? true : false) || (([[aStanza firstChildWithName:@"users"] valueForAttribute:@"xmlrpc"]  == @"True") ? true : false),
             groupsManagement = (([[aStanza firstChildWithName:@"groups"] valueForAttribute:@"xmpp"]   == @"True") ? true : false) || (([[aStanza firstChildWithName:@"groups"] valueForAttribute:@"xmlrpc"] == @"True") ? true : false);
 
-        if (usersManagement && groupsManagement)
+        if ((usersManagement && groupsManagement) || (usersManagement && ! groupsManagement && ! ([_currentDomains containsKey:[[aContact JID] domain]])))
             {
-                [_currentDomains setValue:@{@"jid":aContact, @"users":usersManagement, @"groups":groupsManagement}  forKey:[[aContact JID] domain]];
-                [self populateHypervisors];
-            }
-        else if (usersManagement && ! groupsManagement && ! ([_currentDomains containsKey:[[aContact JID] domain]]))
-            {
-                [_currentDomains setValue:@{@"jid":aContact, @"users":usersManagement, @"groups":groupsManagement}  forKey:[[aContact JID] domain]];
+                [_currentDomains setValue:@{@"contact":aContact, @"canManageUsers":usersManagement, @"canManageSharedRostergroups":groupsManagement}  forKey:[[aContact JID] domain]];
                 [self populateHypervisors];
             }
     }
