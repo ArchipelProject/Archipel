@@ -2,8 +2,7 @@
 #
 # __init__.py
 #
-# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
-# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# Copyright (C) 2012 Nicolas Ochem <nicolas.ochem@free.fr>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -20,7 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import platformrequests
+import centraldb
 
 
 def make_archipel_plugin(configuration, entity, group):
@@ -37,8 +36,8 @@ def make_archipel_plugin(configuration, entity, group):
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
     """
-    return [{"info": platformrequests.TNPlatformRequests.plugin_info(),
-             "plugin": platformrequests.TNPlatformRequests(configuration, entity, group)}]
+    return [{"info": centraldb.TNCentralDb.plugin_info(),
+             "plugin": centraldb.TNCentralDb(configuration, entity, group)}]
 
 
 def version():
@@ -49,4 +48,4 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-hypervisor-platformrequest").version, [platformrequests.TNPlatformRequests.plugin_info()])
+    return (__name__, pkg_resources.get_distribution("archipel-agent-centraldb").version, [centraldb.TNCentralDb.plugin_info()])

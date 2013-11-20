@@ -1,0 +1,253 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
+#
+# archipel-central-agent-initinstall
+#
+# Copyright (C) 2013 Nicolas Ochem nicolas.ochem@free.fr
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import getpass
+import os
+import uuid
+import string
+import sys
+
+from optparse import OptionParser
+from pkg_resources import Requirement, resource_filename
+from random import choice
+from socket import gethostname, getfqdn
+from time import sleep
+
+try:
+    from archipelcore.initinstallutils import success, warn, error, msg, ask, ask_bool
+except ImportError as ex:
+    print "FATAL: you need to install archipel-core"
+    sys.exit()
+
+def clean_installation(prefix=""):
+    """
+    Clean all traces of Archipel
+    """
+    try:
+        warn("Using --force will remove ALL your Archipel Installation files")
+        warn("This mean you will lost all your configuration and data")
+        warn("Do this only if you are completely sure.")
+
+        if not ask_bool("Do you really want to force the reinstallation?", default="n"):
+            print "Exiting.."
+            sys.exit(0)
+        if not ask_bool("Really really sure (last chance)?", default="n"):
+            print "Exiting.."
+            sys.exit(0)
+
+        warn("Ok. you have been warned...")
+        msg("cleaning old existing files")
+        msg("cleaning init script from %s/etc/init.d/archipel-central-agent" % prefix)
+        os.system("rm -rf %s/etc/init.d/archipel-central-agent" % prefix)
+        msg("cleaning Service script from %s/usr/lib/systemd/system/" % prefix)
+        os.system("rm -f %s/usr/lib/systemd/system/archipel-central-agent.service" % prefix)
+        msg("Cleaning configuration file from %s/etc/archipel" % prefix)
+        os.system("rm -rf %s/etc/archipel" % prefix)
+        msg("Cleaning log files %s/var/log/archipel" % prefix)
+        os.system("rm -rf %s/var/log/archipel" % prefix)
+        msg("Cleaning ejabberd database")
+        os.system("service ejabberd stop")
+        sleep(3)
+        os.system("rm -rvf /var/lib/ejabberd/*")
+        os.system("service ejabberd start")
+        success("Previous installation cleaned")
+    except Exception as ex:
+        error(str(ex))
+
+
+def install_init_script(prefix, init_script, systemd_script):
+    """
+    Install the init script
+    @type prefix: string
+    @param prefix: the installation prefix
+    @type init_script: string
+    @param init_script: origin path of the init script
+    @type systemd_script : string
+    @param systemd_script : origin path of service script
+    """
+    if os.path.exists("%s/etc/systemd/" % prefix) and os.path.exists("%s/usr/lib/systemd/system" % prefix):
+        msg("Installing Service script to %s/usr/lib/systemd/system" % prefix)
+        if os.path.isfile("%s/usr/lib/systemd/system/archipel-central-agent.service" % (prefix)):
+            warn("Service script already exists. Leaving as it is.")
+            return
+        if os.system("cp '%s' '%s/usr/lib/systemd/system/'" % (systemd_script, prefix)) == 0:
+            success("Service script installed")
+        else:
+            error("Unable to copy the Service script. Please install it by yourself", exit=False)
+    elif os.path.exists("%s/etc/init.d/" % prefix):
+        msg("Installing init script to %s/etc/init.d/archipel-central-agent" % prefix)
+
+        if os.path.exists("%s/etc/init.d/archipel-central-agent" % prefix):
+            warn("Init script already exists. Leaving as it is.")
+            return
+        if os.system("cp '%s' '%s/etc/init.d/archipel-central-agent'" % (init_script, prefix)) == 0:
+            success("Init script installed")
+        else:
+            error("Unable to copy the init script. Please install it by yourself", exit=False)
+        if os.system("chmod 755 '%s/etc/init.d/archipel-central-agent'" % prefix) == 0:
+            success("Init script chmoded")
+        else:
+            error("Unable to chmod the init script", exit=False)
+    else:
+        error("No suitable system and service manager has been found !", exit=False)
+
+def install_config_folder(prefix, conf_folder):
+    """
+    Install the config file
+    @type prefix: string
+    @param prefix: the installation prefix
+    @type conf_folder: string
+    @param conf_folder: the path of conf folder
+    """
+    msg("Installing configuration to %s/etc/archipel" % prefix)
+    if os.path.exists("%s/etc/archipel/archipel-central-agent.conf" % prefix):
+        warn("Configuration files already exist. Leaving as it is")
+        return False
+    if not os.path.isdir("%s/etc/archipel/" % prefix):
+        os.makedirs("%s/etc/archipel/" % prefix)
+    if os.system("cp -a %s/* '%s/etc/archipel/'" % (conf_folder.replace(" ", "\\ "), prefix)) == 0:
+        success("Config folder installed")
+    else:
+        error("Unable to install install config folder", exit=False)
+    if os.system("chmod 600 '%s/etc/archipel/archipel-central-agent.conf'" % prefix) == 0:
+        success("Config file chmoded")
+    else:
+        error("Unable to chmod the config file", exit=False)
+    return True
+
+
+def pre_configure(prefix, conf_folder, xmpp_server):
+    """
+    Pre-configure the config file
+    @type prefix: string
+    @param prefix: the installation prefix
+    @type conf_file: string
+    @param conf_file: the path of conf file
+    @type xmpp_server: string
+    @param xmpp_server: desired XMPP server FQDN (Default: auto)
+    """
+    msg("Pre-configuring %s/etc/archipel/archipel-central-agent.conf:" % prefix)
+    conf_in = open("%s/archipel-central-agent.conf" % conf_folder)
+    conf_out = open("%s/etc/archipel/archipel-central-agent.conf" % prefix, "w")
+    uuidgen = str(uuid.uuid4())
+    if xmpp_server == "auto":
+        xmpp_server = getfqdn()
+    central_agent_password = ''.join([choice(string.letters + string.digits) for i in xrange(8)])
+    for line in conf_in:
+        line = line.replace("PARAM_UUID",uuidgen)
+        line = line.replace("PARAM_CENTRAL_AGENT_PASSWORD", central_agent_password)
+        line = line.replace("PARAM_XMPP_SERVER", xmpp_server)
+        conf_out.write(line)
+    conf_in.close()
+    conf_out.close()
+
+def get_data_files(prefix):
+    """
+    Try to find the data files
+    @type prefix: string
+    @param prefix: the installation prefix
+    """
+    init_script = resource_filename(Requirement.parse("archipel-central-agent"),"install/etc/init.d/archipel-central-agent")
+    systemd_script = resource_filename(Requirement.parse("archipel-central-agent"),"install/usr/lib/systemd/system/archipel-central-agent.service")
+    conf_folder = resource_filename(Requirement.parse("archipel-central-agent"),"install/etc/archipel")
+
+    # we are in the case of RPM installation
+    if not os.path.exists(init_script):
+        init_script = "%s/usr/install/etc/init.d/archipel-central-agent" % prefix
+    if not os.path.exists(systemd_script):
+        systemd_script = "%s/usr/lib/systemd/system/archipel-central-agent.service" % prefix
+    if not os.path.exists(conf_folder):
+        conf_folder = "%s/usr/install/etc/archipel" % prefix
+    return (init_script, systemd_script, conf_folder)
+
+def configure_ejabberd(password):
+    """
+    Configure ejabberd server for Archipel
+    """
+    msg("Registering admin user")
+    os.system("ejabberdctl register admin $(hostname) %s" % password)
+    msg("Adding Archipel pubsubs")
+    os.system("archipel-tagnode -j admin@$(hostname) -p %s -c" % password)
+    os.system("archipel-rolesnode -j admin@$(hostname) -p %s -c" % password)
+    os.system("archipel-centralagentnode -j admin@$(hostname) -p %s -c" % password)
+    os.system("archipel-adminaccounts -j admin@$(hostname) -p %s -c" % password)
+
+
+def install(prefix="", xmpp_server="auto", password=None):
+
+    init_script, systemd_script, conf_folder = get_data_files(prefix)
+
+    msg("Installation initialization started")
+    try:
+        if xmpp_server == "auto":
+            if password == "":
+                password2  = ""
+                first_time = True
+                while password == "" or password != password2:
+                    if not first_time:
+                        warn("Passwords do not match")
+                    password=getpass.getpass("Enter password for Archipel administrator: ")
+                    password2=getpass.getpass("Confirm password: ")
+                    first_time = False
+            configure_ejabberd(password)
+        else:
+            msg("Skipping xmpp server configuration as it is not in this machine.")
+        install_init_script(prefix, init_script, systemd_script)
+        if install_config_folder(prefix, conf_folder):
+            pre_configure(prefix, conf_folder, xmpp_server)
+        if os.path.isdir("%s/var/lib/archipel" % prefix):
+            warn("Lib folder already exists. Leaving as it is.")
+        else:
+            os.makedirs("%s/var/lib/archipel" % prefix)
+    except Exception as ex :
+        error(str(ex))
+        sys.exit(1)
+
+    success("Archipel installation complete")
+    msg("You may now edit /etc/archipel/archipel-central-agent.conf to match your info")
+
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-p", "--prefix",
+                        dest="prefix",
+                        help="all installation folders and files will be prefixed with given value",
+                        metavar="PREFIX",
+                        default="")
+    parser.add_option("-P", "--password",
+                        dest="admin_password",
+                        help="password for Archipel admin. Will be asked interactively if not set",
+                        metavar="PASSWORD",
+                        default="")
+    parser.add_option("-f", "--force",
+                        dest="clean",
+                        help="before installing, clean all existing folder and files. IT WILL DESTROY YOUR CURRENT INSTALLATION, CENTRAL DATABASE, AND EJABBERD DATABASE. Be warned!",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-x", "--xmpp-server",
+                        dest="xmpp_server",
+                        help="set the fqdn of the XMPP server, defaults to local fqdn",
+                        metavar="FQDN",
+                        default="auto")
+    options, args = parser.parse_args()
+
+    if options.clean:
+        clean_installation(options.prefix)
+    else:
+        install(options.prefix, options.xmpp_server, options.admin_password)

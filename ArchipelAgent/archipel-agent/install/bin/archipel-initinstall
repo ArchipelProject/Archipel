@@ -17,83 +17,21 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import os
-import sqlite3
-import sys
-import string
 import uuid
-from socket import gethostname, getfqdn
-from random import choice
+import string
+import sys
+
 from optparse import OptionParser
 from pkg_resources import Requirement, resource_filename
+from random import choice
+from socket import gethostname, getfqdn
 
-
-def success(msg):
-    """
-    Print a standardized success message
-    @type msg: String
-    @param msg: the message to print
-    """
-    print "\033[32mSUCCESS: %s\033[0m" % msg
-
-def warn(msg):
-    """
-    Print a standardized warning message
-    @type msg: String
-    @param msg: the message to print
-    """
-    print "\033[33mWARNING: %s\033[0m" % msg
-
-def error(msg, exit=True):
-    """
-    Print a standardized success message
-    @type msg: String
-    @param msg: the message to print
-    @type exit: Boolean
-    @param exit: if True, exit after print
-    """
-    print "\033[31mERROR: %s\033[0m" % msg
-    if exit:
-        sys.exit(1)
-
-def msg(msg, exit=True):
-    """
-    Print a standardized neutral message
-    @type msg: String
-    @param msg: the message to print
-    @type exit: Boolean
-    @param exit: if True, exit after print
-    """
-    print "\033[35mMESSAGE: %s\033[0m" % msg
-
-def ask(message, answers=None, default=None):
-    question = " * " + message
-    if answers and default:
-        question += " ["
-        for a in answers:
-            a = a
-            if default and a in (default): a = "\033[32m" + a + "\033[0m"
-            question += a + "/"
-        question = question[:-1]
-        question += "]"
-    if not answers and default:
-        question += " [\033[32m" + default + "\033[0m]"
-    question += " : "
-    resp = raw_input(question)
-    if default:
-        if resp == "": resp = default;
-    if answers and default:
-        if not resp in answers and len(answers) > 0:
-            resp = ask("\033[33mYou must select of the following answer\033[0m", answers, default);
-    return resp
-
-
-def ask_bool(message, default="y"):
-    if ask(message, ["y", "n"], default) == "y":
-        return True
-    return False
-
+try:
+    from archipelcore.initinstallutils import success, warn, error, msg, ask, ask_bool
+except ImportError as ex:
+    print "FATAL: you need to install archipel-core"
+    sys.exit()
 
 def clean_installation(prefix=""):
     """
@@ -277,7 +215,7 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto", force_initd=F
         sys.exit(1)
 
     success("Archipel installation complete")
-    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf top match your informations")
+    msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf to match your info")
     msg("IMPORTANT NOTE 2: If you have used --name=auto and/or --xmpp-server=auto, please check values for xmpp_server and hypervisor_xmpp_jid")
     msg("IMPORTANT NOTE 3: if this is not already done, you need to run archipel-tagnode, archipel-rolesnode, archipel-adminaccount, archipel-vmparkingnode and archipel-vmrequestnode")
 

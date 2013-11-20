@@ -41,6 +41,8 @@ import thread
 import xmpp
 import tempfile
 import base64
+import sys
+import traceback
 import time
 from threading import Timer
 
@@ -477,6 +479,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.perform_hooks("HOOK_VM_DEFINE")
         except Exception as ex:
             self.log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
+            t, v, tr = sys.exc_info()
+            self.log.debug("TRACEBACK: %s" % "\n".join(traceback.format_exception(t, v, tr)))
         finally:
             if not event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED and not event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 try:

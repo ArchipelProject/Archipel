@@ -34,6 +34,8 @@ import logging
 import logging.handlers
 import os
 import xmpp
+import sys
+import traceback
 
 
 # Namespaces
@@ -159,6 +161,8 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     #traceback.print_exc(file=sys.stdout, limit=20)
     caller = inspect.stack()[1][3]
     log.error("%s.%s: exception raised is: '%s' triggered by stanza :\n%s" % (originclass, caller, ex, str(iq)))
+    t, v, tr = sys.exc_info()
+    log.debug("\n".join(traceback.format_exception(t,v,tr)))
     try:
         origin_namespace = iq.getTag("query").getNamespace()
         origin_action = iq.getTag("query").getTag("archipel").getAttr("action")

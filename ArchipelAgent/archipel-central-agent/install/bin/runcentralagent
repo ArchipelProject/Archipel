@@ -1,0 +1,153 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
+#
+# runcentralagent
+#
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright (C) 2013 Nicolas Ochem <nicolas.ochem@free.fr>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import optparse
+import os
+import sys
+import socket
+import signal as sig
+
+## Error codes
+ARCHIPEL_INIT_SUCCESS = 0
+ARCHIPEL_INIT_ERROR_NO_CONFIG = 1
+ARCHIPEL_INIT_ERROR_NO_MODULE = 2
+ARCHIPEL_INIT_ERROR_BAD_LIBVIRT = 3
+ARCHIPEL_INIT_ERROR_UNKNOWN = 4
+ARCHIPEL_INIT_ERROR_CONNECTION = 5
+ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION = 6
+ARCHIPEL_INIT_ERROR_STATELESS_MODE = 7
+
+# Import and check essential modules
+try:
+    from archipelcore.scriptutils import error, msg, success
+except ImportError as ex:
+    print "FATAL: you need to install archipel-core"
+    sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+try:
+    import xmpp
+except ImportError as ex:
+    error("Bad XMPPPY installation you need python-xmpp (xmpppy): %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+try:
+    from archipelcore.utils import init_log
+    from archipelcore.runutils import format_version, versions, initialize_config
+    from archipelcentral.archipelCentralAgent import TNArchipelCentralAgent
+except ImportError as ex:
+    error("Bad archipel installation. You need archipel-core and archipel-central-agent: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
+
+def main(config):
+    """
+    main function of Archipel
+    @type config: ConfigParser
+    @param config: the configuration
+    """
+    jid = xmpp.JID(config.get("CENTRALAGENT", "central_agent_xmpp_jid"))
+    # Set the resource
+    jid.setResource(socket.gethostname())
+
+
+    # Create the archipel main xmpp entity instance
+    password = config.get("CENTRALAGENT", "central_agent_xmpp_password")
+    centralagent = TNArchipelCentralAgent (jid, password, config)
+
+    # Try to connect to XMPP
+    try:
+        centralagent.connect()
+    except Exception as ex:
+        error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)), code=ARCHIPEL_INIT_ERROR_CONNECTION)
+
+    def exit_handler(exit_code, exit_frame):
+        try:
+            print "Archipel interrupted : executing exit proc"
+            centralagent.exit_proc()
+        except Exception as e:
+            print "Error while executing exit proc"
+        finally:
+            os._exit(0)
+
+    print "Registering SIGTERM handler"
+    sig.signal(sig.SIGTERM, exit_handler)
+
+    # Main runloop
+    try:
+        centralagent.loop()
+    except Exception as ex:
+        if centralagent.xmppclient.isConnected():
+            centralagent.xmppclient.disconnect()
+        error("Exception has stopped the main xmpp entity main loop: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
+
+
+if __name__ == "__main__":
+    """
+    Main loop of the program
+    """
+    parser = optparse.OptionParser()
+    parser.add_option("-c", "--config",
+                        dest="config",
+                        help="the config file to use",
+                        metavar="CONFIG",
+                        default="/etc/archipel/archipel-central-agent.conf")
+    parser.add_option("-v", "--version",
+                        action="callback",
+                        help="display the version of all components",
+                        callback=versions)
+    parser.add_option("-n", "--nofork",
+                        action="store_true",
+                        dest="nofork",
+                        help="do not fork. For testing purpose")
+    parser.add_option("-C", "--cmdline",
+                        dest="cmdline_path",
+                        help="Path of the kernel parameter file to use (default: /proc/cmdline)",
+                        default="/proc/cmdline")
+    parser.add_option("-p", "--prepare-only",
+                        action="store_true",
+                        dest="prepare_only",
+                        help="Will only prepare stuff if needed. This is only useless in a live CD where you want to init stuff before starting the agent",
+                        default=False)
+
+    options, args = parser.parse_args()
+
+    # Read configuration
+    config = initialize_config(options.config.split(","), options.cmdline_path, options.prepare_only)
+
+    # Initialize logger
+    init_log(config)
+
+    # fork
+    if not options.nofork:
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except Exception as e:
+            error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
+        os.chdir("/")
+        os.setsid()
+        os.umask(0)
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except Exception as e:
+            error("Unknown error: %s" % str(e), code=ARCHIPEL_INIT_ERROR_UNKNOWN)
+
+    # Start the daemon main loop
+    main(config)

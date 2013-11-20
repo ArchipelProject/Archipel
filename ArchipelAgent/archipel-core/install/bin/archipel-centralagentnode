@@ -1,8 +1,12 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
 #
-# archipel-vmrequestnode
+# archipel-centralagentnode.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -14,7 +18,7 @@
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.archipel-vmrequestnode
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
@@ -23,45 +27,30 @@ import xmpp
 import archipelcore.pubsub
 from archipelcore.scriptutils import *
 
-NODENAME_REQIN = "/archipel/platform/requests/in"
-NODENAME_REQOUT = "/archipel/platform/requests/out"
-
+NODENAME_CENTRAL_KEEPALIVE = "/archipel/centralagentkeepalive"
 
 def create(xmppclient, pubsubserver):
     """
     Create the pubsub node
     """
-    configIn = {
+    config = {
             archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 100,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
     }
-    configOut = {
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
-    }
-    create_pubsub(xmppclient, pubsubserver, NODENAME_REQIN, configIn)
-    create_pubsub(xmppclient, pubsubserver, NODENAME_REQOUT, configOut)
+    create_pubsub(xmppclient, pubsubserver, NODENAME_CENTRAL_KEEPALIVE, config)
+
 
 def delete(xmppclient, pubsubserver):
     """
     Delete the pubsub node
     """
-    delete_pubsub(xmppclient, pubsubserver, NODENAME_REQIN)
-    delete_pubsub(xmppclient, pubsubserver, NODENAME_REQOUT)
+    delete_pubsub(xmppclient, pubsubserver, NODENAME_CENTRAL_KEEPALIVE)
 
 
 
@@ -90,6 +79,7 @@ if __name__ == "__main__":
                         help="delete the node")
 
     options, args = parser.parse_args()
+
     xmppclient = initialize(options)
 
     if options.create:

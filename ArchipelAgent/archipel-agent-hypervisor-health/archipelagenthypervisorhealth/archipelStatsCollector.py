@@ -170,10 +170,13 @@ class TNThreadedHealthCollector (Thread):
         file_meminfo = open('/proc/meminfo')
         meminfo = file_meminfo.read()
         file_meminfo.close()
-        file_pages_sharing = open("/sys/kernel/mm/ksm/pages_sharing")
-        pagessharing = file_pages_sharing.read()
-        file_pages_sharing.close()
-        memshared = int(pagessharing) * self.memoryPageSize / 1024;
+        try:
+            file_pages_sharing = open("/sys/kernel/mm/ksm/pages_sharing")
+            pagessharing = file_pages_sharing.read()
+            file_pages_sharing.close()
+            memshared = int(pagessharing) * self.memoryPageSize / 1024;
+        except:
+            memshared = 0
         meminfolines = meminfo.split("\n")
         memTotal = int(meminfolines[0].split()[1])
         memFree = int(meminfolines[1].split()[1]) + int(meminfolines[2].split()[1]) + int(meminfolines[3].split()[1])

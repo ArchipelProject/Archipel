@@ -15,3 +15,12 @@
 *ArchipelClient/Archipel.sublime-workspace
 *ArchipelClient/Resources/archipel-commit.js
 *ArchipelClient.xcodeproj*
+.*.sw*
+buildAgent.log
+buildCentralAgent.log
+ArchipelTest/results/*
+ArchipelTest/stateless/*
+ArchipelTest/tftpboot/*
+ArchipelTest/vm/*
+ArchipelTest/testfiles/archipel-hyp-*.xml
+ArchipelTest/testfiles/archipel-central-server.qcow2

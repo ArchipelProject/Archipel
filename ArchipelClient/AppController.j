@@ -1397,7 +1397,10 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 - (void)outlineView:(CPOutlineView)anOutlineView viewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
 {
     var key = [anItem className],
-        view = [_rosterOutlineView makeViewWithIdentifier:key owner:self];
+        view = nil; //[_rosterOutlineView makeViewWithIdentifier:key owner:self];
+
+    // @TODO: this is causing issue. it tries to get some stuff and then crash. I'm tired of tableview bugs
+    // we'll just wait for it to be stable
 
     if (!view)
     {

@@ -241,7 +241,7 @@ def uninstall():
             success("Archipel entries removed from %s" % local_easy_install_pth)
 
     msg("Cleaning binary scripts")
-    for script_name in ["adminaccounts", "commandsbytag", "initinstall", "tagnode", \
+    for script_name in ["adminaccounts", "commandsbytag", "centralagentnode", "initinstall", "tagnode", \
                         "updatedomain", "vmrequestnode", "command", "importvirtualmachine",\
                         "rolesnode", "testxmppserver", "vmparkingnode"]:
         if os.system("which archipel-%s &> /dev/null" % script_name) == 0:

@@ -213,6 +213,8 @@ class TNArchipelEntity (object):
                     self.plugins.append(plugin)
             except Exception as ex:
                 self.log.error("PLUGIN: unable to load plugin %s: %s" % (str(factory_method), str(ex)))
+                t, v, tr = sys.exc_info()
+                self.log.debug("\n".join(traceback.format_exception(t,v,tr)))
         self.perform_hooks("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")
 
     def get_plugin(self, identifier):
@@ -1269,7 +1271,7 @@ class TNArchipelEntity (object):
                     else:
                         self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 seconds.")
                         t, v, tr = sys.exc_info()
-                        self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
+                        self.log.error("TRACEBACK: %s" % "\n".join(traceback.format_exception(t, v, tr)))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
 

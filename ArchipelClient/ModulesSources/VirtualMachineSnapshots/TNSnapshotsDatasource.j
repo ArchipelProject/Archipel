@@ -120,7 +120,7 @@
     return array;
 }
 
-##pragma mark -
+#pragma mark -
 #pragma mark Filtering
 
 /*! Message use internally for filtering

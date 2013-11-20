@@ -72,6 +72,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     @outlet CPTableView         tableUsersInGroup;
     @outlet CPTextField         fieldNewGroupDescription;
     @outlet CPTextField         fieldNewGroupName;
+    @outlet CPTextField         fieldNewGroupDisplay;
     @outlet CPView              mainView                    @accessors(getter=mainView);
     @outlet CPView              viewTableGroupsContainer;
     @outlet CPView              viewTableUsersInGroupContainer;
@@ -264,6 +265,8 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 {
     [fieldNewGroupName setStringValue:@""];
     [fieldNewGroupDescription setStringValue:@""];
+    [fieldNewGroupDisplay setStringValue:@""];
+
 
     [popoverNewGroup close];
     [popoverNewGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] preferredEdge:nil];
@@ -316,7 +319,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     }
 
     [popoverNewGroup close];
-    [self createGroup:[fieldNewGroupName stringValue] description:[fieldNewGroupDescription stringValue]];
+    [self createGroup:[fieldNewGroupName stringValue] description:[fieldNewGroupDescription stringValue] display:[fieldNewGroupDisplay stringValue]];
 }
 
 /*! create a new group
@@ -429,16 +432,17 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     @param aName the name of the group
     @param aDescription the description of the group
 */
-- (void)createGroup:(CPString)aName description:(CPString)aDescription
+- (void)createGroup:(CPString)aName description:(CPString)aDescription display:(CPString)aDisplay
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerGroups}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeXMPPServerGroupsCreate,
-        "id": [CPString UUID],
+        "id": aName,
         "name": aName,
-        "description": aDescription}];
+        "description": aDescription,
+        "display": aDisplay}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didCreateGroup:) ofObject:self];
 }

@@ -1,0 +1,31 @@
+<network>
+  <name>archipel-test-network</name>
+  <uuid>ac9c3695-804a-a20e-2e4e-143ea804d0b0</uuid>
+  <forward mode='nat'/>
+  <bridge name='virbr1' stp='on' delay='0' />
+  <mac address='52:54:00:6A:10:0C'/>
+  <domain name='archipel.priv'/>
+  <dns>
+    <host ip='192.168.137.1'>
+      <hostname>outside.archipel.priv</hostname>
+    </host>
+    <host ip='192.168.137.29'>
+      <hostname>archipel-hyp-1.archipel.priv</hostname>
+    </host>
+    <host ip='192.168.137.30'>
+      <hostname>archipel-hyp-2.archipel.priv</hostname>
+    </host>
+    <host ip='192.168.137.31'>
+      <hostname>archipel-test.archipel.priv</hostname>
+    </host>
+  </dns>
+  <ip address='192.168.137.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.137.20' end='192.168.137.254' />
+      <bootp file="/pxelinux.0" server="192.168.137.31" />
+      <host mac='52:54:00:00:01:31' name='archipel-hyp-1.archipel.priv' ip='192.168.137.29' />
+      <host mac='52:54:00:00:01:32' name='archipel-hyp-2.archipel.priv' ip='192.168.137.30' />
+      <host mac='52:54:00:00:01:33' name='archipel-test.archipel.priv' ip='192.168.137.31' />
+    </dhcp>
+  </ip>
+</network>
