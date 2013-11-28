@@ -17,9 +17,12 @@ Usage:
 
 """
 
+import sys
+import glob
 import os.path
 import ctypes
 import ctypes.util
+import threading
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
@@ -31,74 +34,112 @@ class Magic:
 
     """
 
-    def __init__(self, mime=False, magic_file=None, mime_encoding=False):
+    def __init__(self, mime=False, magic_file=None, mime_encoding=False,
+                 keep_going=False):
         """
         Create a new libmagic wrapper.
 
         mime - if True, mimetypes are returned instead of textual descriptions
         mime_encoding - if True, codec is returned
         magic_file - use a mime database other than the system default
-
+        keep_going - don't stop at the first match, keep going
         """
-        flags = MAGIC_NONE
+        self.flags = MAGIC_NONE
         if mime:
-            flags |= MAGIC_MIME
+            self.flags |= MAGIC_MIME
         elif mime_encoding:
-            flags |= MAGIC_MIME_ENCODING
+            self.flags |= MAGIC_MIME_ENCODING
+        if keep_going:
+            self.flags |= MAGIC_CONTINUE
 
-        self.cookie = magic_open(flags)
+        self.cookie = magic_open(self.flags)
 
         magic_load(self.cookie, magic_file)
 
+        self.thread = threading.currentThread()
 
     def from_buffer(self, buf):
         """
         Identify the contents of `buf`
         """
-        return magic_buffer(self.cookie, buf)
+        self._thread_check()
+        try:
+            return magic_buffer(self.cookie, buf)
+        except MagicException as e:
+            return self._handle509Bug(e)
 
     def from_file(self, filename):
         """
         Identify the contents of file `filename`
         raises IOError if the file does not exist
         """
-
+        self._thread_check()
         if not os.path.exists(filename):
             raise IOError("File does not exist: " + filename)
+        try:
+            return magic_file(self.cookie, filename)
+        except MagicException as e:
+            return self._handle509Bug(e)
 
-        return magic_file(self.cookie, filename)
+    def _handle509Bug(self, e):
+        # libmagic 5.09 has a bug where it might mail to identify the
+        # mimetype of a file and returns null from magic_file (and
+        # likely _buffer), but also does not return an error message.
+        if e.message is None and (self.flags & MAGIC_MIME):
+            return "application/octet-stream"
+
+    def _thread_check(self):
+        if self.thread != threading.currentThread():
+            raise Exception('attempting to use libmagic on multiple threads will '
+                            'end in SEGV.  Prefer to use the module functions '
+                            'from_file or from_buffer, or carefully manage direct '
+                            'use of the Magic class')
 
     def __del__(self):
-        if self.cookie:
+        # no _thread_check here because there can be no other
+        # references to this object at this point.
+
+        # during shutdown magic_close may have been cleared already so
+        # make sure it exists before using it.
+
+        # the self.cookie check should be unnessary and was an
+        # incorrect fix for a threading problem, however I'm leaving
+        # it in because it's harmless and I'm slightly afraid to
+        # remove it.
+        if self.cookie and magic_close:
             magic_close(self.cookie)
             self.cookie = None
 
-_magic_mime = None
-_magic = None
 
-def _get_magic_mime():
-    global _magic_mime
-    if not _magic_mime:
-        _magic_mime = Magic(mime=True)
-    return _magic_mime
-
-def _get_magic():
-    global _magic
-    if not _magic:
-        _magic = Magic()
-    return _magic
+instances = threading.local()
 
 def _get_magic_type(mime):
-    if mime:
-        return _get_magic_mime()
-    else:
-        return _get_magic()
+    i = instances.__dict__.get(mime)
+    if i is None:
+        i = instances.__dict__[mime] = Magic(mime=mime)
+    return i
 
 def from_file(filename, mime=False):
+    """"
+    Accepts a filename and returns the detected filetype.  Return
+    value is the mimetype if mime=True, otherwise a human readable
+    name.
+
+    >>> magic.from_file("testdata/test.pdf", mime=True)
+    'application/pdf'
+    """
     m = _get_magic_type(mime)
     return m.from_file(filename)
 
 def from_buffer(buffer, mime=False):
+    """
+    Accepts a binary string and returns the detected filetype.  Return
+    value is the mimetype if mime=True, otherwise a human readable
+    name.
+
+    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
+    'PDF document, version 1.2'
+    """
     m = _get_magic_type(mime)
     return m.from_buffer(buffer)
 
@@ -115,11 +156,15 @@ if dll:
 
 if not libmagic or not libmagic._name:
     import sys
-    platform_to_lib = {'darwin': '/opt/local/lib/libmagic.dylib',
-                       'win32': 'magic1.dll'}
-    if sys.platform in platform_to_lib:
+    platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib',
+                                  '/usr/local/lib/libmagic.dylib'] +
+                       # Assumes there will only be one version installed
+                       glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),
+                       'win32':  ['magic1.dll']}
+    for dll in platform_to_lib.get(sys.platform, []):
         try:
-            libmagic = ctypes.CDLL(platform_to_lib[sys.platform])
+            libmagic = ctypes.CDLL(dll)
+            break
         except OSError:
             pass
 
@@ -129,12 +174,25 @@ if not libmagic or not libmagic._name:
 
 magic_t = ctypes.c_void_p
 
-def errorcheck(result, func, args):
-    err = magic_error(args[0])
-    if err is not None:
+def errorcheck_null(result, func, args):
+    if result is None:
+        err = magic_error(args[0])
         raise MagicException(err)
     else:
         return result
+
+def errorcheck_negative_one(result, func, args):
+    if result is -1:
+        err = magic_error(args[0])
+        raise MagicException(err)
+    else:
+        return result
+
+
+def coerce_filename(filename):
+    if filename is None:
+        return None
+    return filename.encode(sys.getfilesystemencoding())
 
 magic_open = libmagic.magic_open
 magic_open.restype = magic_t
@@ -152,26 +210,30 @@ magic_errno = libmagic.magic_errno
 magic_errno.restype = c_int
 magic_errno.argtypes = [magic_t]
 
-magic_file = libmagic.magic_file
-magic_file.restype = c_char_p
-magic_file.argtypes = [magic_t, c_char_p]
-magic_file.errcheck = errorcheck
+_magic_file = libmagic.magic_file
+_magic_file.restype = c_char_p
+_magic_file.argtypes = [magic_t, c_char_p]
+_magic_file.errcheck = errorcheck_null
 
+def magic_file(cookie, filename):
+    return _magic_file(cookie, coerce_filename(filename))
 
 _magic_buffer = libmagic.magic_buffer
 _magic_buffer.restype = c_char_p
 _magic_buffer.argtypes = [magic_t, c_void_p, c_size_t]
-_magic_buffer.errcheck = errorcheck
-
+_magic_buffer.errcheck = errorcheck_null
 
 def magic_buffer(cookie, buf):
     return _magic_buffer(cookie, buf, len(buf))
 
 
-magic_load = libmagic.magic_load
-magic_load.restype = c_int
-magic_load.argtypes = [magic_t, c_char_p]
-magic_load.errcheck = errorcheck
+_magic_load = libmagic.magic_load
+_magic_load.restype = c_int
+_magic_load.argtypes = [magic_t, c_char_p]
+_magic_load.errcheck = errorcheck_negative_one
+
+def magic_load(cookie, filename):
+    return _magic_load(cookie, coerce_filename(filename))
 
 magic_setflags = libmagic.magic_setflags
 magic_setflags.restype = c_int
