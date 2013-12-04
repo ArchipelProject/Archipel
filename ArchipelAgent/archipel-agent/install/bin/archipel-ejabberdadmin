@@ -22,6 +22,10 @@
 
 from optparse import OptionParser
 import xmpp
+import re
+
+#FIXME : Global flag for new ejabberd acl syntax
+new_acl_syntax = False
 
 def xmpp_connect(jid, password, auth=True):
     """
@@ -48,14 +52,28 @@ def xmpp_connect(jid, password, auth=True):
 def _fecth_acls(xmppclient):
     """
     Retrieve the acl from server
+    @type xmppclient: xmpp client session object
+    @param xmppclient: xmpp client session
+    @return: list of users in acl admin
     """
     iq = xmpp.Iq(typ="set", to=xmppclient.Server)
     iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
     result = xmppclient.SendAndWaitForResponse(iq)
     if result.getType() == "result":
         items = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
+        admins=[]
         try:
-            admins = map(lambda x: xmpp.JID(x.getData().split(",")[3].strip("\"") + "@" + x.getData().split(",")[4].split("}")[0].strip("\"")) , items)
+            for item in items:
+
+                #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
+                m = re.search('{user,{', item.getData())
+                if m:
+                    global new_acl_syntax
+                    new_acl_syntax = True
+
+                raw_admin_string = item.getData().split(",")[3] + "@" + item.getData().split(",")[4].split("}")[0]
+                admins.append(xmpp.JID(raw_admin_string.translate(({ord(k):None for k in u'\"{}<>'}))))
+           
             return admins
         except:
             return []
@@ -68,7 +86,14 @@ def _update_acls(current_admins):
     ind  = 0
     for ajid in current_admins:
         ind += 1
-        acls += '{acl, admin, {user,"%s","%s"}}' % (ajid.getNode(), ajid.getDomain())
+
+        #FIXME : Workaround for ejabberd 13.10 acls syntax changed a bit
+        #'{acl, admin, {user,{"%s","%s"}}}' instead of '{acl, admin, user,{"%s","%s"}}'
+        if new_acl_syntax:
+            acls += '{acl, admin, {user,{"%s","%s"}}}' % (ajid.getNode(), ajid.getDomain())
+        else:
+            acls += '{acl, admin, {user,"%s","%s"}}' % (ajid.getNode(), ajid.getDomain())
+
         if ind != len(current_admins):
             acls += ","
     acls += "]."
@@ -78,6 +103,7 @@ def _update_acls(current_admins):
     iq_command_x = iq_command.addChild("x", namespace="jabber:x:data", attrs={"type": "submit"})
     iq_command_x.addChild("field", attrs={"type": "hidden", "var": "FORM_TYPE"}).addChild("value").setData("http://jabber.org/protocol/admin")
     iq_command_x.addChild("field", attrs={"type": "text-multi", "var": "acls"}).addChild("value").setData(acls)
+
     return xmppclient.SendAndWaitForResponse(iq)
 
 
