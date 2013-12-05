@@ -114,6 +114,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     [[CPNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(_didUsernameChanged:)
                                                      name:CPControlTextDidChangeNotification
+                                                     name:CPControlTextDidEndEditingNotification
                                                    object:fieldNewUserUsername];
 }
 
