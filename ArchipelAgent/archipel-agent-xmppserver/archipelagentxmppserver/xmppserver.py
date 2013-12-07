@@ -898,9 +898,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         def on_receive_password_changed(conn, iq):
             if iq.getType() == "result":
-                for user in users:
-                    self.users.append({"jid": user["jid"].getStripped(), "type": "human"})
-                self.entities_types_cache[user["jid"].getStripped()] = "human"
                 self.entity.log.info("XMPPSERVER: Successfully changed paswword for user(s).")
                 self.entity.push_change("xmppserver:users", "passwordchanged")
             else:
