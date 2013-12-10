@@ -64,7 +64,6 @@ def _fecth_acls(xmppclient):
         admins=[]
         try:
             for item in items:
-
                 #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
                 m = re.search('{user,{', item.getData())
                 if m:
@@ -73,10 +72,11 @@ def _fecth_acls(xmppclient):
 
                 raw_admin_string = item.getData().split(",")[3] + "@" + item.getData().split(",")[4].split("}")[0]
                 admins.append(xmpp.JID(raw_admin_string.translate(({ord(k):None for k in u'\"{}<>'}))))
-           
-            return admins
+
         except:
-            return []
+            pass
+        finally:
+            return admins
 
 def _update_acls(current_admins):
     """
