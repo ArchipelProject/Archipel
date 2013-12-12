@@ -96,14 +96,12 @@ def main(config):
 
     def exit_handler(exit_code, exit_frame):
         try:
-            print "Archipel interrupted : executing exit proc"
             hypervisor.exit_proc()
         except Exception as e:
-            print "Error while executing exit proc"
+            error("Error while executing exit proc : %s" % e)
         finally:
             os._exit(0)
 
-    print "Registering SIGTERM handler"
     sig.signal(sig.SIGTERM, exit_handler)
 
     # Main runloop
