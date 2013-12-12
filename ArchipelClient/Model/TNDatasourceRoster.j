@@ -351,15 +351,18 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
 {
-    if ([theItem isKindOfClass:TNStropheGroup])
+    if (theIndex >= 0)
     {
-        [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
-        return CPDragOperationEvery;
-    }
-    else
-    {
-        [anOutlineView setDropItem:nil dropChildIndex:theIndex];
-        return CPDragOperationEvery;
+        if ([theItem isKindOfClass:TNStropheGroup])
+        {
+            [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
+            return CPDragOperationEvery;
+        }
+        else
+        {
+            [anOutlineView setDropItem:nil dropChildIndex:theIndex];
+            return CPDragOperationEvery;
+        }
     }
 
     return CPDragOperationNone;
