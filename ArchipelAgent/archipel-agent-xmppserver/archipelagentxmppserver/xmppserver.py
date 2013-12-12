@@ -22,6 +22,8 @@
 import xmpp
 import xmlrpclib
 
+from archipel.archipelHypervisor import TNArchipelHypervisor
+from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
 
@@ -31,17 +33,17 @@ ARCHIPEL_NS_XMPPSERVER_USERS    = "archipel:xmppserver:users"
 
 ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT           = -10000
 
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST           = -20000
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE         = -20001
-ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS       = -20002
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS       = -20001
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE         = -20002
 ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE         = -20003
 ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS    = -20004
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST           = -20005
 
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -30000
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -30001
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -30002
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER         = -30003
-ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_CHANGEPASSWORD = -30004
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_CHANGEPASSWORD = -30001
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER         = -30002
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -30003
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -30004
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -30005
 
 
 class TNXMPPServerController (TNArchipelPlugin):
@@ -279,7 +281,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         if vcard_node and vcard_node.getTag("ROLE"):
             vcard_role = vcard_node.getTag("ROLE").getData()
-            if vcard_role in ("hypervisor", "virtualmachine"):
+            if vcard_role in ("hypervisor", "virtualmachine", "central-agent"):
                 return vcard_role
         return "human"
 
@@ -368,7 +370,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         else:
             self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
 
-    ### XMPP Processing for shared groups
+    ### XMPP Processing for shared groups thtough XMLRPC
 
     def process_groups_iq(self, conn, iq):
         """
@@ -584,7 +586,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.info("XMPPSERVER: Removing user %s from shared group %s" % (userJID, ID))
         self.entity.push_change("xmppserver:groups", "usersdeleted")
 
-    ### XMPP Processing for users
+    ### XMPP Processing for users through XEP-133
 
     def process_users_iq_for_virtualmachines(self, conn, iq):
         """
@@ -944,7 +946,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            users_node  = xmpp.Node("users", attrs={"xmpp": self.users_management_capabilities["xmpp"], "xmlrpc": self.users_management_capabilities["xmlrpc"]})
+            users_node  = xmpp.Node("users",  attrs={"xmpp": self.users_management_capabilities["xmpp"],  "xmlrpc": self.users_management_capabilities["xmlrpc"]})
             groups_node = xmpp.Node("groups", attrs={"xmpp": self.groups_management_capabilities["xmpp"], "xmlrpc": self.groups_management_capabilities["xmlrpc"]})
             reply.setQueryPayload([users_node, groups_node])
 

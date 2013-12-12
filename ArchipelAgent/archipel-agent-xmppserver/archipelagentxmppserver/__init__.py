@@ -49,5 +49,5 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    import xmppserver_xmpp
-    return (__name__, pkg_resources.get_distribution("archipel-agent-xmppserver").version, [xmppserver_xmpp.TNXMPPServerController.plugin_info()])
+    import xmppserver
+    return (__name__, pkg_resources.get_distribution("archipel-agent-xmppserver").version, [xmppserver.TNXMPPServerController.plugin_info()])
