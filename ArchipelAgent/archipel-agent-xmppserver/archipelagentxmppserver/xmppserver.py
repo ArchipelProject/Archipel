@@ -64,11 +64,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.user_page_size = 50
         self.need_user_refresh = True
         self.entities_types_cache = {}
-        self.users_management_capabilities  = {"xmpp": False, "xmlrpc": False}
-        self.groups_management_capabilities = {"xmpp": False, "xmlrpc": False}
+        self.xmpp_server = entity.jid.getDomain()
 
         if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
-            self.xmpp_server        = entity.jid.getDomain()
             self.xmlrpc_host        = configuration.get("XMPPSERVER", "xmlrpc_host")
             self.xmlrpc_port        = configuration.getint("XMPPSERVER", "xmlrpc_port")
             self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
@@ -77,46 +75,38 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.xmlrpc_call        = "%s://%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_host, self.xmlrpc_port)
             self.xmlrpc_auth        = {'user':self.xmlrpc_user, 'server': self.xmlrpc_host, 'password': self.xmlrpc_password}
             self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
-            try:
-                answer = self._send_xmlrpc_call("srg_list", {"host": self.xmlrpc_host})
-                self.groups_management_capabilities["xmlrpc"] = True
-                self.entity.log.info("XMPPSERVER: Module is using XMLRPC API for managing Shared Roster Groups")
-                if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
-                    self.autogroup_name_hypervisors = "All Hypervisors"
-                    self.autogroup_name_vms = "All Virtual Machines"
-                    self.autogroup_name_users = "All Users"
-                    if configuration.has_option("XMPPSERVER", "auto_group_name_virtualmachines"):
-                        self.autogroup_name_vms = configuration.get("XMPPSERVER", "auto_group_name_virtualmachines")
-                    if configuration.has_option("XMPPSERVER", "auto_group_name_hypervisors"):
-                        self.autogroup_name_hypervisors = configuration.get("XMPPSERVER", "auto_group_name_hypervisors")
-                    if configuration.has_option("XMPPSERVER", "auto_group_name_users"):
-                        self.autogroup_name_users = configuration.get("XMPPSERVER", "auto_group_name_users")
 
-                    auto_group_filter = "all"
-                    if configuration.has_option("XMPPSERVER", "auto_group_filter"):
-                        auto_group_filter = configuration.get("XMPPSERVER", "auto_group_filter")
-                        if not auto_group_filter in ("virtualmachines", "hypervisors", "all"):
-                            raise Exception("Bad configuration", "auto_group_filter must be virtualmachines, hypervisors or all.")
-                    self.autogroup_vms_id = self.autogroup_name_vms
-                    self.autogroup_hypervisors_id = self.autogroup_name_hypervisors
-                    self.autogroup_users_id = self.autogroup_name_users
+            if configuration.has_option("XMPPSERVER", "auto_group") and configuration.getboolean("XMPPSERVER", "auto_group"):
+                self.autogroup_name_hypervisors = "All Hypervisors"
+                self.autogroup_name_vms = "All Virtual Machines"
+                self.autogroup_name_users = "All Users"
+                if configuration.has_option("XMPPSERVER", "auto_group_name_virtualmachines"):
+                    self.autogroup_name_vms = configuration.get("XMPPSERVER", "auto_group_name_virtualmachines")
+                if configuration.has_option("XMPPSERVER", "auto_group_name_hypervisors"):
+                    self.autogroup_name_hypervisors = configuration.get("XMPPSERVER", "auto_group_name_hypervisors")
+                if configuration.has_option("XMPPSERVER", "auto_group_name_users"):
+                    self.autogroup_name_users = configuration.get("XMPPSERVER", "auto_group_name_users")
 
-                    self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
-                    if auto_group_filter in ("all", "hypervisors"):
-                        self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.handle_autogroup_for_entity)
+                auto_group_filter = "all"
+                if configuration.has_option("XMPPSERVER", "auto_group_filter"):
+                    auto_group_filter = configuration.get("XMPPSERVER", "auto_group_filter")
+                    if not auto_group_filter in ("virtualmachines", "hypervisors", "all"):
+                        raise Exception("Bad configuration", "auto_group_filter must be virtualmachines, hypervisors or all.")
+                self.autogroup_vms_id = self.autogroup_name_vms
+                self.autogroup_hypervisors_id = self.autogroup_name_hypervisors
+                self.autogroup_users_id = self.autogroup_name_users
 
-                    if auto_group_filter in ("all", "virtualmachines"):
-                        self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
-                        self.entity.register_hook("HOOK_HYPERVISOR_SOFT_ALLOC", method=self.handle_autogroup_for_entity)
-                        self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
+                self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
+                if auto_group_filter in ("all", "hypervisors"):
+                    self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.handle_autogroup_for_entity)
 
-            except Exception as ex:
-                self.entity.log.warning("Shared Roster Group management is not allowed to this hypervisor through XMLRPC and mod_admin_extra : %s" % ex)
+                if auto_group_filter in ("all", "virtualmachines"):
+                    self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
+                    self.entity.register_hook("HOOK_HYPERVISOR_SOFT_ALLOC", method=self.handle_autogroup_for_entity)
+                    self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
         else:
             self.entity.log.info("XMLRPC module for Shared Roster Group management is disabled for this hypervisor")
-
-        self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self._xmpp_server_admin_test)
 
         # permissions
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
@@ -127,13 +117,13 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False)
             self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_changepassword", "Authorizes user to change XMPP users password", False)
+            self.entity.permission_center.create_permission("xmppserver_managementcapabilities", "Authorizes user to get management capabilities", False)
 
         if self.entity.__class__.__name__ != "TNArchipelCentralAgent":
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
   
-
-
 
     ### Plugin interface
     def register_handlers(self):
@@ -234,26 +224,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (entity.jid, group_name, ex))
 
     ## Utils
-
-    def _xmpp_server_admin_test(self, origin, user_info, entity):
-        """
-        Build the xmpp management capabilities dictionnary
-        """
-        # use disco#info to see if we can use admin-server command XEP-133
-        def on_receive_info(conn, iq):
-            if iq.getType() == "result":
-                self.entity.log.info("XMMP user management is allowed to this hypervisor through XEP-133")
-                self.users_management_capabilities["xmpp"] = True
-            else:
-                self.entity.log.warning("XMPP user management is not allowed to this hypervisor through XEP-133")
-                self.users_management_capabilities["xmpp"] = False
-
-        user_iq = xmpp.Iq(typ="get", to=entity.jid.getDomain())
-        user_iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
-        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
-            self.entity.hypervisor.xmppclient.SendAndCallForResponse(user_iq, on_receive_info)
-        else:
-            self.entity.xmppclient.SendAndCallForResponse(user_iq, on_receive_info)
 
     def _send_xmlrpc_call(self, method, args):
         """
@@ -370,7 +340,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         else:
             self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
 
-    ### XMPP Processing for shared groups thtough XMLRPC
+    ### XMPP Processing for shared groups through XMLRPC
 
     def process_groups_iq(self, conn, iq):
         """
@@ -913,6 +883,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             iq_command_x.addChild("field", attrs={"type": "hidden", "var": "FORM_TYPE"}).addChild("value").setData("http://jabber.org/protocol/admin")
             iq_command_x.addChild("field", attrs={"var": "accountjid"}).addChild("value").setData(user["jid"])
             iq_command_x.addChild("field", attrs={"var": "password"}).addChild("value").setData(user["password"])
+
             if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
                 self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_password_changed)
             else:
@@ -942,14 +913,62 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_management_capabilities(self, iq):
         """
-        Reply the hypervisor xmpp management capabitilies
+        Get users/group management capabitilies of the current entity
+        @type iq : xmpp.Protocol.Iq
+        @param iq : the received IQ
+        @rtype : xmpp.Protocol.Iq
+        @return : a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply("result")
-            users_node  = xmpp.Node("users",  attrs={"xmpp": self.users_management_capabilities["xmpp"],  "xmlrpc": self.users_management_capabilities["xmlrpc"]})
-            groups_node = xmpp.Node("groups", attrs={"xmpp": self.groups_management_capabilities["xmpp"], "xmlrpc": self.groups_management_capabilities["xmlrpc"]})
-            reply.setQueryPayload([users_node, groups_node])
-
+            reply = self.get_management_capabilities(iq)
+            return None
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT)
         return reply
+
+
+    def get_management_capabilities(self, base_reply):
+        """
+        Build the xmpp management capabilities dictionnary
+        """
+        reply = base_reply.buildReply("result")
+
+        def on_receive_info(conn, iq):
+    
+            _users_management_capabilities  = {"xmpp": False, "xmlrpc": False}
+            _groups_management_capabilities = {"xmpp": False, "xmlrpc": False}
+
+            _info_msg="XMPPSERVER - User and SRG Management : "
+            if iq.getType() == "result":
+               _users_management_capabilities["xmpp"] = True
+               _info_msg += "XEP-133 allowed"
+            else:
+               _users_management_capabilities["xmpp"] = False
+               _info_msg += "XEP-133 NOT allowed"               
+
+            # next try to use xmlrpc and mod_admin_extra to manage srg
+            try:
+                answer = self._send_xmlrpc_call("srg_list", {"host": self.xmlrpc_host})
+                _groups_management_capabilities["xmlrpc"] = True
+                _info_msg += " and SRG allowed through xmlrpc"
+            except Exception as ex:
+                _groups_management_capabilities["xmlrpc"] = False
+                _info_msg += " and SRG NOT allowed through xmlrpc, reason : %s" % str(ex)
+
+
+            # now send back the reply
+            _users_node  = xmpp.Node("users",  attrs={"xmpp":_users_management_capabilities["xmpp"],  "xmlrpc":_users_management_capabilities["xmlrpc"]})
+            _groups_node = xmpp.Node("groups", attrs={"xmpp":_groups_management_capabilities["xmpp"], "xmlrpc":_groups_management_capabilities["xmlrpc"]})
+            reply.setQueryPayload([_users_node, _groups_node])
+            self.entity.log.debug(_info_msg)
+            self.entity.xmppclient.send(reply)
+
+        # use disco#info to see if we can use admin-server command XEP-133
+
+        iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
+        iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
+        
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_info)
+        else:
+            self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_info)

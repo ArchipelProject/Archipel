@@ -136,7 +136,6 @@ def insert_jid(xmppclient, jid):
     if result.getType() == "result":
         print "-> %s as been added to admin acls" % jid
         list_jid(xmppclient)
-        print "You MUST restart the archipel-agent for %s to apply theses modifications" % jid
     else:
         print "!! Error when trying to insert %s as admin on %s" %(jid, xmppclient.Server)
 
@@ -157,7 +156,6 @@ def remove_jid(xmppclient, jid):
     if result.getType() == "result":
         print "-> %s as been removed from acls" % jid
         list_jid(xmppclient)
-        print "You MUST restart the archipel-agent for %s to apply theses modifications" % jid
     else:
         print "!! Error when trying to delete %s from admin on %s" %(jid, xmppclient.Server)
 
