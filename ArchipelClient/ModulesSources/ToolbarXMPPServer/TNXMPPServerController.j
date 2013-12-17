@@ -59,6 +59,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     CPDictionary                            _currentDomains;
     CPDictionary                            _entityCapabilities
     CPDictionary                            _savedDomains;
+    BOOL                                    _forceRosterRefresh;
     CPImage                                 _defaultAvatar;
     CPTabViewItem                           _itemViewGroups;
     CPTabViewItem                           _itemViewUsers;
@@ -77,8 +78,8 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     // register defaults defaults
     [defaults registerDefaults:@{@"TNArchipelUseEjabberdSharedRosterGroups":[bundle objectForInfoDictionaryKey:@"TNArchipelUseEjabberdSharedRosterGroups"]}];
 
-    _currentDomains   = [[CPDictionary alloc] init];
-    _savedDomains     = [[CPDictionary alloc] init];
+    _currentDomains     = [[CPDictionary alloc] init];
+    _savedDomains       = [[CPDictionary alloc] init];
     _entityCapabilities = [[CPDictionary alloc] init];
 
     _defaultAvatar  = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
@@ -124,6 +125,8 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 
     // Try to fetch some savedDomains if we don't have one use currentDomains
     _savedDomains = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPServerSaved"];
+
+    _forceRosterRefresh = YES;
 
     [self checkHypervisors];
 
@@ -250,39 +253,43 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         enumerator = [_savedDomains keyEnumerator],
         key;
 
-    [_currentDomains removeAllObjects];
+    if ([_savedDomains count] > 0)
+        [_currentDomains removeAllObjects];
 
-    if (key = [enumerator nextObject])
+    if (([_savedDomains count] == 0) && _forceRosterRefresh)
     {
-        checkForDomain = [_savedDomains valueForKey:key];
-        [_savedDomains removeObjectForKey:key];
-    }
+        _forceRosterRefresh = NO;
 
-    for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
-    {
-        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
-
-        if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
-            && ([contact XMPPShow] != TNStropheContactStatusOffline))
+        for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
         {
-                if ((checkForDomain != nil) && ([[contact JID] compare:[[checkForDomain objectForKey:@"contact"] JID]] == 0))
-                {
-                    [self fetchManagementCapabilitiesFor:contact];
+            var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
-                    if ((([checkForDomain valueForKey:@"canManageUsers" ]) && ([checkForDomain valueForKey:@"canManageSharedRostergroups"])) || ! ([[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelUseEjabberdSharedRosterGroups"]))
-                        return;
-
-                    checkForDomain = nil;
-                    continue;
-                }
-                else if (checkForDomain == nil)
-                {
-                    [self fetchManagementCapabilitiesFor:contact];
-                }
+            if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+                && ([contact XMPPShow] != TNStropheContactStatusOffline))
+                //&& (([[contact JID] compare:[[[[_currentDomains objectForKey:[[contact JID] domain]]] objectForKey:@"contact"] JID]] != 0)))
+            {
+                [self fetchManagementCapabilitiesFor:contact];
+            }
         }
     }
+    else
+    {
+        while ((key = [enumerator nextObject]) != nil)
+        {
+            checkForDomain  = [ _savedDomains valueForKey:key];
+            [_savedDomains removeObjectForKey:key];
 
-    [self populateHypervisors];
+            for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
+            {
+                var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
+
+                if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+                    && ([contact XMPPShow] != TNStropheContactStatusOffline)
+                    && ([[contact JID] compare:[[checkForDomain objectForKey:@"contact"] JID]] == 0))
+                    [self fetchManagementCapabilitiesFor:contact];
+            }
+        }
+    }
 }
 
 /*! populate the hypervisor pop up button according to dictionnary
@@ -356,7 +363,6 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 
     [stanza addChildWithName:@"query" andAttributes:{@"xmlns": TNArchipelTypeXMPPServer}];
     [stanza addChildWithName:@"archipel" andAttributes:{@"action": TNArchipelTypeXMPPServerManagementCapabilities}];
-
     [aContact sendStanza:stanza andRegisterSelector:@selector(_didfetchManagementCapabilities:forContact:) ofObject:self userInfo:aContact];
 }
 
@@ -371,17 +377,22 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         var usersManagement  = (([[aStanza firstChildWithName:@"users"] valueForAttribute:@"xmpp"]    == @"True") ? true : false) || (([[aStanza firstChildWithName:@"users"] valueForAttribute:@"xmlrpc"]  == @"True") ? true : false),
             groupsManagement = (([[aStanza firstChildWithName:@"groups"] valueForAttribute:@"xmpp"]   == @"True") ? true : false) || (([[aStanza firstChildWithName:@"groups"] valueForAttribute:@"xmlrpc"] == @"True") ? true : false);
 
-        if ((usersManagement && groupsManagement) || (usersManagement && ! groupsManagement && ! ([_currentDomains containsKey:[[aContact JID] domain]])))
-            {
-                [_currentDomains setValue:@{@"contact":aContact, @"canManageUsers":usersManagement, @"canManageSharedRostergroups":groupsManagement}  forKey:[[aContact JID] domain]];
-                [self populateHypervisors];
-            }
+        if (usersManagement && groupsManagement)
+        {
+            [_currentDomains setValue:@{@"contact":aContact, @"canManageUsers":usersManagement, @"canManageSharedRostergroups":groupsManagement}  forKey:[[aContact JID] domain]];
+
+        }
+        else if ((usersManagement && ! groupsManagement) && ! ([_currentDomains containsKey:[[aContact JID] domain]]))
+        {
+            [_currentDomains setValue:@{@"contact":aContact, @"canManageUsers":usersManagement, @"canManageSharedRostergroups":groupsManagement}  forKey:[[aContact JID] domain]];
+            [self checkHypervisors];
+        }
+        else
+            [self checkHypervisors];
+
+        [self populateHypervisors];
+
     }
-
-    // if we have still domains in savedDomains, we process them
-    if ([_savedDomains count] > 0)
-        [self checkHypervisors];
-
 }
 
 #pragma mark -
