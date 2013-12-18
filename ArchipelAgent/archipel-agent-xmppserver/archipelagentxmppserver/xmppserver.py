@@ -385,9 +385,9 @@ class TNXMPPServerController (TNArchipelPlugin):
             reply = iq.buildReply("result")
             groupID = iq.getTag("query").getTag("archipel").getAttr("id")
             groupName = iq.getTag("query").getTag("archipel").getAttr("name")
-            groupDesc = iq.getTag("query").getTag("archipel").getAttr("description")            
-            groupDisplay = iq.getTag("query").getTag("archipel").getAttr("display")
-            self.group_create(groupID, groupName, groupDesc, groupDisplay)
+            groupDesc = iq.getTag("query").getTag("archipel").getAttr("description")
+            groupDisplays = map(lambda x: x.getAttr("id"), iq.getTag("query").getTag("archipel").getTags("displayed_group"))
+            self.group_create(groupID, groupName, groupDesc, groupDisplays)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
         return reply
@@ -401,9 +401,12 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param name: the name of the group
         @type description: string
         @param description: the description of the group
+        @type display: list
+        @param display: list fo group(s) which can see the group
         """
         server = self.entity.jid.getDomain()
-        answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": ID, "name": name, "description": description, "group": ID})
+        display_groups = '\\n'.join(map(str, display))
+        answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": display_groups, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Creating a new shared group %s" % ID)
@@ -454,10 +457,15 @@ class TNXMPPServerController (TNArchipelPlugin):
             for group in groups:
                 members = group["members"]
                 del group["members"]
+                displayed_groups = group["displayed_groups"]
+                del group["displayed_groups"]
                 newNode = xmpp.Node("group", attrs=group)
                 for member in members:
                     newNode.addChild("user", attrs={"jid": member})
+                for displayed_group in displayed_groups:
+                    newNode.addChild("displayed_group", attrs={"id": displayed_group})
                 groupsNode.append(newNode)
+                newNode = xmpp.Node("displayed_groups")
             reply.setQueryPayload(groupsNode)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST)
@@ -480,7 +488,11 @@ class TNXMPPServerController (TNArchipelPlugin):
                     displayed_name = info['information'][1]["value"]
                 if info['information'][0]["key"] == "description":
                     description = info['information'][1]["value"]
-            info = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", ""), "members": []}
+                if info['information'][0]["key"] == "displayed_groups":
+                    displayed_groups = ''.join(c for c in info['information'][1]["value"] if not c in "[]\"")
+            info = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", ""), "displayed_groups": [], "members": []}
+            for displayed_group in displayed_groups.split(","):
+                info["displayed_groups"].append(displayed_group)
             answer = self._send_xmlrpc_call("srg_get_members", {"host": server, "group": group["id"]})
             members = answer["members"]
             for member in members:
