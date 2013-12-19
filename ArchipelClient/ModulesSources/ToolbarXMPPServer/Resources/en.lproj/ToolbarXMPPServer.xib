@@ -956,10 +956,11 @@
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField verticalHuggingPriority="750" id="358">
-                            <rect key="frame" x="34" y="20" width="354" height="35"/>
+                            <rect key="frame" x="34" y="13" width="354" height="42"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" alignment="center" title="To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode." id="359">
+                            <textFieldCell key="cell" alignment="center" id="359">
                                 <font key="font" metaFont="smallSystem"/>
+                                <string key="title">To use this feature, you need to enable XMLRPC in agent configuration. Note that at least one hypervisor have to be admin of the XMPP Server.</string>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
@@ -1080,7 +1081,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="waN-Jj-r09">
-                    <rect key="frame" x="90" y="133" width="124" height="17"/>
+                    <rect key="frame" x="90" y="133" width="315" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="user@domain.local" id="Qbn-Jl-I8i">
                         <font key="font" metaFont="system"/>
