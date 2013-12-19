@@ -179,7 +179,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         try:
             self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_users)
-            self.group_create(self.autogroup_users_id, self.autogroup_name_users, "Automatic group", "%s\\n%s" % (self.autogroup_hypervisors_id, self.autogroup_vms_id))
+            self.group_create(self.autogroup_users_id, self.autogroup_name_users, "Automatic group", [self.autogroup_hypervisors_id, self.autogroup_vms_id])
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_users, ex))
 
@@ -192,12 +192,12 @@ class TNXMPPServerController (TNArchipelPlugin):
 
         try:
             self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_vms)
-            self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group", self.autogroup_users_id)
+            self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group", [self.autogroup_users_id])
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_vms, ex))
         try:
             self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_hypervisors)
-            self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group", self.autogroup_users_id)
+            self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group", [self.autogroup_users_id])
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_hypervisors, ex))
 
@@ -463,7 +463,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 for member in members:
                     newNode.addChild("user", attrs={"jid": member})
                 for displayed_group in displayed_groups:
-                    newNode.addChild("displayed_group", attrs={"id": displayed_group})
+                    if(displayed_group != ''):
+                        newNode.addChild("displayed_group", attrs={"id": displayed_group})
                 groupsNode.append(newNode)
                 newNode = xmpp.Node("displayed_groups")
             reply.setQueryPayload(groupsNode)
