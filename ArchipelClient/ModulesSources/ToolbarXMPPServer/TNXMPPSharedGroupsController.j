@@ -40,17 +40,19 @@
 @global CPLocalizedStringFromTableInBundle
 
 
-var TNArchipelTypeXMPPServerGroups               = @"archipel:xmppserver:groups",
-    TNArchipelTypeXMPPServerGroupsCreate         = @"create",
-    TNArchipelTypeXMPPServerGroupsDelete         = @"delete",
-    TNArchipelTypeXMPPServerGroupsAddUsers       = @"addusers",
-    TNArchipelTypeXMPPServerGroupsDeleteUsers    = @"deleteusers",
-    TNArchipelTypeXMPPServerGroupsList           = @"list";
+var TNArchipelTypeXMPPServerGroups                       = @"archipel:xmppserver:groups",
+    TNArchipelTypeXMPPServerGroupsCreate                 = @"create",
+    TNArchipelTypeXMPPServerGroupsDelete                 = @"delete",
+    TNArchipelTypeXMPPServerGroupsAddUsers               = @"addusers",
+    TNArchipelTypeXMPPServerGroupsDeleteUsers            = @"deleteusers",
+    TNArchipelTypeXMPPServerGroupsList                   = @"list";
 
-var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
-    TNModuleControlForRemoveSharedGroup          = @"RemoveSharedGroup",
-    TNModuleControlForAddUsersInSharedGroup      = @"AddUsersInSharedGroup",
-    TNModuleControlForRemoveUsersFromSharedGroup = @"RemoveUsersFromSharedGroup";
+var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
+    TNModuleControlForRemoveSharedGroup                  = @"RemoveSharedGroup",
+    TNModuleControlForAddUsersInSharedGroup              = @"AddUsersInSharedGroup",
+    TNModuleControlForRemoveUsersFromSharedGroup         = @"RemoveUsersFromSharedGroup",
+    TNModuleControlForAddDisplayGroupsInSharedGroup      = @"AddDisplayGroupsInSharedGroup",
+    TNModuleControlForRemoveDisplayGroupsFromSharedGroup = @"RemoveDisplayGroupsFromSharedGroup";
 
 /*! @ingroup toolbarxmppserver
     Shared groups controller implementation
@@ -61,18 +63,23 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarGroups;
     @outlet CPButtonBar         buttonBarUsersInGroups;
+    @outlet CPButtonBar         buttonBarDisplayGroupGroups;
+    @outlet CPPopover           popoverAddDisplayGroupsInGroup;
     @outlet CPPopover           popoverAddUserInGroup;
     @outlet CPPopover           popoverNewGroup;
     @outlet CPSearchField       filterFieldGroups;
+    @outlet CPSearchField       filterFieldDisplayGroups;
+    @outlet CPSearchField       filterFieldDisplayGroupsInGroup;
     @outlet CPSearchField       filterFieldUsers;
     @outlet CPSearchField       filterFieldUsersInGroup;
     @outlet CPSplitView         splitViewVertical;
     @outlet CPTableView         tableGroups;
     @outlet CPTableView         tableUsers;
     @outlet CPTableView         tableUsersInGroup;
+    @outlet CPTableView         tableDisplayGroups;
+    @outlet CPTableView         tableDisplayGroupsInGroup;
     @outlet CPTextField         fieldNewGroupDescription;
     @outlet CPTextField         fieldNewGroupName;
-    @outlet CPTextField         fieldNewGroupDisplay;
     @outlet CPView              mainView                    @accessors(getter=mainView);
     @outlet CPView              viewTableGroupsContainer;
     @outlet CPView              viewTableUsersInGroupContainer;
@@ -88,6 +95,8 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     TNTableViewDataSource       _datasourceGroups;
     TNTableViewDataSource       _datasourceUsers;
     TNTableViewDataSource       _datasourceUsersInGroup;
+    TNTableViewDataSource       _datasourceDisplayGroups;
+    TNTableViewDataSource       _datasourceDisplayGroupsInGroup;
     TNXMPPServerUserFetcher     _usersFetcher;
 }
 
@@ -122,6 +131,14 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [tableGroups setDataSource:_datasourceGroups];
     [tableGroups setDelegate:self];
 
+    /* table DisplayGroups */
+    _datasourceDisplayGroups = [[TNTableViewDataSource alloc] init];
+    [_datasourceDisplayGroups setTable:tableDisplayGroups];
+    [_datasourceDisplayGroups setSearchableKeyPaths:[@"name", @"description"]];
+    [tableDisplayGroups setDataSource:_datasourceDisplayGroups];
+    [tableDisplayGroups setDelegate:self];
+
+
     /* table users in group */
     _datasourceUsersInGroup  = [[TNTableViewDataSource alloc] init];
     [_datasourceUsersInGroup setTable:tableUsersInGroup];
@@ -129,15 +146,28 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [tableUsersInGroup setDataSource:_datasourceUsersInGroup];
     [tableUsersInGroup setDelegate:self];
 
+    /* table displayGroups in group */
+    _datasourceDisplayGroupsInGroup = [[TNTableViewDataSource alloc] init];
+    [_datasourceDisplayGroupsInGroup setTable:tableDisplayGroupsInGroup];
+    [_datasourceDisplayGroupsInGroup setSearchableKeyPaths:[@"id"]];
+    [tableDisplayGroupsInGroup setDataSource:_datasourceDisplayGroupsInGroup];
+    [tableDisplayGroupsInGroup setDelegate:self];
+
     [filterFieldGroups setTarget:_datasourceGroups];
     [filterFieldGroups setAction:@selector(filterObjects:)];
 
     [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
     [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
 
+    [filterFieldDisplayGroupsInGroup setTarget:_datasourceDisplayGroupsInGroup];
+    [filterFieldDisplayGroupsInGroup setAction:@selector(filterObjects:)];
+
     [filterFieldUsers setSendsSearchStringImmediately:YES];
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
+
+    [filterFieldDisplayGroups setTarget:_datasourceDisplayGroups];
+    [filterFieldDisplayGroups setAction:@selector(filterObjects:)];
 
     var filterBg = CPImageInBundle(@"Backgrounds/background-filter.png", nil, [CPBundle mainBundle]);
     [[viewTableGroupsContainer superview] setBackgroundColor:[CPColor colorWithPatternImage:filterBg]];
@@ -186,6 +216,18 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
                          action:@selector(removeUsersFromGroup:)
                           image:CPImageInBundle(@"IconsButtons/user-remove.png",nil, [CPBundle mainBundle])];
 
+    [_delegate addControlsWithIdentifier:TNModuleControlForAddDisplayGroupsInSharedGroup
+                          title:CPBundleLocalizedString(@"Add display group(s) to shared group", @"Add display group(s) to shared group")
+                         target:self
+                         action:@selector(openAddDisplayGroupsInGroupWindow:)
+                          image:CPImageInBundle(@"IconsButtons/group-add.png",nil, [CPBundle mainBundle])];
+
+    [_delegate addControlsWithIdentifier:TNModuleControlForRemoveDisplayGroupsFromSharedGroup
+                          title:CPBundleLocalizedString(@"Remove selected group(s) from shared group", @"Remove selected group(s) from shared group")
+                         target:self
+                         action:@selector(removeDisplayGroupsFromGroup:)
+                          image:CPImageInBundle(@"IconsButtons/group-remove.png",nil, [CPBundle mainBundle])];
+
     [buttonBarGroups setButtons:[
         [_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup],
         [_delegate buttonWithIdentifier:TNModuleControlForRemoveSharedGroup]]];
@@ -193,6 +235,10 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [buttonBarUsersInGroups setButtons:[
         [_delegate buttonWithIdentifier:TNModuleControlForAddUsersInSharedGroup],
         [_delegate buttonWithIdentifier:TNModuleControlForRemoveUsersFromSharedGroup]]];
+
+    [buttonBarDisplayGroupGroups setButtons: [
+        [_delegate buttonWithIdentifier:TNModuleControlForAddDisplayGroupsInSharedGroup],
+        [_delegate buttonWithIdentifier:TNModuleControlForRemoveDisplayGroupsFromSharedGroup]]];
 }
 
 /*! clean stuff when hidden
@@ -201,6 +247,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 {
     [self closeNewGroupWindow:nil];
     [self closeAddUserInGroupWindow:nil];
+    [self closeAddDisplayGroupsInGroupWindow:nil];
 
     [_usersFetcher reset];
 }
@@ -217,13 +264,17 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 - (void)setUIAccordingToPermissions
 {
     var condition1 = ([tableGroups numberOfSelectedRows] > 0),
-        condition2 = condition1 && ([tableUsersInGroup numberOfSelectedRows] > 0);
+        condition2 = condition1 && ([tableUsersInGroup numberOfSelectedRows] > 0),
+        condition3 = condition1 && ([tableDisplayGroupsInGroup numberOfSelectedRows] > 0);
 
     [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
     [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRemoveSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"] specialCondition:condition1];
 
     [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForAddUsersInSharedGroup] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"] specialCondition:condition1];
     [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRemoveUsersFromSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"] specialCondition:condition2];
+
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForAddDisplayGroupsInSharedGroup] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"] specialCondition:condition1];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRemoveDisplayGroupsFromSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"] specialCondition:condition3];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]])
         [popoverAddUserInGroup close];
@@ -248,11 +299,15 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 {
     [_datasourceGroups removeAllObjects];
     [_datasourceUsers removeAllObjects];
+    [_datasourceDisplayGroups removeAllObjects];
     [_datasourceUsersInGroup removeAllObjects];
+    [_datasourceDisplayGroupsInGroup removeAllObjects];
 
     [tableUsers reloadData];
     [tableUsersInGroup reloadData];
     [tableGroups reloadData];
+    [tableDisplayGroups reloadData];
+    [tableDisplayGroupsInGroup reloadData];
 }
 
 #pragma mark -
@@ -265,8 +320,6 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 {
     [fieldNewGroupName setStringValue:@""];
     [fieldNewGroupDescription setStringValue:@""];
-    [fieldNewGroupDisplay setStringValue:@""];
-
 
     [popoverNewGroup close];
     [popoverNewGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] preferredEdge:nil];
@@ -306,6 +359,26 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [popoverAddUserInGroup close];
 }
 
+/*! open the add display group in group window
+    @param aSender the sender of the action
+*/
+- (IBAction)openAddDisplayGroupsInGroupWindow:(id)aSender
+{
+    [tableDisplayGroups reloadData];
+
+    [popoverAddDisplayGroupsInGroup close];
+    [popoverAddDisplayGroupsInGroup showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForAddDisplayGroupsInSharedGroup] preferredEdge:nil];
+    [popoverAddDisplayGroupsInGroup setDefaultButton:buttonAdd];
+}
+
+/*! close the add user in group window
+    @param aSender the sender of the action
+*/
+- (IBAction)closeAddDisplayGroupsInGroupWindow:(id)aSender
+{
+    [popoverAddDisplayGroupsInGroup close];
+}
+
 /*! create a new group
     @param aSender the sender of the action
 */
@@ -319,7 +392,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     }
 
     [popoverNewGroup close];
-    [self createGroup:[fieldNewGroupName stringValue] description:[fieldNewGroupDescription stringValue] display:[fieldNewGroupDisplay stringValue]];
+    [self createGroup:[fieldNewGroupName stringValue] description:[fieldNewGroupDescription stringValue]];
 }
 
 /*! create a new group
@@ -357,7 +430,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 {
     if ([tableUsersInGroup numberOfSelectedRows] < 1)
     {
-        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong users", @"Wrong users")
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong groups", @"Wrong groups")
                           informative:CPBundleLocalizedString(@"You must select at least one user", @"You must select at least one user")];
         return;
     }
@@ -368,6 +441,36 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     [self removeUsers:rows fromGroup:[_currentSelectedGroup objectForKey:@"id"]];
 }
 
+/*! add selected groups into selected group
+    @param aSender the sender of the action
+*/
+- (IBAction)addDisplayGroupsInGroup:(id)aSender
+{
+    var indexes = [tableDisplayGroups selectedRowIndexes],
+        rows    = [_datasourceDisplayGroups objectsAtIndexes:indexes];
+
+    [_datasourceDisplayGroupsInGroup addObjectsFromArray:rows];
+    [self updateDisplayGroups];
+    [popoverAddDisplayGroupsInGroup close];
+}
+
+/*! remove selected groups from selected group
+    @param aSender the sender of the action
+*/
+- (IBAction)removeDisplayGroupsFromGroup:(id)aSender
+{
+    if ([tableDisplayGroupsInGroup numberOfSelectedRows] < 1)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong groups", @"Wrong groups")
+                          informative:CPBundleLocalizedString(@"You must select at least one group", @"You must select at least one group")];
+        return;
+    }
+
+    [_datasourceDisplayGroupsInGroup removeObjectsAtIndexes:[tableDisplayGroupsInGroup selectedRowIndexes]];
+    [tableDisplayGroupsInGroup reloadData];
+
+    [self updateDisplayGroups];
+}
 
 #pragma mark -
 #pragma mark XMPP Management
@@ -380,8 +483,11 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     {
         [_datasourceGroups removeAllObjects];
         [_datasourceUsersInGroup removeAllObjects];
+        [_datasourceDisplayGroups removeAllObjects];
+        [_datasourceDisplayGroupsInGroup removeAllObjects];
         [tableGroups reloadData];
         [tableUsersInGroup reloadData];
+        [tableDisplayGroupsInGroup reloadData];
         return;
     }
 
@@ -406,20 +512,26 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 
         [_datasourceGroups removeAllObjects];
         [_datasourceUsersInGroup removeAllObjects];
+        [_datasourceUsersInGroup]
+        [_datasourceDisplayGroups removeAllObjects];
+        [_datasourceDisplayGroupsInGroup removeAllObjects];
 
         for (var i = 0; i < [groups count]; i++)
         {
-            var group       = [groups objectAtIndex:i],
-                gid         = [group valueForAttribute:@"id"],
-                name        = [group valueForAttribute:@"displayed_name"],
-                desc        = [group valueForAttribute:@"description"],
-                users       = [group childrenWithName:@"user"],
-                newItem     = @{@"id":gid, @"name":name, @"description":desc, @"users":users};
+            var group         = [groups objectAtIndex:i],
+                gid           = [group valueForAttribute:@"id"],
+                name          = [group valueForAttribute:@"displayed_name"],
+                desc          = [group valueForAttribute:@"description"],
+                users         = [group childrenWithName:@"user"],
+                displayGroups = [group childrenWithName:@"displayed_group"],
+                newItem       = @{@"id":gid, @"name":name, @"description":desc, @"users":users, @"displayGroups":displayGroups};
             [_datasourceGroups addObject:newItem];
+            [_datasourceDisplayGroups addObject:newItem];
         }
 
         [tableGroups reloadData];
         [tableUsersInGroup reloadData];
+        [tableDisplayGroupsInGroup reloadData];
 
         [tableGroups selectRowIndexes:_oldSelectedIndexesForGroupTable byExtendingSelection:NO];
         [self tableViewSelectionDidChange:[CPNotification notificationWithName:@"" object:tableGroups]];
@@ -432,7 +544,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
     @param aName the name of the group
     @param aDescription the description of the group
 */
-- (void)createGroup:(CPString)aName description:(CPString)aDescription display:(CPString)aDisplay
+- (void)createGroup:(CPString)aName description:(CPString)aDescription
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
@@ -441,8 +553,7 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
         "action": TNArchipelTypeXMPPServerGroupsCreate,
         "id": aName,
         "name": aName,
-        "description": aDescription,
-        "display": aDisplay}];
+        "description": aDescription}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didCreateGroup:) ofObject:self];
 }
@@ -552,6 +663,40 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
         [_delegate handleIqErrorFromStanza:aStanza];
 }
 
+/*! ask the server to update the displayGroups for Group
+*/
+- (void)updateDisplayGroups
+{
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerGroups}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeXMPPServerGroupsCreate,
+        "id": [_currentSelectedGroup objectForKey:@"id"],
+        "name": [_currentSelectedGroup objectForKey:@"name"],
+        "description": [_currentSelectedGroup objectForKey:@"description"]}];
+
+    for (var i = 0; i < [[_datasourceDisplayGroupsInGroup content] count]; i++)
+    {
+        [stanza addChildWithName:@"displayed_group" andAttributes:{"id": [[[_datasourceDisplayGroupsInGroup content] objectAtIndex:i] objectForKey:@"id"]}];
+        [stanza up];
+    }
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didUpdateDisplayGroups:) ofObject:self];
+}
+
+/*! compute the answer of displayGroup update
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (void)_didUpdateDisplayGroups:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [self reload];
+    }
+    else
+        [_delegate handleIqErrorFromStanza:aStanza];
+}
 
 #pragma mark -
 #pragma mark Delegates
@@ -568,17 +713,22 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
         {
             _currentSelectedGroup = nil;
             [_datasourceUsersInGroup removeAllObjects];
+            [_datasourceDisplayGroupsInGroup removeAllObjects];
             [tableUsersInGroup reloadData];
+            [tableDisplayGroupsInGroup reloadData];
         }
         else
         {
-            var index   = [[tableGroups selectedRowIndexes] firstIndex],
-                group   = [_datasourceGroups objectAtIndex:index],
-                users   = [group objectForKey:@"users"];
+            var index           = [[tableGroups selectedRowIndexes] firstIndex],
+                group           = [_datasourceGroups objectAtIndex:index],
+                users           = [group objectForKey:@"users"],
+                displayGroups   = [group objectForKey:@"displayGroups"];
 
             _currentSelectedGroup = group;
 
             [_datasourceUsersInGroup removeAllObjects];
+            [_datasourceDisplayGroupsInGroup removeAllObjects];
+
             for (var i = 0; i < [users count]; i++)
             {
                 var user    = [users objectAtIndex:i],
@@ -586,6 +736,14 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
                 [_datasourceUsersInGroup addObject:newItem];
             }
             [tableUsersInGroup reloadData];
+
+            for (var i = 0; i < [displayGroups count]; i++)
+            {
+                var displayGroup    = [displayGroups objectAtIndex:i],
+                    newItem = @{@"id":[displayGroup valueForAttribute:@"id"]};
+                [_datasourceDisplayGroupsInGroup addObject:newItem];
+            }
+            [tableDisplayGroupsInGroup reloadData];
         }
     }
 
@@ -626,6 +784,17 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
                 [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRemoveSharedGroup]];
             }
             break;
+
+        case tableDisplayGroupsInGroup:
+            if ([aTableView numberOfSelectedRows] == 0)
+            {
+                [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForAddDisplayGroupsInSharedGroup]];
+            }
+            else
+            {
+                [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRemoveDisplayGroupsFromSharedGroup]];
+            }
+            break;
     }
 
     return _contextualMenu;
@@ -646,6 +815,10 @@ var TNModuleControlForAddSharedGroup             = @"AddSharedGroup",
 
     case tableGroups:
         [self RemoveSharedGroup];
+        break;
+
+    case tableDisplayGroupsInGroup:
+        [self RemoveDisplayGroupsFromSharedGroup];
         break;
   }
 }
