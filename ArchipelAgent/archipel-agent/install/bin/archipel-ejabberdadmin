@@ -69,9 +69,8 @@ def _fecth_acls(xmppclient):
                 if m:
                     global new_acl_syntax
                     new_acl_syntax = True
-
                 raw_admin_string = item.getData().split(",")[3] + "@" + item.getData().split(",")[4].split("}")[0]
-                admins.append(xmpp.JID(raw_admin_string.translate(({ord(k):None for k in u'\"{}<>'}))))
+                admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
 
         except:
             pass
