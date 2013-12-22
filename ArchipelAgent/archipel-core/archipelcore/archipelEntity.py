@@ -677,19 +677,19 @@ class TNArchipelEntity (object):
         """
         self.change_presence(self.xmppstatusshow, presence_status)
 
-    def push_change(self, namespace, change, content_node=None):
+    def push_change(self, namespace, change, *content_nodes):
         """
         Push a change using archipel push system.
         This system will change with inclusion of pubsub.
         @type namespace: string
         @param namespace: the namespace of the push. it will be prefixed with @ARCHIPEL_NS_IQ_PUSH
         @type change: string
-        @param change: the change value (can be anything, like 'newvm' in the context of the namespace)
+        @param change: the change value(s) (can be anything, like 'newvm' in the context of the namespace)
         """
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
         self.log.info("PUSH : pushing %s->%s" % (ns, change))
         push = xmpp.Node(tag="push", attrs={"date": datetime.datetime.now(), "xmlns": ns, "change": change})
-        if content_node:
+        for content_node in content_nodes:
             push.addChild(node=content_node)
         self.pubSubNodeEvent.add_item(push)
 
