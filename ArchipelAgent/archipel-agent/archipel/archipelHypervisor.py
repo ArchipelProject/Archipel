@@ -915,11 +915,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                     organization_info[element] = self.vcard_infos[element]
 
             xml_description = command.getTag("domain")
-            vm_uuid = command.getAttr("uuid")
 
             requested_name = command.getAttr("name")
-            vm = self.alloc(iq.getFrom(), requested_name=requested_name, organization_info=organization_info,
-                            definition=xml_description, requested_uuid=vm_uuid)
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name,
+                            organization_info=organization_info, definition=xml_description)
 
             reply = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
