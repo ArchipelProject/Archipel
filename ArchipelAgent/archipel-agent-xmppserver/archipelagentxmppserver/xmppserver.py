@@ -806,12 +806,12 @@ class TNXMPPServerController (TNArchipelPlugin):
             nodes = []
             bound_begin = page * self.user_page_size
             bound_end = bound_begin + self.user_page_size
-            users = sorted(self.users, cmp=lambda x, y: cmp(x["jid"], y["jid"]))[bound_begin:bound_end]
+            users = sorted(self.users, cmp=lambda x, y: cmp(x["jid"], y["jid"]))
             for user in users:
                 if only_humans and not user["type"] == "human":
                     continue
                 nodes.append(xmpp.Node("user", attrs={"jid": user["jid"], "type": user["type"]}))
-            base_reply.setQueryPayload(nodes)
+            base_reply.setQueryPayload(nodes[bound_begin:bound_end])
             self.entity.xmppclient.send(base_reply)
 
         if self.need_user_refresh:
