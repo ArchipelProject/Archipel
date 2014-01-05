@@ -1190,8 +1190,7 @@ class TNArchipelEntity (object):
                     perm_targets.append(perm_target)
             if len(errors) > 0:
                 reply = build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
-            for target in perm_targets:
-                self.push_change("permissions", target)
+            self.push_change("permissions", perm_targets)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_PERMISSIONS)
         return reply
