@@ -31,7 +31,6 @@ def send_raw(xmppclient, to, acp, pretty):
     """
     out = send_raw_acp(xmppclient, to, acp)
     if pretty:
-        success("Answer received: ")
         print xml_print(out)
     else:
         print out
