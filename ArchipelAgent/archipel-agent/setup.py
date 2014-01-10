@@ -108,6 +108,7 @@ setup(name='archipel-agent',
         'install/bin/archipel-updatedomain',
         'install/bin/archipel-initinstall',
         'install/bin/archipel-commandsbytag',
+        'install/bin/archipel-ejabberdadmin',
         'install/bin/archipel-command',
         'install/bin/runarchipel'
         ],

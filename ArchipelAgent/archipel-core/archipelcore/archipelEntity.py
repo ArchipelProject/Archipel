@@ -845,7 +845,7 @@ class TNArchipelEntity (object):
 
     def set_vcard(self, params={}):
         """
-        Allows to define a vCard t ype for the entry.
+        Allows to define a vCard type for the entry.
         set the vcard of the entity
         @type params: dict
         @param params: the parameters of the vCard

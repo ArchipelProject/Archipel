@@ -97,6 +97,7 @@ var _iconEntityTypeHuman,
 - (void)reset
 {
     _maxLoadedPage = 0;
+    [_dataSource removeAllObjects];
     [_dataSource setTotalCount:-1];
     [_dataSource setCurrentlyLoading:NO];
     if ([_delegate respondsToSelector:@selector(userFetcher:isLoading:)])
@@ -214,6 +215,8 @@ var _iconEntityTypeHuman,
     if ([aStanza type] == @"result")
     {
         var users = [aStanza childrenWithName:@"user"];
+
+        [_dataSource removeAllObjects];
 
         for (var i = 0; i < [users count]; i++)
         {

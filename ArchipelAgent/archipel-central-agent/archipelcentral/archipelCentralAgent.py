@@ -28,6 +28,7 @@ import random
 import sqlite3
 import xmpp
 
+from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
@@ -51,7 +52,7 @@ ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
 
-class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNTaggableEntity):
+class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
     This class represents a Central Agent XMPP Capable. This is a XMPP client
     which manages a central database containing all hypervisors and all vms
@@ -85,6 +86,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNTaggableEnti
 
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.hook_xmpp_authenticated)
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
 
         self.central_agent_jid_val = None
 

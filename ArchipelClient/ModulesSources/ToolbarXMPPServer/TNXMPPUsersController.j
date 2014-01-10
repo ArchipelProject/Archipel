@@ -42,10 +42,12 @@
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
-    TNArchipelTypeXMPPServerUsersUnregister         = @"unregister";
+    TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",
+    TNArchipelTypeXMPPServerUsersChangePassword     = @"changepassword";
 
 var TNModuleControlForRegisterUser                  = @"RegisterUser",
     TNModuleControlForUnregisterUser                = @"UnregisterUser",
+    TNModuleControlForResetPassword                 = @"ResetPassword",
     TNModuleControlForGrantAdmin                    = @"GrantAdmin",
     TNModuleControlForRevokeAdmin                   = @"RevokeAdmin";
 
@@ -56,14 +58,19 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 @implementation TNXMPPUsersController : CPObject
 {
     @outlet CPButton            buttonCreate;
+    @outlet CPButton            buttonResetPassword;
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPImageView         imageFecthingUsers;
     @outlet CPPopover           popoverNewUser;
+    @outlet CPPopover           popoverResetPassword;
     @outlet CPSearchField       filterField;
     @outlet CPTableView         tableUsers;
     @outlet CPTextField         fieldNewUserPassword;
     @outlet CPTextField         fieldNewUserPasswordConfirm;
     @outlet CPTextField         fieldNewUserUsername;
+    @outlet CPTextField         fieldResetUserPassword;
+    @outlet CPTextField         fieldResetUserPasswordConfirm;
+    @outlet CPTextField         labelUserUsername;
     @outlet CPTextField         labelFecthingUsers;
     @outlet CPView              mainView                        @accessors(getter=mainView);
     @outlet CPView              viewTableContainer;
@@ -73,6 +80,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     CPMenuItem                  _contextualMenu                 @accessors(property=contextualMenu);
 
     TNStropheContact            _entity;
+    CPDictionary                _entityCapabilities;
     TNTableViewLazyDataSource   _datasourceUsers;
     TNXMPPServerUserFetcher     _usersFetcher;
 }
@@ -84,6 +92,8 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
+
+    _entityCapabilities = [[CPDictionary alloc] init];
 
     // table users
     _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
@@ -103,6 +113,10 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     [fieldNewUserPassword setSecure:YES];
     [fieldNewUserPasswordConfirm setSecure:YES];
 
+
+    [fieldResetUserPassword setSecure:YES];
+    [fieldResetUserPasswordConfirm setSecure:YES];
+
     [[CPNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(_didAdminAccountsListUpdate:)
                                                      name:TNPermissionsAdminListUpdatedNotification
@@ -110,7 +124,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 
     [[CPNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(_didUsernameChanged:)
-                                                     name:CPControlTextDidChangeNotification
+                                                     name:CPControlTextDidEndEditingNotification
                                                    object:fieldNewUserUsername];
 }
 
@@ -165,9 +179,10 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 #pragma mark -
 #pragma mark Setters / Getters
 
-- (void)setEntity:(TNStropheContact)anEntity
+- (void)setEntity:(CPDictionary)anEntity
 {
-    _entity = anEntity;
+    _entity = [anEntity objectForKey:@"contact"];
+    _entityCapabilities = @{@"canManageUsers":[anEntity objectForKey:@"canManageUsers"], @"canManageSharedRostergroups":[anEntity objectForKey:@"canManageSharedRostergroups"]}
     [_usersFetcher setEntity:_entity];
 }
 
@@ -203,9 +218,16 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
                              action:@selector(revokeAdmin:)
                               image:CPImageInBundle(@"IconsButtons/unstar.png",nil, [CPBundle mainBundle])];
 
+        [_delegate addControlsWithIdentifier:TNModuleControlForResetPassword
+                              title:CPBundleLocalizedString(@"Reset the password of the selected user", @"Reset the password of the selected user")
+                             target:self
+                             action:@selector(openResetPasswordWindow:)
+                              image:CPImageInBundle(@"IconsButtons/edit.png",nil, [CPBundle mainBundle])];
+
         [buttonBarControl setButtons:[
             [_delegate buttonWithIdentifier:TNModuleControlForRegisterUser],
             [_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser],
+            [_delegate buttonWithIdentifier:TNModuleControlForResetPassword],
             [_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin],
             [_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin]]];
 }
@@ -215,6 +237,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 - (void)willHide
 {
     [self closeRegisterUserWindow:nil];
+    [self closeResetPasswordWindow:nil];
     [_usersFetcher reset];
 }
 
@@ -231,11 +254,13 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 {
     // this will check against a non existing permissions
     // As these controls are only for admins, we don't really care about the permission
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin] enabledAccordingToPermissions:[@"dummy_permission"]];
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin] enabledAccordingToPermissions:[@"dummy_permission"]];
 
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin] enabledAccordingToPermissions:[@"dummy_permission"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin] enabledAccordingToPermissions:[@"dummy_permission"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
+
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForResetPassword] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
 
     if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
         [popoverNewUser close];
@@ -261,7 +286,6 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 - (void)flushUI
 {
     [_usersFetcher reset];
-    [_datasourceUsers removeAllObjects];
     [tableUsers reloadData];
 }
 
@@ -279,7 +303,17 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     [fieldNewUserPasswordConfirm setStringValue:@""];
 
     [popoverNewUser close];
-    [popoverNewUser showRelativeToRect:nil ofView:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] preferredEdge:nil];
+
+    if ([aSender isKindOfClass:CPMenuItem])
+    {
+        var rect = [tableUsers rectOfRow:[tableUsers selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [popoverNewUser showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableUsers preferredEdge:nil];
+    }
+    else
+        [popoverNewUser showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
     [popoverNewUser setDefaultButton:buttonCreate];
     [popoverNewUser makeFirstResponder:fieldNewUserUsername];
 }
@@ -395,6 +429,86 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     }
 }
 
+/*! Reset password of select user
+    @param aSender the sender of the action
+*/
+- (IBAction)openResetPasswordWindow:(id)aSender
+{
+    if ([tableUsers numberOfSelectedRows] > 1)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"You cannot reset password for more than one user at a time", @"You cannot reset password for more than one user at a time")
+                          informative:@""];
+        return;
+    }
+
+    var index     = [[tableUsers selectedRowIndexes] firstIndex],
+        user      = [_datasourceUsers objectAtIndex:index];
+
+    [labelUserUsername setStringValue:[user objectForKey:@"JID"]];
+    [fieldResetUserPassword setStringValue:@""];
+    [fieldResetUserPasswordConfirm setStringValue:@""];
+
+    [popoverResetPassword close];
+
+    if ([aSender isKindOfClass:CPMenuItem])
+    {
+        var rect = [tableUsers rectOfRow:[tableUsers selectedRow]];
+        rect.origin.y += rect.size.height / 2;
+        rect.origin.x += rect.size.width / 2;
+        [popoverResetPassword showRelativeToRect:CGRectMake(rect.origin.x, rect.origin.y, 10, 10) ofView:tableUsers preferredEdge:nil];
+    }
+    else
+        [popoverResetPassword showRelativeToRect:nil ofView:aSender preferredEdge:nil];
+
+    [popoverResetPassword setDefaultButton:buttonResetPassword];
+    [popoverResetPassword makeFirstResponder:fieldResetUserPassword];
+
+}
+
+/*! Close the reset password popover
+    @param aSender the sender of the action
+*/
+- (IBAction)closeResetPasswordWindow:(id)aSender
+{
+    [popoverResetPassword close];
+}
+
+/*! Reset the password for the select user
+    @param aSender the sender of the action
+*/
+- (IBAction)resetPassword:(id)aSender
+{
+   if ([fieldResetUserPassword stringValue] != [fieldResetUserPasswordConfirm stringValue])
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Password doesn't match", @"Password doesn't match")
+                          informative:CPBundleLocalizedString(@"You have to enter identical passwords", @"You have to enter identical passwords")];
+        return;
+    }
+
+    if ([[fieldResetUserPassword stringValue] length] < 8)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Bad password", @"Bad password")
+                          informative:CPBundleLocalizedString(@"The password is too short. it must be at least 8 characters", @"The password is too short. it must be at least 8 characters")];
+        return;
+    }
+
+    [popoverResetPassword close];
+
+    var JID;
+    try {
+        JID = [TNStropheJID stropheJIDWithString:[labelUserUsername stringValue]];
+        if (![JID domain])
+            [CPException raise:@"Bad JID" reason:@"JID must follow the form user@node"]
+    }
+    catch(e)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Bad JID", @"Bad JID")
+                          informative:[labelUserUsername stringValue] + CPLocalizedString(" is not a valid JID.", " is not a valid JID.")
+                          style:CPCriticalAlertStyle];
+        return;
+    }
+    [self resetPasswordForJID:JID password:[fieldResetUserPassword stringValue]];
+}
 
 #pragma mark -
 #pragma mark XMPP Management
@@ -475,6 +589,41 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     }
 }
 
+/*! Reset the password of an existing user with given username and password
+    @param aUserName the username of the new user
+    @param aPasswor the password of the new user
+*/
+- (void)resetPasswordForJID:(TNStropheJID)aJID password:(CPString)aPassword
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeXMPPServerUsersChangePassword}];
+
+    [stanza addChildWithName:@"user" andAttributes:{"jid": [aJID bare], "password": aPassword}];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didPasswordChange:) ofObject:self];
+}
+
+/*! compute the answer of user creation
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (void)_didPasswordChange:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Password changed", @"Password changed")
+                                                         message:CPLocalizedString(@"The password for this user has been sucessfully changed.", @"The password for this user has been sucessfully changed.")];
+
+    }
+    else
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Cannot change the password", @"Cannot change the password")
+                                                         message:CPLocalizedString(@"Agent was unable to change the user password.", @"Agent was unable to change the user password.")
+                                                            icon:TNGrowlIconError];
+        [_delegate handleIqErrorFromStanza:aStanza];
+    }
+}
 
 #pragma mark -
 #pragma mark Delegates
@@ -494,12 +643,21 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     {
         [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRegisterUser]];
     }
+    else if ([aTableView numberOfSelectedRows] == 1)
+    {
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForUnregisterUser]];
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForResetPassword]];
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForGrantAdmin]];
+        [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRevokeAdmin]];
+
+    }
     else
     {
         [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForUnregisterUser]];
         [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForGrantAdmin]];
         [_contextualMenu addItem:[_delegate menuItemWithIdentifier:TNModuleControlForRevokeAdmin]];
     }
+
 
     return _contextualMenu;
 }
