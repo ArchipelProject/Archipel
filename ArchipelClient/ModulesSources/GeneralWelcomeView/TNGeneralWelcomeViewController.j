@@ -80,8 +80,15 @@
     [mainWebView setAlphaValue:0.0];
     mainWebView._DOMElement.style.WebkitTransition = "opacity 0.3s";
 
-    [mainWebView setFrameLoadDelegate:self];
-    [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"] + "?lang=" + [defaults objectForKey:@"CPBundleLocale"]];
+    if ([defaults objectForKey:@"TNArchipelHelpWindowURL"] != "")
+    {
+        [mainWebView setFrameLoadDelegate:self];
+        [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"] + "?lang=" + [defaults objectForKey:@"CPBundleLocale"]];
+    }
+    else
+    {
+        [fieldLoading setStringValue:CPBundleLocalizedString(@"No welcome page defined", @"No welcome page defined")];
+    }
 
     return YES;
 }
@@ -94,7 +101,14 @@
 
     [defaults setObject:[fieldPreferencesWelcomePageUrl stringValue] forKey:@"TNArchipelHelpWindowURL"];
 
-    [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"] + "?lang=" + [defaults objectForKey:@"CPBundleLocale"]];
+    if ([defaults objectForKey:@"TNArchipelHelpWindowURL"] != "")
+    {
+        [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"] + "?lang=" + [defaults objectForKey:@"CPBundleLocale"]];
+    }
+    else
+    {
+        [fieldLoading setStringValue:CPBundleLocalizedString(@"No welcome page defined", @"No welcome page defined")];
+    }
 }
 
 /*! called when user gets preferences
