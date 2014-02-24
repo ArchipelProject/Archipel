@@ -970,19 +970,19 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
+    if ([aTableView selectedRow] != aRow)
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
 
     [_contextualMenu removeAllItems];
 
     if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableVirtualMachines))
     {
         [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNewVM]];
-
         return _contextualMenu;
     }
-
-    var itemRow = [aTableView rowAtPoint:aRow];
-    if ([aTableView selectedRow] != aRow)
-        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
     switch (aTableView)
     {
@@ -1029,22 +1029,22 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
 {
-  if ([aTableView numberOfSelectedRows] == 0)
-      return;
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
 
-  switch (aTableView)
-  {
-    case tableVirtualMachines:
-      [self deleteVirtualMachine:aTableView];
-      break;
+    switch (aTableView)
+    {
+        case tableVirtualMachines:
+            [self deleteVirtualMachine:aTableView];
+            break;
 
-    case tableVirtualMachinesParked:
-      [self deleteParkedVirtualMachines:aTableView];
-      break;
+        case tableVirtualMachinesParked:
+            [self deleteParkedVirtualMachines:aTableView];
+            break;
 
-    default:
-      return
-  }
+        default:
+            return
+    }
 
 }
 
