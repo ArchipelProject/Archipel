@@ -665,6 +665,13 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
     if ((anOutlineView != _mainOutlineView) && ([anOutlineView numberOfSelectedRows] > 1))
         return;
 
+    var itemRow = [anOutlineView rowForItem:anItem];
+    if ([anOutlineView selectedRow] != itemRow)
+        if (itemRow >=0)
+            [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
+        else
+            [anOutlineView deselectAll];
+
     [_contextualMenu removeAllItems];
 
     if ([anOutlineView numberOfSelectedRows] == 0)
@@ -672,10 +679,6 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
        [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRegisterVmCast]];
        return _contextualMenu;
     }
-
-    var itemRow = [_mainOutlineView rowForItem:anItem];
-    if ([_mainOutlineView selectedRow] != itemRow)
-        [_mainOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
 
     var selectedIndexes = [_mainOutlineView selectedRowIndexes],
         object          = [_mainOutlineView itemAtRow:[selectedIndexes firstIndex]];
