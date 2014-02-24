@@ -456,23 +456,23 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
 
+    if ([aTableView selectedRow] != aRow)
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
+
     [_contextualMenu removeAllItems];
 
-    var itemRow = [aTableView rowAtPoint:aRow];
-    if ([aTableView selectedRow] != aRow)
-        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
-
-    if ([aTableView numberOfSelectedRows] > 1)
+    if (([aTableView numberOfSelectedRows] > 1) && (aTableView == tableMedias))
     {
         [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForRemoveDisk]];
-
         return _contextualMenu;
     }
 
-    if ([aTableView numberOfSelectedRows] == 0)
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableMedias))
     {
         [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForAddDisk]];
-
         return _contextualMenu;
     }
 

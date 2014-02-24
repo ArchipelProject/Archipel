@@ -765,9 +765,12 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 */
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
-    var itemRow = [tableViewNetworks rowAtPoint:aRow];
-    if ([tableViewNetworks selectedRow] != aRow)
-        [tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+
+    if ([aTableView selectedRow] != aRow)
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
 
     var selectedIndex = [[tableViewNetworks selectedRowIndexes] firstIndex],
         conditionTableSelectedRow = ([tableViewNetworks numberOfSelectedRows] != 0),

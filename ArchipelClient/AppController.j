@@ -1538,12 +1538,15 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     if (anOutlineView != _rosterOutlineView)
         return;
 
+    var itemRow = [anOutlineView rowForItem:anItem];
+    if ([anOutlineView selectedRow] != itemRow)
+        if (itemRow >=0)
+            [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
+        else
+            [anOutlineView deselectAll];
+
     if ([anOutlineView numberOfSelectedRows] == 0)
         return;
-
-    var itemRow = [_rosterOutlineView rowForItem:anItem];
-    if ([_rosterOutlineView selectedRow] != itemRow)
-        [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
 
     if ([anItem isKindOfClass:TNStropheContact])
         return _rosterMenuForContacts;
