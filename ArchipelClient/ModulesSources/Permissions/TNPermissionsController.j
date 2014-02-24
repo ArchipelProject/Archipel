@@ -660,20 +660,23 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
 
-    [_contextualMenu removeAllItems];
-
-    var itemRow = [aTableView rowAtPoint:aRow];
     if ([aTableView selectedRow] != aRow)
-        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
+
+    if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableUsers))
+        return;
+
+    [_contextualMenu removeAllItems];
 
     if (([aTableView numberOfSelectedRows] >= 1) && (aTableView == tableUsers))
     {
         [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForApplyRole]];
-
         return _contextualMenu;
     }
 
-    return
 }
 
 /*! delegate of TNPermissionUserFetcher
