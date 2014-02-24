@@ -653,11 +653,14 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
     if ((anOutlineView != _outlineViewSnapshots) && ([anOutlineView numberOfSelectedRows] > 1))
         return;
 
-    [_contextualMenu removeAllItems];
-
     var itemRow = [anOutlineView rowForItem:anItem];
     if ([anOutlineView selectedRow] != itemRow)
-        [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
+        if (itemRow >=0)
+            [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
+        else
+            [anOutlineView deselectAll];
+
+    [_contextualMenu removeAllItems];
 
     if ([anOutlineView numberOfSelectedRows] == 0)
         {
