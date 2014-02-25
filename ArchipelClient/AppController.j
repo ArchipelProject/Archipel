@@ -907,7 +907,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 - (void)displayFirstConnectionInterface
 {
-    [hintController showWindow:nil];
+    if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayHintPopup"] == 1)
+        [hintController showWindow:nil];
 }
 
 /*! Update the scroller style according to the defaults
