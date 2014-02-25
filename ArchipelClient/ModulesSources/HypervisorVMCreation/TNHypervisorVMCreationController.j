@@ -141,7 +141,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachines setTarget:self];
-    [tableVirtualMachines setDoubleAction:@selector(openEditVirtualMachineWindow:)];
+    [tableVirtualMachines setDoubleAction:@selector(addSelectedVMToRoster:)];
     [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
     [tableVirtualMachines setBackgroundColor:TNArchipelDefaultColorsTableView];
 
