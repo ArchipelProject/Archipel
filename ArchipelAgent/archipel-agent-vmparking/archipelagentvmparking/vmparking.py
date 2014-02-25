@@ -325,7 +325,7 @@ class TNVMParking (TNArchipelPlugin):
                 vmpass = domain.getTag("description").getData().split("::::")[1]
                 vmname = domain.getTag("name").getData()
                 self.entity.log.debug("VMPARKING: about to create vm thread")
-                vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False, organizationInfo=self.entity.vcard_infos)
+                vm_thread = self.entity.soft_alloc(xmpp.JID(vmjid), vmname, vmpass, start=False, organization_info=self.entity.vcard_infos)
                 vm = vm_thread.get_instance()
                 vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=domain, oneshot=True)
                 if vm_info["start"]:
