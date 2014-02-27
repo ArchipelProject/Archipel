@@ -876,6 +876,11 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (BOOL)_didReceiveHypervisorRoster:(TNStropheStanza)aStanza
 {
+
+    var indexes         = [tableVirtualMachines selectedRowIndexes],
+        selectedObjects = [_virtualMachinesDatasource objectsAtIndexes:indexes],
+        indexesToSelect = [[CPIndexSet alloc] init];
+
     if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
@@ -929,6 +934,14 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
+
+        for (var i = 0; i < [selectedObjects count]; i++)
+        {
+          var object = [selectedObjects objectAtIndex:i];
+          [indexesToSelect addIndex:[_virtualMachinesDatasource indexOfObject:object]];
+        }
+
+        [tableVirtualMachines selectRowIndexes:indexesToSelect byExtendingSelection:NO];
         [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]]
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
