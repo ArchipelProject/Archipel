@@ -88,6 +88,7 @@ setup(name=NAME,
          'install/bin/archipel-rolesnode',
          'install/bin/archipel-adminaccounts',
          'install/bin/archipel-centralagentnode',
-         'install/bin/archipel-testxmppserver'
+         'install/bin/archipel-testxmppserver',
+         'install/bin/archipel-ejabberdadmin'
       ]
       )
