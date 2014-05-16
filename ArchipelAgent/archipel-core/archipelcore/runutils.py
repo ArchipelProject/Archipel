@@ -28,11 +28,13 @@ import commands
 import os
 import socket
 import subprocess
+import sys
 
 from archipelcore.scriptutils import error, msg, success
 from archipelcore.utils import init_conf
 
 ## Error codes
+ARCHIPEL_INIT_SUCCESS = 0
 ARCHIPEL_INIT_ERROR_NO_CONFIG = 1
 ARCHIPEL_INIT_ERROR_STATELESS_MODE = 7
 
