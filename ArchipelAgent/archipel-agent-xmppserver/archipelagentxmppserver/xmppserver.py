@@ -218,6 +218,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             group_name = self.autogroup_name_hypervisors
             group_id = self.autogroup_hypervisors_id
         try:
+            self.create_autogroups_if_needed(self, None, None)
             self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (entity.jid, group_name))
             self.group_add_users(group_id, [entity.jid.getStripped()])
         except Exception as ex:
