@@ -184,7 +184,7 @@ class TNArchipelEntity (object):
         for factory_method in iter_entry_points(group=group, name="factory"):
             try:
                 plugin_infos = load_entry_point(factory_method.dist, group="archipel.plugin", name="version")()
-                for plugin_info in plugin_infos[-1]:
+                for plugin_info in plugin_infos[2]:
                     if loading_module_policy == "restrictive":
                         if not self.configuration.has_option("MODULES", plugin_info["identifier"]):
                             self.log.info("PLUGIN: plugin %s has not been loaded as it is not defined in configuration and loading mode is restrictive." % plugin_info["identifier"])
