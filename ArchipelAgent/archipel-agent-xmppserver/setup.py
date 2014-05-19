@@ -30,8 +30,6 @@ ENTRY_POINTS        = { 'archipel.plugin.hypervisor' :  [
                             'factory=archipelagentxmppserver:make_archipel_plugin'],
                         'archipel.plugin.virtualmachine' : [
                             'factory=archipelagentxmppserver:make_archipel_plugin'],
-                        'archipel.plugin.centralagent' : [
-                            'factory=archipelagentxmppserver:make_archipel_plugin'],
                         'archipel.plugin' : [
                             'version=archipelagentxmppserver:version']}
 RPM_REQUIRED_DEPS   = "archipel-core"
