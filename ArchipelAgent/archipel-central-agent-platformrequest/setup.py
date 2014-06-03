@@ -75,5 +75,8 @@ setup(name=NAME,
           "archipel-core>=0.6.0beta"
       ],
       entry_points=ENTRY_POINTS,
-      scripts = []
+      scripts = [],
+      data_files=[
+        ('install/etc/archipel/central-agent-modules.d/' , ["install/etc/archipel/central-agent-modules.d/platformrequest.conf"])
+        ]
       )
