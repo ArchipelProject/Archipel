@@ -30,6 +30,7 @@ import socket
 import struct
 import fcntl
 import inspect
+import glob
 import logging
 import logging.handlers
 import os
@@ -119,6 +120,10 @@ def init_conf(paths):
     import socket
     conf = ConfigParser.ConfigParser()
     conf.read(paths)
+    if conf.has_option("GLOBAL", "modules_configuration_path"):
+        plugins_path = self.configuration.get("GLOBAL", "modules_configuration_path")
+        plugins_conf = glob.glob(plugins_path+"/*.conf")
+        conf.read(plugins_conf)
     for section in conf.sections():
         for option in conf.options(section):
             value = conf.get(section, option, raw=True)

@@ -93,7 +93,8 @@ setup(name='archipel-central-agent',
         'install/bin/archipel-central-agent-initinstall'
         ],
       data_files=[
-        ('install/etc/init.d'              , ['install/etc/init.d/archipel-central-agent']),
-        ('install/etc/archipel/'           , ['install/etc/archipel/archipel-central-agent.conf'])
+        ('install/etc/init.d'                           , ['install/etc/init.d/archipel-central-agent']),
+        ('install/etc/archipel/'                        , ['install/etc/archipel/archipel-central-agent.conf']),
+        ('install/etc/archipel/central-agent-modules.d' , [])
         ]
       )
