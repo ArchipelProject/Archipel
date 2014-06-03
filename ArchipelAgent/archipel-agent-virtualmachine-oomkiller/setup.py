@@ -74,5 +74,8 @@ setup(name=NAME,
       install_requires=[
           "archipel-core>=0.6.0beta"
       ],
-      entry_points=ENTRY_POINTS
+      entry_points=ENTRY_POINTS,
+      data_files=[
+        ('install/etc/archipel/modules.d/' , ["install/etc/archipel/modules.d/vm_oomkiller.conf"])
+        ]
       )
