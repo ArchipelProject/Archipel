@@ -79,5 +79,8 @@ setup(name=NAME,
         "apscheduler>=1.3.1",
         "archipel-core>=0.6.0beta"
       ],
-      entry_points=ENTRY_POINTS
+      entry_points=ENTRY_POINTS,
+      data_files=[
+        ('install/etc/archipel/modules.d/' , ["install/etc/archipel/modules.d/actionscheduler.conf"])
+        ]
       )
