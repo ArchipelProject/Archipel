@@ -77,6 +77,6 @@ setup(name=NAME,
       entry_points=ENTRY_POINTS,
       scripts = [],
       data_files=[
-        ('install/etc/archipel/central-agent-modules.d/' , ["install/etc/archipel/central-agent-modules.d/platformrequest.conf"])
+        ('/etc/archipel/central-agent-modules.d/' , ["install/etc/archipel/central-agent-modules.d/platformrequest.conf"])
         ]
       )

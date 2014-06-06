@@ -78,6 +78,6 @@ setup(name=NAME,
       ],
       entry_points=ENTRY_POINTS,
       data_files=[
-        ('install/etc/archipel/modules.d/' , ["install/etc/archipel/modules.d/geolocalization.conf"])
+        ('/etc/archipel/modules.d/' , ["install/etc/archipel/modules.d/geolocalization.conf"])
         ]
       )

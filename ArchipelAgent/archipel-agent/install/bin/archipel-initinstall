@@ -114,6 +114,8 @@ def install_config_folder(prefix, conf_folder):
     @param conf_folder: the path of conf folder
     """
     msg("Installing configuration to %s/etc/archipel" % prefix)
+    if not os.path.isdir("%s/etc/archipel/modules.d"):
+        os.makedirs("%s/etc/archipel/modules.d" % prefix)
     if os.path.isdir("%s/etc/archipel/" % prefix):
         warn("Configuration files already exist. Leaving as it is")
         return False

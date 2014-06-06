@@ -116,6 +116,8 @@ def install_config_folder(prefix, conf_folder):
     @param conf_folder: the path of conf folder
     """
     msg("Installing configuration to %s/etc/archipel" % prefix)
+    if not os.path.isdir("%s/etc/archipel/central-agent-modules.d")
+        os.makedirs("%s/etc/archipel/central-agent-modules.d" % prefix)        
     if os.path.exists("%s/etc/archipel/archipel-central-agent.conf" % prefix):
         warn("Configuration files already exist. Leaving as it is")
         return False
