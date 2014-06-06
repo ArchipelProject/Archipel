@@ -69,8 +69,15 @@ class TNXMPPServerController (TNArchipelPlugin):
         if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
             self.xmlrpc_host        = configuration.get("XMPPSERVER", "xmlrpc_host")
             self.xmlrpc_port        = configuration.getint("XMPPSERVER", "xmlrpc_port")
-            self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
-            self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
+
+            if self.entity.__class__.__name__ == "TNArchipelHypervisor":
+                self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
+                self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
+            
+            if self.entity.__class__.__name__ != "TNArchipelCentralAgent":
+                self.xmlrpc_user        = configuration.get("CENTRALAGENT", "central_agent_xmpp_jid").split("@")[0]
+                self.xmlrpc_password    = configuration.get("CENTRALAGENT", "central_agent_xmpp_password")
+
             self.xmlrpc_prefix      = "https" if configuration.getboolean("XMPPSERVER", "xmlrpc_sslonly") else "http"
             self.xmlrpc_call        = "%s://%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_host, self.xmlrpc_port)
             self.xmlrpc_auth        = {'user':self.xmlrpc_user, 'server': self.xmlrpc_host, 'password': self.xmlrpc_password}
