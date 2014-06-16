@@ -31,7 +31,6 @@ import sys
 import time
 import traceback
 import xmpp
-from pkg_resources import iter_entry_points
 from pkg_resources import iter_entry_points,load_entry_point
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
