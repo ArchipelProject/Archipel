@@ -117,7 +117,6 @@ setup(name='archipel-agent',
         ('install/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
         ('install/etc/init.d/'             , ['install/etc/init.d/archipel']),
         ('install/usr/lib/systemd/system/' , ['install/usr/lib/systemd/system/archipel-agent.service']),
-        ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem']),
-        ('install/etc/archipel/modules.d/' , [])
+        ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )

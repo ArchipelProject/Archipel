@@ -76,6 +76,6 @@ setup(name=NAME,
       ],
       entry_points=ENTRY_POINTS,
       data_files=[
-        ('/etc/archipel/modules.d/' , ["install/etc/archipel/modules.d/vm_storage.conf"])
+        ('configuration' , ["configuration/plugin.conf"])
         ]
       )
