@@ -121,7 +121,7 @@ def init_conf(paths):
     conf = ConfigParser.ConfigParser()
     conf.read(paths)
     if conf.has_option("GLOBAL", "modules_configuration_path"):
-        plugins_path = self.configuration.get("GLOBAL", "modules_configuration_path")
+        plugins_path = conf.get("GLOBAL", "modules_configuration_path")
         plugins_conf = glob.glob(plugins_path+"/*.conf")
         conf.read(plugins_conf)
     for section in conf.sections():
