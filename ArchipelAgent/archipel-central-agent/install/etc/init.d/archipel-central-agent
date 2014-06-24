@@ -93,7 +93,7 @@ status() {
         exit 0
     else
         echo -ne " * $PROGNAME state: \\033[31m[STOPPED]\\033[0m\\n"
-        exit 0
+        exit 3
     fi
 
 }
