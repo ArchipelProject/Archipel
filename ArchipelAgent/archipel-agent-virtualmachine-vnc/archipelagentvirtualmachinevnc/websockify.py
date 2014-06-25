@@ -11,7 +11,7 @@ as taken from http://docs.python.org/dev/library/ssl.html#certificates
 
 '''
 
-import socket, optparse, time, os, sys, subprocess
+import socket, time, os, sys, subprocess
 from select import select
 import websocket
 try:    from urllib.parse import parse_qs, urlparse
@@ -290,94 +290,3 @@ Traffic Legend:
                     self.vmsg("%s:%s: Client closed connection" %(
                         self.target_host, self.target_port))
                     raise self.CClose(closed['code'], closed['reason'])
-
-def websockify_init():
-    usage = "\n    %prog [options]"
-    usage += " [source_addr:]source_port [target_addr:target_port]"
-    usage += "\n    %prog [options]"
-    usage += " [source_addr:]source_port -- WRAP_COMMAND_LINE"
-    parser = optparse.OptionParser(usage=usage)
-    parser.add_option("--verbose", "-v", action="store_true",
-            help="verbose messages and per frame traffic")
-    parser.add_option("--record",
-            help="record sessions to FILE.[session_number]", metavar="FILE")
-    parser.add_option("--daemon", "-D",
-            dest="daemon", action="store_true",
-            help="become a daemon (background process)")
-    parser.add_option("--run-once", action="store_true",
-            help="handle a single WebSocket connection and exit")
-    parser.add_option("--timeout", type=int, default=0,
-            help="after TIMEOUT seconds exit when not connected")
-    parser.add_option("--idle-timeout", type=int, default=0,
-            help="server exits after TIMEOUT seconds if there are no "
-                 "active connections")
-    parser.add_option("--cert", default="self.pem",
-            help="SSL certificate file")
-    parser.add_option("--key", default=None,
-            help="SSL key file (if separate from cert)")
-    parser.add_option("--ssl-only", action="store_true",
-            help="disallow non-encrypted client connections")
-    parser.add_option("--ssl-target", action="store_true",
-            help="connect to SSL target as SSL client")
-    parser.add_option("--unix-target",
-            help="connect to unix socket target", metavar="FILE")
-    parser.add_option("--web", default=None, metavar="DIR",
-            help="run webserver on same port. Serve files from DIR.")
-    parser.add_option("--wrap-mode", default="exit", metavar="MODE",
-            choices=["exit", "ignore", "respawn"],
-            help="action to take when the wrapped program exits "
-            "or daemonizes: exit (default), ignore, respawn")
-    parser.add_option("--prefer-ipv6", "-6",
-            action="store_true", dest="source_is_ipv6",
-            help="prefer IPv6 when resolving source_addr")
-    parser.add_option("--target-config", metavar="FILE",
-            dest="target_cfg",
-            help="Configuration file containing valid targets "
-            "in the form 'token: host:port' or, alternatively, a "
-            "directory containing configuration files of this form")
-    (opts, args) = parser.parse_args()
-
-    # Sanity checks
-    if len(args) < 2 and not opts.target_cfg:
-        parser.error("Too few arguments")
-    if sys.argv.count('--'):
-        opts.wrap_cmd = args[1:]
-    else:
-        opts.wrap_cmd = None
-        if len(args) > 2:
-            parser.error("Too many arguments")
-
-    if not websocket.ssl and opts.ssl_target:
-        parser.error("SSL target requested and Python SSL module not loaded.");
-
-    if opts.ssl_only and not os.path.exists(opts.cert):
-        parser.error("SSL only and %s not found" % opts.cert)
-
-    # Parse host:port and convert ports to numbers
-    if args[0].count(':') > 0:
-        opts.listen_host, opts.listen_port = args[0].rsplit(':', 1)
-        opts.listen_host = opts.listen_host.strip('[]')
-    else:
-        opts.listen_host, opts.listen_port = '', args[0]
-
-    try:    opts.listen_port = int(opts.listen_port)
-    except: parser.error("Error parsing listen port")
-
-    if opts.wrap_cmd or opts.unix_target or opts.target_cfg:
-        opts.target_host = None
-        opts.target_port = None
-    else:
-        if args[1].count(':') > 0:
-            opts.target_host, opts.target_port = args[1].rsplit(':', 1)
-            opts.target_host = opts.target_host.strip('[]')
-        else:
-            parser.error("Error parsing target")
-        try:    opts.target_port = int(opts.target_port)
-        except: parser.error("Error parsing target port")
-
-    # Create and start the WebSockets proxy
-    server = WebSocketProxy(**opts.__dict__)
-    server.start_server()
-
-if __name__ == '__main__':
-    websockify_init()

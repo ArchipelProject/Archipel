@@ -51,7 +51,7 @@ def format_version(info):
         for p in info[2]:
             print "     + %s" % p["identifier"]
 
-def versions(option, opt, value, parser):
+def versions():
     """
     Display all the versions
     """

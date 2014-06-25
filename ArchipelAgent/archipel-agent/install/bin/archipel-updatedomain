@@ -21,7 +21,7 @@
 import os
 import sqlite3
 import sys
-from optparse import OptionParser
+import argparse
 import commands
 
 
@@ -39,17 +39,17 @@ def update(dbfile, newdomain):
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-f", "--file",
+    pparser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file",
                         dest="dbfile",
                         help="the sqlite3 file of hypervisor",
                         metavar="FILE",
                         default="/var/lib/archipel/hypervisor.sqlite3")
-    parser.add_option("-d", "--domain",
+    parser.add_argument("-d", "--domain",
                         dest="domain",
                         help="the new domain to use",
                         metavar="DOMAIN")
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     for p in ("/var/lock/subsys/archipel", "/var/lock/archipel", "/tmp/.lock-archipel"):
         if os.path.exists(p):

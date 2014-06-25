@@ -17,10 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import argparse
 import os
 import sys
-from optparse import OptionParser
 import xmpp
 import archipelcore.pubsub
 
@@ -345,21 +344,22 @@ def test_xmlrpc_modadminextra(jid, password):
 ## Main
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-j", "--jid",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-j", "--jid",
                         dest="jid",
                         help="set the JID to use",
                         metavar="JID")
-    parser.add_option("-p", "--password",
+    parser.add_argument("-p", "--password",
                         dest="password",
                         help="set the password associated to the JID",
                         metavar="PASSWORD")
-    parser.add_option("-P", "--pubsubserver",
+    parser.add_argument("-P", "--pubsubserver",
                         dest="pubsubserver",
                         help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
                         metavar="PUBSUBSERVER",
                         default=None)
-    options, args = parser.parse_args()
+    
+    options = parser.parse_args()
 
     if not options.jid or not options.password:
         parser.error("you must enter a JID and a PASSWORD. see --help for help")

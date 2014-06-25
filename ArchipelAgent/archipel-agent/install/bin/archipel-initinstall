@@ -22,7 +22,7 @@ import uuid
 import string
 import sys
 
-from optparse import OptionParser
+import argparse
 from pkg_resources import Requirement, resource_filename, iter_entry_points
 from random import choice
 from socket import gethostname, getfqdn
@@ -253,39 +253,39 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto", force_initd=F
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-p", "--prefix",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--prefix",
                         dest="prefix",
                         help="all installation folders and files will be prefixed with given value",
                         metavar="PREFIX",
                         default="")
-    parser.add_option("-f", "--force",
+    parser.add_argument("-f", "--force",
                         dest="clean",
                         help="before installing, clean all existing folder and files. IT WILL DESTROY YOUR CURRENT INSTALLATION, VM DRIVES etc. Be warned!",
                         action="store_true",
                         default=False)
-    parser.add_option("-x", "--xmpp-server",
+    parser.add_argument("-x", "--xmpp-server",
                         dest="xmpp_server",
                         help="set the fqdn of the XMPP server, defaults to local fqdn",
                         metavar="FQDN",
                         default="auto")
-    parser.add_option("-n", "--hypervisor-name",
+    parser.add_argument("-n", "--hypervisor-name",
                         dest="hypervisor_name",
                         help="set the name of the hypervisor (left part of the JID), defaults to <hostname>",
                         metavar="SERVER",
                         default="auto")
-    parser.add_option("-i", "--force-initd",
+    parser.add_argument("-i", "--force-initd",
                         dest="force_initd",
                         help="tell installation to force using initd even if systemd is present",
                         action="store_true",
                         default=False)
-    parser.add_option("-m", "--modules-only",
+    parser.add_argument("-m", "--modules-only",
                         dest="modules_only",
                         help="initialize modules configuration files (if modules are installed after archipel-initinstall has been done)",
                         action="store_true",
                         default=False)
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     if options.clean:
         clean_installation(options.prefix)
