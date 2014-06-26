@@ -117,7 +117,7 @@ if __name__ == "__main__":
     """
     Main loop of the program
     """
-    pparser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config",
                         dest="config",
                         help="the config file to use",
