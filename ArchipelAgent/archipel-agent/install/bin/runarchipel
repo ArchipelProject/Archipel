@@ -125,7 +125,7 @@ if __name__ == "__main__":
                         default="/etc/archipel/archipel.conf")
     parser.add_argument("-v", "--version",
                         dest="version",
-                        action=store_true,
+                        action="store_true",
                         help="display the version of all components",
                         default=False)
     parser.add_argument("-n", "--nofork",

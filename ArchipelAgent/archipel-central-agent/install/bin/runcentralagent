@@ -105,7 +105,7 @@ if __name__ == "__main__":
                         default="/etc/archipel/archipel-central-agent.conf")
     parser.add_argument("-v", "--version",
                         dest="version",
-                        action=store_true,
+                        action="store_true",
                         help="display the version of all components",
                         default=False)
     parser.add_argument("-n", "--nofork",
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     if options.version:
         versions()
-        
+
     # Read configuration
     config = initialize_config(options.config.split(","), options.cmdline_path, options.prepare_only)
 
