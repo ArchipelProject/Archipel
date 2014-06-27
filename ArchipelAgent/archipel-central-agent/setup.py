@@ -93,6 +93,7 @@ setup(name='archipel-central-agent',
         'install/bin/archipel-central-agent-initinstall'
         ],
       data_files=[
+        ('install/var/lib/archipel/avatars'             , create_avatar_list("install/var/lib/archipel/avatars/")),
         ('install/etc/init.d'                           , ['install/etc/init.d/archipel-central-agent']),
         ('install/etc/archipel/'                        , ['install/etc/archipel/archipel-central-agent.conf'])
         ]

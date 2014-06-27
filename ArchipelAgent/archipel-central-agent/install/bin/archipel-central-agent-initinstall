@@ -159,6 +159,24 @@ def pre_configure(prefix, conf_folder, xmpp_server):
     conf_in.close()
     conf_out.close()
 
+def install_data_folder(prefix, lib_folder):
+    """
+    Install the data folder
+    @type prefix: string
+    @param prefix: the installation prefix
+    @type lib_folder: string
+    @param lib_folder: the path of conf file
+    """
+    msg("Installing data folder to %s/var/lib/archipel" % prefix)
+    if os.path.isdir("%s/var/lib/archipel" % prefix):
+        warn("Lib folder already exists. Leaving as it is.")
+        return
+    os.makedirs("%s/var/lib/archipel" % prefix)
+    if os.system("cp -a %s/* '%s/var/lib/archipel'" % (lib_folder.replace(" ", "\\ "), prefix)) == 0:
+        success("Lib folder installed")
+    else:
+        error("Unable to install lib folder")
+        
 def get_data_files(prefix):
     """
     Try to find the data files
@@ -168,6 +186,7 @@ def get_data_files(prefix):
     init_script = resource_filename(Requirement.parse("archipel-central-agent"),"install/etc/init.d/archipel-central-agent")
     systemd_script = resource_filename(Requirement.parse("archipel-central-agent"),"install/usr/lib/systemd/system/archipel-central-agent.service")
     conf_folder = resource_filename(Requirement.parse("archipel-central-agent"),"install/etc/archipel")
+    lib_folder = resource_filename(Requirement.parse("archipel-agent"),"install/var/lib/archipel")
 
     # we are in the case of RPM installation
     if not os.path.exists(init_script):
@@ -176,7 +195,9 @@ def get_data_files(prefix):
         systemd_script = "%s/usr/lib/systemd/system/archipel-central-agent.service" % prefix
     if not os.path.exists(conf_folder):
         conf_folder = "%s/usr/install/etc/archipel" % prefix
-    return (init_script, systemd_script, conf_folder)
+    if not os.path.exists(lib_folder):
+        lib_folder = "%s/usr/install/var/lib/archipel" % prefix
+    return (init_script, systemd_script, conf_folder, lib_folder)
 
 def configure_ejabberd(password):
     """
@@ -219,7 +240,7 @@ def init_modules(prefix=""):
 
 def install(prefix="", xmpp_server="auto", password=None):
 
-    init_script, systemd_script, conf_folder = get_data_files(prefix)
+    init_script, systemd_script, conf_folder, lib_folder = get_data_files(prefix)
 
     msg("Installation initialization started")
     try:
@@ -239,15 +260,11 @@ def install(prefix="", xmpp_server="auto", password=None):
         install_init_script(prefix, init_script, systemd_script)
         if install_config_folder(prefix, conf_folder):
             pre_configure(prefix, conf_folder, xmpp_server)
-        if os.path.isdir("%s/var/lib/archipel" % prefix):
-            warn("Lib folder already exists. Leaving as it is.")
-        else:
-            os.makedirs("%s/var/lib/archipel" % prefix)
+        install_data_folder(prefix,lib_folder)
+        init_modules(prefix)
     except Exception as ex :
         error(str(ex))
         sys.exit(1)
-
-    init_modules(prefix)
 
     success("Archipel installation complete")
     msg("You may now edit /etc/archipel/archipel-central-agent.conf to match your info")
