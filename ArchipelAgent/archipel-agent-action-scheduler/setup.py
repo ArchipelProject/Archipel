@@ -76,7 +76,7 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "apscheduler>=1.3.1",
+        "apscheduler<3",
         "archipel-core>=0.6.0beta"
       ],
       entry_points=ENTRY_POINTS,
