@@ -247,7 +247,7 @@ def install(prefix="", xmpp_server="auto", password=None):
         error(str(ex))
         sys.exit(1)
 
-        init_modules(prefix)
+    init_modules(prefix)
 
     success("Archipel installation complete")
     msg("You may now edit /etc/archipel/archipel-central-agent.conf to match your info")
