@@ -212,7 +212,7 @@ class TNArchipelEntity (object):
                             self.plugins.append(plugin)                    
                             self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
             except Exception as ex:
-                self.log.error("PLUGIN: unable to load plugin %s: %s" % (str(factory_method), str(ex)))
+                self.log.error("PLUGIN: unable to load plugin %s: %s" % (plugin_info["identifier"], str(ex)))
                 t, v, tr = sys.exc_info()
                 self.log.debug("\n".join(traceback.format_exception(t,v,tr)))
         self.perform_hooks("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED")

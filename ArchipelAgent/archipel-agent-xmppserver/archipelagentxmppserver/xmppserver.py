@@ -74,7 +74,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
                 self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
             
-            if self.entity.__class__.__name__ != "TNArchipelCentralAgent":
+            if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
                 self.xmlrpc_user        = configuration.get("CENTRALAGENT", "central_agent_xmpp_jid").split("@")[0]
                 self.xmlrpc_password    = configuration.get("CENTRALAGENT", "central_agent_xmpp_password")
 
