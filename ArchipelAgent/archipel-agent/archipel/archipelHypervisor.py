@@ -217,9 +217,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         if not self.get_plugin("centraldb"):
             self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
-            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
-        else:
-            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence_initialization)
+            
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
 
 
     ### Overrides
@@ -274,12 +273,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             status = "%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
 
         self.change_presence(self.xmppstatusshow, status)
-
-    def update_presence_initialization(self, origin=None, user_info=None, parameters=None):
-        """
-        Set the initial presence of the hypervisor.
-        """
-        self.update_presence(origin=origin, user_info=user_info, parameters=parameters, initializing=True)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
         """
@@ -398,6 +391,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else where or not ?), we proceed to start vms
         """
 
+        self.update_presence(initializing=True)
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         c = self.database.cursor()
         vms_started_elsewhere_uuids = []
@@ -673,6 +667,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
+        self.update_presence(initializing=True)
         if requested_uuid:
             vm_uuid = requested_uuid
         else:
