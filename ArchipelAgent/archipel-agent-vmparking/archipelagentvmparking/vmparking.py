@@ -284,10 +284,10 @@ class TNVMParking (TNArchipelPlugin):
 
             vm = self.entity.get_vm_by_uuid(vm_info["uuid"])
             if not vm:
-                self.entity.log.error("VMPARKING: No virtual machine with UUID %s" % vm_info["uuid"])
+                self.entity.log.warning("VMPARKING: No virtual machine with UUID %s" % vm_info["uuid"])
                 continue
             if not vm.domain:
-                self.entity.log.error("VMPARKING: VM with UUID %s cannot be parked because it is not defined" % vm_info["uuid"])
+                self.entity.log.warning("VMPARKING: VM with UUID %s cannot be parked because it is not defined" % vm_info["uuid"])
                 continue
             vm_informations_cleaned.append(vm_info)
 
@@ -302,8 +302,9 @@ class TNVMParking (TNArchipelPlugin):
             vm_info["hypervisor"]=None
             new_vm_info.append(vm_info)
             self.entity.soft_free(vm_jid)
-        self.set_vms_status(new_vm_info)
-        self.entity.push_change("vmparking", "parked")
+        if len(new_vm_info) > 0:
+            self.set_vms_status(new_vm_info)
+            self.entity.push_change("vmparking", "parked")
 
     def unpark(self, vm_information):
         """

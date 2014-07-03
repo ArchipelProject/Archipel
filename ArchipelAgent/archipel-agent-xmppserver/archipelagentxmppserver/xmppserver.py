@@ -217,10 +217,10 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type entity: object
         @param entity: runtime argument
         """
-        if isinstance(entity, TNArchipelVirtualMachine):
+        if entity.__class__.__name__ == "TNArchipelVirtualMachine":
             group_name = self.autogroup_name_vms
             group_id = self.autogroup_vms_id
-        elif isinstance(entity, TNArchipelHypervisor):
+        elif entity.__class__.__name__ == "TNArchipelHypervisor":
             group_name = self.autogroup_name_hypervisors
             group_id = self.autogroup_hypervisors_id
         try:
