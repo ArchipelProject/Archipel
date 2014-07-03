@@ -242,8 +242,11 @@ class TNVMParking (TNArchipelPlugin):
                 reply = iq.buildReply("result")
                 parked_vms = []
                 for vm in vms:
-                    parked_vms.append({"info": {"uuid": vm["uuid"], "parker": vm["parker"], "date": vm["creation_date"]}, "domain": xmpp.simplexml.NodeBuilder(vm["domain"]).getDom()})
-        
+                    try:
+                        parked_vms.append({"info": {"uuid": vm["uuid"], "parker": vm["parker"], "date": vm["creation_date"]}, "domain": xmpp.simplexml.NodeBuilder(vm["domain"]).getDom()})
+                    except:
+                        self.entity.log.warning("VMPARKING: Error parsing entry %s" % vm)
+
                 def sorting(a, b):
                     a_name=""
                     b_name=""
