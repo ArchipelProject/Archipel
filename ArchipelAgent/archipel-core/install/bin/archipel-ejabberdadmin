@@ -60,22 +60,25 @@ def _fecth_acls(xmppclient):
     iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
     result = xmppclient.SendAndWaitForResponse(iq)
     if result.getType() == "result":
-        items = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
-        admins=[]
-        try:
-            for item in items:
-                #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
-                m = re.search('{user,{', item.getData())
-                if m:
-                    global new_acl_syntax
-                    new_acl_syntax = True
-                raw_admin_string = item.getData().split(",")[3] + "@" + item.getData().split(",")[4].split("}")[0]
-                admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
+        values  = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
+        admins  = []
+        str_val = ""
+        for value in values:
+            str_val+=value.getData()
 
-        except:
-            pass
-        finally:
-            return admins
+        for acl in str_val.replace(" ", "").split("{acl"):
+            #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
+            m = re.search('{user,{', acl)
+            if m:
+                global new_acl_syntax
+                new_acl_syntax = True
+            try:
+                raw_admin_string = acl.split(",")[3] + "@" + acl.split(",")[4].split("}")[0]
+            except:
+                continue
+            admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
+
+        return admins
 
 def _update_acls(current_admins):
     """
