@@ -681,7 +681,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("XMPPSERVER: Successfully registered user(s).")
                 self.entity.push_change("xmppserver:users", "registered")
             else:
-                self.entity.push_change("xmppserver:users", "registerationerror", content_node=iq)
+                self.entity.push_change("xmppserver:users", "registerationerror", iq)
                 self.entity.log.error("XMPPSERVER: Unable to register user. %s" % str(iq))
         server = self.entity.jid.getDomain()
         for user in users:
@@ -727,7 +727,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("XMPPSERVER: Successfully unregistered user(s).")
                 self.entity.push_change("xmppserver:users", "unregistered")
             else:
-                self.entity.push_change("xmppserver:users", "unregisterationerror", content_node=iq)
+                self.entity.push_change("xmppserver:users", "unregisterationerror", iq)
                 self.entity.log.error("XMPPSERVER: unable to unregister user. %s" % str(iq))
 
         iq = xmpp.Iq(typ="set", to=self.entity.jid.getDomain())
@@ -893,7 +893,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("XMPPSERVER: Successfully changed paswword for user(s).")
                 self.entity.push_change("xmppserver:users", "passwordchanged")
             else:
-                self.entity.push_change("xmppserver:users", "changepassworderror", content_node=iq)
+                self.entity.push_change("xmppserver:users", "changepassworderror", iq)
                 self.entity.log.error("XMPPSERVER: Unable to change password for user. %s" % str(iq))
         server = self.entity.jid.getDomain()
         for user in users:
