@@ -205,16 +205,16 @@ def export_rpms(repo_path, package_paths, export_path=None):
         export_path = os.path.join(repo_path, "Archipel_RPMS")
     if not os.path.isdir(export_path):
         os.makedirs(export_path)
-    if not os.path.exists(os.path.join(export_path, "RPMS")):
-        os.makedirs(os.path.join(export_path, "RPMS"))
+    if not os.path.exists(os.path.join(export_path, "RPMS/noarch")):
+        os.makedirs(os.path.join(export_path, "RPMS/noarch"))
     if not os.path.exists(os.path.join(export_path, "SRPMS")):
         os.makedirs(os.path.join(export_path, "SRPMS"))
 
     for package_path in package_paths:
-        if os.system("cp -a %s/dist/*noarch.rpm %s/RPMS" % (package_path, export_path)) == 0:
-            success("Package %s copied to %s/RPMS" % (os.path.basename(package_path), export_path))
+        if os.system("cp -a %s/dist/*noarch.rpm %s/RPMS/noarch" % (package_path, export_path)) == 0:
+            success("Package %s copied to %s/RPMS/noarch" % (os.path.basename(package_path), export_path))
         else:
-            error("Unable to copy %s to %s/RPMS" % (os.path.basename(package_path), export_path))
+            error("Unable to copy %s to %s/RPMS/noarch" % (os.path.basename(package_path), export_path))
         if os.system("cp -a %s/dist/*src.rpm %s/SRPMS" % (package_path, export_path)) == 0:
             success("Package %s copied to %s/SRPMS" % (os.path.basename(package_path), export_path))
         else:
@@ -248,29 +248,32 @@ def uninstall():
             os.system("rm -f `which archipel-%s`" % script_name)
             success("archipel-%s script has been removed" % script_name)
 
-def build_apscheduler_rpm(export_path):
+def build_apscheduler_rpm(export_path=None):
     """
     Build the APScheduler RPM
     @type export_path: String
     @param export_path: the path where to copy the RPM after build
     """
-    apscheduler_url = "http://pypi.python.org/packages/source/A/APScheduler/APScheduler-2.0.2.tar.gz"
+    apscheduler_url = "http://pypi.python.org/packages/source/A/APScheduler/APScheduler-2.1.2.tar.gz"
     msg("Downloading the APScheduler source from pypi")
     if os.system("cd /tmp && wget %s" % apscheduler_url):
         error("Unable to download APScheduler source from %s" %apscheduler_url)
     success("APScheduler source downloaded")
     msg("Untaring the source")
-    if os.system("cd /tmp && tar -xzf APScheduler-2.0.2.tar.gz"):
+    if os.system("cd /tmp && tar -xzf APScheduler-2.1.2.tar.gz"):
         error("Unable to untar the source tar")
     success("Source untared")
     msg("Building the RPM")
-    if os.system("cd /tmp/APScheduler-2.0.2 && python setup.py bdist_rpm"):
+    if os.system("cd /tmp/APScheduler-2.1.2 && python setup.py bdist_rpm"):
         error("Unable to build the RPM")
     success("RPM Built")
-    msg("Copying RPMS to %s" % export_path)
-    if os.system("cp /tmp/APScheduler-2.0.2/dist/*rpm '%s'" % export_path):
-        error("Unable to copy the RPM to repo path %s" % export_path)
-    success("APScheduler RPM ready")
+    if export_path:
+        msg("Copying RPMS to %s" % export_path)
+        if os.system("cp /tmp/APScheduler-2.1.2/dist/*rpm '%s'" % export_path):
+            error("Unable to copy the RPM to repo path %s" % export_path)
+        success("APScheduler RPM ready")
+    else:
+        return "/tmp/APScheduler-2.1.2"
 
 def build_live_cd():
     """
@@ -389,9 +392,9 @@ if __name__ == "__main__":
                         default=False)
     parser.add_argument("-e", "--export",
                         dest="export",
-                        help="Export all RPMS to ./Archipel_RPMS",
-                        action="store_true",
-                        default=False)
+                        help="Export all RPMS to given dir (default is ./Archipel_RPMS)",
+                        metavar="EXPORT",
+                        default="Archipel_RPMS")
     parser.add_argument("-U", "--uninstall",
                         dest="uninstall",
                         help="Remove all Archipel's binary files. Data files (info, conf) remains safe",
@@ -423,8 +426,9 @@ if __name__ == "__main__":
         msg("Generating RPMS")
         generate_rpms(packages_paths)
         if options.export:
-            msg("Exporting the RPMS in %s")
-            export_rpms(PATH, packages_paths)
+            msg("Exporting the RPMS in %s" % options.export)
+            packages_paths.append(build_apscheduler_rpm())
+            export_rpms(PATH, packages_paths, options.export)
         msg("All action performed")
 
     elif options.pypi_register:

@@ -1,2 +1,3 @@
 include LICENSE setup.py setup.cfg
 recursive-include archipelagentactionscheduler *
+recursive-include configuration *
