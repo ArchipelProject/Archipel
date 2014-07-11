@@ -211,11 +211,13 @@ def configure_ejabberd(password):
     os.system("archipel-centralagentnode -j admin@$(hostname) -p %s -c" % password)
     os.system("archipel-adminaccounts -j admin@$(hostname) -p %s -c" % password)
 
-def init_modules(prefix=""):
+def init_modules(prefix="",module=None):
     """
     Try to find every central-agent modules installed and deploy configuration file if any
     @type prefix: string
     @param prefix: the installation prefix
+    @type module: string
+    @param module: a specifi module to load
     """
     config = initialize_config("%s/etc/archipel/archipel-central-agent.conf" % prefix)
     try:
@@ -227,9 +229,14 @@ def init_modules(prefix=""):
     for plugin in iter_entry_points(group="archipel.plugin", name="version"):
         if "archipel.plugin.centralagent" not in plugin.dist.get_entry_map():
             continue
+        if module and module != "All" and plugin.dist.project_name != module:
+            continue
         msg("Installation configuration for plugin %s" %(plugin.dist))
         conf_file = plugin.dist.project_name.replace("archipel-agent-","").replace("archipel-central-agent-","")
         conf_res = resource_filename(Requirement.parse(plugin.dist.project_name),"configuration/plugin.conf")
+        # we are in the case of RPM installation
+        if not os.path.exists(conf_res):
+            conf_res = resource_filename(Requirement.parse(plugin.dist.project_name),"%s/configuration/plugin.conf" % plugin.module_name)
         if os.path.isfile("%s/%s.conf" % (module_path,conf_file)):
             warn("Configuration file for %s already exist, skipping..." % plugin.dist.project_name)
             continue
@@ -294,15 +301,16 @@ if __name__ == "__main__":
                         default="auto")
     parser.add_argument("-m", "--modules-only",
                         dest="modules_only",
-                        help="initialize modules configuration files (if modules are installed after archipel-initinstall has been done)",
-                        action="store_true",
-                        default=False)
+                        nargs="?",
+                        help="initialize modules configuration files. If no module provided it will initialize all of them",
+                        metavar="MODULE NAME",
+                        const="All")
 
     options = parser.parse_args()
 
     if options.clean:
         clean_installation(options.prefix)
     elif options.modules_only:
-        init_modules(options.prefix)
+        init_modules(options.prefix, options.modules_only)
     else:
         install(options.prefix, options.xmpp_server, options.admin_password)

@@ -202,11 +202,13 @@ def get_data_files(prefix):
         lib_folder = "%s/usr/install/var/lib/archipel" % prefix
     return (init_script, systemd_script, conf_folder, lib_folder)
 
-def init_modules(prefix=""):
+def init_modules(prefix="",module=None):
     """
-    Try to find every archipel modules installed and deploy configuration file if any
+    Try to find every central-agent modules installed and deploy configuration file if any
     @type prefix: string
     @param prefix: the installation prefix
+    @type module: string
+    @para
     """
     config = initialize_config("%s/etc/archipel/archipel.conf" % prefix)
     try:
@@ -218,9 +220,14 @@ def init_modules(prefix=""):
     for plugin in iter_entry_points(group="archipel.plugin", name="version"):
         if not (("archipel.plugin.hypervisor" in plugin.dist.get_entry_map()) or ("archipel.plugin.virtualmachine" in plugin.dist.get_entry_map())):
             continue
+        if module and module != "All" and plugin.dist.project_name != module:
+            continue
         msg("Installation configuration for plugin %s" %(plugin.dist))
         conf_file = plugin.dist.project_name.replace("archipel-agent-","")
         conf_res = resource_filename(Requirement.parse(plugin.dist.project_name),"configuration/plugin.conf")
+        # we are in the case of RPM installation
+        if not os.path.exists(conf_res):
+            conf_res = resource_filename(Requirement.parse(plugin.dist.project_name),"%s/configuration/plugin.conf" % plugin.module_name)
         if os.path.isfile("%s/%s.conf" % (module_path,conf_file)):
             warn("Configuration file for %s already exist, skipping..." % plugin.dist.project_name)
             continue
@@ -240,11 +247,10 @@ def install(prefix="", xmpp_server="auto", hypervisor_name="auto", force_initd=F
         if install_config_folder(prefix, conf_folder):
             pre_configure(prefix, conf_folder, hypervisor_name, xmpp_server)
         install_data_folder(prefix,lib_folder )
+        init_modules(prefix)
     except Exception as ex :
         error(str(ex))
         sys.exit(1)
-
-    init_modules(prefix)
 
     success("Archipel installation complete")
     msg("IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf to match your info")
@@ -281,15 +287,16 @@ if __name__ == "__main__":
                         default=False)
     parser.add_argument("-m", "--modules-only",
                         dest="modules_only",
-                        help="initialize modules configuration files (if modules are installed after archipel-initinstall has been done)",
-                        action="store_true",
-                        default=False)
+                        nargs="?",
+                        help="initialize modules configuration files. If no module provided it will initialize all of them",
+                        metavar="MODULE NAME",
+                        const="All")
 
     options = parser.parse_args()
 
     if options.clean:
         clean_installation(options.prefix)
     elif options.modules_only:
-        init_modules(options.prefix)
+        init_modules(options.prefix, options.modules_only)
     else:
         install(options.prefix, options.xmpp_server, options.hypervisor_name, options.force_initd)
