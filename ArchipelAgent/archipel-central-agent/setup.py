@@ -31,7 +31,7 @@ in your environment, for monitoring of your whole system.
 For more information, please go to http://archipelproject.org
 """
 
-RPM_REQUIRED_DEPS = "archipel-core, python-imaging"
+RPM_REQUIRED_DEPS = "archipel-core, python-imaging, python-argparse"
 RPM_POST_INSTALL = "%post\narchipel-central-agent-initinstall\n"
 
 ## HACK FOR DEPS IN RPMS

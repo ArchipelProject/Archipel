@@ -33,7 +33,7 @@ For more information, please go to http://archipelproject.org
 """
 
 #RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt-python"
-RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt, libvirt-python"
+RPM_REQUIRED_DEPS = "archipel-core, python-imaging, python-argparse, libvirt, libvirt-python"
 RPM_POST_INSTALL = "%post\narchipel-initinstall -i\n"
 
 ## HACK FOR DEPS IN RPMS
