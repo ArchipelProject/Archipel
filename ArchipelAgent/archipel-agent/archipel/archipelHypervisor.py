@@ -1335,9 +1335,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
     def on_xmpp_loop_tick(self):
         if self.wait_for_central_agent:
             self.wait_for_central_agent += 1
-            if self.get_plugin("centraldb").central_agent_jid():
-                self.wait_for_central_agent = None
-                return
+            if self.get_plugin("centraldb"):
+                if self.get_plugin("centraldb").central_agent_jid():
+                    self.wait_for_central_agent = None
+                    return
             if self.wait_for_central_agent > ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
                 self.log.error("HYPERVISOR: did not detect any central agent after %s ticks, starting vms based on local db info only." % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
                 self.wake_up_virtual_machines_hook()
