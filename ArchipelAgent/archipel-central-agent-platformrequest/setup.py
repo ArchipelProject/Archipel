@@ -77,5 +77,4 @@ setup(name=NAME,
           "archipel-core>=0.6.0beta"
       ],
       entry_points=ENTRY_POINTS
-        ]
       )
