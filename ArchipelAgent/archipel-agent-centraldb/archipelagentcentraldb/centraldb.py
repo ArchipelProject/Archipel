@@ -237,10 +237,10 @@ class TNCentralDb (TNArchipelPlugin):
         self.register_hypervisors([{"jid":self.entity.jid, "status":"Online", "last_seen": datetime.datetime.now(), "stat1":0, "stat2":0, "stat3":0}])
         # parsing required statistics to be pushed to central agent
         self.required_statistics = []
-
-        for required_stat in central_announcement_event.getTag("required_stats").getChildren():
-
-            self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
+        
+        if central_announcement_event.getTag("required_stats"):
+            for required_stat in central_announcement_event.getTag("required_stats").getChildren():
+                self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
 
     ### Database Management
 

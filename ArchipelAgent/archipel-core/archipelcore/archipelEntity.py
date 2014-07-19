@@ -31,7 +31,7 @@ import sys
 import time
 import traceback
 import xmpp
-from pkg_resources import iter_entry_points
+from pkg_resources import iter_entry_points,load_entry_point
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelFileTransferCapableEntity import TNFileTransferCapableEntity
@@ -182,11 +182,8 @@ class TNArchipelEntity (object):
            return
         for factory_method in iter_entry_points(group=group, name="factory"):
             try:
-                method              = factory_method.load()
-                plugins             = method(self.configuration, self, group)
-                for plugin in plugins:
-                    plugin_info     = plugin["info"]
-
+                plugin_infos = load_entry_point(factory_method.dist, group="archipel.plugin", name="version")()
+                for plugin_info in plugin_infos[2]:
                     if loading_module_policy == "restrictive":
                         if not self.configuration.has_option("MODULES", plugin_info["identifier"]):
                             self.log.info("PLUGIN: plugin %s has not been loaded as it is not defined in configuration and loading mode is restrictive." % plugin_info["identifier"])
@@ -209,8 +206,11 @@ class TNArchipelEntity (object):
                                 excluded_plugins.append(plugin_info["identifier"])
                                 self.log.error("PLUGIN: plugin %s needs configuration option with name %s" % (plugin_info["identifier"], needed_token))
                                 self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-                    self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
-                    self.plugins.append(plugin)
+                    method = factory_method.load()
+                    for plugin in method(self.configuration, self, group):
+                        if (plugin["info"]["identifier"] == plugin_info["identifier"]):
+                            self.plugins.append(plugin)                    
+                            self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
             except Exception as ex:
                 self.log.error("PLUGIN: unable to load plugin %s: %s" % (str(factory_method), str(ex)))
                 t, v, tr = sys.exc_info()

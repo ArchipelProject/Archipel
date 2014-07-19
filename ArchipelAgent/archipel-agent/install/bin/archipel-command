@@ -19,7 +19,7 @@
 
 import sys
 import xmpp
-from optparse import OptionParser
+import argparse
 
 import archipelcore.pubsub
 from archipelcore.scriptutils import *
@@ -37,27 +37,27 @@ def send_raw(xmppclient, to, acp, pretty):
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-j", "--jid",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-j", "--jid",
                         dest="jid",
                         help="set the JID to use",
                         metavar="user@domain")
-    parser.add_option("-p", "--password",
+    parser.add_argument("-p", "--password",
                         dest="password",
                         help="set the password associated to the JID",
                         metavar="123456")
-    parser.add_option("-t", "--to",
+    parser.add_argument("-t", "--to",
                         dest="dest_jid",
                         help="the target **full** JID (i.e. entity@fqdn/resource)")
-    parser.add_option("-r", "--raw",
+    parser.add_argument("-r", "--raw",
                         dest="send_raw",
                         help="the raw acp string to send. You do not need to set the 'from', 'to', and 'id' information")
-    parser.add_option("-P", "--nopretty",
+    parser.add_argument("-P", "--nopretty",
                         dest="nopretty_output",
                         action="store_false",
                         default=True)
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     xmppclient = initialize(options, fill_pubsubserver=False)
 

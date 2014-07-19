@@ -22,8 +22,6 @@
 import xmpp
 import xmlrpclib
 
-from archipel.archipelHypervisor import TNArchipelHypervisor
-from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
 
@@ -69,8 +67,16 @@ class TNXMPPServerController (TNArchipelPlugin):
         if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
             self.xmlrpc_host        = configuration.get("XMPPSERVER", "xmlrpc_host")
             self.xmlrpc_port        = configuration.getint("XMPPSERVER", "xmlrpc_port")
-            self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
-            self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
+
+            if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
+                self.xmlrpc_user        = configuration.get("CENTRALAGENT", "central_agent_xmpp_jid").split("@")[0]
+                self.xmlrpc_password    = configuration.get("CENTRALAGENT", "central_agent_xmpp_password")
+            else:
+                from archipel.archipelHypervisor import TNArchipelHypervisor
+                from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
+                self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
+                self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
+
             self.xmlrpc_prefix      = "https" if configuration.getboolean("XMPPSERVER", "xmlrpc_sslonly") else "http"
             self.xmlrpc_call        = "%s://%s:%s/" % (self.xmlrpc_prefix, self.xmlrpc_host, self.xmlrpc_port)
             self.xmlrpc_auth        = {'user':self.xmlrpc_user, 'server': self.xmlrpc_host, 'password': self.xmlrpc_password}
@@ -211,13 +217,14 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type entity: object
         @param entity: runtime argument
         """
-        if isinstance(entity, TNArchipelVirtualMachine):
+        if entity.__class__.__name__ == "TNArchipelVirtualMachine":
             group_name = self.autogroup_name_vms
             group_id = self.autogroup_vms_id
-        elif isinstance(entity, TNArchipelHypervisor):
+        elif entity.__class__.__name__ == "TNArchipelHypervisor":
             group_name = self.autogroup_name_hypervisors
             group_id = self.autogroup_hypervisors_id
         try:
+            self.create_autogroups_if_needed(self, None, None)
             self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (entity.jid, group_name))
             self.group_add_users(group_id, [entity.jid.getStripped()])
         except Exception as ex:
@@ -674,7 +681,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("XMPPSERVER: Successfully registered user(s).")
                 self.entity.push_change("xmppserver:users", "registered")
             else:
-                self.entity.push_change("xmppserver:users", "registerationerror", content_node=iq)
+                self.entity.push_change("xmppserver:users", "registerationerror", iq)
                 self.entity.log.error("XMPPSERVER: Unable to register user. %s" % str(iq))
         server = self.entity.jid.getDomain()
         for user in users:
@@ -720,7 +727,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("XMPPSERVER: Successfully unregistered user(s).")
                 self.entity.push_change("xmppserver:users", "unregistered")
             else:
-                self.entity.push_change("xmppserver:users", "unregisterationerror", content_node=iq)
+                self.entity.push_change("xmppserver:users", "unregisterationerror", iq)
                 self.entity.log.error("XMPPSERVER: unable to unregister user. %s" % str(iq))
 
         iq = xmpp.Iq(typ="set", to=self.entity.jid.getDomain())
@@ -886,7 +893,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("XMPPSERVER: Successfully changed paswword for user(s).")
                 self.entity.push_change("xmppserver:users", "passwordchanged")
             else:
-                self.entity.push_change("xmppserver:users", "changepassworderror", content_node=iq)
+                self.entity.push_change("xmppserver:users", "changepassworderror", iq)
                 self.entity.log.error("XMPPSERVER: Unable to change password for user. %s" % str(iq))
         server = self.entity.jid.getDomain()
         for user in users:

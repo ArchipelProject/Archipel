@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from optparse import OptionParser
+import argparse
 import commands
 import datetime
 import os
@@ -44,31 +43,31 @@ def insert(dbfile, uuid, xmppserver, name, password):
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-f", "--file",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file",
                         dest="dbfile",
                         help="the sqlite3 file of hypervisor",
                         metavar="FILE",
                         default="/var/lib/archipel/hypervisor.sqlite3")
-    parser.add_option("-x", "--xmppserver",
+    parser.add_argument("-x", "--xmppserver",
                         dest="xmppserver",
                         help="the current Archipel's XMPP server",
                         metavar="SERVER")
-    parser.add_option("-u", "--uuid",
+    parser.add_argument("-u", "--uuid",
                         dest="uuid",
                         help="the UUID of the exting libvirt machine",
                         metavar="UUID")
-    parser.add_option("-p", "--password",
+    parser.add_argument("-p", "--password",
                         dest="password",
                         help="OPTIONAL, the password the VM should use to connect to XMPP server. Generated if ommitted",
                         metavar="PASSWORD",
                         default=None)
-    parser.add_option("-n", "--name",
+    parser.add_argument("-n", "--name",
                         dest="name",
                         help="the name you want to use for this virtual machine",
                         metavar="NAME")
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     for p in ("/var/lock/subsys/archipel", "/var/lock/archipel", "/tmp/.lock-archipel"):
         if os.path.exists(p):

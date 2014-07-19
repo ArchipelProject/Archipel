@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from optparse import OptionParser
+import argparse
 import xmpp
 import re
 
@@ -60,22 +60,25 @@ def _fecth_acls(xmppclient):
     iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
     result = xmppclient.SendAndWaitForResponse(iq)
     if result.getType() == "result":
-        items = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
-        admins=[]
-        try:
-            for item in items:
-                #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
-                m = re.search('{user,{', item.getData())
-                if m:
-                    global new_acl_syntax
-                    new_acl_syntax = True
-                raw_admin_string = item.getData().split(",")[3] + "@" + item.getData().split(",")[4].split("}")[0]
-                admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
+        values  = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
+        admins  = []
+        str_val = ""
+        for value in values:
+            str_val+=value.getData()
 
-        except:
-            pass
-        finally:
-            return admins
+        for acl in str_val.replace(" ", "").split("{acl"):
+            #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
+            m = re.search('{user,{', acl)
+            if m:
+                global new_acl_syntax
+                new_acl_syntax = True
+            try:
+                raw_admin_string = acl.split(",")[3] + "@" + acl.split(",")[4].split("}")[0]
+            except:
+                continue
+            admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
+
+        return admins
 
 def _update_acls(current_admins):
     """
@@ -160,29 +163,29 @@ def remove_jid(xmppclient, jid):
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-j", "--jid",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-j", "--jid",
                         dest="jid",
                         help="set the JID to use",
                         metavar="user@domain")
-    parser.add_option("-p", "--password",
+    parser.add_argument("-p", "--password",
                         dest="password",
                         help="set the password associated to the JID",
                         metavar="123456")
-    parser.add_option("-a", "--authorize",
+    parser.add_argument("-a", "--authorize",
                         dest="authorize",
                         help="insert a new xmpp admin JID",
                         metavar="jid@domain")
-    parser.add_option("-u", "--unauthorize",
+    parser.add_argument("-u", "--unauthorize",
                         dest="unauthorize",
                         help="remove an existing xmpp admin JID",
                         metavar="jid@domain")
-    parser.add_option("-l", "--list",
+    parser.add_argument("-l", "--list",
                         action="store_true",
                         dest="list",
                         help="list all existing xmpp admin")
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     if not options.jid or not options.password or not (options.authorize or options.unauthorize or options.list):
         parser.error("you must enter a JID and a PASSWORD and an ACTION. see --help for help")

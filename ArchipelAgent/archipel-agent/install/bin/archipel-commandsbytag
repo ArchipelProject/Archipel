@@ -20,8 +20,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from optparse import OptionParser
+import argparse
 import archipelcore.pubsub
 import xmpp
 
@@ -104,32 +103,32 @@ if __name__ == "__main__":
     NUMBER_OF_EXPECTED_RESPONSES = 0
     NUMBER_OF_RESPONSES = 0
 
-    parser = OptionParser()
-    parser.add_option("-j", "--jid",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-j", "--jid",
                         dest="jid",
                         help="set the JID to use",
                         metavar="JID")
-    parser.add_option("-p", "--password",
+    parser.add_argument("-p", "--password",
                         dest="password",
                         help="set the password associated to the JID",
                         metavar="PASSWORD")
-    parser.add_option("-P", "--pubsubserver",
+    parser.add_argument("-P", "--pubsubserver",
                         dest="pubsubserver",
                         help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
                         metavar="PUBSUBSERVER",
                         default=None)
-    parser.add_option("-t", "--tags",
+    parser.add_argument("-t", "--tags",
                         dest="tags",
                         help="The macthing tags, separated by coma (--tags=tag2,tag2)",
                         metavar="ACTION",
                         default=True)
-    parser.add_option("-a", "--action",
+    parser.add_argument("-a", "--action",
                         dest="action",
                         help="Choose the action (same as chat commands)",
                         metavar="ACTION",
                         default=True)
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     if not options.jid or not options.password or not options.tags or not options.action:
         parser.error("you must enter a JID and a PASSWORD some TAGS and an ACTION. see --help for help")
