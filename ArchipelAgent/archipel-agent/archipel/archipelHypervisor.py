@@ -253,7 +253,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ### Utilities
 
-    def update_presence(self, origin=None, user_info=None, parameters=None, initializing=False):
+    def update_presence(self, origin=None, user_info=None, parameters=None, presence_msg=None):
         """
         Set the presence of the hypervisor.
         @type origin: L{TNArchipelEntity}
@@ -263,8 +263,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        if initializing:
-            minor_info = "Initializing VMs..."
+        if presence_msg:
+            minor_info = presence_msg
         else:
             minor_info = len(self.virtualmachines)
         if self.has_vmx:
@@ -391,7 +391,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else where or not ?), we proceed to start vms
         """
 
-        self.update_presence(initializing=True)
+        self.update_presence(presence_msg="Initializing...")
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         c = self.database.cursor()
         vms_started_elsewhere_uuids = []
@@ -401,6 +401,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             string_jid = vm["string_jid"]
             jid = xmpp.JID(string_jid)
             uuid = jid.getNode()
+            if uuid in self.virtualmachines:
+                self.log.debug("VM %s entity is already started" % string_jid)
+                continue
             if uuid not in vms_started_elsewhere_uuids:
                 self.log.info("Starting vm %s" % string_jid)
                 jid.setResource(self.jid.getNode().lower())
@@ -667,7 +670,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
-        self.update_presence(initializing=True)
+        self.update_presence(presence_msg="Allocating vm...")
         if requested_uuid:
             vm_uuid = requested_uuid
         else:
@@ -1336,6 +1339,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         if self.wait_for_central_agent:
             self.wait_for_central_agent += 1
             if self.get_plugin("centraldb"):
+                self.update_presence(presence_msg="Waiting for central-agent")
                 if self.get_plugin("centraldb").central_agent_jid():
                     self.wait_for_central_agent = None
                     return
