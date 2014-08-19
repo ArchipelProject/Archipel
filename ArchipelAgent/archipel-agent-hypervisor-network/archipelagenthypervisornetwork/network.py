@@ -546,13 +546,14 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            output = commands.getoutput("brctl show | grep -v -E '^[[:space:]]'")
-            lines = output.split("\n")[1:]
+            bridges_list = commands.getoutput("brctl show 2>/dev/null | grep -v -E '^[[:space:]]|bridge name' | cut -f 1").split("\n")
+            bridges_list += commands.getoutput("ovs-vsctl list-br 2>/dev/null").split("\n")
+            bridges_list = sorted(set(bridges_list))
             bridges_names = []
-            for line in lines:
-                bridge_name = line.split()[0]
-                bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
-                bridges_names.append(bridge_node)
+            for bridge_name in bridges_list:
+                if bridge_name:
+                    bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
+                    bridges_names.append(bridge_node)
             reply.setQueryPayload(bridges_names)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES)
