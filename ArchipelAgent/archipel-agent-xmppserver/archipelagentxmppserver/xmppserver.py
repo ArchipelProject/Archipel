@@ -19,11 +19,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import xmpp
 import xmlrpclib
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 ARCHIPEL_NS_XMPPSERVER          = "archipel:xmppserver"
 ARCHIPEL_NS_XMPPSERVER_GROUPS   = "archipel:xmppserver:groups"
@@ -129,7 +129,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         if self.entity.__class__.__name__ != "TNArchipelCentralAgent":
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
-  
+
 
     ### Plugin interface
     def register_handlers(self):
@@ -954,7 +954,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         reply = base_reply.buildReply("result")
 
         def on_receive_info(conn, iq):
-    
+
             _users_management_capabilities  = {"xmpp": False, "xmlrpc": False}
             _groups_management_capabilities = {"xmpp": False, "xmlrpc": False}
 
@@ -964,7 +964,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                _info_msg += "XEP-133 allowed"
             else:
                _users_management_capabilities["xmpp"] = False
-               _info_msg += "XEP-133 NOT allowed"               
+               _info_msg += "XEP-133 NOT allowed"
 
             # next try to use xmlrpc and mod_admin_extra to manage srg
             try:
@@ -987,7 +987,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
         iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
         iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
-        
+
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_info)
         else:

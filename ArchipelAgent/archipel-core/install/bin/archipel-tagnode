@@ -19,11 +19,11 @@
 
 import argparse
 import os
-import xmpp
 import sys
 import commands
 
 import archipelcore.pubsub
+from archipelcore import xmpp
 from archipelcore.scriptutils import *
 
 NODENAME_TAG = "/archipel/tags"

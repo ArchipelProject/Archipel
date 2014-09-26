@@ -38,7 +38,6 @@ import libvirt
 import os
 import shutil
 import thread
-import xmpp
 import tempfile
 import base64
 import sys
@@ -52,6 +51,7 @@ from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR, generate_mac_adress
 import archipelLibvirtEntity

@@ -25,11 +25,12 @@ import random
 import shutil
 import sqlite3
 import string
-import xmpp
 
 from archipel.archipelHypervisor import TNArchipelHypervisor
 from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
 from archipelcore.archipelPlugin import TNArchipelPlugin
+from archipelcore import xmpp
+
 from archipelcore.utils import build_error_iq, build_error_message
 
 ARCHIPEL_ERROR_CODE_VMPARK_LIST = -11001
@@ -164,7 +165,7 @@ class TNVMParking (TNArchipelPlugin):
         uuid_strings = []
         for vm in vms:
             uuid_strings.append(vm["uuid"])
-        where_statement = "uuid='" + "' or uuid='".join(uuid_strings) + "' and (hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online'))" 
+        where_statement = "uuid='" + "' or uuid='".join(uuid_strings) + "' and (hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online'))"
         rows = self.entity.get_plugin("centraldb").read_vms("*", where_statement, callback)
 
     def get_vm_by_uuid_from_db(self, uuid):
@@ -234,7 +235,7 @@ class TNVMParking (TNArchipelPlugin):
 
     def list(self, iq, conn):
         """
-        List virtual machines in the park.         
+        List virtual machines in the park.
         """
         def _on_centralagent_reply(vms):
             try:
@@ -255,7 +256,7 @@ class TNVMParking (TNArchipelPlugin):
                     if b["domain"]:
                         b_name=b["domain"].getTag("name").getData()
                     return cmp(a_name, b_name)
-        
+
                 parked_vms.sort(sorting)
                 nodes = []
                 for parked_vm in parked_vms:
@@ -275,7 +276,7 @@ class TNVMParking (TNArchipelPlugin):
 
     def park(self, vm_informations):
         """
-        Park a virtual machine. 
+        Park a virtual machine.
         @type vm_informations: list
         @param vm_informations: list of dict like {"uuid": x, "parker": z)}
         """
@@ -335,7 +336,7 @@ class TNVMParking (TNArchipelPlugin):
                 if vm_info["start"]:
                     vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.control_create_hook, oneshot=True)
                 vm_thread.start()
-    
+
                 self.entity.push_change("vmparking", "unparked")
                 self.entity.log.info("VMPARKING: successfully unparked %s" % str(vmjid))
 
@@ -360,7 +361,7 @@ class TNVMParking (TNArchipelPlugin):
                     shutil.rmtree(vmfolder)
 
                 jids.append(xmpp.JID(vm["jid"]))
-    
+
             # And remove the XMPP account
             self.entity.get_plugin("xmppserver").users_unregister(jids)
             self.entity.log.info("VMPARKING: successfully deleted %s from parking" % str(unregistered_vms))

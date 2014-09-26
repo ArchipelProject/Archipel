@@ -42,15 +42,12 @@ except ImportError as ex:
     sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 try:
-    import xmpp
-except ImportError as ex:
-    error("Bad XMPPPY installation you need python-xmpp (xmpppy): %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
-
-try:
     from archipelcore.utils import init_log
     from archipelcore.runutils import format_version, versions, initialize_config
     from archipel.archipelHypervisor import TNArchipelHypervisor
     from archipel.libvirtEventLoop import virEventLoopNativeStart
+    from archipelcore import xmpp
+
 except ImportError as ex:
     error("Bad archipel installation. You need archipel-core and archipel-agent: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
 
@@ -146,7 +143,7 @@ if __name__ == "__main__":
 
     if options.version:
         versions()
-        
+
     # Sanity checks
     test_libvirt()
 

@@ -21,11 +21,11 @@
 
 import commands
 import sqlite3
-import xmpp
 import os
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_OOM_KILLER = "archipel:vm:oom"

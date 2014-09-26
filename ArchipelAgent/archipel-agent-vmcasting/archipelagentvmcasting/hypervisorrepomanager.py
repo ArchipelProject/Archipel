@@ -26,11 +26,11 @@ import time
 import urllib
 import urllib2
 import vmcastmaker
-import xmpp
 from threading import Thread
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_HYPERVISOR_VMCASTING        = "archipel:hypervisor:vmcasting"

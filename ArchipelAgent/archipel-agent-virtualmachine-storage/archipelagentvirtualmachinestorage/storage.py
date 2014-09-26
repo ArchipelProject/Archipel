@@ -23,11 +23,11 @@
 import magic
 import os
 import subprocess
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_VM_DISK                     = "archipel:vm:disk"
