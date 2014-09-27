@@ -26,7 +26,6 @@ Contains L{TNArchipelCentralAgent}, the entities used for central agent.
 import datetime
 import random
 import sqlite3
-import xmpp
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
@@ -34,6 +33,7 @@ from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.pubsub import TNPubSubNode
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
 
 ARCHIPEL_CENTRAL_AGENT_KEEPALIVE         = 4  #seconds
 ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 10 #seconds
@@ -48,7 +48,7 @@ ARCHIPEL_NS_CENTRALAGENT                 = "archipel:centralagent"
 
 ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 
-# XMPP shows 
+# XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
 
@@ -228,7 +228,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
             self.last_keepalive_heard = datetime.datetime.now()
             self.last_hyp_check = datetime.datetime.now()
-    
+
     def become_central_agent(self):
         """
         triggered when becoming active central agent
@@ -496,14 +496,14 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                 res = {}
                 i = 0
                 for col in columns.split(","):
-                    res[col]=row[i] 
+                    res[col]=row[i]
                     i+=1
                 ret.append(res)
         return ret
 
     def read_vms_started_elsewhere(self, entries, origin_hyp):
         """
-        Based on a list of vms, and an hypervisor, return list of vms which 
+        Based on a list of vms, and an hypervisor, return list of vms which
         are defined in another, currently running, hypervisor.
         """
         uuids = []
@@ -525,7 +525,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
     def read_parked_vms(self, entries):
         """
-        Based on a list of vms, and an hypervisor, return list of vms which 
+        Based on a list of vms, and an hypervisor, return list of vms which
         are parked (have no hypervisor, or have a hypervisor which is not online)
         """
         uuids = []
@@ -579,7 +579,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param entries: list of vms
         """
         results = []
-        
+
         # we check if vms are really parked
         parked_vms_ret = self.read_parked_vms(entries)
         parked_vms = {}
@@ -609,7 +609,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                     new_uuid = new_domain.getTag("uuid").getData()
                 if new_domain.getTag("name"):
                     new_name = new_domain.getTag("name").getData()
-        
+
                 if not previous_uuid.lower() == new_uuid.lower():
                     result = "ERROR: UUID of new description must be the same (was %s, is %s)" % (previous_uuid, new_uuid)
                     error = True
@@ -632,8 +632,8 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                     result = "Central database updated with new information"
                     entries_to_commit.append({"uuid": uuid, "domain": str(new_domain)})
                 results.append({"result": result, "uuid": uuid, "error": error})
-        
-        if len(entries_to_commit) >0 : 
+
+        if len(entries_to_commit) >0 :
             command = "update vms set domain=:domain where uuid=:uuid"
             self.db_commit(command, entries_to_commit)
         return results
@@ -789,7 +789,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                     self.last_keepalive_sent = datetime.datetime.now()
 
                 if self.ping_hypervisors:
-                    
+
                     if (datetime.datetime.now() - self.last_hyp_check).seconds >= ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY:
 
                         self.check_hyps()

@@ -24,9 +24,10 @@ import os
 import shutil
 import tarfile
 import tempfile
-import xmpp
 from gzip import GzipFile as gz
 from threading import Thread
+
+from archipelcore import xmpp
 
 from archipel.archipelLibvirtEntity import generate_mac_adress
 

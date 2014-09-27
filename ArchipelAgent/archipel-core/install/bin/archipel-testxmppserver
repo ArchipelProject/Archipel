@@ -20,8 +20,8 @@
 import argparse
 import os
 import sys
-import xmpp
 import archipelcore.pubsub
+from archipelcore import xmpp
 
 ## Constants
 
@@ -358,7 +358,7 @@ if __name__ == "__main__":
                         help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
                         metavar="PUBSUBSERVER",
                         default=None)
-    
+
     options = parser.parse_args()
 
     if not options.jid or not options.password:

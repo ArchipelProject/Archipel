@@ -29,7 +29,7 @@ SHORTDESCRIPTION    = "Base framework of Archipel."
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = {}
 
-RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy >= 0.6.6"
+RPM_REQUIRED_DEPS   = "python-setuptools, python-sqlalchemy >= 0.6.6"
 
 # fix RPM generation on CentOS < 7. Note your need the EPEL repo installed.
 if os.path.exists("/etc/rpm/macros.dist"):
@@ -37,9 +37,9 @@ if os.path.exists("/etc/rpm/macros.dist"):
     c = f.read()
     f.close()
     if "centos 7" in c:
-        RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy"
+        RPM_REQUIRED_DEPS   = "python-setuptools, python-sqlalchemy"
     elif "centos" in c:
-        RPM_REQUIRED_DEPS   = "python-setuptools, python-xmpp, python-sqlalchemy0.7"
+        RPM_REQUIRED_DEPS   = "python-setuptools, python-sqlalchemy0.7"
 
 ## HACK FOR DEPS IN RPMS
 from setuptools.command.bdist_rpm import bdist_rpm
@@ -77,11 +77,10 @@ setup(name=NAME,
       author_email=MAIL,
       url=URL,
       license=LICENSE,
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      packages=find_packages(exclude=['ez_setup', 'examples', 'tests','.git','.gitignore','README.md']),
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "xmpppy>=0.5.0rc1",
         "sqlalchemy>=0.6.6"
       ],
       entry_points=ENTRY_POINTS,

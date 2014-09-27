@@ -22,11 +22,12 @@
 
 import sqlite3
 import uuid
-import xmpp
+
 from apscheduler.scheduler import Scheduler
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_ENTITY_SCHEDULER    = "archipel:entity:scheduler"

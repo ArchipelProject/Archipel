@@ -23,10 +23,10 @@
 import commands
 import libvirt
 import os
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
 
 from archipel.archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
 

@@ -25,6 +25,7 @@ import os
 import sys
 import xmpp
 import archipelcore.pubsub
+from archipelcore import xmpp
 from archipelcore.scriptutils import *
 
 NODENAME_CENTRAL_KEEPALIVE = "/archipel/centralagentkeepalive"

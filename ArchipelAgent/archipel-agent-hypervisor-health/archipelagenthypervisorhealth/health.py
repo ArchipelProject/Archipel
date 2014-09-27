@@ -22,12 +22,12 @@
 
 import commands
 import libvirt
-import xmpp
 import json
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
 from archipelStatsCollector import TNThreadedHealthCollector
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_HYPERVISOR_HEALTH       = "archipel:hypervisor:health"

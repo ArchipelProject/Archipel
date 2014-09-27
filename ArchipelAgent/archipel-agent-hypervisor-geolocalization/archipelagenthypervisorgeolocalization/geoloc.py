@@ -21,10 +21,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import httplib
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_HYPERVISOR_GEOLOC           = "archipel:hypervisor:geolocalization"

@@ -22,7 +22,7 @@
 
 import argparse
 import archipelcore.pubsub
-import xmpp
+from archipelcore import xmpp
 
 def xmpp_connect(jid, password, auth=True):
     """

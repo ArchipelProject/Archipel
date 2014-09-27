@@ -22,6 +22,7 @@ import os
 import sys
 import xmpp
 import archipelcore.pubsub
+from archipelcore import xmpp
 from archipelcore.scriptutils import *
 
 NODENAME_ROLE = "/archipel/roles"
@@ -94,7 +95,7 @@ if __name__ == "__main__":
                         help="list the roles")
 
     options = parser.parse_args()
-    
+
     xmppclient = initialize(options)
 
     if options.list:

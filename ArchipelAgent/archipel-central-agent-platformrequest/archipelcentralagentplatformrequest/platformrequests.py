@@ -20,11 +20,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import xmpp
 from pkg_resources import iter_entry_points
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 from scorecomputing import TNBasicPlatformScoreComputing
 
@@ -132,7 +132,7 @@ class TNPlatformRequests (TNArchipelPlugin):
             limit = iq.getTag("query").getTag("archipel").getAttr("limit")
             computed_items = self.computing_unit.score(self.entity.database, limit=limit)
             self.entity.log.debug("PLATFORMREQ: computed items : %s" % computed_items)
-            for computed_item in computed_items: 
+            for computed_item in computed_items:
                 reply.addChild("hypervisor", attrs=computed_item)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)

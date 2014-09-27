@@ -32,7 +32,6 @@ import random
 import sqlite3
 import string
 import uuid as moduuid
-import xmpp
 from threading import Thread
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
@@ -40,6 +39,7 @@ from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
 from archipelVirtualMachine import TNArchipelVirtualMachine
@@ -217,7 +217,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         if not self.get_plugin("centraldb"):
             self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
-            
+
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
 
 

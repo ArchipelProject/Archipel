@@ -18,11 +18,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import xmpp
 import argparse
 
 import archipelcore.pubsub
 from archipelcore.scriptutils import *
+from archipelcore import xmpp
 
 
 def send_raw(xmppclient, to, acp, pretty):
