@@ -22,7 +22,6 @@
 
 import argparse
 import os
-import xmpp
 import archipelcore.pubsub
 from archipelcore import xmpp
 from archipelcore.scriptutils import *
