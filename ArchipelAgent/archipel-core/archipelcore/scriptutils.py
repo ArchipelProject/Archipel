@@ -31,7 +31,7 @@ def success(msg):
     @type msg: String
     @param msg: the message to print
     """
-    print "\033[32mSUCCESS: %s\033[0m" % msg
+    print >> sys.stderr, "\033[32mSUCCESS: %s\033[0m" % msg
 
 def error(msg, exit=True, code=1):
     """
@@ -43,7 +43,7 @@ def error(msg, exit=True, code=1):
     @type code: int
     @param code: the error code
     """
-    print "\033[31mERROR: %s\033[0m" % msg
+    print >> sys.stderr, "\033[31mERROR: %s\033[0m" % msg
     if exit:
         sys.exit(code)
 
@@ -55,7 +55,7 @@ def msg(msg, exit=True):
     @type exit: Boolean
     @param exit: if True, exit after print
     """
-    print "\033[35mMESSAGE: %s\033[0m" % msg
+    print >> sys.stderr, "\033[35mMESSAGE: %s\033[0m" % msg
 
 def warn(msg):
     """
@@ -63,7 +63,7 @@ def warn(msg):
     @type msg: String
     @param msg: the message to print
     """
-    print "\033[33mWARNING: %s\033[0m" % msg
+    print >> sys.stderr, "\033[33mWARNING: %s\033[0m" % msg
 
 def connect(jid, password):
     """

@@ -22,11 +22,11 @@
 import datetime
 import random
 import sqlite3
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.pubsub import TNPubSubNode
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 # this pubsub is subscribed by all hypervisors and carries the keepalive messages
 # for the central agent
@@ -81,7 +81,7 @@ class TNCentralDb (TNArchipelPlugin):
             xmldesc = self.entity.xmldesc(mask_description=False)
 
         vm_info=[{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid}]
-        self.register_vms(vm_info) 
+        self.register_vms(vm_info)
 
     def hook_vm_terminate(self, origin=None, user_info=None, arguments=None):
         """
@@ -121,7 +121,7 @@ class TNCentralDb (TNArchipelPlugin):
         else:
 
             return self.entity.hypervisor.get_plugin("centraldb").central_agent_jid_val
-        
+
 
     def handle_central_keepalive_event(self,event):
         """
@@ -221,7 +221,7 @@ class TNCentralDb (TNArchipelPlugin):
     def push_vms_in_central_db(self, central_announcement_event):
         """
         there is a new central agent, or we just started.
-        Consequently, we re-populate central database 
+        Consequently, we re-populate central database
         since we are using "on conflict replace" mode of sqlite, inserting an existing uuid will overwrite it.
         """
         vm_table = []
@@ -238,9 +238,9 @@ class TNCentralDb (TNArchipelPlugin):
         # parsing required statistics to be pushed to central agent
         self.required_statistics = []
 
-        for required_stat in central_announcement_event.getTag("required_stats").getChildren():
-
-            self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
+        if central_announcement_event.getTag("required_stats"):
+            for required_stat in central_announcement_event.getTag("required_stats").getChildren():
+                self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
 
     ### Database Management
 
@@ -261,7 +261,7 @@ class TNCentralDb (TNArchipelPlugin):
         @param table: the list of vms to insert
         """
         self.read_from_db("read_vms", columns, where_statement, callback)
-    
+
     #### write commands
 
     def register_hypervisors(self,table):
@@ -302,17 +302,17 @@ class TNCentralDb (TNArchipelPlugin):
         """
         Update a set of vms in central database.
         @type table: list
-        @param table: the list of vms to update. Must contain the "uuid" attribute as 
+        @param table: the list of vms to update. Must contain the "uuid" attribute as
                       this is the one used for key in the update statement.
         """
         self.commit_to_db("update_vms",table, None)
 
     def update_vms_domain(self,table,callback):
         """
-        Update a set of vms in central database. 
+        Update a set of vms in central database.
         Performs additional checks for domain update when vm is offline.
         @type table: list
-        @param table: the list of vms to update. Must contain the "uuid" attribute as 
+        @param table: the list of vms to update. Must contain the "uuid" attribute as
                       this is the one used for key in the update statement.
         """
         self.commit_to_db("update_vms_domain",table, callback)
@@ -321,7 +321,7 @@ class TNCentralDb (TNArchipelPlugin):
         """
         Update a set of hypervisors in central database.
         @type table: list
-        @param table: the list of hypervisors to update. Must contain the "jid" attribute as 
+        @param table: the list of hypervisors to update. Must contain the "jid" attribute as
                       this is the one used for key in the update statement.
         """
         self.commit_to_db("update_hypervisors",table, None)
@@ -351,14 +351,14 @@ class TNCentralDb (TNArchipelPlugin):
                     entryTag.addChild("item",attrs={"key":key,"value":value})
 
                 dbCommand.addChild(node=entryTag)
-        
+
             def commit_to_db_callback(conn,resp):
 
                 if callback:
 
                     unpacked_entries = self.unpack_entries(resp)
                     callback(unpacked_entries)
-    
+
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
@@ -369,7 +369,7 @@ class TNCentralDb (TNArchipelPlugin):
 
         else:
 
-            self.entity.log.warning("CENTRALDB: cannot commit to db because we have not detected any central agent") 
+            self.entity.log.warning("CENTRALDB: cannot commit to db because we have not detected any central agent")
 
     def read_from_db(self,action,columns, where_statement, callback):
         """
@@ -393,7 +393,7 @@ class TNCentralDb (TNArchipelPlugin):
 
             if columns:
                 dbCommand.setAttr("columns", columns)
-        
+
             self.entity.log.debug("CENTRALDB: central agent jid %s" % central_agent_jid)
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
@@ -412,7 +412,7 @@ class TNCentralDb (TNArchipelPlugin):
 
         else:
 
-            self.entity.log.warning("CENTRALDB: cannot read from db because we have not detected any central agent") 
+            self.entity.log.warning("CENTRALDB: cannot read from db because we have not detected any central agent")
 
     def unpack_entries(self, iq):
         """

@@ -43,6 +43,7 @@ If you find some errors, please feel free to correct them.
 # Team
 
 * Antoine Mercadal (primalmotion)   : Lead developer
+* Cyril Peponnet (CyrilPeponnet)    : contributor
 
 * Franck Villaume (nerville)        : contributor
 * Alexandre Fernandez (crashtest)   : contributor

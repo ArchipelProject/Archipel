@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys, os
-from optparse import OptionParser
+import argparse
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 LOG_PATH = os.path.join(PATH, "buildCentralAgent.log")
@@ -75,7 +75,7 @@ def parse_repo(path):
     """
     paths = []
     for plugin_folder in os.listdir(path):
-        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-central-agent") or plugin_folder.startswith("archipel-core") or plugin_folder.startswith("archipel-platformrequest")):
+        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-central-agent") or plugin_folder.startswith("archipel-core") or plugin_folder.startswith("archipel-platformrequest") or plugin_folder.startswith("archipel-agent-xmppserver")):
             paths.append(os.path.join(path, plugin_folder))
     return paths
 
@@ -277,49 +277,49 @@ def build_apscheduler_rpm(export_path):
 ### Main function
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-b", "--buildeggs",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-b", "--buildeggs",
                         dest="build_eggs",
                         help="Generate the EGGS",
                         action="store_true",
                         default=False)
-    parser.add_option("-B", "--buildprms",
+    parser.add_argument("-B", "--buildprms",
                         dest="build_rpms",
                         help="Generate the RPMS",
                         action="store_true",
                         default=False)
-    parser.add_option("-u", "--upload",
+    parser.add_argument("-u", "--upload",
                         dest="pypi_upload",
                         help="Upload to pypi using your .pypirc",
                         action="store_true",
                         default=False)
-    parser.add_option("-r", "--register",
+    parser.add_argument("-r", "--register",
                         dest="pypi_register",
                         help="register to pypi using your .pypirc",
                         action="store_true",
                         default=False)
-    parser.add_option("-c", "--clean",
+    parser.add_argument("-c", "--clean",
                         dest="clean",
                         help="Clean build",
                         action="store_true",
                         default=False)
-    parser.add_option("-d", "--devinstall",
+    parser.add_argument("-d", "--devinstall",
                         dest="devinstall",
                         help="Install Archipel Central Agent using the developer mode",
                         action="store_true",
                         default=False)
-    parser.add_option("-e", "--export",
+    parser.add_argument("-e", "--export",
                         dest="export",
                         help="Export all RPMS to ./Archipel_RPMS",
                         action="store_true",
                         default=False)
-    parser.add_option("-U", "--uninstall",
+    parser.add_argument("-U", "--uninstall",
                         dest="uninstall",
                         help="Remove all Archipel's binary files. Data files (info, conf) remains safe",
                         action="store_true",
                         default=False)
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     os.chdir(PATH)
     packages_paths = parse_repo(PATH)

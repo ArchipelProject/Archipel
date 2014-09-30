@@ -406,16 +406,16 @@ var TNModuleControlForStart                         = @"Start",
 */
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
-
-    [_contextualMenu removeAllItems];
-
-    var itemRow = [aTableView rowAtPoint:aRow];
     if ([aTableView selectedRow] != aRow)
-        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
 
     if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableVirtualMachines))
         return;
 
+    [_contextualMenu removeAllItems];
     [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForStart]];
     [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForResume]];
     [_contextualMenu addItem:[CPMenuItem separatorItem]];
@@ -426,7 +426,6 @@ var TNModuleControlForStart                         = @"Start",
     [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForReboot]];
     [_contextualMenu addItem:[CPMenuItem separatorItem]];
     [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForMigrate]];
-
 
     return _contextualMenu;
 }

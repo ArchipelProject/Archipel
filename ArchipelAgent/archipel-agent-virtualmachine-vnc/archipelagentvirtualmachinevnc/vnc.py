@@ -21,11 +21,12 @@
 
 import libvirt
 import thread
-import xmpp
 
 from websockify import WebSocketProxy
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
+
 import archipel.archipelLibvirtEntity
 
 ARCHIPEL_NS_VNC                 = "archipel:virtualmachine:vnc"

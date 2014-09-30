@@ -71,6 +71,10 @@
     <key>TNArchipelDisplayXMPPManageContactsButton</key>
     <integer>1</integer>
 
+    <!-- UI flavour: you can hide the hint popup window -->
+    <key>TNArchipelDisplayHintPopup</key>
+    <integer>1</integer>
+
     <!-- Cool down timer before loading modules, when switching entities in roster -->
     <key>TNArchipelModuleLoadingDelay</key>
     <real>0.15</real>

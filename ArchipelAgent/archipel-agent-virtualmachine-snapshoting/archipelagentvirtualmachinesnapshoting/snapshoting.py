@@ -21,11 +21,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import libvirt
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 from archipel.archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
 

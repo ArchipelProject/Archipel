@@ -141,7 +141,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     [tableVirtualMachines setDelegate:self];
     [tableVirtualMachines setTarget:self];
-    [tableVirtualMachines setDoubleAction:@selector(openEditVirtualMachineWindow:)];
+    [tableVirtualMachines setDoubleAction:@selector(addSelectedVMToRoster:)];
     [[tableVirtualMachines tableColumnWithIdentifier:@"self"] setDataView:[dataViewVMPrototype duplicate]];
     [tableVirtualMachines setBackgroundColor:TNArchipelDefaultColorsTableView];
 
@@ -876,6 +876,11 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (BOOL)_didReceiveHypervisorRoster:(TNStropheStanza)aStanza
 {
+
+    var indexes         = [tableVirtualMachines selectedRowIndexes],
+        selectedObjects = [_virtualMachinesDatasource objectsAtIndexes:indexes],
+        indexesToSelect = [[CPIndexSet alloc] init];
+
     if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
@@ -929,6 +934,14 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 
         [tableVirtualMachines reloadData];
         [tableVirtualMachinesNotManaged reloadData];
+
+        for (var i = 0; i < [selectedObjects count]; i++)
+        {
+          var object = [selectedObjects objectAtIndex:i];
+          [indexesToSelect addIndex:[_virtualMachinesDatasource indexOfObject:object]];
+        }
+
+        [tableVirtualMachines selectRowIndexes:indexesToSelect byExtendingSelection:NO];
         [tableVirtualMachines setSortDescriptors:[[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]]
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
@@ -970,19 +983,19 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
+    if ([aTableView selectedRow] != aRow)
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
 
     [_contextualMenu removeAllItems];
 
     if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableVirtualMachines))
     {
         [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForNewVM]];
-
         return _contextualMenu;
     }
-
-    var itemRow = [aTableView rowAtPoint:aRow];
-    if ([aTableView selectedRow] != aRow)
-        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
     switch (aTableView)
     {
@@ -1029,22 +1042,22 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (void)tableViewDeleteKeyPressed:(CPTableView)aTableView
 {
-  if ([aTableView numberOfSelectedRows] == 0)
-      return;
+    if ([aTableView numberOfSelectedRows] == 0)
+        return;
 
-  switch (aTableView)
-  {
-    case tableVirtualMachines:
-      [self deleteVirtualMachine:aTableView];
-      break;
+    switch (aTableView)
+    {
+        case tableVirtualMachines:
+            [self deleteVirtualMachine:aTableView];
+            break;
 
-    case tableVirtualMachinesParked:
-      [self deleteParkedVirtualMachines:aTableView];
-      break;
+        case tableVirtualMachinesParked:
+            [self deleteParkedVirtualMachines:aTableView];
+            break;
 
-    default:
-      return
-  }
+        default:
+            return
+    }
 
 }
 

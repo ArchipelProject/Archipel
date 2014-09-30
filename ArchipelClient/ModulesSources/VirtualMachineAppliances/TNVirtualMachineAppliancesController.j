@@ -566,6 +566,13 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 */
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
+
+    if ([aTableView selectedRow] != aRow)
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
+
     if ([aTableView numberOfSelectedRows] > 1)
         return;
 
@@ -574,13 +581,8 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
     if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableAppliances))
     {
         [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForCreateAppliance]];
-
         return _contextualMenu;
     }
-
-    var itemRow = [aTableView rowAtPoint:aRow];
-    if ([aTableView selectedRow] != aRow)
-        [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
 
     var selectedIndex   = [[tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];

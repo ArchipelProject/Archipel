@@ -249,11 +249,13 @@ var TNModuleControlForSchedule                    = @"Schedule",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
 
-    [_contextualMenu removeAllItems];
+    if ([aTableView selectedRow] != aRow)
+        if (aRow >=0)
+            [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+        else
+            [aTableView deselectAll];
 
-    var itemRow = [tableJobs rowAtPoint:aRow];
-    if ([tableJobs selectedRow] != aRow)
-        [tableJobs selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
+    [_contextualMenu removeAllItems];
 
     if (([aTableView numberOfSelectedRows] == 0) && (aTableView == tableJobs))
     {

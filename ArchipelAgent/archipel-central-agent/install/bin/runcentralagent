@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import optparse
+import argparse
 import os
 import sys
 import socket
@@ -42,13 +42,9 @@ except ImportError as ex:
     sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 try:
-    import xmpp
-except ImportError as ex:
-    error("Bad XMPPPY installation you need python-xmpp (xmpppy): %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
-
-try:
     from archipelcore.utils import init_log
     from archipelcore.runutils import format_version, versions, initialize_config
+    from archipelcore import xmpp
     from archipelcentral.archipelCentralAgent import TNArchipelCentralAgent
 except ImportError as ex:
     error("Bad archipel installation. You need archipel-core and archipel-central-agent: %s" % str(ex), code=ARCHIPEL_INIT_ERROR_NO_MODULE)
@@ -76,14 +72,12 @@ def main(config):
 
     def exit_handler(exit_code, exit_frame):
         try:
-            print "Archipel interrupted : executing exit proc"
             centralagent.exit_proc()
         except Exception as e:
-            print "Error while executing exit proc"
+            error("Error while executing exit proc : %s" % e)
         finally:
             os._exit(0)
 
-    print "Registering SIGTERM handler"
     sig.signal(sig.SIGTERM, exit_handler)
 
     # Main runloop
@@ -99,31 +93,35 @@ if __name__ == "__main__":
     """
     Main loop of the program
     """
-    parser = optparse.OptionParser()
-    parser.add_option("-c", "--config",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config",
                         dest="config",
                         help="the config file to use",
                         metavar="CONFIG",
                         default="/etc/archipel/archipel-central-agent.conf")
-    parser.add_option("-v", "--version",
-                        action="callback",
+    parser.add_argument("-v", "--version",
+                        dest="version",
+                        action="store_true",
                         help="display the version of all components",
-                        callback=versions)
-    parser.add_option("-n", "--nofork",
+                        default=False)
+    parser.add_argument("-n", "--nofork",
                         action="store_true",
                         dest="nofork",
                         help="do not fork. For testing purpose")
-    parser.add_option("-C", "--cmdline",
+    parser.add_argument("-C", "--cmdline",
                         dest="cmdline_path",
                         help="Path of the kernel parameter file to use (default: /proc/cmdline)",
                         default="/proc/cmdline")
-    parser.add_option("-p", "--prepare-only",
+    parser.add_argument("-p", "--prepare-only",
                         action="store_true",
                         dest="prepare_only",
                         help="Will only prepare stuff if needed. This is only useless in a live CD where you want to init stuff before starting the agent",
                         default=False)
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
+
+    if options.version:
+        versions()
 
     # Read configuration
     config = initialize_config(options.config.split(","), options.cmdline_path, options.prepare_only)

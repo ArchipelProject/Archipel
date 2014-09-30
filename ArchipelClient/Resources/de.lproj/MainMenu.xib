@@ -544,7 +544,7 @@
 										<int key="NSCellFlags2">33554432</int>
 										<object class="NSCustomResource" key="NSContents" id="372274280">
 											<string key="NSClassName">NSImage</string>
-											<string key="NSResourceName">Backgrounds/background-icon.png</string>
+											<string key="NSResourceName">background-icon.png</string>
 										</object>
 										<int key="NSAlign">0</int>
 										<int key="NSScale">0</int>
@@ -670,7 +670,7 @@
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents" id="563494444">
 								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">hints/hint1.png</string>
+								<string key="NSResourceName">hint1.png</string>
 							</object>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">0</int>

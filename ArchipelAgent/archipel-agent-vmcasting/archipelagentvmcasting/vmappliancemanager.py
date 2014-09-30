@@ -21,11 +21,11 @@
 
 import os
 import sqlite3
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
 
 import archipel.archipelLibvirtEntity
 import appliancecompresser

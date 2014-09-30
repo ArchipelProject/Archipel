@@ -178,11 +178,17 @@ class TNThreadedHealthCollector (Thread):
         except:
             memshared = 0
         meminfolines = meminfo.split("\n")
-        memTotal = int(meminfolines[0].split()[1])
-        memFree = int(meminfolines[1].split()[1]) + int(meminfolines[2].split()[1]) + int(meminfolines[3].split()[1])
-        swapped = int(meminfolines[4].split()[1])
-        memUsed = memTotal - memFree
-        return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": memTotal, "swapped": swapped, "shared": memshared}
+        minfo={}
+        for line in meminfolines:
+            fields = line.split()
+            try:
+                minfo[fields[0][:-1]] = int(fields[1])
+            except:
+                continue
+        memFree = minfo["Cached"] + minfo["Buffers"] + minfo["MemFree"]
+        swapped = minfo["SwapTotal"] - minfo["SwapFree"]
+        memUsed = minfo["MemTotal"] - memFree
+        return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": minfo["MemTotal"], "swapped": swapped, "shared": memshared}
 
     def get_cpu_stats(self):
         """

@@ -32,7 +32,6 @@ import random
 import sqlite3
 import string
 import uuid as moduuid
-import xmpp
 from threading import Thread
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
@@ -40,6 +39,7 @@ from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore import xmpp
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
 from archipelVirtualMachine import TNArchipelVirtualMachine
@@ -146,7 +146,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
         self.bad_chars_in_name = '(){}[]<>!@#$'
-        self.wait_for_central_agent = 1
+        self.wait_for_central_agent = False
+        try:
+            central_db_configured = self.configuration.getboolean("MODULES", "centraldb")
+        except:
+            central_db_configured = False
+        if central_db_configured:
+            self.wait_for_central_agent = 1
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -211,9 +217,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         if not self.get_plugin("centraldb"):
             self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.wake_up_virtual_machines_hook, oneshot=True)
-            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
-        else:
-            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence_initialization)
+
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
 
 
     ### Overrides
@@ -248,7 +253,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ### Utilities
 
-    def update_presence(self, origin=None, user_info=None, parameters=None, initializing=False):
+    def update_presence(self, origin=None, user_info=None, parameters=None, presence_msg=None):
         """
         Set the presence of the hypervisor.
         @type origin: L{TNArchipelEntity}
@@ -258,8 +263,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        if initializing:
-            minor_info = "Initializing VMs..."
+        if presence_msg:
+            minor_info = presence_msg
         else:
             minor_info = len(self.virtualmachines)
         if self.has_vmx:
@@ -268,12 +273,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             status = "%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
 
         self.change_presence(self.xmppstatusshow, status)
-
-    def update_presence_initialization(self, origin=None, user_info=None, parameters=None):
-        """
-        Set the initial presence of the hypervisor.
-        """
-        self.update_presence(origin=origin, user_info=user_info, parameters=parameters, initializing=True)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
         """
@@ -391,16 +390,20 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         After getting the status of local vms from central db (were they started
         else where or not ?), we proceed to start vms
         """
- 
+
+        self.update_presence(presence_msg="Initializing...")
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         c = self.database.cursor()
         vms_started_elsewhere_uuids = []
         for vm in vms_started_elsewhere:
             vms_started_elsewhere_uuids.append(vm["uuid"])
-        for vm in vms: 
+        for vm in vms:
             string_jid = vm["string_jid"]
             jid = xmpp.JID(string_jid)
             uuid = jid.getNode()
+            if uuid in self.virtualmachines:
+                self.log.debug("VM %s entity is already started" % string_jid)
+                continue
             if uuid not in vms_started_elsewhere_uuids:
                 self.log.info("Starting vm %s" % string_jid)
                 jid.setResource(self.jid.getNode().lower())
@@ -429,7 +432,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
     def create_threaded_vm(self, jid, password, name, organizationInfo=None):
         """
         This method creates a threaded L{TNArchipelVirtualMachine}, starts it and returns the Thread instance.
-        @type jid: string
+        @type jid: xmpp.JID
         @param jid: the JID of the L{TNArchipelVirtualMachine}
         @type password: string
         @param password: the password associated to the JID
@@ -449,13 +452,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a generated name
         """
         search = True
-        currentName = None
+        current_name = None
         while search:
-            currentName = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
-            if not self.get_vm_by_name(currentName):
-                self.log.info("Generated name %s available. Using it." % currentName)
+            current_name = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
+            if not self.get_vm_by_name(current_name):
+                self.log.info("Generated name %s available. Using it." % current_name)
                 search = False
-        return currentName
+        return current_name
 
     def get_vm_by_name(self, name):
         """
@@ -524,7 +527,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         managed, or not.
         @type name: String
         @param name: the name to check
-        @type raise_error: Boolean
+        @type raise_error: bool
         @param raise_error: If set to True, raise an error instead of returning a boolean
         @type name_check_level: int
         @param name_check_level: Check all existing VM (including libvirt domain) or just internal VMs
@@ -646,34 +649,41 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
     ###  Hypervisor controls
 
-    def alloc(self, requester=None, requested_name=None, start=True, requested_uuid=None, xml_description=None, organizationInfo=None, name_check_level=ARCHIPEL_VM_NAME_CHECK_ALL):
+    def alloc(self, requester=None, requested_name=None, start_thread=True, requested_uuid=None, definition=None,
+              organization_info=None, name_check_level=ARCHIPEL_VM_NAME_CHECK_ALL):
         """
         Alloc a new XMPP entity.
         @type requester: xmpp.JID
         @param requester: the JID of the migrated VM to alloc
         @type requested_name: string
         @param requested_name: the requested name for the VM if None, will be generated
-        @type start: Boolean
-        @param start: if True, start the vm immediatly
+        @type start_thread: bool
+        @param start_thread: if True, start the thread for VM immediately (not the VM itself)
         @type requested_uuid: string
         @param requested_uuid: if set, the UUID to use as libvirt UUID and JID's node
-        @type xml_description: xmpp.Node
-        @param xml_description: Optional description
-        @type organizationInfo: Dict
-        @param organizationInfo: Dict containing locality, company name, company unit and owner
+        @type definition: xmpp.Node
+        @param definition: Optional VM's definition (domain XML)
+        @type organization_info: dict
+        @param organization_info: Dict containing locality, company name, company unit and owner
         @type name_check_level: integer
         @param name_check_level: Level of name checking when allocating the VM
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
+        self.update_presence(presence_msg="Allocating vm...")
         if requested_uuid:
-            vmuuid = requested_uuid
+            vm_uuid = requested_uuid
         else:
-            vmuuid = str(moduuid.uuid1())
+            vm_uuid = str(moduuid.uuid1())
+
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
-        vm_jid = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
-        disallow_spaces_in_name = (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name")) or self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
-        strip_unhandled_chars_in_name = self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
+        vm_jid = xmpp.JID(node=vm_uuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
+
+        is_xen = self.local_libvirt_uri.upper().startswith(archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)
+        blank_spaces_disallowed_in_config = self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") \
+            and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name")
+        disallow_spaces_in_name = blank_spaces_disallowed_in_config or is_xen
+        strip_unhandled_chars_in_name = is_xen
 
         if not requested_name:
             name = self.generate_name()
@@ -689,7 +699,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             name = name.replace(" ", "-")
 
         self.log.info("Starting xmpp threaded virtual machine.")
-        vm_thread = self.create_threaded_vm(vm_jid, vm_password, name, organizationInfo)
+        vm_thread = self.create_threaded_vm(vm_jid, vm_password, name, organization_info)
         vm = vm_thread.get_instance()
 
         if requester:
@@ -697,33 +707,33 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.add_jid_hook, user_info=xmpp.JID(requester), oneshot=True)
             vm.permission_center.grant_permission_to_user("all", requester.getStripped())
 
-        if xml_description:
-            if not xml_description.getTag("uuid"):
-                xml_description.addChild("uuid")
-            if not xml_description.getTag("uuid").getData().lower() == vmuuid.lower():
-                xml_description.getTag("uuid").setData(vmuuid)
-            if not xml_description.getTag("name"):
-                xml_description.addChild("name")
-            if not xml_description.getTag("name").getData().lower() == name.lower():
-                xml_description.getTag("name").setData(name)
-            vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=xml_description, oneshot=True)
+        if definition:
+            if not definition.getTag("uuid"):
+                definition.addChild("uuid")
+            if not definition.getTag("uuid").getData().lower() == vm_uuid.lower():
+                definition.getTag("uuid").setData(vm_uuid)
+            if not definition.getTag("name"):
+                definition.addChild("name")
+            if not definition.getTag("name").getData().lower() == name.lower():
+                definition.getTag("name").setData(name)
+            vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.define_hook, user_info=definition, oneshot=True)
 
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), '', name))
         self.database.commit()
-        self.virtualmachines[vmuuid] = vm
+        self.virtualmachines[vm_uuid] = vm
 
         self.update_presence()
         self.log.info("XMPP Virtual Machine instance sucessfully initialized.")
         self.perform_hooks("HOOK_HYPERVISOR_ALLOC", vm)
         self.push_change("hypervisor", "alloc")
-        if start:
+        if start_thread:
             vm_thread.start()
             return vm
         else:
             return vm_thread
 
-    def soft_alloc(self, jid, name, password, start=True, organizationInfo=None):
+    def soft_alloc(self, jid, name, password, start=True, organization_info=None):
         """
         Perform light allocation (no registration, no subscription).
         @type jid: xmpp.JID
@@ -737,7 +747,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         jid.setResource(self.jid.getNode().lower())
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
-        vm_thread = self.create_threaded_vm(jid, password, name , organizationInfo)
+        vm_thread = self.create_threaded_vm(jid, password, name , organization_info)
         vm = vm_thread.get_instance()
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
@@ -823,29 +833,29 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type requester: xmpp.JID
         @param requester: JID of the requester
         """
-        xmppvm = self.get_vm_by_uuid(uuid)
-        xmldesc = xmppvm.definition
+        vm = self.get_vm_by_uuid(uuid)
+        definition = vm.definition
 
-        if not xmldesc:
-            raise Exception('The mother vm has to be defined to be cloned.')
+        if not definition:
+            raise Exception('The mother VM has to be defined to be cloned.')
 
-        dominfo = xmppvm.domain.info()
-        if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
-            raise Exception('The mother vm has to be stopped to be cloned.')
+        vm_state = vm.domain.info()[0]
+        if not vm_state in (libvirt.VIR_DOMAIN_SHUTOFF, libvirt.VIR_DOMAIN_SHUTDOWN):
+            raise Exception('The mother VM has to be stopped to be cloned.')
 
-        if not wanted_name:
-            name = "%s (clone of %s)" % (self.generate_name(), xmppvm.name)
-        else:
+        if wanted_name:
             name = wanted_name
+        else:
+            name = "%s (clone of %s)" % (self.generate_name(), vm.name)
 
-        newvm_thread = self.alloc(requester, requested_name=name, start=False, organizationInfo=xmppvm.vcard_infos)
-        newvm = newvm_thread.get_instance()
-        newvm.register_hook("HOOK_VM_INITIALIZE",
-                            method=newvm.clone,
-                            user_info={"definition": xmldesc, "path": xmppvm.folder, "parentvm": xmppvm},
+        new_vm_thread = self.alloc(requester, requested_name=name, start_thread=False, organization_info=vm.vcard_infos)
+        new_vm = new_vm_thread.get_instance()
+        new_vm.register_hook("HOOK_VM_INITIALIZE",
+                            method=new_vm.clone,
+                            user_info={"definition": definition, "path": vm.folder, "parentvm": vm},
                             oneshot=True)
-        newvm_thread.start()
-        self.perform_hooks("HOOK_HYPERVISOR_CLONE", newvm)
+        new_vm_thread.start()
+        self.perform_hooks("HOOK_HYPERVISOR_CLONE", new_vm)
         self.push_change("hypervisor", "clone")
 
     def get_capabilities(self):
@@ -886,7 +896,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
     def iq_alloc(self, iq):
         """
         This method creates a threaded L{TNArchipelVirtualMachine} with UUID given
-        as payload in IQ and register the hypervisor and the iq sender in
+        as payload in IQ and registers the hypervisor and the iq sender in
         the VM's roster.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
@@ -894,30 +904,20 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready-to-send IQ containing the results
         """
         try:
-            organizationInfo = {}
-            requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
+            command = iq.getTag("query").getTag("archipel")
 
-            organizationInfo["ORGNAME"] = iq.getTag("query").getTag("archipel").getAttr("orgname")
-            organizationInfo["ORGUNIT"] = iq.getTag("query").getTag("archipel").getAttr("orgunit")
-            organizationInfo["LOCALITY"] = iq.getTag("query").getTag("archipel").getAttr("locality")
-            organizationInfo["USERID"] = iq.getTag("query").getTag("archipel").getAttr("userid")
-            organizationInfo["CATEGORIES"] = iq.getTag("query").getTag("archipel").getAttr("categories")
+            organization_info = {}
+            for element in ("ORGNAME", "ORGUNIT", "LOCALITY", "USERID", "CATEGORIES"):
+                organization_info[element] = command.getAttr(element.lower())
+                if not organization_info[element]:
+                    organization_info[element] = self.vcard_infos[element]
 
-            if not organizationInfo["ORGNAME"] or organizationInfo["ORGNAME"] == "":
-                organizationInfo["ORGNAME"] = self.vcard_infos["ORGNAME"]
-            if not organizationInfo["ORGUNIT"] or organizationInfo["ORGUNIT"] == "":
-                organizationInfo["ORGUNIT"] = self.vcard_infos["ORGUNIT"]
-            if not organizationInfo["LOCALITY"] or organizationInfo["LOCALITY"] == "":
-                organizationInfo["LOCALITY"] = self.vcard_infos["LOCALITY"]
-            if not organizationInfo["USERID"] or organizationInfo["USERID"] == "":
-                organizationInfo["USERID"] = self.vcard_infos["USERID"]
-            if not organizationInfo["CATEGORIES"] or organizationInfo["CATEGORIES"] == "":
-                organizationInfo["CATEGORIES"] = self.vcard_infos["CATEGORIES"]
+            xml_description = command.getTag("domain")
 
-            domainXML = None
-            if iq.getTag("query").getTag("archipel").getTag("domain"):
-                domainXML = iq.getTag("query").getTag("archipel").getTag("domain")
-            vm = self.alloc(iq.getFrom(), requested_name=requested_name, xml_description=domainXML, organizationInfo=organizationInfo)
+            requested_name = command.getAttr("name")
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name,
+                            organization_info=organization_info, definition=xml_description)
+
             reply = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
 
@@ -1243,9 +1243,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 if uuid in self.virtualmachines:
                     raise Exception("Virtual machine with UUID %s is already managed by Archipel" % uuid)
                 vm = self.libvirt_connection.lookupByUUIDString(uuid)
-                xmldesc = vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
-                descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), start=True, requested_uuid=uuid, xml_description=descnode, organizationInfo=self.vcard_infos, name_check_level=ARCHIPEL_VM_NAME_CHECK_INTERNAL)
+                domain_xml_text = vm.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
+                domain_xml = xmpp.simplexml.NodeBuilder(data=domain_xml_text).getDom()
+                self.alloc(requester=iq.getFrom(), requested_name=vm.name(), requested_uuid=uuid,
+                           definition=domain_xml, organization_info=self.vcard_infos,
+                           name_check_level=ARCHIPEL_VM_NAME_CHECK_INTERNAL)
                 self.log.info("manage new virtual machine with UUID: %s" % uuid)
             self.push_change("hypervisor", "manage")
         except Exception as ex:
@@ -1336,9 +1338,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
     def on_xmpp_loop_tick(self):
         if self.wait_for_central_agent:
             self.wait_for_central_agent += 1
-            if self.get_plugin("centraldb").central_agent_jid():
-                self.wait_for_central_agent = None
-                return
+            if self.get_plugin("centraldb"):
+                self.update_presence(presence_msg="Waiting for central-agent")
+                if self.get_plugin("centraldb").central_agent_jid():
+                    self.wait_for_central_agent = None
+                    return
             if self.wait_for_central_agent > ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
                 self.log.error("HYPERVISOR: did not detect any central agent after %s ticks, starting vms based on local db info only." % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
                 self.wake_up_virtual_machines_hook()

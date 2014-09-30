@@ -1,12 +1,9 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
 # -*- coding: utf-8 -*-
 #
-# archipel-centralagentnode.py
+# archipel-rolesnode
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
-# This file is part of ArchipelProject
-# http://archipelproject.org
-#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,14 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import argparse
 import os
 import sys
-from optparse import OptionParser
-import xmpp
 import archipelcore.pubsub
+from archipelcore import xmpp
 from archipelcore.scriptutils import *
 
-NODENAME_CENTRAL_KEEPALIVE = "/archipel/centralagentkeepalive"
+NODENAME_ROLE = "/archipel/roles"
+
 
 def create(xmppclient, pubsubserver):
     """
@@ -38,51 +36,70 @@ def create(xmppclient, pubsubserver):
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 100,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
-            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
     }
-    create_pubsub(xmppclient, pubsubserver, NODENAME_CENTRAL_KEEPALIVE, config)
+    create_pubsub(xmppclient, pubsubserver, NODENAME_ROLE, config)
 
 
 def delete(xmppclient, pubsubserver):
     """
     Delete the pubsub node
     """
-    delete_pubsub(xmppclient, pubsubserver, NODENAME_CENTRAL_KEEPALIVE)
+    delete_pubsub(xmppclient, pubsubserver, NODENAME_ROLE)
 
+
+def list_roles(xmppclient, pubsubserver):
+    """
+    List the roles
+    """
+    pubsubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_ROLE)
+    for item in pubsubNode.get_items():
+        role = item.getTag("role")
+        permissions = role.getTags("permission")
+        print " - %s: %s (created by %s)" % (role.getAttr("name"), role.getAttr("description"), role.getAttr("creator"))
+        for perm in permissions:
+            print "   + %s" % (perm.getAttr("permission_name"))
+        print ""
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
-    parser.add_option("-j", "--jid",
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-j", "--jid",
                         dest="jid",
                         help="set the JID to use",
                         metavar="user@domain")
-    parser.add_option("-p", "--password",
+    parser.add_argument("-p", "--password",
                         dest="password",
                         help="set the password associated to the JID",
                         metavar="123456")
-    parser.add_option("-P", "--pubsubserver",
+    parser.add_argument("-P", "--pubsubserver",
                         dest="pubsubserver",
                         help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
                         metavar="pubsub.domain",
                         default=None)
-    parser.add_option("-c", "--create",
+    parser.add_argument("-c", "--create",
                         action="store_true",
                         dest="create",
                         help="create the node")
-    parser.add_option("-d", "--delete",
+    parser.add_argument("-d", "--delete",
                         action="store_true",
                         dest="delete",
                         help="delete the node")
+    parser.add_argument("-l", "--list",
+                        action="store_true",
+                        dest="list",
+                        help="list the roles")
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
 
     xmppclient = initialize(options)
 
-    if options.create:
+    if options.list:
+        list_roles(xmppclient, options.pubsubserver)
+    elif options.create:
         create(xmppclient, options.pubsubserver)
     elif options.delete:
         delete(xmppclient, options.pubsubserver)

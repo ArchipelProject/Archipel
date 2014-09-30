@@ -23,11 +23,11 @@
 import magic
 import os
 import subprocess
-import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
+from archipelcore import xmpp
 
 
 ARCHIPEL_NS_VM_DISK                     = "archipel:vm:disk"
@@ -68,7 +68,6 @@ class TNStorageManagement (TNArchipelPlugin):
             os.makedirs(self.shared_isos_folder)
         if not os.path.exists(self.golden_drives_dir):
             os.makedirs(self.golden_drives_dir)
-        self.magicObject = magic.Magic()
         # permissions
         self.entity.permission_center.create_permission("drives_create", "Authorizes user to get create a drive", False)
         self.entity.permission_center.create_permission("drives_delete", "Authorizes user to delete a drive", False)
@@ -126,15 +125,27 @@ class TNStorageManagement (TNArchipelPlugin):
         or self._is_file_a_vmdk(path) \
         or self._is_file_an_iso(path)
 
+    def _is_file_a(self, types, extension, path, ):
+        """
+        check given file type either by mimetypes or extension
+        @type types: tuple
+        @param types: the types of file
+        @type extension: string
+        @param extension: file extension
+        @type path: string
+        @param path: the file path to check
+        @return: boolean
+        """
+        file_type = magic.from_file(path).lower()
+        return any(type in file_type for type in types) or path.lower().endswith("." + extension)
+
     def _is_file_a_cow(self, path):
         """
         check if given drive is a valid COW file
         @type path: string
         @param path: the path of the file to check
         """
-        m = magic.Magic()
-        output = m.from_file(path).lower()
-        return "user-mode linux cow file" in output
+        return self._is_file_a(("user-mode linux cow file",), "cow", path)
 
     def _is_file_a_qcow(self, path):
         """
@@ -142,8 +153,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @type path: string
         @param path: the path of the file to check
         """
-        output = self.magicObject.from_file(path).lower()
-        return "format: qcow , version: 1" in output or "qemu qcow image (v1)" in output
+        return self._is_file_a(("format: qcow , version: 1", "qemu qcow image (v1)"), "qcow" , path)
 
     def _is_file_a_qcow2(self, path):
         """
@@ -151,8 +161,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @type path: string
         @param path: the path of the file to check
         """
-        output = self.magicObject.from_file(path).lower()
-        return "format: qcow , version: 2" in output or "qemu qcow image (v2)" in output
+        return self._is_file_a(("format: qcow , version: 2", "qemu qcow image (v2)") , "qcow2", path)
 
     def _is_file_a_raw(self, path):
         """
@@ -160,8 +169,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @type path: string
         @param path: the path of the file to check
         """
-        output = self.magicObject.from_file(path).lower()
-        return output == "data" or "x86 boot sector" in output or "filesystem data" in output
+        return self._is_file_a(("boot sector", "filesystem data") ,"raw", path)
 
     def _is_file_a_vmdk(self, path):
         """
@@ -169,8 +177,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @type path: string
         @param path: the path of the file to check
         """
-        output = self.magicObject.from_file(path).lower()
-        return "vmware" in output
+        return self._is_file_a(("vmware",), "vmdk", path)
 
     def _is_file_an_iso(self, path):
         """
@@ -178,8 +185,7 @@ class TNStorageManagement (TNArchipelPlugin):
         @type path: string
         @param path: the path of the file to check
         """
-        output = self.magicObject.from_file(path).lower()
-        return "iso 9660" in output
+        return self._is_file_a(("iso 9660", "boot sector"), "iso", path)
 
 
     ### XMPP Processing

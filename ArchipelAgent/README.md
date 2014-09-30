@@ -60,7 +60,7 @@ If you already have a previous installation of Archipel done using
 Ensure all dependencies are installed:
 
     # yum install python-libvirt python-imaging
-    # easy_install numpy sqlalchemy apscheduler xmpppy
+    # easy_install numpy sqlalchemy apscheduler
 
 Now, to install archipel from the source or the nightlies, please type:
 

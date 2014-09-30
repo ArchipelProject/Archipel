@@ -1,0 +1,205 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# -*- coding: utf-8 -*-
+#
+# archipel-ejabberdadmin.py
+#
+# Copyright (C) 2013 Cyril Peponnet <cyril@peponnet.>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import re
+
+from archipelcore import xmpp
+
+
+#FIXME : Global flag for new ejabberd acl syntax
+new_acl_syntax = False
+
+def xmpp_connect(jid, password, auth=True):
+    """
+    create a new XMPP connection
+    @type jid: xmpp.JID
+    @param jid: the JID to use to connect
+    @type password: string
+    @param password: the password associated to the JID
+    @type auth: Boolean
+    @param auth: if True, authentify after connection (Default True)
+    @rtype: xmpp.Client
+    @return: the ready to use xmpp client
+    """
+    xmppclient = xmpp.Client(jid.getDomain(), debug=[])
+    if not xmppclient.connect():
+        print "Cannot connect to the XMPP server"
+        return
+    if auth:
+        if xmppclient.auth(jid.getNode(), password, "configurator") == None:
+            print "Bad authentication"
+            return
+    return xmppclient
+
+def _fecth_acls(xmppclient):
+    """
+    Retrieve the acl from server
+    @type xmppclient: xmpp client session object
+    @param xmppclient: xmpp client session
+    @return: list of users in acl admin
+    """
+    iq = xmpp.Iq(typ="set", to=xmppclient.Server)
+    iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
+    result = xmppclient.SendAndWaitForResponse(iq)
+    if result.getType() == "result":
+        values  = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
+        admins  = []
+        str_val = ""
+        for value in values:
+            str_val+=value.getData()
+
+        for acl in str_val.replace(" ", "").split("{acl"):
+            #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
+            m = re.search('{user,{', acl)
+            if m:
+                global new_acl_syntax
+                new_acl_syntax = True
+            try:
+                raw_admin_string = acl.split(",")[3] + "@" + acl.split(",")[4].split("}")[0]
+            except:
+                continue
+            admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
+
+        return admins
+
+def _update_acls(current_admins):
+    """
+    Update the acls
+    """
+    acls = "["
+    ind  = 0
+    for ajid in current_admins:
+        ind += 1
+
+        #FIXME : Workaround for ejabberd 13.10 acls syntax changed a bit
+        #'{acl, admin, {user,{"%s","%s"}}}' instead of '{acl, admin, user,{"%s","%s"}}'
+        if new_acl_syntax:
+            acls += '{acl, admin, {user,{"%s","%s"}}}' % (ajid.getNode(), ajid.getDomain())
+        else:
+            acls += '{acl, admin, {user,"%s","%s"}}' % (ajid.getNode(), ajid.getDomain())
+
+        if ind != len(current_admins):
+            acls += ","
+    acls += "]."
+
+    iq = xmpp.Iq(typ="set", to=xmppclient.Server)
+    iq_command = iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
+    iq_command_x = iq_command.addChild("x", namespace="jabber:x:data", attrs={"type": "submit"})
+    iq_command_x.addChild("field", attrs={"type": "hidden", "var": "FORM_TYPE"}).addChild("value").setData("http://jabber.org/protocol/admin")
+    iq_command_x.addChild("field", attrs={"type": "text-multi", "var": "acls"}).addChild("value").setData(acls)
+
+    return xmppclient.SendAndWaitForResponse(iq)
+
+
+def list_jid(xmppclient):
+    """
+    List current xmpp admin
+    """
+    admins = _fecth_acls(xmppclient)
+    if admins:
+        print "The following users are actually admin of %s xmpp domain :" % xmppclient.Server
+        for admin in admins:
+            print "-> %s" % admin
+    else:
+        print "No admin has been found for domain %s" % xmppclient.Server
+
+def insert_jid(xmppclient, jid):
+    """
+    Add a new jid in acl admin list
+    """
+    current_admins = _fecth_acls(xmppclient)
+
+    if jid in current_admins:
+        print "-> %s is already admin on %s" % (jid, xmppclient.Server)
+        return
+
+    current_admins.append(jid)
+
+    result = _update_acls(current_admins)
+
+    if result.getType() == "result":
+        print "-> %s as been added to admin acls" % jid
+        list_jid(xmppclient)
+    else:
+        print "!! Error when trying to insert %s as admin on %s" %(jid, xmppclient.Server)
+
+def remove_jid(xmppclient, jid):
+    """
+    Remove a jid from acl admin list
+    """
+    current_admins = _fecth_acls(xmppclient)
+
+    if not jid in current_admins:
+        print "-> %s is not admin on %s" % (jid, xmppclient.Server)
+        return
+
+    current_admins.remove(jid)
+
+    result = _update_acls(current_admins)
+
+    if result.getType() == "result":
+        print "-> %s as been removed from acls" % jid
+        list_jid(xmppclient)
+    else:
+        print "!! Error when trying to delete %s from admin on %s" %(jid, xmppclient.Server)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-j", "--jid",
+                        dest="jid",
+                        help="set the JID to use",
+                        metavar="user@domain")
+    parser.add_argument("-p", "--password",
+                        dest="password",
+                        help="set the password associated to the JID",
+                        metavar="123456")
+    parser.add_argument("-a", "--authorize",
+                        dest="authorize",
+                        help="insert a new xmpp admin JID",
+                        metavar="jid@domain")
+    parser.add_argument("-u", "--unauthorize",
+                        dest="unauthorize",
+                        help="remove an existing xmpp admin JID",
+                        metavar="jid@domain")
+    parser.add_argument("-l", "--list",
+                        action="store_true",
+                        dest="list",
+                        help="list all existing xmpp admin")
+
+    options = parser.parse_args()
+
+    if not options.jid or not options.password or not (options.authorize or options.unauthorize or options.list):
+        parser.error("you must enter a JID and a PASSWORD and an ACTION. see --help for help")
+
+    userJID     = xmpp.JID(options.jid)
+    xmppclient  = xmpp_connect(userJID, options.password)
+
+    if xmppclient:
+
+        if options.list:
+            list_jid(xmppclient)
+        elif options.authorize:
+            insert_jid(xmppclient, xmpp.JID(options.authorize))
+        elif options.unauthorize:
+            remove_jid(xmppclient, xmpp.JID(options.unauthorize))

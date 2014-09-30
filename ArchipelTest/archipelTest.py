@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys,os,xmpp,time,select,uuid,sqlite3,datetime,pexpect,random,shutil
 sys.path.append("../ArchipelAgent/archipel-core/archipelcore")
-from archipelcore import pubsub
+import pubsub
 ARCHIPEL_KEEPALIVE_PUBSUB="/archipel/centralagentkeepalive"
 
 class XmppClient:
@@ -78,7 +78,7 @@ class XmppClient:
 class ArchipelTest:
 
     def open_hyp_consoles(self):
-        for hyp in ["archipel-hyp-1","archipel-hyp-2","archipel-hyp-3"]:
+        for hyp in ["archipel-hyp-1","archipel-hyp-2","archipel-central-server"]:
             self.log("Connecting to console %s"%hyp)
             child=pexpect.spawn("virsh console %s"%hyp)
             logfile=open("%s/%s.console.log"%(self.results_dir,hyp),'w')
@@ -109,6 +109,7 @@ class ArchipelTest:
             console.sendline("/etc/init.d/archipel stop")
             console.expect("\[root@")
             #console.expect(["Archipel is not running","Stopping Archipel"])
+        self.log("Done stopping archipel on hyps")
 
     def start_archipel(self):
         self.log("Starting archipel on hypervisors")
@@ -118,8 +119,12 @@ class ArchipelTest:
             #console.expect(["Starting Archipel","lready started"])
 
     def begin_suite(self,standalone_central_agent):
-        
+
+        self.log("reinitializing ejabberd")
+        self.consoles[2].sendline("archipel-central-server initialize")
+        self.consoles[2].expect("initialized")
         self.xmppdomain="archipel-test.archipel.priv"
+        time.sleep(1)
         self.own_jid=xmpp.protocol.JID("professeur@%s"%self.xmppdomain)
         #self.cl=xmpp.Client(self.own_jid.getDomain(),debug=['always', 'nodebuilder'])
         self.cl=xmpp.Client(self.own_jid.getDomain(),debug=[])
@@ -128,23 +133,38 @@ class ArchipelTest:
             sys.stderr.write("Could not connect to server, or password mismatch!\n")
             sys.exit(1)
         self.logfiles=[]
-        shutil.rmtree("stateless/config")
-        os.mkdir("stateless/config")
-        shutil.copy("testfiles/archipel.conf","stateless/config/")
-        shutil.rmtree("stateless/logs")
-        self.start_archipel()
+        try:
+            shutil.rmtree("testfiles/stateless/config")
+        except:
+            self.log("No stateless/config directory found, creating")
+        os.mkdir("testfiles/stateless/config")
+        try:
+            shutil.copy("testfiles/archipel.conf","testfiles/stateless/config/")
+        except:
+            self.log("Warning : there was a problem copying config, probably permission")
+        try:
+            shutil.rmtree("testfiles/stateless/centraldb")
+        except:
+            self.log("No stateless/centraldb directory found, creating")
+        os.mkdir("testfiles/stateless/centraldb")
+        self.consoles[2].sendline("rm -rf /stateless/logs")
+        self.consoles[2].sendline("mkdir /stateless/logs")
+        self.consoles[2].sendline("chmod 777 /stateless/logs")
         self.consoles[2].sendline("/etc/init.d/archipel-central-agent restart")
+        self.log("Mounting the stateless storage on the test machine (this machine).")
+        os.system("mount testfiles/stateless")
+        self.start_archipel()
         self.consoles[2].expect("\[root@")
-        for logfile in ['archipel.archipel-hyp-1.archipel.priv.log', 'archipel.archipel-hyp-2.archipel.priv.log','archipel.archipel-hyp-3.archipel.priv.log']:
+        for logfile in ['archipel.archipel-hyp-1.log', 'archipel.archipel-hyp-2.log','archipel.archipel-central-server.archipel.priv.log']:
             logfile_open=False
             while not logfile_open:
                 try:
-                    self.logfiles.append(open("stateless/logs/%s"%logfile,'r'))
+                    self.logfiles.append(open("testfiles/stateless/logs/%s"%logfile,'r'))
                     logfile_open=True
                 except IOError:
                     self.log("Log file not yet created for %s. archipel not started yet ?"%logfile)
                     time.sleep(0.5)
-        
+
     def begin_test(self,description):
         self.tests.append({"description":description,"success":True,"reasons":[]})
         self.log("Start test %s : %s."%(self.test_id+1,description))
@@ -179,8 +199,8 @@ class ArchipelTest:
         # copy the logs to the results dir
         results_subdir="%s/suite_%s/"%(self.results_dir,suite_name)
         os.mkdir(results_subdir)
-        for log in os.listdir("stateless/logs"):
-            shutil.copy("stateless/logs/%s"%log,results_subdir)
+        for log in os.listdir("testfiles/stateless/logs"):
+            shutil.copy("testfiles/stateless/logs/%s"%log,results_subdir)
 
 
     def log(self,line):
@@ -217,21 +237,25 @@ class ArchipelTest:
         self.open_hyp_consoles()
         use_local_codebase=True
         self.stop_archipel()
-        # delete any previously existing vms in hypervisors
+        self.log("delete any previously existing vms in hypervisors")
         for console in self.consoles:
             console.sendline("virsh list --name --all | xargs -n 1 virsh destroy")
             console.expect("\[root@")
             console.sendline("virsh list --name --all | xargs -n 1 virsh undefine")
             console.expect("\[root@")
+        self.log("Mount dev codebase")
         if use_local_codebase:
             for console in self.consoles[0:2]:
-                console.sendline("/bin/bash -c 'mount | grep archipel_dev | wc -l'")
-                i=console.expect(["0\n","1\n"])
+                console.sendline("mount | grep archipel_dev")
+                console.sendline("if [ $? -eq 0 ]; then echo 'yes';else echo 'no';fi")
+                i=console.expect(["no\n","yes\n"])
+                self.log("did we found archipel mounted ? %s"%i)
                 if i==0:
-                    self.log("did not found mount of archipel working directory, mounting now")
+                #if True:
+                    self.log("did not find mount of archipel working directory, mounting now")
                     console.sendline("mkdir /archipel_dev")
                     console.expect("\[root@")
-                    console.sendline("mount -t cifs -o password=password //192.168.122.1/archipel /archipel_dev")
+                    console.sendline("mount -t cifs -o user=smbuser,password=archipel //192.168.137.1/archipel /archipel_dev")
                     console.expect("\[root@")
                     console.sendline("cd /archipel_dev/ArchipelAgent")
                     console.expect("\[root@")
@@ -240,33 +264,33 @@ class ArchipelTest:
                 else:
                     self.log("archipel working directory already mounted on the hypervisor")
         # create central agent
-        console=self.consoles[2]
-        console.sendline("/bin/bash -c 'mount | grep archipel_dev | wc -l'")
-        i=console.expect(["0\n","1\n"])
-        if i==0:
-            self.log("did not found mount of archipel working directory, mounting now")
-            console.sendline("mkdir /archipel_dev")
-            console.sendline("mount -t cifs -o password=password //192.168.122.1/archipel /archipel_dev")
-            console.expect("\[root@")
-        else:
-            self.log("archipel working directory already mounted on the hypervisor")
-        console.sendline("/etc/init.d/archipel stop")
-        console.expect("\[root@")
-        console.sendline("cd /archipel_dev/ArchipelAgent")
-        console.expect("\[root@")
-        self.log("Installing and running central agent")
-        console.sendline("./buildCentralAgent -d") # perform archipel developer installation
-        console.expect("\[root@")
-        console.sendline("rm -f /etc/archipel/archipel-central-agent.conf")
-        console.expect("\[root@")
-        console.sendline("archipel-central-agent-initinstall -x archipel-test.archipel.priv")
-        console.expect("\[root@")
+        #console=self.consoles[2]
+        #console.sendline("/bin/bash -c 'mount | grep archipel_dev | wc -l'")
+        #i=console.expect(["0\n","1\n"])
+        #if i==0:
+        #    self.log("did not found mount of archipel working directory, mounting now")
+        #    console.sendline("mkdir /archipel_dev")
+        #    console.sendline("mount -t cifs -o password=password //192.168.122.1/archipel /archipel_dev")
+        #    console.expect("\[root@")
+        #else:
+        #    self.log("archipel working directory already mounted on the hypervisor")
+        #console.sendline("/etc/init.d/archipel stop")
+        #console.expect("\[root@")
+        #console.sendline("cd /archipel_dev/ArchipelAgent")
+        #console.expect("\[root@")
+        #self.log("Installing and running central agent")
+        #console.sendline("./buildCentralAgent -d") # perform archipel developer installation
+        #console.expect("\[root@")
+        #console.sendline("rm -f /etc/archipel/archipel-central-agent.conf")
+        #console.expect("\[root@")
+        #console.sendline("archipel-central-agent-initinstall -x archipel-test.archipel.priv")
+        #console.expect("\[root@")
         # configure logging to shared folder
-        console.sendline("sed -i 's&logging_file_path.*=.*&logging_file_path=/stateless/logs/archipel.archipel-hyp-3.archipel.priv.log&' /etc/archipel/archipel-central-agent.conf")
-        console.expect("\[root@")
+        #console.sendline("sed -i 's&logging_file_path.*=.*&logging_file_path=/stateless/logs/archipel.archipel-hyp-3.archipel.priv.log&' /etc/archipel/archipel-central-agent.conf")
+        #console.expect("\[root@")
         # configure database to be on shared storage
-        console.sendline("sed -i 's&database *=.*&database = /vm/central_db.sqlite3&' /etc/archipel/archipel-central-agent.conf")
-        console.expect("\[root@")
+        #console.sendline("sed -i 's&database *=.*&database = /vm/central_db.sqlite3&' /etc/archipel/archipel-central-agent.conf")
+        #console.expect("\[root@")
 
         self.run_tests(True)
 
@@ -278,7 +302,7 @@ class ArchipelTest:
         while not ping_successful:
             nb_of_tries+=1
             time.sleep(1)
-            iq = xmpp.Iq(typ="get", to=jid)   
+            iq = xmpp.Iq(typ="get", to=jid)
             iq.addChild("ping",namespace="urn:xmpp:ping")
             resp=self.send_iq(iq)
             ping_successful = (resp and resp.getType()=="result")
@@ -328,9 +352,15 @@ class ArchipelTest:
 
     def wait_subscription(self,jid):
         i=0
-        while i<30:
+        while i<2:
             roster=self.xmppclient.jabber.getRoster()
             is_subscribed=(roster.getSubscription(str(jid))=="both")
+            try:
+                is_subscribed=(roster.getSubscription(str(jid))=="both")
+            except KeyError:
+                self.log("Key error!")
+                time.sleep(1)
+                continue
             if is_subscribed:
                 break
             self.xmppclient.jabber.Process(1)
@@ -364,7 +394,7 @@ class ArchipelTest:
 
         hyp_jid=[]
         for i in [0,1]:
-            hyp_jid.append(xmpp.JID("archipel-hyp-%s.archipel.priv@%s/archipel-hyp-%s.archipel.priv"%(i+1,self.xmppdomain,i+1)))
+            hyp_jid.append(xmpp.JID("archipel-hyp-%s@%s/archipel-hyp-%s"%(i+1,self.xmppdomain,i+1)))
 
         # we wait for ping success
         ping_successful=self.wait_xmpp_pingable(hyp_jid[i])
@@ -378,20 +408,21 @@ class ArchipelTest:
         for i in [0,1]:
             hyp_subscription_iq=xmpp.Iq(typ='set', queryNS="archipel:subscription", to=hyp_jid[i])
             hyp_subscription_iq.getTag("query").addChild(name="archipel", attrs={"action": "add","jid":str(self.own_jid)})
-            resp=self.send_iq(hyp_subscription_iq)
-            success = (resp and resp.getType()=="result")
-            if not success:
-                self.fail_test("Subscribe stanza returned error")
-            if not self.wait_subscription(hyp_jid[i]):
-                self.fail_test("We were expecting a subscription request from the hypervisor but it did not arrive")
-        self.end_test() 
+            for i in range(30):
+                resp=self.send_iq(hyp_subscription_iq)
+                success = (resp and resp.getType()=="result")
+                if not success:
+                    self.fail_test("Subscribe stanza returned error")
+                #if not self.wait_subscription(hyp_jid[i]):
+                    #self.fail_test("We were expecting a subscription request from the hypervisor but it did not arrive")
+        self.end_test()
 
         self.begin_test("Hypervisors are in central database")
         central_agent=str(self.get_central_pubsub_jid())
         self.log("Central agent detected : %s"%central_agent)
-        self.central_database = sqlite3.connect("vm/central_db.sqlite3", check_same_thread=False)
+        self.central_database = sqlite3.connect("testfiles/centraldb/central_db.sqlite3", check_same_thread=False)
         self.central_database.row_factory = sqlite3.Row
-            
+
         ret=self.wait_central_db_ok("select jid from hypervisors where status='Online'",num_hyp)
         self.log("Hypervisors in central db:  %s"%ret)
         if len(ret)!=num_hyp:
@@ -447,7 +478,7 @@ class ArchipelTest:
             else:
                 self.log("did not find vm in central db, as expected.")
         self.end_test()
-        
+
         self.begin_test("Delete undefined VM by sending stanza to vm")
         # delete the second of 4 vms
         for i in [0,1]:
@@ -465,7 +496,7 @@ class ArchipelTest:
             else:
                 self.log("did not find vm in central db, as expected.")
         self.end_test()
-        
+
         self.begin_test("Define vm")
         # define the 3rd and 4th vms of each hypervisor
         for i in [0,1]:
@@ -492,7 +523,7 @@ class ArchipelTest:
                     else:
                         self.fail_test("Vm definition was not updated in central db")
         self.end_test()
-        
+
         self.begin_test("Delete defined VM by sending stanza to hypervisor")
         # delete the third of 4 vms
         for i in [0,1]:
@@ -512,7 +543,7 @@ class ArchipelTest:
             else:
                 self.log("did not find vm in central db, as expected.")
         self.end_test()
-        
+
         self.begin_test("Delete defined VM by sending stanza to vm")
         # delete the 4th of 4 vms
         for i in [0,1]:
@@ -530,8 +561,8 @@ class ArchipelTest:
             else:
                 self.log("did not find vm in central db, as expected.")
         self.end_test()
-        
-        self.begin_test("Create vms directly in parking") 
+
+        self.begin_test("Create vms directly in parking")
         # we could do it all from one hypervisor, but we do it from 2
         # because one will be central agent (commit locally) and the other will not
         # (so it will send the sqlite commands to the central agent for execution)
@@ -566,7 +597,7 @@ class ArchipelTest:
         if len(ret)!=6:
             self.fail_test("Did not find 6 vms in central db after 60 probes")
         time.sleep(1)
-        self.end_test() 
+        self.end_test()
 
         self.begin_test("Unpark one vm in each hypervisor")
         hyp_unpark_iqs=[]
@@ -713,7 +744,7 @@ class ArchipelTest:
                 self.begin_test("Ungraceful shutdown of the hypervisor. Checks status is 'unreachable' in centraldb")
 
             central_agent=str(self.get_central_pubsub_jid())
-    
+
             self.log("Switching off hypervisor")
             hyp1_console=self.consoles[0]
             if i==0:
@@ -768,7 +799,7 @@ class ArchipelTest:
         if not success:
 	    self.log("destroy stana returned error %s"%resp)
             self.fail_test("Destroy stanza returned error")
-    
+
 
         for i in [0,1]:
 	    if i==0:
@@ -780,13 +811,13 @@ class ArchipelTest:
                 hyp3_console.sendline("/etc/init.d/archipel-central-agent stop")
                 hyp3_console.expect("OK")
                 hyp3_console.expect("\[root@")
-    
-            self.log("Switching off hyp 1")	
+
+            self.log("Switching off hyp 1")
             hyp1_console=self.consoles[0]
             hyp1_console.sendline("/etc/init.d/archipel stop")
             hyp1_console.expect("OK")
             hyp1_console.expect("\[root@")
-    
+
 	    self.log("Now switching back on")
             hyp1_console.sendline("/etc/init.d/archipel start")
             hyp1_console.expect("OK")
@@ -798,7 +829,7 @@ class ArchipelTest:
             for vm_props in [vms[0],vms[1],vms[2]]:
 	        vm_jid = vm_props["jid"]
                 self.wait_xmpp_pingable(vm_jid)
-    
+
             if i==1:
                 self.log("Switching on central agent")
                 hyp3_console=self.consoles[2]
@@ -812,8 +843,8 @@ class ArchipelTest:
         self.begin_test("Hypervisor switches off and on and finds out one of its vms has been started somewhere else, deletes them locally")
         time.sleep(4)
         self.xmppclient.jabber.Process(3)
-	
-        self.log("Switching off hyp 1")	
+
+        self.log("Switching off hyp 1")
         hyp1_console=self.consoles[0]
         hyp1_console.sendline("/etc/init.d/archipel stop")
         hyp1_console.expect("OK")
@@ -853,7 +884,7 @@ class ArchipelTest:
             self.fail_test("Did not find %s hypervisors in central db with status online when 1 hypervisor is off"%(num_hyp))
 	self.log("TODO: check automatically that hyp 1 has Online(1) as status")
         #sleep_time=5
-        #self.log("We sleep %s secs otherwise we have strange libvirt errors" % sleep_time)	
+        #self.log("We sleep %s secs otherwise we have strange libvirt errors" % sleep_time)
 	#time.sleep(sleep_time)
         self.wait_xmpp_pingable(vms[2]["jid"])
 
@@ -909,10 +940,10 @@ class ArchipelTest:
         success = (resp and resp.getType()=="result")
         if not success:
             self.fail_test("Park stanza returned error")
-	
+
 	self.log("platform request reply: %s"%resp)
 	self.end_test()
-        
+
 	self.begin_test("Xml update in parking, should pass")
 	self.log("Now parking last remaining vm")
 	park_other_iq = xmpp.Iq(typ='set', queryNS="archipel:hypervisor:vmparking", to=hyp_jid[1])
@@ -992,7 +1023,7 @@ class ArchipelTest:
             show= roster.getShow(rosteritem)
             resources= roster.getResources(rosteritem)
             self.log("Roster item : %s, status : %s, show : %s, resources : %s"%(rosteritem,status,show,resources))
-        
+
         self.cl.disconnect()
         exit
 

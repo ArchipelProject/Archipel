@@ -31,7 +31,7 @@ in your environment, for monitoring of your whole system.
 For more information, please go to http://archipelproject.org
 """
 
-RPM_REQUIRED_DEPS = "archipel-core, python-imaging"
+RPM_REQUIRED_DEPS = "archipel-core, python-imaging, python-argparse"
 RPM_POST_INSTALL = "%post\narchipel-central-agent-initinstall\n"
 
 ## HACK FOR DEPS IN RPMS
@@ -83,7 +83,7 @@ setup(name='archipel-central-agent',
       provides=["archipelcentral"],
       install_requires=[
         "archipel-core>=0.6.0beta",
-        "PIL"
+        "archipel-agent-xmppserver>=0.6.0beta"
       ],
       entry_points="""
         # -*- Entry points: -*-
@@ -93,7 +93,8 @@ setup(name='archipel-central-agent',
         'install/bin/archipel-central-agent-initinstall'
         ],
       data_files=[
-        ('install/etc/init.d'              , ['install/etc/init.d/archipel-central-agent']),
-        ('install/etc/archipel/'           , ['install/etc/archipel/archipel-central-agent.conf'])
+        ('install/var/lib/archipel/avatars'             , create_avatar_list("install/var/lib/archipel/avatars/")),
+        ('install/etc/init.d'                           , ['install/etc/init.d/archipel-central-agent']),
+        ('install/etc/archipel/'                        , ['install/etc/archipel/archipel-central-agent.conf'])
         ]
       )

@@ -33,8 +33,8 @@ For more information, please go to http://archipelproject.org
 """
 
 #RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt-python"
-RPM_REQUIRED_DEPS = "archipel-core, python-imaging, libvirt, libvirt-python"
-RPM_POST_INSTALL = "%post\narchipel-initinstall -i\n"
+RPM_REQUIRED_DEPS = "archipel-core, python-imaging, python-argparse, libvirt, libvirt-python"
+RPM_POST_INSTALL = "%post\narchipel-initinstall\n"
 
 ## HACK FOR DEPS IN RPMS
 from setuptools.command.bdist_rpm import bdist_rpm
@@ -105,14 +105,9 @@ setup(name='archipel-agent',
         """,
       scripts = [
         'install/bin/archipel-importvirtualmachine',
-        'install/bin/archipel-rolesnode',
-        'install/bin/archipel-tagnode',
         'install/bin/archipel-updatedomain',
         'install/bin/archipel-initinstall',
-        'install/bin/archipel-testxmppserver',
         'install/bin/archipel-commandsbytag',
-        'install/bin/archipel-adminaccounts',
-        'install/bin/archipel-centralagentnode',
         'install/bin/archipel-command',
         'install/bin/runarchipel'
         ],
