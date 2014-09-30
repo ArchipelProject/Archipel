@@ -21,11 +21,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import xmpp
 import sqlite3
 
 from archipel.archipelHypervisor import TNArchipelHypervisor
 from archipel.archipelHypervisor import TNArchipelVirtualMachine
+from archipelcore import xmpp
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
 
