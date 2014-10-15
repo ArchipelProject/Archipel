@@ -106,8 +106,8 @@
 
     _audioTagReceive = [[CPSound alloc] initWithContentsOfFile:sound byReference:NO];
 
-    [viewMessage setBackgroundColor:CPColorWithImages(@"bg-controls.png", nil, nil, bundle)];
-    [viewConferenceInfo setBackgroundColor:CPColorWithImages(@"bg-info.png", nil, nil, bundle)];
+    [viewMessage setBackgroundColor:CPColorWithImages(@"bg-controls.png", 256, 36, bundle)];
+    [viewConferenceInfo setBackgroundColor:CPColorWithImages(@"bg-info.png", 1, 60, bundle)];
     [viewConferenceInfo applyShadow];
 
     _toolbarItemImages = [

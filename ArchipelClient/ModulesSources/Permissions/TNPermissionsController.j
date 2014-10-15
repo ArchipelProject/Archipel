@@ -171,7 +171,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
     [filterRosterUsers setTarget:_datasourceRosterUsers];
     [filterRosterUsers setAction:@selector(filterObjects:)];
 
-    var filterBgColor = CPColorWithImages(@"Backgrounds/background-filter.png", nil, nil, [CPBundle mainBundle]);
+    var filterBgColor = CPColorWithImages(@"Backgrounds/background-filter.png", 1, 33, [CPBundle mainBundle]);
     [[filterUsers superview] setBackgroundColor:filterBgColor];
     [[filterRosterUsers superview] setBackgroundColor:filterBgColor];
     [[filterField superview] setBackgroundColor:filterBgColor];
