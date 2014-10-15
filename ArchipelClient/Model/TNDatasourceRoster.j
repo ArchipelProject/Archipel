@@ -356,13 +356,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
         return CPDragOperationEvery;
     }
-    else if (theItem)
-    {
-        [anOutlineView setDropItem:nil dropChildIndex:theIndex];
-        return CPDragOperationEvery;
-    }
 
-    return CPDragOperationNone;
+    [anOutlineView setDropItem:nil dropChildIndex:theIndex];
+    return CPDragOperationEvery;
 }
 
 /*! CPOutlineView Datasource
