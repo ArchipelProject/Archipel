@@ -19,6 +19,8 @@
 
 @import <LPKit/LPSwitch.j>
 
+var switchKnobWidth     = 30,
+    switchKnobHeight    = 25;
 
 /*! @ingroup archipelcore
     Themed LPSwitch
@@ -32,8 +34,8 @@
         switchHeight                   = 25,
         offBackgroundImage             = CPColorWithImages(@"LPSwitch/switch-off-background.png",   switchWidth, switchHeight, mainBundle),
         onBackgroundImage              = CPColorWithImages(@"LPSwitch/switch-on-background.png",    switchWidth, switchHeight, mainBundle),
-        knobBackgroundImage            = CPColorWithImages(@"LPSwitch/switch-knob.png",             switchWidth, switchHeight, mainBundle),
-        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchWidth, switchHeight, mainBundle);
+        knobBackgroundImage            = CPColorWithImages(@"LPSwitch/switch-knob.png",             switchKnobWidth, switchKnobHeight, mainBundle),
+        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchKnobWidth, switchKnobHeight, mainBundle);
 
     return @{
             @"off-background-color"         :offBackgroundImage,
@@ -59,7 +61,7 @@
         aSwitch     = [[TNSwitch alloc] initWithFrame:aFrame],
         switchWidth                    = 77,
         switchHeight                   = 25,
-        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchWidth, switchHeight, mainBundle);
+        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchKnobWidth, switchKnobHeight, mainBundle);
 
     [aSwitch setValue:highlightedKnobBackgroundImage forThemeAttribute:@"knob-background-color" inState:CPThemeStateNormal | CPThemeStateHighlighted];
 
@@ -74,9 +76,9 @@
     if (self = [super initWithFrame:aFrame])
     {
         var mainBundle                     = [CPBundle mainBundle],
-            highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png",        aFrame.size.width, aFrame.size.height, mainBundle),
+            highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png",        switchKnobWidth, switchKnobHeight, mainBundle),
             offBackgroundImageDisabled     = CPColorWithImages(@"LPSwitch/switch-off-background-disabled.png", aFrame.size.width, aFrame.size.height, mainBundle),
-            knobBackgroundDisabled         = CPColorWithImages(@"LPSwitch/switch-knob-disabled.png",           aFrame.size.width, aFrame.size.height, mainBundle);
+            knobBackgroundDisabled         = CPColorWithImages(@"LPSwitch/switch-knob-disabled.png",           switchKnobWidth, switchKnobHeight, mainBundle);
 
         [self setValue:highlightedKnobBackgroundImage forThemeAttribute:@"knob-background-color" inState:CPThemeStateNormal | CPThemeStateHighlighted];
 
