@@ -60,6 +60,7 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
     if (!_vncReady)
     {
         [[self UIItem] setEnabled:NO];
+        [_UIObject reloadToolbarItems];
         return;
     }
 
@@ -70,7 +71,9 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
             break;
         default:
             [[self UIItem] setEnabled:NO];
-   }
+    }
+
+    [_UIObject reloadToolbarItems];
 }
 
 - (void)didVNCInformationRecovered:(CPNotification)aNotification
@@ -93,11 +96,14 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
     [super setEntity:anEntity];
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
+
     if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
     {
         [[self UIItem] setEnabled:NO];
+        [_UIObject reloadToolbarItems];
         return;
     }
+
     [self setGUIAccordingToStatus:nil];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:nil];
