@@ -359,6 +359,17 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
                           style:CPCriticalAlertStyle];
         return;
     }
+
+    var predicate = [CPPredicate predicateWithFormat:"JID.bare == %@", [fieldNewUserUsername stringValue]];
+
+    if ([[[_datasourceUsers content] filteredArrayUsingPredicate:predicate] count] > 0)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"User already exist", @"User already exist")
+                          informative:[fieldNewUserUsername stringValue] + CPLocalizedString(" already exist!", " already exist!")
+                          style:CPCriticalAlertStyle];
+        return;
+    }
+
     [self registerUserWithJID:JID password:[fieldNewUserPassword stringValue]];
 }
 
@@ -634,7 +645,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

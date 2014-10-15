@@ -676,7 +676,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         def on_receive_registration(conn, iq):
             if iq.getType() == "result":
                 for user in users:
-                    self.users.append({"jid": user["jid"].getStripped(), "type": "human"})
+                    entry = {"jid": user["jid"].getStripped(), "type": "human"}
+                    if entry not in self.users:
+                        self.users.append(entry)
                 self.entities_types_cache[user["jid"].getStripped()] = "human"
                 self.entity.log.info("XMPPSERVER: Successfully registered user(s).")
                 self.entity.push_change("xmppserver:users", "registered")
