@@ -62,6 +62,8 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
         default:
             [[self UIItem] setEnabled:NO];
    }
+
+   [_UIObject reloadToolbarItems];
 }
 
 

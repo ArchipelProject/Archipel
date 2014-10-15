@@ -60,6 +60,7 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
     if (!_vncReady)
     {
         [[self UIItem] setEnabled:NO];
+        [_UIObject reloadToolbarItems];
         return;
     }
 
@@ -70,7 +71,9 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
             break;
         default:
             [[self UIItem] setEnabled:NO];
-   }
+    }
+
+    [_UIObject reloadToolbarItems];
 }
 
 - (void)didVNCInformationRecovered:(CPNotification)aNotification

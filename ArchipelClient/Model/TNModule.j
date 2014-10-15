@@ -326,7 +326,8 @@ var TNModuleStatusImageReady,
 - (void)UIItem
 {
     if ([_UIObject isKindOfClass:CPToolbar])
-        return [_UIObject itemWithIdentifier:_identifier]
+        return [_UIObject itemWithIdentifier:_identifier];
+
     return _UIItem;
 }
 
