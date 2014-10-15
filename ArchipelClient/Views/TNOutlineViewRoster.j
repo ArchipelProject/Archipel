@@ -141,11 +141,22 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
     }
 
     var rowIndex = [self rowForItem:[aNotification userInfo]];
+
+    if (rowIndex == CPNotFound)
+    {
+        var group = [[[aNotification userInfo] groups] firstObject];
+        [self expandItem:group];
+
+        rowIndex = [self rowForItem:[aNotification userInfo]];
+    }
+
     if (rowIndex !== CPNotFound)
         [[_searchField cancelButton] performClick:self];
-        [self reloadData];
-        [self selectRowIndexes:[CPIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+
+    [self reloadData];
+    [self selectRowIndexes:[CPIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
 }
+
 
 #pragma mark -
 #pragma mark Utilities
