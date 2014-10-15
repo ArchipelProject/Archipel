@@ -113,7 +113,7 @@
     [mainView setBackView:viewVCard];
     [mainView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
-    var gradColor = CPColorWithImages(@"Backgrounds/background-nickname.png", nil, nil, bundle);
+    var gradColor = CPColorWithImages(@"Backgrounds/background-nickname.png", 1, 30, bundle);
     [viewNicknameContainer setBackgroundColor:gradColor];
     [viewVCardContainer setBackgroundColor:gradColor];
 

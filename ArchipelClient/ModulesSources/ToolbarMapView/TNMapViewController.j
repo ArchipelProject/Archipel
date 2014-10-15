@@ -89,7 +89,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     var posy,
         defaults         = [CPUserDefaults standardUserDefaults],
         bundle           = [CPBundle bundleForClass:[self class]],
-        gradBGColor      = CPColorWithImages(@"gradientbg.png", nil, nil, bundle);
+        gradBGColor      = CPColorWithImages(@"gradientbg.png", 1, 32, bundle);
 
     [viewOrigin setBackgroundColor:gradBGColor];
     [viewDestination setBackgroundColor:gradBGColor];
