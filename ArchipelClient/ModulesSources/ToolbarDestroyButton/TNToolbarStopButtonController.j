@@ -81,11 +81,14 @@ var TNArchipelControlNotification   = @"TNArchipelControlNotification",
     [super setEntity:anEntity];
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
+
     if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
     {
         [[self UIItem] setEnabled:NO];
+        [_UIObject reloadToolbarItems];
         return;
     }
+
     [self setGUIAccordingToStatus:nil];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
