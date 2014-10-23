@@ -24,12 +24,12 @@
 */
 @implementation CPTableView (removeUglyChange)
 
-- (void)unfocusedSelectionGradientColors
+- (CPColor)unfocusedSelectionGradientColors
 {
     return [self currentValueForThemeAttribute:@"sourcelist-selection-color"];
 }
 
-- (void)unfocusedSelectionHighlightColor
+- (CPColor)unfocusedSelectionHighlightColor
 {
     return [self currentValueForThemeAttribute:@"selection-color"];
 }
