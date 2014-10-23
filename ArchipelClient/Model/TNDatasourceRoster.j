@@ -349,7 +349,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 /*! CPOutlineView Datasource
 */
-- (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
+- (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id /*< CPDraggingInfo >*/)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
 {
     if ([theItem isKindOfClass:TNStropheGroup])
     {
@@ -363,7 +363,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 /*! CPOutlineView Datasource
 */
-- (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)targetItem childIndex:(int)theIndex
+- (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id /*< CPDraggingInfo >*/)theInfo item:(id)targetItem childIndex:(int)theIndex
 {
     for (var i = 0; i < [_draggedItems count]; i++)
     {

@@ -26,7 +26,7 @@
     CPDictionary _colorRegistry;
 }
 
-- (void)initWithFrame:(CGRect)aRect
+- (id)initWithFrame:(CGRect)aRect
 {
     if (self = [super initWithFrame:aRect])
     {
@@ -41,7 +41,7 @@
     _colorRegistry = [CPDictionary dictionary];
 }
 
-- (void)setThemeState:(CPThemeState)aThemeState
+- (BOOL)setThemeState:(ThemeState)aThemeState
 {
     if ([self hasThemeState:aThemeState])
         return;
@@ -65,7 +65,7 @@
     }
 }
 
-- (void)unsetThemeState:(CPThemeState)aThemeState
+- (BOOL)unsetThemeState:(ThemeState)aThemeState
 {
     if (![self hasThemeState:aThemeState])
         return;
