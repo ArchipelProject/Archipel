@@ -327,7 +327,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     /* left view */
     [leftView addSubview:_outlineScrollView];
-    [leftView setBackgroundColor:CPColorWithImages(@"Backgrounds/dark-bg.png", nil, nil, bundle)];
+    [leftView setBackgroundColor:CPColorWithImages(@"Backgrounds/dark-bg.png", 201, 311, bundle)];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
@@ -367,7 +367,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
 
-    [filterView setBackgroundColor:CPColorWithImages(@"Backgrounds/background-filter.png", nil, nil, bundle)];
+    [filterView setBackgroundColor:CPColorWithImages(@"Backgrounds/background-filter.png", 201, 33, bundle)];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
 
@@ -426,7 +426,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
 
     /* status bar */
-    [statusBar setBackgroundColor:CPColorWithImages(@"Backgrounds/statusbar-bg.png", nil, nil, bundle)];
+    [statusBar setBackgroundColor:CPColorWithImages(@"Backgrounds/statusbar-bg.png", 835, 26, bundle)];
     [statusBar applyShadow:[CPColor colorWithHexString:@"f3f3f3"] offset:CGSizeMake(0.0, 1.0)];
 
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];

@@ -147,7 +147,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
 /*! implement theming in order to allow change color of selected item
 */
-- (void)setThemeState:(id)aState
+- (BOOL)setThemeState:(ThemeState)aState
 {
     [super setThemeState:aState];
 
@@ -158,7 +158,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
 /*! implement theming in order to allow change color of selected item
 */
-- (void)unsetThemeState:(id)aState
+- (BOOL)unsetThemeState:(ThemeState)aState
 {
     [super unsetThemeState:aState];
 
@@ -250,7 +250,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
 /*! implement theming in order to allow change color of selected item
 */
-- (void)setThemeState:(id)aState
+- (BOOL)setThemeState:(ThemeState)aState
 {
     [super setThemeState:aState];
 
@@ -259,7 +259,7 @@ var TNRosterDataViewContactImageUnknownUser,
 
 /*! implement theming in order to allow change color of selected item
 */
-- (void)unsetThemeState:(id)aState
+- (BOOL)unsetThemeState:(ThemeState)aState
 {
     [super unsetThemeState:aState];
 

@@ -109,7 +109,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 /*! initialize the module loader
     @return an initialized instance of TNModuleLoader
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

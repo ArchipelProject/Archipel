@@ -413,6 +413,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         server = self.entity.jid.getDomain()
         display_groups = '\\n'.join(map(str, display))
+        shared_groups = self._send_xmlrpc_call("srg_list", {"host": server})
+        if [True for group in shared_groups['groups'] if group['id'] == ID]:
+            return True
         answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": display_groups, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
@@ -533,9 +536,12 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type users: list
         @param users: list of the users to add in the group
         """
-        server = self.entity.jid.getDomain()
+        server  = self.entity.jid.getDomain()
+        members = self._send_xmlrpc_call("srg_get_members", {"host": server, "group": ID})
         for user in users:
             userJID = xmpp.JID(user)
+            if [True for member in members['members'] if member['member'] == userJID]:
+                continue
             answer = self._send_xmlrpc_call("srg_user_add", {"user": userJID.getNode(), "host": userJID.getDomain(), "group": ID, "grouphost": server})
             if not answer['res'] == 0:
                 raise Exception("Cannot add user to shared roster group. %s" % str(answer))
@@ -676,7 +682,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         def on_receive_registration(conn, iq):
             if iq.getType() == "result":
                 for user in users:
-                    self.users.append({"jid": user["jid"].getStripped(), "type": "human"})
+                    entry = {"jid": user["jid"].getStripped(), "type": "human"}
+                    if entry not in self.users:
+                        self.users.append(entry)
                 self.entities_types_cache[user["jid"].getStripped()] = "human"
                 self.entity.log.info("XMPPSERVER: Successfully registered user(s).")
                 self.entity.push_change("xmppserver:users", "registered")

@@ -291,6 +291,11 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
+    [fieldStringXMLDesc setBordered:YES];
+    [fieldStringXMLDesc setBezeled:YES];
+    [fieldStringXMLDesc setEnabled:YES];
+    [fieldStringXMLDesc setFrameSize:CGSizeMake([fieldStringXMLDesc frameSize].width, 351)];
+
 
     _stringXMLDesc = @"";
 

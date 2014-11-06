@@ -22,6 +22,7 @@
 import types
 import xmpp
 
+from uuid import uuid1 as uuid
 
 XMPP_PUBSUB_VAR_TITLE                                       = "pubsub#title"
 XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION                        = "pubsub#deliver_notifications"
@@ -264,12 +265,12 @@ class TNPubSubNode:
         pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
         publish     = pubsub.addChild("publish", attrs={"node": self.nodename})
         item        = publish.addChild("item")
+        item.setAttr("id", uuid())
         item.addChild(node=itemcontentnode)
 
         def _did_publish_item(conn, resp, callback, item):
             ret = False
-            if resp.getType() == "result":
-                item.setAttr("id", resp.getTag("pubsub").getTag("publish").getTag("item").getAttr("id"))
+            if resp.getType() == "result" and resp.getTag("pubsub").getTag("publish").getTag("item").getAttr("id") == item.getAttr("id"):
                 self.content.append(item)
                 ret = True
             if callback:

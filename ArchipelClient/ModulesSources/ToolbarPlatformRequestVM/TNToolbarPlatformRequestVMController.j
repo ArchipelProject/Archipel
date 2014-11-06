@@ -178,13 +178,17 @@ var TNArchipelNSPlatform                            = @"archipel:platform",
     if (areSubscriptionsRetrieved)
     {
         CPLog.info("sucessfully subscriptions retreived for node " + [aPubSubNode name]);
+
         if ([aPubSubNode numberOfSubscriptions] == 0)
             [aPubSubNode subscribe];
+
         [[self UIItem] setEnabled:YES];
+        [_UIObject reloadToolbarItems];
     }
     else
     {
         [[self UIItem] setEnabled:NO];
+        [_UIObject reloadToolbarItems];
         CPLog.error("cannot retrieve subscriptions for node " + [aPubSubNode name]);
     }
 }

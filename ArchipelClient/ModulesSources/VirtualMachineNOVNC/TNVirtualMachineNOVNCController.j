@@ -117,7 +117,7 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
         imageSendPasteBoard = CPImageInBundle(@"sendPasteBoard.png", CGSizeMake(16, 16), bundle),
         imageGetPasteBoard = CPImageInBundle(@"getPasteBoard.png", CGSizeMake(16, 16), bundle);
 
-    [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", nil, nil, bundle)];
+    [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", 256, 36, bundle)];
     [buttonZoomFitToWindow setImage:imageZoomFit];
     [buttonZoomReset setImage:imageZoomReset];
     [buttonExternalWindow setImage:imageDirectAccess];
