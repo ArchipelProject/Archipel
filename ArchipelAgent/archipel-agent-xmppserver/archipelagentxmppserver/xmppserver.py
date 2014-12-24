@@ -414,8 +414,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         server = self.entity.jid.getDomain()
         display_groups = '\\n'.join(map(str, display))
         shared_groups = self._send_xmlrpc_call("srg_list", {"host": server})
-        if [True for group in shared_groups['groups'] if group['id'] == ID]:
-            return True
         answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": display_groups, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
@@ -704,7 +702,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_registration)
             else:
                 self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_registration)
-            self.entity.log.info("XMPPSERVER: Registering a new user %s@%s" % (user["jid"], server))
+            self.entity.log.info("XMPPSERVER: Registering a new user %s on %s" % (user["jid"], server))
 
     def iq_users_unregister(self, iq):
         """
