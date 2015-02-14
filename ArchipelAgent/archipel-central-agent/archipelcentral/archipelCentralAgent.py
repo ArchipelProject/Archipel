@@ -88,6 +88,13 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.hook_xmpp_authenticated)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
 
+        # create hooks
+        self.create_hook("HOOK_CENTRALAGENT_VM_REGISTERED")
+        self.create_hook("HOOK_CENTRALAGENT_VM_UNREGISTERED")
+        self.create_hook("HOOK_CENTRALAGENT_HYP_REGISTERED")
+        self.create_hook("HOOK_CENTRALAGENT_HYP_UNREGISTERED")
+
+
         self.central_agent_jid_val = None
 
         self.xmpp_authenticated   = False
@@ -375,6 +382,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.register_hypervisors(entries)
+            self.perform_hooks("HOOK_CENTRALAGENT_HYP_REGISTERED", entries)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -389,6 +397,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.register_vms(entries)
+            self.perform_hooks("HOOK_CENTRALAGENT_VM_REGISTERED", entries)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -447,6 +456,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.unregister_hypervisors(entries)
+            self.perform_hooks("HOOK_CENTRALAGENT_HYP_UNREGISTERED", entries)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -461,6 +471,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = iq.buildReply("result")
             in_entries = self.unpack_entries(iq)
             out_entries = self.unregister_vms(in_entries)
+            self.perform_hooks("HOOK_CENTRALAGENT_VM_UNREGISTERED", out_entries)
             for entry in self.pack_entries(out_entries):
                 reply.addChild(node = entry)
         except Exception as ex:
