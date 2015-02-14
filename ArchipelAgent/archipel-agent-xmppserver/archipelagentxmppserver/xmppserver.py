@@ -446,7 +446,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         server = self.entity.jid.getDomain()
         answer = self._send_xmlrpc_call("srg_delete", {"host": server, "group": ID})
         if not answer['res'] == 0:
-            raise Exception("Cannot create shared roster group. %s" % str(answer))
+            raise Exception("Cannot delete shared roster group. %s" % str(answer))
         self.entity.log.info("XMPPSERVER: Removing a shared group %s" % ID)
         self.entity.push_change("xmppserver:groups", "deleted")
 
@@ -729,13 +729,14 @@ class TNXMPPServerController (TNArchipelPlugin):
         def on_receive_unregistration(conn, iq):
             if iq.getType() == "result":
                 for jid in users:
-                    self.users.remove({"jid": jid.getStripped(), "type": "human"})
+                    user = {"jid": jid.getStripped(), "type": "human"}
+                    if user in self.users:
+                        self.users.remove(user)
                 self.entity.log.info("XMPPSERVER: Successfully unregistered user(s).")
                 self.entity.push_change("xmppserver:users", "unregistered")
             else:
                 self.entity.push_change("xmppserver:users", "unregisterationerror", iq)
                 self.entity.log.error("XMPPSERVER: unable to unregister user. %s" % str(iq))
-
         iq = xmpp.Iq(typ="set", to=self.entity.jid.getDomain())
         iq_command = iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"node": "http://jabber.org/protocol/admin#delete-user"})
         iq_command_x = iq_command.addChild("x", namespace="jabber:x:data", attrs={"type": "submit"})
@@ -745,11 +746,11 @@ class TNXMPPServerController (TNArchipelPlugin):
             accountjids_node.addChild("value").setData(jid.getStripped())
             if jid.getStripped() in self.entities_types_cache:
                 del self.entities_types_cache[jid.getStripped()]
+            self.entity.log.info("XMPPSERVER: Unregistering user %s" % str(jid.getStripped()))
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
         else:
             self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_unregistration)
-        self.entity.log.info("XMPPSERVER: Unregistring some users %s" % str(users))
 
     def iq_users_number(self, iq):
         """
