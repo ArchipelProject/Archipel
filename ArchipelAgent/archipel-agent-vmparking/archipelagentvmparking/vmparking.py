@@ -239,7 +239,7 @@ class TNVMParking (TNArchipelPlugin):
         """
         def _on_centralagent_reply(vms):
             try:
-                self.entity.log.debug("VMPARKING: here is the raw list result %s" % vms)
+                self.entity.log.debug("VMPARKING: We got %s entry from central db" % len(vms))
                 reply = iq.buildReply("result")
                 parked_vms = []
                 for vm in vms:

@@ -1043,8 +1043,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=migration_destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "migrationinfo"})
-        xmpp.dispatcher.ID += 1
-        iq.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         self.xmppclient.SendAndCallForResponse(iq, self.migrate_running_step2)
 
     def migrate_running_step2(self, conn, resp):
@@ -1100,8 +1098,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "soft_alloc"})
         iq.getTag("query").getTag("archipel").addChild(node=self.xmldesc(mask_description=False))
-        xmpp.dispatcher.ID += 1
-        iq.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         self.xmppclient.SendAndCallForResponse(iq, self.migrate_not_running_step2)
 
     def migrate_not_running_step2(self, conn, resp):

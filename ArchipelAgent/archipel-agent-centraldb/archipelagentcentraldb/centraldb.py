@@ -36,6 +36,8 @@ ARCHIPEL_NS_CENTRALAGENT                 = "archipel:centralagent"
 
 ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 
+ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 120
+
 class TNCentralDb (TNArchipelPlugin):
     """
     This contains the necessary interfaces to interact with central agent and central db
@@ -64,6 +66,7 @@ class TNCentralDb (TNArchipelPlugin):
             self.entity.register_hook("HOOK_VM_TERMINATE", method=self.hook_vm_terminate)
 
         self.central_agent_jid_val = None
+        self.last_keepalive_heard = None
 
         self.xmpp_authenticated    = False
         self.required_statistics        = []
@@ -114,6 +117,10 @@ class TNCentralDb (TNArchipelPlugin):
         """
         Returns the jid of the central agent. In case we are a VM, query hypervisor.
         """
+        # this could happen under heavy processing
+        if self.last_keepalive_heard and (datetime.datetime.now() - self.last_keepalive_heard).seconds > ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
+            return None
+
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
 
             return self.central_agent_jid_val
@@ -183,8 +190,8 @@ class TNCentralDb (TNArchipelPlugin):
 
     def handle_first_keepalive(self, keepalive_jid):
         """
-        this is the first keepalive. We query hypervisors that have started somewhere else
-        then we trigger method manage_persistence to start the vms.
+        this is the first keepalive. We query hypervisors that have vm entities somewhere else
+        then we trigger method manage_persistence to instantiate vm entities.
         """
         vms_from_local_db = self.entity.get_vms_from_local_db()
 
@@ -200,22 +207,20 @@ class TNCentralDb (TNArchipelPlugin):
                 dbCommand.addChild(node=entryTag)
 
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=keepalive_jid)
-            iq.getTag("query").addChild(name="archipel", attrs={"action":"read_vms_started_elsewhere"})
+            iq.getTag("query").addChild(name="archipel", attrs={"action":"get_existing_vms_instances"})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
-            xmpp.dispatcher.ID += 1
-            iq.setID("%s-%d" % (self.entity.jid.getNode(), xmpp.dispatcher.ID))
 
-            def _read_vms_started_elsewhere_callback(conn, packed_vms):
+            def _get_existing_vms_instances_callback(conn, packed_vms):
 
-                vms_started_elsewhere = self.unpack_entries(packed_vms)
-                self.entity.manage_persistence(vms_from_local_db, vms_started_elsewhere)
+                existing_vms_entities = self.unpack_entries(packed_vms)
+                self.entity.manage_persistence(vms_from_local_db, existing_vms_entities)
 
-            self.entity.xmppclient.SendAndCallForResponse(iq, _read_vms_started_elsewhere_callback)
+            self.entity.xmppclient.SendAndCallForResponse(iq, _get_existing_vms_instances_callback)
 
         else:
 
             # update status to Online(0)
-            self.entity.manage_persistence([], [])
+            self.entity.manage_persistence()
 
 
     def push_vms_in_central_db(self, central_announcement_event):
@@ -362,9 +367,7 @@ class TNCentralDb (TNArchipelPlugin):
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
-            self.entity.log.debug("CENTRALDB: commit to db request %s" % iq)
-            xmpp.dispatcher.ID += 1
-            iq.setID("%s-%d" % (self.entity.jid.getNode(), xmpp.dispatcher.ID))
+            self.entity.log.debug("CENTRALDB [%s]: \n%s" % (action.upper(), iq))
             self.entity.xmppclient.SendAndCallForResponse(iq, commit_to_db_callback)
 
         else:
@@ -393,19 +396,14 @@ class TNCentralDb (TNArchipelPlugin):
 
             if columns:
                 dbCommand.setAttr("columns", columns)
-
-            self.entity.log.debug("CENTRALDB: central agent jid %s" % central_agent_jid)
+            self.entity.log.debug("CENTRALDB: Asking central db for [%s] %s %s" % (action.upper(), columns, where_statement))
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
-            xmpp.dispatcher.ID += 1
-            iq.setID("%s-%d" % (self.entity.jid.getNode(), xmpp.dispatcher.ID))
 
             def _read_from_db_callback(conn, resp):
-
-                self.entity.log.debug("CENTRALDB: reply to read statement %s" % resp)
                 unpacked_entries = self.unpack_entries(resp)
-                self.entity.log.debug("CENTRALDB: unpacked reply %s" % unpacked_entries)
+                self.entity.log.debug("CENTRALDB: read %s entries from db response" % len(unpacked_entries))
                 callback(unpacked_entries)
 
             self.entity.xmppclient.SendAndCallForResponse(iq, _read_from_db_callback)
@@ -423,19 +421,12 @@ class TNCentralDb (TNArchipelPlugin):
         entries=[]
 
         for entry in iq.getChildren():
-
             entry_dict = {}
-
             for entry_val in entry.getChildren():
-
                 if entry_val.getAttr("key"):
-
                      entry_dict[entry_val.getAttr("key")]=entry_val.getAttr("value")
-
             if entry_dict != {} :
-
                 entries.append(entry_dict)
-
         return entries
 
 

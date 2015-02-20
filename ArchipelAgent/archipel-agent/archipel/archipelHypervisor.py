@@ -71,8 +71,8 @@ ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
-# number of xmpp ticks before central agent is considered AWOL
-ARCHIPEL_CENTRAL_AGENT_TIMEOUT                  = 20
+# number of seconds before central agent is considered AWOL
+ARCHIPEL_CENTRAL_AGENT_TIMEOUT                  = 5
 
 class TNThreadedVirtualMachine (Thread):
     """
@@ -146,13 +146,17 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.libvirt_event_callback_id = None
         self.vcard_infos = {}
         self.bad_chars_in_name = '(){}[]<>!@#$'
-        self.wait_for_central_agent = False
+        self.check_for_central_agent = False
+        self.already_wake_up = False
+
         try:
             central_db_configured = self.configuration.getboolean("MODULES", "centraldb")
         except:
             central_db_configured = False
         if central_db_configured:
-            self.wait_for_central_agent = 1
+            self.check_for_central_agent = True
+            self.seen_central_agent = False
+            self.last_keepalive_from_central_agent = None
 
         # VMX extensions check
         f = open("/proc/cpuinfo")
@@ -271,7 +275,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             status = "%s (%s)" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
         else:
             status = "%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
-
         self.change_presence(self.xmppstatusshow, status)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
@@ -284,7 +287,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @type parameters: object
         @param parameters: runtime arguments
         """
-        self.manage_persistence(self.get_vms_from_local_db(), [])
+        self.manage_persistence(self.get_vms_from_local_db())
+        self.already_wake_up = True
 
     def register_handlers(self):
         """
@@ -385,37 +389,38 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             vms.append({"string_jid":string_jid, "password":password, "date": date, "comment": comment, "name": name})
         return vms
 
-    def manage_persistence(self, vms, vms_started_elsewhere):
+    def manage_persistence(self, vms=[], existing_vms_entities=[]):
         """
-        After getting the status of local vms from central db (were they started
-        else where or not ?), we proceed to start vms
+        After getting the status of local vms from central db (were they exist
+        else where or not ?), we proceed to instanciate vms
         """
+        if len(vms) > 0 and len(existing_vms_entities) > 0:
+            self.update_presence(presence_msg="Initializing...")
 
-        self.update_presence(presence_msg="Initializing...")
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         c = self.database.cursor()
-        vms_started_elsewhere_uuids = []
-        for vm in vms_started_elsewhere:
-            vms_started_elsewhere_uuids.append(vm["uuid"])
+        existing_vms_entities_uuids = []
+        for vm in existing_vms_entities:
+            existing_vms_entities_uuids.append(vm["uuid"])
         for vm in vms:
             string_jid = vm["string_jid"]
             jid = xmpp.JID(string_jid)
             uuid = jid.getNode()
             if uuid in self.virtualmachines:
-                self.log.debug("VM %s entity is already started" % string_jid)
+                self.log.debug("VM %s entity already exist" % string_jid)
                 continue
-            if uuid not in vms_started_elsewhere_uuids:
-                self.log.info("Starting vm %s" % string_jid)
+            if uuid not in existing_vms_entities_uuids:
+                self.log.info("Creating vm entity for %s" % string_jid)
                 jid.setResource(self.jid.getNode().lower())
                 vm_thread = self.create_threaded_vm(jid, vm["password"], vm["name"], self.vcard_infos)
                 self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
                 vm_thread.start()
                 self.perform_hooks("HOOK_HYPERVISOR_VM_WOKE_UP", vm_thread.get_instance())
             else:
-                self.log.warning("Vm %s is already started on another hypervisor, removing from local db and local libvirt." % string_jid)
+                self.log.warning("Vm entity %s already exist on another hypervisor, removing from local db and local libvirt." % string_jid)
                 c.execute("delete from virtualmachines where jid='%s'" % string_jid)
                 self.database.commit()
-                for vm in vms_started_elsewhere:
+                for vm in existing_vms_entities:
                     vm_uuid = xmpp.JID(string_jid).getNode()
                     if vm_uuid:
                         try:
@@ -424,7 +429,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                                 libvirt_vm.destroy()
                             libvirt_vm.undefine()
                         except libvirt.libvirtError:
-                             self.log.warning("Libvirt gave error while trying to destroy vm started somewhere else")
+                             self.log.warning("Libvirt gave error while trying to destroy the existing vm %s" % (vm))
 
         self.perform_hooks("HOOK_HYPERVISOR_WOKE_UP", self)
         self.update_presence()
@@ -1336,17 +1341,30 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         return reply
 
     def on_xmpp_loop_tick(self):
-        if self.wait_for_central_agent:
-            self.wait_for_central_agent += 1
+        if self.check_for_central_agent:
+            if not self.last_keepalive_from_central_agent:
+                self.last_keepalive_from_central_agent = datetime.datetime.now()
             if self.get_plugin("centraldb"):
-                self.update_presence(presence_msg="Waiting for central-agent")
                 if self.get_plugin("centraldb").central_agent_jid():
-                    self.wait_for_central_agent = None
+                    if not self.seen_central_agent:
+                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database" % self.get_plugin("centraldb").central_agent_jid())
+                        self.seen_central_agent = True
                     return
-            if self.wait_for_central_agent > ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
-                self.log.error("HYPERVISOR: did not detect any central agent after %s ticks, starting vms based on local db info only." % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
+                elif self.seen_central_agent:
+                    self.log.error("CENTRALDB: Central Agent timeout after %s seconds" % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
+                    self.last_keepalive_from_central_agent = datetime.datetime.now()
+                    self.seen_central_agent = False
+
+                waiting_for = (datetime.datetime.now() - self.last_keepalive_from_central_agent).seconds
+                if waiting_for < ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
+                    self.update_presence(presence_msg="Waiting %ss for central-agent" % (ARCHIPEL_CENTRAL_AGENT_TIMEOUT - waiting_for))
+                    return
+                elif waiting_for > ARCHIPEL_CENTRAL_AGENT_TIMEOUT and waiting_for < (ARCHIPEL_CENTRAL_AGENT_TIMEOUT * 2):
+                    self.update_presence()
+
+            if not self.already_wake_up:
+                self.log.error("HYPERVISOR: No Central agent found after %s seconds, starting vms based on local db info only." % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
                 self.wake_up_virtual_machines_hook()
-                self.wait_for_central_agent = None
 
     def exit_proc(self):
         """

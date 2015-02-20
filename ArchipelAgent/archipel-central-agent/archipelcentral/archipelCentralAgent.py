@@ -35,7 +35,7 @@ from archipelcore.pubsub import TNPubSubNode
 from archipelcore.utils import build_error_iq, build_error_message
 from archipelcore import xmpp
 
-ARCHIPEL_CENTRAL_AGENT_KEEPALIVE         = 4  #seconds
+ARCHIPEL_CENTRAL_AGENT_KEEPALIVE         = 4  #seconds please change it according to centraldb agent plugin
 ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 10 #seconds
 ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY     = 30 #ticks
 ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT       = 60 #seconds
@@ -152,7 +152,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         It understands IQ of type:
             - read_hypervisors
             - read_vms
-            - read_vms_started_elsewhere
+            - get_existing_vms_instances
             - register_hypervisors
             - register_vms
             - update_vms
@@ -170,8 +170,8 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = self.iq_read_hypervisors(iq)
         elif action == "read_vms":
             reply = self.iq_read_vms(iq)
-        elif action == "read_vms_started_elsewhere":
-            reply = self.iq_read_vms_started_elsewhere(iq)
+        elif action == "get_existing_vms_instances":
+            reply = self.iq_get_existing_vms_instances(iq)
         elif action == "register_hypervisors":
             reply = self.iq_register_hypervisors(iq)
         elif action == "register_vms":
@@ -187,9 +187,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         elif action == "unregister_vms":
             reply = self.iq_unregister_vms(iq)
         if reply:
-            self.log.debug("CENTRALAGENT: we got a reply for this iq %s" % reply)
             conn.send(reply)
-            self.log.debug("CENTRALAGENT: reply sent")
             raise xmpp.protocol.NodeProcessed
 
     ### Pubsub management
@@ -294,7 +292,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             if event_type == "keepalive":
 
                 old_central_agent_jid = self.central_agent_jid()
-                self.log.debug("CENTRALAGENT: Keepalive heard.")
                 keepalive_jid = xmpp.JID(central_announcement_event.getAttr("jid"))
 
                 if self.is_central_agent and keepalive_jid != self.jid:
@@ -304,13 +301,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                     keepalive_salt = float(central_announcement_event.getAttr("salt"))
 
                     if keepalive_salt > self.salt:
-
                         self.log.debug("CENTRALAGENT: stepping down")
                         self.change_presence("away","Standby")
                         self.is_central_agent = False
-
                     else:
-
                         self.log.debug("CENTRALAGENT: election won")
                         return
 
@@ -353,19 +347,20 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
 
-    def iq_read_vms_started_elsewhere(self,iq):
+    def iq_get_existing_vms_instances(self,iq):
         """
-        Called when the central agent receives a vms started elsewhere read event.
+        Called when the central agent receives a request to check if entities
+        are already defined elsewhere
         @type iq: xmpp.Iq
         @param iq: received Iq
         """
         try:
             read_event = iq.getTag("query").getTag("archipel").getTag("event")
             entries = self.unpack_entries(iq)
-            self.log.debug("CENTRALAGENT: iq_read_vms_started_elsewhere : iq : %s, entries : %s" % (iq, entries))
+            self.log.debug("CENTRALAGENT: iq_get_existing_vms_instances : iq : %s, entries : %s" % (iq, entries))
             origin_hyp = iq.getFrom()
             reply = iq.buildReply("result")
-            entries = self.read_vms_started_elsewhere(entries, origin_hyp)
+            entries = self.get_existing_vms_instances(entries, origin_hyp)
             for entry in self.pack_entries(entries):
                 reply.addChild(node = entry)
         except Exception as ex:
@@ -512,7 +507,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                 ret.append(res)
         return ret
 
-    def read_vms_started_elsewhere(self, entries, origin_hyp):
+    def get_existing_vms_instances(self, entries, origin_hyp):
         """
         Based on a list of vms, and an hypervisor, return list of vms which
         are defined in another, currently running, hypervisor.
@@ -520,18 +515,17 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         uuids = []
         for entry in entries:
             uuids.append(entry["uuid"])
-        self.log.debug("CENTRALAGENT: read_vms_started_elsewhere uuids :%s " % uuids)
         read_statement = "select vms.uuid from vms join hypervisors on hypervisors.jid=vms.hypervisor where (vms.uuid='"
         read_statement += "' or vms.uuid='".join(uuids)
         read_statement += "') and hypervisors.jid != '%s'" % origin_hyp
         read_statement += " and hypervisors.status='Online'"
 
-        self.log.debug("CENTRALAGENT: read statement %s" % read_statement)
+        self.log.debug("CENTRALAGENT: Check if vm uuids %s exist elsewhere " % uuids)
         rows = self.database.execute(read_statement)
         ret = []
         for row in rows:
             ret.append({"uuid":row[0]})
-        self.log.debug("CENTRALAGENT: return of read statement : %s" % ret)
+        self.log.debug("CENTRALAGENT: We found %s on %s vms existing on others hypervistors." % (len(ret), len(uuids)))
         return ret
 
     def read_parked_vms(self, entries):
@@ -545,12 +539,13 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement = "select uuid, domain from vms where uuid=('"
         read_statement += "' or vms.uuid='".join(uuids)
         read_statement += "') and hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online')"
-        self.log.debug("CENTRALDB: read_parked_vms read statement :%s" % read_statement)
+        self.log.debug("CENTRALDB: Get parked vms from database")
 
         rows = self.database.execute(read_statement)
         ret = []
         for row in rows:
             ret.append({"uuid":row[0], "domain":row[1]})
+        self.log.debug("CENTRALDB: We found %s parked vms" % len(ret))
         return ret
 
     def register_hypervisors(self,entries):
@@ -741,25 +736,23 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         """
         Check that hypervisors are alive.
         """
-        self.log.debug("CENTRALAGENT: now checking all hypervisors are alive")
+        self.log.debug("CENTRALAGENT: Checking hypervisors state")
         now = datetime.datetime.now()
-        rows = self.database.execute("select jid,last_seen from hypervisors;")
-        unreachable_hypervisors = []
+        rows = self.database.execute("select jid,last_seen,status from hypervisors;")
+        hypervisor_to_update = []
 
         for row in rows:
-
-            jid, last_seen = row
-
+            jid, last_seen, status = row
             last_seen_date = datetime.datetime.strptime(last_seen, "%Y-%m-%d %H:%M:%S.%f")
+            if (now - last_seen_date).seconds > ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Online":
+                self.log.warning("CENTRALAGENT: Hypervisor %s timed out" % jid)
+                hypervisor_to_update.append({"jid": jid, "status": "Unreachable"})
+            elif (now - last_seen_date).seconds <= ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Unreachable":
+                self.log.info("CENTRALAGENT: Hypervisor %s is back up Online" % jid)
+                hypervisor_to_update.append({"jid": jid, "status": "Online"})
 
-            if (now - last_seen_date).seconds > ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT:
-
-                self.log.info("CENTRALAGENT: hyp %s timed out" % jid)
-                unreachable_hypervisors.append({"jid": jid, "status": "Unreachable"})
-
-        if len(unreachable_hypervisors) > 0:
-
-            self.update_hypervisors(unreachable_hypervisors)
+        if hypervisor_to_update:
+            self.update_hypervisors(hypervisor_to_update)
 
         self.last_hyp_check = datetime.datetime.now()
 
@@ -788,19 +781,14 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                 central_agent_timeout = ARCHIPEL_CENTRAL_AGENT_TIMEOUT * ( 1 + self.random_wait )
 
                 if (datetime.datetime.now() - self.last_keepalive_heard).seconds > central_agent_timeout:
-
                     self.log.info("CENTRALAGENT: has not detected any central agent for the last %s seconds, becoming central agent." % central_agent_timeout)
                     self.become_central_agent()
 
             elif self.is_central_agent: # we are central agent
-
                 if (datetime.datetime.now() - self.last_keepalive_sent).seconds >= ARCHIPEL_CENTRAL_AGENT_KEEPALIVE:
-
                     self.central_keepalive_pubsub.add_item(self.keepalive_event_with_date())
                     self.last_keepalive_sent = datetime.datetime.now()
 
                 if self.ping_hypervisors:
-
                     if (datetime.datetime.now() - self.last_hyp_check).seconds >= ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY:
-
                         self.check_hyps()
