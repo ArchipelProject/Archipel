@@ -272,9 +272,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             minor_info = len(self.virtualmachines)
         if self.has_vmx:
-            status = "%s (%s)" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
+            status = u"%s (%s)" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
         else:
-            status = "%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
+            status = u"%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
+
+        if self.get_plugin("centraldb") and self.get_plugin("centraldb").central_agent_jid():
+            status = u'\u26AD '+ status
         self.change_presence(self.xmppstatusshow, status)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
