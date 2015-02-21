@@ -397,7 +397,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         After getting the status of local vms from central db (were they exist
         else where or not ?), we proceed to instanciate vms
         """
-        if len(vms) > 0 and len(existing_vms_entities) > 0:
+        if len(vms) > 0 or len(existing_vms_entities) > 0:
             self.update_presence(presence_msg="Initializing...")
 
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
