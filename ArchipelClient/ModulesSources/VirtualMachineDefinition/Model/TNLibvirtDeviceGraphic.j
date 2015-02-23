@@ -54,7 +54,7 @@ TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapCH,
                                             TNLibvirtDeviceGraphicVNCKeymapHU,
                                             TNLibvirtDeviceGraphicVNCKeymapIT,
                                             TNLibvirtDeviceGraphicVNCKeymapNL_BE,
-                                            TNLibvirtDeviceGraphicVNCKeymapNO
+                                            TNLibvirtDeviceGraphicVNCKeymapNO,
                                             TNLibvirtDeviceGraphicVNCKeymapPT,
                                             TNLibvirtDeviceGraphicVNCKeymapSV];
 
