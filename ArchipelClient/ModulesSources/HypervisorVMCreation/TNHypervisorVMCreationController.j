@@ -938,7 +938,8 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
         for (var i = 0; i < [selectedObjects count]; i++)
         {
           var object = [selectedObjects objectAtIndex:i];
-          [indexesToSelect addIndex:[_virtualMachinesDatasource indexOfObject:object]];
+          if ([_virtualMachinesDatasource indexOfObject:object] != CPNotFound)
+            [indexesToSelect addIndex:[_virtualMachinesDatasource indexOfObject:object]];
         }
 
         [tableVirtualMachines selectRowIndexes:indexesToSelect byExtendingSelection:NO];
