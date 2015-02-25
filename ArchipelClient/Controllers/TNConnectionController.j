@@ -43,10 +43,6 @@ function _get_query_parameter_with_name(name)
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-var user     = _get_query_parameter_with_name("user"),
-    pass     = _get_query_parameter_with_name("pass"),
-    service  = _get_query_parameter_with_name("service");
-
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
 
@@ -93,6 +89,9 @@ var TNConnectionControllerForceResource,
 */
 - (void)awakeFromCib
 {
+    var user     = _get_query_parameter_with_name("user"),
+        pass     = _get_query_parameter_with_name("pass"),
+        service  = _get_query_parameter_with_name("service");
 
     if (user)
     {
