@@ -33,6 +33,20 @@
 @class CPLocalizedString
 @class TNDatasourceRoster
 
+function _get_query_parameter_with_name(name)
+{
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var user     = _get_query_parameter_with_name("user"),
+    pass     = _get_query_parameter_with_name("pass"),
+    service  = _get_query_parameter_with_name("service");
+
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
 
@@ -79,6 +93,19 @@ var TNConnectionControllerForceResource,
 */
 - (void)awakeFromCib
 {
+
+    if (user)
+    {
+        [fieldJID setStringValue:user]
+        if (!service)
+            [fieldService setStringValue:TNArchipelServiceTemplate.replace("@DOMAIN@",user.split("@")[1])]
+        else
+            [fieldService setStringValue:service]
+    }
+
+    if (pass)
+        [fieldPassword setStringValue:pass]
+
     [mainWindow setShowsResizeIndicator:NO];
     [mainWindow setDefaultButton:buttonConnect];
 
@@ -153,7 +180,8 @@ var TNConnectionControllerForceResource,
 {
     var lastPassword = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPPassword"];
 
-    [fieldPassword setStringValue:lastPassword || @""];
+    if ([fieldPassword stringValue] == @"")
+        [fieldPassword setStringValue:lastPassword];
 }
 
 - (void)_prepareService
@@ -174,7 +202,8 @@ var TNConnectionControllerForceResource,
 
     var lastService = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPService"];
 
-    [fieldService setStringValue:lastService || @""];
+    if ([fieldService stringValue] == @"")
+        [fieldService setStringValue:lastService];
 }
 
 - (void)_saveCredentials
