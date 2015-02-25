@@ -111,13 +111,11 @@ var TNConnectionControllerForceResource,
 
 - (void)_didJIDChange:(CPNotification)aNotification
 {
-    var currentJID;
+    var current_domain = [fieldJID stringValue].split("@")[1];
 
-    try { currentJID = [TNStropheJID stropheJIDWithString:[fieldJID stringValue]]; } catch(e) { }
-
-    [fieldService setStringValue:[currentJID domain] ? TNArchipelServiceTemplate.replace("@DOMAIN@", [currentJID domain]) : @""];
-
-    [self _saveCredentials];
+    if (current_domain)
+        [fieldService setStringValue:TNArchipelServiceTemplate.replace("@DOMAIN@",current_domain)]
+        [self _saveCredentials];
 }
 
 
