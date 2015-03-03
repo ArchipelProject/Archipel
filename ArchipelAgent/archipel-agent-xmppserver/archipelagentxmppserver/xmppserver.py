@@ -183,9 +183,19 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtime argument
         """
+        if not self.entity.__class__.__name__ in  ["TNArchipelVirtualMachine", "TNArchipelHypervisor"]:
+            return
+
+        groups_id = []
+        for group in self.group_list():
+            groups_id.append(group['id'])
+
+        print groups_id
+
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_users)
-            self.group_create(self.autogroup_users_id, self.autogroup_name_users, "Automatic group", [self.autogroup_hypervisors_id, self.autogroup_vms_id])
+            if not self.autogroup_users_id in groups_id:
+                self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_users)
+                self.group_create(self.autogroup_users_id, self.autogroup_name_users, "Automatic group", [self.autogroup_hypervisors_id, self.autogroup_vms_id])
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_users, ex))
 
@@ -197,19 +207,21 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_users, ex))
 
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_vms)
-            self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group", [self.autogroup_users_id])
+            if not self.autogroup_vms_id in groups_id:
+                self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_vms)
+                self.group_create(self.autogroup_vms_id, self.autogroup_name_vms, "Automatic group", [self.autogroup_users_id])
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_vms, ex))
         try:
-            self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_hypervisors)
-            self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group", [self.autogroup_users_id])
+            if not self.autogroup_hypervisors_id in groups_id:
+                self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_hypervisors)
+                self.group_create(self.autogroup_hypervisors_id, self.autogroup_name_hypervisors, "Automatic group", [self.autogroup_users_id])
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_hypervisors, ex))
 
     def handle_autogroup_for_entity(self, origin, user_info, entity):
         """
-        Will add all new virtual machines in autogroup if configured to
+        Will add all new virtual machines in autogroup if configured to and if not already in another SRG
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -223,7 +235,12 @@ class TNXMPPServerController (TNArchipelPlugin):
         elif entity.__class__.__name__ == "TNArchipelHypervisor":
             group_name = self.autogroup_name_hypervisors
             group_id = self.autogroup_hypervisors_id
+        else:
+            return
         try:
+            for group in self.group_list():
+                if entity.jid.getStripped() in group["members"]:
+                    return
             self.create_autogroups_if_needed(self, None, None)
             self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (entity.jid, group_name))
             self.group_add_users(group_id, [entity.jid.getStripped()])
@@ -413,7 +430,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         server = self.entity.jid.getDomain()
         display_groups = '\\n'.join(map(str, display))
-        shared_groups = self._send_xmlrpc_call("srg_list", {"host": server})
         answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": display_groups, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
