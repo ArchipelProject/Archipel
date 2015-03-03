@@ -2450,7 +2450,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 - (IBAction)didChangeDomainType:(id)aSender
 {
     [_libvirtDomain setType:[aSender title]];
-    [[_libvirtDomain devices] setEmulator:nil];
+    //[[_libvirtDomain devices] setEmulator:nil];
     [self _updateUIFromDomainType];
 
     _definitionEdited = YES;
