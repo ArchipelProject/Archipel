@@ -123,7 +123,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
-        self.inhibit_domain_event = False
+        self.inhibit_next_undefine_domain_event = False
         self.cputime_samples=[]
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_timer(self.cputime_sampling_Interval)
@@ -343,13 +343,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.change_name(newname, publish)
 
         if self.domain:
-            self.inhibit_domain_event = True
+            self.inhibit_next_undefine_domain_event = True
             old_definition = self.definition
             self.undefine()
             self.definition = old_definition
             if self.definition:
                 self.definition.getTag("name").setData(newname)
-            self.inhibit_domain_event = False
 
     def set_automatic_libvirt_description(self, xmldesc):
         """
@@ -439,10 +438,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.log.info("LIBVIRTEVENT: Event received but virtual machine is migrating. Ignoring.")
             return
 
-        if self.inhibit_domain_event:
-            self.log.info("LIBVIRTEVENT: VM has inihibited its event reaction. Ignoring")
-            return
-
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
@@ -469,6 +464,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.push_change("virtualmachine:control", "shutoff")
                 self.perform_hooks("HOOK_VM_SHUTOFF")
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
+                if self.inhibit_next_undefine_domain_event:
+                    self.inhibit_next_undefine_domain_event = False
+                    self.log.info("LIBVIRTEVENT: VM has inihibited its undefine event reaction. Ignoring")
+                    return
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined")
                 self.perform_hooks("HOOK_VM_UNDEFINE")

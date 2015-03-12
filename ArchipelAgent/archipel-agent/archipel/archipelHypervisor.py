@@ -589,7 +589,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 # Otherwise, we transfer the event to the vm if we manage it
                 vm = self.get_vm_by_uuid(dom.UUIDString())
-                if vm and not vm.inhibit_domain_event:
+                if vm:
                     vm.on_domain_event(event, detail)
             except Exception as ex:
                 self.log.error("EVENTVIRTUALMACHINE: Exception while running on_domain_event for vm %s: %s" % (dom.UUIDString(), str(ex)))
