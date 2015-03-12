@@ -190,8 +190,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         for group in self.group_list():
             groups_id.append(group['id'])
 
-        print groups_id
-
         try:
             if not self.autogroup_users_id in groups_id:
                 self.entity.log.info("XMPPSERVER: Trying to create the autogroup %s if needed" % self.autogroup_name_users)
