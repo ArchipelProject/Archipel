@@ -289,6 +289,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
         self.permission_center.create_permission("nodeinfo", "Authorizes users to access virtual machine's hypervisor node informations", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
+        self.permission_center.create_permission("screenshot", "Authorizes users to see screenshots of the virtual machine", False)
 
     def add_vm_definition_hook(self, method):
         """
