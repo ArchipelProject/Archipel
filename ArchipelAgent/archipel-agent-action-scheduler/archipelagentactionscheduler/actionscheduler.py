@@ -308,7 +308,10 @@ class TNActionScheduler (TNArchipelPlugin):
             if iq.getTag("query").getTag("archipel").has_attr("param"):
                 param = iq.getTag("query").getTag("archipel").getAttr("param")
             uid = str(uuid.uuid1())
-            str_date = "%s-%s-%s @ %s : %02d : %02d" % (year, month, day, hour, int(minute), int(second))
+            try:
+                str_date = "%s-%s-%s @ %s : %02d : %02d" % (year, month, day, hour, int(minute), int(second))
+            except:
+                str_date = "%s-%s-%s @ %s hour(s) and %s minute(s) and %s second(s)" % (year, month, day, hour, minute, second)
             if entityClass == "TNArchipelVirtualMachine":
                 func = self.do_job_for_vm
             elif entityClass == "TNArchipelHypervisor":
