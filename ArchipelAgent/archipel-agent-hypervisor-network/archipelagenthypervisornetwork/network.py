@@ -546,15 +546,25 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            bridges_list = commands.getoutput("brctl show 2>/dev/null | grep -v -E '^[[:space:]]|bridge name' | cut -f 1").split("\n")
-            bridges_list += commands.getoutput("ovs-vsctl list-br 2>/dev/null").split("\n")
-            bridges_list = sorted(set(bridges_list))
-            bridges_names = []
-            for bridge_name in bridges_list:
-                if bridge_name:
-                    bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
-                    bridges_names.append(bridge_node)
-            reply.setQueryPayload(bridges_names)
+            bridges = []
+
+            for std_bridge in commands.getoutput("brctl show 2>/dev/null | grep -v -E '^[[:space:]]|bridge name' | cut -f 1").split("\n"):
+                if std_bridge:
+                    bridges.append({"name": std_bridge, "type": "linux-bridge"})
+
+            for ovs_bridge in commands.getoutput("ovs-vsctl list-br 2>/dev/null").split("\n"):
+                if ovs_bridge:
+                    bridges.append({"name": ovs_bridge, "type": "openvswitch"})
+
+            bridges = sorted(bridges, key=lambda k: k["name"])
+
+            bridges_list = []
+            for bridge in bridges:
+                if bridge.get("name", None) and bridge.get("type", None):
+                    bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge["name"], "type": bridge["type"]})
+                    bridges_list.append(bridge_node)
+
+            reply.setQueryPayload(bridges_list)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES)
         return reply

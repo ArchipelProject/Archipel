@@ -225,6 +225,18 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             [[_nic source] setBridge:[buttonSource title]];
             [[_nic source] setDevice:nil];
             [[_nic source] setMode:nil];
+            if ([[[buttonSource selectedItem] representedObject].type] == @"openvswitch")
+            {
+                if (![_nic virtualPort])
+                {
+                    [_nic setVirtualPort:[[TNLibvirtDeviceInterfaceVirtualPort alloc] init]];
+                    [[_nic virtualPort] setType:"openvswitch"];
+                }
+            }
+            else
+                if ([_nic virtualPort])
+                    [_nic setVirtualPort:nil];
+
             [_nic setTarget:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeUser:
@@ -576,10 +588,14 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
         [buttonSource removeAllItems];
         for (var i = 0; i < [bridges count]; i++)
         {
-            var bridge = [[bridges objectAtIndex:i] valueForAttribute:@"name"];
+            var bridge = [[bridges objectAtIndex:i] valueForAttribute:@"name"],
+                type   = [[bridges objectAtIndex:i] valueForAttribute:@"type"],
+                item   = [[CPMenuItem alloc] initWithTitle:bridge action:nil keyEquivalent:nil];
 
-            [buttonSource addItemWithTitle:bridge];
+            [item setRepresentedObject:{"type": type}];
+            [buttonSource addItem:item];
         }
+
         [buttonSource selectItemWithTitle:[[_nic source] bridge]];
 
         if (![buttonSource selectedItem])
