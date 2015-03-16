@@ -871,7 +871,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     //     customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
     //     currentContact  = [aNotification object];
 
-    [_rosterOutlineView reloadData];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
 }
 
 
@@ -1349,6 +1349,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 
     [userAvatarController loadAvatarMetaInfos];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
+
 }
 
 
