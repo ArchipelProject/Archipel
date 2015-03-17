@@ -74,7 +74,7 @@ def buildStropheCappuccino():
 
 def buildTNKit():
     os.system("echo \* Starting to build TNKit")
-    if os.system("cd ./ArchipelClient/Libraries/TNKit && jake release && jake debug"):
+    if os.system("cd ./ArchipelClient/Libraries/TNKit && export CAPP_BUILD=./Build && jake release && jake debug"):
         os.system("echo \* unable to build TNKit")
         sys.exit(-7)
 
