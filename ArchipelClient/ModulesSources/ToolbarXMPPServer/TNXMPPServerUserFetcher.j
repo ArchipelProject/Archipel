@@ -65,7 +65,7 @@ var _iconEntityTypeHuman,
 
 /*! Instaciate the class
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {
@@ -216,7 +216,8 @@ var _iconEntityTypeHuman,
     {
         var users = [aStanza childrenWithName:@"user"];
 
-        [_dataSource removeAllObjects];
+        if (_maxLoadedPage == 0)
+            [_dataSource removeAllObjects];
 
         for (var i = 0; i < [users count]; i++)
         {
