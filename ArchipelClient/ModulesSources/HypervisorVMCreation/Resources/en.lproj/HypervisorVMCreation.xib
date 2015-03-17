@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="14A388a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14D72i" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TNHypervisorVMCreationController">
@@ -155,7 +155,7 @@
                 <textField verticalHuggingPriority="750" id="46">
                     <rect key="frame" x="17" y="290" width="403" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" title="Virtual machine informations" id="51">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" title="Virtual machine information" id="51">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" red="0.37254902719999999" green="0.40392160420000001" blue="0.43529415129999999" alpha="1" colorSpace="deviceRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -211,7 +211,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="499">
-                    <rect key="frame" x="17" y="169.5" width="95" height="17"/>
+                    <rect key="frame" x="17" y="169" width="95" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="left" title="Organization" id="500">
                         <font key="font" metaFont="systemBold"/>
@@ -220,7 +220,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="515">
-                    <rect key="frame" x="17" y="199.5" width="95" height="17"/>
+                    <rect key="frame" x="17" y="199" width="95" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="left" title="Locality" id="516">
                         <font key="font" metaFont="systemBold"/>
@@ -238,7 +238,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="520">
-                    <rect key="frame" x="17" y="109.5" width="95" height="17"/>
+                    <rect key="frame" x="17" y="109" width="95" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="left" title="Owner" id="521">
                         <font key="font" metaFont="systemBold"/>
@@ -247,7 +247,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="545">
-                    <rect key="frame" x="17" y="79.5" width="95" height="17"/>
+                    <rect key="frame" x="17" y="79" width="95" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="left" title="Category" id="546">
                         <font key="font" metaFont="systemBold"/>
@@ -406,7 +406,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="57">
-                    <rect key="frame" x="17" y="78.5" width="45" height="17"/>
+                    <rect key="frame" x="17" y="78" width="45" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="JID" id="58">
                         <font key="font" metaFont="systemBold"/>
@@ -919,11 +919,11 @@
                                 </subviews>
                                 <nil key="backgroundColor"/>
                             </clipView>
-                            <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="128">
+                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="128">
                                 <rect key="frame" x="0.0" y="350" width="685" height="15"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
-                            <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="126">
+                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="126">
                                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
@@ -1000,11 +1000,11 @@
                                 </subviews>
                                 <nil key="backgroundColor"/>
                             </clipView>
-                            <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="356">
+                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="356">
                                 <rect key="frame" x="0.0" y="350" width="685" height="15"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
-                            <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="354">
+                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="354">
                                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
@@ -1081,11 +1081,11 @@
                                 </subviews>
                                 <nil key="backgroundColor"/>
                             </clipView>
-                            <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="382">
+                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="382">
                                 <rect key="frame" x="0.0" y="350" width="685" height="15"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
-                            <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="384">
+                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="384">
                                 <rect key="frame" x="669" y="17" width="16" height="348"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </scroller>
