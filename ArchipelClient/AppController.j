@@ -77,6 +77,12 @@ TNArchipelEntityTypeHypervisor      = @"hypervisor";
 
 /*! @global
     @group TNArchipelEntityType
+    This represent a Hypervisor XMPP entity
+*/
+TNArchipelEntityTypeCentralAgent      = @"central-agent";
+
+/*! @global
+    @group TNArchipelEntityType
     This represent a virtual machine XMPP entity
 */
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
@@ -448,6 +454,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
                               forKey:TNArchipelEntityTypeVirtualMachine];
     [TNArchipelEntityTypes setObject:CPLocalizedString(@"Hypervisor", @"Hypervisor")
                               forKey:TNArchipelEntityTypeHypervisor];
+    [TNArchipelEntityTypes setObject:CPLocalizedString(@"Central Agent", @"Central Agent")
+                          forKey:TNArchipelEntityTypeCentralAgent];
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
