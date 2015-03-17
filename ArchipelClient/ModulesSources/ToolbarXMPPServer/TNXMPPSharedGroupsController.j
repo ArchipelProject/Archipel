@@ -21,6 +21,7 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPPopover.j>
 @import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPSplitView.j>
@@ -153,12 +154,15 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
     [tableDisplayGroupsInGroup setDataSource:_datasourceDisplayGroupsInGroup];
     [tableDisplayGroupsInGroup setDelegate:self];
 
+    [filterFieldGroups setSendsSearchStringImmediately:YES]
     [filterFieldGroups setTarget:_datasourceGroups];
     [filterFieldGroups setAction:@selector(filterObjects:)];
 
+    [filterFieldUsersInGroup setSendsSearchStringImmediately:YES]
     [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
     [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
 
+    [filterFieldDisplayGroupsInGroup setSendsSearchStringImmediately:YES]
     [filterFieldDisplayGroupsInGroup setTarget:_datasourceDisplayGroupsInGroup];
     [filterFieldDisplayGroupsInGroup setAction:@selector(filterObjects:)];
 
@@ -166,6 +170,7 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
 
+    [filterFieldDisplayGroups setSendsSearchStringImmediately:YES]
     [filterFieldDisplayGroups setTarget:_datasourceDisplayGroups];
     [filterFieldDisplayGroups setAction:@selector(filterObjects:)];
 
