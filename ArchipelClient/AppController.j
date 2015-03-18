@@ -590,10 +590,10 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     [theWindow setToolbar:_mainToolbar];
     [_mainToolbar._toolbarView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
-    _mainToolbar._toolbarView._DOMElement.style.borderBottom = "1px solid D9D9D9";
-    _mainToolbar._toolbarView._DOMElement.style.boxSizing = @"border-box";
-    _mainToolbar._toolbarView._DOMElement.style.MozBoxSizing = @"border-box";
-    _mainToolbar._toolbarView._DOMElement.style.WebkitBoxSizing = @"border-box";
+    _mainToolbar._toolbarView._DOMElement.style.borderBottom = "1px solid #D9D9D9";
+    // _mainToolbar._toolbarView._DOMElement.style.boxSizing = @"border-box";
+    // _mainToolbar._toolbarView._DOMElement.style.MozBoxSizing = @"border-box";
+    // _mainToolbar._toolbarView._DOMElement.style.WebkitBoxSizing = @"border-box";
 
 
     // ok the next following line is a terrible awfull hack.

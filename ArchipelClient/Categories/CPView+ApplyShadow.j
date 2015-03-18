@@ -49,21 +49,21 @@
 */
 - (void)applyShadow
 {
-    [self applyShadow:[CPColor whiteColor] offset:CGSizeMake(0.0, 1.0)];
+    // [self applyShadow:[CPColor whiteColor] offset:CGSizeMake(0.0, 1.0)];
 }
 
 - (void)applyGlow
 {
-    [self applyGlow:[CPColor whiteColor] spread:10 size:CGSizeMake(0, 0)];
+    // [self applyGlow:[CPColor whiteColor] spread:10 size:CGSizeMake(0, 0)];
 }
 
 - (void)applyGlow:(CPColor)aColor spread:(int)aSpreadValue size:(CGSize)aSize
 {
-    var CSSString = aColor ? aSize.height + "px " + aSize.width + "px  " + aSpreadValue + "px " + [aColor cssString] : @"";
-
-    self._DOMElement.style.boxShadow = CSSString;
-    self._DOMElement.style.MozBoxShadow = CSSString;
-    self._DOMElement.style.WebkitBoxShadow = CSSString;
+    // var CSSString = aColor ? aSize.height + "px " + aSize.width + "px  " + aSpreadValue + "px " + [aColor cssString] : @"";
+    //
+    // self._DOMElement.style.boxShadow = CSSString;
+    // self._DOMElement.style.MozBoxShadow = CSSString;
+    // self._DOMElement.style.WebkitBoxShadow = CSSString;
 }
 
 - (void)setHasWhiteShadow:(BOOL)shouldHaveWhiteShadow

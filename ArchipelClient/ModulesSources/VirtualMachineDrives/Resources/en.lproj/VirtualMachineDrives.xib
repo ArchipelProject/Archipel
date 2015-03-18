@@ -220,7 +220,7 @@
 															<string key="NSContents">Text Cell</string>
 															<reference key="NSSupport" ref="247105171"/>
 															<reference key="NSControlView" ref="454242853"/>
-															<object class="NSColor" key="NSBackgroundColor">
+															<object class="NSColor" key="NSBackgroundColor" id="219059552">
 																<int key="NSColorSpace">6</int>
 																<string key="NSCatalogName">System</string>
 																<string key="NSColorName">controlBackgroundColor</string>
@@ -238,20 +238,7 @@
 												</array>
 												<double key="NSIntercellSpacingWidth">1</double>
 												<double key="NSIntercellSpacingHeight">1</double>
-												<object class="NSColor" key="NSBackgroundColor">
-													<int key="NSColorSpace">6</int>
-													<string key="NSCatalogName">System</string>
-													<string key="NSColorName">_sourceListBackgroundColor</string>
-													<object class="NSColor" key="NSColor">
-														<int key="NSColorSpace">6</int>
-														<string key="NSCatalogName">System</string>
-														<string key="NSColorName">alternateSelectedControlColor</string>
-														<object class="NSColor" key="NSColor">
-															<int key="NSColorSpace">1</int>
-															<bytes key="NSRGB">MCAwIDEAA</bytes>
-														</object>
-													</object>
-												</object>
+												<reference key="NSBackgroundColor" ref="219059552"/>
 												<object class="NSColor" key="NSGridColor">
 													<int key="NSColorSpace">6</int>
 													<string key="NSCatalogName">System</string>
@@ -269,8 +256,7 @@
 												<int key="NSDraggingSourceMaskForLocal">15</int>
 												<int key="NSDraggingSourceMaskForNonLocal">0</int>
 												<bool key="NSAllowsTypeSelect">YES</bool>
-												<int key="NSTableViewSelectionHighlightStyle">1</int>
-												<int key="NSTableViewDraggingDestinationStyle">1</int>
+												<int key="NSTableViewDraggingDestinationStyle">0</int>
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</array>
