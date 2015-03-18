@@ -42,7 +42,7 @@
 @import <TNKit/TNTabView.j>
 
 @import "Categories/TNCategories.j"
-@import "Controllers/TNAvatarController.j"TNButtonBarPopUpButton.j
+@import "Controllers/TNAvatarController.j"
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
 @import "Controllers/TNGroupsController.j"
