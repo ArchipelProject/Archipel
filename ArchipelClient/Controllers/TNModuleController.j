@@ -321,7 +321,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 {
     if (!_entity)
     {
-        [_mainTabView selectFirstTabViewItem:nil];
+        [_mainTabView selectFirstTabViewItem:self];
         return;
     }
 
@@ -332,12 +332,11 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         oldSelectedIndex    = [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid] || -1,
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
-    if (oldSelectedIndex == -1)
+    if (oldSelectedIndex == -1 || numberOfTabItems < oldSelectedIndex)
     {
-        [_mainTabView selectFirstTabViewItem:nil];
+        [_mainTabView selectFirstTabViewItem:self];
         return;
     }
-
 
     CPLog.info("recovering last selected tab index " + oldSelectedIndex);
 
