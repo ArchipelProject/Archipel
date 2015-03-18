@@ -80,6 +80,12 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         self.log.info("Server address defined as %s" % self.xmppserveraddr)
 
+        # start the permission center
+        self.permission_db_file = self.configuration.get("CENTRALAGENT", "centralagent_permissions_database_path")
+        self.permission_center.start(database_file=self.permission_db_file)
+        self.init_permissions()
+
+
         # module inits
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.centralagent')
@@ -110,11 +116,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.last_hyp_check       = datetime.datetime.now()
         self.required_stats_xml   = None
 
-        # start the permission center
-        self.permission_db_file = self.configuration.get("CENTRALAGENT", "centralagent_permissions_database_path")
-        self.permission_center.start(database_file=self.permission_db_file)
-        self.init_permissions()
-
         module_platformrequest    = self.configuration.get("MODULES", "platformrequest")
 
         if module_platformrequest:
@@ -130,6 +131,12 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             self.keepalive_event.addChild(node = self.required_stats_xml)
 
     ### Utilities
+
+    def init_permissions(self):
+        """
+        Initialize the permissions.
+        """
+        TNArchipelEntity.init_permissions(self)
 
     def register_handlers(self):
         """

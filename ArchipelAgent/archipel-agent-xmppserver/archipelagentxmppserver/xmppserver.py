@@ -115,7 +115,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.info("XMLRPC module for Shared Roster Group management is disabled for this hypervisor")
 
         # permissions
-        if self.entity.__class__.__name__ == "TNArchipelHypervisor":
+        if self.entity.__class__.__name__ in ["TNArchipelHypervisor", "TNArchipelCentralAgent"]:
             self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
             self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
             self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False)
@@ -125,8 +125,9 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_changepassword", "Authorizes user to change XMPP users password", False)
             self.entity.permission_center.create_permission("xmppserver_managementcapabilities", "Authorizes user to get management capabilities", False)
-
-        if self.entity.__class__.__name__ != "TNArchipelCentralAgent":
+            self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
+        else:
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
 
@@ -139,7 +140,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
-        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+        elif self.entity.__class__.__name__ in ["TNArchipelHypervisor", "TNArchipelCentralAgent"]:
             self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER)
             self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
             self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
@@ -150,7 +151,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         """
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_virtualmachines, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
-        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+        elif self.entity.__class__.__name__ in ["TNArchipelHypervisor", "TNArchipelCentralAgent"]:
             self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER)
             self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq_for_hypervisors, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
             self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)

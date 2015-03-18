@@ -77,6 +77,12 @@ TNArchipelEntityTypeHypervisor      = @"hypervisor";
 
 /*! @global
     @group TNArchipelEntityType
+    This represent a Hypervisor XMPP entity
+*/
+TNArchipelEntityTypeCentralAgent      = @"central-agent";
+
+/*! @global
+    @group TNArchipelEntityType
     This represent a virtual machine XMPP entity
 */
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
@@ -451,6 +457,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
                               forKey:TNArchipelEntityTypeVirtualMachine];
     [TNArchipelEntityTypes setObject:CPLocalizedString(@"Hypervisor", @"Hypervisor")
                               forKey:TNArchipelEntityTypeHypervisor];
+    [TNArchipelEntityTypes setObject:CPLocalizedString(@"Central Agent", @"Central Agent")
+                          forKey:TNArchipelEntityTypeCentralAgent];
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -874,7 +882,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     //     customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
     //     currentContact  = [aNotification object];
 
-    [_rosterOutlineView reloadData];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
 }
 
 
@@ -1352,6 +1360,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 
     [userAvatarController loadAvatarMetaInfos];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
+
 }
 
 

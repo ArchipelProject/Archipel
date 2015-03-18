@@ -318,7 +318,7 @@ def client_build_lpkit():
 def client_build_tnkit():
     print " * Building TNKit";
     s = Spinner();
-    ret = os.system("cd ./Libraries/TNKit && jake debug  %s && jake release %s"  % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/TNKit && export CAPP_BUILD=./Build && jake debug  %s && jake release %s"  % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build TNKit\033[0m"
