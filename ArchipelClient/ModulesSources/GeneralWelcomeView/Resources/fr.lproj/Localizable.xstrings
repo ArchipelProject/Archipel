@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>The URL of the welcome page</key>
-	<string>L'URL de la page de bienvenue</string>
+	<key>No welcome page defined</key>
+	<string>No welcome page defined</string>
 </dict>
 </plist>

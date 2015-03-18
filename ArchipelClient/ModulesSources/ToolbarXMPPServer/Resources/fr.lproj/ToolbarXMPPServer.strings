@@ -65,7 +65,7 @@
 /* Class = "NSTextFieldCell"; title = "Groups"; ObjectID = "87"; */
 "87.title" = "Groups";
 
-/* Class = "NSTextFieldCell"; title = "Users"; ObjectID = "89"; */
+/* Class = "NSTextFieldCell"; title = "Members"; ObjectID = "89"; */
 "89.title" = "Users";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "117"; */
@@ -158,9 +158,72 @@
 /* Class = "NSButtonCell"; title = "Enabled"; ObjectID = "355"; */
 "355.title" = "Enabled";
 
-/* Class = "NSTextFieldCell"; title = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode."; ObjectID = "359"; */
+/* Class = "NSTextFieldCell"; title = "To use this feature, you need to enable XMLRPC in agent configuration. Note that at least one hypervisor have to be admin of the XMPP Server."; ObjectID = "359"; */
 "359.title" = "To use this feature, you need to use the agent's xmppserver module in XMLRPC API mode.\nAlso, note you need to reload the application after changing this.";
 
 /* Class = "NSTextFieldCell"; title = "Fetching users..."; ObjectID = "364"; */
 "364.title" = "Fetching users...";
+
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "1pc-XX-qJv"; */
+"1pc-XX-qJv.title" = "Password";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "AAx-F2-xKM"; */
+"AAx-F2-xKM.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Display Groups"; ObjectID = "Dqk-4p-cdy"; */
+"Dqk-4p-cdy.title" = "Display Groups";
+
+/* Class = "NSTableColumn"; headerCell.title = "Description"; ObjectID = "Ku3-l3-ydf"; */
+"Ku3-l3-ydf.headerCell.title" = "Description";
+
+/* Class = "NSTextFieldCell"; title = "Add group(s) as display group"; ObjectID = "NTj-WQ-Gv4"; */
+"NTj-WQ-Gv4.title" = "Add group(s) as display group";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Desired password"; ObjectID = "NyV-T6-lWd"; */
+"NyV-T6-lWd.placeholderString" = "Desired password";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "OC4-xa-fq4"; */
+"OC4-xa-fq4.title" = "Add";
+
+/* Class = "NSTextFieldCell"; title = "Reset user password"; ObjectID = "QQh-zx-ZsA"; */
+"QQh-zx-ZsA.title" = "Reset user password";
+
+/* Class = "NSTextFieldCell"; title = "user@domain.local"; ObjectID = "Qbn-Jl-I8i"; */
+"Qbn-Jl-I8i.title" = "user@domain.local";
+
+/* Class = "NSTextFieldCell"; title = "Just enter the new password for user :"; ObjectID = "WAu-ls-dEh"; */
+"WAu-ls-dEh.title" = "Just enter the new password for user :";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "WCS-9i-bIG"; */
+"WCS-9i-bIG.title" = "Text Cell";
+
+/* Class = "NSButtonCell"; title = "Reset password"; ObjectID = "XDf-YB-DMy"; */
+"XDf-YB-DMy.title" = "Reset password";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "XW5-ll-WEe"; */
+"XW5-ll-WEe.title" = "Box";
+
+/* Class = "NSTableColumn"; headerCell.title = "Groups"; ObjectID = "d3v-3v-GWu"; */
+"d3v-3v-GWu.headerCell.title" = "Groups";
+
+/* Class = "NSTextFieldCell"; title = "Confirm"; ObjectID = "d5r-XY-HEZ"; */
+"d5r-XY-HEZ.title" = "Confirm";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "dvG-bb-X3V"; */
+"dvG-bb-X3V.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "eb9-ng-LEb"; */
+"eb9-ng-LEb.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "oBt-3Y-NoJ"; */
+"oBt-3Y-NoJ.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Select group(s) you want to display when belonging to the selected group."; ObjectID = "tyF-Hy-v8D"; */
+"tyF-Hy-v8D.title" = "Select group(s) you want to display when belonging to the selected group.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Password confirmation"; ObjectID = "wrc-NJ-NHo"; */
+"wrc-NJ-NHo.placeholderString" = "Password confirmation";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "y3a-mh-eZz"; */
+"y3a-mh-eZz.title" = "Text Cell";
 

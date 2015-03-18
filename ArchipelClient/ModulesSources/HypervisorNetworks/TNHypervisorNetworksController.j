@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCollectionView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
@@ -67,7 +66,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 @implementation TNHypervisorNetworksController : TNModule
 {
     @outlet CPButton                    buttonDefineXMLString;
-    @outlet CPButtonBar                 buttonBarControl;
+    @outlet TNButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPTableView                 tableViewNetworks;
     @outlet CPView                      viewTableContainer;
@@ -91,7 +90,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 {
     _networksRAW = [CPDictionary dictionary];
 
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     /* VM table view */
     _datasourceNetworks     = [[TNTableViewDataSource alloc] init];
@@ -767,7 +766,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

@@ -62,6 +62,7 @@
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
+@import "Views/TNButtonBar.j"
 
 @global CPLocalizedString
 @global CPApplicationWillTerminateNotification
@@ -74,6 +75,12 @@ CPFontDefaultSystemFontFace = @"Courier";
     This represent a Hypervisor XMPP entity
 */
 TNArchipelEntityTypeHypervisor      = @"hypervisor";
+
+/*! @global
+    @group TNArchipelEntityType
+    This represent a Hypervisor XMPP entity
+*/
+TNArchipelEntityTypeCentralAgent      = @"central-agent";
 
 /*! @global
     @group TNArchipelEntityType
@@ -142,7 +149,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 @implementation AppController : CPObject
 {
-    @outlet CPButtonBar                         buttonBarLeft;
+    @outlet TNButtonBar                         buttonBarLeft;
     @outlet CPImageView                         imageViewLogoAbout;
     @outlet CPImageView                         ledIn;
     @outlet CPImageView                         ledOut;
@@ -204,7 +211,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
     TNVersion                                   _currentVersion;
-    TNViewHypervisorControl                     _currentRightViewContent;
 }
 
 
@@ -254,7 +260,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
 
-    var commonImageModuleBackground = [CPColor colorWithHexString:@"F6F6F6"];
+    var commonImageModuleBackground = [CPColor whiteColor];
 
     /* register defaults defaults */
     [defaults registerDefaults:@{
@@ -279,6 +285,10 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* main split views */
     var posx = 230;
     [splitViewMain setPosition:posx ofDividerAtIndex:0];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
+
     var bounds = [leftView bounds];
     bounds.size.width = posx;
     [leftView setFrame:bounds];
@@ -298,6 +308,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPLog.trace(@"initializing the splitViewHorizontalRoster");
     [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
     [splitViewHorizontalRoster setDelegate:self];
+    [splitViewHorizontalRoster setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewHorizontalRoster setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewHorizontalRoster setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
     [propertiesController setAvatarManager:avatarController];
     [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
 
@@ -309,16 +322,13 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[leftView bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView setEnabled:NO];
+    [_rosterOutlineView setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleRegular];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
-    _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0)";
-    _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(-90deg, #E0E4EA, #D1D8E0)";
-
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
-    //[_rosterOutlineView setBackgroundColor:[CPColor colorWithHexString:@"E0E4EA"]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
@@ -327,7 +337,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     /* left view */
     [leftView addSubview:_outlineScrollView];
-    [leftView setBackgroundColor:CPColorWithImages(@"Backgrounds/dark-bg.png", 201, 311, bundle)];
+    [leftView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
@@ -344,8 +354,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* loading view */
     [viewLoading setFrame:[rightView bounds]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    viewLoading._DOMElement.style.background = "url(Resources/Backgrounds/dark-bg.png)";
-    viewLoading._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
+    [viewLoading setBackgroundColor:[CPColor whiteColor]];
+
     [rightView addSubview:viewLoading];
 
     [progressIndicatorModulesLoading setMinValue:0.0];
@@ -367,7 +377,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
 
-    [filterView setBackgroundColor:CPColorWithImages(@"Backgrounds/background-filter.png", 201, 33, bundle)];
+    [filterView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
 
@@ -398,7 +408,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* about window */
     [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
-    [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
+    [webViewAboutCredits setBorderedWithHexColor:@"#F2F2F2"];
     [textFieldAboutVersion setStringValue:_currentVersion];
 
 
@@ -426,8 +436,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
 
     /* status bar */
-    [statusBar setBackgroundColor:CPColorWithImages(@"Backgrounds/statusbar-bg.png", 835, 26, bundle)];
-    [statusBar applyShadow:[CPColor colorWithHexString:@"f3f3f3"] offset:CGSizeMake(0.0, 1.0)];
+    [statusBar setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
 
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
@@ -448,6 +457,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
                               forKey:TNArchipelEntityTypeVirtualMachine];
     [TNArchipelEntityTypes setObject:CPLocalizedString(@"Hypervisor", @"Hypervisor")
                               forKey:TNArchipelEntityTypeHypervisor];
+    [TNArchipelEntityTypes setObject:CPLocalizedString(@"Central Agent", @"Central Agent")
+                          forKey:TNArchipelEntityTypeCentralAgent];
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -573,13 +584,17 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 - (void)makeToolbar
 {
-    var bundle = [CPBundle bundleForClass:self];
-
-    CPLog.trace("initializing mianToolbar");
+    CPLog.trace("initializing mainToolbar");
 
     _mainToolbar = [[TNToolbar alloc] init];
 
     [theWindow setToolbar:_mainToolbar];
+    [_mainToolbar._toolbarView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
+    _mainToolbar._toolbarView._DOMElement.style.borderBottom = "1px solid #D9D9D9";
+    // _mainToolbar._toolbarView._DOMElement.style.boxSizing = @"border-box";
+    // _mainToolbar._toolbarView._DOMElement.style.MozBoxSizing = @"border-box";
+    // _mainToolbar._toolbarView._DOMElement.style.WebkitBoxSizing = @"border-box";
+
 
     // ok the next following line is a terrible awfull hack.
     [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE"
@@ -590,23 +605,23 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout
                                   label:CPLocalizedString(@"Log out", @"Log out")
-                                   icon:[bundle pathForResource:@"IconsToolbar/logout.png"]
-                                   altIcon:[bundle pathForResource:@"IconsToolbar/logout-alt.png"]
+                                   icon:CPImageInBundle(@"IconsToolbar/logout.png", 32, 32)
+                                   altIcon:CPImageInBundle(@"IconsToolbar/logout-alt.png", 32, 32)
                                  target:self action:@selector(toolbarItemLogoutClick:)
                                 toolTip:@"Log out from the application"];
 
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags
                                   label:CPLocalizedString(@"Tags", @"Tags")
-                                   icon:[bundle pathForResource:@"IconsToolbar/tags.png"]
-                                   altIcon:[bundle pathForResource:@"IconsToolbar/tags-alt.png"]
+                                   icon:CPImageInBundle(@"IconsToolbar/tags.png", 32, 32)
+                                   altIcon:CPImageInBundle(@"IconsToolbar/tags-alt.png", 32, 32)
                                  target:self action:@selector(toolbarItemTagsClick:)
                                 toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 130.0, 25.0)],
-        availableItem   = [[CPMenuItem alloc] init],
-        awayItem        = [[CPMenuItem alloc] init],
-        busyItem        = [[CPMenuItem alloc] init],
-        DNDItem         = [[CPMenuItem alloc] init],
+        availableItem   = [CPMenuItem new],
+        awayItem        = [CPMenuItem new],
+        busyItem        = [CPMenuItem new],
+        DNDItem         = [CPMenuItem new],
         statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:CPLocalizedString(@"Status", @"Status") view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
 
 
@@ -617,19 +632,19 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:CPImageInBundle(@"IconsStatus/green-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [availableItem setImage:CPImageInBundle(@"IconsStatus/green-large.png", 10.0, 8.0)];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:CPImageInBundle(@"IconsStatus/orange-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [awayItem setImage:CPImageInBundle(@"IconsStatus/orange-large.png", 10.0, 8.0)];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:CPImageInBundle(@"IconsStatus/red-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [busyItem setImage:CPImageInBundle(@"IconsStatus/red-large.png", 10.0, 8.0)];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:CPImageInBundle(@"IconsStatus/black-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [DNDItem setImage:CPImageInBundle(@"IconsStatus/black-large.png", 10.0, 8.0)];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CGSizeMake(123.0, 25.0)];
@@ -641,7 +656,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_mainToolbar setPosition:499 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
     [_mainToolbar setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
     [_mainToolbar setPosition:902 forToolbarItemIdentifier:TNToolBarItemTags];
-    [_mainToolbar setPosition:903 forToolbarItemIdentifier:TNToolBarItemHelp];
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
 
     [_mainToolbar reloadToolbarItems];
@@ -681,25 +695,12 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = CPColorWithImages(@"TNButtonBar/buttonBarBackground.png", CGSizeMake(1, 27), bundle),
-        leftBezel               = CPImageInBundle(@"TNButtonBar/buttonBarLeftBezel.png", CGSizeMake(1, 26), bundle),
-        centerBezel             = CPImageInBundle(@"TNButtonBar/buttonBarCenterBezel.png", CGSizeMake(1, 26), bundle),
-        rightBezel              = CPImageInBundle(@"TNButtonBar/buttonBarRightBezel.png", CGSizeMake(1, 26), bundle),
-        buttonBezel             = CPColorWithImages([leftBezel, centerBezel, rightBezel]),
-        leftBezelHighlighted    = CPImageInBundle(@"TNButtonBar/buttonBarLeftBezelHighlighted.png", CGSizeMake(1, 26), bundle),
-        centerBezelHighlighted  = CPImageInBundle(@"TNButtonBar/buttonBarCenterBezelHighlighted.png", CGSizeMake(1, 26), bundle),
-        rightBezelHighlighted   = CPImageInBundle(@"TNButtonBar/buttonBarRightBezelHighlighted.png", CGSizeMake(1, 26), bundle),
-        buttonBezelHighlighted  = CPColorWithImages([leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted]),
-        plusMenu                = [[CPMenu alloc] init],
-        minusButton             = [CPButtonBar minusButton];
+    var plusMenu                = [[CPMenu alloc] init],
+        minusButton             = [TNButtonBar minusButton];
 
-    _hideButton             = [CPButtonBar minusButton];
+    _hideButton             = [TNButtonBar minusButton];
     _hideButtonImageEnable  = CPImageInBundle(@"IconsButtonBar/show.png", CGSizeMake(20, 20), bundle);
     _hideButtonImageDisable = CPImageInBundle(@"IconsButtonBar/hide.png", CGSizeMake(20, 20), bundle);
-
-    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
-    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
-    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
     _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CGRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];
@@ -871,7 +872,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     //     customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
     //     currentContact  = [aNotification object];
 
-    [_rosterOutlineView reloadData];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
 }
 
 
@@ -1349,6 +1350,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 
     [userAvatarController loadAvatarMetaInfos];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
+
 }
 
 
@@ -1541,7 +1544,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     var itemRow = [anOutlineView rowForItem:anItem];
     if ([anOutlineView selectedRow] != itemRow)
-        if (itemRow >=0)
+        if (itemRow >= 0)
             [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
         else
             [anOutlineView deselectAll];

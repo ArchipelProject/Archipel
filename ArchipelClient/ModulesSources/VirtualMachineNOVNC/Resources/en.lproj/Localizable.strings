@@ -7,9 +7,6 @@
 /* Error connecting to the VNC screen. Use the VNC tab for more information. */
 "Error connecting to the VNC screen. Use the VNC tab for more information." = "Error connecting to the VNC screen. Use the VNC tab for more information.";
 
-/* Fit screen to window */
-"Fit screen to window" = "Fit screen to window";
-
 /* For now, you cannot use SPICE screen in external window */
 "For now, you cannot use SPICE screen in external window" = "For now, you cannot use SPICE screen in external window";
 
@@ -21,12 +18,6 @@
 
 /* It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'. */
 "It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'." = "It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.";
-
-/* Open external VNC program */
-"Open external VNC program" = "Open external VNC program";
-
-/* Reset zoom */
-"Reset zoom" = "Reset zoom";
 
 /* Retry */
 "Retry" = "Retry";

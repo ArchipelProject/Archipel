@@ -116,7 +116,7 @@
 /* Class = "NSButtonCell"; title = "Update"; ObjectID = "977"; */
 "977.title" = "Aktuallisieren";
 
-/* Class = "TNModalWindow"; title = "Connection"; ObjectID = "980"; */
+/* Class = "NSWindow"; title = "Connection"; ObjectID = "980"; */
 "980.title" = "Verbindung";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Enter your JID"; ObjectID = "987"; */
@@ -155,7 +155,7 @@
 /* Class = "NSTextFieldCell"; title = "Remember"; ObjectID = "1005"; */
 "1005.title" = "Merken";
 
-/* Class = "TNSwitch"; ibShadowedToolTip = "Remember credentials"; ObjectID = "1006"; */
+/* Class = "NSView"; ibShadowedToolTip = "Remember credentials"; ObjectID = "1006"; */
 "1006.ibShadowedToolTip" = "Remember credentials";
 
 /* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "1009"; */
@@ -185,13 +185,13 @@
 /* Class = "NSTextFieldCell"; title = "status"; ObjectID = "1031"; */
 "1031.title" = "status";
 
-/* Class = "NSButton"; ibShadowedToolTip = "Click here to change the avatar"; ObjectID = "1033"; */
+/* Class = "NSView"; ibShadowedToolTip = "Click here to change the avatar"; ObjectID = "1033"; */
 "1033.ibShadowedToolTip" = "Click here to change the avatar";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "XMPP ressource"; ObjectID = "1044"; */
 "1044.ibShadowedToolTip" = "XMPP ressource";
 
-/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, use UI animations. It can slow down the performances"; ObjectID = "1046"; */
+/* Class = "NSView"; ibShadowedToolTip = "If enabled, use UI animations. It can slow down the performances"; ObjectID = "1046"; */
 "1046.ibShadowedToolTip" = "If enabled, use UI animations. It can slow down the performances";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay between loading entities modules. (0.15 is cool)"; ObjectID = "1047"; */
@@ -227,7 +227,7 @@
 /* Class = "NSTextFieldCell"; title = "Using animations can slow down the performances."; ObjectID = "1065"; */
 "1065.title" = "Das Verwenden von Animationen geht zu Lasten der Performance.";
 
-/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, use XMPP monitoring. It can slow down the performances"; ObjectID = "1072"; */
+/* Class = "NSView"; ibShadowedToolTip = "If enabled, use XMPP monitoring. It can slow down the performances"; ObjectID = "1072"; */
 "1072.ibShadowedToolTip" = "If enabled, use XMPP monitoring. It can slow down the performances";
 
 /* Class = "NSTextFieldCell"; title = "Using XMPP monitoring can slow down the performances."; ObjectID = "1074"; */

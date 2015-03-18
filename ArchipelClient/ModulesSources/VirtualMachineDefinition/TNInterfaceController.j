@@ -16,17 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <Foundation/Foundation.j>
+@import <AppKit/CPPopover.j>
+@import <AppKit/CPCheckBox.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 @import <StropheCappuccino/TNStropheContact.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 
+@import "../../Views/TNButtonBar.j"
 @import "Model/TNLibvirtDeviceInterface.j"
 
 @global CPLocalizedString
@@ -46,7 +48,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
 */
 @implementation TNInterfaceController : CPObject
 {
-    @outlet CPButtonBar         buttonBarNetworkParameters;
+    @outlet TNButtonBar         buttonBarNetworkParameters;
     @outlet CPCheckBox          checkBoxBandwidthInbound;
     @outlet CPCheckBox          checkBoxBandwidthOutbound;
     @outlet CPPopover           mainPopover;
@@ -84,7 +86,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
 */
 - (void)awakeFromCib
 {
-    [viewNWFilterParametersContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewNWFilterParametersContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [buttonType removeAllItems];
     [buttonModel removeAllItems];
@@ -94,11 +96,11 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
     [buttonModel addItemsWithTitles:TNLibvirtDeviceInterfaceModels];
     [buttonType addItemsWithTitles: TNLibvirtDeviceInterfaceTypes];
 
-    var addButton  = [CPButtonBar plusButton];
+    var addButton  = [TNButtonBar plusButton];
     [addButton setTarget:self];
     [addButton setAction:@selector(addNWFilterParameter:)];
 
-    var removeButton  = [CPButtonBar minusButton];
+    var removeButton  = [TNButtonBar minusButton];
     [removeButton setTarget:self];
     [removeButton setAction:@selector(removeNWFilterParameter:)];
 
@@ -225,6 +227,18 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
             [[_nic source] setBridge:[buttonSource title]];
             [[_nic source] setDevice:nil];
             [[_nic source] setMode:nil];
+            if ([[[buttonSource selectedItem] representedObject].type] == @"openvswitch")
+            {
+                if (![_nic virtualPort])
+                {
+                    [_nic setVirtualPort:[[TNLibvirtDeviceInterfaceVirtualPort alloc] init]];
+                    [[_nic virtualPort] setType:"openvswitch"];
+                }
+            }
+            else
+                if ([_nic virtualPort])
+                    [_nic setVirtualPort:nil];
+
             [_nic setTarget:nil];
             break;
         case TNLibvirtDeviceInterfaceTypeUser:
@@ -576,10 +590,14 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
         [buttonSource removeAllItems];
         for (var i = 0; i < [bridges count]; i++)
         {
-            var bridge = [[bridges objectAtIndex:i] valueForAttribute:@"name"];
+            var bridge = [[bridges objectAtIndex:i] valueForAttribute:@"name"],
+                type   = [[bridges objectAtIndex:i] valueForAttribute:@"type"],
+                item   = [[CPMenuItem alloc] initWithTitle:bridge action:nil keyEquivalent:nil];
 
-            [buttonSource addItemWithTitle:bridge];
+            [item setRepresentedObject:{"type": type}];
+            [buttonSource addItem:item];
         }
+
         [buttonSource selectItemWithTitle:[[_nic source] bridge]];
 
         if (![buttonSource selectedItem])

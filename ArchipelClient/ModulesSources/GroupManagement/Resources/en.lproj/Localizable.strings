@@ -10,44 +10,29 @@
 /* Cannot migrate virtual machine  */
 "Cannot migrate virtual machine " = "Cannot migrate virtual machine ";
 
-/* Destroy selected virtual machines */
-"Destroy selected virtual machines" = "Destroy selected virtual machines";
+/* Force Off */
+"Force Off" = "Force Off";
 
-/* Migrate all selected VMs */
-"Migrate all selected VMs" = "Migrate all selected VMs";
+/* Migrate */
+"Migrate" = "Migrate";
 
-/* Pause selected virtual machines */
-"Pause selected virtual machines" = "Pause selected virtual machines";
+/* Pause */
+"Pause" = "Pause";
 
-/* Reboot selected virtual machines */
-"Reboot selected virtual machines" = "Reboot selected virtual machines";
+/* Reboot */
+"Reboot" = "Reboot";
 
-/* Resume selected virtual machines */
-"Resume selected virtual machines" = "Resume selected virtual machines";
+/* Resume */
+"Resume" = "Resume";
 
-/* Send all selected VM destroy event */
-"Send all selected VM destroy event" = "Send all selected VM destroy event";
+/* Shutdown */
+"Shutdown" = "Shutdown";
 
-/* Send all selected VM pause event */
-"Send all selected VM pause event" = "Send all selected VM pause event";
+/* Start */
+"Start" = "Start";
 
-/* Send all selected VM reboot event */
-"Send all selected VM reboot event" = "Send all selected VM reboot event";
-
-/* Send all selected VM resume event */
-"Send all selected VM resume event" = "Send all selected VM resume event";
-
-/* Send all selected VM shutdown event */
-"Send all selected VM shutdown event" = "Send all selected VM shutdown event";
-
-/* Send all selected VM start event */
-"Send all selected VM start event" = "Send all selected VM start event";
-
-/* Shutdown selected virtual machines */
-"Shutdown selected virtual machines" = "Shutdown selected virtual machines";
-
-/* Start selected virtual machines */
-"Start selected virtual machines" = "Start selected virtual machines";
+/* Take a Snapshot */
+"Take a Snapshot" = "Take a Snapshot";
 
 /* Virtual machine  */
 "Virtual machine " = "Virtual machine ";

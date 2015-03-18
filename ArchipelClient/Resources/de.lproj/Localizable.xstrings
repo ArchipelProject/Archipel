@@ -50,6 +50,8 @@
 	<string>Abbrechen</string>
 	<key>Cannot save your preferences to the XMPP server</key>
 	<string>Ihre Einstellungen konnten auf dem XMPP Server nicht gespeichert werden</string>
+	<key>Central Agent</key>
+	<string>Central Agent</string>
 	<key>Collapse all groups</key>
 	<string>Alle Gruppen zusammenklappen</string>
 	<key>Collapse group</key>

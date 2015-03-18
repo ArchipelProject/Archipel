@@ -79,7 +79,7 @@ var TNNetworkDataViewStatusImageActive,
     TNNetworkDataViewStatusImageUnactive   = CPImageInBundle(@"IconsStatus/red.png", CGSizeMake(8.0, 8.0), [CPBundle mainBundle]);
 }
 
-- (void)initWithFrame:(CGRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {

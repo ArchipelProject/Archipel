@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -30,6 +29,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNGroupedMigrationController.j";
 
 @global CPLocalizedString
@@ -45,12 +45,15 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     TNArchipelTypeVirtualMachineControlSuspend      = @"suspend",
     TNArchipelTypeVirtualMachineControlResume       = @"resume",
     TNArchipelTypeVirtualMachineControlMigrate      = @"migrate",
+    TNArchipelTypeHypervisorSnapshot                = @"archipel:virtualmachine:snapshoting",
+    TNArchipelTypeHypervisorSnapshotTake            = @"take",
     TNArchipelActionTypeCreate                      = @"Start",
     TNArchipelActionTypePause                       = @"Pause",
     TNArchipelActionTypeShutdown                    = @"Shutdown",
     TNArchipelActionTypeDestroy                     = @"Destroy",
     TNArchipelActionTypeResume                      = @"Resume",
-    TNArchipelActionTypeReboot                      = @"Reboot";
+    TNArchipelActionTypeReboot                      = @"Reboot",
+    TNArchipelActionTypeSnapshot                    = @"Snapshot";
 
 var TNModuleControlForStart                         = @"Start",
     TNModuleControlForPause                         = @"Pause",
@@ -58,6 +61,7 @@ var TNModuleControlForStart                         = @"Start",
     TNModuleControlForShutdown                      = @"Stop",
     TNModuleControlForDestroy                       = @"Destroy",
     TNModuleControlForReboot                        = @"Reboot",
+    TNModuleControlForSnapshot                      = @"Snapshot",
     TNModuleControlForMigrate                       = @"Migrate";
 
 /*! @defgroup  groupmanagement Module Group Management
@@ -69,7 +73,7 @@ var TNModuleControlForStart                         = @"Start",
 */
 @implementation TNGroupManagementController : TNModule
 {
-    @outlet CPButtonBar                     buttonBarControl;
+    @outlet TNButtonBar                     buttonBarControl;
     @outlet CPSearchField                   filterField;
     @outlet CPTableView                     tableVirtualMachines;
     @outlet CPView                          viewTableContainer;
@@ -86,7 +90,7 @@ var TNModuleControlForStart                         = @"Start",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
 
@@ -138,6 +142,12 @@ var TNModuleControlForStart                         = @"Start",
                              action:@selector(migrate:)
                               image:CPImageInBundle(@"IconsButtons/migrate.png",nil, [CPBundle mainBundle])];
 
+    [self addControlsWithIdentifier:TNModuleControlForSnapshot
+                              title:CPBundleLocalizedString(@"Take a Snapshot", @"Take a Snapshot")
+                             target:self
+                             action:@selector(snapshot:)
+                              image:CPImageInBundle(@"IconsButtons/photo.png",nil, [CPBundle mainBundle])];
+
     [buttonBarControl setButtons:[
         [self buttonWithIdentifier:TNModuleControlForStart],
         [self buttonWithIdentifier:TNModuleControlForPause],
@@ -145,7 +155,8 @@ var TNModuleControlForStart                         = @"Start",
         [self buttonWithIdentifier:TNModuleControlForShutdown],
         [self buttonWithIdentifier:TNModuleControlForDestroy],
         [self buttonWithIdentifier:TNModuleControlForReboot],
-        [self buttonWithIdentifier:TNModuleControlForMigrate]]];
+        [self buttonWithIdentifier:TNModuleControlForMigrate],
+        [self buttonWithIdentifier:TNModuleControlForSnapshot]]];
 
     [filterField setTarget:_datasourceGroupVM];
     [filterField setAction:@selector(filterObjects:)];
@@ -181,11 +192,14 @@ var TNModuleControlForStart                         = @"Start",
 
 /*! called when module become visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [self reload:nil];
+
+    return YES;
 }
 
 /*! called when module become unvisible
@@ -286,6 +300,14 @@ var TNModuleControlForStart                         = @"Start",
     [groupedMigrationController openWindow:([aSender isKindOfClass:CPMenuItem]) ? tableVirtualMachines : aSender];
 }
 
+/*! Action that will open the grouped migration controller
+    @param sender the sender of the action
+*/
+- (IBAction)snapshot:(id)aSender
+{
+    [self applyAction:TNArchipelActionTypeSnapshot];
+}
+
 
 #pragma mark -
 #pragma mark XMPP Management
@@ -295,32 +317,44 @@ var TNModuleControlForStart                         = @"Start",
 */
 - (void)applyAction:(CPString)aCommand
 {
-    var controlType;
+    var controlType,
+        namespace;
 
     switch (aCommand)
     {
         case TNArchipelActionTypeCreate:
             controlType = TNArchipelTypeVirtualMachineControlCreate;
+            namespace = TNArchipelTypeVirtualMachineControl;
             break;
 
         case TNArchipelActionTypeShutdown:
             controlType = TNArchipelTypeVirtualMachineControlShutdown;
+            namespace = TNArchipelTypeVirtualMachineControl;
             break;
 
         case TNArchipelActionTypeDestroy:
             controlType = TNArchipelTypeVirtualMachineControlDestroy;
+            namespace = TNArchipelTypeVirtualMachineControl;
             break;
 
         case TNArchipelActionTypePause:
             controlType = TNArchipelTypeVirtualMachineControlSuspend;
+            namespace = TNArchipelTypeVirtualMachineControl;
             break;
 
         case TNArchipelActionTypeResume:
             controlType = TNArchipelTypeVirtualMachineControlResume;
+            namespace = TNArchipelTypeVirtualMachineControl;
             break;
 
         case TNArchipelActionTypeReboot:
             controlType = TNArchipelTypeVirtualMachineControlReboot;
+            namespace = TNArchipelTypeVirtualMachineControl;
+            break;
+
+        case TNArchipelActionTypeSnapshot:
+            controlType = TNArchipelTypeHypervisorSnapshotTake;
+            namespace = TNArchipelTypeHypervisorSnapshot
             break;
     }
 
@@ -330,14 +364,25 @@ var TNModuleControlForStart                         = @"Start",
     for (var i = 0; i < [objects count]; i++)
     {
         var vm              = [objects objectAtIndex:i],
-            controlStanza   = [TNStropheStanza iqWithType:@"set"];
+            stanza          = [TNStropheStanza iqWithType:@"set"];
 
-        [controlStanza addChildWithName:@"query" andAttributes:{@"xmlns": TNArchipelTypeVirtualMachineControl}];
-        [controlStanza addChildWithName:@"archipel" andAttributes:{
-            @"xmlns": TNArchipelTypeVirtualMachineControl,
+        [stanza addChildWithName:@"query" andAttributes:{@"xmlns": namespace}];
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            @"xmlns": namespace,
             @"action": controlType}];
 
-        [vm sendStanza:controlStanza andRegisterSelector:@selector(_didSendAction:) ofObject:self];
+        if (aCommand == TNArchipelActionTypeSnapshot)
+        {
+            [stanza addChildWithName:@"domainsnapshot"];
+            [stanza addChildWithName:@"name"];
+            [stanza addTextNode:[CPString UUID]];
+            [stanza up];
+            [stanza addChildWithName:@"description"];
+            [stanza addTextNode:@"Grouped Snapshot"];
+            [stanza up];
+        }
+
+        [vm sendStanza:stanza andRegisterSelector:@selector(_didSendAction:) ofObject:self];
     }
 }
 
@@ -354,6 +399,10 @@ var TNModuleControlForStart                         = @"Start",
                                                          message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + sender + CPBundleLocalizedString(" state modified", " state modified")];
 
         [tableVirtualMachines reloadData];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza]
     }
 
     return NO;
@@ -407,7 +456,7 @@ var TNModuleControlForStart                         = @"Start",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];
@@ -426,7 +475,8 @@ var TNModuleControlForStart                         = @"Start",
     [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForReboot]];
     [_contextualMenu addItem:[CPMenuItem separatorItem]];
     [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForMigrate]];
-
+    [_contextualMenu addItem:[CPMenuItem separatorItem]];
+    [_contextualMenu addItem:[self menuItemWithIdentifier:TNModuleControlForSnapshot]];
     return _contextualMenu;
 }
 

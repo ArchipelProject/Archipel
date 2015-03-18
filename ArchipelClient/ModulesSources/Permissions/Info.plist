@@ -38,6 +38,7 @@
     <array>
         <string>virtualmachine</string>
         <string>hypervisor</string>
+        <string>central-agent</string>
     </array>
     <key>TabIndex</key>
     <integer>20</integer>

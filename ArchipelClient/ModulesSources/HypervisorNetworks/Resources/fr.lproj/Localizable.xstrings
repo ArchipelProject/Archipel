@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Activate selected networks</key>
-	<string>Activate selected networks</string>
-	<key>Activate this network</key>
-	<string>Activate this network</string>
 	<key>Add a new DHCP reservation</key>
 	<string>Add a new DHCP reservation</string>
 	<key>Add new DHCP range</key>
@@ -22,8 +18,6 @@
 	<string>Cancel</string>
 	<key>Create a new network</key>
 	<string>Create a new network</string>
-	<key>Create new virtual network</key>
-	<string>Create new virtual network</string>
 	<key>DHCP Hosts</key>
 	<string>DHCP Hosts</string>
 	<key>DHCP Ranges</key>
@@ -32,20 +26,16 @@
 	<string>Deactivate</string>
 	<key>Deactivate Network</key>
 	<string>Deactivate Network</string>
-	<key>Deactivate selected networks</key>
-	<string>Deactivate selected networks</string>
-	<key>Deactivate this network</key>
-	<string>Deactivate this network</string>
 	<key>Delete</key>
 	<string>Delete</string>
 	<key>Delete Network</key>
 	<string>Delete Network</string>
-	<key>Delete selected network</key>
-	<string>Delete selected network</string>
-	<key>Delete selected networks</key>
-	<string>Delete selected networks</string>
-	<key>Edit selected network</key>
-	<string>Edit selected network</string>
+	<key>Disable</key>
+	<string>Disable</string>
+	<key>Edit network settings</key>
+	<string>Edit network settings</string>
+	<key>Enable</key>
+	<string>Enable</string>
 	<key>Error</key>
 	<string>Error</string>
 	<key>Network has been defined</key>
@@ -62,6 +52,8 @@
 	<string>Remove elected DHCP reservations</string>
 	<key>Remove selected DHCP ranges</key>
 	<string>Remove selected DHCP ranges</string>
+	<key>You can't delete a running network</key>
+	<string>You can't delete a running network</string>
 	<key>You can't edit a running network</key>
 	<string>You can't edit a running network</string>
 	<key>You can't update a running network</key>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1090</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
-		<string key="IBDocument.HIToolboxVersion">755.00</string>
+		<int key="IBDocument.SystemTarget">101000</int>
+		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
+		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6245</string>
+			<string key="NS.object.0">6751</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSBox</string>
@@ -44,7 +44,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="829179636">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSImageView" id="786653176">
@@ -60,7 +60,6 @@
 						</set>
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="829179636"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="216857673"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="751180431">
@@ -79,7 +78,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 415}, {476, 20}}</string>
 						<reference key="NSSuperview" ref="829179636"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="982331386"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="505075983">
@@ -123,22 +121,19 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="205747347"/>
-								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="765232434">
 								<reference key="NSNextResponder" ref="205747347"/>
 								<int key="NSvFlags">274</int>
 								<string key="NSFrame">{{0, 26}, {687, 365}}</string>
 								<reference key="NSSuperview" ref="205747347"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="78274795"/>
 								<string key="NSClassName">NSScrollView</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 19}, {685, 391}}</string>
 						<reference key="NSSuperview" ref="829179636"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="765232434"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -147,7 +142,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{498, 418}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="829179636"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="205747347"/>
 						<bool key="NSViewIsLayerTreeHost">YES</bool>
 						<bool key="NSEnabled">YES</bool>
@@ -212,7 +206,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 448}, {425, 20}}</string>
 						<reference key="NSSuperview" ref="829179636"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="782987107"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="944484286">
@@ -232,7 +225,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="829179636"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="786653176"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="808969343">
@@ -256,8 +248,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{725, 522}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="70210539"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -349,6 +339,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
+							<int key="NSAuxButtonType">7</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -363,7 +354,7 @@
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">UUID:</string>
-							<object class="NSFont" key="NSSupport" id="232277396">
+							<object class="NSFont" key="NSSupport" id="1062393938">
 								<bool key="IBIsSystemFont">YES</bool>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">2072</int>
@@ -386,7 +377,7 @@
 							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Description:</string>
-							<reference key="NSSupport" ref="232277396"/>
+							<reference key="NSSupport" ref="1062393938"/>
 							<reference key="NSControlView" ref="588375577"/>
 							<reference key="NSBackgroundColor" ref="281828944"/>
 							<reference key="NSTextColor" ref="778480377"/>
@@ -397,7 +388,7 @@
 					<object class="NSTextField" id="303253771">
 						<reference key="NSNextResponder" ref="958189303"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{101, 237.5}, {358, 17}}</string>
+						<string key="NSFrame">{{101, 237}, {358, 17}}</string>
 						<reference key="NSSuperview" ref="958189303"/>
 						<reference key="NSNextKeyView" ref="588375577"/>
 						<bool key="NSEnabled">YES</bool>
@@ -849,139 +840,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">82</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="imageViewModuleReady">NSImageView</string>
-						<string key="viewMask">NSView</string>
-						<string key="viewPreferences">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="imageViewModuleReady">
-							<string key="name">imageViewModuleReady</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewMask">
-							<string key="name">viewMask</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewPreferences">
-							<string key="name">viewPreferences</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Model∕TNModule.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNVirtualMachineSnapshotsController</string>
-					<string key="superclassName">TNModule</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="closeWindowNewSnapshot:">id</string>
-						<string key="deleteSnapshot:">id</string>
-						<string key="fieldFilterDidChange:">id</string>
-						<string key="openWindowNewSnapshot:">id</string>
-						<string key="revertSnapshot:">id</string>
-						<string key="takeSnapshot:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="closeWindowNewSnapshot:">
-							<string key="name">closeWindowNewSnapshot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="deleteSnapshot:">
-							<string key="name">deleteSnapshot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="fieldFilterDidChange:">
-							<string key="name">fieldFilterDidChange:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openWindowNewSnapshot:">
-							<string key="name">openWindowNewSnapshot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="revertSnapshot:">
-							<string key="name">revertSnapshot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="takeSnapshot:">
-							<string key="name">takeSnapshot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">CPButtonBar</string>
-						<string key="buttonSnapshotTake">NSButton</string>
-						<string key="fieldFilter">NSSearchField</string>
-						<string key="fieldInfo">NSTextField</string>
-						<string key="fieldNewSnapshotDescription">LPMultiLineTextField</string>
-						<string key="fieldNewSnapshotName">NSTextField</string>
-						<string key="popoverNewSnapshot">NSPopover</string>
-						<string key="scrollViewSnapshots">NSScrollView</string>
-						<string key="viewTableContainer">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonBarControl">
-							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="buttonSnapshotTake">
-							<string key="name">buttonSnapshotTake</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldFilter">
-							<string key="name">fieldFilter</string>
-							<string key="candidateClassName">NSSearchField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldInfo">
-							<string key="name">fieldInfo</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldNewSnapshotDescription">
-							<string key="name">fieldNewSnapshotDescription</string>
-							<string key="candidateClassName">LPMultiLineTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldNewSnapshotName">
-							<string key="name">fieldNewSnapshotName</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="popoverNewSnapshot">
-							<string key="name">popoverNewSnapshot</string>
-							<string key="candidateClassName">NSPopover</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="scrollViewSnapshots">
-							<string key="name">scrollViewSnapshots</string>
-							<string key="candidateClassName">NSScrollView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewTableContainer">
-							<string key="name">viewTableContainer</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕VirtualMachineSnapshots∕TNVirtualMachineSnapshotsController.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>

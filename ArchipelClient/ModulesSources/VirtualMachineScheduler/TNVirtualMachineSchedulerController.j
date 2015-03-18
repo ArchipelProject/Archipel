@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPSearchField.j>
@@ -31,6 +30,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNSchedulerController.j"
 
 @global CPLocalizedString
@@ -53,7 +53,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
 */
 @implementation TNVirtualMachineScheduler : TNModule
 {
-    @outlet CPButtonBar             buttonBarJobs;
+    @outlet TNButtonBar             buttonBarJobs;
     @outlet CPSearchField           filterFieldJobs;
     @outlet CPTableView             tableJobs           @accessors(readonly);
     @outlet CPView                  viewTableContainer;
@@ -69,7 +69,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];
     [_datasourceJobs setTable:tableJobs];
@@ -250,7 +250,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

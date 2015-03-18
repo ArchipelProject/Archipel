@@ -16,15 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPMenuItem.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <Foundation/Foundation.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
+
 
 @import <StropheCappuccino/TNStropheStanza.j>
+@import <StropheCappuccino/TNStropheContact.j>
 @import <TNKit/TNAlert.j>
 
 @import "Model/TNLibvirt.j"
@@ -433,6 +437,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             [buttonSourcePath addItem:item];
         }
 
+        []
+
         [buttonSourcePath selectItemAtIndex:0];
         for (var i = 0; i < [[buttonSourcePath itemArray] count]; i++)
         {
@@ -468,19 +474,27 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     if ([aStanza type] == @"result")
     {
-        var isos = [aStanza childrenWithName:@"iso"];
+        var isos           = [aStanza childrenWithName:@"iso"],
+            items          = [];
 
         [buttonSourcePath removeAllItems];
 
         for (var i = 0; i < [isos count]; i++)
         {
             var iso     = [isos objectAtIndex:i],
-                label   = [iso valueForAttribute:@"name"],
+                label   = [[iso valueForAttribute:@"name"] capitalizedString],
                 item    = [[CPMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
 
             [item setRepresentedObject:{"format": "raw", "path": [iso valueForAttribute:@"path"]}];
-            [buttonSourcePath addItem:item];
+            [items addObject:item];
+        }
 
+        var sortDescriptor = [[CPSortDescriptor alloc] initWithKey:@"title" ascending:YES];
+        items = [items sortedArrayUsingDescriptors:[sortDescriptor]];
+
+        for (var i = 0; i < [items count]; i++)
+        {
+            [buttonSourcePath addItem:items[i]];
         }
 
         [buttonSourcePath selectItemAtIndex:0];

@@ -20,17 +20,19 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNInstalledAppliancesObject.j";
 
 @global CPLocalizedString
@@ -58,7 +60,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 @implementation TNVirtualMachineAppliancesController : TNModule
 {
     @outlet CPButton                    buttonCreate;
-    @outlet CPButtonBar                 buttonBarControl;
+    @outlet TNButtonBar                 buttonBarControl;
     @outlet CPCheckBox                  checkBoxShouldGZIP;
     @outlet CPPopover                   popoverNewAppliances;
     @outlet CPSearchField               fieldFilterAppliance;
@@ -77,7 +79,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     // table appliances
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
@@ -568,7 +570,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

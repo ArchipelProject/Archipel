@@ -14,34 +14,28 @@
 	<string>Attach</string>
 	<key>Attach appliance</key>
 	<string>Attach appliance</string>
-	<key>Attach selected appliance</key>
-	<string>Attach selected appliance</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Create appliance from this virtual machine</key>
-	<string>Create appliance from this virtual machine</string>
+	<key>Create a new appliance from current virtual machine</key>
+	<string>Create a new appliance from current virtual machine</string>
 	<key>Detach</key>
 	<string>Detach</string>
-	<key>Detach current VM from selected appliance</key>
-	<string>Detach current VM from selected appliance</string>
 	<key>Detach from appliance</key>
 	<string>Detach from appliance</string>
-	<key>Dettach from selected appliance</key>
-	<string>Dettach from selected appliance</string>
+	<key>Detach the selected appliance</key>
+	<string>Detach the selected appliance</string>
 	<key>Error</key>
 	<string>Error</string>
 	<key>Instanciation has started</key>
 	<string>Instanciation has started</string>
-	<key>Package current VM into hypervisor's VMCast</key>
-	<string>Package current VM into hypervisor's VMCast</string>
 	<key>Packaging started.</key>
 	<string>Packaging started.</string>
 	<key>Packaging successful.</key>
 	<string>Packaging successful.</string>
 	<key>Unable to create package. Check agent logs</key>
 	<string>Unable to create package. Check agent logs</string>
-	<key>Use selected package for VM. Any changes will be lost</key>
-	<string>Use selected package for VM. Any changes will be lost</string>
+	<key>Use the selected appliance</key>
+	<string>Use the selected appliance</string>
 	<key>Virtual machine must not be running to package it.</key>
 	<string>Virtual machine must not be running to package it.</string>
 	<key>You must select an appliance</key>

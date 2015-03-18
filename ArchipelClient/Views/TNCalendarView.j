@@ -20,7 +20,7 @@
 
 @implementation TNCalendarView : LPCalendarView
 
-+ (id)themeAttributes
++ (CPDictionary)themeAttributes
 {
     var mainBundle    = [CPBundle mainBundle],
         bgImage       = CPColorWithImages(@"LPCalendarView/background.png", 1.0, 21.0, mainBundle),

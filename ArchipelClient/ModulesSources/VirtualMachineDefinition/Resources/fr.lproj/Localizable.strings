@@ -1,17 +1,17 @@
+/* Add a new Character device */
+"Add a new Character device" = "Add a new Character device";
+
 /* Add a new drive */
 "Add a new drive" = "Add a new drive";
 
-/* Add a new graphic device */
-"Add a new graphic device" = "Add a new graphic device";
+/* Add a new Graphic device */
+"Add a new Graphic device" = "Add a new Graphic device";
 
-/* Add new character device */
-"Add new character device" = "Add new character device";
+/* Add a new input device */
+"Add a new input device" = "Add a new input device";
 
-/* Add new input device */
-"Add new input device" = "Add new input device";
-
-/* Add new network interface */
-"Add new network interface" = "Add new network interface";
+/* Add a new network interface */
+"Add a new network interface" = "Add a new network interface";
 
 /* All your changes will be definitly lost. */
 "All your changes will be definitly lost." = "All your changes will be definitly lost.";
@@ -31,14 +31,14 @@
 /* Discard */
 "Discard" = "Discard";
 
-/* Edit selected character device */
-"Edit selected character device" = "Edit selected character device";
+/* Edit selected Character device */
+"Edit selected Character device" = "Edit selected Character device";
 
 /* Edit selected drive */
 "Edit selected drive" = "Edit selected drive";
 
-/* Edit selected graphic device */
-"Edit selected graphic device" = "Edit selected graphic device";
+/* Edit selected Graphic device */
+"Edit selected Graphic device" = "Edit selected Graphic device";
 
 /* Edit selected input device */
 "Edit selected input device" = "Edit selected input device";
@@ -49,17 +49,20 @@
 /* Error */
 "Error" = "Error";
 
-/* Remove selected character devices */
-"Remove selected character devices" = "Remove selected character devices";
+/* Remove selected Character device(s) */
+"Remove selected Character device(s)" = "Remove selected Character device(s)";
 
-/* Remove selected drives */
-"Remove selected drives" = "Remove selected drives";
+/* Remove selected drive(s) */
+"Remove selected drive(s)" = "Remove selected drive(s)";
 
-/* Remove selected input devices */
-"Remove selected input devices" = "Remove selected input devices";
+/* Remove selected Graphic device(s) */
+"Remove selected Graphic device(s)" = "Remove selected Graphic device(s)";
 
-/* Remove selected network interfaces */
-"Remove selected network interfaces" = "Remove selected network interfaces";
+/* Remove selected input device(s) */
+"Remove selected input device(s)" = "Remove selected input device(s)";
+
+/* Remove selected network interface(s) */
+"Remove selected network interface(s)" = "Remove selected network interface(s)";
 
 /* Undefine */
 "Undefine" = "Undefine";

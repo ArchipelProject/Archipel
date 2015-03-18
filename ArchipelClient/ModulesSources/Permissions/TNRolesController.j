@@ -19,15 +19,17 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPPopover.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <StropheCappuccino/TNPubSub.j>
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <TNKit/TNTableViewDataSource.j>
+
+@import "../../Views/TNButtonBar.j"
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
@@ -39,7 +41,7 @@
 @implementation TNRolesController : CPObject
 {
     @outlet CPButton                buttonSave;
-    @outlet CPButtonBar             buttonBar;
+    @outlet TNButtonBar             buttonBar;
     @outlet CPPopover               mainPopover;
     @outlet CPPopover               popoverNewTemplate;
     @outlet CPSearchField           filterField;
@@ -62,14 +64,14 @@
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _datasourceRoles    = [[TNTableViewDataSource alloc] init];
     [_datasourceRoles setTable:tableRoles];
     [_datasourceRoles setSearchableKeyPaths:[@"name", @"description"]];
     [tableRoles setDataSource:_datasourceRoles];
 
-    var buttonDelete = [CPButtonBar plusButton];
+    var buttonDelete = [TNButtonBar plusButton];
     [buttonDelete setImage:CPImageInBundle(@"IconsButtons/minus.png", CGSizeMake(16, 16), [CPBundle mainBundle])];
     [buttonDelete setTarget:self];
     [buttonDelete setAction:@selector(deleteSelectedRole:)];

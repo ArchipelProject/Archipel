@@ -50,7 +50,7 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
 #pragma mark -
 #pragma mark Initialization
 
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

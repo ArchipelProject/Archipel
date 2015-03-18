@@ -48,7 +48,7 @@ TNLibvirtDeviceDiskSourceProtocols = [  TNLibvirtDeviceDiskSourceProtocolSheepdo
 
 /*! intialize the disk source
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

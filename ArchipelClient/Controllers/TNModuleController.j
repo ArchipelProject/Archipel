@@ -21,6 +21,7 @@
 @import <AppKit/CPMenu.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPToolbarItem.j>
+@import <AppKit/CPTabViewItem.j>
 @import <AppKit/CPView.j>
 
 @import <StropheCappuccino/StropheCappuccino.j>
@@ -28,6 +29,7 @@
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
+@import "../Model/TNModule.j"
 @import "TNPermissionsCenter.j"
 
 @global TNArchipelEntityTypes
@@ -162,7 +164,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     if ([_entity isKindOfClass:TNStropheContact])
     {
-
         [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
         [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
 
@@ -319,7 +320,10 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 - (void)recoverFromLastSelectedIndex
 {
     if (!_entity)
+    {
+        [_mainTabView selectFirstTabViewItem:self];
         return;
+    }
 
     var roster              = [[TNStropheIMClient defaultClient] roster],
         defaults            = [CPUserDefaults standardUserDefaults],
@@ -328,8 +332,11 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         oldSelectedIndex    = [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid] || -1,
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
-    if (oldSelectedIndex == -1)
+    if (oldSelectedIndex == -1 || numberOfTabItems < oldSelectedIndex)
+    {
+        [_mainTabView selectFirstTabViewItem:self];
         return;
+    }
 
     CPLog.info("recovering last selected tab index " + oldSelectedIndex);
 
@@ -816,7 +823,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     {
         var frame = [[[CPApp mainWindow] contentView] bounds];
 
-        frame.size.height -= 25;
+        frame.size.height -= 22;
         frame.origin.y = -frame.size.height ;
         [[newModule view] setFrame:frame];
         [newModule setUIItem:sender]; // due to archiving, we lost the origin item

@@ -119,7 +119,7 @@
 /* Class = "NSTextField"; ibShadowedToolTip = "Maximum number of logs to keep in the history"; ObjectID = "155"; */
 "155.ibShadowedToolTip" = "Maximum number of logs to keep in the history";
 
-/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, UI will poll for new stats"; ObjectID = "161"; */
+/* Class = "NSView"; ibShadowedToolTip = "If enabled, UI will poll for new stats"; ObjectID = "161"; */
 "161.ibShadowedToolTip" = "If enabled, UI will poll for new stats";
 
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "184"; */

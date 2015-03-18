@@ -33,7 +33,7 @@
 
 /*! initialize the datasource
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

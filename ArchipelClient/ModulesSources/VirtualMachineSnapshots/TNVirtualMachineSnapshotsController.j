@@ -19,16 +19,17 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPOutlineView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNSnapshot.j"
 @import "TNSnapshotsDatasource.j"
 
@@ -60,7 +61,7 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
     @outlet CPButton                    buttonSnapshotTake;
-    @outlet CPButtonBar                 buttonBarControl;
+    @outlet TNButtonBar                 buttonBarControl;
     @outlet CPPopover                   popoverNewSnapshot;
     @outlet CPScrollView                scrollViewSnapshots;
     @outlet CPSearchField               fieldFilter;
@@ -81,7 +82,7 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     // VM table view
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
@@ -655,7 +656,7 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
 
     var itemRow = [anOutlineView rowForItem:anItem];
     if ([anOutlineView selectedRow] != itemRow)
-        if (itemRow >=0)
+        if (itemRow >= 0)
             [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
         else
             [anOutlineView deselectAll];

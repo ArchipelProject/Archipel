@@ -55,9 +55,6 @@
 /* Pause */
 "Pause" = "Pause";
 
-/* Pause / Resume */
-"Pause / Resume" = "Pause / Resume";
-
 /* Paused */
 "Paused" = "Paused";
 
@@ -75,12 +72,6 @@
 
 /* Running */
 "Running" = "Running";
-
-/* Shut down */
-"Shut down" = "Shut down";
-
-/* Start */
-"Start" = "Start";
 
 /* Stop */
 "Stop" = "Stop";

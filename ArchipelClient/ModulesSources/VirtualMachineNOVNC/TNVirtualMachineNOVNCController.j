@@ -23,6 +23,7 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <VNCCappuccino/VNCCappuccino.j>
@@ -117,7 +118,8 @@ TNArchipelVNCScreenTypeSPICE = @"spice";
         imageSendPasteBoard = CPImageInBundle(@"sendPasteBoard.png", CGSizeMake(16, 16), bundle),
         imageGetPasteBoard = CPImageInBundle(@"getPasteBoard.png", CGSizeMake(16, 16), bundle);
 
-    [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", 256, 36, bundle)];
+    [viewControls setBackgroundColor:[CPColor whiteColor]];
+    viewControls._DOMElement.style.borderTop = "1px solid #f2f2f2";
     [buttonZoomFitToWindow setImage:imageZoomFit];
     [buttonZoomReset setImage:imageZoomReset];
     [buttonExternalWindow setImage:imageDirectAccess];

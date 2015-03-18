@@ -21,6 +21,7 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPSecureTextField.j>
 
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
@@ -32,6 +33,16 @@
 
 @class CPLocalizedString
 @class TNDatasourceRoster
+
+function _get_query_parameter_with_name(name)
+{
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
@@ -79,6 +90,22 @@ var TNConnectionControllerForceResource,
 */
 - (void)awakeFromCib
 {
+    var user     = _get_query_parameter_with_name("user"),
+        pass     = _get_query_parameter_with_name("pass"),
+        service  = _get_query_parameter_with_name("service");
+
+    if (user)
+    {
+        [fieldJID setStringValue:user]
+        if (!service)
+            [fieldService setStringValue:TNArchipelServiceTemplate.replace("@DOMAIN@",user.split("@")[1])]
+        else
+            [fieldService setStringValue:service]
+    }
+
+    if (pass)
+        [fieldPassword setStringValue:pass]
+
     [mainWindow setShowsResizeIndicator:NO];
     [mainWindow setDefaultButton:buttonConnect];
 
@@ -86,8 +113,6 @@ var TNConnectionControllerForceResource,
     [switchCredentialRemember setAction:@selector(rememberCredentials:)];
 
     [[mainWindow contentView] applyShadow];
-
-    [buttonConnect setBezelStyle:CPRoundedBezelStyle];
 
     [fieldPassword setSecure:YES];
     [fieldPassword setNeedsLayout];
@@ -111,13 +136,11 @@ var TNConnectionControllerForceResource,
 
 - (void)_didJIDChange:(CPNotification)aNotification
 {
-    var currentJID;
+    var current_domain = [fieldJID stringValue].split("@")[1];
 
-    try { currentJID = [TNStropheJID stropheJIDWithString:[fieldJID stringValue]]; } catch(e) { }
-
-    [fieldService setStringValue:[currentJID domain] ? TNArchipelServiceTemplate.replace("@DOMAIN@", [currentJID domain]) : @""];
-
-    [self _saveCredentials];
+    if (current_domain)
+        [fieldService setStringValue:TNArchipelServiceTemplate.replace("@DOMAIN@",current_domain)]
+        [self _saveCredentials];
 }
 
 
@@ -126,7 +149,7 @@ var TNConnectionControllerForceResource,
 
 /*! Initialize credentials informations according to the Application Defaults
 */
-- (void)initCredentials
+- (id)initCredentials
 {
     [self _prepareCredentialRemember];
     [self _prepareJID];
@@ -155,7 +178,8 @@ var TNConnectionControllerForceResource,
 {
     var lastPassword = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPPassword"];
 
-    [fieldPassword setStringValue:lastPassword || @""];
+    if ([fieldPassword stringValue] == @"")
+        [fieldPassword setStringValue:lastPassword];
 }
 
 - (void)_prepareService
@@ -176,7 +200,8 @@ var TNConnectionControllerForceResource,
 
     var lastService = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPService"];
 
-    [fieldService setStringValue:lastService || @""];
+    if ([fieldService stringValue] == @"")
+        [fieldService setStringValue:lastService];
 }
 
 - (void)_saveCredentials

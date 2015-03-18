@@ -20,6 +20,7 @@
 
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNTableViewDataSource.j>

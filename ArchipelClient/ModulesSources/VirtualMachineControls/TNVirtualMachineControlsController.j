@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPSearchField.j>
@@ -28,6 +27,8 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
@@ -36,6 +37,7 @@
 
 @import "../../Views/TNSwitch.j"
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNExtendedContactObject.j"
 
 @global CPLocalizedString
@@ -96,11 +98,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 @implementation TNVirtualMachineControlsController : TNModule
 {
-    @outlet CPBox                   boxAdvancedCommands;
+    @outlet CPView                  viewAdvancedCommands;
     @outlet CPButton                buttonKill;
     @outlet CPButton                buttonPark;
     @outlet CPButton                buttonScreenshot;
-    @outlet CPButtonBar             buttonBarMigration;
+    @outlet TNButtonBar             buttonBarMigration;
     @outlet CPCheckBox              checkBoxAdvancedCommands;
     @outlet CPImageView             imageState;
     @outlet CPImageView             imageViewFullScreenshot;
@@ -157,8 +159,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         @"TNArchipelControlsScreenshotRefresh":[bundle objectForInfoDictionaryKey:@"TNArchipelControlsScreenshotRefresh"]
     }];
 
-    [boxAdvancedCommands setCornerRadius:3.0];
-
     [sliderMemory setContinuous:YES];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
@@ -197,7 +197,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
 
     // table migration
-    [viewTableHypervisorsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableHypervisorsContainer setBorderedWithHexColor:@"#F2F2F2"];
     _datasourceHypervisors   = [[TNTableViewDataSource alloc] init];
     [tableHypervisors setTarget:self];
     [tableHypervisors setDoubleAction:@selector(migrate:)];
@@ -208,7 +208,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [tableHypervisors setDataSource:_datasourceHypervisors];
 
     // button bar migration
-    _migrateButton  = [CPButtonBar plusButton];
+    _migrateButton  = [TNButtonBar plusButton];
     [_migrateButton setImage:CPImageInBundle(@"IconsButtons/migrate.png", CGSizeMake(16, 16), mainBundle)];
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
@@ -226,9 +226,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imageScreenShutDown = CPImageInBundle(@"shutdown.png", CGSizeMake(216, 162), bundle);
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
-    buttonScreenshot._DOMElement.style.borderRadius = "5px";
-    buttonScreenshot._DOMElement.style.border = "6px solid #222";
-    buttonScreenshot._DOMElement.style.boxShadow = "0px 0px 1px 1px #DCDCDC";
 
 }
 

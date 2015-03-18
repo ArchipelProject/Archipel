@@ -123,7 +123,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
-        self.inhibit_domain_event = False
+        self.inhibit_next_undefine_domain_event = False
         self.cputime_samples=[]
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_timer(self.cputime_sampling_Interval)
@@ -289,6 +289,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
         self.permission_center.create_permission("nodeinfo", "Authorizes users to access virtual machine's hypervisor node informations", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
+        self.permission_center.create_permission("screenshot", "Authorizes users to see screenshots of the virtual machine", False)
 
     def add_vm_definition_hook(self, method):
         """
@@ -342,13 +343,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.change_name(newname, publish)
 
         if self.domain:
-            self.inhibit_domain_event = True
+            self.inhibit_next_undefine_domain_event = True
             old_definition = self.definition
             self.undefine()
             self.definition = old_definition
             if self.definition:
                 self.definition.getTag("name").setData(newname)
-            self.inhibit_domain_event = False
 
     def set_automatic_libvirt_description(self, xmldesc):
         """
@@ -438,10 +438,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             self.log.info("LIBVIRTEVENT: Event received but virtual machine is migrating. Ignoring.")
             return
 
-        if self.inhibit_domain_event:
-            self.log.info("LIBVIRTEVENT: VM has inihibited its event reaction. Ignoring")
-            return
-
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
@@ -468,6 +464,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.push_change("virtualmachine:control", "shutoff")
                 self.perform_hooks("HOOK_VM_SHUTOFF")
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
+                if self.inhibit_next_undefine_domain_event:
+                    self.inhibit_next_undefine_domain_event = False
+                    self.log.info("LIBVIRTEVENT: VM has inihibited its undefine event reaction. Ignoring")
+                    return
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined")
                 self.perform_hooks("HOOK_VM_UNDEFINE")
@@ -1043,8 +1043,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=migration_destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "migrationinfo"})
-        xmpp.dispatcher.ID += 1
-        iq.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         self.xmppclient.SendAndCallForResponse(iq, self.migrate_running_step2)
 
     def migrate_running_step2(self, conn, resp):
@@ -1100,8 +1098,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "soft_alloc"})
         iq.getTag("query").getTag("archipel").addChild(node=self.xmldesc(mask_description=False))
-        xmpp.dispatcher.ID += 1
-        iq.setID("%s-%d" % (self.jid.getNode(), xmpp.dispatcher.ID))
         self.xmppclient.SendAndCallForResponse(iq, self.migrate_not_running_step2)
 
     def migrate_not_running_step2(self, conn, resp):

@@ -41,7 +41,7 @@
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "50"; */
 "50.title" = "Créer";
 
-/* Class = "NSTextFieldCell"; title = "New virtual machine"; ObjectID = "51"; */
+/* Class = "NSTextFieldCell"; title = "Virtual machine informations"; ObjectID = "51"; */
 "51.title" = "Nouvelle machine virtuelle";
 
 /* Class = "NSTextFieldCell"; title = "If you leave name blank, the name will be generated."; ObjectID = "52"; */

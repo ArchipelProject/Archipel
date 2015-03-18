@@ -64,7 +64,7 @@ else
 
 /*! initialize the controller
 */
-- (void)initWithEntity:(TNStropheContact)anEntity
+- (id)initWithEntity:(TNStropheContact)anEntity
 {
     if (self = [super init])
     {

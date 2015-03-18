@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1090</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
-		<string key="IBDocument.HIToolboxVersion">755.00</string>
+		<int key="IBDocument.SystemTarget">101000</int>
+		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
+		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6245</string>
+			<string key="NS.object.0">6751</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSBox</string>
@@ -53,7 +53,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="609831124">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSImageView" id="783335893">
@@ -69,7 +69,6 @@
 						</set>
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="324583958"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="69129986">
@@ -100,7 +99,6 @@
 												<int key="NSvFlags">256</int>
 												<string key="NSFrameSize">{686, 349}</string>
 												<reference key="NSSuperview" ref="156227592"/>
-												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="838468007"/>
 												<string key="NSReuseIdentifierKey">_NS:1197</string>
 												<bool key="NSEnabled">YES</bool>
@@ -111,7 +109,6 @@
 													<int key="NSvFlags">256</int>
 													<string key="NSFrameSize">{686, 17}</string>
 													<reference key="NSSuperview" ref="838468007"/>
-													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="156227592"/>
 													<string key="NSReuseIdentifierKey">_NS:1199</string>
 													<reference key="NSTableView" ref="809789922"/>
@@ -286,7 +283,6 @@
 										</array>
 										<string key="NSFrame">{{0, 17}, {685, 349}}</string>
 										<reference key="NSSuperview" ref="610167192"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="809789922"/>
 										<string key="NSReuseIdentifierKey">_NS:1195</string>
 										<reference key="NSDocView" ref="809789922"/>
@@ -299,7 +295,6 @@
 										<int key="NSvFlags">-2147483392</int>
 										<string key="NSFrame">{{224, 17}, {15, 102}}</string>
 										<reference key="NSSuperview" ref="610167192"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="437713175"/>
 										<string key="NSReuseIdentifierKey">_NS:1214</string>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -315,7 +310,6 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{0, 350}, {685, 16}}</string>
 										<reference key="NSSuperview" ref="610167192"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="808108227"/>
 										<string key="NSReuseIdentifierKey">_NS:1216</string>
 										<bool key="NSEnabled">YES</bool>
@@ -335,7 +329,6 @@
 										</array>
 										<string key="NSFrameSize">{685, 17}</string>
 										<reference key="NSSuperview" ref="610167192"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="949232090"/>
 										<string key="NSReuseIdentifierKey">_NS:1200</string>
 										<reference key="NSDocView" ref="949232090"/>
@@ -344,7 +337,6 @@
 								</array>
 								<string key="NSFrame">{{0, 25}, {685, 366}}</string>
 								<reference key="NSSuperview" ref="966007610"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="156227592"/>
 								<string key="NSReuseIdentifierKey">_NS:1193</string>
 								<int key="NSsFlags">133808</int>
@@ -362,13 +354,11 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="966007610"/>
-								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 19}, {685, 391}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="610167192"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -377,7 +367,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{498, 418}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="966007610"/>
 						<bool key="NSViewIsLayerTreeHost">YES</bool>
 						<bool key="NSEnabled">YES</bool>
@@ -439,7 +428,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 448}, {289, 20}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="564464291"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="420619805">
@@ -464,7 +452,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="783335893"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="339885539">
@@ -488,8 +475,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{725, 522}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="348945006"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -585,6 +570,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
+							<int key="NSAuxButtonType">7</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -771,6 +757,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -823,6 +810,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -875,6 +863,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -927,6 +916,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -979,6 +969,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -1031,6 +1022,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -2310,265 +2302,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">282</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">TNCalendarView</string>
-					<string key="superclassName">LPCalendarView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Views∕TNCalendarView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="imageViewModuleReady">NSImageView</string>
-						<string key="viewMask">NSView</string>
-						<string key="viewPreferences">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="imageViewModuleReady">
-							<string key="name">imageViewModuleReady</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewMask">
-							<string key="name">viewMask</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewPreferences">
-							<string key="name">viewPreferences</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Model∕TNModule.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNSchedulerController</string>
-					<string key="superclassName">NSObject</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="alloc:">id</string>
-						<string key="checkboxClicked:">id</string>
-						<string key="closeWindow:">id</string>
-						<string key="openWindow:">id</string>
-						<string key="schedule:">id</string>
-						<string key="unschedule:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="alloc:">
-							<string key="name">alloc:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="checkboxClicked:">
-							<string key="name">checkboxClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="closeWindow:">
-							<string key="name">closeWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openWindow:">
-							<string key="name">openWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="schedule:">
-							<string key="name">schedule:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="unschedule:">
-							<string key="name">unschedule:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonNewJobAction">NSPopUpButton</string>
-						<string key="buttonNewJobOK">NSButton</string>
-						<string key="calendarViewNewJob">TNCalendarView</string>
-						<string key="checkBoxEveryDay">CPCheckBox</string>
-						<string key="checkBoxEveryHour">CPCheckBox</string>
-						<string key="checkBoxEveryMinute">CPCheckBox</string>
-						<string key="checkBoxEveryMonth">CPCheckBox</string>
-						<string key="checkBoxEverySecond">CPCheckBox</string>
-						<string key="checkBoxEveryYear">CPCheckBox</string>
-						<string key="fieldNewJobComment">NSTextField</string>
-						<string key="mainPopover">NSPopover</string>
-						<string key="stepperHour">TNTextFieldStepper</string>
-						<string key="stepperMinute">TNTextFieldStepper</string>
-						<string key="stepperNewRecurrentJobDay">TNTextFieldStepper</string>
-						<string key="stepperNewRecurrentJobHour">TNTextFieldStepper</string>
-						<string key="stepperNewRecurrentJobMinute">TNTextFieldStepper</string>
-						<string key="stepperNewRecurrentJobMonth">TNTextFieldStepper</string>
-						<string key="stepperNewRecurrentJobSecond">TNTextFieldStepper</string>
-						<string key="stepperNewRecurrentJobYear">TNTextFieldStepper</string>
-						<string key="stepperSecond">TNTextFieldStepper</string>
-						<string key="tabViewJobSchedule">NSTabView</string>
-						<string key="viewNewJobOneShot">NSView</string>
-						<string key="viewNewJobRecurent">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonNewJobAction">
-							<string key="name">buttonNewJobAction</string>
-							<string key="candidateClassName">NSPopUpButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="buttonNewJobOK">
-							<string key="name">buttonNewJobOK</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="calendarViewNewJob">
-							<string key="name">calendarViewNewJob</string>
-							<string key="candidateClassName">TNCalendarView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxEveryDay">
-							<string key="name">checkBoxEveryDay</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxEveryHour">
-							<string key="name">checkBoxEveryHour</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxEveryMinute">
-							<string key="name">checkBoxEveryMinute</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxEveryMonth">
-							<string key="name">checkBoxEveryMonth</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxEverySecond">
-							<string key="name">checkBoxEverySecond</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxEveryYear">
-							<string key="name">checkBoxEveryYear</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldNewJobComment">
-							<string key="name">fieldNewJobComment</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mainPopover">
-							<string key="name">mainPopover</string>
-							<string key="candidateClassName">NSPopover</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperHour">
-							<string key="name">stepperHour</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperMinute">
-							<string key="name">stepperMinute</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperNewRecurrentJobDay">
-							<string key="name">stepperNewRecurrentJobDay</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperNewRecurrentJobHour">
-							<string key="name">stepperNewRecurrentJobHour</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperNewRecurrentJobMinute">
-							<string key="name">stepperNewRecurrentJobMinute</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperNewRecurrentJobMonth">
-							<string key="name">stepperNewRecurrentJobMonth</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperNewRecurrentJobSecond">
-							<string key="name">stepperNewRecurrentJobSecond</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperNewRecurrentJobYear">
-							<string key="name">stepperNewRecurrentJobYear</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stepperSecond">
-							<string key="name">stepperSecond</string>
-							<string key="candidateClassName">TNTextFieldStepper</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="tabViewJobSchedule">
-							<string key="name">tabViewJobSchedule</string>
-							<string key="candidateClassName">NSTabView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewNewJobOneShot">
-							<string key="name">viewNewJobOneShot</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewNewJobRecurent">
-							<string key="name">viewNewJobRecurent</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕VirtualMachineScheduler∕TNSchedulerController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNVirtualMachineScheduler</string>
-					<string key="superclassName">TNModule</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">openNewJobWindow:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">openNewJobWindow:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">openNewJobWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarJobs">CPButtonBar</string>
-						<string key="filterFieldJobs">NSSearchField</string>
-						<string key="schedulerController">TNSchedulerController</string>
-						<string key="tableJobs">NSTableView</string>
-						<string key="viewTableContainer">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonBarJobs">
-							<string key="name">buttonBarJobs</string>
-							<string key="candidateClassName">CPButtonBar</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="filterFieldJobs">
-							<string key="name">filterFieldJobs</string>
-							<string key="candidateClassName">NSSearchField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="schedulerController">
-							<string key="name">schedulerController</string>
-							<string key="candidateClassName">TNSchedulerController</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="tableJobs">
-							<string key="name">tableJobs</string>
-							<string key="candidateClassName">NSTableView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewTableContainer">
-							<string key="name">viewTableContainer</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕VirtualMachineScheduler∕TNVirtualMachineSchedulerController.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>

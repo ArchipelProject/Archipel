@@ -1,5 +1,5 @@
 /*
- * TNLibvirtBase.j
+ * TNButtonBar.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -17,48 +17,40 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <StropheCappuccino/TNXMLNode.j>
+@import <AppKit/CPButtonBar.j>
 
 
-/*! @ingroup virtualmachinedefinition
-    Base class of all libvirt models object
-*/
-@implementation TNLibvirtBase : CPObject
+@implementation TNButtonBar : CPButtonBar
 
-
-#pragma mark -
-#pragma mark Initialization
-
-/*! initialize the object with a given XML node
-    @param aNode the node to use
-*/
-- (id)initWithXMLNode:(TNXMLNode)aNode
+- (void)awakeFromCib
 {
-    if (!aNode || (typeof(aNode) == @"undefined"))
-        return nil;
-
-    if (self = [super init])
-        return self;
+    [super awakeFromCib];
 }
 
-
-#pragma mark -
-#pragma mark Generation
-
-/*! return a TNXMLNode representing the object
-    @return TNXMLNode
-*/
-- (TNXMLNode)XMLNode
+- (id)initWithFrame:(CGRect)aFrame
 {
-    return nil;
+    if (self = [super initWithFrame:aFrame])
+        [self _applyTheme];
+
+    return self;
 }
 
-#pragma mark -
-#pragma mark Overides
-
-- (CPString)description
+- (void)_applyTheme
 {
-    return [[self XMLNode] stringValue];
+    [self setValue:[CPColor whiteColor] forThemeAttribute:"bezel-color"];
+    [self setValue:[CPColor whiteColor] forThemeAttribute:"button-bezel-color"];
+    [self setValue:[CPColor colorWithHexString:@"D9D9D9"] forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
+    self._DOMElement.style.borderTop = "1px solid #f2f2f2";
+}
+
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    if (self = [super initWithCoder:aCoder])
+    {
+        [self _applyTheme];
+    }
+
+    return self;
 }
 
 @end

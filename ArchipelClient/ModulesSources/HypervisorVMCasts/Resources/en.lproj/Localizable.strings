@@ -49,14 +49,8 @@
 /* Register to a new VMCast feed */
 "Register to a new VMCast feed" = "Register to a new VMCast feed";
 
-/* Register to a new VMCasts */
-"Register to a new VMCasts" = "Register to a new VMCasts";
-
-/* Remove selected appliance */
-"Remove selected appliance" = "Remove selected appliance";
-
-/* Show activity monitor */
-"Show activity monitor" = "Show activity monitor";
+/* Remove/Unregister */
+"Remove/Unregister" = "Remove/Unregister";
 
 /* Size */
 "Size" = "Size";
@@ -66,12 +60,6 @@
 
 /* Unregister */
 "Unregister" = "Unregister";
-
-/* Unregister from selected VMCast */
-"Unregister from selected VMCast" = "Unregister from selected VMCast";
-
-/* Unregister from selected VMCast feed */
-"Unregister from selected VMCast feed" = "Unregister from selected VMCast feed";
 
 /* VMcast has been registred */
 "VMcast has been registred" = "VMcast has been registred";

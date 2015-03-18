@@ -19,8 +19,8 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
+@import <AppKit/CPPopover.j>
 @import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
@@ -32,6 +32,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
+@import "../../Views/TNButtonBar.j"
 @import "TNXMPPServerUserFetcher.j"
 
 @class TNTableViewLazyDataSource
@@ -59,7 +60,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 {
     @outlet CPButton            buttonCreate;
     @outlet CPButton            buttonResetPassword;
-    @outlet CPButtonBar         buttonBarControl;
+    @outlet TNButtonBar         buttonBarControl;
     @outlet CPImageView         imageFecthingUsers;
     @outlet CPPopover           popoverNewUser;
     @outlet CPPopover           popoverResetPassword;
@@ -90,7 +91,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
     _entityCapabilities = [[CPDictionary alloc] init];
@@ -182,7 +183,12 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 - (void)setEntity:(CPDictionary)anEntity
 {
     _entity = [anEntity objectForKey:@"contact"];
-    _entityCapabilities = @{@"canManageUsers":[anEntity objectForKey:@"canManageUsers"], @"canManageSharedRostergroups":[anEntity objectForKey:@"canManageSharedRostergroups"]}
+
+    var canManageUsers = [anEntity objectForKey:@"canManageUsers"] || NO,
+        canManageSharedRostergroups = [anEntity objectForKey:@"canManageSharedRostergroups"] || NO;
+
+    _entityCapabilities = @{@"canManageUsers": canManageUsers, @"canManageSharedRostergroups": canManageSharedRostergroups};
+
     [_usersFetcher setEntity:_entity];
 }
 

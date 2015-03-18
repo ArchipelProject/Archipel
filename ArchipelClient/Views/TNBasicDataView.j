@@ -61,7 +61,6 @@
 
             [view setThemeState:aThemeState];
         }
-        [self applyShadow:[CPColor colorWithHexString:@"2F5288"] offset:CGSizeMake(-1.0, -1.0)];
     }
 }
 

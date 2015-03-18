@@ -20,18 +20,19 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPSplitView.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPOutlineView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNPermissionUserFetcher.j"
 @import "TNRolesController.j"
 @import "TNPermissionDataView.j"
@@ -64,12 +65,13 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 */
 @implementation TNPermissionsController : TNModule
 {
-    @outlet CPButtonBar             buttonBarControl;
+    @outlet TNButtonBar             buttonBarControl;
     @outlet CPImageView             imageFecthingUsers;
     @outlet CPSearchField           filterField;
     @outlet CPSearchField           filterRosterUsers;
     @outlet CPSearchField           filterUsers;
     @outlet CPSplitView             splitView;
+    @outlet CPSplitView             splitViewSecondary;
     @outlet CPTableView             tablePermissions;
     @outlet CPTableView             tableRosterUsers;
     @outlet CPTableView             tableUsers;
@@ -100,10 +102,17 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
     _currentUserPermissions = [CPArray array];
     _defaultAvatar          = CPImageInBundle(@"user-unknown.png", nil, [CPBundle mainBundle]);
 
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"F2F2F2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
-    [splitView setBorderedWithHexColor:@"#C0C7D2"];
+    [splitView setBorderedWithHexColor:@"#F2F2F2"];
+    [splitView setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitView setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitView setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
+
+    [splitViewSecondary setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewSecondary setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewSecondary setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
 
     [viewTableContainer setHidden:YES];
 
@@ -171,10 +180,9 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
     [filterRosterUsers setTarget:_datasourceRosterUsers];
     [filterRosterUsers setAction:@selector(filterObjects:)];
 
-    var filterBgColor = CPColorWithImages(@"Backgrounds/background-filter.png", 1, 33, [CPBundle mainBundle]);
-    [[filterUsers superview] setBackgroundColor:filterBgColor];
-    [[filterRosterUsers superview] setBackgroundColor:filterBgColor];
-    [[filterField superview] setBackgroundColor:filterBgColor];
+    [[filterUsers superview] setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
+    [[filterRosterUsers superview] setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
+    [[filterField superview] setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
 }
 
 
@@ -661,7 +669,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

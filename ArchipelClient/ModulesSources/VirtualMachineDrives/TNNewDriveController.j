@@ -22,6 +22,7 @@
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNAlert.j>
 @import <StropheCappuccino/TNStropheStanza.j>

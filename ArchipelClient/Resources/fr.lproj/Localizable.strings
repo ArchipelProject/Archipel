@@ -82,6 +82,9 @@
 /* Cannot save your preferences to the XMPP server */
 "Cannot save your preferences to the XMPP server" = "Cannot save your preferences to the XMPP server";
 
+/* Central Agent */
+"Central Agent" = "Central Agent";
+
 /* Collapse all groups */
 "Collapse all groups" = "Collapse all groups";
 

@@ -37,7 +37,7 @@
 /*! initializes the datasource with the given number of set
     @param numberOfSets the number of different data set to use
 */
-- (void)initWithNumberOfSets:(int)numberOfSets
+- (id)initWithNumberOfSets:(int)numberOfSets
 {
     if (self = [super init])
     {
@@ -53,7 +53,7 @@
 
 /*! initializes the datasource with 1 data sat
 */
-- (void)init
+- (id)init
 {
     return [self initWithSets:1];
 }

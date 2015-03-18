@@ -10,32 +10,22 @@
 	<string> vers l'hyperviseur sélectionné</string>
 	<key>Cannot migrate virtual machine </key>
 	<string>Impossible de migrer la VM </string>
-	<key>Destroy selected virtual machines</key>
-	<string>Détruire la VM sélectionnée</string>
-	<key>Migrate all selected VMs</key>
-	<string>Migrate all selected VMs</string>
-	<key>Pause selected virtual machines</key>
-	<string>Mettre en pause la VM sélectionnée</string>
-	<key>Reboot selected virtual machines</key>
-	<string>Redémarrer toutes les VMs sélectionnées</string>
-	<key>Resume selected virtual machines</key>
-	<string>Reprendre l'exécution de la VM sélectionnée</string>
-	<key>Send all selected VM destroy event</key>
-	<string>Send all selected VM destroy event</string>
-	<key>Send all selected VM pause event</key>
-	<string>Send all selected VM pause event</string>
-	<key>Send all selected VM reboot event</key>
-	<string>Send all selected VM reboot event</string>
-	<key>Send all selected VM resume event</key>
-	<string>Send all selected VM resume event</string>
-	<key>Send all selected VM shutdown event</key>
-	<string>Send all selected VM shutdown event</string>
-	<key>Send all selected VM start event</key>
-	<string>Send all selected VM start event</string>
-	<key>Shutdown selected virtual machines</key>
-	<string>Eteindre la VM sélectionnée</string>
-	<key>Start selected virtual machines</key>
-	<string>Démarrer toutes les VMs sélectionnées</string>
+	<key>Force Off</key>
+	<string>Force Off</string>
+	<key>Migrate</key>
+	<string>Migrate</string>
+	<key>Pause</key>
+	<string>Pause</string>
+	<key>Reboot</key>
+	<string>Reboot</string>
+	<key>Resume</key>
+	<string>Resume</string>
+	<key>Shutdown</key>
+	<string>Shutdown</string>
+	<key>Start</key>
+	<string>Start</string>
+	<key>Take a Snapshot</key>
+	<string>Take a Snapshot</string>
 	<key>Virtual machine </key>
 	<string>Machine Virtuelle </string>
 </dict>

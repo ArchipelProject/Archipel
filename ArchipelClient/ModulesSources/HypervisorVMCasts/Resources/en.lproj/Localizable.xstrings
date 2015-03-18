@@ -36,22 +36,14 @@
 	<string>Open download queue</string>
 	<key>Register to a new VMCast feed</key>
 	<string>Register to a new VMCast feed</string>
-	<key>Register to a new VMCasts</key>
-	<string>Register to a new VMCasts</string>
-	<key>Remove selected appliance</key>
-	<string>Remove selected appliance</string>
-	<key>Show activity monitor</key>
-	<string>Show activity monitor</string>
+	<key>Remove/Unregister</key>
+	<string>Remove/Unregister</string>
 	<key>Size</key>
 	<string>Size</string>
 	<key>Status</key>
 	<string>Status</string>
 	<key>Unregister</key>
 	<string>Unregister</string>
-	<key>Unregister from selected VMCast</key>
-	<string>Unregister from selected VMCast</string>
-	<key>Unregister from selected VMCast feed</key>
-	<string>Unregister from selected VMCast feed</string>
 	<key>VMCasts</key>
 	<string>VMCasts</string>
 	<key>VMcast has been registred</key>

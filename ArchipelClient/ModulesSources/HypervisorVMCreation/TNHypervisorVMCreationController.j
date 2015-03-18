@@ -19,18 +19,18 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTabViewItem.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <AppKit/CPWindow.j>
+@import <AppKit/CPTabView.j>
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNVirtualMachineAllocationController.j"
 @import "TNVirtualMachineCloneController.j"
 @import "TNVirtualMachineDataView.j"
@@ -76,9 +76,9 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 @implementation TNHypervisorVMCreationController : TNModule
 {
-    @outlet CPButtonBar                             buttonBarControl;
-    @outlet CPButtonBar                             buttonBarNotManagedVMControl;
-    @outlet CPButtonBar                             buttonBarParkedVMControl;
+    @outlet TNButtonBar                             buttonBarControl;
+    @outlet TNButtonBar                             buttonBarNotManagedVMControl;
+    @outlet TNButtonBar                             buttonBarParkedVMControl;
     @outlet CPPopUpButton                           popupDeleteMachine;
     @outlet CPSearchField                           fieldFilterVM;
     @outlet CPSearchField                           fieldFilterVMNotManaged;
@@ -114,9 +114,9 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [viewTableContainerNotManaged setBorderedWithHexColor:@"#C0C7D2"];
-    [viewTableContainerParked setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
+    [viewTableContainerNotManaged setBorderedWithHexColor:@"#F2F2F2"];
+    [viewTableContainerParked setBorderedWithHexColor:@"#F2F2F2"];
 
     // tab view
     var tabViewItemManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemManagedVM"],
@@ -938,7 +938,8 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
         for (var i = 0; i < [selectedObjects count]; i++)
         {
           var object = [selectedObjects objectAtIndex:i];
-          [indexesToSelect addIndex:[_virtualMachinesDatasource indexOfObject:object]];
+          if ([_virtualMachinesDatasource indexOfObject:object] != CPNotFound)
+            [indexesToSelect addIndex:[_virtualMachinesDatasource indexOfObject:object]];
         }
 
         [tableVirtualMachines selectRowIndexes:indexesToSelect byExtendingSelection:NO];
@@ -984,7 +985,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

@@ -29,7 +29,7 @@ THE SOFTWARE.
     id      target;
     int     currentStep;
     int     delta;
-    CG      targetFrame;
+    CGRect  targetFrame;
     int     steps;
     float   stepDuration;
     CPTimer timer;

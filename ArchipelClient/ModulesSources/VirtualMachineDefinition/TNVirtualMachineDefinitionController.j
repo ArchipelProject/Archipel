@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPColor.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPPopUpButton.j>
@@ -30,6 +29,8 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
+@import <AppKit/CPCheckBox.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
@@ -38,6 +39,7 @@
 @import <TNKit/TNSwipeView.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "Model/TNLibvirt.j"
 @import "TNCharacterDeviceController.j"
 @import "TNCharacterDeviceDataView.j"
@@ -119,11 +121,11 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     @outlet CPButton                    buttonUndefine;
     @outlet CPButton                    buttonXMLEditor;
     @outlet CPButton                    buttonXMLEditorDefine;
-    @outlet CPButtonBar                 buttonBarCharacterDevices;
-    @outlet CPButtonBar                 buttonBarControlDrives;
-    @outlet CPButtonBar                 buttonBarControlNics;
-    @outlet CPButtonBar                 buttonBarGraphicDevices;
-    @outlet CPButtonBar                 buttonBarInputDevices;
+    @outlet TNButtonBar                 buttonBarCharacterDevices;
+    @outlet TNButtonBar                 buttonBarControlDrives;
+    @outlet TNButtonBar                 buttonBarControlNics;
+    @outlet TNButtonBar                 buttonBarGraphicDevices;
+    @outlet TNButtonBar                 buttonBarInputDevices;
     @outlet CPPopover                   popoverXMLEditor;
     @outlet CPPopUpButton               buttonBoot;
     @outlet CPPopUpButton               buttonDomainType;
@@ -172,8 +174,6 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     @outlet CPView                      viewParametersAdvanced;
     @outlet CPView                      viewParametersCharacterDevices;
     @outlet CPView                      viewParametersDrives;
-    @outlet CPView                      viewParametersEffectBottom;
-    @outlet CPView                      viewParametersEffectTop;
     @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersStandard;
     @outlet LPMultiLineTextField        fieldBootloaderArgs;
@@ -189,13 +189,13 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     @outlet TNInputDeviceDataView       dataViewInputDevicePrototype;
     @outlet TNInterfaceController       interfaceController;
     @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
-    @outlet CPCheckbox                  checkboxACPI;
-    @outlet CPCheckbox                  checkboxAPIC;
-    @outlet CPCheckbox                  checkboxHugePages;
-    @outlet CPCheckbox                  checkboxNestedVirtualization;
-    @outlet CPCheckbox                  checkboxPAE;
-    @outlet CPCheckbox                  checkboxPreferencesHugePages;
-    @outlet CPCheckbox                  checkboxEnableUSB;
+    @outlet CPCheckBox                  checkboxACPI;
+    @outlet CPCheckBox                  checkboxAPIC;
+    @outlet CPCheckBox                  checkboxHugePages;
+    @outlet CPCheckBox                  checkboxNestedVirtualization;
+    @outlet CPCheckBox                  checkboxPAE;
+    @outlet CPCheckBox                  checkboxPreferencesHugePages;
+    @outlet CPCheckBox                  checkboxEnableUSB;
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;
 
@@ -222,8 +222,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
         mainBundle  = [CPBundle mainBundle],
-        defaults    = [CPUserDefaults standardUserDefaults],
-        imageBg     = CPImageInBundle(@"bg-controls.png", nil, bundle);
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     [scrollViewContentView setDocumentView:viewMainContent];
     [scrollViewContentView setAutohidesScrollers:YES];
@@ -231,7 +230,6 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [viewMainContent setFrameOrigin:CGPointMake(0.0, 0.0)];
     [viewMainContent setFrameSize:frameSize];
     [viewMainContent setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [viewBottomControl setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 
      var inset = CGInsetMake(2, 2, 2, 5);
     [buttonUndefine setImage:CPImageInBundle(@"undefine.png", CGSizeMake(16, 16), bundle)];
@@ -249,7 +247,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
         tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"],
         tabViewItemCharacter = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemCharacters"];
 
-    [tabViewParameters setContentBackgroundColor:[CPColor colorWithHexString:@"f5f5f5"]];
+    [tabViewParameters setContentBackgroundColor:[CPColor whiteColor]];
 
     var scrollViewParametersStandard = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]],
         scrollViewParametersAdvanced = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]];
@@ -281,13 +279,8 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [tabViewParameters addTabViewItem:tabViewItemDrives];
     [tabViewParameters addTabViewItem:tabViewItemNics];
     [tabViewParameters addTabViewItem:tabViewItemCharacter];
+    [tabViewParameters selectFirstTabViewItem:self];
     [tabViewParameters setDelegate:self];
-
-    var shadowTop    = CPImageInBundle(@"shadow-top.png", CGSizeMake(1.0, 10.0), bundle),
-        shadowBottom = CPImageInBundle(@"shadow-bottom.png", CGSizeMake(1.0, 10.0), bundle);
-
-    [viewParametersEffectTop setBackgroundColor:[CPColor colorWithPatternImage:shadowTop]];
-    [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
@@ -329,7 +322,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [tableDrives setDoubleAction:@selector(editDrive:)];
     [tableDrives setBackgroundColor:TNArchipelDefaultColorsTableView];
 
-    [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewDrivesContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [driveController setDelegate:self];
 
@@ -371,7 +364,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
     [tableInterfaces setBackgroundColor:TNArchipelDefaultColorsTableView];
 
-    [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewNicsContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [interfaceController setDelegate:self];
 
@@ -412,7 +405,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [_inputDevicesDatasource setTable:tableInputDevices];
     [tableInputDevices setDataSource:_inputDevicesDatasource];
-    [viewInputDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewInputDevicesContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [self addControlsWithIdentifier:TNModuleControlForInputDeviceAdd
                               title:CPBundleLocalizedString(@"Add a new input device", @"Add a new input device")
@@ -449,7 +442,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [_graphicDevicesDatasource setTable:tableGraphicsDevices];
     [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
-    [viewGraphicDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewGraphicDevicesContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [self addControlsWithIdentifier:TNModuleControlForGraphicDeviceAdd
                               title:CPBundleLocalizedString(@"Add a new Graphic device", @"Add a new Graphic device")
@@ -491,7 +484,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [_characterDevicesDatasource setTable:tableCharacterDevices];
     [tableCharacterDevices setDataSource:_characterDevicesDatasource];
-    [viewCharacterDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewCharacterDevicesContainer setBorderedWithHexColor:@"#F2F2F2"];
     [_characterDevicesDatasource setSearchableKeyPaths:[@"type", @"kind", @"protocol.type", @"target.type", @"target.address", @"target.port", @"target.name", @"source.path", @"source.mode", @"source.host", @"source.service"]]
     [fieldFilterCharacters setTarget:_characterDevicesDatasource];
     [fieldFilterCharacters setAction:@selector(filterObjects:)];
@@ -1916,7 +1909,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];
@@ -2450,7 +2443,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 - (IBAction)didChangeDomainType:(id)aSender
 {
     [_libvirtDomain setType:[aSender title]];
-    [[_libvirtDomain devices] setEmulator:nil];
+    //[[_libvirtDomain devices] setEmulator:nil];
     [self _updateUIFromDomainType];
 
     _definitionEdited = YES;

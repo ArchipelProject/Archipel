@@ -23,6 +23,7 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <GrowlCappuccino/TNGrowlCenter.j>
 @import <StropheCappuccino/TNStropheStanza.j>

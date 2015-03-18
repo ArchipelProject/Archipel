@@ -27,30 +27,36 @@ TNLibvirtDeviceGraphicTypeRDP           = @"rdp";
 TNLibvirtDeviceGraphicTypeSPICE         = @"spice";
 TNLibvirtDeviceGraphicTypeDESKTOP       = @"desktop";
 
+TNLibvirtDeviceGraphicVNCKeymapCH           = @"ch";
+TNLibvirtDeviceGraphicVNCKeymapDE           = @"de";
+TNLibvirtDeviceGraphicVNCKeymapEN_GB        = @"en-gb";
+TNLibvirtDeviceGraphicVNCKeymapEN_US        = @"en-us";
+TNLibvirtDeviceGraphicVNCKeymapES           = @"es";
+TNLibvirtDeviceGraphicVNCKeymapFI           = @"fi";
 TNLibvirtDeviceGraphicVNCKeymapFR           = @"fr";
 TNLibvirtDeviceGraphicVNCKeymapFR_CH        = @"fr-ch";
-TNLibvirtDeviceGraphicVNCKeymapEN_US        = @"en-us";
-TNLibvirtDeviceGraphicVNCKeymapEN_GB        = @"en-gb";
-TNLibvirtDeviceGraphicVNCKeymapDE           = @"de";
-TNLibvirtDeviceGraphicVNCKeymapES           = @"es";
-TNLibvirtDeviceGraphicVNCKeymapNO           = @"no";
 TNLibvirtDeviceGraphicVNCKeymapHU           = @"hu";
 TNLibvirtDeviceGraphicVNCKeymapIT           = @"it";
 TNLibvirtDeviceGraphicVNCKeymapNL_BE        = @"nl-be";
+TNLibvirtDeviceGraphicVNCKeymapNO           = @"no";
 TNLibvirtDeviceGraphicVNCKeymapPT           = @"pt";
+TNLibvirtDeviceGraphicVNCKeymapSV           = @"sv";
 
 
-TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapEN_US,
+TNLibvirtDeviceGraphicVNCKeymaps        = [ TNLibvirtDeviceGraphicVNCKeymapCH,
+                                            TNLibvirtDeviceGraphicVNCKeymapDE,
                                             TNLibvirtDeviceGraphicVNCKeymapEN_GB,
+                                            TNLibvirtDeviceGraphicVNCKeymapEN_US,
+                                            TNLibvirtDeviceGraphicVNCKeymapES,
+                                            TNLibvirtDeviceGraphicVNCKeymapFI,
                                             TNLibvirtDeviceGraphicVNCKeymapFR,
                                             TNLibvirtDeviceGraphicVNCKeymapFR_CH,
-                                            TNLibvirtDeviceGraphicVNCKeymapDE,
-                                            TNLibvirtDeviceGraphicVNCKeymapES,
-                                            TNLibvirtDeviceGraphicVNCKeymapNO,
                                             TNLibvirtDeviceGraphicVNCKeymapHU,
                                             TNLibvirtDeviceGraphicVNCKeymapIT,
                                             TNLibvirtDeviceGraphicVNCKeymapNL_BE,
-                                            TNLibvirtDeviceGraphicVNCKeymapPT];
+                                            TNLibvirtDeviceGraphicVNCKeymapNO,
+                                            TNLibvirtDeviceGraphicVNCKeymapPT,
+                                            TNLibvirtDeviceGraphicVNCKeymapSV];
 
 
 /*! @ingroup virtualmachinedefinition

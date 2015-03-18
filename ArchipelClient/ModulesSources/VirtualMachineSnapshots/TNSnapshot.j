@@ -56,7 +56,7 @@
 #pragma mark -
 #pragma mark Accessors
 
-- (CPImage)isCurrent
+- (BOOL)isCurrent
 {
     if (_isCurrent)
         return _currentIcon;

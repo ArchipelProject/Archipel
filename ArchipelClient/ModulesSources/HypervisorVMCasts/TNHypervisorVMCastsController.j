@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPOutlineView.j>
 @import <AppKit/CPProgressIndicator.j>
@@ -31,6 +30,7 @@
 @import <TNKit/TNAlert.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
 @import "TNVMCastDatasource.j";
@@ -65,7 +65,7 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
 */
 @implementation TNHypervisorVMCastsController : TNModule
 {
-    @outlet CPButtonBar                     buttonBarControl;
+    @outlet TNButtonBar                     buttonBarControl;
     @outlet CPCheckBox                      checkBoxOnlyInstalled;
     @outlet CPScrollView                    mainScrollView;
     @outlet CPSearchField                   fieldFilter;
@@ -85,7 +85,7 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _castsDatasource = [[TNVMCastDatasource alloc] init];
 
@@ -667,7 +667,7 @@ var TNModuleControlForRegisterVmCast                    = @"RegisterVmCast",
 
     var itemRow = [anOutlineView rowForItem:anItem];
     if ([anOutlineView selectedRow] != itemRow)
-        if (itemRow >=0)
+        if (itemRow >= 0)
             [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
         else
             [anOutlineView deselectAll];

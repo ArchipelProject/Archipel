@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTableView.j>
@@ -27,9 +26,11 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 
+@import "../../Views/TNButtonBar.j"
 @import "Model/TNLibvirtNet.j"
 
 @global CPLocalizedString
@@ -42,8 +43,8 @@
 @implementation TNNetworkEditionController : CPObject
 {
     @outlet CPButton            buttonOK;
-    @outlet CPButtonBar         buttonBarControlDHCPHosts;
-    @outlet CPButtonBar         buttonBarControlDHCPRanges;
+    @outlet TNButtonBar         buttonBarControlDHCPHosts;
+    @outlet TNButtonBar         buttonBarControlDHCPRanges;
     @outlet CPCheckBox          checkBoxAutostart;
     @outlet CPCheckBox          checkBoxBandwidthInbound;
     @outlet CPCheckBox          checkBoxBandwidthOutbound;
@@ -89,24 +90,24 @@
 
 - (void)awakeFromCib
 {
-    _plusButtonDHCPHosts = [CPButtonBar plusButton];
+    _plusButtonDHCPHosts = [TNButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
     [_plusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Add a new DHCP reservation", @"Add a new DHCP reservation")];
 
-    _minusButtonDHCPHosts= [CPButtonBar minusButton];
+    _minusButtonDHCPHosts= [TNButtonBar minusButton];
     [_minusButtonDHCPHosts setTarget:self];
     [_minusButtonDHCPHosts setAction:@selector(removeDHCPHost:)];
     [_minusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Remove elected DHCP reservations", @"Remove elected DHCP reservations")];
 
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
 
-    _plusButtonDHCPRanges = [CPButtonBar plusButton];
+    _plusButtonDHCPRanges = [TNButtonBar plusButton];
     [_plusButtonDHCPRanges setTarget:self];
     [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];
     [_plusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Add new DHCP range", @"Add new DHCP range")];
 
-    _minusButtonDHCPRanges = [CPButtonBar minusButton];
+    _minusButtonDHCPRanges = [TNButtonBar minusButton];
     [_minusButtonDHCPRanges setTarget:self];
     [_minusButtonDHCPRanges setAction:@selector(removeDHCPRange:)];
     [_minusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Remove selected DHCP ranges", @"Remove selected DHCP ranges")];
@@ -125,14 +126,14 @@
     [tableViewRanges setDelegate:self];
     [tableViewRanges setDataSource:_datasourceDHCPRanges];
     [_datasourceDHCPRanges setTable:tableViewRanges];
-    [viewRangesTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewRangesTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     // TABLE FOR HOSTS
     _datasourceDHCPHosts = [[TNTableViewDataSource alloc] init];
     [tableViewHosts setDelegate:self];
     [tableViewHosts setDataSource:_datasourceDHCPHosts];
     [_datasourceDHCPHosts setTable:tableViewHosts];
-    [viewHostsTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewHostsTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     var menuRange = [[CPMenu alloc] init],
         menuHost = [[CPMenu alloc] init];

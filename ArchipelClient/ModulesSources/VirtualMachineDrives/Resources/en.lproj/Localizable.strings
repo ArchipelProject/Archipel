@@ -4,20 +4,14 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Create a drive */
-"Create a drive" = "Create a drive";
-
 /* Create a new disk */
 "Create a new disk" = "Create a new disk";
 
 /* Delete */
 "Delete" = "Delete";
 
-/* Delete selected disks */
-"Delete selected disks" = "Delete selected disks";
-
-/* Delete selected drive */
-"Delete selected drive" = "Delete selected drive";
+/* Delete selected disk(s) */
+"Delete selected disk(s)" = "Delete selected disk(s)";
 
 /* Delete to drive */
 "Delete to drive" = "Delete to drive";
@@ -36,9 +30,6 @@
 
 /* Edit selected disk */
 "Edit selected disk" = "Edit selected disk";
-
-/* Edit selected drive */
-"Edit selected drive" = "Edit selected drive";
 
 /* Error */
 "Error" = "Error";

@@ -63,7 +63,7 @@ TNLibvirtDeviceFilesystemAccessModes            = [ TNLibvirtDeviceFilesystemAcc
 
 /*! initialize the Disk
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

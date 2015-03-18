@@ -21,7 +21,7 @@
 @import <AppKit/CPImage.j>
 @import <AppKit/CPMenuItem.j>
 @import <AppKit/CPPopUpButton.j>
-@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPCheckBox.j>
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPView.j>
 
@@ -32,6 +32,7 @@
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
 @global TNArchipelEntityTypeHypervisor
+@global TNArchipelEntityTypeCentralAgent
 
 var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users";
 
@@ -60,9 +61,12 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     CPDictionary                            _entityCapabilities
     CPDictionary                            _savedDomains;
     BOOL                                    _forceRosterRefresh;
+    BOOL                                    _keepSearching;
     CPImage                                 _defaultAvatar;
     CPTabViewItem                           _itemViewGroups;
     CPTabViewItem                           _itemViewUsers;
+
+    TNPubSubNode                            _nodeCentralAgent;
 }
 
 #pragma mark -
@@ -126,7 +130,13 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
     // Try to fetch some savedDomains if we don't have one use currentDomains
     _savedDomains = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPServerSaved"];
 
+    // Retrieve items from pubsub
+    _nodeCentralAgent = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/centralagentkeepalive" connection:[[TNStropheIMClient defaultClient] connection] pubSubServer:nil];
+    [_nodeCentralAgent setDelegate:self];
+    [_nodeCentralAgent retrieveItems];
+
     _forceRosterRefresh = YES;
+    _keepSearching = YES;
 
     [self checkHypervisors];
 
@@ -264,9 +274,19 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         {
             var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
-            if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+            if (!_keepSearching)
+                break
+
+            if (![contact vCard])
+            {
+                [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:contact];
+                [contact getVCard];
+                continue;
+            }
+
+            if ((([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+                || ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeCentralAgent))
                 && ([contact XMPPShow] != TNStropheContactStatusOffline))
-                //&& (([[contact JID] compare:[[[[_currentDomains objectForKey:[[contact JID] domain]]] objectForKey:@"contact"] JID]] != 0)))
             {
                 [self fetchManagementCapabilitiesFor:contact];
             }
@@ -283,7 +303,18 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
             {
                 var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
-                if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+                if (!_keepSearching)
+                    break
+
+                if (![contact vCard])
+                {
+                    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:contact];
+                    [contact getVCard];
+                    continue;
+                }
+
+                if ((([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+                    || ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeCentralAgent))
                     && ([contact XMPPShow] != TNStropheContactStatusOffline)
                     && ([[contact JID] compare:[[checkForDomain objectForKey:@"contact"] JID]] == 0))
                     [self fetchManagementCapabilitiesFor:contact];
@@ -335,7 +366,11 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 - (IBAction)changeCurrentHypervisor:(id)aSender
 {
     _entity = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"contact"];
-    _entityCapabilities = @{@"canManageUsers":[[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageUsers"], @"canManageSharedRostergroups":[[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageSharedRostergroups"]}
+
+    var canManageUsers = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageUsers"] || NO,
+        canManageSharedRostergroups = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageSharedRostergroups"] || NO;
+
+    _entityCapabilities = @{@"canManageUsers": canManageUsers, @"canManageSharedRostergroups": canManageSharedRostergroups}
 
     [buttonHypervisors setToolTip:CPBundleLocalizedString([[_entity JID] domain] + @" managed by " + [[_entity JID] bare], [[_entity JID] domain] + @" managed by " + [[_entity JID] bare])];
 
@@ -380,18 +415,28 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
         if (usersManagement && groupsManagement)
         {
             [_currentDomains setValue:@{@"contact":aContact, @"canManageUsers":usersManagement, @"canManageSharedRostergroups":groupsManagement}  forKey:[[aContact JID] domain]];
+            _keepSearching = NO;
 
         }
         else if ((usersManagement && ! groupsManagement) && ! ([_currentDomains containsKey:[[aContact JID] domain]]))
         {
             [_currentDomains setValue:@{@"contact":aContact, @"canManageUsers":usersManagement, @"canManageSharedRostergroups":groupsManagement}  forKey:[[aContact JID] domain]];
-            [self checkHypervisors];
         }
-        else
-            [self checkHypervisors];
 
         [self populateHypervisors];
 
+    }
+}
+
+- (void)_didReceiveVcard:(CPNotification)aNotification
+{
+    var contact = [aNotification object];
+
+    if ((([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+        || ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeCentralAgent))
+        && ([contact XMPPShow] != TNStropheContactStatusOffline))
+    {
+        [self fetchManagementCapabilitiesFor:contact];
     }
 }
 
@@ -411,6 +456,29 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
             [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] representedObject]];
             [sharedGroupsController reload];
             break;
+    }
+}
+
+/*! delegate of TNPubSubNode
+*/
+- (void)pubSubNode:(TNPubSubNode)aNode retrievedItems:(BOOL)hasRetrievedItems
+{
+    var last_pubsub_item = [[_nodeCentralAgent content] firstObject];
+    if (last_pubsub_item)
+    {
+        var jid = [[last_pubsub_item firstChildWithName:@"event"] valueForAttribute:@"jid"],
+            JID = [TNStropheJID stropheJIDWithString:jid],
+            roster = [[TNStropheIMClient defaultClient] roster],
+            contact = [roster contactWithJID:JID];
+
+        CPLog.info("Central Agent jid found, we will use it: " + JID);
+        if (!contact)
+        {
+            [roster addContact:JID withName:[JID node] inGroup:nil];
+            contact = [roster contactWithJID:JID];
+        }
+
+        [self fetchManagementCapabilitiesFor:contact];
     }
 }
 

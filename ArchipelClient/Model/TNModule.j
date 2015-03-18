@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPMenu.j>
@@ -34,7 +33,7 @@
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 
-
+@import "../Views/TNButtonBar.j"
 @import "../Controllers/TNPermissionsCenter.j"
 @import "../Controllers/TNPushCenter.j"
 
@@ -166,10 +165,10 @@ var TNModuleStatusImageReady,
 */
 - (void)addControlsWithIdentifier:(CPString)anIdentifier title:(CPString)aTitle target:(id)aTarget action:(SEL)aSelector image:(CPImage)anImage
 {
-    [anImage setSize:CPSizeMake(16.0, 16.0)];
+    [anImage setSize:CGSizeMake(16.0, 16.0)];
 
     // add a new buttonbar to dict
-    var _button = [CPButtonBar plusButton];
+    var _button = [TNButtonBar plusButton];
     [_button setTarget:aTarget];
     [_button setAction:aSelector];
     [_button setToolTip:aTitle];
@@ -190,7 +189,7 @@ var TNModuleStatusImageReady,
 /* return the button with identifier
     @param anIdentifier the identifier of the item
 */
-- (CPButtonBar)buttonWithIdentifier:(CPString)anIdentifier
+- (TNButtonBar)buttonWithIdentifier:(CPString)anIdentifier
 {
     return [_buttonsBarButtonsRegistry objectForKey:anIdentifier];
 }

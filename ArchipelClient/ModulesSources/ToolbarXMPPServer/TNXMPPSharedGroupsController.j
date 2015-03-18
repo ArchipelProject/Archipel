@@ -19,8 +19,8 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPPopover.j>
 @import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPSplitView.j>
@@ -33,7 +33,10 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
+@import "../../Views/TNButtonBar.j"
+
 @import "TNXMPPServerUserFetcher.j"
+@import "TNXMPPUsersController.j"
 
 @class TNPermissionsCenter
 @global CPLocalizedString
@@ -61,9 +64,9 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 {
     @outlet CPButton            buttonAdd;
     @outlet CPButton            buttonCreate;
-    @outlet CPButtonBar         buttonBarGroups;
-    @outlet CPButtonBar         buttonBarUsersInGroups;
-    @outlet CPButtonBar         buttonBarDisplayGroupGroups;
+    @outlet TNButtonBar         buttonBarGroups;
+    @outlet TNButtonBar         buttonBarUsersInGroups;
+    @outlet TNButtonBar         buttonBarDisplayGroupGroups;
     @outlet CPPopover           popoverAddDisplayGroupsInGroup;
     @outlet CPPopover           popoverAddUserInGroup;
     @outlet CPPopover           popoverNewGroup;
@@ -107,9 +110,9 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 */
 - (void)awakeFromCib
 {
-    // [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
-    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
+    // [viewTableGroupsContainer setBorderedWithHexColor:@"#F2F2F2"];
+    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#F2F2F2"];
+    [splitViewVertical setBorderedWithHexColor:@"#F2F2F2"];
     [splitViewVertical setIsPaneSplitter:YES];
 
     /* table Users */
@@ -153,12 +156,15 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
     [tableDisplayGroupsInGroup setDataSource:_datasourceDisplayGroupsInGroup];
     [tableDisplayGroupsInGroup setDelegate:self];
 
+    [filterFieldGroups setSendsSearchStringImmediately:YES]
     [filterFieldGroups setTarget:_datasourceGroups];
     [filterFieldGroups setAction:@selector(filterObjects:)];
 
+    [filterFieldUsersInGroup setSendsSearchStringImmediately:YES]
     [filterFieldUsersInGroup setTarget:_datasourceUsersInGroup];
     [filterFieldUsersInGroup setAction:@selector(filterObjects:)];
 
+    [filterFieldDisplayGroupsInGroup setSendsSearchStringImmediately:YES]
     [filterFieldDisplayGroupsInGroup setTarget:_datasourceDisplayGroupsInGroup];
     [filterFieldDisplayGroupsInGroup setAction:@selector(filterObjects:)];
 
@@ -166,6 +172,7 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
     [filterFieldUsers setTarget:_datasourceUsers];
     [filterFieldUsers setAction:@selector(filterObjects:)];
 
+    [filterFieldDisplayGroups setSendsSearchStringImmediately:YES]
     [filterFieldDisplayGroups setTarget:_datasourceDisplayGroups];
     [filterFieldDisplayGroups setAction:@selector(filterObjects:)];
 
@@ -756,7 +763,7 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];
