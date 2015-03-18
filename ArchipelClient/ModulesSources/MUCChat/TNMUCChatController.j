@@ -54,6 +54,7 @@
     @outlet CPTextField         textFieldMessage;
     @outlet CPView              viewConferenceInfo;
     @outlet CPView              viewMessage;
+    @outlet CPSplitView         splitViewMain;
 
     CPArray                     _toolbarItemImages;
     CPSound                     _audioTagReceive;
@@ -71,6 +72,10 @@
 */
 - (void)awakeFromCib
 {
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
+
     _messageBoard = [[TNMessageBoard alloc] initWithFrame:[scrollViewMessageContainer bounds]];
     [scrollViewMessageContainer setDocumentView:_messageBoard];
     [_messageBoard setFrameSize:[scrollViewMessageContainer contentSize]];
@@ -106,8 +111,8 @@
 
     _audioTagReceive = [[CPSound alloc] initWithContentsOfFile:sound byReference:NO];
 
-    [viewMessage setBackgroundColor:CPColorWithImages(@"bg-controls.png", 256, 36, bundle)];
-    [viewConferenceInfo setBackgroundColor:CPColorWithImages(@"bg-info.png", 1, 60, bundle)];
+    [viewMessage setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
+    [viewConferenceInfo setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
     [viewConferenceInfo applyShadow];
 
     _toolbarItemImages = [

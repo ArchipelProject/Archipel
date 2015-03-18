@@ -113,8 +113,6 @@ var TNConnectionControllerForceResource,
 
     [[mainWindow contentView] applyShadow];
 
-    [buttonConnect setBezelStyle:CPRoundedBezelStyle];
-
     [fieldPassword setSecure:YES];
     [fieldPassword setNeedsLayout];
 

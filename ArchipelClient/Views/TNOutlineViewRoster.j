@@ -67,7 +67,6 @@ TNArchipelRosterOutlineViewSelectItemNotification   = @"TNArchipelRosterOutlineV
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
         [self setCornerView:nil];
-        [self setBackgroundColor:nil];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];

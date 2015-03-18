@@ -68,8 +68,6 @@
 
 - (void)setHasWhiteShadow:(BOOL)shouldHaveWhiteShadow
 {
-    if (shouldHaveWhiteShadow)
-        [self applyShadow];
 }
 
 @end

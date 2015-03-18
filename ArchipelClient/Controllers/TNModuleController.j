@@ -162,7 +162,6 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 
     if ([_entity isKindOfClass:TNStropheContact])
     {
-
         [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
         [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
 
@@ -319,7 +318,10 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
 - (void)recoverFromLastSelectedIndex
 {
     if (!_entity)
+    {
+        [_mainTabView selectFirstTabViewItem:nil];
         return;
+    }
 
     var roster              = [[TNStropheIMClient defaultClient] roster],
         defaults            = [CPUserDefaults standardUserDefaults],
@@ -329,7 +331,11 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
     if (oldSelectedIndex == -1)
+    {
+        [_mainTabView selectFirstTabViewItem:nil];
         return;
+    }
+
 
     CPLog.info("recovering last selected tab index " + oldSelectedIndex);
 
@@ -816,7 +822,7 @@ TNArchipelModulesVisibilityRequestNotification  = @"TNArchipelModulesVisibilityR
     {
         var frame = [[[CPApp mainWindow] contentView] bounds];
 
-        frame.size.height -= 25;
+        frame.size.height -= 22;
         frame.origin.y = -frame.size.height ;
         [[newModule view] setFrame:frame];
         [newModule setUIItem:sender]; // due to archiving, we lost the origin item

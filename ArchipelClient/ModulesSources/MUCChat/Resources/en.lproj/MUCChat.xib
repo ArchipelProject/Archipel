@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1090</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
-		<string key="IBDocument.HIToolboxVersion">755.00</string>
+		<int key="IBDocument.SystemTarget">101000</int>
+		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
+		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6245</string>
+			<string key="NS.object.0">6751</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSCustomObject</string>
@@ -252,7 +252,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="236646770">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSTextField" id="1068033063">
@@ -260,6 +260,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 82}, {373, 20}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="281096482"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="19286570">
@@ -283,6 +284,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{145, 7}, {257, 22}}</string>
 								<reference key="NSSuperview" ref="347697340"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="206479304">
 									<int key="NSCellFlags">-1804599231</int>
@@ -303,6 +305,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{37, 10}, {103, 17}}</string>
 								<reference key="NSSuperview" ref="347697340"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="497849494"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="175098584">
@@ -322,6 +325,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{145, 34}, {257, 22}}</string>
 								<reference key="NSSuperview" ref="347697340"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="1072718201"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="120158522">
@@ -343,6 +347,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{37, 37}, {103, 17}}</string>
 								<reference key="NSSuperview" ref="347697340"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="467356407"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="358602607">
@@ -360,6 +365,7 @@
 						</array>
 						<string key="NSFrame">{{20, 10}, {454, 64}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
+						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -368,6 +374,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 110}, {460, 26}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1068033063"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="106162432">
@@ -391,6 +398,8 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{494, 156}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="410264265"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -492,6 +501,14 @@
 						<reference key="destination" ref="497849494"/>
 					</object>
 					<int key="connectionID">31</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">splitViewMain</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="214992717"/>
+					</object>
+					<int key="connectionID">65</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -826,7 +843,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">64</int>
+			<int key="maxID">65</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -854,6 +871,7 @@
 						<string key="labelConferenceServer">NSTextField</string>
 						<string key="scrollViewMessageContainer">NSScrollView</string>
 						<string key="scrollViewPeople">NSScrollView</string>
+						<string key="splitViewMain">NSSplitView</string>
 						<string key="textFieldMessage">NSTextField</string>
 						<string key="viewConferenceInfo">NSView</string>
 						<string key="viewMessage">NSView</string>
@@ -882,6 +900,10 @@
 						<object class="IBToOneOutletInfo" key="scrollViewPeople">
 							<string key="name">scrollViewPeople</string>
 							<string key="candidateClassName">NSScrollView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="splitViewMain">
+							<string key="name">splitViewMain</string>
+							<string key="candidateClassName">NSSplitView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="textFieldMessage">
 							<string key="name">textFieldMessage</string>

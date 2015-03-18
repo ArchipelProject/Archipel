@@ -172,8 +172,6 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     @outlet CPView                      viewParametersAdvanced;
     @outlet CPView                      viewParametersCharacterDevices;
     @outlet CPView                      viewParametersDrives;
-    @outlet CPView                      viewParametersEffectBottom;
-    @outlet CPView                      viewParametersEffectTop;
     @outlet CPView                      viewParametersNICs;
     @outlet CPView                      viewParametersStandard;
     @outlet LPMultiLineTextField        fieldBootloaderArgs;
@@ -222,8 +220,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
         mainBundle  = [CPBundle mainBundle],
-        defaults    = [CPUserDefaults standardUserDefaults],
-        imageBg     = CPImageInBundle(@"bg-controls.png", nil, bundle);
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     [scrollViewContentView setDocumentView:viewMainContent];
     [scrollViewContentView setAutohidesScrollers:YES];
@@ -231,7 +228,6 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [viewMainContent setFrameOrigin:CGPointMake(0.0, 0.0)];
     [viewMainContent setFrameSize:frameSize];
     [viewMainContent setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [viewBottomControl setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 
      var inset = CGInsetMake(2, 2, 2, 5);
     [buttonUndefine setImage:CPImageInBundle(@"undefine.png", CGSizeMake(16, 16), bundle)];
@@ -281,13 +277,8 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [tabViewParameters addTabViewItem:tabViewItemDrives];
     [tabViewParameters addTabViewItem:tabViewItemNics];
     [tabViewParameters addTabViewItem:tabViewItemCharacter];
+    [tabViewParameters selectFirstTabViewItem:self];
     [tabViewParameters setDelegate:self];
-
-    var shadowTop    = CPImageInBundle(@"shadow-top.png", CGSizeMake(1.0, 10.0), bundle),
-        shadowBottom = CPImageInBundle(@"shadow-bottom.png", CGSizeMake(1.0, 10.0), bundle);
-
-    [viewParametersEffectTop setBackgroundColor:[CPColor colorWithPatternImage:shadowTop]];
-    [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
 
     [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];

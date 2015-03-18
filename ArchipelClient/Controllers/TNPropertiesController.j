@@ -106,16 +106,15 @@
     _groupUserImage         = CPImageInBundle(@"groups.png", CGSizeMake(16,16), bundle);
     _pubsubImage            = CPImageInBundle(@"pubsub.png", nil, bundle);
 
-    [viewVCard setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
-    [viewXMPPInfos setBackgroundColor:[CPColor colorWithHexString:@"f6f6f6"]];
+    [viewVCard setBackgroundColor:[CPColor whiteColor]];
+    [viewXMPPInfos setBackgroundColor:[CPColor whiteColor]];
 
     [mainView setFrontView:viewXMPPInfos];
     [mainView setBackView:viewVCard];
     [mainView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
-    var gradColor = CPColorWithImages(@"Backgrounds/background-nickname.png", 1, 30, bundle);
-    [viewNicknameContainer setBackgroundColor:gradColor];
-    [viewVCardContainer setBackgroundColor:gradColor];
+    [viewNicknameContainer setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
+    [viewVCardContainer setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
 
     [imageVCardIcon setImage:CPImageInBundle(@"vcard-icon.png", nil, bundle)];
 

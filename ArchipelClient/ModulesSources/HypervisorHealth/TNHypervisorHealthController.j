@@ -205,7 +205,9 @@ var TNHypervisorHealthControllerVMXImageEnabled,
     [viewCharts setFrameSize:newFrameSize];
     [scrollViewChart setAutohidesScrollers:YES];
     [scrollViewChart setDocumentView:viewCharts];
+    [viewCharts setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
 
+    [viewLogs setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
     [tabViewItemLogs setLabel:CPBundleLocalizedString(@"Logs", @"Logs")];
     [tabViewItemLogs setView:viewLogs];
     [tabViewInfos addTabViewItem:tabViewItemLogs];

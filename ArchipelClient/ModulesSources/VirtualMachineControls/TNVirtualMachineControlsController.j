@@ -96,7 +96,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 @implementation TNVirtualMachineControlsController : TNModule
 {
-    @outlet CPBox                   boxAdvancedCommands;
+    @outlet CPView                  viewAdvancedCommands;
     @outlet CPButton                buttonKill;
     @outlet CPButton                buttonPark;
     @outlet CPButton                buttonScreenshot;
@@ -156,8 +156,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         @"TNArchipelControlsMaxVCPUs"         :[bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"],
         @"TNArchipelControlsScreenshotRefresh":[bundle objectForInfoDictionaryKey:@"TNArchipelControlsScreenshotRefresh"]
     }];
-
-    [boxAdvancedCommands setCornerRadius:3.0];
 
     [sliderMemory setContinuous:YES];
     [stepperCPU setTarget:self];
@@ -226,9 +224,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imageScreenShutDown = CPImageInBundle(@"shutdown.png", CGSizeMake(216, 162), bundle);
     [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
     [buttonScreenshot setBordered:NO];
-    buttonScreenshot._DOMElement.style.borderRadius = "5px";
-    buttonScreenshot._DOMElement.style.border = "6px solid #222";
-    buttonScreenshot._DOMElement.style.boxShadow = "0px 0px 1px 1px #DCDCDC";
 
 }
 

@@ -254,7 +254,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
 
-    var commonImageModuleBackground = [CPColor colorWithHexString:@"F6F6F6"];
+    var commonImageModuleBackground = [CPColor whiteColor];
 
     /* register defaults defaults */
     [defaults registerDefaults:@{
@@ -279,6 +279,10 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* main split views */
     var posx = 230;
     [splitViewMain setPosition:posx ofDividerAtIndex:0];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewMain setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
+
     var bounds = [leftView bounds];
     bounds.size.width = posx;
     [leftView setFrame:bounds];
@@ -298,6 +302,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPLog.trace(@"initializing the splitViewHorizontalRoster");
     [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
     [splitViewHorizontalRoster setDelegate:self];
+    [splitViewHorizontalRoster setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewHorizontalRoster setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewHorizontalRoster setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
     [propertiesController setAvatarManager:avatarController];
     [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
 
@@ -309,16 +316,13 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[leftView bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView setEnabled:NO];
+    [_rosterOutlineView setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleRegular];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
-    _rosterOutlineView._DOMElement.style.backgroundImage = "-webkit-linear-gradient(top, #E0E4EA, #D1D8E0)";
-    _rosterOutlineView._DOMElement.style.backgroundImage = "-moz-linear-gradient(-90deg, #E0E4EA, #D1D8E0)";
-
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
-    //[_rosterOutlineView setBackgroundColor:[CPColor colorWithHexString:@"E0E4EA"]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
@@ -327,7 +331,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     /* left view */
     [leftView addSubview:_outlineScrollView];
-    [leftView setBackgroundColor:CPColorWithImages(@"Backgrounds/dark-bg.png", 201, 311, bundle)];
+    [leftView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
@@ -344,8 +348,8 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* loading view */
     [viewLoading setFrame:[rightView bounds]];
     [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    viewLoading._DOMElement.style.background = "url(Resources/Backgrounds/dark-bg.png)";
-    viewLoading._DOMElement.style.background = "-webkit-gradient(radial, 50% 50%, 0, 50% 50%, 650, from(transparent), to(rgba(0, 0, 0, 1))), url(Resources/Backgrounds/dark-bg.png)";
+    [viewLoading setBackgroundColor:[CPColor whiteColor]];
+
     [rightView addSubview:viewLoading];
 
     [progressIndicatorModulesLoading setMinValue:0.0];
@@ -367,7 +371,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
 
-    [filterView setBackgroundColor:CPColorWithImages(@"Backgrounds/background-filter.png", 201, 33, bundle)];
+    [filterView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
 
@@ -426,8 +430,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
 
     /* status bar */
-    [statusBar setBackgroundColor:CPColorWithImages(@"Backgrounds/statusbar-bg.png", 835, 26, bundle)];
-    [statusBar applyShadow:[CPColor colorWithHexString:@"f3f3f3"] offset:CGSizeMake(0.0, 1.0)];
+    [statusBar setBackgroundColor:[CPColor colorWithHexString:@"f2f2f2"]];
 
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
@@ -580,6 +583,12 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     _mainToolbar = [[TNToolbar alloc] init];
 
     [theWindow setToolbar:_mainToolbar];
+    [_mainToolbar._toolbarView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
+    _mainToolbar._toolbarView._DOMElement.style.borderBottom = "1px solid D9D9D9";
+    _mainToolbar._toolbarView._DOMElement.style.boxSizing = @"border-box";
+    _mainToolbar._toolbarView._DOMElement.style.MozBoxSizing = @"border-box";
+    _mainToolbar._toolbarView._DOMElement.style.WebkitBoxSizing = @"border-box";
+
 
     // ok the next following line is a terrible awfull hack.
     [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE"
@@ -681,15 +690,9 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = CPColorWithImages(@"TNButtonBar/buttonBarBackground.png", CGSizeMake(1, 27), bundle),
-        leftBezel               = CPImageInBundle(@"TNButtonBar/buttonBarLeftBezel.png", CGSizeMake(1, 26), bundle),
-        centerBezel             = CPImageInBundle(@"TNButtonBar/buttonBarCenterBezel.png", CGSizeMake(1, 26), bundle),
-        rightBezel              = CPImageInBundle(@"TNButtonBar/buttonBarRightBezel.png", CGSizeMake(1, 26), bundle),
-        buttonBezel             = CPColorWithImages([leftBezel, centerBezel, rightBezel]),
-        leftBezelHighlighted    = CPImageInBundle(@"TNButtonBar/buttonBarLeftBezelHighlighted.png", CGSizeMake(1, 26), bundle),
-        centerBezelHighlighted  = CPImageInBundle(@"TNButtonBar/buttonBarCenterBezelHighlighted.png", CGSizeMake(1, 26), bundle),
-        rightBezelHighlighted   = CPImageInBundle(@"TNButtonBar/buttonBarRightBezelHighlighted.png", CGSizeMake(1, 26), bundle),
-        buttonBezelHighlighted  = CPColorWithImages([leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted]),
+    var bezelColor              = [CPColor whiteColor],
+        buttonBezel             = [CPColor whiteColor],
+        buttonBezelHighlighted  = [CPColor colorWithHexString:@"D9D9D9"],
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 

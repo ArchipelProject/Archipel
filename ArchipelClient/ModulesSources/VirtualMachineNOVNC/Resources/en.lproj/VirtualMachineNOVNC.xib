@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1090</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
-		<string key="IBDocument.HIToolboxVersion">755.00</string>
+		<int key="IBDocument.SystemTarget">101000</int>
+		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
+		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6245</string>
+			<string key="NS.object.0">6751</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSBox</string>
@@ -83,9 +83,14 @@
 													<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
 												</object>
 											</object>
-											<object class="NSColor" key="NSTextColor" id="740469973">
-												<int key="NSColorSpace">1</int>
-												<bytes key="NSRGB">MSAxIDEAA</bytes>
+											<object class="NSColor" key="NSTextColor" id="263820008">
+												<int key="NSColorSpace">6</int>
+												<string key="NSCatalogName">System</string>
+												<string key="NSColorName">textColor</string>
+												<object class="NSColor" key="NSColor" id="1014646825">
+													<int key="NSColorSpace">3</int>
+													<bytes key="NSWhite">MAA</bytes>
+												</object>
 											</object>
 										</object>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -94,7 +99,7 @@
 									<object class="NSTextField" id="163447148">
 										<reference key="NSNextResponder" ref="211286806"/>
 										<int key="NSvFlags">269</int>
-										<string key="NSFrame">{{157, 11}, {47, 14}}</string>
+										<string key="NSFrame">{{153, 11}, {47, 14}}</string>
 										<reference key="NSSuperview" ref="211286806"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="630526641"/>
@@ -105,8 +110,16 @@
 											<string key="NSContents">Zoom: 0%</string>
 											<reference key="NSSupport" ref="22"/>
 											<reference key="NSControlView" ref="163447148"/>
-											<reference key="NSBackgroundColor" ref="33462811"/>
-											<reference key="NSTextColor" ref="740469973"/>
+											<object class="NSColor" key="NSBackgroundColor" id="101981354">
+												<int key="NSColorSpace">6</int>
+												<string key="NSCatalogName">System</string>
+												<string key="NSColorName">textBackgroundColor</string>
+												<object class="NSColor" key="NSColor">
+													<int key="NSColorSpace">3</int>
+													<bytes key="NSWhite">MQA</bytes>
+												</object>
+											</object>
+											<reference key="NSTextColor" ref="263820008"/>
 										</object>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 										<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
@@ -150,7 +163,7 @@
 											<reference key="NSSupport" ref="22"/>
 											<reference key="NSControlView" ref="1055932367"/>
 											<reference key="NSBackgroundColor" ref="33462811"/>
-											<reference key="NSTextColor" ref="740469973"/>
+											<reference key="NSTextColor" ref="263820008"/>
 										</object>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 										<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
@@ -411,10 +424,7 @@
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
 									<string key="NSColorName">controlTextColor</string>
-									<object class="NSColor" key="NSColor" id="1014646825">
-										<int key="NSColorSpace">3</int>
-										<bytes key="NSWhite">MAA</bytes>
-									</object>
+									<reference key="NSColor" ref="1014646825"/>
 								</object>
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -435,21 +445,8 @@
 								<string key="NSPlaceholderString">My password</string>
 								<reference key="NSControlView" ref="248718457"/>
 								<bool key="NSDrawsBackground">YES</bool>
-								<object class="NSColor" key="NSBackgroundColor" id="101981354">
-									<int key="NSColorSpace">6</int>
-									<string key="NSCatalogName">System</string>
-									<string key="NSColorName">textBackgroundColor</string>
-									<object class="NSColor" key="NSColor">
-										<int key="NSColorSpace">3</int>
-										<bytes key="NSWhite">MQA</bytes>
-									</object>
-								</object>
-								<object class="NSColor" key="NSTextColor" id="263820008">
-									<int key="NSColorSpace">6</int>
-									<string key="NSCatalogName">System</string>
-									<string key="NSColorName">textColor</string>
-									<reference key="NSColor" ref="1014646825"/>
-								</object>
+								<reference key="NSBackgroundColor" ref="101981354"/>
+								<reference key="NSTextColor" ref="263820008"/>
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
@@ -1196,7 +1193,10 @@
 									<reference key="NSSupport" ref="22"/>
 									<reference key="NSControlView" ref="99199872"/>
 									<reference key="NSBackgroundColor" ref="33462811"/>
-									<reference key="NSTextColor" ref="740469973"/>
+									<object class="NSColor" key="NSTextColor">
+										<int key="NSColorSpace">1</int>
+										<bytes key="NSRGB">MSAxIDEAA</bytes>
+									</object>
 								</object>
 								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
@@ -1919,8 +1919,8 @@
 							<reference ref="726182240"/>
 							<reference ref="1055932367"/>
 							<reference ref="630526641"/>
-							<reference ref="163447148"/>
 							<reference ref="880992509"/>
+							<reference ref="163447148"/>
 						</array>
 						<reference key="parent" ref="798677276"/>
 					</object>
@@ -2406,6 +2406,7 @@
 				<string key="189.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="19.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="190.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<reference key="193.IBNSViewMetadataGestureRecognizers" ref="0"/>
 				<string key="193.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<object class="NSMutableDictionary" key="194.IBAttributePlaceholdersKey">
 					<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>

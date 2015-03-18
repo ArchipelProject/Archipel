@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="14A388a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="14D105g" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TNXMPPServerController">
@@ -187,7 +187,7 @@
                         </scrollView>
                     </subviews>
                 </customView>
-                <searchField verticalHuggingPriority="750" id="28">
+                <searchField wantsLayer="YES" verticalHuggingPriority="750" id="28">
                     <rect key="frame" x="372" y="320" width="207" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="29">
@@ -212,7 +212,9 @@
                 </imageView>
             </subviews>
             <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
+                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                    <color key="value" red="0.94901967050000002" green="0.94901967050000002" blue="0.94901967050000002" alpha="1" colorSpace="deviceRGB"/>
+                </userDefinedRuntimeAttribute>
             </userDefinedRuntimeAttributes>
         </customView>
         <customView id="66" userLabel="Shared Groups">
@@ -314,7 +316,7 @@
                                         </scrollView>
                                     </subviews>
                                 </customView>
-                                <searchField verticalHuggingPriority="750" id="82">
+                                <searchField wantsLayer="YES" verticalHuggingPriority="750" id="82">
                                     <rect key="frame" x="230" y="299" width="148" height="22"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                     <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="83">
@@ -397,7 +399,7 @@
                                                 </scrollView>
                                             </subviews>
                                         </customView>
-                                        <searchField verticalHuggingPriority="750" id="84">
+                                        <searchField wantsLayer="YES" verticalHuggingPriority="750" id="84">
                                             <rect key="frame" x="176" y="175" width="148" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="85">
@@ -477,7 +479,7 @@
                                                 </scrollView>
                                             </subviews>
                                         </customView>
-                                        <searchField verticalHuggingPriority="750" id="XPR-cS-pIt">
+                                        <searchField wantsLayer="YES" verticalHuggingPriority="750" id="XPR-cS-pIt">
                                             <rect key="frame" x="176" y="87" width="148" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="fOc-TF-EHE">
@@ -511,7 +513,9 @@
                 </splitView>
             </subviews>
             <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
+                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                    <color key="value" red="0.94901967050000002" green="0.94901967050000002" blue="0.94901967050000002" alpha="1" colorSpace="deviceRGB"/>
+                </userDefinedRuntimeAttribute>
             </userDefinedRuntimeAttributes>
         </customView>
         <customObject id="30" customClass="TNXMPPUsersController">
@@ -648,7 +652,9 @@
                 </textField>
             </subviews>
             <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
+                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                    <color key="value" red="0.94901967050000002" green="0.94901967050000002" blue="0.94901967050000002" alpha="1" colorSpace="deviceRGB"/>
+                </userDefinedRuntimeAttribute>
             </userDefinedRuntimeAttributes>
         </view>
         <customObject id="90" customClass="TNXMPPSharedGroupsController">
@@ -771,7 +777,9 @@
                 </textField>
             </subviews>
             <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
+                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                    <color key="value" red="0.94901967050000002" green="0.94901967050000002" blue="0.94901967050000002" alpha="1" colorSpace="deviceRGB"/>
+                </userDefinedRuntimeAttribute>
             </userDefinedRuntimeAttributes>
         </view>
         <viewController id="337" userLabel="Popover AddUserInGrp VC">
@@ -844,7 +852,7 @@
                         <action selector="addUsersInGroup:" target="90" id="167"/>
                     </connections>
                 </button>
-                <searchField verticalHuggingPriority="750" id="158">
+                <searchField wantsLayer="YES" verticalHuggingPriority="750" id="158">
                     <rect key="frame" x="270" y="295" width="207" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="159">
@@ -986,9 +994,6 @@
                     </userDefinedRuntimeAttributes>
                 </customView>
             </subviews>
-            <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
-            </userDefinedRuntimeAttributes>
         </customView>
         <view id="N42-S4-H8Z" userLabel="View Change Password">
             <rect key="frame" x="0.0" y="0.0" width="423" height="238"/>
@@ -1088,9 +1093,6 @@
                     </textFieldCell>
                 </textField>
             </subviews>
-            <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
-            </userDefinedRuntimeAttributes>
         </view>
         <view id="SCW-ED-pow" userLabel="View Add display groups in group">
             <rect key="frame" x="0.0" y="0.0" width="498" height="398"/>
@@ -1132,7 +1134,7 @@
                         <action selector="addDisplayGroupsInGroup:" target="90" id="JNz-wQ-UTe"/>
                     </connections>
                 </button>
-                <searchField verticalHuggingPriority="750" id="9qO-qq-MYN">
+                <searchField wantsLayer="YES" verticalHuggingPriority="750" id="9qO-qq-MYN">
                     <rect key="frame" x="270" y="294" width="207" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="bWS-Vy-73M">
@@ -1202,9 +1204,6 @@
                     </tableHeaderView>
                 </scrollView>
             </subviews>
-            <userDefinedRuntimeAttributes>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="hasWhiteShadow" value="YES"/>
-            </userDefinedRuntimeAttributes>
         </view>
     </objects>
 </document>

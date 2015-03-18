@@ -74,8 +74,6 @@
         defaults    = [CPUserDefaults standardUserDefaults],
         frame       = [[messagesScrollView contentView] bounds];
 
-    [viewControls setBackgroundColor:CPColorWithImages(@"bg-controls.png", 256, 36, bundle)];
-
     //controls buttons
     var imageClear  = CPImageInBundle(@"IconsButtons/clean.png", CGSizeMake(16, 16), mainBundle),
         imageDetach = CPImageInBundle(@"IconsButtons/fullscreen.png", CGSizeMake(16, 16), mainBundle);
