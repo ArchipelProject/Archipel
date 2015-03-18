@@ -60,8 +60,8 @@
     -->
 
     <!-- Set the default font -->
-    <key>CPSystemFontFace</key>
-    <string>Asap</string>
+    <!-- <key>CPSystemFontFace</key>
+    <string>Asap</string> -->
 
     <!-- Set the default log level -->
     <key>TNArchipelConsoleDebugLevel</key>
