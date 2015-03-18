@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -30,6 +29,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNGroupedMigrationController.j";
 
 @global CPLocalizedString
@@ -73,7 +73,7 @@ var TNModuleControlForStart                         = @"Start",
 */
 @implementation TNGroupManagementController : TNModule
 {
-    @outlet CPButtonBar                     buttonBarControl;
+    @outlet TNButtonBar                     buttonBarControl;
     @outlet CPSearchField                   filterField;
     @outlet CPTableView                     tableVirtualMachines;
     @outlet CPView                          viewTableContainer;

@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTabViewItem.j>
@@ -31,6 +30,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNVirtualMachineAllocationController.j"
 @import "TNVirtualMachineCloneController.j"
 @import "TNVirtualMachineDataView.j"
@@ -76,9 +76,9 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 @implementation TNHypervisorVMCreationController : TNModule
 {
-    @outlet CPButtonBar                             buttonBarControl;
-    @outlet CPButtonBar                             buttonBarNotManagedVMControl;
-    @outlet CPButtonBar                             buttonBarParkedVMControl;
+    @outlet TNButtonBar                             buttonBarControl;
+    @outlet TNButtonBar                             buttonBarNotManagedVMControl;
+    @outlet TNButtonBar                             buttonBarParkedVMControl;
     @outlet CPPopUpButton                           popupDeleteMachine;
     @outlet CPSearchField                           fieldFilterVM;
     @outlet CPSearchField                           fieldFilterVMNotManaged;

@@ -123,7 +123,7 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="215021165"/>
 								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="700024333">
 								<reference key="NSNextResponder" ref="215021165"/>
@@ -1438,7 +1438,7 @@
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="VMCastRegistrationController">TNVMCastRegistrationController</string>
-						<string key="buttonBarControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
 						<string key="checkBoxOnlyInstalled">CPCheckBox</string>
 						<string key="downloadQueueController">TNDownloadQueueController</string>
 						<string key="fieldFilter">NSSearchField</string>
@@ -1452,7 +1452,7 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="checkBoxOnlyInstalled">
 							<string key="name">checkBoxOnlyInstalled</string>

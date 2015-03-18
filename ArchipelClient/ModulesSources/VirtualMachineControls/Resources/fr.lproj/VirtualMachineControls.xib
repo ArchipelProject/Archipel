@@ -329,7 +329,7 @@
 														<reference key="NSSuperview" ref="911079387"/>
 														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="871356984"/>
-														<string key="NSClassName">CPButtonBar</string>
+														<string key="NSClassName">TNButtonBar</string>
 													</object>
 												</array>
 												<string key="NSFrame">{{18, 12}, {419, 159}}</string>
@@ -2848,7 +2848,7 @@ IHBhcmsuA</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="boxAdvancedCommands">NSBox</string>
-						<string key="buttonBarMigration">CPButtonBar</string>
+						<string key="buttonBarMigration">TNButtonBar</string>
 						<string key="buttonBarTransport">NSSegmentedControl</string>
 						<string key="buttonKill">NSButton</string>
 						<string key="buttonPark">NSButton</string>
@@ -2880,7 +2880,7 @@ IHBhcmsuA</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarMigration">
 							<string key="name">buttonBarMigration</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarTransport">
 							<string key="name">buttonBarTransport</string>

@@ -359,7 +359,7 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="966007610"/>
 								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 19}, {685, 391}}</string>
@@ -2537,7 +2537,7 @@
 						</object>
 					</object>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarJobs">CPButtonBar</string>
+						<string key="buttonBarJobs">TNButtonBar</string>
 						<string key="filterFieldJobs">NSSearchField</string>
 						<string key="schedulerController">TNSchedulerController</string>
 						<string key="tableJobs">NSTableView</string>
@@ -2546,7 +2546,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarJobs">
 							<string key="name">buttonBarJobs</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="filterFieldJobs">
 							<string key="name">filterFieldJobs</string>

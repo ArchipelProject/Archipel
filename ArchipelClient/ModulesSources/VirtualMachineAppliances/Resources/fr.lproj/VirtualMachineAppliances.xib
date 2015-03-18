@@ -351,7 +351,7 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="896725779"/>
 								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 19}, {685, 391}}</string>
@@ -1424,7 +1424,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
 						<string key="buttonCreate">NSButton</string>
 						<string key="checkBoxShouldGZIP">CPCheckBox</string>
 						<string key="fieldFilterAppliance">NSSearchField</string>
@@ -1436,7 +1436,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonCreate">
 							<string key="name">buttonCreate</string>

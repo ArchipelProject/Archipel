@@ -558,7 +558,7 @@
 					<string key="NSFrameSize">{438, 210}</string>
 					<reference key="NSNextKeyView" ref="137483945"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>

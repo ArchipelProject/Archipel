@@ -739,24 +739,14 @@
 															<object class="NSTableView" id="487991068">
 																<reference key="NSNextResponder" ref="435823178"/>
 																<int key="NSvFlags">256</int>
-																<string key="NSFrameSize">{462, 277}</string>
+																<string key="NSFrameSize">{462, 294}</string>
 																<reference key="NSSuperview" ref="435823178"/>
 																<reference key="NSWindow"/>
-																<reference key="NSNextKeyView" ref="301116546"/>
+																<reference key="NSNextKeyView"/>
 																<string key="NSReuseIdentifierKey">_NS:1197</string>
 																<bool key="NSEnabled">YES</bool>
 																<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 																<bool key="NSControlAllowsExpansionToolTips">YES</bool>
-																<object class="NSTableHeaderView" key="NSHeaderView" id="923830">
-																	<reference key="NSNextResponder" ref="301116546"/>
-																	<int key="NSvFlags">256</int>
-																	<string key="NSFrameSize">{462, 17}</string>
-																	<reference key="NSSuperview" ref="301116546"/>
-																	<reference key="NSWindow"/>
-																	<reference key="NSNextKeyView" ref="435823178"/>
-																	<string key="NSReuseIdentifierKey">_NS:1199</string>
-																	<reference key="NSTableView" ref="487991068"/>
-																</object>
 																<object class="_NSCornerView" key="NSCornerView">
 																	<nil key="NSNextResponder"/>
 																	<int key="NSvFlags">-2147483392</int>
@@ -829,26 +819,12 @@
 																<int key="NSTableViewGroupRowStyle">1</int>
 															</object>
 														</array>
-														<string key="NSFrame">{{0, 17}, {462, 277}}</string>
+														<string key="NSFrameSize">{462, 294}</string>
 														<reference key="NSSuperview" ref="549195567"/>
 														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="487991068"/>
 														<string key="NSReuseIdentifierKey">_NS:1195</string>
 														<reference key="NSDocView" ref="487991068"/>
-														<bool key="NSAutomaticallyAdjustsContentInsets">YES</bool>
-													</object>
-													<object class="NSClipView" id="301116546">
-														<reference key="NSNextResponder" ref="549195567"/>
-														<int key="NSvFlags">2338</int>
-														<array class="NSMutableArray" key="NSSubviews">
-															<reference ref="923830"/>
-														</array>
-														<string key="NSFrameSize">{462, 17}</string>
-														<reference key="NSSuperview" ref="549195567"/>
-														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="923830"/>
-														<string key="NSReuseIdentifierKey">_NS:1200</string>
-														<reference key="NSDocView" ref="923830"/>
 														<bool key="NSAutomaticallyAdjustsContentInsets">YES</bool>
 													</object>
 													<object class="NSScroller" id="945537074">
@@ -864,8 +840,7 @@
 														<reference key="NSControlTarget" ref="549195567"/>
 														<reference key="NSTarget" ref="549195567"/>
 														<string key="NSAction">_doScroller:</string>
-														<double key="NSCurValue">37</double>
-														<double key="NSPercent">0.1947367936372757</double>
+														<double key="NSPercent">0.99661016949152548</double>
 													</object>
 													<object class="NSScroller" id="7471844">
 														<reference key="NSNextResponder" ref="549195567"/>
@@ -881,8 +856,7 @@
 														<int key="NSsFlags">1</int>
 														<reference key="NSTarget" ref="549195567"/>
 														<string key="NSAction">_doScroller:</string>
-														<double key="NSCurValue">1</double>
-														<double key="NSPercent">0.99377593360995853</double>
+														<double key="NSPercent">0.99784017278617709</double>
 													</object>
 												</array>
 												<string key="NSFrame">{{0, 25}, {462, 294}}</string>
@@ -894,7 +868,6 @@
 												<reference key="NSVScroller" ref="945537074"/>
 												<reference key="NSHScroller" ref="7471844"/>
 												<reference key="NSContentView" ref="435823178"/>
-												<reference key="NSHeaderClipView" ref="301116546"/>
 												<bytes key="NSScrollAmts">QSAAAEEgAABCIAAAQiAAAA</bytes>
 												<double key="NSMinMagnification">0.25</double>
 												<double key="NSMaxMagnification">4</double>
@@ -907,7 +880,7 @@
 												<reference key="NSSuperview" ref="82778366"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="315658567"/>
-												<string key="NSClassName">CPButtonBar</string>
+												<string key="NSClassName">TNButtonBar</string>
 											</object>
 										</array>
 										<string key="NSFrame">{{-1, 0}, {462, 352}}</string>
@@ -1329,7 +1302,7 @@
 								<string key="NSFrameSize">{473, 26}</string>
 								<reference key="NSSuperview" ref="238825293"/>
 								<reference key="NSNextKeyView" ref="973006180"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 69}, {473, 249}}</string>
@@ -2214,7 +2187,6 @@
 						<reference key="object" ref="549195567"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="945537074"/>
-							<reference ref="923830"/>
 							<reference ref="7471844"/>
 							<reference ref="487991068"/>
 						</array>
@@ -2223,11 +2195,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">118</int>
 						<reference key="object" ref="945537074"/>
-						<reference key="parent" ref="549195567"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">119</int>
-						<reference key="object" ref="923830"/>
 						<reference key="parent" ref="549195567"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -2813,7 +2780,6 @@
 				<string key="104.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="117.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="118.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="119.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="120.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="121.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="123.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2956,6 +2922,14 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNButtonBar</string>
+					<string key="superclassName">CPButtonBar</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">../.XcodeSupport/Views∕TNButtonBar.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNModule</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -3049,7 +3023,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
 						<string key="filterField">NSSearchField</string>
 						<string key="filterRosterUsers">NSSearchField</string>
 						<string key="filterUsers">NSSearchField</string>
@@ -3068,7 +3042,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="filterField">
 							<string key="name">filterField</string>
@@ -3185,7 +3159,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBar">CPButtonBar</string>
+						<string key="buttonBar">TNButtonBar</string>
 						<string key="buttonSave">NSButton</string>
 						<string key="fieldNewTemplateDescription">NSTextField</string>
 						<string key="fieldNewTemplateName">NSTextField</string>
@@ -3198,7 +3172,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBar">
 							<string key="name">buttonBar</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonSave">
 							<string key="name">buttonSave</string>

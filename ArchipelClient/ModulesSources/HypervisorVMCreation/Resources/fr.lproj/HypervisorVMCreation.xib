@@ -2359,7 +2359,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="972294544"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {685, 390}}</string>
@@ -2614,7 +2614,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="276125466"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {685, 390}}</string>
@@ -2868,7 +2868,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="266531901"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {685, 390}}</string>
@@ -5597,9 +5597,9 @@
 						<string key="VMManagerController">TNVirtualMachineManageController</string>
 						<string key="VMParkingController">TNVirtualMachineParkingController</string>
 						<string key="VMSubscriptionController">TNVirtualMachineSubscriptionController</string>
-						<string key="buttonBarControl">CPButtonBar</string>
-						<string key="buttonBarNotManagedVMControl">CPButtonBar</string>
-						<string key="buttonBarParkedVMControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
+						<string key="buttonBarNotManagedVMControl">TNButtonBar</string>
+						<string key="buttonBarParkedVMControl">TNButtonBar</string>
 						<string key="dataViewParkedVMPrototype">TNVirtualMachineParkedDataView</string>
 						<string key="dataViewVMPrototype">TNVirtualMachineDataView</string>
 						<string key="fieldFilterVM">NSSearchField</string>
@@ -5640,15 +5640,15 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarNotManagedVMControl">
 							<string key="name">buttonBarNotManagedVMControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarParkedVMControl">
 							<string key="name">buttonBarParkedVMControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="dataViewParkedVMPrototype">
 							<string key="name">dataViewParkedVMPrototype</string>

@@ -55,19 +55,6 @@ var switchKnobWidth     = 30,
 }
 
 
-+ (TNSwitch)switchWithFrame:(CGRect)aFrame
-{
-    var mainBundle  = [CPBundle mainBundle],
-        aSwitch     = [[TNSwitch alloc] initWithFrame:aFrame],
-        switchWidth                    = 77,
-        switchHeight                   = 25,
-        highlightedKnobBackgroundImage = CPColorWithImages(@"LPSwitch/switch-knob-highlighted.png", switchKnobWidth, switchKnobHeight, mainBundle);
-
-    [aSwitch setValue:highlightedKnobBackgroundImage forThemeAttribute:@"knob-background-color" inState:CPThemeStateNormal | CPThemeStateHighlighted];
-
-    return aSwitch;
-}
-
 - (id)initWithFrame:(CGRect)aFrame
 {
     aFrame.size.width = 77;

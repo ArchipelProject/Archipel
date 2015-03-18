@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPSearchField.j>
@@ -38,6 +37,7 @@
 
 @import "../../Views/TNSwitch.j"
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNExtendedContactObject.j"
 
 @global CPLocalizedString
@@ -102,7 +102,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPButton                buttonKill;
     @outlet CPButton                buttonPark;
     @outlet CPButton                buttonScreenshot;
-    @outlet CPButtonBar             buttonBarMigration;
+    @outlet TNButtonBar             buttonBarMigration;
     @outlet CPCheckBox              checkBoxAdvancedCommands;
     @outlet CPImageView             imageState;
     @outlet CPImageView             imageViewFullScreenshot;
@@ -208,7 +208,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [tableHypervisors setDataSource:_datasourceHypervisors];
 
     // button bar migration
-    _migrateButton  = [CPButtonBar plusButton];
+    _migrateButton  = [TNButtonBar plusButton];
     [_migrateButton setImage:CPImageInBundle(@"IconsButtons/migrate.png", CGSizeMake(16, 16), mainBundle)];
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];

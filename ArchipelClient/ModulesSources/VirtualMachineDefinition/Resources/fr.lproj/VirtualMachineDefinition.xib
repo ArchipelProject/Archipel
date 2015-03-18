@@ -1317,7 +1317,7 @@
 										<string key="NSFrameSize">{238, 26}</string>
 										<reference key="NSSuperview" ref="844931929"/>
 										<reference key="NSNextKeyView" ref="431730621"/>
-										<string key="NSClassName">CPButtonBar</string>
+										<string key="NSClassName">TNButtonBar</string>
 									</object>
 									<object class="NSScrollView" id="728752961">
 										<reference key="NSNextResponder" ref="844931929"/>
@@ -1560,7 +1560,7 @@
 										<int key="NSvFlags">290</int>
 										<string key="NSFrameSize">{238, 26}</string>
 										<reference key="NSSuperview" ref="812374230"/>
-										<string key="NSClassName">CPButtonBar</string>
+										<string key="NSClassName">TNButtonBar</string>
 									</object>
 									<object class="NSScrollView" id="820801080">
 										<reference key="NSNextResponder" ref="812374230"/>
@@ -2874,7 +2874,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{744, 26}</string>
 								<reference key="NSSuperview" ref="823585359"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {744, 292}}</string>
@@ -3150,7 +3150,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{748, 26}</string>
 								<reference key="NSSuperview" ref="481668896"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {748, 293}}</string>
@@ -3217,7 +3217,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{748, 26}</string>
 								<reference key="NSSuperview" ref="148452675"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 							<object class="NSScrollView" id="10965149">
 								<reference key="NSNextResponder" ref="148452675"/>
@@ -6507,7 +6507,7 @@
 								<string key="NSFrameSize">{376, 26}</string>
 								<reference key="NSSuperview" ref="389147134"/>
 								<reference key="NSNextKeyView" ref="121171805"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{417, 78}, {376, 226}}</string>
@@ -20097,7 +20097,7 @@ A</string>
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarNetworkParameters">CPButtonBar</string>
+						<string key="buttonBarNetworkParameters">TNButtonBar</string>
 						<string key="buttonModel">NSPopUpButton</string>
 						<string key="buttonNetworkFilter">NSPopUpButton</string>
 						<string key="buttonOK">NSButton</string>
@@ -20122,7 +20122,7 @@ A</string>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarNetworkParameters">
 							<string key="name">buttonBarNetworkParameters</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonModel">
 							<string key="name">buttonModel</string>
@@ -20578,11 +20578,11 @@ A</string>
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarCharacterDevices">CPButtonBar</string>
-						<string key="buttonBarControlDrives">CPButtonBar</string>
-						<string key="buttonBarControlNics">CPButtonBar</string>
-						<string key="buttonBarGraphicDevices">CPButtonBar</string>
-						<string key="buttonBarInputDevices">CPButtonBar</string>
+						<string key="buttonBarCharacterDevices">TNButtonBar</string>
+						<string key="buttonBarControlDrives">TNButtonBar</string>
+						<string key="buttonBarControlNics">TNButtonBar</string>
+						<string key="buttonBarGraphicDevices">TNButtonBar</string>
+						<string key="buttonBarInputDevices">TNButtonBar</string>
 						<string key="buttonBoot">NSPopUpButton</string>
 						<string key="buttonClocks">NSButton</string>
 						<string key="buttonDefine">NSButton</string>
@@ -20669,23 +20669,23 @@ A</string>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarCharacterDevices">
 							<string key="name">buttonBarCharacterDevices</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarControlDrives">
 							<string key="name">buttonBarControlDrives</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarControlNics">
 							<string key="name">buttonBarControlNics</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarGraphicDevices">
 							<string key="name">buttonBarGraphicDevices</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarInputDevices">
 							<string key="name">buttonBarInputDevices</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBoot">
 							<string key="name">buttonBoot</string>

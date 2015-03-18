@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -29,6 +28,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNNewDriveController.j"
 @import "TNEditDriveController.j"
 @import "TNDriveDataView.j"
@@ -61,7 +61,7 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 */
 @implementation TNVirtualMachineDrivesController : TNModule
 {
-    @outlet CPButtonBar             buttonBarControl;
+    @outlet TNButtonBar             buttonBarControl;
     @outlet CPSearchField           fieldFilter;
     @outlet CPView                  viewTableContainer;
     @outlet TNEditDriveController   editDriveController;

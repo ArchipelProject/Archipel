@@ -62,6 +62,7 @@
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
+@import "Views/TNButtonBar.j"
 
 @global CPLocalizedString
 @global CPApplicationWillTerminateNotification
@@ -148,7 +149,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 @implementation AppController : CPObject
 {
-    @outlet CPButtonBar                         buttonBarLeft;
+    @outlet TNButtonBar                         buttonBarLeft;
     @outlet CPImageView                         imageViewLogoAbout;
     @outlet CPImageView                         ledIn;
     @outlet CPImageView                         ledOut;
@@ -694,19 +695,12 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = [CPColor whiteColor],
-        buttonBezel             = [CPColor whiteColor],
-        buttonBezelHighlighted  = [CPColor colorWithHexString:@"D9D9D9"],
-        plusMenu                = [[CPMenu alloc] init],
-        minusButton             = [CPButtonBar minusButton];
+    var plusMenu                = [[CPMenu alloc] init],
+        minusButton             = [TNButtonBar minusButton];
 
-    _hideButton             = [CPButtonBar minusButton];
+    _hideButton             = [TNButtonBar minusButton];
     _hideButtonImageEnable  = CPImageInBundle(@"IconsButtonBar/show.png", CGSizeMake(20, 20), bundle);
     _hideButtonImageDisable = CPImageInBundle(@"IconsButtonBar/hide.png", CGSizeMake(20, 20), bundle);
-
-    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
-    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
-    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
     _plusButton = [[TNButtonBarPopUpButton alloc] initWithFrame:CGRectMake(0, 0, 35, 25)],
     [_plusButton setTarget:self];

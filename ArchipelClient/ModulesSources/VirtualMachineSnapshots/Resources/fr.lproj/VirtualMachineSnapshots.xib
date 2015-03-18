@@ -124,7 +124,7 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="205747347"/>
 								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="765232434">
 								<reference key="NSNextResponder" ref="205747347"/>
@@ -927,7 +927,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
 						<string key="buttonSnapshotTake">NSButton</string>
 						<string key="fieldFilter">NSSearchField</string>
 						<string key="fieldInfo">NSTextField</string>
@@ -940,7 +940,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonSnapshotTake">
 							<string key="name">buttonSnapshotTake</string>

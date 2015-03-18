@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPOutlineView.j>
@@ -30,6 +29,7 @@
 @import <TNKit/TNAlert.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNSnapshot.j"
 @import "TNSnapshotsDatasource.j"
 
@@ -61,7 +61,7 @@ var TNModuleControlForTakeSnapshot               = @"TakeSnapshot",
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
     @outlet CPButton                    buttonSnapshotTake;
-    @outlet CPButtonBar                 buttonBarControl;
+    @outlet TNButtonBar                 buttonBarControl;
     @outlet CPPopover                   popoverNewSnapshot;
     @outlet CPScrollView                scrollViewSnapshots;
     @outlet CPSearchField               fieldFilter;

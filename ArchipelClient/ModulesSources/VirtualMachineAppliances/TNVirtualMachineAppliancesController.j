@@ -20,7 +20,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -33,6 +32,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNInstalledAppliancesObject.j";
 
 @global CPLocalizedString
@@ -60,7 +60,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 @implementation TNVirtualMachineAppliancesController : TNModule
 {
     @outlet CPButton                    buttonCreate;
-    @outlet CPButtonBar                 buttonBarControl;
+    @outlet TNButtonBar                 buttonBarControl;
     @outlet CPCheckBox                  checkBoxShouldGZIP;
     @outlet CPPopover                   popoverNewAppliances;
     @outlet CPSearchField               fieldFilterAppliance;

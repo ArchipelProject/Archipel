@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1090</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
-		<string key="IBDocument.HIToolboxVersion">755.00</string>
+		<int key="IBDocument.SystemTarget">101000</int>
+		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
+		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<dictionary class="NSMutableDictionary" key="IBDocument.PluginVersions">
-			<string key="com.apple.InterfaceBuilder.CocoaPlugin">6245</string>
-			<string key="com.apple.WebKitIBPlugin">6245</string>
+			<string key="com.apple.InterfaceBuilder.CocoaPlugin">6751</string>
+			<string key="com.apple.WebKitIBPlugin">6751</string>
 		</dictionary>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSBox</string>
@@ -121,7 +121,7 @@
 											<reference key="NSSuperview" ref="1029982473"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="938674003"/>
-											<string key="NSClassName">CPButtonBar</string>
+											<string key="NSClassName">TNButtonBar</string>
 										</object>
 										<object class="NSCustomView" id="724709012">
 											<reference key="NSNextResponder" ref="1029982473"/>
@@ -3108,10 +3108,10 @@
 						<object class="NSTokenFieldCell" key="NSCell" id="383374500">
 							<int key="NSCellFlags">341835776</int>
 							<int key="NSCellFlags2">0</int>
-							<object class="NSFont" key="NSSupport" id="28">
+							<object class="NSFont" key="NSSupport" id="579388675">
 								<bool key="IBIsSystemFont">YES</bool>
 								<double key="NSSize">12</double>
-								<int key="NSfFlags">4883</int>
+								<int key="NSfFlags">787</int>
 							</object>
 							<string key="NSCellIdentifier">_NS:9</string>
 							<reference key="NSControlView" ref="723940869"/>
@@ -3186,7 +3186,7 @@
 							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">272629760</int>
 							<string key="NSContents">Pick up the new avatar of the entity from the following list.</string>
-							<reference key="NSSupport" ref="28"/>
+							<reference key="NSSupport" ref="579388675"/>
 							<reference key="NSControlView" ref="42360357"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
 							<reference key="NSTextColor" ref="646325751"/>
@@ -4165,7 +4165,7 @@
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">272629760</int>
 								<string key="NSContents">You can modify your XMPP account properties.</string>
-								<reference key="NSSupport" ref="28"/>
+								<reference key="NSSupport" ref="579388675"/>
 								<reference key="NSControlView" ref="661838399"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
 								<reference key="NSTextColor" ref="646325751"/>
@@ -9539,7 +9539,7 @@
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="XMPPAccountController">TNXMPPAccountController</string>
 						<string key="avatarController">TNAvatarController</string>
-						<string key="buttonBarLeft">CPButtonBar</string>
+						<string key="buttonBarLeft">TNButtonBar</string>
 						<string key="connectionController">TNConnectionController</string>
 						<string key="contactsController">TNContactsController</string>
 						<string key="fieldVersion">NSTextField</string>
@@ -9585,7 +9585,7 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarLeft">
 							<string key="name">buttonBarLeft</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="connectionController">
 							<string key="name">connectionController</string>
@@ -9779,6 +9779,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">../.XcodeSupport/Controllers∕TNAvatarController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNButtonBar</string>
+					<string key="superclassName">CPButtonBar</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">../.XcodeSupport/Views∕TNButtonBar.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

@@ -27,7 +27,6 @@
 			<string>NSSlider</string>
 			<string>NSSliderCell</string>
 			<string>NSTableColumn</string>
-			<string>NSTableHeaderView</string>
 			<string>NSTableView</string>
 			<string>NSTextField</string>
 			<string>NSTextFieldCell</string>
@@ -256,7 +255,7 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 								<reference key="NSSuperview" ref="932508617"/>
 								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<nil key="NSClassName"/>
+								<string key="NSClassName">NSView</string>
 							</object>
 							<object class="NSCustomView" id="394663784">
 								<reference key="NSNextResponder" ref="932508617"/>
@@ -343,24 +342,14 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 																<reference key="NSNextResponder" ref="724696483"/>
 																<int key="NSvFlags">256</int>
 																<array class="NSMutableArray" key="NSSubviews"/>
-																<string key="NSFrameSize">{419, 118}</string>
+																<string key="NSFrameSize">{419, 135}</string>
 																<reference key="NSSuperview" ref="724696483"/>
 																<reference key="NSWindow"/>
-																<reference key="NSNextKeyView" ref="16731475"/>
+																<reference key="NSNextKeyView"/>
 																<string key="NSReuseIdentifierKey">_NS:1197</string>
 																<bool key="NSEnabled">YES</bool>
 																<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 																<bool key="NSControlAllowsExpansionToolTips">YES</bool>
-																<object class="NSTableHeaderView" key="NSHeaderView" id="666955799">
-																	<reference key="NSNextResponder" ref="186012459"/>
-																	<int key="NSvFlags">256</int>
-																	<string key="NSFrameSize">{419, 17}</string>
-																	<reference key="NSSuperview" ref="186012459"/>
-																	<reference key="NSWindow"/>
-																	<reference key="NSNextKeyView" ref="724696483"/>
-																	<string key="NSReuseIdentifierKey">_NS:1199</string>
-																	<reference key="NSTableView" ref="262603946"/>
-																</object>
 																<object class="_NSCornerView" key="NSCornerView">
 																	<nil key="NSNextResponder"/>
 																	<int key="NSvFlags">-2147483392</int>
@@ -463,7 +452,7 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 																<int key="NSTableViewGroupRowStyle">1</int>
 															</object>
 														</array>
-														<string key="NSFrame">{{0, 17}, {419, 118}}</string>
+														<string key="NSFrameSize">{419, 135}</string>
 														<reference key="NSSuperview" ref="995159657"/>
 														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="262603946"/>
@@ -486,8 +475,7 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 														<reference key="NSControlTarget" ref="995159657"/>
 														<reference key="NSTarget" ref="995159657"/>
 														<string key="NSAction">_doScroller:</string>
-														<double key="NSCurValue">37</double>
-														<double key="NSPercent">0.1947367936372757</double>
+														<double key="NSPercent">0.99264705882352944</double>
 													</object>
 													<object class="NSScroller" id="868848856">
 														<reference key="NSNextResponder" ref="995159657"/>
@@ -503,33 +491,18 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 														<int key="NSsFlags">1</int>
 														<reference key="NSTarget" ref="995159657"/>
 														<string key="NSAction">_doScroller:</string>
-														<double key="NSPercent">0.57142859697341919</double>
-													</object>
-													<object class="NSClipView" id="186012459">
-														<reference key="NSNextResponder" ref="995159657"/>
-														<int key="NSvFlags">2338</int>
-														<array class="NSMutableArray" key="NSSubviews">
-															<reference ref="666955799"/>
-														</array>
-														<string key="NSFrameSize">{419, 17}</string>
-														<reference key="NSSuperview" ref="995159657"/>
-														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="666955799"/>
-														<string key="NSReuseIdentifierKey">_NS:1200</string>
-														<reference key="NSDocView" ref="666955799"/>
-														<bool key="NSAutomaticallyAdjustsContentInsets">YES</bool>
+														<double key="NSPercent">0.99761904761904763</double>
 													</object>
 												</array>
 												<string key="NSFrame">{{0, 24}, {419, 135}}</string>
 												<reference key="NSSuperview" ref="911079387"/>
 												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView" ref="186012459"/>
+												<reference key="NSNextKeyView" ref="724696483"/>
 												<string key="NSReuseIdentifierKey">_NS:1193</string>
 												<int key="NSsFlags">133680</int>
 												<reference key="NSVScroller" ref="16731475"/>
 												<reference key="NSHScroller" ref="868848856"/>
 												<reference key="NSContentView" ref="724696483"/>
-												<reference key="NSHeaderClipView" ref="186012459"/>
 												<bytes key="NSScrollAmts">QSAAAEEgAABBmAAAQZgAAA</bytes>
 												<double key="NSMinMagnification">0.25</double>
 												<double key="NSMaxMagnification">4</double>
@@ -541,8 +514,7 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 												<string key="NSFrameSize">{419, 26}</string>
 												<reference key="NSSuperview" ref="911079387"/>
 												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView"/>
-												<string key="NSClassName">CPButtonBar</string>
+												<string key="NSClassName">TNButtonBar</string>
 											</object>
 										</array>
 										<string key="NSFrame">{{21, 20}, {419, 159}}</string>
@@ -577,7 +549,7 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="842917504"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<nil key="NSClassName"/>
+								<string key="NSClassName">NSView</string>
 							</object>
 							<object class="NSCustomView" id="1022529771">
 								<reference key="NSNextResponder" ref="932508617"/>
@@ -2217,7 +2189,6 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 						<reference key="object" ref="995159657"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="16731475"/>
-							<reference ref="666955799"/>
 							<reference ref="868848856"/>
 							<reference ref="262603946"/>
 						</array>
@@ -2231,11 +2202,6 @@ dCBhbmQgYWxsIGl0cyBkYXRhLg</string>
 					<object class="IBObjectRecord">
 						<int key="objectID">167</int>
 						<reference key="object" ref="16731475"/>
-						<reference key="parent" ref="995159657"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">168</int>
-						<reference key="object" ref="666955799"/>
 						<reference key="parent" ref="995159657"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -2436,7 +2402,6 @@ IG1hY2hpbmUuCgpUaGVyZSBpcyBubyBjb21pbmcgYmFjayE</string>
 				<string key="163.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="166.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="167.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="168.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="169.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="17.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="170.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2666,6 +2631,14 @@ IG1hY2hpbmUuCgpUaGVyZSBpcyBubyBjb21pbmcgYmFjayE</string>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
+					<string key="className">TNButtonBar</string>
+					<string key="superclassName">CPButtonBar</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">../.XcodeSupport/Views∕TNButtonBar.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNModule</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -2794,7 +2767,7 @@ IG1hY2hpbmUuCgpUaGVyZSBpcyBubyBjb21pbmcgYmFjayE</string>
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarMigration">CPButtonBar</string>
+						<string key="buttonBarMigration">TNButtonBar</string>
 						<string key="buttonBarTransport">NSSegmentedControl</string>
 						<string key="buttonKill">NSButton</string>
 						<string key="buttonPark">NSButton</string>
@@ -2823,7 +2796,7 @@ IG1hY2hpbmUuCgpUaGVyZSBpcyBubyBjb21pbmcgYmFjayE</string>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarMigration">
 							<string key="name">buttonBarMigration</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarTransport">
 							<string key="name">buttonBarTransport</string>

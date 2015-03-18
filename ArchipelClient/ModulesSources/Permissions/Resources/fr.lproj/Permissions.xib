@@ -880,7 +880,7 @@
 												<string key="NSFrameSize">{455, 26}</string>
 												<reference key="NSSuperview" ref="82778366"/>
 												<reference key="NSNextKeyView" ref="315658567"/>
-												<string key="NSClassName">CPButtonBar</string>
+												<string key="NSClassName">TNButtonBar</string>
 											</object>
 										</array>
 										<string key="NSFrame">{{-1, 0}, {455, 352}}</string>
@@ -1294,7 +1294,7 @@
 								<string key="NSFrameSize">{473, 26}</string>
 								<reference key="NSSuperview" ref="238825293"/>
 								<reference key="NSNextKeyView" ref="973006180"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 69}, {473, 249}}</string>

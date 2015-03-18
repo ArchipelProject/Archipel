@@ -24,6 +24,7 @@
 
 @import "../../Views/TNBasicDataView.j"
 
+@class TNPermission
 
 /*! @ingroup permissions
     This class represent a permission DataView

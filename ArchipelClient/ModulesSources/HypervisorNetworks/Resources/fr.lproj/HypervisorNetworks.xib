@@ -274,7 +274,7 @@
 								<string key="NSFrameSize">{659, 26}</string>
 								<reference key="NSSuperview" ref="917488120"/>
 								<reference key="NSWindow"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {659, 389}}</string>
@@ -605,7 +605,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{375, 26}</string>
 								<reference key="NSSuperview" ref="752823882"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {375, 229}}</string>
@@ -853,7 +853,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{375, 26}</string>
 								<reference key="NSSuperview" ref="622625316"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {375, 235}}</string>
@@ -5743,7 +5743,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
 						<string key="buttonDefineXMLString">NSButton</string>
 						<string key="fieldFilterNetworks">NSSearchField</string>
 						<string key="fieldXMLString">LPMultiLineTextField</string>
@@ -5756,7 +5756,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonDefineXMLString">
 							<string key="name">buttonDefineXMLString</string>
@@ -6044,8 +6044,8 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControlDHCPHosts">CPButtonBar</string>
-						<string key="buttonBarControlDHCPRanges">CPButtonBar</string>
+						<string key="buttonBarControlDHCPHosts">TNButtonBar</string>
+						<string key="buttonBarControlDHCPRanges">TNButtonBar</string>
 						<string key="buttonForwardDevice">NSPopUpButton</string>
 						<string key="buttonForwardMode">NSPopUpButton</string>
 						<string key="buttonOK">NSButton</string>
@@ -6078,11 +6078,11 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarControlDHCPHosts">
 							<string key="name">buttonBarControlDHCPHosts</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarControlDHCPRanges">
 							<string key="name">buttonBarControlDHCPRanges</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonForwardDevice">
 							<string key="name">buttonForwardDevice</string>

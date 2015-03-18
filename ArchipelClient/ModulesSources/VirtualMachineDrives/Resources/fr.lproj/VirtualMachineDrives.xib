@@ -330,7 +330,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{777, 26}</string>
 								<reference key="NSSuperview" ref="363565048"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {777, 398}}</string>

@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCollectionView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
@@ -67,7 +66,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 @implementation TNHypervisorNetworksController : TNModule
 {
     @outlet CPButton                    buttonDefineXMLString;
-    @outlet CPButtonBar                 buttonBarControl;
+    @outlet TNButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPTableView                 tableViewNetworks;
     @outlet CPView                      viewTableContainer;

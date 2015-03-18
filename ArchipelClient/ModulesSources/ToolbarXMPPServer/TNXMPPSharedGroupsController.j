@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPPopover.j>
 @import <AppKit/CPScrollView.j>
@@ -33,6 +32,8 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
+
+@import "../../Views/TNButtonBar.j"
 
 @import "TNXMPPServerUserFetcher.j"
 @import "TNXMPPUsersController.j"
@@ -63,9 +64,9 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 {
     @outlet CPButton            buttonAdd;
     @outlet CPButton            buttonCreate;
-    @outlet CPButtonBar         buttonBarGroups;
-    @outlet CPButtonBar         buttonBarUsersInGroups;
-    @outlet CPButtonBar         buttonBarDisplayGroupGroups;
+    @outlet TNButtonBar         buttonBarGroups;
+    @outlet TNButtonBar         buttonBarUsersInGroups;
+    @outlet TNButtonBar         buttonBarDisplayGroupGroups;
     @outlet CPPopover           popoverAddDisplayGroupsInGroup;
     @outlet CPPopover           popoverAddUserInGroup;
     @outlet CPPopover           popoverNewGroup;

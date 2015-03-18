@@ -633,7 +633,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{559, 26}</string>
 								<reference key="NSSuperview" ref="1032599027"/>
-								<string key="NSClassName">CPButtonBar</string>
+								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 18}, {559, 294}}</string>
@@ -970,7 +970,7 @@
 												<string key="NSFrameSize">{441, 26}</string>
 												<reference key="NSSuperview" ref="797410172"/>
 												<reference key="NSNextKeyView" ref="954142303"/>
-												<string key="NSClassName">CPButtonBar</string>
+												<string key="NSClassName">TNButtonBar</string>
 											</object>
 										</array>
 										<string key="NSFrameSize">{441, 296}</string>
@@ -1223,7 +1223,7 @@
 												<int key="NSvFlags">290</int>
 												<string key="NSFrameSize">{281, 26}</string>
 												<reference key="NSSuperview" ref="1199790"/>
-												<string key="NSClassName">CPButtonBar</string>
+												<string key="NSClassName">TNButtonBar</string>
 											</object>
 										</array>
 										<string key="NSFrameSize">{281, 296}</string>
@@ -4179,9 +4179,9 @@ IGFwcGxpY2F0aW9uIGFmdGVyIGNoYW5naW5nIHRoaXMuA</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="buttonAdd">NSButton</string>
-						<string key="buttonBarDisplayGroupGroups">CPButtonBar</string>
-						<string key="buttonBarGroups">CPButtonBar</string>
-						<string key="buttonBarUsersInGroups">CPButtonBar</string>
+						<string key="buttonBarDisplayGroupGroups">TNButtonBar</string>
+						<string key="buttonBarGroups">TNButtonBar</string>
+						<string key="buttonBarUsersInGroups">TNButtonBar</string>
 						<string key="buttonCreate">NSButton</string>
 						<string key="fieldNewGroupDescription">NSTextField</string>
 						<string key="fieldNewGroupName">NSTextField</string>
@@ -4210,15 +4210,15 @@ IGFwcGxpY2F0aW9uIGFmdGVyIGNoYW5naW5nIHRoaXMuA</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarDisplayGroupGroups">
 							<string key="name">buttonBarDisplayGroupGroups</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarGroups">
 							<string key="name">buttonBarGroups</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarUsersInGroups">
 							<string key="name">buttonBarUsersInGroups</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonCreate">
 							<string key="name">buttonCreate</string>
@@ -4359,7 +4359,7 @@ IGFwcGxpY2F0aW9uIGFmdGVyIGNoYW5naW5nIHRoaXMuA</string>
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">CPButtonBar</string>
+						<string key="buttonBarControl">TNButtonBar</string>
 						<string key="buttonCreate">NSButton</string>
 						<string key="buttonResetPassword">NSButton</string>
 						<string key="fieldNewUserPassword">NSTextField</string>
@@ -4380,7 +4380,7 @@ IGFwcGxpY2F0aW9uIGFmdGVyIGNoYW5naW5nIHRoaXMuA</string>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="buttonBarControl">
 							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonCreate">
 							<string key="name">buttonCreate</string>

@@ -121,7 +121,7 @@
 											<reference key="NSSuperview" ref="1029982473"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="938674003"/>
-											<string key="NSClassName">CPButtonBar</string>
+											<string key="NSClassName">TNButtonBar</string>
 										</object>
 										<object class="NSCustomView" id="724709012">
 											<reference key="NSNextResponder" ref="1029982473"/>
@@ -9539,7 +9539,7 @@
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="XMPPAccountController">TNXMPPAccountController</string>
 						<string key="avatarController">TNAvatarController</string>
-						<string key="buttonBarLeft">CPButtonBar</string>
+						<string key="buttonBarLeft">TNButtonBar</string>
 						<string key="connectionController">TNConnectionController</string>
 						<string key="contactsController">TNContactsController</string>
 						<string key="fieldVersion">NSTextField</string>
@@ -9585,7 +9585,7 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="buttonBarLeft">
 							<string key="name">buttonBarLeft</string>
-							<string key="candidateClassName">CPButtonBar</string>
+							<string key="candidateClassName">TNButtonBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="connectionController">
 							<string key="name">connectionController</string>
@@ -9779,6 +9779,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">../.XcodeSupport/Controllers∕TNAvatarController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNButtonBar</string>
+					<string key="superclassName">CPButtonBar</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">../.XcodeSupport/Views∕TNButtonBar.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPPopover.j>
 @import <AppKit/CPScrollView.j>
@@ -33,6 +32,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
 
+@import "../../Views/TNButtonBar.j"
 @import "TNXMPPServerUserFetcher.j"
 
 @class TNTableViewLazyDataSource
@@ -60,7 +60,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 {
     @outlet CPButton            buttonCreate;
     @outlet CPButton            buttonResetPassword;
-    @outlet CPButtonBar         buttonBarControl;
+    @outlet TNButtonBar         buttonBarControl;
     @outlet CPImageView         imageFecthingUsers;
     @outlet CPPopover           popoverNewUser;
     @outlet CPPopover           popoverResetPassword;

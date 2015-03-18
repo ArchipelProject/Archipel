@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPColor.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPPopUpButton.j>
@@ -40,6 +39,7 @@
 @import <TNKit/TNSwipeView.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "Model/TNLibvirt.j"
 @import "TNCharacterDeviceController.j"
 @import "TNCharacterDeviceDataView.j"
@@ -121,11 +121,11 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     @outlet CPButton                    buttonUndefine;
     @outlet CPButton                    buttonXMLEditor;
     @outlet CPButton                    buttonXMLEditorDefine;
-    @outlet CPButtonBar                 buttonBarCharacterDevices;
-    @outlet CPButtonBar                 buttonBarControlDrives;
-    @outlet CPButtonBar                 buttonBarControlNics;
-    @outlet CPButtonBar                 buttonBarGraphicDevices;
-    @outlet CPButtonBar                 buttonBarInputDevices;
+    @outlet TNButtonBar                 buttonBarCharacterDevices;
+    @outlet TNButtonBar                 buttonBarControlDrives;
+    @outlet TNButtonBar                 buttonBarControlNics;
+    @outlet TNButtonBar                 buttonBarGraphicDevices;
+    @outlet TNButtonBar                 buttonBarInputDevices;
     @outlet CPPopover                   popoverXMLEditor;
     @outlet CPPopUpButton               buttonBoot;
     @outlet CPPopUpButton               buttonDomainType;
@@ -247,7 +247,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
         tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"],
         tabViewItemCharacter = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemCharacters"];
 
-    [tabViewParameters setContentBackgroundColor:[CPColor colorWithHexString:@"f5f5f5"]];
+    [tabViewParameters setContentBackgroundColor:[CPColor whiteColor]];
 
     var scrollViewParametersStandard = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]],
         scrollViewParametersAdvanced = [[CPScrollView alloc] initWithFrame:[tabViewParameters bounds]];

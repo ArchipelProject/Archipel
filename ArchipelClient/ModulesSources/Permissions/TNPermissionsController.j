@@ -20,7 +20,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPSplitView.j>
@@ -33,6 +32,7 @@
 @import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "../../Model/TNModule.j"
+@import "../../Views/TNButtonBar.j"
 @import "TNPermissionUserFetcher.j"
 @import "TNRolesController.j"
 @import "TNPermissionDataView.j"
@@ -65,7 +65,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 */
 @implementation TNPermissionsController : TNModule
 {
-    @outlet CPButtonBar             buttonBarControl;
+    @outlet TNButtonBar             buttonBarControl;
     @outlet CPImageView             imageFecthingUsers;
     @outlet CPSearchField           filterField;
     @outlet CPSearchField           filterRosterUsers;
