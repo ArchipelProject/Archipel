@@ -109,9 +109,9 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 */
 - (void)awakeFromCib
 {
-    // [viewTableGroupsContainer setBorderedWithHexColor:@"#C0C7D2"];
-    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
+    // [viewTableGroupsContainer setBorderedWithHexColor:@"#F2F2F2"];
+    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#F2F2F2"];
+    [splitViewVertical setBorderedWithHexColor:@"#F2F2F2"];
     [splitViewVertical setIsPaneSplitter:YES];
 
     /* table Users */

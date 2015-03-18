@@ -48,7 +48,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 /*! Instaciate the class
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

@@ -26,6 +26,8 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
@@ -77,7 +79,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     // table appliances
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
@@ -568,7 +570,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

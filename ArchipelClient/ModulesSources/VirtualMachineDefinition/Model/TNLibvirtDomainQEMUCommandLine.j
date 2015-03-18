@@ -37,7 +37,7 @@
 
 /*! initialize the CommandLine
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

@@ -24,6 +24,7 @@
 
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNAlert.j>
+@import <StropheCappuccino/TNStropheContact.j>
 @import <GrowlCappuccino/TNGrowlCenter.j>
 @import <VNCCappuccino/VNCCappuccino.j>
 
@@ -64,7 +65,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     @param aRect the content rect of the window
     @param aStyleMask the style mask of the window
 */
-- (id)initWithContentRect:(CGRect)aRect styleMask:(int)aStyleMask
+- (id)initWithContentRect:(CGRect)aRect styleMask:(unsigned)aStyleMask
 {
     if (self = [super initWithContentRect:aRect styleMask:aStyleMask])
     {

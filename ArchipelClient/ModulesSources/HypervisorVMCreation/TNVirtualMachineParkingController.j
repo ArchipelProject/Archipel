@@ -21,6 +21,7 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPTableView.j>
+@import <AppKit/CPPopover.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <StropheCappuccino/TNXMLNode.j>

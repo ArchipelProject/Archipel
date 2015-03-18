@@ -245,7 +245,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
             [marker setDelegate:self];
             [marker setUserInfo:@{@"rosterItem":item}];
             [marker addToMapView:_mainMapView];
-            [_mainMapView setCenter:loc];
+            [_mainMapView setCenterLocation:loc];
         }
         catch(e)
         {

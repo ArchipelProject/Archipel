@@ -69,7 +69,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];
     [_datasourceJobs setTable:tableJobs];
@@ -250,7 +250,7 @@ var TNModuleControlForSchedule                    = @"Schedule",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

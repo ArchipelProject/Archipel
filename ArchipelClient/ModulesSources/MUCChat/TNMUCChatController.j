@@ -21,6 +21,7 @@
 @import <AppKit/CPSound.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPSplitView.j>
 
 @import <StropheCappuccino/MUC/TNStropheMUCRoom.j>
 @import <TNKit/TNAlert.j>

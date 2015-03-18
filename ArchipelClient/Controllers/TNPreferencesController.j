@@ -142,7 +142,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
 /*! initialize the XMPP storage
 */
-- (void)initXMPPStorage
+- (id)initXMPPStorage
 {
     var connection= [[TNStropheIMClient defaultClient] connection];
     _xmppStorage = [TNStrophePrivateStorage strophePrivateStorageWithConnection:connection namespace:TNArchipelXMPPPrivateStoragePrefsNamespace];

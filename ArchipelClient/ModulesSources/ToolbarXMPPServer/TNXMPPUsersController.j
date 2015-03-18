@@ -91,7 +91,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
     _entityCapabilities = [[CPDictionary alloc] init];

@@ -21,7 +21,9 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPTableView.j>
-@import <AppKit/CPTabViewItem.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
 
 @import <GrowlCappuccino/TNGrowlCenter.j>
 @import <StropheCappuccino/TNStropheStanza.j>
@@ -80,7 +82,7 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
 {
     [stepperHour setMaxValue:23];
 
-    [calendarViewNewJob setBorderedWithHexColor:@"#C0C7D2"];
+    [calendarViewNewJob setBorderedWithHexColor:@"#F2F2F2"];
     [calendarViewNewJob setDelegate:self];
 
     var itemOneShot = [[CPTabViewItem alloc] initWithIdentifier:@"itemOneShot"];

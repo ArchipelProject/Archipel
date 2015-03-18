@@ -22,6 +22,7 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPPopover.j>
 
 @import "Model/TNLibvirtDeviceInput.j"
 

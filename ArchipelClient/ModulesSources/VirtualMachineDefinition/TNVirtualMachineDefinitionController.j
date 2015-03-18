@@ -30,6 +30,8 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
+@import <AppKit/CPCheckBox.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
@@ -187,13 +189,13 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     @outlet TNInputDeviceDataView       dataViewInputDevicePrototype;
     @outlet TNInterfaceController       interfaceController;
     @outlet TNInterfaceDeviceDataView   dataViewNICsPrototype;
-    @outlet CPCheckbox                  checkboxACPI;
-    @outlet CPCheckbox                  checkboxAPIC;
-    @outlet CPCheckbox                  checkboxHugePages;
-    @outlet CPCheckbox                  checkboxNestedVirtualization;
-    @outlet CPCheckbox                  checkboxPAE;
-    @outlet CPCheckbox                  checkboxPreferencesHugePages;
-    @outlet CPCheckbox                  checkboxEnableUSB;
+    @outlet CPCheckBox                  checkboxACPI;
+    @outlet CPCheckBox                  checkboxAPIC;
+    @outlet CPCheckBox                  checkboxHugePages;
+    @outlet CPCheckBox                  checkboxNestedVirtualization;
+    @outlet CPCheckBox                  checkboxPAE;
+    @outlet CPCheckBox                  checkboxPreferencesHugePages;
+    @outlet CPCheckBox                  checkboxEnableUSB;
     @outlet TNTabView                   tabViewParameters;
     @outlet TNTextFieldStepper          stepperNumberCPUs;
 
@@ -320,7 +322,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [tableDrives setDoubleAction:@selector(editDrive:)];
     [tableDrives setBackgroundColor:TNArchipelDefaultColorsTableView];
 
-    [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewDrivesContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [driveController setDelegate:self];
 
@@ -362,7 +364,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
     [tableInterfaces setDoubleAction:@selector(editInterface:)];
     [tableInterfaces setBackgroundColor:TNArchipelDefaultColorsTableView];
 
-    [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewNicsContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [interfaceController setDelegate:self];
 
@@ -403,7 +405,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [_inputDevicesDatasource setTable:tableInputDevices];
     [tableInputDevices setDataSource:_inputDevicesDatasource];
-    [viewInputDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewInputDevicesContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [self addControlsWithIdentifier:TNModuleControlForInputDeviceAdd
                               title:CPBundleLocalizedString(@"Add a new input device", @"Add a new input device")
@@ -440,7 +442,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [_graphicDevicesDatasource setTable:tableGraphicsDevices];
     [tableGraphicsDevices setDataSource:_graphicDevicesDatasource];
-    [viewGraphicDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewGraphicDevicesContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [self addControlsWithIdentifier:TNModuleControlForGraphicDeviceAdd
                               title:CPBundleLocalizedString(@"Add a new Graphic device", @"Add a new Graphic device")
@@ -482,7 +484,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 
     [_characterDevicesDatasource setTable:tableCharacterDevices];
     [tableCharacterDevices setDataSource:_characterDevicesDatasource];
-    [viewCharacterDevicesContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewCharacterDevicesContainer setBorderedWithHexColor:@"#F2F2F2"];
     [_characterDevicesDatasource setSearchableKeyPaths:[@"type", @"kind", @"protocol.type", @"target.type", @"target.address", @"target.port", @"target.name", @"source.path", @"source.mode", @"source.host", @"source.service"]]
     [fieldFilterCharacters setTarget:_characterDevicesDatasource];
     [fieldFilterCharacters setAction:@selector(filterObjects:)];
@@ -1907,7 +1909,7 @@ var TNModuleControlForDriveAdd                          = @"DriveAdd",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

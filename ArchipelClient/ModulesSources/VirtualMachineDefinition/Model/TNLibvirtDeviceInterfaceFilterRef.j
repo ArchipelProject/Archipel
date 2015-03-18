@@ -37,7 +37,7 @@
 
 /*! intialize the filter
 */
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {

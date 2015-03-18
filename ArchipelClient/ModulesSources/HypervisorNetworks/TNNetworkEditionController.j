@@ -27,6 +27,7 @@
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 
@@ -125,14 +126,14 @@
     [tableViewRanges setDelegate:self];
     [tableViewRanges setDataSource:_datasourceDHCPRanges];
     [_datasourceDHCPRanges setTable:tableViewRanges];
-    [viewRangesTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewRangesTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     // TABLE FOR HOSTS
     _datasourceDHCPHosts = [[TNTableViewDataSource alloc] init];
     [tableViewHosts setDelegate:self];
     [tableViewHosts setDataSource:_datasourceDHCPHosts];
     [_datasourceDHCPHosts setTable:tableViewHosts];
-    [viewHostsTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewHostsTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     var menuRange = [[CPMenu alloc] init],
         menuHost = [[CPMenu alloc] init];

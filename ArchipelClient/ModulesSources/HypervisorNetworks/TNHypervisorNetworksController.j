@@ -91,7 +91,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 {
     _networksRAW = [CPDictionary dictionary];
 
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     /* VM table view */
     _datasourceNetworks     = [[TNTableViewDataSource alloc] init];
@@ -767,7 +767,7 @@ var TNModuleControlForAddNework                 = @"AddNetwork",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

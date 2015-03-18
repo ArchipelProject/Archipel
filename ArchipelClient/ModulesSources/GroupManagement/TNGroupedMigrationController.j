@@ -22,6 +22,7 @@
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPWindow.j>
 @import <AppKit/CPTableView.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 @import <StropheCappuccino/TNStropheIMClient.j>

@@ -27,6 +27,7 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPOutlineView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTableViewLazyDataSource.j>
@@ -104,7 +105,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
     [viewTableContainer setBorderedWithHexColor:@"F2F2F2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
-    [splitView setBorderedWithHexColor:@"#C0C7D2"];
+    [splitView setBorderedWithHexColor:@"#F2F2F2"];
     [splitView setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
     [splitView setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
     [splitView setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
@@ -668,7 +669,7 @@ var TNModuleControlForApplyRole                 = @"ApplyRole",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

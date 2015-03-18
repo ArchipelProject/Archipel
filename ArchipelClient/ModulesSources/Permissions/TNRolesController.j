@@ -23,6 +23,7 @@
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPPopover.j>
 
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <StropheCappuccino/TNPubSub.j>
@@ -62,7 +63,7 @@
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _datasourceRoles    = [[TNTableViewDataSource alloc] init];
     [_datasourceRoles setTable:tableRoles];

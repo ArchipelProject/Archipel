@@ -25,7 +25,7 @@
 @import <AppKit/CPTabViewItem.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <AppKit/CPWindow.j>
+@import <AppKit/CPTabView.j>
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
@@ -114,9 +114,9 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [viewTableContainerNotManaged setBorderedWithHexColor:@"#C0C7D2"];
-    [viewTableContainerParked setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
+    [viewTableContainerNotManaged setBorderedWithHexColor:@"#F2F2F2"];
+    [viewTableContainerParked setBorderedWithHexColor:@"#F2F2F2"];
 
     // tab view
     var tabViewItemManagedVM = [[CPTabViewItem alloc] initWithIdentifier:@"tabViewItemManagedVM"],
@@ -985,7 +985,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

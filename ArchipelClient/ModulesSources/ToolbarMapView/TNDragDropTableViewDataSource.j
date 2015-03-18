@@ -41,7 +41,7 @@ var TNDragTypeMigration = @"TNDragTypeMigration";
     return YES;
 }
 
-- (CPDragOperation)tableView:(CPTableView)aTableView validateDrop:(id)info proposedRow:(CPInteger)row proposedDropOperation:(CPTableViewDropOperation)operation
+- (CPDragOperation)tableView:(CPTableView)aTableView validateDrop:(CPDraggingInfo)info proposedRow:(int)row proposedDropOperation:(CPTableViewDropOperation)operation
 {
     // if ([info draggingSource] !== aTableView)
     //     return CPDragOperationNone;
@@ -52,7 +52,7 @@ var TNDragTypeMigration = @"TNDragTypeMigration";
 }
 
 
-- (BOOL)tableView:(CPTableView)tableView acceptDrop:(id <CPDraggingInfo>)info row:(int)row dropOperation:(CPTableViewDropOperation)operation
+- (BOOL)tableView:(CPTableView)tableView acceptDrop:(CPDraggingInfo)info row:(int)row dropOperation:(CPTableViewDropOperation)operation
 {
 
     var pboard  = [info draggingPasteboard],

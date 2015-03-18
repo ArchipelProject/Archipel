@@ -16,15 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPMenuItem.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <Foundation/Foundation.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
+
 
 @import <StropheCappuccino/TNStropheStanza.j>
+@import <StropheCappuccino/TNStropheContact.j>
 @import <TNKit/TNAlert.j>
 
 @import "Model/TNLibvirt.j"

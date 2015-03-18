@@ -16,12 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
-@import <Foundation/Foundation.j>
+@import <AppKit/CPPopover.j>
+@import <AppKit/CPCheckBox.j>
 
 @import <TNKit/TNTableViewDataSource.j>
 @import <StropheCappuccino/TNStropheContact.j>
@@ -84,7 +86,7 @@ var TNArchipelTypeHypervisorNetwork                 = @"archipel:hypervisor:netw
 */
 - (void)awakeFromCib
 {
-    [viewNWFilterParametersContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewNWFilterParametersContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     [buttonType removeAllItems];
     [buttonModel removeAllItems];

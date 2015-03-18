@@ -115,7 +115,7 @@ var gmNamespace = nil;
 }
 
 /* Overriding CPWebView's implementation */
-- (BOOL)_resizeWebFrame
+- (void)_resizeWebFrame
 {
     var width = [self bounds].size.width,
         height = [self bounds].size.height;
@@ -135,7 +135,7 @@ var gmNamespace = nil;
     [super viewDidMoveToSuperview];
 }
 
-- (void)setCenter:(MKLocation)aLocation
+- (void)setCenterLocation:(MKLocation)aLocation
 {
     if (_mapReady)
     {

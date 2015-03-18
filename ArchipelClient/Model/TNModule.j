@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPMenu.j>
@@ -26,6 +25,7 @@
 @import <AppKit/CPToolbar.j>
 @import <AppKit/CPToolbarItem.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPButtonBar.j>
 @import <AppKit/CPViewController.j>
 
 @import <StropheCappuccino/TNStropheConnection.j>

@@ -28,6 +28,8 @@
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopover.j>
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
@@ -195,7 +197,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
 
     // table migration
-    [viewTableHypervisorsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableHypervisorsContainer setBorderedWithHexColor:@"#F2F2F2"];
     _datasourceHypervisors   = [[TNTableViewDataSource alloc] init];
     [tableHypervisors setTarget:self];
     [tableHypervisors setDoubleAction:@selector(migrate:)];

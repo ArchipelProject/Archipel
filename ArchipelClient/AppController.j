@@ -42,7 +42,7 @@
 @import <TNKit/TNTabView.j>
 
 @import "Categories/TNCategories.j"
-@import "Controllers/TNAvatarController.j"
+@import "Controllers/TNAvatarController.j"TNButtonBarPopUpButton.j
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
 @import "Controllers/TNGroupsController.j"
@@ -407,7 +407,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* about window */
     [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
-    [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
+    [webViewAboutCredits setBorderedWithHexColor:@"#F2F2F2"];
     [textFieldAboutVersion setStringValue:_currentVersion];
 
 

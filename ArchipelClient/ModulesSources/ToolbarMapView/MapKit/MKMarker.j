@@ -14,7 +14,7 @@
     CPString        _shadowUrl          @accessors(property=shadowUrl);
     id              _delegate           @accessors(property=delegate);
     id              _userInfo           @accessors(property=userInfo);
-    Marker          _gMarker            @accessors(property=gMarker);
+    MKMarker        _gMarker            @accessors(property=gMarker);
     MKLocation      _location           @accessors(property=location);
 
     CPString        _infoWindowHTML;

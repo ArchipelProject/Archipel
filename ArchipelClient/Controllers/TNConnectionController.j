@@ -149,7 +149,7 @@ var TNConnectionControllerForceResource,
 
 /*! Initialize credentials informations according to the Application Defaults
 */
-- (void)initCredentials
+- (id)initCredentials
 {
     [self _prepareCredentialRemember];
     [self _prepareJID];

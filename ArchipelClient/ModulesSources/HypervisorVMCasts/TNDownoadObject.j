@@ -58,7 +58,7 @@
 /*! format the size
     @return formated size
 */
-- (CPString)totalSize
+- (float)totalSize
 {
     return [CPString formatByteSize:_totalSize];
 }

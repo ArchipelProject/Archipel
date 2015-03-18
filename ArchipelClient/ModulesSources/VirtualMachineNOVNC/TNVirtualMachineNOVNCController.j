@@ -23,6 +23,7 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
+@import <AppKit/CPPopover.j>
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <VNCCappuccino/VNCCappuccino.j>

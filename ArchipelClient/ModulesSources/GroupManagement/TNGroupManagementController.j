@@ -90,7 +90,7 @@ var TNModuleControlForStart                         = @"Start",
 */
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
 
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
 
@@ -192,11 +192,14 @@ var TNModuleControlForStart                         = @"Start",
 
 /*! called when module become visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [self reload:nil];
+
+    return YES;
 }
 
 /*! called when module become unvisible
@@ -453,7 +456,7 @@ var TNModuleControlForStart                         = @"Start",
 - (CPMenu)tableView:(CPTableView)aTableView menuForTableColumn:(CPTableColumn)aColumn row:(int)aRow
 {
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];
