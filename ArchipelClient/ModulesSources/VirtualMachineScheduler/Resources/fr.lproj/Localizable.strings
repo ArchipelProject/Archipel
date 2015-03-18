@@ -1,6 +1,9 @@
 /* Action has been scheduled */
 "Action has been scheduled" = "Action has been scheduled";
 
+/* Add a scheduled action */
+"Add a scheduled action" = "Add a scheduled action";
+
 /* Are you sure you want to unschedule these jobs ? */
 "Are you sure you want to unschedule these jobs ?" = "Are you sure you want to unschedule these jobs ?";
 
@@ -16,8 +19,8 @@
 /* Recurent */
 "Recurent" = "Recurent";
 
-/* Schedule new action */
-"Schedule new action" = "Schedule new action";
+/* Remove the selected scheduled action(s) */
+"Remove the selected scheduled action(s)" = "Remove the selected scheduled action(s)";
 
 /* Unique */
 "Unique" = "Unique";
@@ -30,9 +33,6 @@
 
 /* Unschedule Jobs */
 "Unschedule Jobs" = "Unschedule Jobs";
-
-/* Unschedule selected action */
-"Unschedule selected action" = "Unschedule selected action";
 
 /* You must select a date */
 "You must select a date" = "You must select a date";

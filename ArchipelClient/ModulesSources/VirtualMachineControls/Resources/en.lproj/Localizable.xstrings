@@ -40,8 +40,6 @@
 	<string>Park virtual machine?</string>
 	<key>Pause</key>
 	<string>Pause</string>
-	<key>Pause / Resume</key>
-	<string>Pause / Resume</string>
 	<key>Paused</key>
 	<string>Paused</string>
 	<key>Play</key>
@@ -54,10 +52,6 @@
 	<string>Resume</string>
 	<key>Running</key>
 	<string>Running</string>
-	<key>Shut down</key>
-	<string>Shut down</string>
-	<key>Start</key>
-	<string>Start</string>
 	<key>Stop</key>
 	<string>Stop</string>
 	<key>Virtual machine has been destroyed.</key>

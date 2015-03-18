@@ -16,35 +16,26 @@
 /* Attach appliance */
 "Attach appliance" = "Attach appliance";
 
-/* Attach selected appliance */
-"Attach selected appliance" = "Attach selected appliance";
-
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Create appliance from this virtual machine */
-"Create appliance from this virtual machine" = "Create appliance from this virtual machine";
+/* Create a new appliance from current virtual machine */
+"Create a new appliance from current virtual machine" = "Create a new appliance from current virtual machine";
 
 /* Detach */
 "Detach" = "Detach";
 
-/* Detach current VM from selected appliance */
-"Detach current VM from selected appliance" = "Detach current VM from selected appliance";
-
 /* Detach from appliance */
 "Detach from appliance" = "Detach from appliance";
 
-/* Dettach from selected appliance */
-"Dettach from selected appliance" = "Dettach from selected appliance";
+/* Detach the selected appliance */
+"Detach the selected appliance" = "Detach the selected appliance";
 
 /* Error */
 "Error" = "Error";
 
 /* Instanciation has started */
 "Instanciation has started" = "Instanciation has started";
-
-/* Package current VM into hypervisor's VMCast */
-"Package current VM into hypervisor's VMCast" = "Package current VM into hypervisor's VMCast";
 
 /* Packaging started. */
 "Packaging started." = "Packaging started.";
@@ -55,8 +46,8 @@
 /* Unable to create package. Check agent logs */
 "Unable to create package. Check agent logs" = "Unable to create package. Check agent logs";
 
-/* Use selected package for VM. Any changes will be lost */
-"Use selected package for VM. Any changes will be lost" = "Use selected package for VM. Any changes will be lost";
+/* Use the selected appliance */
+"Use the selected appliance" = "Use the selected appliance";
 
 /* Virtual machine must not be running to package it. */
 "Virtual machine must not be running to package it." = "Virtual machine must not be running to package it.";

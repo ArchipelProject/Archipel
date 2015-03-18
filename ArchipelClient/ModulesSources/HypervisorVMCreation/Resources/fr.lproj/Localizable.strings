@@ -7,14 +7,17 @@
 /*  to your roster */
 " to your roster" = " to your roster";
 
-/* Add a new VM */
-"Add a new VM" = "Add a new VM";
+/* Add a new Virtual Machine */
+"Add a new Virtual Machine" = "Add a new Virtual Machine";
 
-/* Add a user subscription */
-"Add a user subscription" = "Add a user subscription";
+/* Add a subsription */
+"Add a subsription" = "Add a subsription";
 
 /* Add contact */
 "Add contact" = "Add contact";
+
+/* Add to the parking */
+"Add to the parking" = "Add to the parking";
 
 /* Added new subscription to virtual machine */
 "Added new subscription to virtual machine" = "Added new subscription to virtual machine";
@@ -34,23 +37,14 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Clone selected VM */
-"Clone selected VM" = "Clone selected VM";
-
-/* Clone this virtual machine */
-"Clone this virtual machine" = "Clone this virtual machine";
-
-/* Create new virtual machine */
-"Create new virtual machine" = "Create new virtual machine";
+/* Clone */
+"Clone" = "Clone";
 
 /* Delete */
 "Delete" = "Delete";
 
-/* Delete selected parked VMs. All data will be lost */
-"Delete selected parked VMs. All data will be lost" = "Delete selected parked VMs. All data will be lost";
-
-/* Delete virtual machine */
-"Delete virtual machine" = "Delete virtual machine";
+/* Delete permanently */
+"Delete permanently" = "Delete permanently";
 
 /* Destroying a Virtual Machine */
 "Destroying a Virtual Machine" = "Destroying a Virtual Machine";
@@ -58,32 +52,26 @@
 /* Destroying some Virtual Machines */
 "Destroying some Virtual Machines" = "Destroying some Virtual Machines";
 
-/* Do not use Archipel to manage selected vms. Vms will still be there */
-"Do not use Archipel to manage selected vms. Vms will still be there" = "Do not use Archipel to manage selected vms. Vms will still be there";
+/* Edit parked Virtual Machine XML definition */
+"Edit parked Virtual Machine XML definition" = "Edit parked Virtual Machine XML definition";
 
-/* Edit parked VM's XML definition */
-"Edit parked VM's XML definition" = "Edit parked VM's XML definition";
+/* Edit Virtual Machine informations */
+"Edit Virtual Machine informations" = "Edit Virtual Machine informations";
 
 /* Error */
 "Error" = "Error";
 
-/* If vm is in roster, jump to it, otherwhise, ask subscription */
-"If vm is in roster, jump to it, otherwhise, ask subscription" = "If vm is in roster, jump to it, otherwhise, ask subscription";
+/* Jump to */
+"Jump to" = "Jump to";
 
-/* Make Archipel manage selected VMs */
-"Make Archipel manage selected VMs" = "Make Archipel manage selected VMs";
-
-/* Park selected VMs */
-"Park selected VMs" = "Park selected VMs";
+/* Manage with Archipel */
+"Manage with Archipel" = "Manage with Archipel";
 
 /* Remove */
 "Remove" = "Remove";
 
-/* Remove a user subscription */
-"Remove a user subscription" = "Remove a user subscription";
-
-/* Remove completely selected vms */
-"Remove completely selected vms" = "Remove completely selected vms";
+/* Remove a subsription */
+"Remove a subsription" = "Remove a subsription";
 
 /* Removing subscription */
 "Removing subscription" = "Removing subscription";
@@ -91,8 +79,11 @@
 /* Subscription have been removed */
 "Subscription have been removed" = "Subscription have been removed";
 
-/* Unpark selected VMs into this hypervisor */
-"Unpark selected VMs into this hypervisor" = "Unpark selected VMs into this hypervisor";
+/* Unmanage from Archipel */
+"Unmanage from Archipel" = "Unmanage from Archipel";
+
+/* Unpark to current hypervisor */
+"Unpark to current hypervisor" = "Unpark to current hypervisor";
 
 /* Virtual machine  */
 "Virtual machine " = "Virtual machine ";
@@ -103,18 +94,9 @@
 /* Virtual machine has been removed */
 "Virtual machine has been removed" = "Virtual machine has been removed";
 
-/* VM will ask subscription to given user */
-"VM will ask subscription to given user" = "VM will ask subscription to given user";
-
-/* VM will remove subscription from given user */
-"VM will remove subscription from given user" = "VM will remove subscription from given user";
-
 /* Would you like to add  */
 "Would you like to add " = "Would you like to add ";
 
 /* You must select a virtual machine */
 "You must select a virtual machine" = "You must select a virtual machine";
-
-/* You must select one (and only one) virtual machine */
-"You must select one (and only one) virtual machine" = "You must select one (and only one) virtual machine";
 

@@ -14,8 +14,6 @@
 	<string>Creation date</string>
 	<key>Delete</key>
 	<string>Delete</string>
-	<key>Delete selected snapshot</key>
-	<string>Delete selected snapshot</string>
 	<key>Delete to snapshot</key>
 	<string>Delete to snapshot</string>
 	<key>Description</key>
@@ -24,10 +22,8 @@
 	<string>Remove selected snapshot</string>
 	<key>Revert</key>
 	<string>Revert</string>
-	<key>Revert VM state to selected snapshot</key>
-	<string>Revert VM state to selected snapshot</string>
-	<key>Revert to selected drive</key>
-	<string>Revert to selected drive</string>
+	<key>Revert state to selected snapshot</key>
+	<string>Revert state to selected snapshot</string>
 	<key>Revert to snapshot</key>
 	<string>Revert to snapshot</string>
 	<key>Snapshot deleted</key>
@@ -36,8 +32,6 @@
 	<string>Snapshot sucessfully reverted</string>
 	<key>Snapshoting sucessfull</key>
 	<string>Snapshoting sucessfull</string>
-	<key>Take a snapshot</key>
-	<string>Take a snapshot</string>
 	<key>There is no snapshot for this virtual machine</key>
 	<string>There is no snapshot for this virtual machine</string>
 	<key>UUID</key>

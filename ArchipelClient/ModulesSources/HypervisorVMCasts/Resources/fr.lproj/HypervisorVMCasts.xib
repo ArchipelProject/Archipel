@@ -49,7 +49,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="1005">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSImageView" id="459723065">
@@ -65,7 +65,6 @@
 						</set>
 						<string key="NSFrame">{{699, 499}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="897131327"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="834086289">
@@ -84,7 +83,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{18, 422}, {474, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="590245974"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="4504155">
@@ -110,6 +108,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -122,7 +121,6 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="215021165"/>
-								<reference key="NSWindow"/>
 								<string key="NSClassName">TNButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="700024333">
@@ -130,14 +128,12 @@
 								<int key="NSvFlags">274</int>
 								<string key="NSFrame">{{0, 26}, {687, 367}}</string>
 								<reference key="NSSuperview" ref="215021165"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="342279016"/>
 								<string key="NSClassName">NSScrollView</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {685, 393}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="700024333"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -146,7 +142,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{498, 421}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="215021165"/>
 						<bool key="NSViewIsLayerTreeHost">YES</bool>
 						<bool key="NSEnabled">YES</bool>
@@ -219,7 +214,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 451}, {692, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="405108041"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="826338067">
@@ -247,7 +241,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 479}, {701, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="459723065"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="563196763">
@@ -271,8 +264,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{725, 525}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="537587155"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -695,6 +686,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
+							<int key="NSAuxButtonType">7</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -1349,223 +1341,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">124</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">TNDownloadQueueController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">closeWindow:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">closeWindow:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">closeWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="labelTarget">NSTextField</string>
-						<string key="mainPopover">NSPopover</string>
-						<string key="mainTableView">NSTableView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="labelTarget">
-							<string key="name">labelTarget</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mainPopover">
-							<string key="name">mainPopover</string>
-							<string key="candidateClassName">NSPopover</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mainTableView">
-							<string key="name">mainTableView</string>
-							<string key="candidateClassName">NSTableView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕HypervisorVMCasts∕TNDownloadQueueController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNHypervisorVMCastsController</string>
-					<string key="superclassName">TNModule</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="clickOnFilterCheckBox:">id</string>
-						<string key="download:">id</string>
-						<string key="fieldFilterDidChange:">id</string>
-						<string key="openNewVMCastURLWindow:">id</string>
-						<string key="remove:">id</string>
-						<string key="removeAppliance:">id</string>
-						<string key="removeVMCast:">id</string>
-						<string key="showDownloadQueue:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="clickOnFilterCheckBox:">
-							<string key="name">clickOnFilterCheckBox:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="download:">
-							<string key="name">download:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="fieldFilterDidChange:">
-							<string key="name">fieldFilterDidChange:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openNewVMCastURLWindow:">
-							<string key="name">openNewVMCastURLWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="remove:">
-							<string key="name">remove:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="removeAppliance:">
-							<string key="name">removeAppliance:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="removeVMCast:">
-							<string key="name">removeVMCast:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showDownloadQueue:">
-							<string key="name">showDownloadQueue:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="VMCastRegistrationController">TNVMCastRegistrationController</string>
-						<string key="buttonBarControl">TNButtonBar</string>
-						<string key="checkBoxOnlyInstalled">CPCheckBox</string>
-						<string key="downloadQueueController">TNDownloadQueueController</string>
-						<string key="fieldFilter">NSSearchField</string>
-						<string key="mainScrollView">NSScrollView</string>
-						<string key="viewTableContainer">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="VMCastRegistrationController">
-							<string key="name">VMCastRegistrationController</string>
-							<string key="candidateClassName">TNVMCastRegistrationController</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="buttonBarControl">
-							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">TNButtonBar</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxOnlyInstalled">
-							<string key="name">checkBoxOnlyInstalled</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="downloadQueueController">
-							<string key="name">downloadQueueController</string>
-							<string key="candidateClassName">TNDownloadQueueController</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldFilter">
-							<string key="name">fieldFilter</string>
-							<string key="candidateClassName">NSSearchField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mainScrollView">
-							<string key="name">mainScrollView</string>
-							<string key="candidateClassName">NSScrollView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewTableContainer">
-							<string key="name">viewTableContainer</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕HypervisorVMCasts∕TNHypervisorVMCastsController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="imageViewModuleReady">NSImageView</string>
-						<string key="viewMask">NSView</string>
-						<string key="viewPreferences">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="imageViewModuleReady">
-							<string key="name">imageViewModuleReady</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewMask">
-							<string key="name">viewMask</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewPreferences">
-							<string key="name">viewPreferences</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Model∕TNModule.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNVMCastRegistrationController</string>
-					<string key="superclassName">NSObject</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="addNewVMCast:">id</string>
-						<string key="closeWindow:">id</string>
-						<string key="openWindow:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="addNewVMCast:">
-							<string key="name">addNewVMCast:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="closeWindow:">
-							<string key="name">closeWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openWindow:">
-							<string key="name">openWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonNewVMCast">NSButton</string>
-						<string key="fieldNewURL">NSTextField</string>
-						<string key="mainPopover">NSPopover</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonNewVMCast">
-							<string key="name">buttonNewVMCast</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldNewURL">
-							<string key="name">fieldNewURL</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mainPopover">
-							<string key="name">mainPopover</string>
-							<string key="candidateClassName">NSPopover</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕HypervisorVMCasts∕TNVMCastRegistrationController.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>

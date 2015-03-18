@@ -49,14 +49,8 @@
 /* Register to a new VMCast feed */
 "Register to a new VMCast feed" = "Register to a new VMCast feed";
 
-/* Register to a new VMCasts */
-"Register to a new VMCasts" = "S'abonner à un nouveau VMCasts";
-
-/* Remove selected appliance */
-"Remove selected appliance" = "Supprimer l'appliance sélectionnée.";
-
-/* Show activity monitor */
-"Show activity monitor" = "Ouvrir le moniteur de téléchargements.";
+/* Remove/Unregister */
+"Remove/Unregister" = "Remove/Unregister";
 
 /* Size */
 "Size" = "Taille";
@@ -66,12 +60,6 @@
 
 /* Unregister */
 "Unregister" = "Désabonnement";
-
-/* Unregister from selected VMCast */
-"Unregister from selected VMCast" = "Se désabonner du flux VMCast sélectionné.";
-
-/* Unregister from selected VMCast feed */
-"Unregister from selected VMCast feed" = "Unregister from selected VMCast feed";
 
 /* VMcast has been registred */
 "VMcast has been registred" = "Abonnement au VMcast effectué";

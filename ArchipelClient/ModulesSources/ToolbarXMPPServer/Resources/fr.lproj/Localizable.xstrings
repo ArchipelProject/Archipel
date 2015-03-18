@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Add a new shared group</key>
-	<string>Add a new shared group</string>
-	<key>Add selected users to shared group</key>
-	<string>Add selected users to shared group</string>
+	<key> managed by </key>
+	<string> managed by </string>
+	<key>Add display group(s) to shared group</key>
+	<string>Add display group(s) to shared group</string>
+	<key>Add user(s) to shared group</key>
+	<string>Add user(s) to shared group</string>
 	<key>Are you sure you want to unregister selected user(s) ?</key>
 	<string>Are you sure you want to unregister selected user(s) ?</string>
 	<key>Bad JID</key>
@@ -16,40 +18,52 @@
 	<string>Cancel</string>
 	<key>Confirm</key>
 	<string>Confirm</string>
-	<key>Delete selected shared groups</key>
-	<string>Delete selected shared groups</string>
-	<key>Make selected users as admins</key>
-	<string>Make selected users as admins</string>
+	<key>Create a new shared group</key>
+	<string>Create a new shared group</string>
+	<key>Delete selected shared group</key>
+	<string>Delete selected shared group</string>
+	<key>Grand selected user(s) as admin</key>
+	<string>Grand selected user(s) as admin</string>
 	<key>Password doesn't match</key>
 	<string>Password doesn't match</string>
 	<key>Register a new user</key>
 	<string>Register a new user</string>
-	<key>Remove admin rights to selected users</key>
-	<string>Remove admin rights to selected users</string>
-	<key>Remove selected users from shared group</key>
-	<string>Remove selected users from shared group</string>
+	<key>Remove admin rights on selected user(s)</key>
+	<string>Remove admin rights on selected user(s)</string>
+	<key>Remove selected group(s) from shared group</key>
+	<string>Remove selected group(s) from shared group</string>
+	<key>Remove selected user(s) from shared group</key>
+	<string>Remove selected user(s) from shared group</string>
+	<key>Reset the password of the selected user</key>
+	<string>Reset the password of the selected user</string>
 	<key>Shared Groups</key>
 	<string>Shared Groups</string>
 	<key>The password is too short. it must be at least 8 characters</key>
 	<string>The password is too short. it must be at least 8 characters</string>
 	<key>Unregister</key>
 	<string>Unregister</string>
-	<key>Unregister selected users</key>
-	<string>Unregister selected users</string>
+	<key>Unregister selected user(s)</key>
+	<string>Unregister selected user(s)</string>
+	<key>User already exist</key>
+	<string>User already exist</string>
 	<key>Wrong group</key>
 	<string>Wrong group</string>
+	<key>Wrong groups</key>
+	<string>Wrong groups</string>
 	<key>Wrong name</key>
 	<string>Wrong name</string>
-	<key>Wrong users</key>
-	<string>Wrong users</string>
 	<key>XMPP Users</key>
 	<string>XMPP Users</string>
+	<key>You cannot reset password for more than one user at a time</key>
+	<string>You cannot reset password for more than one user at a time</string>
 	<key>You have to enter identical passwords</key>
 	<string>You have to enter identical passwords</string>
 	<key>You must enter a name containing at least 4 characters</key>
 	<string>You must enter a name containing at least 4 characters</string>
 	<key>You must select a group</key>
 	<string>You must select a group</string>
+	<key>You must select at least one group</key>
+	<string>You must select at least one group</string>
 	<key>You must select at least one user</key>
 	<string>You must select at least one user</string>
 	<key>You must select one user</key>

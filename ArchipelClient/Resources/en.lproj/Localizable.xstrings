@@ -50,6 +50,8 @@
 	<string>Cancel</string>
 	<key>Cannot save your preferences to the XMPP server</key>
 	<string>Cannot save your preferences to the XMPP server</string>
+	<key>Central Agent</key>
+	<string>Central Agent</string>
 	<key>Collapse all groups</key>
 	<string>Collapse all groups</string>
 	<key>Collapse group</key>

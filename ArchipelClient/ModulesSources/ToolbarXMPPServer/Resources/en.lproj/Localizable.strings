@@ -1,8 +1,11 @@
-/* Add a new shared group */
-"Add a new shared group" = "Add a new shared group";
+/*  managed by  */
+" managed by " = " managed by ";
 
-/* Add selected users to shared group */
-"Add selected users to shared group" = "Add selected users to shared group";
+/* Add display group(s) to shared group */
+"Add display group(s) to shared group" = "Add display group(s) to shared group";
+
+/* Add user(s) to shared group */
+"Add user(s) to shared group" = "Add user(s) to shared group";
 
 /* Are you sure you want to unregister selected user(s) ? */
 "Are you sure you want to unregister selected user(s) ?" = "Are you sure you want to unregister selected user(s) ?";
@@ -19,11 +22,14 @@
 /* Confirm */
 "Confirm" = "Confirm";
 
-/* Delete selected shared groups */
-"Delete selected shared groups" = "Delete selected shared groups";
+/* Create a new shared group */
+"Create a new shared group" = "Create a new shared group";
 
-/* Make selected users as admins */
-"Make selected users as admins" = "Make selected users as admins";
+/* Delete selected shared group */
+"Delete selected shared group" = "Delete selected shared group";
+
+/* Grand selected user(s) as admin */
+"Grand selected user(s) as admin" = "Grand selected user(s) as admin";
 
 /* Password doesn't match */
 "Password doesn't match" = "Password doesn't match";
@@ -31,11 +37,17 @@
 /* Register a new user */
 "Register a new user" = "Register a new user";
 
-/* Remove admin rights to selected users */
-"Remove admin rights to selected users" = "Remove admin rights to selected users";
+/* Remove admin rights on selected user(s) */
+"Remove admin rights on selected user(s)" = "Remove admin rights on selected user(s)";
 
-/* Remove selected users from shared group */
-"Remove selected users from shared group" = "Remove selected users from shared group";
+/* Remove selected group(s) from shared group */
+"Remove selected group(s) from shared group" = "Remove selected group(s) from shared group";
+
+/* Remove selected user(s) from shared group */
+"Remove selected user(s) from shared group" = "Remove selected user(s) from shared group";
+
+/* Reset the password of the selected user */
+"Reset the password of the selected user" = "Reset the password of the selected user";
 
 /* Shared Groups */
 "Shared Groups" = "Shared Groups";
@@ -46,20 +58,26 @@
 /* Unregister */
 "Unregister" = "Unregister";
 
-/* Unregister selected users */
-"Unregister selected users" = "Unregister selected users";
+/* Unregister selected user(s) */
+"Unregister selected user(s)" = "Unregister selected user(s)";
+
+/* User already exist */
+"User already exist" = "User already exist";
 
 /* Wrong group */
 "Wrong group" = "Wrong group";
 
+/* Wrong groups */
+"Wrong groups" = "Wrong groups";
+
 /* Wrong name */
 "Wrong name" = "Wrong name";
 
-/* Wrong users */
-"Wrong users" = "Wrong users";
-
 /* XMPP Users */
 "XMPP Users" = "XMPP Users";
+
+/* You cannot reset password for more than one user at a time */
+"You cannot reset password for more than one user at a time" = "You cannot reset password for more than one user at a time";
 
 /* You have to enter identical passwords */
 "You have to enter identical passwords" = "You have to enter identical passwords";
@@ -69,6 +87,9 @@
 
 /* You must select a group */
 "You must select a group" = "You must select a group";
+
+/* You must select at least one group */
+"You must select at least one group" = "You must select at least one group";
 
 /* You must select at least one user */
 "You must select at least one user" = "You must select at least one user";

@@ -48,7 +48,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="1005">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSCustomView" id="677659969">
@@ -68,7 +68,6 @@
 												<int key="NSvFlags">256</int>
 												<string key="NSFrameSize">{683, 337}</string>
 												<reference key="NSSuperview" ref="691775534"/>
-												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="228198904"/>
 												<string key="NSReuseIdentifierKey">_NS:1197</string>
 												<bool key="NSEnabled">YES</bool>
@@ -79,7 +78,6 @@
 													<int key="NSvFlags">256</int>
 													<string key="NSFrameSize">{683, 17}</string>
 													<reference key="NSSuperview" ref="228198904"/>
-													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="691775534"/>
 													<string key="NSReuseIdentifierKey">_NS:1199</string>
 													<reference key="NSTableView" ref="677151237"/>
@@ -247,7 +245,6 @@
 										</array>
 										<string key="NSFrame">{{0, 17}, {683, 337}}</string>
 										<reference key="NSSuperview" ref="683186317"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="677151237"/>
 										<string key="NSReuseIdentifierKey">_NS:1195</string>
 										<reference key="NSDocView" ref="677151237"/>
@@ -260,7 +257,6 @@
 										<int key="NSvFlags">-2147483392</int>
 										<string key="NSFrame">{{224, 17}, {15, 102}}</string>
 										<reference key="NSSuperview" ref="683186317"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="241235827"/>
 										<string key="NSReuseIdentifierKey">_NS:1214</string>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -276,7 +272,6 @@
 										<int key="NSvFlags">-2147483392</int>
 										<string key="NSFrame">{{0, 339}, {683, 15}}</string>
 										<reference key="NSSuperview" ref="683186317"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="224286300"/>
 										<string key="NSReuseIdentifierKey">_NS:1216</string>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -296,7 +291,6 @@
 										</array>
 										<string key="NSFrameSize">{683, 17}</string>
 										<reference key="NSSuperview" ref="683186317"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="1020138376"/>
 										<string key="NSReuseIdentifierKey">_NS:1200</string>
 										<reference key="NSDocView" ref="1020138376"/>
@@ -305,7 +299,6 @@
 								</array>
 								<string key="NSFrame">{{0, 26}, {683, 354}}</string>
 								<reference key="NSSuperview" ref="677659969"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="691775534"/>
 								<string key="NSReuseIdentifierKey">_NS:1193</string>
 								<int key="NSsFlags">133680</int>
@@ -323,13 +316,11 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{683, 26}</string>
 								<reference key="NSSuperview" ref="677659969"/>
-								<reference key="NSWindow"/>
 								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 20}, {683, 380}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="683186317"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -338,7 +329,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{496, 408}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="677659969"/>
 						<bool key="NSViewIsLayerTreeHost">YES</bool>
 						<bool key="NSEnabled">YES</bool>
@@ -400,7 +390,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 441}, {689, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="499700828"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="610230672">
@@ -425,7 +414,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 470}, {689, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="59387253"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="543361636">
@@ -449,8 +437,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{723, 512}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="968439110"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -591,6 +577,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
+							<int key="NSAuxButtonType">7</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -634,7 +621,7 @@
 									<object class="NSTableView" id="1001377736">
 										<reference key="NSNextResponder" ref="488477822"/>
 										<int key="NSvFlags">256</int>
-										<string key="NSFrameSize">{538.5, 237}</string>
+										<string key="NSFrameSize">{538, 237}</string>
 										<reference key="NSSuperview" ref="488477822"/>
 										<reference key="NSNextKeyView" ref="212324185"/>
 										<string key="NSReuseIdentifierKey">_NS:1197</string>
@@ -644,7 +631,7 @@
 										<object class="NSTableHeaderView" key="NSHeaderView" id="447023279">
 											<reference key="NSNextResponder" ref="212324185"/>
 											<int key="NSvFlags">256</int>
-											<string key="NSFrameSize">{538.5, 17}</string>
+											<string key="NSFrameSize">{538, 17}</string>
 											<reference key="NSSuperview" ref="212324185"/>
 											<reference key="NSNextKeyView" ref="488477822"/>
 											<string key="NSReuseIdentifierKey">_NS:1199</string>
@@ -1310,188 +1297,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">101</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">TNButtonBar</string>
-					<string key="superclassName">CPButtonBar</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Views∕TNButtonBar.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNGroupManagementController</string>
-					<string key="superclassName">TNModule</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="create:">id</string>
-						<string key="destroy:">id</string>
-						<string key="migrate:">id</string>
-						<string key="reboot:">id</string>
-						<string key="resume:">id</string>
-						<string key="shutdown:">id</string>
-						<string key="snapshot:">id</string>
-						<string key="suspend:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="create:">
-							<string key="name">create:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="destroy:">
-							<string key="name">destroy:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="migrate:">
-							<string key="name">migrate:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="reboot:">
-							<string key="name">reboot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="resume:">
-							<string key="name">resume:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="shutdown:">
-							<string key="name">shutdown:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="snapshot:">
-							<string key="name">snapshot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="suspend:">
-							<string key="name">suspend:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">TNButtonBar</string>
-						<string key="filterField">NSSearchField</string>
-						<string key="groupedMigrationController">TNGroupedMigrationController</string>
-						<string key="tableVirtualMachines">NSTableView</string>
-						<string key="viewTableContainer">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonBarControl">
-							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">TNButtonBar</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="filterField">
-							<string key="name">filterField</string>
-							<string key="candidateClassName">NSSearchField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="groupedMigrationController">
-							<string key="name">groupedMigrationController</string>
-							<string key="candidateClassName">TNGroupedMigrationController</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="tableVirtualMachines">
-							<string key="name">tableVirtualMachines</string>
-							<string key="candidateClassName">NSTableView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewTableContainer">
-							<string key="name">viewTableContainer</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕GroupManagement∕TNGroupManagementController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNGroupedMigrationController</string>
-					<string key="superclassName">NSObject</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="closeWindow:">id</string>
-						<string key="openWindow:">id</string>
-						<string key="sendMigration:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="closeWindow:">
-							<string key="name">closeWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openWindow:">
-							<string key="name">openWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="sendMigration:">
-							<string key="name">sendMigration:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonMigrate">NSButton</string>
-						<string key="mainPopover">NSPopover</string>
-						<string key="searchFieldHypervisors">NSSearchField</string>
-						<string key="tableHypervisors">NSTableView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonMigrate">
-							<string key="name">buttonMigrate</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mainPopover">
-							<string key="name">mainPopover</string>
-							<string key="candidateClassName">NSPopover</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="searchFieldHypervisors">
-							<string key="name">searchFieldHypervisors</string>
-							<string key="candidateClassName">NSSearchField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="tableHypervisors">
-							<string key="name">tableHypervisors</string>
-							<string key="candidateClassName">NSTableView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕GroupManagement∕TNGroupedMigrationController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="imageViewModuleReady">NSImageView</string>
-						<string key="viewMask">NSView</string>
-						<string key="viewPreferences">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="imageViewModuleReady">
-							<string key="name">imageViewModuleReady</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewMask">
-							<string key="name">viewMask</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewPreferences">
-							<string key="name">viewPreferences</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Model∕TNModule.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>

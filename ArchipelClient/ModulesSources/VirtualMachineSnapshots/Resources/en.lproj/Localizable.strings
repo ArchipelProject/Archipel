@@ -16,9 +16,6 @@
 /* Delete */
 "Delete" = "Delete";
 
-/* Delete selected snapshot */
-"Delete selected snapshot" = "Delete selected snapshot";
-
 /* Delete to snapshot */
 "Delete to snapshot" = "Delete to snapshot";
 
@@ -31,14 +28,11 @@
 /* Revert */
 "Revert" = "Revert";
 
-/* Revert to selected drive */
-"Revert to selected drive" = "Revert to selected drive";
+/* Revert state to selected snapshot */
+"Revert state to selected snapshot" = "Revert state to selected snapshot";
 
 /* Revert to snapshot */
 "Revert to snapshot" = "Revert to snapshot";
-
-/* Revert VM state to selected snapshot */
-"Revert VM state to selected snapshot" = "Revert VM state to selected snapshot";
 
 /* Snapshot deleted */
 "Snapshot deleted" = "Snapshot deleted";
@@ -48,9 +42,6 @@
 
 /* Snapshoting sucessfull */
 "Snapshoting sucessfull" = "Snapshoting sucessfull";
-
-/* Take a snapshot */
-"Take a snapshot" = "Take a snapshot";
 
 /* There is no snapshot for this virtual machine */
 "There is no snapshot for this virtual machine" = "There is no snapshot for this virtual machine";

@@ -44,13 +44,13 @@
 /* Class = "NSTextFieldCell"; title = "..."; ObjectID = "47"; */
 "47.title" = "...";
 
-/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled, OOM will not be able to kill the VM in case of memory going too low"; ObjectID = "48"; */
+/* Class = "NSView"; ibShadowedToolTip = "If enabled, OOM will not be able to kill the VM in case of memory going too low"; ObjectID = "48"; */
 "48.ibShadowedToolTip" = "If enabled, OOM will not be able to kill the VM in case of memory going too low";
 
-/* Class = "TNSwitch"; ibShadowedToolTip = "If enabled , the VM will start with the hypervisor"; ObjectID = "49"; */
+/* Class = "NSView"; ibShadowedToolTip = "If enabled , the VM will start with the hypervisor"; ObjectID = "49"; */
 "49.ibShadowedToolTip" = "If enabled , the VM will start with the hypervisor";
 
-/* Class = "TNTextFieldStepper"; ibShadowedToolTip = "Manage the number of CPU"; ObjectID = "50"; */
+/* Class = "NSView"; ibShadowedToolTip = "Manage the number of CPU"; ObjectID = "50"; */
 "50.ibShadowedToolTip" = "Manage the number of CPU";
 
 /* Class = "NSSlider"; ibShadowedToolTip = "Adjust live memory"; ObjectID = "51"; */
@@ -128,9 +128,6 @@
 /* Class = "NSTextFieldCell"; title = "Parking a virtual machine \nwill send its informations in the park."; ObjectID = "200"; */
 "200.title" = "Parking a virtual machine \nwill send its informations in the park.";
 
-/* Class = "NSBox"; title = "Commands"; ObjectID = "201"; */
-"201.title" = "Commands";
-
 /* Class = "NSTextField"; ibShadowedToolTip = "Delay before polling new CPU usage"; ObjectID = "218"; */
 "218.ibShadowedToolTip" = "Delay before polling new CPU usage";
 
@@ -139,7 +136,4 @@
 
 /* Class = "NSTextFieldCell"; title = "CPU Usage refresh time"; ObjectID = "220"; */
 "220.title" = "CPU Usage refresh time";
-
-/* Class = "NSBox"; title = "Box"; ObjectID = "227"; */
-"227.title" = "Box";
 

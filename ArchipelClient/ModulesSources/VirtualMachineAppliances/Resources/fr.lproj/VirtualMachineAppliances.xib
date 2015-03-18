@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1090</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
-		<string key="IBDocument.HIToolboxVersion">755.00</string>
+		<int key="IBDocument.SystemTarget">101000</int>
+		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
+		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6245</string>
+			<string key="NS.object.0">6751</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSBox</string>
@@ -24,7 +24,6 @@
 			<string>NSSearchField</string>
 			<string>NSSearchFieldCell</string>
 			<string>NSTableColumn</string>
-			<string>NSTableHeaderView</string>
 			<string>NSTableView</string>
 			<string>NSTextField</string>
 			<string>NSTextFieldCell</string>
@@ -49,7 +48,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="417908996">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSImageView" id="43283298">
@@ -65,7 +64,6 @@
 						</set>
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="689982466"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="278892624">
@@ -94,24 +92,12 @@
 											<object class="NSTableView" id="720383587">
 												<reference key="NSNextResponder" ref="635639831"/>
 												<int key="NSvFlags">256</int>
-												<string key="NSFrameSize">{686, 349}</string>
+												<string key="NSFrameSize">{686, 366}</string>
 												<reference key="NSSuperview" ref="635639831"/>
-												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView" ref="565747509"/>
 												<string key="NSReuseIdentifierKey">_NS:1197</string>
 												<bool key="NSEnabled">YES</bool>
 												<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 												<bool key="NSControlAllowsExpansionToolTips">YES</bool>
-												<object class="NSTableHeaderView" key="NSHeaderView" id="335693939">
-													<reference key="NSNextResponder" ref="565747509"/>
-													<int key="NSvFlags">256</int>
-													<string key="NSFrameSize">{686, 17}</string>
-													<reference key="NSSuperview" ref="565747509"/>
-													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="635639831"/>
-													<string key="NSReuseIdentifierKey">_NS:1199</string>
-													<reference key="NSTableView" ref="720383587"/>
-												</object>
 												<object class="_NSCornerView" key="NSCornerView">
 													<nil key="NSNextResponder"/>
 													<int key="NSvFlags">-2147483392</int>
@@ -272,9 +258,8 @@
 												<int key="NSTableViewGroupRowStyle">1</int>
 											</object>
 										</array>
-										<string key="NSFrame">{{0, 17}, {685, 349}}</string>
+										<string key="NSFrameSize">{685, 366}</string>
 										<reference key="NSSuperview" ref="522169729"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="720383587"/>
 										<string key="NSReuseIdentifierKey">_NS:1195</string>
 										<reference key="NSDocView" ref="720383587"/>
@@ -287,7 +272,6 @@
 										<int key="NSvFlags">-2147483392</int>
 										<string key="NSFrame">{{224, 17}, {15, 102}}</string>
 										<reference key="NSSuperview" ref="522169729"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="450573546"/>
 										<string key="NSReuseIdentifierKey">_NS:1214</string>
 										<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -295,15 +279,13 @@
 										<reference key="NSControlTarget" ref="522169729"/>
 										<reference key="NSTarget" ref="522169729"/>
 										<string key="NSAction">_doScroller:</string>
-										<double key="NSCurValue">37</double>
-										<double key="NSPercent">0.1947367936372757</double>
+										<double key="NSPercent">0.99727520435967298</double>
 									</object>
 									<object class="NSScroller" id="450573546">
 										<reference key="NSNextResponder" ref="522169729"/>
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{0, 350}, {685, 16}}</string>
 										<reference key="NSSuperview" ref="522169729"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="1073660176"/>
 										<string key="NSReuseIdentifierKey">_NS:1216</string>
 										<bool key="NSEnabled">YES</bool>
@@ -315,31 +297,15 @@
 										<string key="NSAction">_doScroller:</string>
 										<double key="NSPercent">0.99854227405247808</double>
 									</object>
-									<object class="NSClipView" id="565747509">
-										<reference key="NSNextResponder" ref="522169729"/>
-										<int key="NSvFlags">2338</int>
-										<array class="NSMutableArray" key="NSSubviews">
-											<reference ref="335693939"/>
-										</array>
-										<string key="NSFrameSize">{685, 17}</string>
-										<reference key="NSSuperview" ref="522169729"/>
-										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="335693939"/>
-										<string key="NSReuseIdentifierKey">_NS:1200</string>
-										<reference key="NSDocView" ref="335693939"/>
-										<bool key="NSAutomaticallyAdjustsContentInsets">YES</bool>
-									</object>
 								</array>
 								<string key="NSFrame">{{0, 25}, {685, 366}}</string>
 								<reference key="NSSuperview" ref="896725779"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="635639831"/>
 								<string key="NSReuseIdentifierKey">_NS:1193</string>
 								<int key="NSsFlags">133808</int>
 								<reference key="NSVScroller" ref="847439680"/>
 								<reference key="NSHScroller" ref="450573546"/>
 								<reference key="NSContentView" ref="635639831"/>
-								<reference key="NSHeaderClipView" ref="565747509"/>
 								<bytes key="NSScrollAmts">QSAAAEEgAABBmAAAQZgAAA</bytes>
 								<double key="NSMinMagnification">0.25</double>
 								<double key="NSMaxMagnification">4</double>
@@ -350,13 +316,11 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="896725779"/>
-								<reference key="NSWindow"/>
 								<string key="NSClassName">TNButtonBar</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{20, 19}, {685, 391}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="522169729"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -365,7 +329,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{498, 418}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="896725779"/>
 						<bool key="NSViewIsLayerTreeHost">YES</bool>
 						<bool key="NSEnabled">YES</bool>
@@ -427,7 +390,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 448}, {622, 20}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="281192649"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="305166580">
@@ -452,7 +414,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="43283298"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="833758935">
@@ -476,8 +437,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{725, 522}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="702408257"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -610,6 +569,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
+							<int key="NSAuxButtonType">7</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -707,6 +667,7 @@
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">200</int>
 							<int key="NSPeriodicInterval">25</int>
+							<int key="NSAuxButtonType">3</int>
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
@@ -1018,7 +979,6 @@
 						<reference key="object" ref="522169729"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="847439680"/>
-							<reference ref="335693939"/>
 							<reference ref="450573546"/>
 							<reference ref="720383587"/>
 						</array>
@@ -1027,11 +987,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">75</int>
 						<reference key="object" ref="847439680"/>
-						<reference key="parent" ref="522169729"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">76</int>
-						<reference key="object" ref="335693939"/>
 						<reference key="parent" ref="522169729"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -1313,7 +1268,6 @@
 				<string key="72.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="74.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="75.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="76.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="77.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="78.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="79.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1346,134 +1300,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">128</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">TNModule</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toolbarItemClicked:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toolbarItemClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="imageViewModuleReady">NSImageView</string>
-						<string key="viewMask">NSView</string>
-						<string key="viewPreferences">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="imageViewModuleReady">
-							<string key="name">imageViewModuleReady</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewMask">
-							<string key="name">viewMask</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewPreferences">
-							<string key="name">viewPreferences</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/Model∕TNModule.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">TNVirtualMachineAppliancesController</string>
-					<string key="superclassName">TNModule</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="attach:">id</string>
-						<string key="closeNewApplianceWindow:">id</string>
-						<string key="detach:">id</string>
-						<string key="openNewApplianceWindow:">id</string>
-						<string key="package:">id</string>
-						<string key="tableDoubleClicked:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="attach:">
-							<string key="name">attach:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="closeNewApplianceWindow:">
-							<string key="name">closeNewApplianceWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="detach:">
-							<string key="name">detach:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openNewApplianceWindow:">
-							<string key="name">openNewApplianceWindow:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="package:">
-							<string key="name">package:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="tableDoubleClicked:">
-							<string key="name">tableDoubleClicked:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="buttonBarControl">TNButtonBar</string>
-						<string key="buttonCreate">NSButton</string>
-						<string key="checkBoxShouldGZIP">CPCheckBox</string>
-						<string key="fieldFilterAppliance">NSSearchField</string>
-						<string key="fieldNewApplianceName">NSTextField</string>
-						<string key="popoverNewAppliances">NSPopover</string>
-						<string key="tableAppliances">NSTableView</string>
-						<string key="viewTableContainer">NSView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="buttonBarControl">
-							<string key="name">buttonBarControl</string>
-							<string key="candidateClassName">TNButtonBar</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="buttonCreate">
-							<string key="name">buttonCreate</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="checkBoxShouldGZIP">
-							<string key="name">checkBoxShouldGZIP</string>
-							<string key="candidateClassName">CPCheckBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldFilterAppliance">
-							<string key="name">fieldFilterAppliance</string>
-							<string key="candidateClassName">NSSearchField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fieldNewApplianceName">
-							<string key="name">fieldNewApplianceName</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="popoverNewAppliances">
-							<string key="name">popoverNewAppliances</string>
-							<string key="candidateClassName">NSPopover</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="tableAppliances">
-							<string key="name">tableAppliances</string>
-							<string key="candidateClassName">NSTableView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="viewTableContainer">
-							<string key="name">viewTableContainer</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../.XcodeSupport/ModulesSources∕VirtualMachineAppliances∕TNVirtualMachineAppliancesController.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>

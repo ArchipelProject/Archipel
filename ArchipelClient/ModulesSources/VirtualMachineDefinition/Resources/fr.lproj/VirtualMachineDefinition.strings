@@ -2,9 +2,6 @@
 /* Class = "NSTextFieldCell"; title = "Virtual machine properties"; ObjectID = "3"; */
 "3.title" = "Virtual machine properties";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "4"; */
-"4.title" = "Box";
-
 /* Class = "NSPopUpButton"; ibShadowedToolTip = "Change the kind of VM"; ObjectID = "5"; */
 "5.ibShadowedToolTip" = "Change the kind of VM";
 
@@ -19,9 +16,6 @@
 
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "10"; */
 "10.title" = "Item 3";
-
-/* Class = "NSBox"; title = "Box"; ObjectID = "11"; */
-"11.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "Basic settings"; ObjectID = "13"; */
 "13.title" = "Basic settings";
@@ -38,7 +32,7 @@
 /* Class = "NSTextFieldCell"; title = "Boot from"; ObjectID = "21"; */
 "21.title" = "Boot from:";
 
-/* Class = "TNTextFieldStepper"; ibShadowedToolTip = "Number of CPUs"; ObjectID = "22"; */
+/* Class = "NSView"; ibShadowedToolTip = "Number of CPUs"; ObjectID = "22"; */
 "22.ibShadowedToolTip" = "Number of CPUs";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "Amount of memory (RAM)"; ObjectID = "23"; */
@@ -250,9 +244,6 @@
 
 /* Class = "NSButton"; ibShadowedToolTip = "Open the XML editor"; ObjectID = "370"; */
 "370.ibShadowedToolTip" = "Open the XML editor";
-
-/* Class = "NSTextFieldCell"; title = "Advanced controls:"; ObjectID = "380"; */
-"380.title" = "Advanced controls:";
 
 /* Class = "NSButton"; ibShadowedToolTip = "Save changes"; ObjectID = "385"; */
 "385.ibShadowedToolTip" = "Save changes";

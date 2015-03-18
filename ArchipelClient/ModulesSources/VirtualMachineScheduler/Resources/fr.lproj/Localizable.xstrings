@@ -4,6 +4,8 @@
 <dict>
 	<key>Action has been scheduled</key>
 	<string>Action has been scheduled</string>
+	<key>Add a scheduled action</key>
+	<string>Add a scheduled action</string>
 	<key>Are you sure you want to unschedule these jobs ?</key>
 	<string>Are you sure you want to unschedule these jobs ?</string>
 	<key>Are you sure you want to unschedule this job ?</key>
@@ -14,8 +16,8 @@
 	<string>Error</string>
 	<key>Recurent</key>
 	<string>Recurent</string>
-	<key>Schedule new action</key>
-	<string>Schedule new action</string>
+	<key>Remove the selected scheduled action(s)</key>
+	<string>Remove the selected scheduled action(s)</string>
 	<key>Unique</key>
 	<string>Unique</string>
 	<key>Unschedule</key>
@@ -24,8 +26,6 @@
 	<string>Unschedule Jobs</string>
 	<key>Unschedule job</key>
 	<string>Unschedule job</string>
-	<key>Unschedule selected action</key>
-	<string>Unschedule selected action</string>
 	<key>You must select a date</key>
 	<string>You must select a date</string>
 	<key>You must select a job</key>
