@@ -21,6 +21,7 @@
 @import <AppKit/CPMenu.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPToolbarItem.j>
+@import <AppKit/CPTabViewItem.j>
 @import <AppKit/CPView.j>
 
 @import <StropheCappuccino/StropheCappuccino.j>
@@ -28,6 +29,7 @@
 @import <TNKit/TNTabView.j>
 @import <TNKit/TNToolbar.j>
 
+@import "../Model/TNModule.j"
 @import "TNPermissionsCenter.j"
 
 @global TNArchipelEntityTypes

@@ -166,7 +166,7 @@ var TNModuleStatusImageReady,
 */
 - (void)addControlsWithIdentifier:(CPString)anIdentifier title:(CPString)aTitle target:(id)aTarget action:(SEL)aSelector image:(CPImage)anImage
 {
-    [anImage setSize:CPSizeMake(16.0, 16.0)];
+    [anImage setSize:CGSizeMake(16.0, 16.0)];
 
     // add a new buttonbar to dict
     var _button = [CPButtonBar plusButton];

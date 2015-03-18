@@ -366,7 +366,11 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 - (IBAction)changeCurrentHypervisor:(id)aSender
 {
     _entity = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"contact"];
-    _entityCapabilities = @{@"canManageUsers":[[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageUsers"], @"canManageSharedRostergroups":[[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageSharedRostergroups"]}
+
+    var canManageUsers = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageUsers"] || NO,
+        canManageSharedRostergroups = [[[buttonHypervisors selectedItem] representedObject] objectForKey:@"canManageSharedRostergroups"] || NO;
+
+    _entityCapabilities = @{@"canManageUsers": canManageUsers, @"canManageSharedRostergroups": canManageSharedRostergroups}
 
     [buttonHypervisors setToolTip:CPBundleLocalizedString([[_entity JID] domain] + @" managed by " + [[_entity JID] bare], [[_entity JID] domain] + @" managed by " + [[_entity JID] bare])];
 

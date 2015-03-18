@@ -21,6 +21,7 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPTextField.j>
+@import <AppKit/CPSecureTextField.j>
 
 @import <StropheCappuccino/TNStropheIMClient.j>
 @import <StropheCappuccino/TNStropheStanza.j>

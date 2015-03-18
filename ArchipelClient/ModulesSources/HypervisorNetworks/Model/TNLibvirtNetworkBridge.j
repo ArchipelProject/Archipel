@@ -47,7 +47,7 @@
 #pragma mark -
 #pragma mark Initialization
 
-- (TNLibvirtNetworkBridge)init
+- (id)init
 {
     if (self = [super init])
     {

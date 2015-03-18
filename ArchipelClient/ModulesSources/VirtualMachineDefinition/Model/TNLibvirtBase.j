@@ -32,7 +32,7 @@
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
-- (TNLibvirtBase)initWithXMLNode:(TNXMLNode)aNode
+- (id)initWithXMLNode:(TNXMLNode)aNode
 {
     if (!aNode || (typeof(aNode) == @"undefined"))
         return nil;

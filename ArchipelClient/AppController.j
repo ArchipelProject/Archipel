@@ -210,7 +210,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     TNTabView                                   _moduleTabView;
     TNToolbar                                   _mainToolbar;
     TNVersion                                   _currentVersion;
-    TNViewHypervisorControl                     _currentRightViewContent;
 }
 
 
@@ -584,9 +583,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 */
 - (void)makeToolbar
 {
-    var bundle = [CPBundle bundleForClass:self];
-
-    CPLog.trace("initializing mianToolbar");
+    CPLog.trace("initializing mainToolbar");
 
     _mainToolbar = [[TNToolbar alloc] init];
 
@@ -607,23 +604,23 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout
                                   label:CPLocalizedString(@"Log out", @"Log out")
-                                   icon:[bundle pathForResource:@"IconsToolbar/logout.png"]
-                                   altIcon:[bundle pathForResource:@"IconsToolbar/logout-alt.png"]
+                                   icon:CPImageInBundle(@"IconsToolbar/logout.png", 32, 32)
+                                   altIcon:CPImageInBundle(@"IconsToolbar/logout-alt.png", 32, 32)
                                  target:self action:@selector(toolbarItemLogoutClick:)
                                 toolTip:@"Log out from the application"];
 
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags
                                   label:CPLocalizedString(@"Tags", @"Tags")
-                                   icon:[bundle pathForResource:@"IconsToolbar/tags.png"]
-                                   altIcon:[bundle pathForResource:@"IconsToolbar/tags-alt.png"]
+                                   icon:CPImageInBundle(@"IconsToolbar/tags.png", 32, 32)
+                                   altIcon:CPImageInBundle(@"IconsToolbar/tags-alt.png", 32, 32)
                                  target:self action:@selector(toolbarItemTagsClick:)
                                 toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 130.0, 25.0)],
-        availableItem   = [[CPMenuItem alloc] init],
-        awayItem        = [[CPMenuItem alloc] init],
-        busyItem        = [[CPMenuItem alloc] init],
-        DNDItem         = [[CPMenuItem alloc] init],
+        availableItem   = [CPMenuItem new],
+        awayItem        = [CPMenuItem new],
+        busyItem        = [CPMenuItem new],
+        DNDItem         = [CPMenuItem new],
         statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:CPLocalizedString(@"Status", @"Status") view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
 
 
@@ -634,19 +631,19 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:CPImageInBundle(@"IconsStatus/green-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [availableItem setImage:CPImageInBundle(@"IconsStatus/green-large.png", 10.0, 8.0)];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:CPImageInBundle(@"IconsStatus/orange-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [awayItem setImage:CPImageInBundle(@"IconsStatus/orange-large.png", 10.0, 8.0)];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:CPImageInBundle(@"IconsStatus/red-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [busyItem setImage:CPImageInBundle(@"IconsStatus/red-large.png", 10.0, 8.0)];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:CPImageInBundle(@"IconsStatus/black-large.png", CGSizeMake(10.0, 8.0), bundle)];
+    [DNDItem setImage:CPImageInBundle(@"IconsStatus/black-large.png", 10.0, 8.0)];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CGSizeMake(123.0, 25.0)];
@@ -658,7 +655,6 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     [_mainToolbar setPosition:499 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
     [_mainToolbar setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
     [_mainToolbar setPosition:902 forToolbarItemIdentifier:TNToolBarItemTags];
-    [_mainToolbar setPosition:903 forToolbarItemIdentifier:TNToolBarItemHelp];
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
 
     [_mainToolbar reloadToolbarItems];
@@ -1554,7 +1550,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
 
     var itemRow = [anOutlineView rowForItem:anItem];
     if ([anOutlineView selectedRow] != itemRow)
-        if (itemRow >=0)
+        if (itemRow >= 0)
             [anOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
         else
             [anOutlineView deselectAll];

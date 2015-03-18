@@ -101,7 +101,7 @@ var TNVirtualMachineDataViewAvatarUnknown;
 */
 - (void)setObjectValue:(TNStropheContact)aContact
 {
-    [fieldJID setStringValue:[aContact JID]];
+    [fieldJID setStringValue:[aContact JID] || @""];
     [fieldServer setStringValue:[[aContact JID] domain]];
     [fieldHypervisor setStringValue:[[aContact JID] resource]];
 

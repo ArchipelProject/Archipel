@@ -35,6 +35,7 @@
 @import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "TNXMPPServerUserFetcher.j"
+@import "TNXMPPUsersController.j"
 
 @class TNPermissionsCenter
 @global CPLocalizedString
@@ -761,7 +762,7 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 {
 
     if ([aTableView selectedRow] != aRow)
-        if (aRow >=0)
+        if (aRow >= 0)
             [aTableView selectRowIndexes:[CPIndexSet indexSetWithIndex:aRow] byExtendingSelection:NO];
         else
             [aTableView deselectAll];

@@ -183,7 +183,12 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 - (void)setEntity:(CPDictionary)anEntity
 {
     _entity = [anEntity objectForKey:@"contact"];
-    _entityCapabilities = @{@"canManageUsers":[anEntity objectForKey:@"canManageUsers"], @"canManageSharedRostergroups":[anEntity objectForKey:@"canManageSharedRostergroups"]}
+
+    var canManageUsers = [anEntity objectForKey:@"canManageUsers"] || NO,
+        canManageSharedRostergroups = [anEntity objectForKey:@"canManageSharedRostergroups"] || NO;
+
+    _entityCapabilities = @{@"canManageUsers": canManageUsers, @"canManageSharedRostergroups": canManageSharedRostergroups};
+
     [_usersFetcher setEntity:_entity];
 }
 
