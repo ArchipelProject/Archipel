@@ -27,7 +27,7 @@ var switchKnobWidth     = 30,
 */
 @implementation TNSwitch : LPSwitch
 
-+ (id)themeAttributes
++ (CPDictionary)themeAttributes
 {
     var mainBundle                     = [CPBundle mainBundle],
         switchWidth                    = 77,
