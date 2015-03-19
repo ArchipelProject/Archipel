@@ -71,17 +71,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             self.entity.permission_center.create_permission("nuagenetwork_create", "Authorizes user to create a Nuage network", False)
             self.entity.permission_center.create_permission("nuagenetwork_delete", "Authorizes user to delete a Nuage network", False)
             self.entity.permission_center.create_permission("nuagenetwork_update", "Authorizes user to update a Nuage network", False)
-
-        # register to the node vmrequest
-        if isinstance(self.entity, TNArchipelHypervisor):
-            self.entity.log.info("NUAGENETWORKS: Checking if general bridge %s exists." % self.nuageBridgeName)
-            if not os.system("brctl showstp %s" % self.nuageBridgeName) == 0:
-                self.entity.log.info("NUAGENETWORKS: Nope. creating it...")
-                if os.system("brctl addbr %s" % self.nuageBridgeName):
-                    self.entity.log.error("NUAGENETWORKS: Unable to create bridge. Dying.")
-                    raise Exception("Unable to create the general bridge with name %s." % self.nuageBridgeName)
-                self.entity.log.info("NUAGENETWORKS: Bridge %s has been created." % self.nuageBridgeName)
-
+s
         if isinstance(self.entity, TNArchipelHypervisor):
             self.manage_database()
 
