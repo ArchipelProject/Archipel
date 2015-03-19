@@ -71,7 +71,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
             self.entity.permission_center.create_permission("nuagenetwork_create", "Authorizes user to create a Nuage network", False)
             self.entity.permission_center.create_permission("nuagenetwork_delete", "Authorizes user to delete a Nuage network", False)
             self.entity.permission_center.create_permission("nuagenetwork_update", "Authorizes user to update a Nuage network", False)
-s
+
         if isinstance(self.entity, TNArchipelHypervisor):
             self.manage_database()
 
