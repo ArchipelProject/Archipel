@@ -44,7 +44,7 @@ If you find some errors, please feel free to correct them.
 
 * Antoine Mercadal (primalmotion)   : Lead developer
 * Cyril Peponnet (CyrilPeponnet)    : contributor
-
+* Nicolas Ochem (nicolasochem)      : contributor
 * Franck Villaume (nerville)        : contributor
 * Alexandre Fernandez (crashtest)   : contributor
 * Ben Langfeld (benlangfedl)        : StropheCappuccino contributor
