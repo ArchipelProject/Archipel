@@ -116,7 +116,7 @@ def install_dev(package_paths):
     """
     for package_path in package_paths:
         os.chdir(package_path)
-        if os.system("python setup.py develop --no-deps") == 0:
+        if os.system("python setup.py develop ") == 0:
             success("EGG package %s installed in developer mode" % os.path.basename(package_path))
         else:
             error("Unable to install EGG package %s in developer mode" % os.path.basename(package_path))
