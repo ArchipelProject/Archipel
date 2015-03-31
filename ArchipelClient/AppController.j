@@ -133,9 +133,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNToolBarItemTags               = @"TNToolBarItemTags",
     TNToolBarItemHelp               = @"TNToolBarItemHelp",
     TNToolBarItemStatus             = @"TNToolBarItemStatus",
-    TNArchipelTagViewHeight         = 33.0;
+    TNArchipelTagViewHeight         = 33.0,
+    date                            = new Date();
+    year                            = date.getFullYear();
 
-__COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
+__COPYRIGHT__ = "Copyright 2010-"+year;
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
