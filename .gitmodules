@@ -16,9 +16,6 @@
 [submodule "ArchipelClient/Libraries/TNKit"]
 	path = ArchipelClient/Libraries/TNKit
 	url = https://github.com/ArchipelProject/TNKit.git
-[submodule "ArchipelAgent/ANSOS"]
-	path = ArchipelAgent/ANSOS
-	url = https://github.com/ArchipelProject/Node.git
 [submodule "ArchipelAgent/archipel-core/archipelcore/xmpp"]
 	path = ArchipelAgent/archipel-core/archipelcore/xmpp
 	url = https://github.com/ArchipelProject/xmpppy.git
