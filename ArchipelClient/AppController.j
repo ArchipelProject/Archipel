@@ -379,7 +379,7 @@ __COPYRIGHT__ = "Copyright 2010-"+year;
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
 
-    [filterView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
+    [filterView setBackgroundColor:[CPColor whiteColor]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
 
