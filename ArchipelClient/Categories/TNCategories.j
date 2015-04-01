@@ -36,3 +36,4 @@
 @import "CPView+Border.j"
 @import "TNStropheClient+Singleton.j"
 @import "TNStropheGroup+Capitalized.j"
+@import "CPDictionary+NoExceptionOnNil.j"
