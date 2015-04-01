@@ -137,7 +137,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     date                            = new Date();
     year                            = date.getFullYear();
 
-__COPYRIGHT__ = "Copyright 2010-"+year;
+__COPYRIGHT__ = "Copyright 2010-"+year+" - Antoine Mercadal";
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
