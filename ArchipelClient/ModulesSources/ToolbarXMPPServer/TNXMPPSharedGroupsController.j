@@ -110,10 +110,12 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 */
 - (void)awakeFromCib
 {
-    // [viewTableGroupsContainer setBorderedWithHexColor:@"#F2F2F2"];
-    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#F2F2F2"];
+
+    [splitViewVertical setIsPaneSplitter:NO];
     [splitViewVertical setBorderedWithHexColor:@"#F2F2F2"];
-    [splitViewVertical setIsPaneSplitter:YES];
+    [splitViewVertical setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewVertical setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewVertical setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
 
     /* table Users */
     _datasourceUsers  = [[TNTableViewLazyDataSource alloc] init];
