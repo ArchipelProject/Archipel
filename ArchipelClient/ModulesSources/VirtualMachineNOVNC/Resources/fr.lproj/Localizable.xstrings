@@ -12,8 +12,6 @@
 	<string>For now, you cannot use SPICE screen in external window</string>
 	<key>Full Screen</key>
 	<string>Full Screen</string>
-	<key>Get Clipboard</key>
-	<string>Get Clipboard</string>
 	<key>It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.</key>
 	<string>It seems your websocket configuration is not properly configured. If you are using Firefox, go to about:config and set 'network.websocket.override-security-block' and 'network.websocket.enabled' to 'True'.</string>
 	<key>Retry</key>
@@ -22,8 +20,6 @@
 	<string>SPICE is not supported as external window</string>
 	<key>Screen for </key>
 	<string>Screen for </string>
-	<key>Send Clipboard</key>
-	<string>Send Clipboard</string>
 	<key>Websocket error for VNC</key>
 	<string>Websocket error for VNC</string>
 	<key>Your browser does not support javascript fullscreen</key>

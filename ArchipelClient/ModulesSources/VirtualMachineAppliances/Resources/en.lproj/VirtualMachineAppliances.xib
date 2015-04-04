@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">101000</int>
-		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.SystemVersion">14D130a</string>
 		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
-		<string key="IBDocument.AppKitVersion">1347.45</string>
-		<string key="IBDocument.HIToolboxVersion">758.60</string>
+		<string key="IBDocument.AppKitVersion">1347.57</string>
+		<string key="IBDocument.HIToolboxVersion">758.70</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">6751</string>
@@ -160,7 +160,7 @@
 															<reference key="NSTextColor" ref="721482670"/>
 														</object>
 														<object class="NSTextFieldCell" key="NSDataCell" id="884685301">
-															<int key="NSCellFlags">337641536</int>
+															<int key="NSCellFlags">67108928</int>
 															<int key="NSCellFlags2">2048</int>
 															<string key="NSContents">Text Cell</string>
 															<object class="NSFont" key="NSSupport" id="606744346">
@@ -216,7 +216,7 @@
 															<reference key="NSTextColor" ref="721482670"/>
 														</object>
 														<object class="NSTextFieldCell" key="NSDataCell" id="940548428">
-															<int key="NSCellFlags">337641536</int>
+															<int key="NSCellFlags">67108928</int>
 															<int key="NSCellFlags2">2048</int>
 															<string key="NSContents">Text Cell</string>
 															<reference key="NSSupport" ref="606744346"/>
