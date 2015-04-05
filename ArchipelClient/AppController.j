@@ -68,7 +68,7 @@
 @global CPApplicationWillTerminateNotification
 @global CPApp
 
-CPFontDefaultSystemFontFace = @"Courier";
+CPFontDefaultSystemFontFace = @"Arial";
 
 /*! @global
     @group TNArchipelEntityType
