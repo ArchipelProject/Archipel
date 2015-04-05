@@ -58,7 +58,7 @@ def main():
 
     # Parses all existing modules
     for folder in os.listdir(GLOBAL_MODULES_SRC_PATH):
-        if os.path.isdir(GLOBAL_MODULES_SRC_PATH + folder):
+        if os.path.isdir(GLOBAL_MODULES_SRC_PATH + folder) and not os.path.isfile(GLOBAL_MODULES_SRC_PATH + folder + "/module_disabled"):
             allmodules_paths.append(GLOBAL_MODULES_SRC_PATH + folder)
 
     for o, a in opts:
