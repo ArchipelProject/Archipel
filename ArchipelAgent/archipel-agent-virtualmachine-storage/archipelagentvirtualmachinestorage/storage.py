@@ -23,6 +23,7 @@
 import magic
 import os
 import subprocess
+import shutil
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
@@ -38,6 +39,7 @@ ARCHIPEL_ERROR_CODE_DRIVES_GETISO       = -3004
 ARCHIPEL_ERROR_CODE_DRIVES_CONVERT      = -3005
 ARCHIPEL_ERROR_CODE_DRIVES_RENAME       = -3006
 ARCHIPEL_ERROR_CODE_DRIVES_GETGOLDEN    = -3007
+ARCHIPEL_ERROR_CODE_DRIVES_SETGOLDEN    = -3008
 
 
 class TNStorageManagement (TNArchipelPlugin):
@@ -75,6 +77,7 @@ class TNStorageManagement (TNArchipelPlugin):
         self.entity.permission_center.create_permission("drives_getiso", "Authorizes user to get existing ISO images", False)
         self.entity.permission_center.create_permission("drives_convert", "Authorizes user to convert a drive", False)
         self.entity.permission_center.create_permission("drives_rename", "Authorizes user to rename a drive", False)
+        self.entity.permission_center.create_permission("drives_create_golden", "Authorizes user to create a golden image", False)
 
 
     ### Plugin interface
@@ -201,6 +204,7 @@ class TNStorageManagement (TNArchipelPlugin):
             - convert
             - rename
             - getgolden
+            - setgolden
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
@@ -225,6 +229,8 @@ class TNStorageManagement (TNArchipelPlugin):
             reply = self.iq_rename(iq)
         elif action == "getgolden":
             reply = self.iq_getgolden(iq)
+        elif action == "setgolden":
+            reply = self.iq_setgolden(iq)
 
         if reply:
             conn.send(reply)
@@ -406,8 +412,9 @@ class TNStorageManagement (TNArchipelPlugin):
                         "virtualSize": diskInfo[2].split(" ")[3].replace("(", ""),
                         "diskSize": diskSize
                     }
-                    if len(diskInfo) == 7:
-                        currentAttributes["backingFile"] = os.path.basename(diskInfo[5].split()[2])
+                    backing_file = filter(lambda x: x.startswith("backing file"), diskInfo)
+                    if backing_file:
+                        currentAttributes["backingFile"] = backing_file[0].split()[2]
                     node = xmpp.Node(tag="disk", attrs=currentAttributes)
                     nodes.append(node)
             reply = iq.buildReply("result")
@@ -465,4 +472,35 @@ class TNStorageManagement (TNArchipelPlugin):
             self.entity.log.info("Info about golden sent.")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETGOLDEN)
+        return reply
+
+    def iq_setgolden(self, iq):
+        """
+        Set a qow2 image as golden image
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            query_node  = iq.getTag("query")
+            disk_path   = query_node.getTag("archipel").getAttr("path")
+            golden_name = query_node.getTag("archipel").getAttr("name").replace(" ", "_").replace("/", "_").replace("..", "_")
+
+            if not (self._is_file_a_qcow(disk_path) or self._is_file_a_qcow2(disk_path)):
+                raise Exception("Invalid format", "You can only use qcow/qcow2 as format for golden image")
+
+            if not os.path.exists(disk_path):
+                raise Exception("File not found", "Cannot find %s" % disk_path)
+
+            if os.path.exists(os.path.join(self.golden_drives_dir, golden_name)):
+                raise Exception("Golden image already exist", "Golden image %s already exist" % golden_name)
+
+            shutil.move(disk_path, os.path.join(self.golden_drives_dir, golden_name))
+            reply = iq.buildReply("result")
+            self.entity.log.info("Created golden image %s" % (golden_name))
+            self.entity.shout("disk", "I've just created a new golden image %s." % (golden_name))
+            self.entity.push_change("disk", "goldened")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_SETGOLDEN)
         return reply
