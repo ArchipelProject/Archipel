@@ -44,6 +44,7 @@ import sys
 import traceback
 import time
 from threading import Timer
+from StringIO import StringIO
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
@@ -699,7 +700,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.domain.resume()
         self.log.info("Virtual machine resumed.")
 
-    def screenshot(self, thumbnail=True):
+    def screenshot(self, thumbnail=True, screen=0):
         """
         take a screenshot of the virtualmachine and
         return image as base64encoded PNG
@@ -718,31 +719,25 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         state = self.domain.info()[0]
         if hasattr(self.domain, "screenshot") and (state == libvirt.VIR_DOMAIN_PAUSED or state == libvirt.VIR_DOMAIN_RUNNING):
             try:
-                from PIL import Image
+                from PIL import Image, ImageFile
             except:
                 self.log.error("Cannot take screenshot because cannot use python imaging library (PIL). You need to install python-imaging")
                 return (None, (0, 0))
 
-            f = tempfile.NamedTemporaryFile(delete=False)
-            f.close()
-
-            # temporary solution. screenshot API is not
-            # working yet with python libvirt
-            ret = os.system("virsh screenshot %s %s" % (self.uuid, f.name))
-            if not ret == 0:
-                self.log.error("Cannot use virsh to take screenshot: return code is %d" % ret)
-                return None
-            # end of temp technic
-            pixmap = Image.open(f.name)
+            stream   = self.hypervisor.libvirt_connection.newStream(flags=0)
+            mime     = self.domain.screenshot(stream, screen, flags=0)
+            img_buff = ImageFile.Parser()
+            stream.recvAll(lambda stream, data, out: out.feed(data), img_buff)
+            stream.finish()
+            pixmap = img_buff.close()
             if thumbnail:
                 pixmap.thumbnail((216, 162), Image.ANTIALIAS)
             size = pixmap.size
-            pixmap.save("%s.%s" % (f.name, "png"))
-            png = open("%s.png" % f.name)
-            data = base64.b64encode(png.read())
+            png = StringIO()
+            pixmap.save(png, format='png')
+            del pixmap
+            data = base64.b64encode(png.getvalue())
             png.close()
-            os.unlink(f.name)
-            os.unlink("%s.png" % f.name)
             return (data, size)
         return (None, (0, 0))
 
