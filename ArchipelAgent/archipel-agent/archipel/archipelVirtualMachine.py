@@ -124,7 +124,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
-        self.inhibit_next_undefine_domain_event = False
+        self.inhibit_undefine_domain_event_counter = 0
+        self.inhibit_define_domain_event_counter   = 0
         self.cputime_samples=[]
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_timer(self.cputime_sampling_Interval)
@@ -344,7 +345,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.change_name(newname, publish)
 
         if self.domain:
-            self.inhibit_next_undefine_domain_event = True
+            self.inhibit_undefine_domain_event_counter += 1
+            self.log.debug("RENAME: Value of undefine inhibit counter is now %s" % self.inhibit_undefine_domain_event_counter)
             old_definition = self.definition
             self.undefine()
             self.definition = old_definition
@@ -465,9 +467,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.push_change("virtualmachine:control", "shutoff")
                 self.perform_hooks("HOOK_VM_SHUTOFF")
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
-                if self.inhibit_next_undefine_domain_event:
-                    self.inhibit_next_undefine_domain_event = False
+                if self.inhibit_undefine_domain_event_counter > 0:
+                    self.inhibit_undefine_domain_event_counter -= 1
                     self.log.info("LIBVIRTEVENT: VM has inihibited its undefine event reaction. Ignoring")
+                    self.log.debug("LIBVIRTEVENT: Value of undefine inhibit counter is now %s" % self.inhibit_undefine_domain_event_counter)
                     return
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined")
@@ -475,6 +478,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.domain = None
                 self.definition = None
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
+                if self.inhibit_define_domain_event_counter > 0:
+                    self.inhibit_define_domain_event_counter -= 1
+                    self.log.info("LIBVIRTEVENT: VM has inihibited its define event reaction. Ignoring")
+                    self.log.debug("LIBVIRTEVENT: Value of define inhibit counter is now %s" % self.inhibit_define_domain_event_counter)
+                    return
+
+                if not self.domain:
+                    self.connect_domain()
                 self.set_presence_according_to_libvirt_info()
                 self.push_change("virtualmachine:definition", "defined")
                 self.perform_hooks("HOOK_VM_DEFINE")
@@ -940,12 +951,15 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         self.definition = xmldesc
 
+        # don't handle next define events as it could interfere with next define if too close in time
+        self.inhibit_define_domain_event_counter += 1
+        self.log.debug("DEFINE: Value of define inhibit counter is now %s" % self.inhibit_define_domain_event_counter)
+
         if not self.domain:
             self.connect_domain()
-            # in that case no event handler will be triggered as we are
-            # not connected to the domain, so force push and hook
-            self.perform_hooks("HOOK_VM_DEFINE")
-            self.push_change("virtualmachine:definition", "defined")
+
+        self.perform_hooks("HOOK_VM_DEFINE")
+        self.push_change("virtualmachine:definition", "defined")
 
         return xmldesc
 
