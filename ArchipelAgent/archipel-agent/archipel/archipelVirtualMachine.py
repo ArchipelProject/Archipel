@@ -670,6 +670,11 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
+
+        if self.info()["state"] == libvirt.VIR_DOMAIN_SHUTOFF:
+            self.log.warning("Virtual machine already off.")
+            return
+
         self.domain.destroy()
         self.log.info("Virtual machine destroyed.")
 
