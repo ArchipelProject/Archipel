@@ -240,7 +240,7 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
 
             if interface.getTag("virtualport"):
                 interface.delChild("virtualport")
-            interface.addChild("virtualport". attrs={"type": "openvswitch"})
+            interface.addChild("virtualport", attrs={"type": "openvswitch"})
 
             if interface.getTag("target"):
                 interface.delChild("target")
