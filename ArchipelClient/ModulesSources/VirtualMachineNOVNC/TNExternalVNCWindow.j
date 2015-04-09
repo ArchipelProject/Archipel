@@ -80,11 +80,10 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         [zoomSlider setDoubleValue:1.0];
         [zoomSlider setMaxValue:1.0];
 
+        var bundle = [CPBundle bundleForClass:[self class]];
         [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              " view:nil target:nil action:nil];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarGetPasteboard label:CPBundleLocalizedString(@"Get Clipboard", @"Get Clipboard") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarGetPasteboard.png"] target:self action:@selector(getPasteboard:)];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarSendPasteboard label:CPBundleLocalizedString(@"Send Clipboard", @"Send Clipboard") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarSendPasteboard.png"] target:self action:@selector(sendPasteboard:)];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarFullScreen label:CPBundleLocalizedString(@"Full Screen", @"Full Screen") icon:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] target:self action:@selector(setFullScreen:)];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:CPBundleLocalizedString(@"Ctrl Alt Del", @"Ctrl Alt Del") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarFullScreen label:CPBundleLocalizedString(@"Full Screen", @"Full Screen") icon:CPImageInBundle(@"IconsButtons/fullscreen.png", 32, 32, [CPBundle mainBundle]) target:self action:@selector(setFullScreen:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:CPBundleLocalizedString(@"Ctrl Alt Del", @"Ctrl Alt Del") icon:CPImageInBundle(@"toolbarCtrlAtlDel.png", 32, 32, bundle) target:self action:@selector(sendCtrlAltDel:)];
 
         var zoomItem = [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarZoom label:CPBundleLocalizedString(@"Zoom", @"Zoom") view:zoomSlider target:self action:@selector(changeScale:)];
 
@@ -93,8 +92,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
         [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
         [_mainToolbar setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [_mainToolbar setPosition:2 forToolbarItemIdentifier:TNVNCWindowToolBarGetPasteboard];
-        [_mainToolbar setPosition:3 forToolbarItemIdentifier:TNVNCWindowToolBarSendPasteboard];
         [_mainToolbar setPosition:4 forToolbarItemIdentifier:TNVNCWindowToolBarCtrlAltDel];
         [_mainToolbar setPosition:5 forToolbarItemIdentifier:TNVNCWindowToolBarZoom];
         [_mainToolbar setPosition:10 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];

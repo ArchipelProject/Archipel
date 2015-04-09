@@ -830,7 +830,7 @@ class TNArchipelEntity (object):
         """
         self.vCard = vcard.getTag("vCard")
 
-        if self.vCard:
+        if self.vCard and self.vCard.getTag("ROLE"):
             self.log.info("VCARD: I already have a vCard.")
             if self.use_avatar and self.vCard.getTag("PHOTO"):
                 self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
