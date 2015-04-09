@@ -341,7 +341,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         self.hypervisor.libvirt_contains_domain_with_name(newname, raise_error=True)
 
-        self.log.info("renaming VM from %s to %s" % (self.name, newname))
+        self.log.info("Renaming VM from %s to %s" % (self.name, newname))
         self.change_name(newname, publish)
 
         if self.domain:
@@ -366,9 +366,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         provided_name_tag = xmldesc.getTag('name')
 
+        # Here a glitch could appear where self.name is not the same as the definition.
         if not provided_name_tag:
             xmldesc.addChild(name='name')
-        elif self.definition and not provided_name_tag.getData() == self.name:
+        elif self.definition and (not provided_name_tag.getData() == self.name or not provided_name_tag.getData() == self.definition.getTag('name').getData()) :
             self.rename_virtual_machine(provided_name_tag.getData(), publish=True)
 
         xmldesc.getTag('name').setData(self.name.encode("ascii", "replace"))
@@ -943,21 +944,23 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         # if there is any error, catch it and strip down the <description> tag to avoid
         # sending back the password to build_error_iq, then forward the exception
         try:
+            # don't handle next define events as it could interfere with next define if too close in time
+            self.inhibit_define_domain_event_counter += 1
+            self.log.debug("DEFINE: Value of define inhibit counter is now %s" % self.inhibit_define_domain_event_counter)
             self.hypervisor.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+            self.definition = xmldesc
         except Exception as ex:
+            self.inhibit_define_domain_event_counter -= 1
+            self.log.debug("DEFINE: Reset value of define inhibit counter due to exception in define. Counter is now %s" % self.inhibit_define_domain_event_counter)
             if xmldesc.getTag('description'):
                 xmldesc.delChild("description")
             raise ex
 
-        self.definition = xmldesc
-
-        # don't handle next define events as it could interfere with next define if too close in time
-        self.inhibit_define_domain_event_counter += 1
-        self.log.debug("DEFINE: Value of define inhibit counter is now %s" % self.inhibit_define_domain_event_counter)
 
         if not self.domain:
             self.connect_domain()
 
+        self.set_presence_according_to_libvirt_info()
         self.perform_hooks("HOOK_VM_DEFINE")
         self.push_change("virtualmachine:definition", "defined")
 
