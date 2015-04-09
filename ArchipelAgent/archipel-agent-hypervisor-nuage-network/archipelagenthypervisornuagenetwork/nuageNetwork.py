@@ -238,6 +238,10 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
                 interface.delChild("source")
             interface.addChild("source", attrs={"bridge": self.nuageBridgeName})
 
+            if interface.getTag("virtualport"):
+                interface.delChild("virtualport")
+            interface.addChild("virtualport". attrs={"type": "openvswitch"})
+
             if interface.getTag("target"):
                 interface.delChild("target")
             interface.addChild("target", attrs={"dev": mac_address.replace(":", "")})
