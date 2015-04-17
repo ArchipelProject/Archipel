@@ -116,7 +116,7 @@ def install_dev(package_paths):
     """
     for package_path in package_paths:
         os.chdir(package_path)
-        if os.system("python setup.py develop --no-deps") == 0:
+        if os.system("python setup.py develop ") == 0:
             success("EGG package %s installed in developer mode" % os.path.basename(package_path))
         else:
             error("Unable to install EGG package %s in developer mode" % os.path.basename(package_path))
@@ -275,86 +275,6 @@ def build_apscheduler_rpm(export_path=None):
     else:
         return "/tmp/APScheduler-2.1.2"
 
-def build_live_cd():
-    """
-    Build the live CD
-    """
-    import commands, tempfile
-    required_tools = ["ksflatten", "livecd-creator", "rpmbuild", "createrepo", "make", "autoconf", "automake"]
-    for tool in required_tools:
-        msg("Testing command %s" % tool)
-        if os.system("which %s &> /dev/null" % tool):
-            error("You need the command '%s'" % tool)
-    success("All needed tools are present")
-
-    image_minizer = "--with-image-minimizer"
-    if os.system("image-minimizer %s &> /dev/null" % tool):
-        image_minizer = ""
-
-    msg("Generating the rpmbuild repo if needed")
-    rpm_topdir = commands.getoutput("rpm --eval %_topdir")
-    os.system("mkdir -p %s/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}" % rpm_topdir)
-    os.system("mkdir -p %s/RPMS/noarch" % rpm_topdir)
-    success("rpmbuild folder structure seems to be ok")
-
-    msg("Copying all archipel rpm to the repo")
-    if os.system("cp ./Archipel_RPMS/RPMS/* %s/RPMS/noarch/" % rpm_topdir):
-        error("Unable to copy archipel RPMS to %s" % rpm_topdir)
-    success("All Archipel RPMS have been copied")
-
-
-    msg("Checking cache dir")
-    temp_dir = "/tmp/archipel-node-cache"
-    if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)
-        msg("Cachedir is at %s" % temp_dir)
-
-    # environment variables
-    msg("Setting environment variables")
-    os.environ['BASEDIR'] = rpm_topdir
-    os.environ['OVIRT_CACHE_DIR'] = temp_dir
-    os.environ['OVIRT_LOCAL_REPO'] = "file://%s/RPMS" % rpm_topdir
-    os.environ['EXTRA_RELEASE'] = ".archipel"
-    success("Environment variables set")
-
-    msg("Generating the liveCD ISO. This can take more than 20min if your computer is slow.")
-
-    msg("Dist cleaning")
-    if os.system("cd ./ANSOS && make distclean"):
-        warn("Unable to distclean. maybe it's the first build")
-
-    msg("Running ./autogen.sh %s --with-archipel" % image_minizer)
-    if os.system("cd ./ANSOS && ./autogen.sh %s --with-archipel" % image_minizer):
-        error("Unable to autogen")
-    success("Autogen complete")
-
-    msg("Building the oVirt RPMS")
-    if os.system("cd ./ANSOS && make && make dist && rpmbuild --nodeps --define \"extra_release $EXTRA_RELEASE\" -ta --clean *.tar.gz"):
-        error("Uable to generate the RPMS")
-    success("oVirt RPMS generation complete")
-
-    build_apscheduler_rpm("%s/RPMS/noarch/" %rpm_topdir)
-
-    msg("Generating the local repository")
-    if os.path.exists("%s/RPMS/repodata" % rpm_topdir):
-        msg("Flushing old repodata")
-        if os.system("rm -rf %s/RPMS/repodata" % rpm_topdir):
-            error("Unable to flush %s/RPMS/repodata" % rpm_topdir)
-    if os.system("cd '%s/RPMS' && createrepo ." % rpm_topdir):
-        error("Unable to run createrepo in %s/RPMS" % rpm_topdir)
-    success("Repository successfully generated in %s/RPMS" % rpm_topdir)
-
-    msg("Building the ANSOS iso")
-    if os.system("cd ./ANSOS/recipe && make archipel-node-image.iso"):
-        error("Uable to genrate the ISO")
-    success("ISO sucessfully generated")
-
-    msg("Copying the ISO")
-    os.system("rm -f ./archipel-node-image-*.iso")
-    os.system("cp ./ANSOS/recipe/archipel-node-image-*.iso .")
-
-    success("ANSOS is now ready!")
-
 
 ### Main function
 
@@ -398,11 +318,6 @@ if __name__ == "__main__":
     parser.add_argument("-U", "--uninstall",
                         dest="uninstall",
                         help="Remove all Archipel's binary files. Data files (info, conf) remains safe",
-                        action="store_true",
-                        default=False)
-    parser.add_argument("-l", "--livecd",
-                        dest="livecd",
-                        help="Build ANSOS",
                         action="store_true",
                         default=False)
 
@@ -451,5 +366,3 @@ if __name__ == "__main__":
         uninstall()
         msg("All action performed")
 
-    if options.livecd:
-        build_live_cd()

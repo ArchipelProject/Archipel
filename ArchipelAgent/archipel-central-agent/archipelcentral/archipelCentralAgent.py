@@ -85,11 +85,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.permission_center.start(database_file=self.permission_db_file)
         self.init_permissions()
 
-
-        # module inits
-        self.initialize_modules('archipel.plugin.core')
-        self.initialize_modules('archipel.plugin.centralagent')
-
         # action on auth
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.hook_xmpp_authenticated)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
@@ -115,6 +110,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.last_keepalive_heard = datetime.datetime.now()
         self.last_hyp_check       = datetime.datetime.now()
         self.required_stats_xml   = None
+
+        # module inits
+        self.initialize_modules('archipel.plugin.core')
+        self.initialize_modules('archipel.plugin.centralagent')
 
         module_platformrequest    = self.configuration.get("MODULES", "platformrequest")
 

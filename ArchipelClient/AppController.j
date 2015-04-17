@@ -68,7 +68,7 @@
 @global CPApplicationWillTerminateNotification
 @global CPApp
 
-CPFontDefaultSystemFontFace = @"Courier";
+CPFontDefaultSystemFontFace = @"Arial";
 
 /*! @global
     @group TNArchipelEntityType
@@ -133,9 +133,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     TNToolBarItemTags               = @"TNToolBarItemTags",
     TNToolBarItemHelp               = @"TNToolBarItemHelp",
     TNToolBarItemStatus             = @"TNToolBarItemStatus",
-    TNArchipelTagViewHeight         = 33.0;
+    TNArchipelTagViewHeight         = 33.0,
+    date                            = new Date();
+    year                            = date.getFullYear();
 
-__COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
+__COPYRIGHT__ = "Copyright 2010-"+year+" - Antoine Mercadal";
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
@@ -377,7 +379,7 @@ __COPYRIGHT__ = "Copyright 2010-2013 Antoine Mercadal";
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
 
-    [filterView setBackgroundColor:[CPColor colorWithHexString:@"F2F2F2"]];
+    [filterView setBackgroundColor:[CPColor whiteColor]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
 

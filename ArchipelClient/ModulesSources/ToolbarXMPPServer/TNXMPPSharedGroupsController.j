@@ -110,10 +110,12 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 */
 - (void)awakeFromCib
 {
-    // [viewTableGroupsContainer setBorderedWithHexColor:@"#F2F2F2"];
-    // [viewTableUsersInGroupContainer setBorderedWithHexColor:@"#F2F2F2"];
+
+    [splitViewVertical setIsPaneSplitter:NO];
     [splitViewVertical setBorderedWithHexColor:@"#F2F2F2"];
-    [splitViewVertical setIsPaneSplitter:YES];
+    [splitViewVertical setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"horizontal-divider-color"];
+    [splitViewVertical setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"vertical-divider-color"];
+    [splitViewVertical setValue:[CPColor colorWithHexString:@"F2F2F2"] forThemeAttribute:@"pane-divider-color"];
 
     /* table Users */
     _datasourceUsers  = [[TNTableViewLazyDataSource alloc] init];
@@ -398,6 +400,13 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
         return;
     }
 
+    if ([fieldNewGroupDescription stringValue] == @"")
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong description", @"Wrong description")
+                          informative:CPBundleLocalizedString(@"You must enter a description for your group", @"You must enter a description for your group")];
+        return;
+    }
+
     [popoverNewGroup close];
     [self createGroup:[fieldNewGroupName stringValue] description:[fieldNewGroupDescription stringValue]];
 }
@@ -519,7 +528,6 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 
         [_datasourceGroups removeAllObjects];
         [_datasourceUsersInGroup removeAllObjects];
-        [_datasourceUsersInGroup]
         [_datasourceDisplayGroups removeAllObjects];
         [_datasourceDisplayGroupsInGroup removeAllObjects];
 
@@ -561,6 +569,10 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
         "id": aName,
         "name": aName,
         "description": aDescription}];
+
+    // FIXME: Workaround as ejabberd 15.03 can't handle empty values for SRG creation through XML-RPC
+    [stanza addChildWithName:@"displayed_group" andAttributes:{"id": @"CHANGE_ME"}];
+    [stanza up];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didCreateGroup:) ofObject:self];
 }

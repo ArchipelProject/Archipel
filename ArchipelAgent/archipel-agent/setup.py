@@ -98,7 +98,7 @@ setup(name='archipel-agent',
         "archipel-agent-xmppserver>=0.6.0beta",
         "archipel-agent-virtualmachine-vnc>=0.6.0beta",
         "archipel-agent-vmparking>=0.6.0beta",
-        "PIL"
+        "pillow"
       ],
       entry_points="""
         # -*- Entry points: -*-

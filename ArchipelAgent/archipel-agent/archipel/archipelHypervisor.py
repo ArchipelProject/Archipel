@@ -514,18 +514,24 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         domains = []
         allDomainIDs = self.libvirt_connection.listDomainsID()
         for domID in allDomainIDs:
-            dom = self.libvirt_connection.lookupByID(domID)
-            uuid = dom.UUIDString()
-            if not uuid in self.virtualmachines:
-                if dom.isPersistent() or not only_persistant:
-                    domains.append(dom)
+            try:
+                dom = self.libvirt_connection.lookupByID(domID)
+                uuid = dom.UUIDString()
+                if not uuid in self.virtualmachines:
+                    if dom.isPersistent() or not only_persistant:
+                        domains.append(dom)
+            except Exception as ex:
+                self.log.warning("LIBVIRT: Could not find domain with ID %s. It may have been undefine just right now (%s)" % (domID, ex))
 
         allDomainNames = self.libvirt_connection.listDefinedDomains()
         for name in allDomainNames:
-            dom = self.libvirt_connection.lookupByName(name)
-            uuid = dom.UUIDString()
-            if not uuid in self.virtualmachines:
-                domains.append(dom)
+            try:
+                dom = self.libvirt_connection.lookupByName(name)
+                uuid = dom.UUIDString()
+                if not uuid in self.virtualmachines:
+                    domains.append(dom)
+            except Exception as ex:
+                self.log.warning("LIBVIRT: Coud not find domain with name %s. It may have been undefine just right now (%s)" % (name, ex))
 
         return domains
 

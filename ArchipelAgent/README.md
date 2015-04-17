@@ -32,7 +32,7 @@ Please, read this document completely before typing anything!
 
 # Installation
 
-## Basic users (mostly you :)
+## Basic users (mostly you :))
 
 ### Installation from packages
 
@@ -149,3 +149,4 @@ All information to connect to PyPi are red from `~/.pypirc`. For instance:
 # Team
 
 * Antoine Mercadal : Lead developer
+* Cyril Peponnet   : Contributor

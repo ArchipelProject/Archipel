@@ -24,7 +24,7 @@
         '@DOMAIN@' will be replaced by user JID's domain
      -->
     <key>TNArchipelServiceTemplate</key>
-    <string>http://@DOMAIN@:5280/http-bind</string>
+    <string>ws://@DOMAIN@:5280/xmpp</string>
 
     <!-- Set this to one to force using a specific XMPP service
         In that case, the service field will be hidden, and users
