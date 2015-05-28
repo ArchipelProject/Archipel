@@ -535,9 +535,6 @@ var __defaultPermissionCenter;
     if (aPubSubNode !== _pubsubAdminAccounts)
         return;
 
-    if (![aStanza containsChildrenWithName:@"headers"])
-        return;
-
     [_pubsubAdminAccounts retrieveItems];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNPermissionsAdminListUpdatedNotification object:self];
 }
