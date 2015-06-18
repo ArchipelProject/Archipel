@@ -60,7 +60,6 @@ class TNXMPPServerController (TNArchipelPlugin):
 
         self.users = []
         self.user_page_size = 50
-        self.need_user_refresh = True
         self.entities_types_cache = {}
         self.xmpp_server = entity.jid.getDomain()
 
@@ -289,7 +288,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param args: optional kwards of the callback
         """
         self.users = []
-        self.need_user_refresh = False
 
         def on_receive_users_num(conn, iq):
             if iq.getType() != "result":
@@ -801,10 +799,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 n = n + 1
             base_reply.setQueryPayload([xmpp.Node("users", attrs={"total": n})])
             self.entity.xmppclient.send(base_reply)
-        if self.need_user_refresh:
-            self._fetch_users(self.entity.jid.getDomain(), send_number, {"base_reply": base_reply})
-        else:
-            send_number(base_reply)
+        self._fetch_users(self.entity.jid.getDomain(), send_number, {"base_reply": base_reply})
 
     def iq_users_list(self, iq):
         """
@@ -844,10 +839,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             base_reply.setQueryPayload(nodes[bound_begin:bound_end])
             self.entity.xmppclient.send(base_reply)
 
-        if self.need_user_refresh:
-            self._fetch_users(self.entity.jid.getDomain(), send_users, {"base_reply": base_reply})
-        else:
-            send_users(base_reply)
+        self._fetch_users(self.entity.jid.getDomain(), send_users, {"base_reply": base_reply})
 
     def iq_users_filter(self, iq):
         """
@@ -884,10 +876,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             else:
                 self.entity.xmppclient.send(base_reply)
 
-        if self.need_user_refresh:
-            self._fetch_users(self.entity.jid.getDomain(), send_filtered_users, {"base_reply": base_reply})
-        else:
-            send_filtered_users(base_reply)
+        self._fetch_users(self.entity.jid.getDomain(), send_filtered_users, {"base_reply": base_reply})
 
     def iq_users_change_password(self, iq):
         """
