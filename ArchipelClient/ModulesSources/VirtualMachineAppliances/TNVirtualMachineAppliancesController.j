@@ -62,6 +62,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
     @outlet CPButton                    buttonCreate;
     @outlet TNButtonBar                 buttonBarControl;
     @outlet CPCheckBox                  checkBoxShouldGZIP;
+    @outlet CPCheckBox                  checkBoxIncludeISO;
     @outlet CPPopover                   popoverNewAppliances;
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPTableView                 tableAppliances;
@@ -269,6 +270,7 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 {
     [fieldNewApplianceName setStringValue:[CPString UUID]];
     [checkBoxShouldGZIP setState:CPOnState];
+    [checkBoxIncludeISO setState:CPOffState];
 
     [popoverNewAppliances close];
     [popoverNewAppliances showRelativeToRect:nil ofView:[self buttonWithIdentifier:TNModuleControlForCreateAppliance] preferredEdge:nil]
@@ -519,13 +521,15 @@ var TNModuleControlForAttachAppliance               = @"AttachAppliance",
 
     var stanza      = [TNStropheStanza iqWithType:@"get"],
         name        = [fieldNewApplianceName stringValue],
-        shouldGZIP  = [checkBoxShouldGZIP state] == CPOnState ? "True" : "False";
+        shouldGZIP  = [checkBoxShouldGZIP state] == CPOnState ? "True" : "False",
+        includeISO  = [checkBoxIncludeISO state] == CPOnState ? "True" : "False";
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineVMCastingPackage,
-        "name": name,
-        "gzip": shouldGZIP}];
+        "action":      TNArchipelTypeVirtualMachineVMCastingPackage,
+        "name":        name,
+        "gzip":        shouldGZIP,
+        "include_iso": includeISO}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didPackageAppliance:) ofObject:self];
 

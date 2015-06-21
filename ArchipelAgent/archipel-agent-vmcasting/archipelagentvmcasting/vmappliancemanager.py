@@ -407,9 +407,13 @@ class TNVMApplianceManager (TNArchipelPlugin):
             disk_nodes = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
             package_name = iq.getTag("query").getTag("archipel").getAttr("name")
             package_should_gzip = iq.getTag("query").getTag("archipel").getAttr("gzip")
+            package_include_iso = iq.getTag("query").getTag("archipel").getAttr("include_iso")
 
             if package_should_gzip:
                 package_should_gzip = package_should_gzip.lower() in ["true", "1", "y", "yes"];
+
+            if package_include_iso:
+                package_include_iso = package_include_iso.lower() in ["true", "1", "y", "yes"];
 
             conf_should_gzip = self.configuration.getboolean("VMCASTING", "should_gzip_drives")
             conf_force_gzip = self.configuration.getboolean("VMCASTING", "ignore_user_gzip_choice")
@@ -428,6 +432,8 @@ class TNVMApplianceManager (TNArchipelPlugin):
 
             def perform_packaging(conn, resp):
                 for disk_node in disk_nodes:
+                    if disk_node.getAttr('device') == "cdrom" and not package_include_iso:
+                        continue
                     path = disk_node.getTag('source').getAttr('file')
                     paths.append(path)
 
