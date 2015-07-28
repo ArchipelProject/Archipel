@@ -4,6 +4,7 @@
 */Documentation
 *debug.txt
 *Frameworks
+*ArchipelClient/.cappenvs
 *ArchipelClient/ModulesSources/**/Build
 *ArchipelClient/Modules/**
 *.submodules_initialized
