@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">101000</int>
-		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.SystemVersion">14D113c</string>
 		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
-		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.AppKitVersion">1347.53</string>
 		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -46,7 +46,7 @@
 							<object class="NSButton" id="721854551">
 								<reference key="NSNextResponder" ref="930702664"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{543, 4}, {26, 24}}</string>
+								<string key="NSFrame">{{543, 7}, {26, 24}}</string>
 								<reference key="NSSuperview" ref="930702664"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="295265130">
@@ -71,7 +71,7 @@
 							<object class="NSButton" id="741539496">
 								<reference key="NSNextResponder" ref="930702664"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{509, 4}, {26, 24}}</string>
+								<string key="NSFrame">{{509, 7}, {26, 24}}</string>
 								<reference key="NSSuperview" ref="930702664"/>
 								<reference key="NSNextKeyView" ref="721854551"/>
 								<bool key="NSEnabled">YES</bool>
@@ -93,7 +93,7 @@
 							<object class="NSTextField" id="13631270">
 								<reference key="NSNextResponder" ref="930702664"/>
 								<int key="NSvFlags">266</int>
-								<string key="NSFrame">{{6, 5}, {495, 22}}</string>
+								<string key="NSFrame">{{6, 7}, {495, 22}}</string>
 								<reference key="NSSuperview" ref="930702664"/>
 								<reference key="NSNextKeyView" ref="741539496"/>
 								<bool key="NSEnabled">YES</bool>
@@ -542,6 +542,7 @@
 				</object>
 				<string key="20.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="27.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<reference key="3.IBNSViewMetadataGestureRecognizers" ref="0"/>
 				<string key="3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="32.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="33.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>

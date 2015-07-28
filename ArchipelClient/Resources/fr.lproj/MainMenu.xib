@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">101000</int>
-		<string key="IBDocument.SystemVersion">14D105g</string>
+		<string key="IBDocument.SystemVersion">14D113c</string>
 		<string key="IBDocument.InterfaceBuilderVersion">6751</string>
-		<string key="IBDocument.AppKitVersion">1347.45</string>
+		<string key="IBDocument.AppKitVersion">1347.53</string>
 		<string key="IBDocument.HIToolboxVersion">758.60</string>
 		<dictionary class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="com.apple.InterfaceBuilder.CocoaPlugin">6751</string>
@@ -248,8 +248,8 @@
 											<array class="NSMutableArray" key="NSSubviews">
 												<object class="NSSearchField" id="1003698998">
 													<reference key="NSNextResponder" ref="724709012"/>
-													<int key="NSvFlags">266</int>
-													<string key="NSFrame">{{8, 6}, {188, 22}}</string>
+													<int key="NSvFlags">258</int>
+													<string key="NSFrame">{{6, 5}, {188, 22}}</string>
 													<reference key="NSSuperview" ref="724709012"/>
 													<reference key="NSNextKeyView" ref="514451280"/>
 													<bool key="NSViewIsLayerTreeHost">YES</bool>
@@ -317,6 +317,7 @@
 											</array>
 											<string key="NSFrame">{{0, 468}, {201, 33}}</string>
 											<reference key="NSSuperview" ref="1029982473"/>
+											<reference key="NSNextKeyView" ref="1003698998"/>
 											<string key="NSClassName">NSView</string>
 										</object>
 									</array>
@@ -377,7 +378,7 @@
 					<string key="NSFrameSize">{835, 525}</string>
 					<reference key="NSNextKeyView" ref="478675906"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -519,7 +520,7 @@
 					<string key="NSFrameSize">{581, 448}</string>
 					<reference key="NSNextKeyView" ref="808524507"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -1189,7 +1190,7 @@
 					<string key="NSFrameSize">{463, 271}</string>
 					<reference key="NSNextKeyView" ref="822254545"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -3701,7 +3702,7 @@
 					<string key="NSFrameSize">{482, 402}</string>
 					<reference key="NSNextKeyView" ref="465035483"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -4080,7 +4081,7 @@
 					<string key="NSFrameSize">{755, 570}</string>
 					<reference key="NSNextKeyView" ref="948422801"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -4322,7 +4323,7 @@
 					<string key="NSFrameSize">{529, 282}</string>
 					<reference key="NSNextKeyView" ref="170790578"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1057}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -4490,7 +4491,7 @@
 						<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
 					</object>
 				</array>
-				<string key="NSFrameSize">{240, 17.5}</string>
+				<string key="NSFrameSize">{240, 18}</string>
 				<reference key="NSNextKeyView" ref="876563167"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="NSClassName">TNRosterDataViewGroup</string>

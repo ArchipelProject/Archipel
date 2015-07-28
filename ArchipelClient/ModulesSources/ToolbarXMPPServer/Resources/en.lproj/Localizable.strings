@@ -28,8 +28,8 @@
 /* Delete selected shared group */
 "Delete selected shared group" = "Delete selected shared group";
 
-/* Grand selected user(s) as admin */
-"Grand selected user(s) as admin" = "Grand selected user(s) as admin";
+/* Grant selected user(s) as admin */
+"Grant selected user(s) as admin" = "Grant selected user(s) as admin";
 
 /* Password doesn't match */
 "Password doesn't match" = "Password doesn't match";

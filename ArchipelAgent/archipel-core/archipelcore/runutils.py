@@ -190,24 +190,23 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             if not "/etc/libvirt/qemu" in commands.getoutput("mount"):
                 msg("Mounting /etc/libvirt/qemu on %s" % p_stateless_qemu_path)
                 subprocess.check_call(["mount", "--bind", p_stateless_qemu_path, "/etc/libvirt/qemu"])
+                # We reload the libvirt
+                try:
+                    if os.path.exists("/bin/systemctl") or os.path.exists("/sbin/systemctl"):
+                        subprocess.check_call(["systemctl", "reload", "libvirtd.service"])
+                        msg("Libvirt restarted using systemctl")
+                    elif os.path.exists("/sbin/service"):
+                        subprocess.check_call(["service", "libvirtd", "restart"])
+                        msg("Libvirt restarted using service")
+                    elif os.path.exists("/etc/init.d/libvirtd"):
+                        subprocess.check_call(["/etc/init.d/libvirtd", "restart"])
+                        msg("Libvirt restarted using /etc/init.d/libvirtd")
+                except:
+                    msg("Libvirtd: Not any service file found. Restarted libvirtd like a boss")
+                    os.system("killall libvirtd")
+                    os.system("libvirtd --daemon")
             else:
                 msg("/etc/libvirt/qemu is already mounted on %s. Ignored" % p_stateless_qemu_path)
-
-            # We reload the libvirt
-            try:
-                if os.path.exists("/bin/systemctl") or os.path.exists("/sbin/systemctl"):
-                    subprocess.check_call(["systemctl", "reload", "libvirtd.service"])
-                    msg("Libvirt restarted using systemctl")
-                elif os.path.exists("/sbin/service"):
-                    subprocess.check_call(["service", "libvirtd", "restart"])
-                    msg("Libvirt restarted using service")
-                elif os.path.exists("/etc/init.d/libvirtd"):
-                    subprocess.check_call(["/etc/init.d/libvirtd", "restart"])
-                    msg("Libvirt restarted using /etc/init.d/libvirtd")
-            except:
-                msg("Libvirtd: Not any service file found. Restarted libvirtd like a boss")
-                os.system("killall libvirtd")
-                os.system("libvirtd --daemon")
 
             # We start the post script if any
             if p_post_script and os.path.exists(p_post_script):

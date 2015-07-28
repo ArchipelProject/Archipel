@@ -44,6 +44,7 @@ import sys
 import traceback
 import time
 from threading import Timer
+from StringIO import StringIO
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
@@ -123,7 +124,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_will_define_hooks = []
         self.vcard_infos = {}
         self.is_freeing = False
-        self.inhibit_next_undefine_domain_event = False
+        self.inhibit_undefine_domain_event_counter = 0
+        self.inhibit_define_domain_event_counter   = 0
         self.cputime_samples=[]
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_timer(self.cputime_sampling_Interval)
@@ -339,11 +341,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         self.hypervisor.libvirt_contains_domain_with_name(newname, raise_error=True)
 
-        self.log.info("renaming VM from %s to %s" % (self.name, newname))
+        self.log.info("Renaming VM from %s to %s" % (self.name, newname))
         self.change_name(newname, publish)
 
         if self.domain:
-            self.inhibit_next_undefine_domain_event = True
+            self.inhibit_undefine_domain_event_counter += 1
+            self.log.debug("RENAME: Value of undefine inhibit counter is now %s" % self.inhibit_undefine_domain_event_counter)
             old_definition = self.definition
             self.undefine()
             self.definition = old_definition
@@ -363,9 +366,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
         provided_name_tag = xmldesc.getTag('name')
 
+        # Here a glitch could appear where self.name is not the same as the definition.
         if not provided_name_tag:
             xmldesc.addChild(name='name')
-        elif self.definition and not provided_name_tag.getData() == self.name:
+        elif self.definition and (not provided_name_tag.getData() == self.name or not provided_name_tag.getData() == self.definition.getTag('name').getData()) :
             self.rename_virtual_machine(provided_name_tag.getData(), publish=True)
 
         xmldesc.getTag('name').setData(self.name.encode("ascii", "replace"))
@@ -464,9 +468,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.push_change("virtualmachine:control", "shutoff")
                 self.perform_hooks("HOOK_VM_SHUTOFF")
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
-                if self.inhibit_next_undefine_domain_event:
-                    self.inhibit_next_undefine_domain_event = False
+                if self.inhibit_undefine_domain_event_counter > 0:
+                    self.inhibit_undefine_domain_event_counter -= 1
                     self.log.info("LIBVIRTEVENT: VM has inihibited its undefine event reaction. Ignoring")
+                    self.log.debug("LIBVIRTEVENT: Value of undefine inhibit counter is now %s" % self.inhibit_undefine_domain_event_counter)
                     return
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined")
@@ -474,6 +479,14 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.domain = None
                 self.definition = None
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
+                if self.inhibit_define_domain_event_counter > 0:
+                    self.inhibit_define_domain_event_counter -= 1
+                    self.log.info("LIBVIRTEVENT: VM has inihibited its define event reaction. Ignoring")
+                    self.log.debug("LIBVIRTEVENT: Value of define inhibit counter is now %s" % self.inhibit_define_domain_event_counter)
+                    return
+
+                if not self.domain:
+                    self.connect_domain()
                 self.set_presence_according_to_libvirt_info()
                 self.push_change("virtualmachine:definition", "defined")
                 self.perform_hooks("HOOK_VM_DEFINE")
@@ -669,6 +682,11 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         if not self.domain:
             raise Exception("You need to first define the virtual machine")
+
+        if self.info()["state"] == libvirt.VIR_DOMAIN_SHUTOFF:
+            self.log.warning("Virtual machine already off.")
+            return
+
         self.domain.destroy()
         self.log.info("Virtual machine destroyed.")
 
@@ -699,7 +717,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.domain.resume()
         self.log.info("Virtual machine resumed.")
 
-    def screenshot(self, thumbnail=True):
+    def screenshot(self, thumbnail=True, screen=0):
         """
         take a screenshot of the virtualmachine and
         return image as base64encoded PNG
@@ -718,31 +736,25 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         state = self.domain.info()[0]
         if hasattr(self.domain, "screenshot") and (state == libvirt.VIR_DOMAIN_PAUSED or state == libvirt.VIR_DOMAIN_RUNNING):
             try:
-                from PIL import Image
+                from PIL import Image, ImageFile
             except:
                 self.log.error("Cannot take screenshot because cannot use python imaging library (PIL). You need to install python-imaging")
                 return (None, (0, 0))
 
-            f = tempfile.NamedTemporaryFile(delete=False)
-            f.close()
-
-            # temporary solution. screenshot API is not
-            # working yet with python libvirt
-            ret = os.system("virsh screenshot %s %s" % (self.uuid, f.name))
-            if not ret == 0:
-                self.log.error("Cannot use virsh to take screenshot: return code is %d" % ret)
-                return None
-            # end of temp technic
-            pixmap = Image.open(f.name)
+            stream   = self.hypervisor.libvirt_connection.newStream(flags=0)
+            mime     = self.domain.screenshot(stream, screen, flags=0)
+            img_buff = ImageFile.Parser()
+            stream.recvAll(lambda stream, data, out: out.feed(data), img_buff)
+            stream.finish()
+            pixmap = img_buff.close()
             if thumbnail:
                 pixmap.thumbnail((216, 162), Image.ANTIALIAS)
             size = pixmap.size
-            pixmap.save("%s.%s" % (f.name, "png"))
-            png = open("%s.png" % f.name)
-            data = base64.b64encode(png.read())
+            png = StringIO()
+            pixmap.save(png, format='png')
+            del pixmap
+            data = base64.b64encode(png.getvalue())
             png.close()
-            os.unlink(f.name)
-            os.unlink("%s.png" % f.name)
             return (data, size)
         return (None, (0, 0))
 
@@ -932,20 +944,25 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         # if there is any error, catch it and strip down the <description> tag to avoid
         # sending back the password to build_error_iq, then forward the exception
         try:
+            # don't handle next define events as it could interfere with next define if too close in time
+            self.inhibit_define_domain_event_counter += 1
+            self.log.debug("DEFINE: Value of define inhibit counter is now %s" % self.inhibit_define_domain_event_counter)
             self.hypervisor.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+            self.definition = xmldesc
         except Exception as ex:
+            self.inhibit_define_domain_event_counter -= 1
+            self.log.debug("DEFINE: Reset value of define inhibit counter due to exception in define. Counter is now %s" % self.inhibit_define_domain_event_counter)
             if xmldesc.getTag('description'):
                 xmldesc.delChild("description")
             raise ex
 
-        self.definition = xmldesc
 
         if not self.domain:
             self.connect_domain()
-            # in that case no event handler will be triggered as we are
-            # not connected to the domain, so force push and hook
-            self.perform_hooks("HOOK_VM_DEFINE")
-            self.push_change("virtualmachine:definition", "defined")
+
+        self.set_presence_according_to_libvirt_info()
+        self.perform_hooks("HOOK_VM_DEFINE")
+        self.push_change("virtualmachine:definition", "defined")
 
         return xmldesc
 

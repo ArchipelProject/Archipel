@@ -22,8 +22,8 @@
 	<string>Create a new shared group</string>
 	<key>Delete selected shared group</key>
 	<string>Delete selected shared group</string>
-	<key>Grand selected user(s) as admin</key>
-	<string>Grand selected user(s) as admin</string>
+	<key>Grant selected user(s) as admin</key>
+	<string>Grant selected user(s) as admin</string>
 	<key>Password doesn't match</key>
 	<string>Password doesn't match</string>
 	<key>Register a new user</key>

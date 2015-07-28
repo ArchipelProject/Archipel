@@ -571,9 +571,11 @@ class TNVMParking (TNArchipelPlugin):
                 autostart = False
                 if item.getAttr("start") and item.getAttr("start").lower() in ("yes", "y", "true", "1"):
                     autostart = True
-                vms_info.append({"uuid": identifier, "start": autostart, "parker": str(iq.getFrom())})
+                if not self.entity.get_vm_by_uuid(identifier):
+                    vms_info.append({"uuid": identifier, "start": autostart, "parker": str(iq.getFrom())})
 
-            self.unpark(vms_info)
+            if vms_info:
+                self.unpark(vms_info)
 
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMPARK_UNPARK)

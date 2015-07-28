@@ -213,7 +213,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
                               image:CPImageInBundle(@"IconsButtons/user-remove.png",nil, [CPBundle mainBundle])];
 
         [_delegate addControlsWithIdentifier:TNModuleControlForGrantAdmin
-                              title:CPBundleLocalizedString(@"Grand selected user(s) as admin", @"Grand selected user(s) as admin")
+                              title:CPBundleLocalizedString(@"Grant selected user(s) as admin", @"Grant selected user(s) as admin")
                              target:self
                              action:@selector(grantAdmin:)
                               image:CPImageInBundle(@"IconsButtons/star.png",nil, [CPBundle mainBundle])];

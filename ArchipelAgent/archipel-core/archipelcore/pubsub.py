@@ -265,7 +265,7 @@ class TNPubSubNode:
         pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
         publish     = pubsub.addChild("publish", attrs={"node": self.nodename})
         item        = publish.addChild("item")
-        item.setAttr("id", uuid())
+        item.setAttr("id", str(uuid()))
         item.addChild(node=itemcontentnode)
 
         def _did_publish_item(conn, resp, callback, item):

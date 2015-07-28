@@ -21,9 +21,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import os
 import archipelcore.pubsub
-from archipelcore import xmpp
 from archipelcore.scriptutils import *
 
 NODENAME_ADMINS = "/archipel/adminaccounts"
@@ -56,31 +54,50 @@ def insert_jid(xmppclient, pubsubserver, adminaccount):
     """
     add a new account as admin
     """
+    admins = _retrives_admins(xmppclient, pubsubserver, NODENAME_ADMINS)
+    for admin in admins:
+        if adminaccount == "%s@%s" % (admin.getTag("admin").getAttr("node"), admin.getTag("admin").getAttr("domain")):
+            error("JID %s is already an admin" % adminaccount)
+            return
+
     item = xmpp.Node(tag="admin", attrs={"node": adminaccount.getNode(), "domain": adminaccount.getDomain()})
     if publish_item(xmppclient, pubsubserver, NODENAME_ADMINS, item):
         success("admin account %s has been added to admin list" % adminaccount)
     else:
         error("Unable to add %s to the admin list" % adminaccount)
 
-def remove_jid(xmppclient, pubsubserver, refID):
+def remove_jid(xmppclient, pubsubserver, adminaccount):
     """
     Remove admin account
     """
-    if retract_item(xmppclient, pubsubserver, NODENAME_ADMINS, refID):
-        success("admin account referenced %s has been removed" % refID)
-    else:
-        error("Unable to remove admin acount with reference %s" % refID)
+    admins = _retrives_admins(xmppclient, pubsubserver, NODENAME_ADMINS)
+    if not admins:
+        print "There is no admins accounts yet."
+
+    for admin in admins:
+        if adminaccount == "%s@%s" % (admin.getTag("admin").getAttr("node"), admin.getTag("admin").getAttr("domain")):
+            if retract_item(xmppclient, pubsubserver, NODENAME_ADMINS, admin.getAttr("id")):
+                success("admin account referenced %s has been removed" % admin.getAttr("id"))
+            else:
+                error("Unable to remove admin acount with reference %s" % admin.getAttr("id"))
 
 def list_jid(xmppclient, pubsubserver):
     """
     List admin accounts
     """
-    pubSubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_ADMINS)
-    admins = pubSubNode.get_items()
+    admins = _retrives_admins(xmppclient, pubsubserver, NODENAME_ADMINS)
     if len(admins) == 0:
         print "There is no admins accounts yet."
     for admin in admins:
-        print "%s: %s@%s" % (admin.getAttr("id"), admin.getTag("admin").getAttr("node"), admin.getTag("admin").getAttr("domain"))
+        print "-> %s@%s" % (admin.getTag("admin").getAttr("node"), admin.getTag("admin").getAttr("domain"))
+
+def _retrives_admins(xmppclient, pubsubserver, NODENAME_ADMINS):
+    """
+    Retrive the list of admins
+    """
+    pubSubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_ADMINS)
+    return pubSubNode.get_items()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -111,7 +128,7 @@ if __name__ == "__main__":
                         metavar="jid@domain")
     parser.add_argument("-u", "--unauthorize",
                         dest="unauthorize",
-                        help="remove an admin JID identified by the item ID",
+                        help="remove an admin JID",
                         metavar="jid@domain")
     parser.add_argument("-l", "--list",
                         action="store_true",

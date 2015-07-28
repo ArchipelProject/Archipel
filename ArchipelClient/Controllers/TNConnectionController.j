@@ -97,14 +97,16 @@ var TNConnectionControllerForceResource,
     if (user)
     {
         [fieldJID setStringValue:user]
+
         if (!service)
             [fieldService setStringValue:TNArchipelServiceTemplate.replace("@DOMAIN@",user.split("@")[1])]
         else
             [fieldService setStringValue:service]
+
+        if (pass)
+            [fieldPassword setStringValue:pass]
     }
 
-    if (pass)
-        [fieldPassword setStringValue:pass]
 
     [mainWindow setShowsResizeIndicator:NO];
     [mainWindow setDefaultButton:buttonConnect];
@@ -171,7 +173,8 @@ var TNConnectionControllerForceResource,
 {
     var lastJID = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelXMPPJID"];
 
-    try { [fieldJID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]]; } catch (e) {};
+    if ([fieldJID stringValue] == @"")
+        try { [fieldJID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]]; } catch (e) {};
 }
 
 - (void)_preparePassword

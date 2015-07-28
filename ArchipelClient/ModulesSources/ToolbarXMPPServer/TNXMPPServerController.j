@@ -142,6 +142,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 
     if (!_pushRegistred)
     {
+        [[CPNotificationCenter defaultCenter] removeObserver:self name:TNArchipelPushNotificationXMPPServerUsers object:nil];
         [self registerSelector:@selector(_didReceiveUsersPush:) ofObject:usersController forPushNotificationType:TNArchipelPushNotificationXMPPServerUsers];
         _pushRegistred = YES;
     }
@@ -279,6 +280,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 
             if (![contact vCard])
             {
+                [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactVCardReceivedNotification object:nil];
                 [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:contact];
                 [contact getVCard];
                 continue;
@@ -308,6 +310,7 @@ var TNArchipelTypeXMPPServer                        = @"archipel:xmppserver",
 
                 if (![contact vCard])
                 {
+                    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactVCardReceivedNotification object:nil];
                     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:contact];
                     [contact getVCard];
                     continue;

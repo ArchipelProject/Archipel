@@ -38,7 +38,8 @@
 
 var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNArchipelTypeVirtualMachineDiskConvert = @"convert",
-    TNArchipelTypeVirtualMachineDiskRename  = @"rename";
+    TNArchipelTypeVirtualMachineDiskRename  = @"rename",
+    TNArchipelTypeVirtualMachineDiskGolden  = @"setgolden"
 
 
 @implementation TNEditDriveController : CPObject
@@ -88,6 +89,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     }
     else
     {
+        [buttonEditDiskFormat removeAllItems];
+        [buttonEditDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
+        [buttonEditDiskFormat addItemWithTitle:CPLocalizedString(@"Golden Image", @"Golden Image")];
         [buttonEditDiskFormat setEnabled:YES];
         [buttonConvert setEnabled:YES];
     }
@@ -125,7 +129,23 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (IBAction)convert:(id)aSender
 {
-    [self convert];
+
+if ([buttonEditDiskFormat title] == CPLocalizedString(@"Golden Image", @"Golden Image"))
+{
+    if (_currentEditedDisk && !([_currentEditedDisk format] == @"qcow2" || [_currentEditedDisk format] == @"qcow"))
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"Golden images can only by qcow or qcow2 format. Please convert before.", @"Golden images can only by qcow or qcow2 format. Please convert before.")];
+        return;
+    }
+    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Convert to golden image", @"Convert to golden image")
+                                informative:CPLocalizedString(@"Create a new golden image using name "+[fieldEditDiskName stringValue]+"?", @"Create a new golden image using name "+[fieldEditDiskName stringValue]+"?")
+                                 target:self
+                                 actions:[[CPLocalizedString("Create", "Create"), @selector(convert_to_golden:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
+    [alert runModal];
+}
+else
+    [self convert_format];
 }
 
 /*! rename a disk
@@ -141,9 +161,26 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 #pragma mark -
 #pragma mark XMPP Controls
 
+/*! asks virtual machine to connvert to a golden image
+*/
+- (void)convert_to_golden:(id)someUserInfo
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineDiskGolden,
+        "path": [_currentEditedDisk path],
+        "name": [fieldEditDiskName stringValue]+@"."+[_currentEditedDisk format]}];
+
+    [[_delegate entity] sendStanza:stanza andRegisterSelector:@selector(_didGoldenCreate:) ofObject:self];
+
+    [mainPopover close];
+}
+
 /*! asks virtual machine to connvert a disk
 */
-- (void)convert
+- (void)convert_format
 {
     if (_currentEditedDisk && [_currentEditedDisk format] == [buttonEditDiskFormat title])
     {
@@ -173,6 +210,20 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if ([aStanza type] == @"result")
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
                                                          message:CPBundleLocalizedString(@"Disk has been converted", @"Disk has been converted")];
+    else if ([aStanza type] == @"error")
+        [_delegate handleIqErrorFromStanza:aStanza];
+
+    return NO;
+}
+
+/*! compute virtual machine disk goldenize results
+    @param aStanza TNStropheStanza that contains the answer
+*/
+- (BOOL)_didGoldenCreate:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:[[_delegate entity] name]
+                                                         message:CPBundleLocalizedString(@"A new golden image have been created.", @"A new golden image have been created.")];
     else if ([aStanza type] == @"error")
         [_delegate handleIqErrorFromStanza:aStanza];
 
