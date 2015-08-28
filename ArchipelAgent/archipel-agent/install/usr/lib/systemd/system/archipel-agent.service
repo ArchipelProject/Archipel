@@ -7,6 +7,7 @@ After=libvirtd.service
 ExecStart=/usr/bin/runarchipel --config=/etc/archipel/archipel.conf --nofork
 Type=simple
 Restart=always
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target
