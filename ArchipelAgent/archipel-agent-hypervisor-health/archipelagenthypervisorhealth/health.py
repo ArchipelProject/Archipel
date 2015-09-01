@@ -21,7 +21,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import commands
-import libvirt
 import json
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
@@ -54,7 +53,10 @@ class TNHypervisorHealth (TNArchipelPlugin):
         max_rows_before_purge   = self.configuration.getint("HEALTH", "max_rows_before_purge")
         max_cached_rows         = self.configuration.getint("HEALTH", "max_cached_rows")
         log_file                = self.configuration.get("LOGGING", "logging_file_path")
-        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)
+        exclude_interfaces      = self.configuration.get("HEALTH", "exclude_interfaces") \
+                                if self.configuration.has_option("HEALTH", "exclude_interfaces") \
+                                else None
+        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows, exclude_interfaces)
         self.logfile = log_file
 
         # permissions

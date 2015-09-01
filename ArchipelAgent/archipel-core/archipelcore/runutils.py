@@ -176,8 +176,11 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
             for k, v in stateless_mode_parameters.items():
                 msg(" - %s: %s" % (k, v))
 
+            # get current state
+            current_mounts = file.read(open("/proc/mounts"))
+
             # Mount remote filestem
-            stateless_mount_storage(p_mount_type, p_mount_address, p_mount_options, p_mount_mountpoint)
+            was_not_stateless_mounted = stateless_mount_storage(current_mounts, p_mount_type, p_mount_address, p_mount_options, p_mount_mountpoint)
 
             # Create remote folders if needed
             paths = [p_stateless_path, p_stateless_lib_path, p_stateless_qemu_path, p_stateless_config_path]
@@ -187,7 +190,11 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
                     os.makedirs(path)
 
             # Mount --bind the /etc/libvirt/qemu to the solid state path
-            if not "/etc/libvirt/qemu" in commands.getoutput("mount"):
+            if was_not_stateless_mounted and "/etc/libvirt/qemu" in current_mounts:
+                msg("Umounting /etc/libvirt/qemu")
+                subprocess.check_call(["umount", "/etc/libvirt/qemu"])
+
+            if not "/etc/libvirt/qemu" in current_mounts or was_not_stateless_mounted:
                 msg("Mounting /etc/libvirt/qemu on %s" % p_stateless_qemu_path)
                 subprocess.check_call(["mount", "--bind", p_stateless_qemu_path, "/etc/libvirt/qemu"])
                 # We reload the libvirt
@@ -239,7 +246,7 @@ def initialize_config(paths, cmdline_path="/proc/cmdline", prepare_only=False):
     return config
 
 
-def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount_point="/stateless"):
+def stateless_mount_storage(current_mounts, mount_type, mount_address, mount_options=None, mount_point="/stateless"):
     """
     Mount the remote file system.
     @type mount_type: string
@@ -251,13 +258,14 @@ def stateless_mount_storage(mount_type, mount_address, mount_options=None, mount
     @type mount_point: string
     @param mount_point: mount path (Default: "/stateless")
     """
-    if mount_address in commands.getoutput("mount"):
+    if "%s %s " % (mount_address, mount_point) in current_mounts:
         msg("Remote filesystem is already mounted. Ignored")
-        return
-    msg("Mouting remote file system from %s (type: %s)" % (mount_address, mount_type))
+        return False
+    msg("Mouting remote file system from %s (type: %s) to %s" % (mount_address, mount_type, mount_point))
     if not mount_options:
         subprocess.check_call(["mount", "-t", mount_type, mount_address, mount_point])
     else:
         subprocess.check_call(["mount", "-t", mount_type, "-o", mount_options, mount_address, mount_point])
     msg("Remote filesystem sucessfull mounted")
+    return True
 
