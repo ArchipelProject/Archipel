@@ -301,8 +301,10 @@ class TNThreadedHealthCollector (Thread):
         """
         Overrides super class method. do the L{TNArchipelVirtualMachine} main loop.
         """
-        self.database_thread_connection = sqlite3.connect(self.database_file)
-        self.database_thread_cursor = self.database_thread_connection.cursor()
+        def connect():
+            self.database_thread_connection = sqlite3.connect(self.database_file)
+            self.database_thread_cursor = self.database_thread_connection.cursor()
+        connect()
         while(1):
             try:
                 self.stats_CPU.append(self.get_cpu_stats())
@@ -337,4 +339,8 @@ class TNThreadedHealthCollector (Thread):
 
                 time.sleep(self.collection_interval)
             except Exception as ex:
-                log.error("Stat collection fails. Exception %s" % str(ex))
+                if str(ex) == "disk I/O error":
+                    log.error("Stat collection fails. Exception %s (try to reopenning it)" % str(ex))
+                    connect()
+                else:
+                    log.error("Stat collection fails. Exception %s" % str(ex))
