@@ -35,7 +35,7 @@ class TNThreadedHealthCollector (Thread):
     This class collects hypervisor stats regularly.
     """
 
-    def __init__(self, database_file, collection_interval, max_rows_before_purge, max_cached_rows):
+    def __init__(self, database_file, collection_interval, max_rows_before_purge, max_cached_rows, exclude_interfaces):
         """
         The contructor of the class.
         @type database_file: string
@@ -51,6 +51,7 @@ class TNThreadedHealthCollector (Thread):
         self.collection_interval    = collection_interval
         self.max_rows_before_purge  = max_rows_before_purge
         self.max_cached_rows        = max_cached_rows
+        self.exclude_interfaces     = exclude_interfaces
         self.stats_CPU              = []
         self.stats_memory           = []
         self.stats_load             = []
@@ -132,7 +133,7 @@ class TNThreadedHealthCollector (Thread):
         try:
             aload = self.stats_load[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get disks information.", ex)
+            raise Exception("Unable to get load average information.", ex)
         if limit > 1:
             acpu.reverse()
             amem.reverse()
@@ -261,8 +262,10 @@ class TNThreadedHealthCollector (Thread):
             dev = line.split(":")[0].replace(" ", "")
             if dev == "lo":
                 continue
-            if dev.startswith("vnet"):
-                continue
+            if self.exclude_interfaces:
+                for exclude_interface in self.exclude_interfaces.split(","):
+                    if dev.startswith(exclude_interface):
+                        continue
             info = line.split(":")[1].split()
             rx = int(info[0])
             tx = int(info[8])
