@@ -426,8 +426,8 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param display: list fo group(s) which can see the group
         """
         server = self.entity.jid.getDomain()
-        santized_display_group = list(set([group for group in display if group.strip()]))
-        display_groups = '\\n'.join(map(str, santized_display_group))
+        sanitized_display_group = list(set([group.strip() for group in display if len(group.strip()) > 0]))
+        display_groups = '\\n'.join(map(str, sanitized_display_group))
         answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": display_groups, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
             raise Exception("Cannot create shared roster group. %s" % str(answer))
