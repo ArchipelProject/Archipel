@@ -750,10 +750,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         for row in rows:
             jid, last_seen, status = row
             last_seen_date = datetime.datetime.strptime(last_seen, "%Y-%m-%d %H:%M:%S.%f")
-            if (now - last_seen_date).seconds > ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Online":
+            if (now - last_seen_date).days*86400 + (now - last_seen_date).seconds > ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Online":
                 self.log.warning("CENTRALAGENT: Hypervisor %s timed out" % jid)
                 hypervisor_to_update.append({"jid": jid, "status": "Unreachable"})
-            elif (now - last_seen_date).seconds <= ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Unreachable":
+            elif (now - last_seen_date).days*86400 + (now - last_seen_date).seconds <= ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Unreachable":
                 self.log.info("CENTRALAGENT: Hypervisor %s is back up Online" % jid)
                 hypervisor_to_update.append({"jid": jid, "status": "Online"})
 
