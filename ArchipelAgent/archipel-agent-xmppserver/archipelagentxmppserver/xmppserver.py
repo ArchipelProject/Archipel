@@ -746,6 +746,9 @@ class TNXMPPServerController (TNArchipelPlugin):
                     user = {"jid": jid.getStripped(), "type": "human"}
                     if user in self.users:
                         self.users.remove(user)
+                        for group in self.group_list():
+                            if jid.getNode() in group['members']:
+                                self.group_delete_users(group['id'], jid.getNode())
                 self.entity.log.info("XMPPSERVER: Successfully unregistered user(s).")
                 self.entity.push_change("xmppserver:users", "unregistered")
             else:
