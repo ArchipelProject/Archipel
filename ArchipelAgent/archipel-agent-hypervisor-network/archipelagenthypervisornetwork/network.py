@@ -237,7 +237,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         content = f.read()
         f.close()
         splitted = content.split('\n')[2:-1]
-        return map(lambda x: x.split(":")[0].replace(" ", ""), splitted)
+        nics = map(lambda x: x.split(":")[0].replace(" ", ""), splitted)
+        return sorted(nics)
 
     def getnwfilters(self):
         """
