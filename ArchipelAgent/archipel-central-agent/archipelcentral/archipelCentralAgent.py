@@ -26,13 +26,15 @@ Contains L{TNArchipelCentralAgent}, the entities used for central agent.
 import datetime
 import random
 import sqlite3
+from threading import Thread
+from Queue import Queue
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.pubsub import TNPubSubNode
-from archipelcore.utils import build_error_iq, build_error_message
+from archipelcore.utils import build_error_iq
 from archipelcore import xmpp
 
 ARCHIPEL_CENTRAL_AGENT_KEEPALIVE         = 4  #seconds please change it according to centraldb agent plugin
@@ -50,6 +52,49 @@ ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
+
+
+class db_controller(Thread):
+    """
+    This class reprensent the database controller. The main purpose is to handle
+    better concurency read/write by setting up a Queue. This is a workaround to
+    avoid sqlite3 to segfault from time to time.
+    """
+    def __init__(self, db):
+        super(db_controller, self).__init__()
+        self.db = db
+        self.requets = Queue()
+        self.start()
+
+    def run(self):
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
+        while True:
+            request, arg, results = self.requets.get()
+            if request == '--close connection--':
+                break
+            cursor.execute(request, arg)
+            conn.commit()
+            if results:
+                for record in cursor:
+                    results.put(record)
+                results.put('--no more results--')
+        conn.close()
+
+    def execute(self, request, arg=None, results=None):
+        self.requets.put((request, arg or tuple(), results))
+
+    def select(self, request, arg=None):
+        results = Queue()
+        self.execute(request, arg, results)
+        while True:
+            record = results.get()
+            if record == '--no more results--':
+                break
+            yield record
+
+    def close(self):
+        self.execute('--close connection--')
 
 
 class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
@@ -102,8 +147,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.is_central_agent     = False
         self.salt                 = random.random()
         self.random_wait          = random.random()
-        self.database             = sqlite3.connect(self.configuration.get("CENTRALAGENT", "database"), check_same_thread=False)
-        self.database.row_factory = sqlite3.Row
+        self.database             = db_controller(self.configuration.get("CENTRALAGENT", "database"))
 
         # defining the structure of the keepalive pubsub event
         self.keepalive_event      = xmpp.Node("event",attrs={"type":"keepalive","jid":self.jid})
@@ -296,10 +340,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             event_type                 = central_announcement_event.getAttr("type")
 
             if event_type == "keepalive":
-
-                old_central_agent_jid = self.central_agent_jid()
                 keepalive_jid = xmpp.JID(central_announcement_event.getAttr("jid"))
-
                 if self.is_central_agent and keepalive_jid != self.jid:
 
                     # detect another central agent
@@ -361,7 +402,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            read_event = iq.getTag("query").getTag("archipel").getTag("event")
             entries = self.unpack_entries(iq)
             self.log.debug("CENTRALAGENT: iq_get_existing_vms_instances : iq : %s, entries : %s" % (iq, entries))
             origin_hyp = iq.getFrom()
@@ -486,7 +526,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement = "select %s from hypervisors" % columns
         if where_statement:
             read_statement += " where %s" % where_statement
-        rows = self.database.execute(read_statement)
+        rows = self.database.select(read_statement)
         ret = []
         for row in rows:
             ret.append({"jid":row[0], "last_seen":row[1], "status":row[2]})
@@ -499,7 +539,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement = "select %s from vms" % columns
         if where_statement:
             read_statement += " where %s" % where_statement
-        rows = self.database.execute(read_statement)
+        rows = self.database.select(read_statement)
         ret = []
         for row in rows:
             if columns == "*":
@@ -527,7 +567,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement += " and hypervisors.status='Online'"
 
         self.log.debug("CENTRALAGENT: Check if vm uuids %s exist elsewhere " % uuids)
-        rows = self.database.execute(read_statement)
+        rows = self.database.select(read_statement)
         ret = []
         for row in rows:
             ret.append({"uuid":row[0]})
@@ -547,7 +587,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement += "') and hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online')"
         self.log.debug("CENTRALDB: Get parked vms from database")
 
-        rows = self.database.execute(read_statement)
+        rows = self.database.select(read_statement)
         ret = []
         for row in rows:
             ret.append({"uuid":row[0], "domain":row[1]})
@@ -705,7 +745,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param event: received Iq
         """
         central_database_event = iq.getTag("query").getTag("archipel").getTag("event")
-        command = central_database_event.getAttr("command")
         entries=[]
         for entry in central_database_event.getChildren():
             entry_dict={}
@@ -732,9 +771,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
     def db_commit(self, command, entries):
         if self.is_central_agent:
-            self.log.debug("CENTRALAGENT: commit '%s' with entries %s" % (command, entries) )
-            self.database.executemany(command, entries)
-            self.database.commit()
+            self.log.debug("CENTRALAGENT: commit '%s' with entries %s" % (command, entries))
+            for entry in entries:
+                self.database.execute(command, entry)
         else:
             raise Exception("CENTRALAGENT: we are not central agent")
 
@@ -744,7 +783,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         """
         self.log.debug("CENTRALAGENT: Checking hypervisors state")
         now = datetime.datetime.now()
-        rows = self.database.execute("select jid,last_seen,status from hypervisors;")
+        rows = self.database.select("select jid,last_seen,status from hypervisors;")
         hypervisor_to_update = []
 
         for row in rows:
@@ -772,7 +811,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.database.execute("create table if not exists hypervisors (jid text unique on conflict replace, last_seen date, status string, stat1 int, stat2 int, stat3 int)")
         #By default on startup, put everything in the parking. Hypervisors will announce their vms.
         self.database.execute("update vms set hypervisor='None';")
-        self.database.commit()
 
     ### Event loop
 
