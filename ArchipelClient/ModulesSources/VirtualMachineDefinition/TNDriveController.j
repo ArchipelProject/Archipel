@@ -180,10 +180,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
             try
             {
                 var host = [[TNLibvirtDeviceDiskSourceHost alloc] init],
-                    hostName = [fieldDevicePath stringValue].split("-")[0].split(":")[0],
-                    hostPort = [fieldDevicePath stringValue].split("-")[0].split(":")[1],
-                    hostProtocol = [fieldDevicePath stringValue].split("-")[1].split("/")[0],
-                    hostProtocolName = [fieldDevicePath stringValue].split("/")[1];
+                    hostProtocol     = [fieldDevicePath stringValue].split("://")[0],
+                    hostName         = [fieldDevicePath stringValue].split("://")[1].split(":")[0],
+                    hostPort         = [fieldDevicePath stringValue].split("://")[1].split(":")[1].split("/")[0],
+                    hostProtocolName = [fieldDevicePath stringValue].split("://")[1].split(":")[1].split("/").slice(1).join('/')
 
                 [host setName:hostName];
                 [host setPort:hostPort];
@@ -293,7 +293,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         [buttonSourcePath setEnabled:NO];
 
         if (aSender)
-            [fieldDevicePath setStringValue:@"127.0.0.1:4242-sheepdog/myshare"];
+            [fieldDevicePath setStringValue:@"gluster://host:port/volume/image.ext"];
         else
         {
             var host = [[[_drive source] hosts] firstObject],
@@ -302,7 +302,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
                 port = [host port],
                 protocol = [driveSource protocol],
                 sourceName = [driveSource name],
-                hostString = hostname + @":" + port + @"-" + protocol + @"/" + sourceName;
+                hostString = protocol + @"://" + hostname + @":" + port + @"/" + sourceName;
 
             [fieldDevicePath setStringValue:hostString];
         }

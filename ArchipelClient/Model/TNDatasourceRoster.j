@@ -226,35 +226,27 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return filteredEntries;
 }
 
-
-#pragma mark -
-#pragma mark Utilities
-
-/*! return group content.
-    @param aGroup the group to parse
-    @param onlyOnline is TRUE, only online contacts will be returned
-    @return CPArray containing group's content
+/*! Use internaly to filter offline contacts
+    @param an array
+    @return an array of item
 */
-- (CPArray)contentsOfGroup:(TNStropheGroup)aGroup hideOffline:(BOOL)shouldHideOffline
+- (CPArray)_hideOfflineIfRequired:(CPArray)aList
 {
-    if (!shouldHideOffline)
-        return [aGroup content];
+    if (!_hideOfflineContacts)
+        return aList
 
-    var c = [CPArray array];
+    var filteredEntries = [CPArray array];
 
-    for (var i = 0; i < [[aGroup content] count]; i++)
+    for (var i = 0; i < [aList count]; i++)
     {
-        var item = [[aGroup content] objectAtIndex:i];
-
+        var item = [aList objectAtIndex:i];
         if ([item isKindOfClass:TNStropheGroup])
-            [c addObject:item];
+            [filteredEntries addObject:item];
         else if ([item XMPPShow] != TNStropheContactStatusOffline)
-            [c addObject:item];
+            [filteredEntries addObject:item];
     }
-
-    return c;
+    return filteredEntries;
 }
-
 
 #pragma mark -
 #pragma mark Delegates
@@ -276,17 +268,17 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
     if (_filter)
-        return [[self _getEntriesMatching] count];
+        return [[self _hideOfflineIfRequired:[self _getEntriesMatching]] count];
 
     if (!item)
-        return [_content count];
+        return [[self _hideOfflineIfRequired:_content] count];
     else
     {
         if ([item isKindOfClass:TNStropheContact])
             return 0;
         else
         {
-            return [[self contentsOfGroup:item hideOffline:_hideOfflineContacts] count];
+            return [[self _hideOfflineIfRequired:[item content]] count];
         }
     }
 }
@@ -306,14 +298,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
     if (_filter)
-        return [[self _getEntriesMatching].sort() objectAtIndex:index];
+        return [[self _hideOfflineIfRequired:[self _getEntriesMatching]].sort() objectAtIndex:index];
 
     if (!item)
-        return [_content.sort() objectAtIndex:index];
+        return [[self _hideOfflineIfRequired:_content].sort() objectAtIndex:index];
     else
     {
         if ([item isKindOfClass:TNStropheGroup])
-            return [[self contentsOfGroup:item hideOffline:_hideOfflineContacts] objectAtIndex:index];
+            return [[self _hideOfflineIfRequired:[item content]] objectAtIndex:index];
         else
             return nil;
     }
