@@ -559,17 +559,18 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         are defined in another, currently running, hypervisor.
         """
         uuids = []
+        ret = []
+
         for entry in entries:
             uuids.append(entry["uuid"])
-        read_statement = "select vms.uuid from vms join hypervisors on hypervisors.jid=vms.hypervisor where (vms.uuid='"
-        read_statement += "' or vms.uuid='".join(uuids)
-        read_statement += "') and hypervisors.jid != '%s'" % origin_hyp
+
+        read_statement = "select vms.uuid from vms join hypervisors on hypervisors.jid=vms.hypervisor"
+        read_statement += " where vms.uuid in (%s)" % ','.join("?"*len(uuids))
+        read_statement += " and hypervisors.jid != '%s'" % origin_hyp
         read_statement += " and hypervisors.status='Online'"
 
         self.log.debug("CENTRALAGENT: Check if vm uuids %s exist elsewhere " % uuids)
-        rows = self.database.select(read_statement)
-        ret = []
-        for row in rows:
+        for row in self.database.select(read_statement, uuids):
             ret.append({"uuid":row[0]})
         self.log.debug("CENTRALAGENT: We found %s on %s vms existing on others hypervistors." % (len(ret), len(uuids)))
         return ret
@@ -580,16 +581,17 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         are parked (have no hypervisor, or have a hypervisor which is not online)
         """
         uuids = []
+        ret = []
+
         for entry in entries:
             uuids.append(entry["uuid"])
-        read_statement = "select uuid, domain from vms where uuid=('"
-        read_statement += "' or vms.uuid='".join(uuids)
-        read_statement += "') and hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online')"
-        self.log.debug("CENTRALDB: Get parked vms from database")
 
-        rows = self.database.select(read_statement)
-        ret = []
-        for row in rows:
+        read_statement = "select uuid, domain from vms"
+        read_statement += " where uuid in (%s)" % ','.join("?"*len(uuids))
+        read_statement += " and (hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online'))"
+
+        self.log.debug("CENTRALDB: Get parked vms from database")
+        for row in self.database.select(read_statement, uuids):
             ret.append({"uuid":row[0], "domain":row[1]})
         self.log.debug("CENTRALDB: We found %s parked vms" % len(ret))
         return ret
