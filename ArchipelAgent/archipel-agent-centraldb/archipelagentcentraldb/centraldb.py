@@ -62,7 +62,6 @@ class TNCentralDb (TNArchipelPlugin):
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
 
             self.entity.register_hook("HOOK_VM_DEFINE", method=self.hook_vm_event)
-            self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.hook_vm_event)
             self.entity.register_hook("HOOK_VM_TERMINATE", method=self.hook_vm_terminate)
 
         self.central_agent_jid_val = None
