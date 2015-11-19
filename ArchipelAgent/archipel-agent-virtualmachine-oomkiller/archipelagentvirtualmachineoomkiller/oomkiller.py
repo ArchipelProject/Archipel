@@ -20,7 +20,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import commands
-import sqlite3
 import os
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
@@ -46,10 +45,7 @@ class TNOOMKiller (TNArchipelPlugin):
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.vm_initialized)
         self.entity.register_hook("HOOK_VM_CREATE", method=self.vm_create)
-        self.entity.register_hook("HOOK_VM_TERMINATE", method=self.vm_terminate)
-        self.database = sqlite3.connect(self.configuration.get("OOMKILLER", "database"), check_same_thread=False)
-        self.database.execute("create table if not exists oomkiller (uuid text unique, adjust int)")
-        self.database.commit()
+        self.oomkiller_flag = "/%s/oomkiller_flag" % (self.entity.folder)
         self.entity.log.info("OOM: module oom killer initialized")
         # permissions
         self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False)
@@ -80,7 +76,8 @@ class TNOOMKiller (TNArchipelPlugin):
         plugin_friendly_name           = "Virtual Machine OOM Killer"
         plugin_identifier              = "oomkiller"
         plugin_configuration_section   = "OOMKILLER"
-        plugin_configuration_tokens    = ["database"]
+        plugin_configuration_tokens    = []
+
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -114,9 +111,7 @@ class TNOOMKiller (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.database.execute("DELETE FROM oomkiller WHERE uuid=?", (self.entity.uuid, ))
-        self.database.commit()
-        self.database.close()
+        os.remove(self.oomkiller_flag)
         self.entity.log.info("OOM: information for vm with uuid %s has been removed." % self.entity.uuid)
 
     def vm_initialized(self, origin, user_info, parameters):
@@ -138,21 +133,22 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def get_oom_info(self):
         """
-        Get the OOM info from database.
+        Get the OOM info from file.
         @rtype: dict
         @return: dict contaning OOM status
         """
         adj_value = 0
         score_value = 0
-        rows = self.database.execute("SELECT adjust FROM oomkiller WHERE uuid=?", (self.entity.uuid, ))
-        for values in rows:
-            adj_value = values[0]
-            score_value = 0
+        if os.path.isfile(self.oomkiller_flag):
+            try:
+                adj_value = file.read(open(self.oomkiller_flag))
+            except Exception as ex:
+                self.entity.log.warning("OOM: Unable to read file while getting OOM: " + str(ex))
         return {"adjust": adj_value, "score": score_value}
 
     def set_oom_info(self, adjust, score):
         """
-        Set the OOM info both on file if exists and on database.
+        Set the OOM info both on file if exists and on file.
         @type adjust: int
         @param adjust: the value of adjust
         @type score: int
@@ -167,16 +163,12 @@ class TNOOMKiller (TNArchipelPlugin):
             f.write(str(adjust))
             f.close()
         except Exception as ex:
-            self.entity.log.warning("OOM: No valid PID. storing value only on database: " + str(ex))
+            self.entity.log.warning("OOM: No valid PID. storing value only on file: " + str(ex))
         try:
-            self.database.execute("INSERT INTO oomkiller VALUES (?, ?)", (self.entity.uuid, int(adjust)))
-        except:
-            self.database.execute("UPDATE oomkiller SET adjust=? WHERE uuid=?", (int(adjust), self.entity.uuid))
-        try:
-            self.database.commit()
+            with open(self.oomkiller_flag, "w") as oomkiller_flag:
+                oomkiller_flag.write(adjust)
         except Exception as ex:
-            self.entity.log.warning("OOM: Unable to commit change in DB while setting OOM: " + str(ex))
-
+            self.entity.log.warning("OOM: Unable to write change in file while setting OOM: " + str(ex))
 
 
     ### XMPP handlers
