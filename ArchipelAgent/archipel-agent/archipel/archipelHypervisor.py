@@ -1350,6 +1350,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         return reply
 
     def on_xmpp_loop_tick(self):
+        self.check_libvirt_connection()
         if self.check_for_central_agent:
             if not self.last_keepalive_from_central_agent:
                 self.last_keepalive_from_central_agent = datetime.datetime.now()
