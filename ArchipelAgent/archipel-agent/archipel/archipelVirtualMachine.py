@@ -752,6 +752,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 return (None, (0, 0))
 
             stream   = self.hypervisor.libvirt_connection.newStream(flags=0)
+            _        = self.domain.screenshot(stream, screen, flags=0)
             img_buff = ImageFile.Parser()
             stream.recvAll(lambda stream, data, out: out.feed(data), img_buff)
             stream.finish()
