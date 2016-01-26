@@ -38,7 +38,6 @@ import libvirt
 import os
 import shutil
 import thread
-import tempfile
 import base64
 import sys
 import traceback
@@ -385,15 +384,26 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         try:
             dominfo = self.domain.info()
             self.libvirt_status = dominfo[0]
-            self.log.info("Virtual machine state is %d" % dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
+                if self.xmppstatus == ARCHIPEL_XMPP_SHOW_RUNNING:
+                    return
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
+                if self.xmppstatus == ARCHIPEL_XMPP_SHOW_PAUSED:
+                    return
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF:
+                if self.xmppstatus == ARCHIPEL_XMPP_SHOW_SHUTDOWN:
+                    return
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWN)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
+                if self.xmppstatus == ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN:
+                    return
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTTINGDOWN)
+            else:
+                self.log.warning("Got an unhandled libvirt virtual machine state (%s)" % dominfo[0])
+                return
+            self.log.info("Virtual machine state is %d" % dominfo[0])
             self.perform_hooks("HOOK_VM_INITIALIZE")
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
@@ -543,7 +553,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
 
             if self.is_migrating:
                 Timer(3, self._listen_migration_progress, []).start()
-        except Exception as ex:
+        except Exception:
             pass
 
 
@@ -742,7 +752,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 return (None, (0, 0))
 
             stream   = self.hypervisor.libvirt_connection.newStream(flags=0)
-            mime     = self.domain.screenshot(stream, screen, flags=0)
+            _        = self.domain.screenshot(stream, screen, flags=0)
             img_buff = ImageFile.Parser()
             stream.recvAll(lambda stream, data, out: out.feed(data), img_buff)
             stream.finish()
@@ -771,7 +781,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 # @TODO: I'm sure there is a better way to do this.
                 # First, this thing should be only running when the VM is running
                 # instead of trying for nothing is the VM is not defined and running.
-                self.log.warning("It seems the VM is gone, certainly due to migration. Stopping cpu usage collector.")
+                self.log.warning("It seems the VM is gone, certainly due to migration. Stopping cpu usage collector. (reason %s)" % ex)
                 return
 
         if not self.is_migrating: # for some reason this is not working...

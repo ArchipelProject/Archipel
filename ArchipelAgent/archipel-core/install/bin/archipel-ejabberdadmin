@@ -21,6 +21,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import random
 import re
 
 from archipelcore import xmpp
@@ -46,7 +47,7 @@ def xmpp_connect(jid, password, auth=True):
         print "Cannot connect to the XMPP server"
         return
     if auth:
-        if xmppclient.auth(jid.getNode(), password, "configurator") == None:
+        if xmppclient.auth(jid.getNode(), password, jid.getResource() if jid.getResource() else random.randint(0, 100000)) == None:
             print "Bad authentication"
             return
     return xmppclient

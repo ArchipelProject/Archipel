@@ -20,12 +20,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
-import random
-import sqlite3
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.pubsub import TNPubSubNode
-from archipelcore.utils import build_error_iq
 from archipelcore import xmpp
 
 # this pubsub is subscribed by all hypervisors and carries the keepalive messages
@@ -62,7 +59,6 @@ class TNCentralDb (TNArchipelPlugin):
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
 
             self.entity.register_hook("HOOK_VM_DEFINE", method=self.hook_vm_event)
-            self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.hook_vm_event)
             self.entity.register_hook("HOOK_VM_TERMINATE", method=self.hook_vm_terminate)
 
         self.central_agent_jid_val = None
@@ -232,11 +228,10 @@ class TNCentralDb (TNArchipelPlugin):
         vm_table = []
 
         for vm,vmprops in self.entity.virtualmachines.iteritems():
-
-            vm_table.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid})
+            if vmprops.definition:
+                vm_table.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid})
 
         if len(vm_table) >= 1:
-
             self.register_vms(vm_table)
 
         self.register_hypervisors([{"jid":self.entity.jid, "status":"Online", "last_seen": datetime.datetime.now(), "stat1":0, "stat2":0, "stat3":0}])
