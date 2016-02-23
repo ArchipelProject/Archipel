@@ -175,6 +175,12 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         nuage_node.addChild("application", attrs={"name": self.entity.vcard_infos["CATEGORIES"]})
 
         # Now we will parse all given interfaces, and build nuage_networks info in nuage metadata
+        if not vm_xml_node.getTag("devices"):
+            continue
+
+        if not vm_xml_node.getTag("devices").getTags("interface"):
+            continue
+
         interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
 
         for interface in interface_nodes:
