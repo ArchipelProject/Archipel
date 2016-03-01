@@ -125,6 +125,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         self.log.info("Server address defined as %s" % self.xmppserveraddr)
 
+        if self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"):
+            global ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT
+            ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT = self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold")
+
         # start the permission center
         self.permission_db_file = self.configuration.get("CENTRALAGENT", "centralagent_permissions_database_path")
         self.permission_center.start(database_file=self.permission_db_file)
