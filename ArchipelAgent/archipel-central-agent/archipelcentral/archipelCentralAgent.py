@@ -127,19 +127,19 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         if self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"):
             global ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT
-            ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT = self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold")
+            ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT = int(self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"))
 
         if self.configuration.get("CENTRALAGENT", "keepalive_interval"):
             global ARCHIPEL_CENTRAL_AGENT_KEEPALIVE
-            ARCHIPEL_CENTRAL_AGENT_KEEPALIVE = self.configuration.get("CENTRALAGENT", "keepalive_interval")
+            ARCHIPEL_CENTRAL_AGENT_KEEPALIVE = int(self.configuration.get("CENTRALAGENT", "keepalive_interval"))
 
         if self.configuration.get("CENTRALAGENT", "central_agent_timeout"):
             global ARCHIPEL_CENTRAL_AGENT_TIMEOUT
-            ARCHIPEL_CENTRAL_AGENT_TIMEOUT = self.configuration.get("CENTRALAGENT", "central_agent_timeout")
+            ARCHIPEL_CENTRAL_AGENT_TIMEOUT = int(self.configuration.get("CENTRALAGENT", "central_agent_timeout"))
 
         if self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"):
             global ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY
-            ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY = self.configuration.get("CENTRALAGENT", "hypervisor_check_interval")
+            ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY = int(self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"))
 
         # start the permission center
         self.permission_db_file = self.configuration.get("CENTRALAGENT", "centralagent_permissions_database_path")
