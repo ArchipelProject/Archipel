@@ -20,7 +20,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sqlite3
 
 from archipel.archipelHypervisor import TNArchipelHypervisor
@@ -175,11 +174,8 @@ class TNHypervisorNuageNetworks (TNArchipelPlugin):
         nuage_node.addChild("application", attrs={"name": self.entity.vcard_infos["CATEGORIES"]})
 
         # Now we will parse all given interfaces, and build nuage_networks info in nuage metadata
-        if not vm_xml_node.getTag("devices"):
-            continue
-
-        if not vm_xml_node.getTag("devices").getTags("interface"):
-            continue
+        if not vm_xml_node.getTag("devices", {}).getTags("interface"):
+            return vm_xml_node
 
         interface_nodes = vm_xml_node.getTag("devices").getTags("interface")
 
