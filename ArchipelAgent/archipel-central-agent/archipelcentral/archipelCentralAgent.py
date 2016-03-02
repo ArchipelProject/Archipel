@@ -38,7 +38,6 @@ from archipelcore.utils import build_error_iq
 from archipelcore import xmpp
 
 ARCHIPEL_CENTRAL_AGENT_KEEPALIVE         = 4  #seconds
-ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 10 #seconds
 ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY     = 30 #seconds
 ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT       = 60 #seconds
 
@@ -133,10 +132,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             global ARCHIPEL_CENTRAL_AGENT_KEEPALIVE
             ARCHIPEL_CENTRAL_AGENT_KEEPALIVE = int(self.configuration.get("CENTRALAGENT", "keepalive_interval"))
 
-        if self.configuration.get("CENTRALAGENT", "central_agent_timeout"):
-            global ARCHIPEL_CENTRAL_AGENT_TIMEOUT
-            ARCHIPEL_CENTRAL_AGENT_TIMEOUT = int(self.configuration.get("CENTRALAGENT", "central_agent_timeout"))
-
         if self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"):
             global ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY
             ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY = int(self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"))
@@ -162,7 +157,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.xmpp_authenticated   = False
         self.is_central_agent     = False
         self.salt                 = random.random()
-        self.random_wait          = random.random()
         self.database             = db_controller(self.configuration.get("CENTRALAGENT", "database"))
 
         # defining the structure of the keepalive pubsub event
@@ -312,9 +306,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         now = datetime.datetime.now()
         now_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
         initial_keepalive.setAttr("central_agent_time", now_string)
+        initial_keepalive.setAttr("keepalive_interval", ARCHIPEL_CENTRAL_AGENT_KEEPALIVE)
 
         if self.required_stats_xml:
-
             initial_keepalive.addChild(node = self.required_stats_xml)
 
         self.central_keepalive_pubsub.add_item(initial_keepalive)
@@ -338,6 +332,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         now_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
         keepalive_event = self.keepalive_event
         keepalive_event.setAttr("central_agent_time", now_string)
+        keepalive_event.setAttr("keepalive_interval", ARCHIPEL_CENTRAL_AGENT_KEEPALIVE)
 
         return keepalive_event
 
@@ -840,7 +835,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
                 # before becoming a central agent, we wait for timeout period plus a random amount of time
                 # to avoid race conditions
-                central_agent_timeout = ARCHIPEL_CENTRAL_AGENT_TIMEOUT * ( 1 + self.random_wait )
+                central_agent_timeout =  random.randint(1,3)
 
                 if (datetime.datetime.now() - self.last_keepalive_heard).seconds > central_agent_timeout:
                     self.log.info("CENTRALAGENT: has not detected any central agent for the last %s seconds, becoming central agent." % central_agent_timeout)
