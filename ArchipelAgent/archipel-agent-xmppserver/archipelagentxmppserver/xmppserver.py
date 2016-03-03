@@ -103,7 +103,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.autogroup_hypervisors_id = self.autogroup_name_hypervisors
                 self.autogroup_users_id = self.autogroup_name_users
 
-                self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED", method=self.get_management_capabilities)
+                self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.get_management_capabilities)
                 self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
                 if auto_group_filter in ("all", "hypervisors"):
                     if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
