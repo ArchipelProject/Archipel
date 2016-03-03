@@ -166,7 +166,7 @@ class TNCentralDb (TNArchipelPlugin):
                 self.central_agent_jid_val = keepalive_jid
                 self.last_keepalive_heard  = datetime.datetime.now()
 
-                self.delayed_tasks.add(self.hypervisor_timeout_threshold, self.push_statistics_to_centraldb, {'central_agent_time': central_agent_time})
+                self.delayed_tasks.add(self.hypervisor_timeout_threshold * 4/5, self.push_statistics_to_centraldb, {'central_agent_time': central_agent_time})
 
                 if old_central_agent_jid == None:
                     self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid})

@@ -120,11 +120,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         self.log.info("Server address defined as %s" % self.xmppserveraddr)
 
-        if self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"):
-            self.keepalive_interval = int(self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"))
-
         if self.configuration.get("CENTRALAGENT", "keepalive_interval"):
-            self.hypervisor_timeout_threshold = int(self.configuration.get("CENTRALAGENT", "keepalive_interval"))
+            self.keepalive_interval = int(self.configuration.get("CENTRALAGENT", "keepalive_interval"))
+
+        if self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"):
+            self.hypervisor_timeout_threshold = int(self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"))
 
         if self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"):
             self.hypervisor_check_interval = int(self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"))
