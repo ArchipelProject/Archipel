@@ -71,9 +71,6 @@ ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
-# number of seconds before central agent is considered AWOL
-ARCHIPEL_CENTRAL_AGENT_TIMEOUT                  = 5
-
 class TNThreadedVirtualMachine (Thread):
     """
     This class is used to run L{ArchipelVirtualMachine} main loop
@@ -1361,19 +1358,19 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                         self.seen_central_agent = True
                     return
                 elif self.seen_central_agent:
-                    self.log.error("CENTRALDB: Central Agent timeout after %s seconds" % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
+                    self.log.error("CENTRALDB: Central Agent timeout after %s seconds" % self.get_plugin("centraldb").keepalive_interval)
                     self.last_keepalive_from_central_agent = datetime.datetime.now()
                     self.seen_central_agent = False
 
                 waiting_for = (datetime.datetime.now() - self.last_keepalive_from_central_agent).seconds
-                if waiting_for < ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
-                    self.update_presence(presence_msg="Waiting %ss for central-agent" % (ARCHIPEL_CENTRAL_AGENT_TIMEOUT - waiting_for))
+                if waiting_for < self.get_plugin("centraldb").keepalive_interval:
+                    self.update_presence(presence_msg="Waiting %ss for central-agent" % (self.get_plugin("centraldb").keepalive_interval - waiting_for))
                     return
-                elif waiting_for > ARCHIPEL_CENTRAL_AGENT_TIMEOUT and waiting_for < (ARCHIPEL_CENTRAL_AGENT_TIMEOUT * 2):
+                elif waiting_for > self.get_plugin("centraldb").keepalive_interval and waiting_for < (self.get_plugin("centraldb").keepalive_interval * 2):
                     self.update_presence()
 
             if not self.already_wake_up:
-                self.log.error("HYPERVISOR: No Central agent found after %s seconds, starting vms based on local db info only." % ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
+                self.log.error("HYPERVISOR: No Central agent found after %s seconds, starting vms based on local db info only." % self.get_plugin("centraldb").keepalive_interval)
                 self.wake_up_virtual_machines_hook()
 
     def exit_proc(self):

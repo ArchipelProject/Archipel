@@ -37,14 +37,9 @@ from archipelcore.pubsub import TNPubSubNode
 from archipelcore.utils import build_error_iq
 from archipelcore import xmpp
 
-ARCHIPEL_CENTRAL_AGENT_KEEPALIVE         = 4  #seconds
-ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY     = 30 #seconds
-ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT       = 60 #seconds
-
 # this pubsub is subscribed by all hypervisors and carries the keepalive messages
 # for the central agent
 ARCHIPEL_KEEPALIVE_PUBSUB                = "/archipel/centralagentkeepalive"
-
 ARCHIPEL_NS_CENTRALAGENT                 = "archipel:centralagent"
 
 ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
@@ -52,15 +47,14 @@ ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
-
-class db_controller(Thread):
+class TNDBController(Thread):
     """
     This class reprensent the database controller. The main purpose is to handle
     better concurency read/write by setting up a Queue. This is a workaround to
     avoid sqlite3 to segfault from time to time.
     """
     def __init__(self, db):
-        super(db_controller, self).__init__()
+        super(TNDBController, self).__init__()
         self.db = db
         self.requets = Queue()
         self.start()
@@ -114,27 +108,26 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         TNArchipelEntity.__init__(self, jid, password, configuration, "central-agent")
         self.log.info("Starting Archipel central agent")
 
-        self.xmppserveraddr            = self.jid.getDomain()
-        self.entity_type               = "central-agent"
-        self.default_avatar            = self.configuration.get("CENTRALAGENT", "central_agent_default_avatar")
-        self.libvirt_event_callback_id = None
-        self.vcard_infos               = {}
-
-        self.vcard_infos["TITLE"]      = "Central agent"
+        self.xmppserveraddr               = self.jid.getDomain()
+        self.entity_type                  = "central-agent"
+        self.default_avatar               = self.configuration.get("CENTRALAGENT", "central_agent_default_avatar")
+        self.libvirt_event_callback_id    = None
+        self.vcard_infos                  = {}
+        self.keepalive_interval           = 10
+        self.hypervisor_timeout_threshold = 60
+        self.hypervisor_check_interval    = 30
+        self.vcard_infos["TITLE"]         = "Central agent"
 
         self.log.info("Server address defined as %s" % self.xmppserveraddr)
 
         if self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"):
-            global ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT
-            ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT = int(self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"))
+            self.keepalive_interval = int(self.configuration.get("CENTRALAGENT", "hypervisor_timeout_threshold"))
 
         if self.configuration.get("CENTRALAGENT", "keepalive_interval"):
-            global ARCHIPEL_CENTRAL_AGENT_KEEPALIVE
-            ARCHIPEL_CENTRAL_AGENT_KEEPALIVE = int(self.configuration.get("CENTRALAGENT", "keepalive_interval"))
+            self.hypervisor_timeout_threshold = int(self.configuration.get("CENTRALAGENT", "keepalive_interval"))
 
         if self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"):
-            global ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY
-            ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY = int(self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"))
+            self.hypervisor_check_interval = int(self.configuration.get("CENTRALAGENT", "hypervisor_check_interval"))
 
         # start the permission center
         self.permission_db_file = self.configuration.get("CENTRALAGENT", "centralagent_permissions_database_path")
@@ -151,13 +144,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.create_hook("HOOK_CENTRALAGENT_HYP_REGISTERED")
         self.create_hook("HOOK_CENTRALAGENT_HYP_UNREGISTERED")
 
-
         self.central_agent_jid_val = None
-
-        self.xmpp_authenticated   = False
-        self.is_central_agent     = False
-        self.salt                 = random.random()
-        self.database             = db_controller(self.configuration.get("CENTRALAGENT", "database"))
+        self.xmpp_authenticated    = False
+        self.is_central_agent      = False
+        self.salt                  = random.random()
+        self.database              = TNDBController(self.configuration.get("CENTRALAGENT", "database"))
 
         # defining the structure of the keepalive pubsub event
         self.keepalive_event      = xmpp.Node("event",attrs={"type":"keepalive","jid":self.jid})
@@ -169,15 +160,13 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.centralagent')
 
-        module_platformrequest    = self.configuration.get("MODULES", "platformrequest")
+        module_platformrequest = self.configuration.get("MODULES", "platformrequest")
 
         if module_platformrequest:
-
             required_stats = self.get_plugin("platformrequest").computing_unit.required_stats
             self.required_stats_xml = xmpp.Node("required_stats")
 
             for stat in required_stats:
-
                 self.log.debug("CENTRALAGENT: stat : %s" % stat)
                 self.required_stats_xml.addChild("stat", attrs=stat)
 
@@ -285,12 +274,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         self.change_presence("away", "Standby")
 
-        if self.central_agent_mode=="force":
-
+        if self.central_agent_mode == "force":
             self.become_central_agent()
-
-        elif self.central_agent_mode=="auto":
-
+        elif self.central_agent_mode == "auto":
             self.last_keepalive_heard = datetime.datetime.now()
             self.last_hyp_check = datetime.datetime.now()
 
@@ -300,21 +286,22 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         """
         self.is_central_agent = True
         self.manage_database()
-        initial_keepalive      = xmpp.Node("event",attrs={"type":"keepalive","jid":self.jid})
+        initial_keepalive = xmpp.Node("event",attrs={"type":"keepalive","jid":self.jid})
         initial_keepalive.setAttr("force_update","true")
         initial_keepalive.setAttr("salt",self.salt)
-        now = datetime.datetime.now()
+        now        = datetime.datetime.now()
         now_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
         initial_keepalive.setAttr("central_agent_time", now_string)
-        initial_keepalive.setAttr("keepalive_interval", ARCHIPEL_CENTRAL_AGENT_KEEPALIVE)
+        initial_keepalive.setAttr("keepalive_interval", self.keepalive_interval)
+        initial_keepalive.setAttr("hypervisor_timeout_threshold", self.hypervisor_timeout_threshold)
 
         if self.required_stats_xml:
-            initial_keepalive.addChild(node = self.required_stats_xml)
+            initial_keepalive.addChild(node=self.required_stats_xml)
 
         self.central_keepalive_pubsub.add_item(initial_keepalive)
         self.log.debug("CENTRALAGENT: initial keepalive sent")
         self.last_keepalive_sent = datetime.datetime.now()
-        self.last_hyp_check = datetime.datetime.now()
+        self.last_hyp_check      = datetime.datetime.now()
         self.change_presence("","Active")
 
     def central_agent_jid(self):
@@ -328,11 +315,12 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         Returns the keepalive event with current date, to send to the pubsub
         so that all ping calculations are based on central agent date.
         """
-        now = datetime.datetime.now()
-        now_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+        now             = datetime.datetime.now()
+        now_string      = now.strftime("%Y-%m-%d %H:%M:%S.%f")
         keepalive_event = self.keepalive_event
         keepalive_event.setAttr("central_agent_time", now_string)
-        keepalive_event.setAttr("keepalive_interval", ARCHIPEL_CENTRAL_AGENT_KEEPALIVE)
+        keepalive_event.setAttr("keepalive_interval", self.keepalive_interval)
+        keepalive_event.setAttr("hypervisor_timeout_threshold", self.hypervisor_timeout_threshold)
 
         return keepalive_event
 
@@ -346,14 +334,12 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         items = event.getTag("event").getTag("items").getTags("item")
 
         for item in items:
-
             central_announcement_event = item.getTag("event")
             event_type                 = central_announcement_event.getAttr("type")
 
             if event_type == "keepalive":
                 keepalive_jid = xmpp.JID(central_announcement_event.getAttr("jid"))
                 if self.is_central_agent and keepalive_jid != self.jid:
-
                     # detect another central agent
                     self.log.warning("CENTRALAGENT: another central agent detected, performing election")
                     keepalive_salt = float(central_announcement_event.getAttr("salt"))
@@ -376,11 +362,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            read_event = iq.getTag("query").getTag("archipel").getTag("event")
-            columns = read_event.getAttr("columns")
+            read_event      = iq.getTag("query").getTag("archipel").getTag("event")
+            columns         = read_event.getAttr("columns")
             where_statement = read_event.getAttr("where_statement")
-            reply = iq.buildReply("result")
-            entries = self.read_hypervisors(columns, where_statement)
+            reply           = iq.buildReply("result")
+            entries         = self.read_hypervisors(columns, where_statement)
             for entry in self.pack_entries(entries):
                 reply.addChild(node = entry)
         except Exception as ex:
@@ -394,11 +380,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            read_event = iq.getTag("query").getTag("archipel").getTag("event")
-            columns = read_event.getAttr("columns")
+            read_event      = iq.getTag("query").getTag("archipel").getTag("event")
+            columns         = read_event.getAttr("columns")
             where_statement = read_event.getAttr("where_statement")
-            reply = iq.buildReply("result")
-            entries = self.read_vms(columns, where_statement)
+            reply           = iq.buildReply("result")
+            entries         = self.read_vms(columns, where_statement)
             for entry in self.pack_entries(entries):
                 reply.addChild(node = entry)
         except Exception as ex:
@@ -413,11 +399,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            entries = self.unpack_entries(iq)
+            entries    = self.unpack_entries(iq)
             self.log.debug("CENTRALAGENT: iq_get_existing_vms_instances : iq : %s, entries : %s" % (iq, entries))
             origin_hyp = iq.getFrom()
-            reply = iq.buildReply("result")
-            entries = self.get_existing_vms_instances(entries, origin_hyp)
+            reply      = iq.buildReply("result")
+            entries    = self.get_existing_vms_instances(entries, origin_hyp)
             for entry in self.pack_entries(entries):
                 reply.addChild(node = entry)
         except Exception as ex:
@@ -431,7 +417,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
+            reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.register_hypervisors(entries)
             self.perform_hooks("HOOK_CENTRALAGENT_HYP_REGISTERED", entries)
@@ -446,7 +432,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
+            reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.register_vms(entries)
             self.perform_hooks("HOOK_CENTRALAGENT_VM_REGISTERED", entries)
@@ -461,7 +447,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
+            reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.update_vms(entries)
         except Exception as ex:
@@ -475,7 +461,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
+            reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             entries = self.update_vms_domain(entries)
             for entry in self.pack_entries(entries):
@@ -491,7 +477,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
+            reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.update_hypervisors(entries)
         except Exception as ex:
@@ -505,7 +491,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
+            reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
             self.unregister_hypervisors(entries)
             self.perform_hooks("HOOK_CENTRALAGENT_HYP_UNREGISTERED", entries)
@@ -520,8 +506,8 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param iq: received Iq
         """
         try:
-            reply = iq.buildReply("result")
-            in_entries = self.unpack_entries(iq)
+            reply       = iq.buildReply("result")
+            in_entries  = self.unpack_entries(iq)
             out_entries = self.unregister_vms(in_entries)
             self.perform_hooks("HOOK_CENTRALAGENT_VM_UNREGISTERED", out_entries)
             for entry in self.pack_entries(out_entries):
@@ -643,11 +629,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @type entries: List
         @param entries: list of vms
         """
-        results = []
-
-        # we check if vms are really parked
+        results        = []
         parked_vms_ret = self.read_parked_vms(entries)
-        parked_vms = {}
+        parked_vms     = {}
         for ret in parked_vms_ret:
             parked_vms[ret["uuid"]] = {"domain":xmpp.simplexml.NodeBuilder(data=ret["domain"]).getDom()}
         entries_to_commit = []
@@ -664,12 +648,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                 result = "ERROR: There is no virtual machine parked with uuid %s" % uuid
                 error = True
             else:
-                old_domain = parked_vms[uuid]["domain"]
-
+                old_domain    = parked_vms[uuid]["domain"]
                 previous_uuid = old_domain.getTag("uuid").getData()
                 previous_name = old_domain.getTag("name").getData()
-                new_uuid = ""
-                new_name = ""
+                new_uuid      = ""
+                new_name      = ""
                 if new_domain.getTag("uuid"):
                     new_uuid = new_domain.getTag("uuid").getData()
                 if new_domain.getTag("name"):
@@ -795,17 +778,17 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         Check that hypervisors are alive.
         """
         self.log.debug("CENTRALAGENT: Checking hypervisors state")
-        now = datetime.datetime.now()
-        rows = self.database.select("select jid,last_seen,status from hypervisors;")
+        now                  = datetime.datetime.now()
+        rows                 = self.database.select("select jid,last_seen,status from hypervisors;")
         hypervisor_to_update = []
 
         for row in rows:
             jid, last_seen, status = row
             last_seen_date = datetime.datetime.strptime(last_seen, "%Y-%m-%d %H:%M:%S.%f")
-            if (now - last_seen_date).days*86400 + (now - last_seen_date).seconds > ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Online":
+            if (now - last_seen_date).days*86400 + (now - last_seen_date).seconds > self.hypervisor_timeout_threshold and status == "Online":
                 self.log.warning("CENTRALAGENT: Hypervisor %s timed out" % jid)
                 hypervisor_to_update.append({"jid": jid, "status": "Unreachable"})
-            elif (now - last_seen_date).days*86400 + (now - last_seen_date).seconds <= ARCHIPEL_CENTRAL_HYP_CHECK_TIMEOUT and status == "Unreachable":
+            elif (now - last_seen_date).days*86400 + (now - last_seen_date).seconds <= self.hypervisor_timeout_threshold and status == "Unreachable":
                 self.log.info("CENTRALAGENT: Hypervisor %s is back up Online" % jid)
                 hypervisor_to_update.append({"jid": jid, "status": "Online"})
 
@@ -822,7 +805,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         """
         self.database.execute("create table if not exists vms (uuid text unique on conflict replace, parker string, creation_date date, domain string, hypervisor string)")
         self.database.execute("create table if not exists hypervisors (jid text unique on conflict replace, last_seen date, status string, stat1 int, stat2 int, stat3 int)")
-        #By default on startup, put everything in the parking. Hypervisors will announce their vms.
         self.database.execute("update vms set hypervisor='None';")
 
     ### Event loop
@@ -831,21 +813,13 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         if self.xmpp_authenticated:
 
-            if not self.is_central_agent and self.central_agent_mode=="auto":
-
-                # before becoming a central agent, we wait for timeout period plus a random amount of time
-                # to avoid race conditions
-                central_agent_timeout =  random.randint(1,3)
-
-                if (datetime.datetime.now() - self.last_keepalive_heard).seconds > central_agent_timeout:
-                    self.log.info("CENTRALAGENT: has not detected any central agent for the last %s seconds, becoming central agent." % central_agent_timeout)
-                    self.become_central_agent()
-
+            if not self.is_central_agent and self.central_agent_mode == "auto":
+                self.become_central_agent()
             elif self.is_central_agent: # we are central agent
-                if (datetime.datetime.now() - self.last_keepalive_sent).seconds >= ARCHIPEL_CENTRAL_AGENT_KEEPALIVE:
+                if (datetime.datetime.now() - self.last_keepalive_sent).seconds >= self.keepalive_interval:
                     self.central_keepalive_pubsub.add_item(self.keepalive_event_with_date())
                     self.last_keepalive_sent = datetime.datetime.now()
 
                 if self.ping_hypervisors:
-                    if (datetime.datetime.now() - self.last_hyp_check).seconds >= ARCHIPEL_CENTRAL_HYP_CHECK_FREQUENCY:
+                    if (datetime.datetime.now() - self.last_hyp_check).seconds >= self.hypervisor_check_interval:
                         self.check_hyps()

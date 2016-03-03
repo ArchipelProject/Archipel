@@ -20,10 +20,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
+import random
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.pubsub import TNPubSubNode
 from archipelcore import xmpp
+from threading import Timer
 
 # this pubsub is subscribed by all hypervisors and carries the keepalive messages
 # for the central agent
@@ -34,6 +36,23 @@ ARCHIPEL_NS_CENTRALAGENT                 = "archipel:centralagent"
 ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 
 ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 120
+
+class TNTasks(object):
+    """Timed jobs tasker"""
+    def __init__(self, log):
+        super(TNTasks, self).__init__()
+        self.tasks = {}
+        self.log = log
+
+    def add(self, interval, func, kwargs):
+        if func.__name__ in self.tasks:
+            if self.tasks[func.__name__].isAlive():
+                return
+        delay = float(interval * random.random())
+        self.log.debug("CENTRALDB: [Task %s ] is delayed to %ss to avoid storm." % (func.__name__, int(delay)))
+        self.tasks[func.__name__] = Timer(delay, func, kwargs=kwargs)
+        self.tasks[func.__name__].start()
+
 
 class TNCentralDb (TNArchipelPlugin):
     """
@@ -53,16 +72,17 @@ class TNCentralDb (TNArchipelPlugin):
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
 
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
-
             self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.hypervisor_hook_xmpp_authenticated)
 
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
-
             self.entity.register_hook("HOOK_VM_DEFINE", method=self.hook_vm_event)
             self.entity.register_hook("HOOK_VM_TERMINATE", method=self.hook_vm_terminate)
 
         self.central_agent_jid_val = None
         self.last_keepalive_heard = None
+        self.keepalive_interval = int(ARCHIPEL_CENTRAL_AGENT_TIMEOUT * 2)
+        self.hypervisor_timeout_threshold = int(ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
+        self.delayed_tasks = TNTasks(self.entity.log)
 
         self.xmpp_authenticated    = False
         self.required_statistics        = []
@@ -76,7 +96,6 @@ class TNCentralDb (TNArchipelPlugin):
         xmldesc = None
 
         if self.entity.definition:
-
             xmldesc = self.entity.xmldesc(mask_description=False)
 
         vm_info=[{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid}]
@@ -118,13 +137,9 @@ class TNCentralDb (TNArchipelPlugin):
             return None
 
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
-
             return self.central_agent_jid_val
-
         else:
-
             return self.entity.hypervisor.get_plugin("centraldb").central_agent_jid_val
-
 
     def handle_central_keepalive_event(self,event):
         """
@@ -135,31 +150,29 @@ class TNCentralDb (TNArchipelPlugin):
         items = event.getTag("event").getTag("items").getTags("item")
 
         for item in items:
-
             central_announcement_event = item.getTag("event")
             event_type                 = central_announcement_event.getAttr("type")
 
             if event_type == "keepalive":
-
                 old_central_agent_jid = self.central_agent_jid()
                 self.entity.log.debug("CENTRALDB: Keepalive heard : %s " % str(item))
                 keepalive_jid              = xmpp.JID(central_announcement_event.getAttr("jid"))
 
                 # we use central agent time in case of drift between hypervisors
-                central_agent_time         = central_announcement_event.getAttr("central_agent_time")
+                central_agent_time                = central_announcement_event.getAttr("central_agent_time")
+                self.keepalive_interval           = int(central_announcement_event.getAttr("keepalive_interval"))
+                self.hypervisor_timeout_threshold = int(central_announcement_event.getAttr("hypervisor_timeout_threshold"))
 
                 self.central_agent_jid_val = keepalive_jid
                 self.last_keepalive_heard  = datetime.datetime.now()
 
-                self.push_statistics_to_centraldb(central_agent_time)
+                self.delayed_tasks.add(self.hypervisor_timeout_threshold, self.push_statistics_to_centraldb, {'central_agent_time': central_agent_time})
 
                 if old_central_agent_jid == None:
-
-                    self.handle_first_keepalive(keepalive_jid)
+                    self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid})
 
                 if central_announcement_event.getAttr("force_update") == "true" or keepalive_jid != old_central_agent_jid:
-
-                    self.push_vms_in_central_db(central_announcement_event)
+                    self.delayed_tasks.add(self.keepalive_interval, self.push_vms_in_central_db, {'central_announcement_event':central_announcement_event})
 
     def push_statistics_to_centraldb(self, central_agent_time):
         """
@@ -170,11 +183,8 @@ class TNCentralDb (TNArchipelPlugin):
         stats_results = {"jid":str(self.entity.jid), "last_seen": central_agent_time}
 
         if len(self.required_statistics) > 0 :
-
             stat_num = 0
-
             for stat in self.required_statistics:
-
                 stat_num += 1
                 value = eval("self.entity.get_plugin('hypervisor_health').collector.stats_%s" % stat["major"])[-1][stat["minor"]]
                 stats_results["stat%s" % stat_num] = value
@@ -192,11 +202,9 @@ class TNCentralDb (TNArchipelPlugin):
         vms_from_local_db = self.entity.get_vms_from_local_db()
 
         if len(vms_from_local_db) > 0:
-
             dbCommand = xmpp.Node(tag="event", attrs={"jid":self.entity.jid})
 
             for vm in vms_from_local_db:
-
                 entryTag = xmpp.Node(tag="entry")
                 uuid     = xmpp.JID(vm["string_jid"]).getNode()
                 entryTag.addChild("item",attrs={"key":"uuid","value": uuid})
@@ -207,14 +215,12 @@ class TNCentralDb (TNArchipelPlugin):
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
 
             def _get_existing_vms_instances_callback(conn, packed_vms):
-
                 existing_vms_entities = self.unpack_entries(packed_vms)
                 self.entity.manage_persistence(vms_from_local_db, existing_vms_entities)
 
             self.entity.xmppclient.SendAndCallForResponse(iq, _get_existing_vms_instances_callback)
 
         else:
-
             # update status to Online(0)
             self.entity.manage_persistence()
 
@@ -226,7 +232,6 @@ class TNCentralDb (TNArchipelPlugin):
         since we are using "on conflict replace" mode of sqlite, inserting an existing uuid will overwrite it.
         """
         vm_table = []
-
         for vm,vmprops in self.entity.virtualmachines.iteritems():
             if vmprops.definition:
                 vm_table.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid})
@@ -334,39 +339,30 @@ class TNCentralDb (TNArchipelPlugin):
         @type table: table
         @param command: the table of dicts of values associated with the command.
         """
+
+        def commit_to_db_callback(conn, resp):
+            if callback:
+                unpacked_entries = self.unpack_entries(resp)
+                callback(unpacked_entries)
+
         central_agent_jid = self.central_agent_jid()
 
         if central_agent_jid:
-
-            # send an iq to central agent
-
             dbCommand = xmpp.Node(tag="event", attrs={"jid":self.entity.jid})
-
             for entry in table:
-
                 entryTag = xmpp.Node(tag="entry")
-
                 for key,value in entry.iteritems():
-
                     entryTag.addChild("item",attrs={"key":key,"value":value})
 
                 dbCommand.addChild(node=entryTag)
 
-            def commit_to_db_callback(conn,resp):
-
-                if callback:
-
-                    unpacked_entries = self.unpack_entries(resp)
-                    callback(unpacked_entries)
 
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
             self.entity.log.debug("CENTRALDB [%s]: \n%s" % (action.upper(), iq))
             self.entity.xmppclient.SendAndCallForResponse(iq, commit_to_db_callback)
-
         else:
-
             self.entity.log.warning("CENTRALDB: cannot commit to db because we have not detected any central agent")
 
     def read_from_db(self,action,columns, where_statement, callback):
@@ -379,32 +375,28 @@ class TNCentralDb (TNArchipelPlugin):
         @type where_statement: string
         @param where_statement: for database reads, provides "where" constraint
         """
+
+        def _read_from_db_callback(conn, resp):
+            unpacked_entries = self.unpack_entries(resp)
+            self.entity.log.debug("CENTRALDB: read %s entries from db response" % len(unpacked_entries))
+            callback(unpacked_entries)
+
         central_agent_jid = self.central_agent_jid()
 
         if central_agent_jid:
-
-            # send an iq to central agent
             dbCommand = xmpp.Node(tag="event", attrs={"jid":self.entity.jid})
-
             if where_statement:
                 dbCommand.setAttr("where_statement", where_statement)
 
             if columns:
                 dbCommand.setAttr("columns", columns)
+
             self.entity.log.debug("CENTRALDB: Asking central db for [%s] %s %s" % (action.upper(), columns, where_statement))
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
-
-            def _read_from_db_callback(conn, resp):
-                unpacked_entries = self.unpack_entries(resp)
-                self.entity.log.debug("CENTRALDB: read %s entries from db response" % len(unpacked_entries))
-                callback(unpacked_entries)
-
             self.entity.xmppclient.SendAndCallForResponse(iq, _read_from_db_callback)
-
         else:
-
             self.entity.log.warning("CENTRALDB: cannot read from db because we have not detected any central agent")
 
     def unpack_entries(self, iq):
@@ -434,10 +426,10 @@ class TNCentralDb (TNArchipelPlugin):
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
-        plugin_friendly_name = "Central db"
-        plugin_identifier = "centraldb"
+        plugin_friendly_name         = "Central db"
+        plugin_identifier            = "centraldb"
         plugin_configuration_section = "CENTRALDB"
-        plugin_configuration_tokens = []
+        plugin_configuration_tokens  = []
         return {"common-name": plugin_friendly_name,
                 "identifier": plugin_identifier,
                 "configuration-section": plugin_configuration_section,

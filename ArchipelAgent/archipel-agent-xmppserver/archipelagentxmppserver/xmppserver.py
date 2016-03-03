@@ -20,6 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import xmlrpclib
+import re
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
@@ -43,6 +44,7 @@ ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -30003
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -30004
 ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -30005
 
+new_acl_syntax = False
 
 class TNXMPPServerController (TNArchipelPlugin):
 
@@ -62,6 +64,8 @@ class TNXMPPServerController (TNArchipelPlugin):
         self.user_page_size = 50
         self.entities_types_cache = {}
         self.xmpp_server = entity.jid.getDomain()
+        self.management_capabilities = {'Users':{'xmpp': False, 'xmlrpc':False}, 'Groups':{'xmpp': False, 'xmlrpc':False}}
+        self.admins = []
 
         if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
             self.xmlrpc_host        = configuration.get("XMPPSERVER", "xmlrpc_host")
@@ -71,8 +75,6 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.xmlrpc_user        = configuration.get("CENTRALAGENT", "central_agent_xmpp_jid").split("@")[0]
                 self.xmlrpc_password    = configuration.get("CENTRALAGENT", "central_agent_xmpp_password")
             else:
-                from archipel.archipelHypervisor import TNArchipelHypervisor
-                from archipel.archipelVirtualMachine import TNArchipelVirtualMachine
                 self.xmlrpc_user        = configuration.get("HYPERVISOR", "hypervisor_xmpp_jid").split("@")[0]
                 self.xmlrpc_password    = configuration.get("HYPERVISOR", "hypervisor_xmpp_password")
 
@@ -101,17 +103,30 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.autogroup_hypervisors_id = self.autogroup_name_hypervisors
                 self.autogroup_users_id = self.autogroup_name_users
 
+                self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED", method=self.get_management_capabilities)
                 self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
                 if auto_group_filter in ("all", "hypervisors"):
-                    self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.handle_autogroup_for_entity)
+                    if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
+                        self.entity.register_hook("HOOK_CENTRALAGENT_HYP_REGISTERED", method=self.handle_autogroup_for_entity)
+                    else:
+                        self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.handle_autogroup_for_entity)
 
                 if auto_group_filter in ("all", "virtualmachines"):
-                    self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
-                    self.entity.register_hook("HOOK_HYPERVISOR_SOFT_ALLOC", method=self.handle_autogroup_for_entity)
-                    self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
+                    if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
+                        self.entity.register_hook("HOOK_CENTRALAGENT_VM_REGISTERED", method=self.handle_autogroup_for_entity)
+                    else:
+                        self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.handle_autogroup_for_entity)
+                        self.entity.register_hook("HOOK_HYPERVISOR_SOFT_ALLOC", method=self.handle_autogroup_for_entity)
+                        self.entity.register_hook("HOOK_HYPERVISOR_VM_WOKE_UP", method=self.handle_autogroup_for_entity)
 
         else:
-            self.entity.log.info("XMLRPC module for Shared Roster Group management is disabled for this hypervisor")
+            self.entity.log.info("XMLRPC module for Shared Roster Group management is disabled for this entity")
+
+        if configuration.has_option("XMPPSERVER", "auto_promote_hypervisors"):
+            if configuration.getboolean("XMPPSERVER", "auto_promote_hypervisors"):
+                if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
+                    self.entity.register_hook("HOOK_CENTRALAGENT_HYP_REGISTERED", method=self.handle_acls_for_hypervisors)
+
 
         # permissions
         if self.entity.__class__.__name__ in ["TNArchipelHypervisor", "TNArchipelCentralAgent"]:
@@ -129,7 +144,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         else:
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
-
 
     ### Plugin interface
     def register_handlers(self):
@@ -183,12 +197,17 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtime argument
         """
-        if not self.entity.__class__.__name__ in  ["TNArchipelVirtualMachine", "TNArchipelHypervisor"]:
+        if not self.entity.__class__.__name__ in  ["TNArchipelVirtualMachine", "TNArchipelHypervisor", "TNArchipelCentralAgent"] \
+           or not self.management_capabilities['Groups']['xmlrpc']:
             return
 
-        groups_id = []
-        for group in self.group_list():
-            groups_id.append(group['id'])
+        try:
+            groups_id = []
+            for group in self.group_list():
+                groups_id.append(group['id'])
+        except Exception as ex:
+            self.entity.log.warning("XMPPSERVER: Unable to use xmlrpc. %s" % (ex))
+            return
 
         try:
             if not self.autogroup_users_id in groups_id:
@@ -230,20 +249,56 @@ class TNXMPPServerController (TNArchipelPlugin):
         if entity.__class__.__name__ == "TNArchipelVirtualMachine":
             group_name = self.autogroup_name_vms
             group_id = self.autogroup_vms_id
+            jid = entity.jid
         elif entity.__class__.__name__ == "TNArchipelHypervisor":
             group_name = self.autogroup_name_hypervisors
             group_id = self.autogroup_hypervisors_id
+            jid = entity.jid
+        elif isinstance(entity, list):
+            for item in entity:
+                if item.get('uuid'):
+                    jid = xmpp.JID(node=item.get('uuid').lower(), domain=self.xmpp_server.lower())
+                    self.handle_autogroup_for_entity(None, "vm", jid)
+                elif item.get('jid'):
+                    jid = xmpp.JID(jid=item.get('jid'))
+                    self.handle_autogroup_for_entity(None, "hypervisor", jid)
+            return
+
+        elif entity.__class__.__name__ == "JID":
+            if user_info == "vm":
+                group_name = self.autogroup_name_vms
+                group_id = self.autogroup_vms_id
+                jid = entity
+            elif user_info == "hypervisor":
+                group_name = self.autogroup_name_hypervisors
+                group_id = self.autogroup_hypervisors_id
+                jid = entity
         else:
             return
         try:
             for group in self.group_list():
-                if entity.jid.getStripped() in group["members"]:
+                if jid.getStripped() in group["members"]:
                     return
             self.create_autogroups_if_needed(self, None, None)
-            self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (entity.jid, group_name))
-            self.group_add_users(group_id, [entity.jid.getStripped()])
+            self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (jid, group_name))
+            self.group_add_users(group_id, [jid.getStripped()])
         except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (entity.jid, group_name, ex))
+            self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (jid, group_name, ex))
+
+    def handle_acls_for_hypervisors(self, origin, user_info, entity):
+        """
+        Add registering hypervisors to acl admins.
+        """
+        if not isinstance(entity, list):
+            return
+
+        jids=[]
+        for item in entity:
+            if item.get('jid'):
+                jids.append(item.get('jid'))
+
+        self._fecth_acls(callback=self._add_admins, args={"jids": jids})
+
 
     ## Utils
 
@@ -360,6 +415,85 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.hypervisor.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
         else:
             self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_users_num)
+
+    def _fecth_acls(self, conn=None, iq=None, callback=None, args=None):
+        """
+        Retrieve the acl from server
+        @return: list of users in acl admin
+        """
+        if iq:
+            if iq.getType() == "result":
+                self.entity.log.debug("XMPPSERVER: Admin ACL updated")
+            else:
+                self.entity.log.error("XMPPSERVER: Admin ACL update failed: %s" % iq)
+
+        def on_receive_acls(conn, result):
+         if result.getType() == "result":
+            values  = result.getTag("command").getTag("x").getTags("field")[1].getTags("value")
+            str_val = ""
+            for value in values:
+                str_val+=value.getData()
+            self.admins = []
+            for acl in str_val.replace(" ", "").split("{acl"):
+                #FIXME : Try to detect the new ejabberd syntax to adapt the acls according to
+                m = re.search('{user,{', acl)
+                if m:
+                    global new_acl_syntax
+                    new_acl_syntax = True
+                try:
+                    raw_admin_string = acl.split(",")[3] + "@" + acl.split(",")[4].split("}")[0]
+                except:
+                    continue
+                self.admins.append(xmpp.JID(''.join(char for char in raw_admin_string if not char in "\"{}<>")))
+
+            if callback:
+                callback(**args)
+
+
+        iq = xmpp.Iq(typ="set", to=self.entity.jid.getDomain())
+        iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
+
+        self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_acls)
+
+    def _update_acls(self):
+        """
+        Update the acls
+        """
+        acls = "["
+        ind  = 0
+        for ajid in self.admins:
+            ind += 1
+            #FIXME : Workaround for ejabberd 13.10 acls syntax changed a bit
+            #'{acl, admin, {user,{"%s","%s"}}}' instead of '{acl, admin, user,{"%s","%s"}}'
+            if new_acl_syntax:
+                acls += '{acl, admin, {user,{"%s","%s"}}}' % (ajid.getNode(), ajid.getDomain())
+            else:
+                acls += '{acl, admin, {user,"%s","%s"}}' % (ajid.getNode(), ajid.getDomain())
+
+            if ind != len(self.admins):
+                acls += ","
+        acls += "]."
+        iq = xmpp.Iq(typ="set", to=self.entity.jid.getDomain())
+        iq_command = iq.addChild("command", namespace="http://jabber.org/protocol/commands", attrs={"action":"execute", "node": "config/acls"})
+        iq_command_x = iq_command.addChild("x", namespace="jabber:x:data", attrs={"type": "submit"})
+        iq_command_x.addChild("field", attrs={"type": "hidden", "var": "FORM_TYPE"}).addChild("value").setData("http://jabber.org/protocol/admin")
+        iq_command_x.addChild("field", attrs={"type": "text-multi", "var": "acls"}).addChild("value").setData(acls)
+
+        self.entity.xmppclient.SendAndCallForResponse(iq, self._fecth_acls)
+
+    def _add_admins(self, jids):
+        """
+        Add an admin.
+        """
+        needUpdate = False
+        for jid in jids:
+            if jid not in self.admins:
+                needUpdate = True
+                self.admins.append(xmpp.JID(jid=jid))
+                self.entity.log.debug("XMPPSERVER: Adding %s to admin acls" % jid)
+
+        if needUpdate:
+            self._update_acls()
 
     ### XMPP Processing for shared groups through XMLRPC
 
@@ -855,7 +989,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         try:
             reply = iq.buildReply("result")
             filterString = iq.getTag("query").getTag("archipel").getAttr("filter")
-            users = self.users_filter(reply, filterString)
+            _ = self.users_filter(reply, filterString)
             return None
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_FILTER)
@@ -955,51 +1089,40 @@ class TNXMPPServerController (TNArchipelPlugin):
         @return : a ready to send IQ containing the result of the action
         """
         try:
-            reply = self.get_management_capabilities(iq)
-            return None
+            reply = iq.buildReply("result")
+            self.get_management_capabilities()
+            _users_node  = xmpp.Node("users",  attrs={"xmpp":self.management_capabilities['Users']['xmpp'],  "xmlrpc":self.management_capabilities['Users']['xmlrpc']})
+            _groups_node = xmpp.Node("groups", attrs={"xmpp":self.management_capabilities['Groups']['xmpp'], "xmlrpc":self.management_capabilities['Groups']['xmlrpc']})
+            reply.setQueryPayload([_users_node, _groups_node])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT)
         return reply
 
 
-    def get_management_capabilities(self, base_reply):
+    def get_management_capabilities(self, origin=None, user_info=None, params=None):
         """
         Build the xmpp management capabilities dictionnary
         """
-        reply = base_reply.buildReply("result")
-
         def on_receive_info(conn, iq):
-
-            _users_management_capabilities  = {"xmpp": False, "xmlrpc": False}
-            _groups_management_capabilities = {"xmpp": False, "xmlrpc": False}
-
             _info_msg="XMPPSERVER - User and SRG Management : "
             if iq.getType() == "result":
-               _users_management_capabilities["xmpp"] = True
+               self.management_capabilities['Users']['xmpp'] = True
                _info_msg += "XEP-133 allowed"
             else:
-               _users_management_capabilities["xmpp"] = False
+               self.management_capabilities['Users']['xmpp'] = False
                _info_msg += "XEP-133 NOT allowed"
 
             # next try to use xmlrpc and mod_admin_extra to manage srg
             try:
-                answer = self._send_xmlrpc_call("srg_list", {"host": self.xmlrpc_host})
-                _groups_management_capabilities["xmlrpc"] = True
+                _ = self._send_xmlrpc_call("srg_list", {"host": self.xmlrpc_host})
+                self.management_capabilities['Groups']['xmlrpc'] = True
                 _info_msg += " and SRG allowed through xmlrpc"
             except Exception as ex:
-                _groups_management_capabilities["xmlrpc"] = False
+                self.management_capabilities['Groups']['xmlrpc'] = False
                 _info_msg += " and SRG NOT allowed through xmlrpc, reason : %s" % str(ex)
-
-
-            # now send back the reply
-            _users_node  = xmpp.Node("users",  attrs={"xmpp":_users_management_capabilities["xmpp"],  "xmlrpc":_users_management_capabilities["xmlrpc"]})
-            _groups_node = xmpp.Node("groups", attrs={"xmpp":_groups_management_capabilities["xmpp"], "xmlrpc":_groups_management_capabilities["xmlrpc"]})
-            reply.setQueryPayload([_users_node, _groups_node])
-            self.entity.log.debug(_info_msg)
-            self.entity.xmppclient.send(reply)
+            self.entity.log.debug("XMPPSERVER: Management Capabilites: %s" % self.management_capabilities)
 
         # use disco#info to see if we can use admin-server command XEP-133
-
         iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
         iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
 

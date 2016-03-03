@@ -655,6 +655,9 @@ class TNArchipelEntity (object):
         @type presence_status: string
         @param presence_status: the value of the XMPP status
         """
+        if self.xmppstatus == presence_status and self.xmppstatusshow == presence_show:
+            return
+
         self.log.info("status change: %s show:%s" % (presence_status, presence_show))
         pres = xmpp.Presence(status=presence_status, show=presence_show)
 
