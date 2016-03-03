@@ -275,7 +275,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         if self.get_plugin("centraldb") and self.get_plugin("centraldb").central_agent_jid():
             status = u'\u26AD '+ status
-        self.change_presence(self.xmppstatusshow, status)
+
+        if status != self.xmppstatus:
+            self.change_presence(self.xmppstatusshow, status)
 
     def wake_up_virtual_machines_hook(self, origin=None, user_info=None, parameters=None):
         """
@@ -1364,8 +1366,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
                 waiting_for = (datetime.datetime.now() - self.last_keepalive_from_central_agent).seconds
                 if waiting_for < self.get_plugin("centraldb").keepalive_interval:
-                    self.update_presence(presence_msg="Waiting %ss for central-agent" % (self.get_plugin("centraldb").keepalive_interval - waiting_for))
-                    return
+                    status = "Waiting %ss for central-agent" % (self.get_plugin("centraldb").keepalive_interval - waiting_for)
+                    self.update_presence(presence_msg=status)
                 elif waiting_for > self.get_plugin("centraldb").keepalive_interval and waiting_for < (self.get_plugin("centraldb").keepalive_interval * 2):
                     self.update_presence()
 
