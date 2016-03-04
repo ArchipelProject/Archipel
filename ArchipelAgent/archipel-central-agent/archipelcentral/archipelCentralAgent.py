@@ -53,11 +53,13 @@ class TNDBController(Thread):
     better concurency read/write by setting up a Queue. This is a workaround to
     avoid sqlite3 to segfault from time to time.
     """
-    def __init__(self, db):
+    def __init__(self, db, log):
         super(TNDBController, self).__init__()
         self.db = db
         self.requets = Queue()
+        self.name = self.__class__.__name__
         self.start()
+        self.log = log
 
     def run(self):
         conn = sqlite3.connect(self.db)
@@ -66,8 +68,12 @@ class TNDBController(Thread):
             request, arg, results = self.requets.get()
             if request == '--close connection--':
                 break
-            cursor.execute(request, arg)
-            conn.commit()
+            try:
+                cursor.execute(request, arg)
+                conn.commit()
+            except Exception as ex:
+                self.log.error("Error while executing sql statement %s with %s (%s)" % (request, arg, ex))
+                continue
             if results:
                 for record in cursor:
                     results.put(record)
@@ -148,7 +154,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         self.xmpp_authenticated    = False
         self.is_central_agent      = False
         self.salt                  = random.random()
-        self.database              = TNDBController(self.configuration.get("CENTRALAGENT", "database"))
+        self.database              = TNDBController(self.configuration.get("CENTRALAGENT", "database"), self.log)
 
         # defining the structure of the keepalive pubsub event
         self.keepalive_event      = xmpp.Node("event",attrs={"type":"keepalive","jid":self.jid})
@@ -289,9 +295,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         initial_keepalive = xmpp.Node("event",attrs={"type":"keepalive","jid":self.jid})
         initial_keepalive.setAttr("force_update","true")
         initial_keepalive.setAttr("salt",self.salt)
-        now        = datetime.datetime.now()
-        now_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
-        initial_keepalive.setAttr("central_agent_time", now_string)
         initial_keepalive.setAttr("keepalive_interval", self.keepalive_interval)
         initial_keepalive.setAttr("hypervisor_timeout_threshold", self.hypervisor_timeout_threshold)
 
@@ -315,10 +318,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         Returns the keepalive event with current date, to send to the pubsub
         so that all ping calculations are based on central agent date.
         """
-        now             = datetime.datetime.now()
-        now_string      = now.strftime("%Y-%m-%d %H:%M:%S.%f")
         keepalive_event = self.keepalive_event
-        keepalive_event.setAttr("central_agent_time", now_string)
         keepalive_event.setAttr("keepalive_interval", self.keepalive_interval)
         keepalive_event.setAttr("hypervisor_timeout_threshold", self.hypervisor_timeout_threshold)
 
@@ -599,6 +599,8 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @type entries: List
         @param entries: list of hypervisors
         """
+        for entry in entries:
+            entry['last_seen'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         self.db_commit("insert into hypervisors values(:jid, :last_seen, :status, :stat1, :stat2, :stat3)", entries)
 
     def register_vms(self,entries):
@@ -693,7 +695,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param entries: list of vms
         """
         update_snipplets=[]
-        for key,val in entries[0].iteritems():
+        for entry in entries:
+            entry['last_seen'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
+        for key, val in entries[0].iteritems():
             if key!="jid":
                 update_snipplets.append("%s=:%s" % (key, key))
         command = "update hypervisors set %s where jid=:jid" % (", ".join(update_snipplets))

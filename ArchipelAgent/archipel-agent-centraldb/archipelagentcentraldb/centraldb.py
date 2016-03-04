@@ -44,10 +44,12 @@ class TNTasks(object):
         self.tasks = {}
         self.log = log
 
-    def add(self, interval, func, kwargs):
+    def add(self, interval, func, kwargs={}):
         if func.__name__ in self.tasks:
             if self.tasks[func.__name__].isAlive():
-                return
+                if int(self.tasks[func.__name__].interval) < int(interval):
+                    return
+
         delay = float(interval * random.random())
         self.log.debug("CENTRALDB: [Task %s ] is delayed to %ss to avoid storm." % (func.__name__, int(delay)))
         self.tasks[func.__name__] = Timer(delay, func, kwargs=kwargs)
@@ -158,15 +160,13 @@ class TNCentralDb (TNArchipelPlugin):
                 self.entity.log.debug("CENTRALDB: Keepalive heard : %s " % str(item))
                 keepalive_jid              = xmpp.JID(central_announcement_event.getAttr("jid"))
 
-                # we use central agent time in case of drift between hypervisors
-                central_agent_time                = central_announcement_event.getAttr("central_agent_time")
                 self.keepalive_interval           = int(central_announcement_event.getAttr("keepalive_interval"))
                 self.hypervisor_timeout_threshold = int(central_announcement_event.getAttr("hypervisor_timeout_threshold"))
 
                 self.central_agent_jid_val = keepalive_jid
                 self.last_keepalive_heard  = datetime.datetime.now()
 
-                self.delayed_tasks.add(self.hypervisor_timeout_threshold * 4/5, self.push_statistics_to_centraldb, {'central_agent_time': central_agent_time})
+                self.delayed_tasks.add((self.hypervisor_timeout_threshold - self.keepalive_interval)*2/3, self.push_statistics_to_centraldb)
 
                 if old_central_agent_jid == None:
                     self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid})
@@ -174,13 +174,11 @@ class TNCentralDb (TNArchipelPlugin):
                 if central_announcement_event.getAttr("force_update") == "true" or keepalive_jid != old_central_agent_jid:
                     self.delayed_tasks.add(self.keepalive_interval, self.push_vms_in_central_db, {'central_announcement_event':central_announcement_event})
 
-    def push_statistics_to_centraldb(self, central_agent_time):
+    def push_statistics_to_centraldb(self):
         """
         each time we hear a keepalive, we push relevant statistics to central db
-        @type central_agent_time: string
-        @param central_agent_time: the time acccording to central agent as local time may drift - in database format
         """
-        stats_results = {"jid":str(self.entity.jid), "last_seen": central_agent_time}
+        stats_results = {"jid":str(self.entity.jid)}
 
         if len(self.required_statistics) > 0 :
             stat_num = 0
@@ -240,9 +238,9 @@ class TNCentralDb (TNArchipelPlugin):
             self.register_vms(vm_table)
 
         self.register_hypervisors([{"jid":self.entity.jid, "status":"Online", "last_seen": datetime.datetime.now(), "stat1":0, "stat2":0, "stat3":0}])
+
         # parsing required statistics to be pushed to central agent
         self.required_statistics = []
-
         if central_announcement_event.getTag("required_stats"):
             for required_stat in central_announcement_event.getTag("required_stats").getChildren():
                 self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
