@@ -479,6 +479,8 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         try:
             reply   = iq.buildReply("result")
             entries = self.unpack_entries(iq)
+            for entry in entries:
+                entry['last_seen'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
             self.update_hypervisors(entries)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
@@ -695,9 +697,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param entries: list of vms
         """
         update_snipplets=[]
-        for entry in entries:
-            entry['last_seen'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-
         for key, val in entries[0].iteritems():
             if key!="jid":
                 update_snipplets.append("%s=:%s" % (key, key))

@@ -21,8 +21,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import archipelcore.pubsub
-from archipelcore import xmpp
+from archipelcore import xmpp, pubsub
 
 def xmpp_connect(jid, password, auth=True):
     """
