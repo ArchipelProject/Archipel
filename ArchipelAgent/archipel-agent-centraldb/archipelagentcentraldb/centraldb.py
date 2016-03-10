@@ -160,8 +160,11 @@ class TNCentralDb (TNArchipelPlugin):
                 self.entity.log.debug("CENTRALDB: Keepalive heard : %s " % str(item))
                 keepalive_jid              = xmpp.JID(central_announcement_event.getAttr("jid"))
 
-                self.keepalive_interval           = int(central_announcement_event.getAttr("keepalive_interval"))
-                self.hypervisor_timeout_threshold = int(central_announcement_event.getAttr("hypervisor_timeout_threshold"))
+                if central_announcement_event.getAttr("keepalive_interval"):
+                    self.keepalive_interval           = int(central_announcement_event.getAttr("keepalive_interval"))
+
+                if central_announcement_event.getAttr("hypervisor_timeout_threshold"):
+                    self.hypervisor_timeout_threshold = int(central_announcement_event.getAttr("hypervisor_timeout_threshold"))
 
                 self.central_agent_jid_val = keepalive_jid
                 self.last_keepalive_heard  = datetime.datetime.now()
