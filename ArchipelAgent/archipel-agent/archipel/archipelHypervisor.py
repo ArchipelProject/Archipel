@@ -1368,6 +1368,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                 if waiting_for < self.get_plugin("centraldb").keepalive_interval:
                     status = "Waiting %ss for central-agent" % (self.get_plugin("centraldb").keepalive_interval - waiting_for)
                     self.update_presence(presence_msg=status)
+                    return
                 elif waiting_for > self.get_plugin("centraldb").keepalive_interval and waiting_for < (self.get_plugin("centraldb").keepalive_interval * 2):
                     self.update_presence()
 
