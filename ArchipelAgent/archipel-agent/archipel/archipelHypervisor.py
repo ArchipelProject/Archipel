@@ -1356,12 +1356,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if self.get_plugin("centraldb"):
                 if self.get_plugin("centraldb").central_agent_jid():
                     if not self.seen_central_agent:
-                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database" % self.get_plugin("centraldb").central_agent_jid())
+                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database with keep alive set to %ss" % ( self.get_plugin("centraldb").central_agent_jid(), self.get_plugin("centraldb").keepalive_interval))
                         self.seen_central_agent = True
                     return
                 elif self.seen_central_agent:
-                    self.log.error("CENTRALDB: Central Agent timeout after %s seconds" % self.get_plugin("centraldb").keepalive_interval)
-                    self.last_keepalive_from_central_agent = datetime.datetime.now()
+                    self.log.error("HYPERVISOR: Central Agent timeout after %s seconds. We didn't receive the keepalive." % self.get_plugin("centraldb").keepalive_interval)
+                    self.update_presence()
                     self.seen_central_agent = False
 
                 waiting_for = (datetime.datetime.now() - self.last_keepalive_from_central_agent).seconds
@@ -1369,8 +1369,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                     status = "Waiting %ss for central-agent" % (self.get_plugin("centraldb").keepalive_interval - waiting_for)
                     self.update_presence(presence_msg=status)
                     return
-                elif waiting_for > self.get_plugin("centraldb").keepalive_interval and waiting_for < (self.get_plugin("centraldb").keepalive_interval * 2):
-                    self.update_presence()
 
             if not self.already_wake_up:
                 self.log.error("HYPERVISOR: No Central agent found after %s seconds, starting vms based on local db info only." % self.get_plugin("centraldb").keepalive_interval)
