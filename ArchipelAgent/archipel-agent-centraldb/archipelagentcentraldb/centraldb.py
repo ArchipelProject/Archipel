@@ -35,7 +35,7 @@ ARCHIPEL_NS_CENTRALAGENT                 = "archipel:centralagent"
 
 ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 
-ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 120
+ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 60
 
 class TNTasks(object):
     """Timed jobs tasker"""
@@ -134,16 +134,27 @@ class TNCentralDb (TNArchipelPlugin):
         """
         Returns the jid of the central agent. In case we are a VM, query hypervisor.
         """
-        # this could happen under heavy processing
-        if self.last_keepalive_heard and (datetime.datetime.now() - self.last_keepalive_heard).seconds > ARCHIPEL_CENTRAL_AGENT_TIMEOUT:
+        if not self.central_agent_jid_val:
             return None
 
-        if self.entity.__class__.__name__ == "TNArchipelHypervisor":
+        # if central agent has a status, it's available
+        if self.entity.roster.getStatus(self.central_agent_jid_val.getStripped()):
             return self.central_agent_jid_val
-        else:
-            return self.entity.hypervisor.get_plugin("centraldb").central_agent_jid_val
 
-    def handle_central_keepalive_event(self,event):
+        # If presence is not known check if we hit the keepalive threshold timeout
+        # This could append when you restart it for example
+        # Time interval is not an exact science so let's double it for timetout
+        if self.last_keepalive_heard and (datetime.datetime.now() - self.last_keepalive_heard).total_seconds() > self.keepalive_interval * 2:
+            self.entity.log.error("CENTRALDB: CentralAgent is down.")
+            print self.last_keepalive_heard
+            print (datetime.datetime.now() - self.last_keepalive_heard).total_seconds()
+            self.central_agent_jid_val = None
+            return None
+        else:
+            self.entity.log.warning("CENTRALDB: CentralAgent looks down. Can't retrieve its presence")
+            return self.central_agent_jid_val
+
+    def handle_central_keepalive_event(self, event):
         """
         Called when the central agent sends a keepalive.
         @type event: xmpp.Node
@@ -172,9 +183,8 @@ class TNCentralDb (TNArchipelPlugin):
                 self.delayed_tasks.add((self.hypervisor_timeout_threshold - self.keepalive_interval)*2/3, self.push_statistics_to_centraldb)
 
                 if old_central_agent_jid == None:
-                    self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid})
-
-                if central_announcement_event.getAttr("force_update") == "true" or keepalive_jid != old_central_agent_jid:
+                    self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid, 'callback': self.push_vms_in_central_db, 'kwargs':{'central_announcement_event':central_announcement_event}})
+                elif central_announcement_event.getAttr("force_update") == "true" or keepalive_jid != old_central_agent_jid:
                     self.delayed_tasks.add(self.keepalive_interval, self.push_vms_in_central_db, {'central_announcement_event':central_announcement_event})
 
     def push_statistics_to_centraldb(self):
@@ -195,7 +205,7 @@ class TNCentralDb (TNArchipelPlugin):
         self.update_hypervisors([stats_results])
 
 
-    def handle_first_keepalive(self, keepalive_jid):
+    def handle_first_keepalive(self, keepalive_jid, callback=None, kwargs={}):
         """
         this is the first keepalive. We query hypervisors that have vm entities somewhere else
         then we trigger method manage_persistence to instantiate vm entities.
@@ -218,6 +228,8 @@ class TNCentralDb (TNArchipelPlugin):
             def _get_existing_vms_instances_callback(conn, packed_vms):
                 existing_vms_entities = self.unpack_entries(packed_vms)
                 self.entity.manage_persistence(vms_from_local_db, existing_vms_entities)
+                if callback:
+                    callback(**kwargs)
 
             self.entity.xmppclient.SendAndCallForResponse(iq, _get_existing_vms_instances_callback)
 
@@ -435,5 +447,3 @@ class TNCentralDb (TNArchipelPlugin):
                 "identifier": plugin_identifier,
                 "configuration-section": plugin_configuration_section,
                 "configuration-tokens": plugin_configuration_tokens}
-
-

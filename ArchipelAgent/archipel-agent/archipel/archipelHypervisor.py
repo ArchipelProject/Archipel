@@ -273,8 +273,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         else:
             status = u"%s (%s) — no VT" % (ARCHIPEL_XMPP_SHOW_ONLINE, minor_info)
 
-        if self.get_plugin("centraldb") and self.get_plugin("centraldb").central_agent_jid():
-            status = u'\u26AD '+ status
+        if self.get_plugin("centraldb") and self.get_plugin("centraldb").central_agent_jid_val:
+            status = u'\u26AD ' + status
 
         if status != self.xmppstatus:
             self.change_presence(self.xmppstatusshow, status)
@@ -1356,15 +1356,14 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if self.get_plugin("centraldb"):
                 if self.get_plugin("centraldb").central_agent_jid():
                     if not self.seen_central_agent:
-                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database with keep alive set to %ss" % ( self.get_plugin("centraldb").central_agent_jid(), self.get_plugin("centraldb").keepalive_interval))
+                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database with keep alive set to %ss" % ( self.get_plugin("centraldb").central_agent_jid_val, self.get_plugin("centraldb").keepalive_interval))
                         self.seen_central_agent = True
                     return
                 elif self.seen_central_agent:
-                    self.log.error("HYPERVISOR: Central Agent timeout after %s seconds. We didn't receive the keepalive." % self.get_plugin("centraldb").keepalive_interval)
                     self.update_presence()
                     self.seen_central_agent = False
 
-                waiting_for = (datetime.datetime.now() - self.last_keepalive_from_central_agent).seconds
+                waiting_for = int((datetime.datetime.now() - self.last_keepalive_from_central_agent).total_seconds())
                 if waiting_for < self.get_plugin("centraldb").keepalive_interval:
                     status = "Waiting %ss for central-agent" % (self.get_plugin("centraldb").keepalive_interval - waiting_for)
                     self.update_presence(presence_msg=status)

@@ -789,10 +789,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         for row in rows:
             jid, last_seen, status = row
             last_seen_date = datetime.datetime.strptime(last_seen, "%Y-%m-%d %H:%M:%S.%f")
-            if (now - last_seen_date).days*86400 + (now - last_seen_date).seconds > self.hypervisor_timeout_threshold and status == "Online":
+            if (now - last_seen_date).total_seconds() > self.hypervisor_timeout_threshold and status == "Online":
                 self.log.warning("CENTRALAGENT: Hypervisor %s timed out" % jid)
                 hypervisor_to_update.append({"jid": jid, "status": "Unreachable"})
-            elif (now - last_seen_date).days*86400 + (now - last_seen_date).seconds <= self.hypervisor_timeout_threshold and status == "Unreachable":
+            elif (now - last_seen_date).total_seconds() <= self.hypervisor_timeout_threshold and status == "Unreachable":
                 self.log.info("CENTRALAGENT: Hypervisor %s is back up Online" % jid)
                 hypervisor_to_update.append({"jid": jid, "status": "Online"})
 
@@ -820,10 +820,10 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             if not self.is_central_agent and self.central_agent_mode == "auto":
                 self.become_central_agent()
             elif self.is_central_agent: # we are central agent
-                if (datetime.datetime.now() - self.last_keepalive_sent).seconds >= self.keepalive_interval:
+                if (datetime.datetime.now() - self.last_keepalive_sent).total_seconds() >= self.keepalive_interval:
                     self.central_keepalive_pubsub.add_item(self.keepalive_event_with_date())
                     self.last_keepalive_sent = datetime.datetime.now()
 
                 if self.ping_hypervisors:
-                    if (datetime.datetime.now() - self.last_hyp_check).seconds >= self.hypervisor_check_interval:
+                    if (datetime.datetime.now() - self.last_hyp_check).total_seconds() >= self.hypervisor_check_interval:
                         self.check_hyps()
