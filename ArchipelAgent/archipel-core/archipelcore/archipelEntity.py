@@ -126,7 +126,7 @@ class TNArchipelEntity (object):
         self.entity_type            = "not-defined"
         self.plugins                = []
         self.is_unregistering       = False
-        self.use_avatar             = self.configuration.getboolean("GLOBAL", "use_avatar");
+        self.use_avatar             = self.configuration.getboolean("GLOBAL", "use_avatar")
         self.permission_db_file     = "permissions.sqlite3"
         self.permission_admin_names = dict(map(lambda x: ("STATIC_%s" % x, x), self.configuration.get("GLOBAL", "archipel_root_admins").split()))
         self.permission_center      = TNArchipelPermissionCenter(root_admins=self.permission_admin_names)
@@ -356,6 +356,7 @@ class TNArchipelEntity (object):
         self.log.info("Successfully authenticated.")
         self.isAuth = True
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
+        self.xmppclient.sendPresence(requestRoster=1)
         self.register_handlers()
         self.roster = self.xmppclient.getRoster()
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
