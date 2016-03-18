@@ -518,7 +518,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
 
-    def read_hypervisors(self, columns, where_statement):
+    def read_hypervisors(self, columns="*", where_statement=None):
         """
         Reads list of hypervisors in central db.
         """
@@ -528,10 +528,18 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         rows = self.database.select(read_statement)
         ret = []
         for row in rows:
-            ret.append({"jid":row[0], "last_seen":row[1], "status":row[2]})
+            if columns == "*":
+                ret.append({"jid":row[0], "last_seen":row[1], "status":row[2]})
+            else:
+                res = {}
+                i = 0
+                for col in columns.split(","):
+                    res[col] = row[i]
+                    i += 1
+                ret.append(res)
         return ret
 
-    def read_vms(self, columns, where_statement):
+    def read_vms(self, columns="*", where_statement=None):
         """
         Read list of vms in central db.
         """
@@ -547,8 +555,8 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                 res = {}
                 i = 0
                 for col in columns.split(","):
-                    res[col]=row[i]
-                    i+=1
+                    res[col] = row[i]
+                    i += 1
                 ret.append(res)
         return ret
 
