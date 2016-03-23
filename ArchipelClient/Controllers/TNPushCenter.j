@@ -112,10 +112,10 @@ var __defaultPushCenter;
         pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"],
         pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"],
         infoDict    = @{
-                        @"owner"    :nodeOwner,
-                        @"type"     :pushType,
-                        @"date"     :pushDate,
-                        @"change"   :pushChange,
+                        @"owner"    :nodeOwner ? nodeOwner : @"",
+                        @"type"     :pushType ? pushType : @"",
+                        @"date"     :pushDate ? pushDate : @"",
+                        @"change"   :pushChange ? pushChange : @"",
                         @"rawStanza":aStanza
                     };
 
