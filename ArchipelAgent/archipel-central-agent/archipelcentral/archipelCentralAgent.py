@@ -83,7 +83,7 @@ class TNDBController(Thread):
     def execute(self, request, arg=None, results=None):
         self.requets.put((request, arg or tuple(), results))
 
-    def select(self, request, arg=None):
+    def request(self, request, arg=None):
         results = Queue()
         self.execute(request, arg, results)
         while True:
@@ -525,7 +525,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement = "select %s from hypervisors" % columns
         if where_statement:
             read_statement += " where %s" % where_statement
-        rows = self.database.select(read_statement)
+        rows = self.database.request(read_statement)
         ret = []
         for row in rows:
             if columns == "*":
@@ -546,11 +546,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement = "select %s from vms" % columns
         if where_statement:
             read_statement += " where %s" % where_statement
-        rows = self.database.select(read_statement)
+        rows = self.database.request(read_statement)
         ret = []
         for row in rows:
             if columns == "*":
-                ret.append({"uuid":row[0], "parker":row[1], "creation_date":row[2], "domain":row[3], "hypervisor":row[4]})
+                ret.append({"uuid":row[0], "parker":row[1], "creation_date":row[2], "domain":row[3], "hypervisor":row[4], "name":row[5]})
             else:
                 res = {}
                 i = 0
@@ -577,7 +577,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement += " and hypervisors.status='Online'"
 
         self.log.debug("CENTRALAGENT: Check if vm uuids %s exist elsewhere " % uuids)
-        for row in self.database.select(read_statement, uuids):
+        for row in self.database.request(read_statement, uuids):
             ret.append({"uuid":row[0]})
         self.log.debug("CENTRALAGENT: We found %s on %s vms existing on others hypervistors." % (len(ret), len(uuids)))
         return ret
@@ -598,7 +598,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         read_statement += " and (hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online'))"
 
         self.log.debug("CENTRALDB: Get parked vms from database")
-        for row in self.database.select(read_statement, uuids):
+        for row in self.database.request(read_statement, uuids):
             ret.append({"uuid":row[0], "domain":row[1]})
         self.log.debug("CENTRALDB: We found %s parked vms" % len(ret))
         return ret
@@ -619,7 +619,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @type entries: List
         @param entries: list of vms
         """
-        self.db_commit("insert into vms values(:uuid, :parker, :creation_date, :domain, :hypervisor)",entries)
+        self.db_commit("insert into vms values(:uuid, :parker, :creation_date, :domain, :hypervisor, :name)",entries)
 
     def update_vms(self,entries):
         """
@@ -627,9 +627,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @type entries: List
         @param entries: list of vms
         """
-        update_snipplets=[]
+        update_snipplets = []
         for key,val in entries[0].iteritems():
-            if key!="uuid":
+            if key != "uuid":
                 update_snipplets.append("%s=:%s" % (key, key))
         command = "update vms set %s where uuid=:uuid" % (", ".join(update_snipplets))
         self.db_commit(command, entries)
@@ -791,7 +791,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         """
         self.log.debug("CENTRALAGENT: Checking hypervisors state")
         now                  = datetime.datetime.now()
-        rows                 = self.database.select("select jid,last_seen,status from hypervisors;")
+        rows                 = self.database.request("select jid,last_seen,status from hypervisors;")
         hypervisor_to_update = []
 
         for row in rows:
@@ -813,11 +813,33 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
     def manage_database(self):
         """
-        Create and / or recover the parking database
+        Create, Update and / or recover the parking database
         """
-        self.database.execute("create table if not exists vms (uuid text unique on conflict replace, parker string, creation_date date, domain string, hypervisor string)")
+        self.database.execute("create table if not exists vms (uuid text unique on conflict replace, parker string, creation_date date, domain string, hypervisor string, name string)")
         self.database.execute("create table if not exists hypervisors (jid text unique on conflict replace, last_seen date, status string, stat1 int, stat2 int, stat3 int)")
+        self.updatedb()
         self.database.execute("update vms set hypervisor='None';")
+
+    def updatedb(self):
+        """
+        Check if we need to alter table and fill it with proper value
+        """
+        need_update = True
+        for item in self.database.request("pragma table_info('vms')"):
+            if item[1] == 'name':
+                need_update = False
+
+        if need_update:
+            self.log.info("Migrating database to new schema")
+            self.database.execute("alter table vms add column 'name' 'string'")
+            # Populate this new value
+            for row in self.database.request('select * from vms'):
+                if row[3] != 'None':
+                    xml = xmpp.simplexml.NodeBuilder(row[3]).getDom()
+                    name = xml.getTag("name").getData()
+                else:
+                    name = row[0]
+                self.database.execute("update vms set name='%s' where uuid =='%s'" % (name, row[0]))
 
     ### Event loop
 

@@ -100,7 +100,7 @@ class TNCentralDb (TNArchipelPlugin):
         if self.entity.definition:
             xmldesc = self.entity.xmldesc(mask_description=False)
 
-        vm_info=[{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid}]
+        vm_info=[{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid, 'name':xmldesc.getTag("name").getData()}]
         self.register_vms(vm_info)
 
     def hook_vm_terminate(self, origin=None, user_info=None, arguments=None):
@@ -134,6 +134,9 @@ class TNCentralDb (TNArchipelPlugin):
         """
         Returns the jid of the central agent. In case we are a VM, query hypervisor.
         """
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            return self.entity.hypervisor.get_plugin("centraldb").central_agent_jid()
+
         if not self.central_agent_jid_val:
             return None
 
@@ -146,8 +149,6 @@ class TNCentralDb (TNArchipelPlugin):
         # Time interval is not an exact science so let's double it for timetout
         if self.last_keepalive_heard and (datetime.datetime.now() - self.last_keepalive_heard).total_seconds() > self.keepalive_interval * 2:
             self.entity.log.error("CENTRALDB: CentralAgent is down.")
-            print self.last_keepalive_heard
-            print (datetime.datetime.now() - self.last_keepalive_heard).total_seconds()
             self.central_agent_jid_val = None
             return None
         else:
@@ -247,7 +248,7 @@ class TNCentralDb (TNArchipelPlugin):
         vm_table = []
         for vm,vmprops in self.entity.virtualmachines.iteritems():
             if vmprops.definition:
-                vm_table.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid})
+                vm_table.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid, "name":vmprops.definition.getTag("name").getData()})
 
         if len(vm_table) >= 1:
             self.register_vms(vm_table)
