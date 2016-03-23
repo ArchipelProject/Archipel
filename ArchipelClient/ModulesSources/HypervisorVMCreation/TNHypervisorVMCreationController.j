@@ -28,6 +28,7 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
 
 @import "../../Model/TNModule.j"
 @import "../../Views/TNButtonBar.j"
@@ -103,7 +104,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
 
     TNTableViewDataSource                           _virtualMachinesDatasource;
     TNTableViewDataSource                           _virtualMachinesNotManagedDatasource;
-    TNTableViewDataSource                           _virtualMachinesParkedDatasource;
+    TNTableViewLazyDataSource                       _virtualMachinesParkedDatasource;
 }
 
 
@@ -247,7 +248,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [buttonBarNotManagedVMControl setButtons:[[self buttonWithIdentifier:TNModuleControlForManage]]];
 
     // Parked VM Table View
-    _virtualMachinesParkedDatasource = [[TNTableViewDataSource alloc] init];
+    _virtualMachinesParkedDatasource = [[TNTableViewLazyDataSource alloc] init];
     [tableVirtualMachinesParked setDelegate:self];
     [tableVirtualMachinesParked setTarget:self];
     [tableVirtualMachinesParked setDoubleAction:@selector(openParkedXMLEditor:)];
@@ -288,6 +289,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [VMSubscriptionController setDelegate:self];
     [VMCloneController setDelegate:self];
     [VMManagerController setDelegate:self];
+    [VMParkingController setDataSource:_virtualMachinesParkedDatasource];
     [VMParkingController setDelegate:self];
 
     TNHypervisorVMCreationControllerLibvirtIcon = CPImageInBundle(@"libvirt-icon.png", nil, [CPBundle bundleForClass:[self class]]);
@@ -318,6 +320,10 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [tableVirtualMachinesParked setDelegate:nil];
     [tableVirtualMachinesParked setDelegate:self];
 
+    if ([tabViewVMs selectedTabViewItem] == nil)
+        [tabViewVMs selectFirstTabViewItem:nil];
+
+
     // simulate a tab change
     [self tabView:tabViewVMs didSelectTabViewItem:[tabViewVMs selectedTabViewItem]];
 
@@ -332,6 +338,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [VMSubscriptionController closeAddSubscriptionWindow:nil];
     [VMSubscriptionController closeRemoveSubscriptionWindow:nil];
     [VMAllocationController closeWindow:nil];
+    [VMParkingController reset];
 
     [super willHide];
 }
@@ -388,6 +395,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     [_virtualMachinesDatasource removeAllObjects];
     [_virtualMachinesNotManagedDatasource removeAllObjects];
     [_virtualMachinesParkedDatasource removeAllObjects];
+    [VMParkingController reset];
 
     [tableVirtualMachines reloadData];
     [tableVirtualMachinesNotManaged reloadData];
@@ -453,6 +461,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
     }
 
     if ([[tabViewVMs selectedTabViewItem] identifier] == @"tabViewItemParkedVM")
+        [VMParkingController reset];
         [VMParkingController listParkedVirtualMachines];
 
     return YES;
@@ -975,6 +984,7 @@ var TNModuleControlForSubscribe                 = @"Subscribe",
             break;
 
         case @"tabViewItemParkedVM":
+            [VMParkingController reset];
             [VMParkingController listParkedVirtualMachines];
             break;
     }

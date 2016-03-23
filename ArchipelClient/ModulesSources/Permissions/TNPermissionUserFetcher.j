@@ -236,7 +236,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)tableViewDataSource:(TNTableViewLazyDataSource)aDataSource applyFilter:(CPString)aFilter
 {
     [_delegate userFetcherClean];
-    [self getXMPPFilteredUsers:aFilter];
+    if ([aFilter length] >= 3)
+        [self getXMPPFilteredUsers:aFilter];
 }
 
 /*! TNTableViewLazyDataSource delegate

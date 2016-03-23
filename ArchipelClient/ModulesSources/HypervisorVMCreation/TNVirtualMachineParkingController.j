@@ -27,6 +27,27 @@
 @import <StropheCappuccino/TNXMLNode.j>
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewLazyDataSource.j>
+
+@implementation TNTableViewLazyDataSource (paginate)
+- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
+{
+    var identifier = [aCol identifier];
+
+    if (!_currentlyLoading
+        && [_content count] < _totalCount
+        && (aRow + _lazyLoadingTrigger >= [_content count])
+        && _delegate
+        && [_delegate respondsToSelector:@selector(tableViewDataSourceNeedsLoading:)])
+    {
+        _currentlyLoading = YES;
+        [_delegate tableViewDataSourceNeedsLoading:self];
+    }
+
+    return [_content[aRow] valueForKeyPath:identifier];
+}
+@end
+
 
 @global CPLocalizedString
 @global CPLocalizedStringFromTableInBundle
@@ -62,7 +83,11 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     @outlet LPMultiLineTextField    fieldXMLString;
 
     TNVirtualMachineParkedObject    _currentItem @accessors(property=currentItem);
-    id                              _delegate   @accessors(property=delegate);
+    id                              _delegate    @accessors(property=delegate);
+    TNTableViewLazyDataSource       _datasource  @accessors(getter=dataSource);
+
+    int                             _maxLoadedPage;
+    CPString                        _currentFilter;
 }
 
 
@@ -78,6 +103,45 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     [fieldXMLString setBordered:YES];
     [fieldXMLString setBezeled:YES];
     [fieldXMLString setEnabled:YES];
+}
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! Instaciate the class
+*/
+- (id)init
+{
+    if (self = [super init])
+    {
+        _maxLoadedPage = 0;
+        _currentFilter = @""
+    }
+
+    return self;
+}
+
+#pragma mark -
+#pragma mark Getters / Setters
+
+/*! Set the target datasource, and set self ad datasource delegate
+    @pathForResource aDataSource the TNTableViewLazyDataSource to use
+*/
+- (void)setDataSource:(TNTableViewLazyDataSource)aDataSource
+{
+    _datasource = aDataSource;
+    [_datasource setDelegate:self];
+}
+
+
+/*! Reset informations
+*/
+- (void)reset
+{
+    _currentFilter = @"";
+    _maxLoadedPage = 0;
+    [_datasource setTotalCount:-1];
+    [_datasource setCurrentlyLoading:NO];
 }
 
 
@@ -179,13 +243,30 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
 */
 - (void)listParkedVirtualMachines
 {
+    [self listParkedVirtualMachines:_currentFilter];
+}
+
+/*! Get list of parked virtual machines with  filter
+*/
+- (void)listParkedVirtualMachines:(CPString)aFilter
+{
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorParking}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorParkingList}];
+    if (aFilter != @""){
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            "action": TNArchipelTypeHypervisorParkingList,
+            "page": _maxLoadedPage,
+            "filter": aFilter}];
+    }
+    else {
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            "action": TNArchipelTypeHypervisorParkingList,
+            "page": _maxLoadedPage}];
+    }
 
     [_delegate setModuleStatus:TNArchipelModuleStatusWaiting];
+    [_datasource setCurrentlyLoading:YES];
     [_delegate sendStanza:stanza andRegisterSelector:@selector(_didReceiveList:) ofObject:self];
 }
 
@@ -200,7 +281,10 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
             datasource = [table dataSource],
             virtualmachines = [aStanza childrenWithName:@"virtualmachine"];
 
-        [datasource removeAllObjects];
+        if (_maxLoadedPage == 0) {
+            [datasource removeAllObjects];
+        }
+
         for (var i = 0; i < [virtualmachines count]; i++)
         {
             var vm = [virtualmachines objectAtIndex:i],
@@ -215,11 +299,16 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
             [datasource addObject:data];
         }
         [table reloadData];
+        if ([virtualmachines count] < 30)
+            [datasource setTotalCount:[datasource count]]
+        else
+            [datasource setTotalCount:[datasource count] + 10]
     }
     else
     {
         [_delegate handleIqErrorFromStanza:aStanza];
     }
+    [_datasource setCurrentlyLoading:NO];
 
     return NO;
 }
@@ -363,8 +452,38 @@ var TNArchipelTypeHypervisorParking             = @"archipel:hypervisor:vmparkin
     return NO;
 }
 
-@end
+/*! TNTableViewLazyDataSource delegate
+*/
+- (void)tableViewDataSourceNeedsLoading:(TNTableViewLazyDataSource)aDataSource
+{
+    console.error(_maxLoadedPage)
+    console.error([_datasource count])
+    console.error([_datasource totalCount])
+    _maxLoadedPage++;
+    [self listParkedVirtualMachines];
+}
 
+/*! TNTableViewLazyDataSource delegate
+*/
+- (void)tableViewDataSource:(TNTableViewLazyDataSource)aDataSource applyFilter:(CPString)aFilter
+{
+    [self reset];
+    if ([aFilter length] >= 3)
+        _currentFilter = aFilter;
+        [self listParkedVirtualMachines:aFilter];
+}
+
+/*! TNTableViewLazyDataSource delegate
+*/
+- (void)tableViewDataSource:(TNTableViewLazyDataSource)aDataSource removeFilter:(CPString)aFilter
+{
+    [self reset];
+    _currentFilter = @""
+    [self listParkedVirtualMachines];
+}
+
+
+@end
 
 // add this code to make the CPLocalizedString looking at
 // the current bundle.
