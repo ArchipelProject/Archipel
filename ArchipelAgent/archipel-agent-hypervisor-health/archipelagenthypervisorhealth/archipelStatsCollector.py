@@ -25,6 +25,7 @@ import sqlite3
 import subprocess
 import time
 import json
+from os import statvfs
 from threading import Thread
 
 from archipelcore.utils import log
@@ -107,10 +108,10 @@ class TNThreadedHealthCollector (Thread):
         @rtype: TNArchipelVirtualMachine
         @return: the L{TNArchipelVirtualMachine} instance
         """
-        log.debug("STATCOLLECTOR: Retrieving last "+ str(limit) + " recorded stats data for sending.")
+        log.debug("STATCOLLECTOR: Retrieving last " + str(limit) + " recorded stats data for sending.")
         try:
             uptime = self.get_uptime()
-            uptime_stats    = {"up": "%dd %dh" % (uptime[0], uptime[1])} #TODO: it's obvious it would be better to not do this
+            uptime_stats    = {"up": "%dd %dh" % (uptime[0], uptime[1])}
         except Exception as ex:
             raise Exception("Unable to get uptime.", ex)
         try:
@@ -175,11 +176,11 @@ class TNThreadedHealthCollector (Thread):
             file_pages_sharing = open("/sys/kernel/mm/ksm/pages_sharing")
             pagessharing = file_pages_sharing.read()
             file_pages_sharing.close()
-            memshared = int(pagessharing) * self.memoryPageSize / 1024;
+            memshared = int(pagessharing) * self.memoryPageSize / 1024
         except:
             memshared = 0
         meminfolines = meminfo.split("\n")
-        minfo={}
+        minfo = {}
         for line in meminfolines:
             fields = line.split()
             try:
@@ -221,16 +222,28 @@ class TNThreadedHealthCollector (Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        output  = subprocess.Popen(["df", "-P", "-x", "devfs", "-x", "devtmpfs", "-x", "tmpfs"], stdout=subprocess.PIPE).communicate()[0]
-        listed  = []
-        ret     = []
-        out     = output.split("\n")[1:-1]
-        for l in out:
-            cell = l.split()
-            if cell[5] in listed:
-                continue
-            ret.append({"partition": cell[0], "blocks": cell[1], "used": int(cell[2]) * 1024, "available": int(cell[3]) * 1024, "capacity": cell[4], "mount": cell[5]})
-            listed.append(cell[5])
+        listed = set()
+        ret    = []
+        with open('/proc/mounts') as f:
+            for mount in f:
+                (mdev,mpath,mfs,moptions,msomething,mpass) = mount.split()
+                if mdev in listed or mpath in listed:
+                    continue
+                if (mfs in ['devfs', 'devtmpfs', 'tmpfs']):
+                    continue
+                vfs = statvfs(mpath)
+                if (vfs.f_blocks == 0):
+                    continue
+                entry = {"partition": mdev,
+                         "blocks": (vfs.f_blocks * vfs.f_bsize) / 1024,
+                         "used": (vfs.f_blocks - vfs.f_bfree) * vfs.f_bsize,
+                         "available": vfs.f_bfree * vfs.f_bsize,
+                         "capacity": '{:d}%'.format(100 - (100 * vfs.f_bfree / vfs.f_blocks)),
+                         "mount": mpath}
+                if entry not in ret:
+                    ret.append(entry)
+                    listed.add(mdev)
+                    listed.add(mpath)
         return ret
 
     def get_disk_total(self):
@@ -239,13 +252,16 @@ class TNThreadedHealthCollector (Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        out = subprocess.Popen(["df", "--total", "-P", "-x", "devfs", "-x", "devtmpfs", "-x", "tmpfs"], stdout=subprocess.PIPE).communicate()[0].split("\n")
-        for line in out:
-            line = line.split()
-            if line[0] == "total":
-                disk_total = line
-                break
-        return {"used": disk_total[2], "available": disk_total[3], "capacity": disk_total[4]}
+        t_used = 0
+        t_available = 0
+        t_capacity = 0
+        disks = self.get_disk_stats()
+        for disk in disks:
+            t_used += disk["used"]
+            t_available += disk["available"]
+            t_capacity += disk["blocks"] * 1024
+
+        return {"used": t_used, "available": t_available, "capacity": "{:d}%".format(100 * t_used / t_capacity)}
 
     def get_network_stats(self):
         """
@@ -273,9 +289,9 @@ class TNThreadedHealthCollector (Thread):
             if self.current_record and dev in self.current_record:
                 delta_usage = (rx - self.current_record[dev]["rx"]) + (tx - self.current_record[dev]["tx"])
             else:
-                delta_usage = 0;
+                delta_usage = 0
             ret[dev] = delta_usage
-        self.current_record = records;
+        self.current_record = records
         return {"date": datetime.datetime.now(), "records": json.dumps(ret)}
 
     def getTimeList(self):
@@ -324,8 +340,8 @@ class TNThreadedHealthCollector (Thread):
                     self.database_thread_cursor.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])
 
                     log.info("Stats saved in database file.")
-                    nrRow = int(self.database_thread_cursor.execute("select count(*) from cpu").fetchone()[0]);
-                    if  nrRow > self.max_rows_before_purge * 1.5:
+                    nrRow = int(self.database_thread_cursor.execute("select count(*) from cpu").fetchone()[0])
+                    if nrRow > self.max_rows_before_purge * 1.5:
                         self.database_thread_cursor.execute("DELETE FROM cpu WHERE collection_date IN (SELECT collection_date FROM cpu ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
                         self.database_thread_cursor.execute("DELETE FROM memory WHERE collection_date IN (SELECT collection_date FROM memory ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
                         self.database_thread_cursor.execute("DELETE FROM load WHERE collection_date IN (SELECT collection_date FROM load ORDER BY collection_date ASC LIMIT " + str(nrRow - self.max_rows_before_purge) + ")")
