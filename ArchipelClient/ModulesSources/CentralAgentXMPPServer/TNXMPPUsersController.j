@@ -81,7 +81,6 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     CPMenuItem                  _contextualMenu                 @accessors(property=contextualMenu);
 
     TNStropheContact            _entity;
-    CPDictionary                _entityCapabilities;
     TNTableViewLazyDataSource   _datasourceUsers;
     TNXMPPServerUserFetcher     _usersFetcher;
 }
@@ -94,7 +93,6 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     [viewTableContainer setBorderedWithHexColor:@"#F2F2F2"];
     [imageFecthingUsers setImage:CPImageInBundle(@"spinner.gif", CGSizeMake(16, 16), [CPBundle mainBundle])];
 
-    _entityCapabilities = [[CPDictionary alloc] init];
 
     // table users
     _datasourceUsers = [[TNTableViewLazyDataSource alloc] init];
@@ -113,7 +111,6 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 
     [fieldNewUserPassword setSecure:YES];
     [fieldNewUserPasswordConfirm setSecure:YES];
-
 
     [fieldResetUserPassword setSecure:YES];
     [fieldResetUserPasswordConfirm setSecure:YES];
@@ -182,13 +179,7 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
 
 - (void)setEntity:(CPDictionary)anEntity
 {
-    _entity = [anEntity objectForKey:@"contact"];
-
-    var canManageUsers = [anEntity objectForKey:@"canManageUsers"] || NO,
-        canManageSharedRostergroups = [anEntity objectForKey:@"canManageSharedRostergroups"] || NO;
-
-    _entityCapabilities = @{@"canManageUsers": canManageUsers, @"canManageSharedRostergroups": canManageSharedRostergroups};
-
+    _entity = anEntity;
     [_usersFetcher setEntity:_entity];
 }
 
@@ -261,16 +252,15 @@ var TNModuleControlForRegisterUser                  = @"RegisterUser",
     // this will check against a non existing permissions
     // As these controls are only for admins, we don't really care about the permission
 
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin] enabledAccordingToPermissions:[@"dummy_permission"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin] enabledAccordingToPermissions:[@"dummy_permission"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
+    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRevokeAdmin] enabledAccordingToPermissions:[@"dummy_permission"]];
+   [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForGrantAdmin] enabledAccordingToPermissions:[@"dummy_permission"]];
 
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
-    [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForResetPassword] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"] specialCondition:([_entityCapabilities valueForKey:@"canManageUsers"])];
+   [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRegisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
+   [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForUnregisterUser] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
+   [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForResetPassword] enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
 
-    if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
-        [popoverNewUser close];
-}
+   if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
+       [popoverNewUser close];}
 
 /*! reload the display of the module
 */

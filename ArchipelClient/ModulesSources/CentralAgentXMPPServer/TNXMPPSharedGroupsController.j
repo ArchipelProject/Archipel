@@ -189,7 +189,7 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 
 - (void)setEntity:(TNStropheContact)anEntity
 {
-    _entity = [anEntity objectForKey:@"contact"];
+    _entity = anEntity;
      [_usersFetcher setEntity:_entity];
 }
 
@@ -273,8 +273,8 @@ var TNModuleControlForAddSharedGroup                     = @"AddSharedGroup",
 - (void)setUIAccordingToPermissions
 {
     var condition1 = ([tableGroups numberOfSelectedRows] > 0),
-        condition2 = condition1 && ([tableUsersInGroup numberOfSelectedRows] > 0),
-        condition3 = condition1 && ([tableDisplayGroupsInGroup numberOfSelectedRows] > 0);
+            condition2 = condition1 && ([tableUsersInGroup numberOfSelectedRows] > 0),
+            condition3 = condition1 && ([tableDisplayGroupsInGroup numberOfSelectedRows] > 0);
 
     [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForAddSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
     [_delegate setControl:[_delegate buttonWithIdentifier:TNModuleControlForRemoveSharedGroup] enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"] specialCondition:condition1];
