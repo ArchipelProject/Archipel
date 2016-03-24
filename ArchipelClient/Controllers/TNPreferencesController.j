@@ -188,6 +188,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
             [tabViewMain addTabViewItem:tabViewModuleItem];
         }
     }
+    if ([tabViewMain selectedTabViewItem] == nil)
+    [tabViewMain selectFirstTabViewItem:nil];
 }
 
 /*! trigger when storage is sucessfulll

@@ -156,6 +156,11 @@
     [tabViewDHCPHostsItem setView:viewHostsConf];
     [tabViewDHCPHostsItem setLabel:CPBundleLocalizedString(@"DHCP Hosts", @"DHCP Hosts")];
     [tabViewDHCP addTabViewItem:tabViewDHCPHostsItem];
+
+    if ([tabViewDHCP selectedTabViewItem] == nil)
+        [tabViewDHCP selectFirstTabViewItem:nil];
+
+
 }
 
 

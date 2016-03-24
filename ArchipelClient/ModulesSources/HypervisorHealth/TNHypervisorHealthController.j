@@ -280,6 +280,10 @@ var TNHypervisorHealthControllerVMXImageEnabled,
 
     [self getHypervisorHealthHistory];
 
+    if ([tabViewInfos selectedTabViewItem] == nil)
+        [tabViewInfos selectFirstTabViewItem:nil];
+
+
     return YES;
 }
 

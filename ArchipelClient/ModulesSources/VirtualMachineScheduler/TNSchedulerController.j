@@ -95,6 +95,10 @@ var TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
     [itemRecurrent setView:viewNewJobRecurent];
     [tabViewJobSchedule addTabViewItem:itemRecurrent];
 
+    if ([tabViewJobSchedule selectedTabViewItem] == nil)
+        [tabViewJobSchedule selectFirstTabViewItem:nil];
+
+
     var date = [CPDate date];
     [stepperNewRecurrentJobYear setMaxValue:[[date format:@"Y"] intValue] + 100];
     [stepperNewRecurrentJobYear setMinValue:[date format:@"Y"]];
