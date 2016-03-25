@@ -24,7 +24,7 @@ import sys
 import socket
 import signal as sig
 
-## Error codes
+# Error codes
 ARCHIPEL_INIT_SUCCESS = 0
 ARCHIPEL_INIT_ERROR_NO_CONFIG = 1
 ARCHIPEL_INIT_ERROR_NO_MODULE = 2
@@ -36,14 +36,14 @@ ARCHIPEL_INIT_ERROR_STATELESS_MODE = 7
 
 # Import and check essential modules
 try:
-    from archipelcore.scriptutils import error, msg, success
+    from archipelcore.scriptutils import error
 except ImportError as ex:
     print "FATAL: you need to install archipel-core"
     sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 try:
     from archipelcore.utils import init_log
-    from archipelcore.runutils import format_version, versions, initialize_config
+    from archipelcore.runutils import versions, initialize_config
     from archipel.archipelHypervisor import TNArchipelHypervisor
     from archipel.libvirtEventLoop import virEventLoopNativeStart
     from archipelcore import xmpp

@@ -51,6 +51,7 @@ ARCHIPEL_LOG_ERROR                              = 3
 
 log = logging.getLogger('archipel')
 
+
 class TNArchipelLogger:
     """
     archipel logger implt
@@ -73,7 +74,7 @@ class TNArchipelLogger:
         elif level == ARCHIPEL_LOG_WARNING:
             log.warning(msg)
         elif level == ARCHIPEL_LOG_ERROR:
-             log.error(msg)
+            log.error(msg)
 
         # if self.xmppclient and self.pubSubNode:
         #     log = xmpp.Node(tag="log", attrs={"date": datetime.datetime.now(), "level": str(level)})
@@ -122,16 +123,17 @@ def init_conf(paths):
     conf.read(paths)
     if conf.has_option("GLOBAL", "modules_configuration_path"):
         plugins_path = conf.get("GLOBAL", "modules_configuration_path")
-        plugins_conf = glob.glob(plugins_path+"/*.conf")
+        plugins_conf = glob.glob(plugins_path + "/*.conf")
         conf.read(plugins_conf)
     for section in conf.sections():
         for option in conf.options(section):
             value = conf.get(section, option, raw=True)
             if (not value):
-                raise Exception("Missing value for option %s in section [%s]" %(option,section))
+                raise Exception("Missing value for option %s in section [%s]" % (option,section))
             value = value.replace("@HOSTNAME@", socket.gethostname())
             conf.set(section, "%s" % option, value)
     return conf
+
 
 def init_log(conf):
     """
@@ -162,8 +164,8 @@ def init_log(conf):
     logger.addHandler(handler)
     logger.setLevel(level)
 
+
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
-    #traceback.print_exc(file=sys.stdout, limit=20)
     caller = inspect.stack()[1][3]
     log.error("%s.%s: exception raised is: '%s' triggered by stanza :\n%s" % (originclass, caller, ex, str(iq)))
     t, v, tr = sys.exc_info()
@@ -183,10 +185,12 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     reply.addChild(node=error)
     return reply
 
+
 def build_error_message(originclass, ex, msg):
     caller = inspect.stack()[3][3]
     log.error("%s: exception raised is: '%s' triggered by message:\n %s" % (caller, str(ex), str(msg)))
     return str(ex)
+
 
 def get_default_gateway_interface():
     """
@@ -199,6 +203,7 @@ def get_default_gateway_interface():
                 continue
 
             return get_ip_address(fields[0])
+
 
 def get_ip_address(ifname):
     """
