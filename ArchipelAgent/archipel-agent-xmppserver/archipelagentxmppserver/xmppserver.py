@@ -69,11 +69,9 @@ class TNXMPPServerController (TNArchipelPlugin):
 
         self.user_page_size = 50
         self.xmpp_server = entity.jid.getDomain()
-        self.management_capabilities = {'Users':{'xmpp': False, 'xmlrpc':False}, 'Groups':{'xmpp': False, 'xmlrpc':False}}
         self.admins = []
 
         if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
-
             if configuration.has_option("XMPPSERVER", "use_xmlrpc_api") and configuration.getboolean("XMPPSERVER", "use_xmlrpc_api"):
                 self.xmlrpc_host        = configuration.get("XMPPSERVER", "xmlrpc_host")
                 self.xmlrpc_port        = configuration.getint("XMPPSERVER", "xmlrpc_port")
@@ -106,15 +104,14 @@ class TNXMPPServerController (TNArchipelPlugin):
                     self.autogroup_hypervisors_id = self.autogroup_name_hypervisors
                     self.autogroup_users_id = self.autogroup_name_users
 
-                    self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.get_management_capabilities)
-                    self.entity.register_hook("HOOK_ARCHIPELENTITY_PLUGIN_ALL_LOADED", method=self.create_autogroups_if_needed)
+                    self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.create_autogroups_if_needed)
                     if auto_group_filter in ("all", "hypervisors"):
                         if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
-                            self.entity.register_hook("HOOK_CENTRALAGENT_HYP_REGISTERED", method=self.handle_autogroup_for_entity)
+                            self.entity.register_hook("HOOK_CENTRALAGENT_HYP_REGISTERED", method=self.handle_autogroup_for_entities)
 
                     if auto_group_filter in ("all", "virtualmachines"):
                         if self.entity.__class__.__name__ == "TNArchipelCentralAgent":
-                            self.entity.register_hook("HOOK_CENTRALAGENT_VM_REGISTERED", method=self.handle_autogroup_for_entity)
+                            self.entity.register_hook("HOOK_CENTRALAGENT_VM_REGISTERED", method=self.handle_autogroup_for_entities)
 
             else:
                 self.entity.log.info("XMLRPC module for Shared Roster Group management is disabled for this entity")
@@ -129,7 +126,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_changepassword", "Authorizes user to change XMPP users password", False)
-            self.entity.permission_center.create_permission("xmppserver_managementcapabilities", "Authorizes user to get management capabilities", False)
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
         else:
@@ -147,7 +143,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.xmppclient.RegisterHandler('iq', self.proxify_user_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
         elif self.entity.__class__.__name__ == "TNArchipelCentralAgent":
-            self.entity.xmppclient.RegisterHandler('iq', self.process_iq_management, ns=ARCHIPEL_NS_XMPPSERVER)
             self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
             self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
@@ -160,7 +155,6 @@ class TNXMPPServerController (TNArchipelPlugin):
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.xmppclient.UnregisterHandler('iq', self.proxify_user_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
         elif self.entity.__class__.__name__ == "TNArchipelCentralAgent":
-            self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_management, ns=ARCHIPEL_NS_XMPPSERVER)
             self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
             self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
 
@@ -191,8 +185,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtime argument
         """
-        if not self.entity.__class__.__name__ == "TNArchipelCentralAgent" \
-           or not self.management_capabilities['Groups']['xmlrpc']:
+        if not self.entity.__class__.__name__ == "TNArchipelCentralAgent":
             return
 
         try:
@@ -200,7 +193,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             for group in self.group_list():
                 groups_id.append(group['id'])
         except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: Unable to use xmlrpc. %s" % (ex))
+            self.entity.log.error("XMPPSERVER: Unable to use xmlrpc. %s" % (ex))
             return
 
         try:
@@ -230,45 +223,35 @@ class TNXMPPServerController (TNArchipelPlugin):
         except Exception as ex:
             self.entity.log.warning("XMPPSERVER: unable to create auto group %s: %s" % (self.autogroup_name_hypervisors, ex))
 
-    def handle_autogroup_for_entity(self, origin, user_info, entity):
+    def handle_autogroup_for_entities(self, origin, user_info, entities):
         """
         Will add all new virtual machines in autogroup if configured to and if not already in another SRG
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
         @param user_info: random user info
-        @type entity: object
-        @param entity: runtime argument
+        @type entity: list
+        @param entity: list of entities
         """
-        if isinstance(entity, list):
-            for item in entity:
-                if item.get('uuid'):
-                    jid = xmpp.JID(node=item.get('uuid').lower(), domain=self.xmpp_server.lower())
-                    self.handle_autogroup_for_entity(None, "vm", jid)
-                elif item.get('jid'):
-                    jid = xmpp.JID(jid=item.get('jid'))
-                    self.handle_autogroup_for_entity(None, "hypervisor", jid)
-            return
-        elif entity.__class__.__name__ == "JID":
-            if user_info == "vm":
-                group_name = self.autogroup_name_vms
-                group_id = self.autogroup_vms_id
-                jid = entity
-            elif user_info == "hypervisor":
+        for entity in entities:
+            if entity.get('jid'):
                 group_name = self.autogroup_name_hypervisors
                 group_id = self.autogroup_hypervisors_id
-                jid = entity
-        else:
-            return
-        try:
-            for group in self.group_list():
-                if jid.getStripped() in group["members"]:
-                    return
-            self.create_autogroups_if_needed(self, None, None)
-            self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (jid, group_name))
-            self.group_add_users(group_id, [jid.getStripped()])
-        except Exception as ex:
-            self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (jid, group_name, ex))
+                jid = xmpp.JID(jid=entity.get('jid'))
+            elif entity.get('uuid'):
+                group_name = self.autogroup_name_vms
+                group_id = self.autogroup_vms_id
+                jid = xmpp.JID(node=entity.get('uuid').lower(), domain=self.xmpp_server.lower())
+            self.entity.permission_center.grant_permission_to_user('xmppserver_users_list', jid.getStripped())
+            self.entity.permission_center.grant_permission_to_user('xmppserver_users_number', jid.getStripped())
+            try:
+                for group in self.group_list():
+                    if jid.getStripped() in group["members"]:
+                        return
+                self.entity.log.info("XMPPSERVER: Adding new entity %s in autogroup %s" % (jid, group_name))
+                self.group_add_users(group_id, [jid.getStripped()])
+            except Exception as ex:
+                self.entity.log.warning("XMPPSERVER: unable to add entity %s in autogroup %s: %s" % (jid, group_name, ex))
 
     # Utils
 
@@ -308,6 +291,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         start_time = time.time()
 
         def on_receive_users_num(conn, iq):
+            if iq.getType() != "result":
+                self.entity.log.error("XMPPSERVER: Cannot retrieve users: %s" % iq.getTag('error'))
+                return
 
             total_number_of_users = int(iq.getTag("command").getTag("x").getTags("field")[1].getTag("value").getData())
 
@@ -315,21 +301,23 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.debug("XMPPSERVER: Done fetching %s users in %s seconds" % (total_number_of_users, time.time() - start_time))
                 callback(**args)
             else:
-                self.entity.log.debug("XMPPSERVER: Refresh cached entries.")
-                if self.management_capabilities['Users']['xmlrpc']:
-                    answer = self._send_xmlrpc_call("registered_users", {"host": xmppserver})
-                    for item in answer.get('users', []):
-                        user = "%s@%s" % (item.get('username'), xmppserver)
-                        if user in self.entities_from_central_db['virtualmachines']:
-                            self.users.add('v' + user)
-                        elif user in self.entities_from_central_db['hypervisors']:
-                            self.users.add('h' + user)
-                        else:
-                            self.users.add('u' + user)
+                temp_users = set()
+                self.entity.log.debug("XMPPSERVER: Refresh cached entries. %s entries cached / %s entries" % (len(total_number_of_users, len(self.users))))
+                answer = self._send_xmlrpc_call("registered_users", {"host": xmppserver})
+                for item in answer.get('users', []):
+                    user = "%s@%s" % (item.get('username'), xmppserver)
+                    if user in self.entities_from_central_db['virtualmachines']:
+                        temp_users.add('v' + user)
+                    elif user in self.entities_from_central_db['hypervisors']:
+                        temp_users.add('h' + user)
+                    else:
+                        temp_users.add('u' + user)
+                self.users = temp_users
+                del temp_users
 
-                    if len(self.users) == total_number_of_users:
-                        self.entity.log.debug("XMPPSERVER: Done fetching %s users in %s seconds" % (total_number_of_users, time.time() - start_time))
-                        callback(**args)
+                if len(self.users) == total_number_of_users:
+                    self.entity.log.debug("XMPPSERVER: Done fetching %s users in %s seconds" % (total_number_of_users, time.time() - start_time))
+                    callback(**args)
 
         iq = xmpp.Iq(typ="set", to=xmppserver)
         iq.addChild("command", attrs={"action": "execute", "node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/commands")
@@ -762,6 +750,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.users_number(reply, only_humans)
             return None
         except Exception as ex:
+            print "ex"
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
         return reply
 
@@ -919,73 +908,3 @@ class TNXMPPServerController (TNArchipelPlugin):
 
             self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_password_changed)
             self.entity.log.info("XMPPSERVER: Changing password for user %s@%s" % (user["jid"], server))
-
-    def process_iq_management(self, conn, iq):
-        """
-        This method is invoked when a ARCHIPEL_NS_XMPPSERVER IQ is received.
-        It understands IQ of type:
-            - managementcapabilities
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_")
-        reply = None
-        if action == "managementcapabilities":
-            reply = self.iq_management_capabilities(iq)
-            if not reply:
-                raise xmpp.protocol.NodeProcessed
-        if reply:
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-
-    def iq_management_capabilities(self, iq):
-        """
-        Get users/group management capabitilies of the current entity
-        @type iq : xmpp.Protocol.Iq
-        @param iq : the received IQ
-        @rtype : xmpp.Protocol.Iq
-        @return : a ready to send IQ containing the result of the action
-        """
-        try:
-            reply = iq.buildReply("result")
-            self.get_management_capabilities()
-            _users_node  = xmpp.Node("users",  attrs={"xmpp":self.management_capabilities['Users']['xmpp'],  "xmlrpc":self.management_capabilities['Users']['xmlrpc']})
-            _groups_node = xmpp.Node("groups", attrs={"xmpp":self.management_capabilities['Groups']['xmpp'], "xmlrpc":self.management_capabilities['Groups']['xmlrpc']})
-            reply.setQueryPayload([_users_node, _groups_node])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_MANAGEMENT)
-        return reply
-
-    def get_management_capabilities(self, origin=None, user_info=None, params=None):
-        """
-        Build the xmpp management capabilities dictionnary
-        """
-        def on_receive_info(conn, iq):
-            info_msg = "XMPPSERVER - User and SRG Management : "
-            if iq.getType() == "result":
-                self.management_capabilities['Users']['xmpp'] = True
-                info_msg += "XEP-133 allowed"
-            else:
-                self.management_capabilities['Users']['xmpp'] = False
-                info_msg += "XEP-133 NOT allowed"
-
-            # next try to use xmlrpc and mod_admin_extra to manage srg
-            try:
-                _ = self._send_xmlrpc_call("srg_list", {"host": self.xmlrpc_host})
-                self.management_capabilities['Users']['xmlrpc'] = True
-                self.management_capabilities['Groups']['xmlrpc'] = True
-                info_msg += " and SRG allowed through xmlrpc"
-            except Exception as ex:
-                self.management_capabilities['Users']['xmlrpc'] = False
-                self.management_capabilities['Groups']['xmlrpc'] = False
-                info_msg += " and SRG NOT allowed through xmlrpc, reason : %s" % str(ex)
-            self.entity.log.debug("XMPPSERVER: Management Capabilites: %s" % self.management_capabilities)
-
-        # use disco#info to see if we can use admin-server command XEP-133
-        iq = xmpp.Iq(typ="get", to=self.entity.jid.getDomain())
-        iq.addChild("query", attrs={"node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/disco#info")
-
-        self.entity.xmppclient.SendAndCallForResponse(iq, on_receive_info)
