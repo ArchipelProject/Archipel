@@ -47,6 +47,7 @@ ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
+
 class TNDBController(Thread):
     """
     This class reprensent the database controller. The main purpose is to handle
@@ -176,9 +177,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                 self.log.debug("CENTRALAGENT: stat : %s" % stat)
                 self.required_stats_xml.addChild("stat", attrs=stat)
 
-            self.keepalive_event.addChild(node = self.required_stats_xml)
+            self.keepalive_event.addChild(node=self.required_stats_xml)
 
-    ### Utilities
+    # Utilities
 
     def init_permissions(self):
         """
@@ -245,7 +246,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-    ### Pubsub management
+    # Pubsub management
 
     def hook_xmpp_authenticated(self, origin=None, user_info=None, arguments=None):
         """
@@ -324,7 +325,6 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         return keepalive_event
 
-
     def handle_central_keepalive_event(self,event):
         """
         Called when the central agents announce themselves.
@@ -368,7 +368,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply           = iq.buildReply("result")
             entries         = self.read_hypervisors(columns, where_statement)
             for entry in self.pack_entries(entries):
-                reply.addChild(node = entry)
+                reply.addChild(node=entry)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -386,7 +386,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply           = iq.buildReply("result")
             entries         = self.read_vms(columns, where_statement)
             for entry in self.pack_entries(entries):
-                reply.addChild(node = entry)
+                reply.addChild(node=entry)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -405,7 +405,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             reply      = iq.buildReply("result")
             entries    = self.get_existing_vms_instances(entries, origin_hyp)
             for entry in self.pack_entries(entries):
-                reply.addChild(node = entry)
+                reply.addChild(node=entry)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -465,7 +465,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             entries = self.unpack_entries(iq)
             entries = self.update_vms_domain(entries)
             for entry in self.pack_entries(entries):
-                reply.addChild(node = entry)
+                reply.addChild(node=entry)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -513,7 +513,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             out_entries = self.unregister_vms(in_entries)
             self.perform_hooks("HOOK_CENTRALAGENT_VM_UNREGISTERED", out_entries)
             for entry in self.pack_entries(out_entries):
-                reply.addChild(node = entry)
+                reply.addChild(node=entry)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_CENTRALAGENT)
         return reply
@@ -572,7 +572,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             uuids.append(entry["uuid"])
 
         read_statement = "select vms.uuid from vms join hypervisors on hypervisors.jid=vms.hypervisor"
-        read_statement += " where vms.uuid in (%s)" % ','.join("?"*len(uuids))
+        read_statement += " where vms.uuid in (%s)" % ','.join("?" * len(uuids))
         read_statement += " and hypervisors.jid != '%s'" % origin_hyp
         read_statement += " and hypervisors.status='Online'"
 
@@ -594,7 +594,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
             uuids.append(entry["uuid"])
 
         read_statement = "select uuid, domain from vms"
-        read_statement += " where uuid in (%s)" % ','.join("?"*len(uuids))
+        read_statement += " where uuid in (%s)" % ','.join("?" * len(uuids))
         read_statement += " and (hypervisor='None' or hypervisor not in (select jid from hypervisors where status='Online'))"
 
         self.log.debug("CENTRALDB: Get parked vms from database")
@@ -693,7 +693,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                     entries_to_commit.append({"uuid": uuid, "domain": str(new_domain)})
                 results.append({"result": result, "uuid": uuid, "error": error})
 
-        if len(entries_to_commit) >0 :
+        if len(entries_to_commit) > 0:
             command = "update vms set domain=:domain where uuid=:uuid"
             self.db_commit(command, entries_to_commit)
         return results
@@ -704,9 +704,9 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @type entries: List
         @param entries: list of vms
         """
-        update_snipplets=[]
+        update_snipplets = []
         for key, val in entries[0].iteritems():
-            if key!="jid":
+            if key != "jid":
                 update_snipplets.append("%s=:%s" % (key, key))
         command = "update hypervisors set %s where jid=:jid" % (", ".join(update_snipplets))
         self.db_commit(command, entries)
@@ -736,12 +736,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         # list of vms which have been found in central db, including uuid and jid
         cleaned_entries = self.read_vms("uuid,domain", where_statement)
         for i in range(len(cleaned_entries)):
-            domain_xml =  cleaned_entries[i]["domain"]
+            domain_xml = cleaned_entries[i]["domain"]
             if domain_xml != "None":
                 domain = xmpp.simplexml.NodeBuilder(data=cleaned_entries[i]["domain"]).getDom()
                 cleaned_entries[i]["jid"] = xmpp.JID(domain.getTag("description").getData().split("::::")[0])
                 del(cleaned_entries[i]["domain"])
-
 
         self.db_commit("delete from vms where uuid=:uuid",cleaned_entries)
         return cleaned_entries
@@ -753,11 +752,11 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
         @param event: received Iq
         """
         central_database_event = iq.getTag("query").getTag("archipel").getTag("event")
-        entries=[]
+        entries = []
         for entry in central_database_event.getChildren():
-            entry_dict={}
+            entry_dict = {}
             for entry_val in entry.getChildren():
-                entry_dict[entry_val.getAttr("key")]=entry_val.getAttr("value")
+                entry_dict[entry_val.getAttr("key")] = entry_val.getAttr("value")
             entries.append(entry_dict)
         return entries
 
@@ -809,7 +808,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
         self.last_hyp_check = datetime.datetime.now()
 
-    ### Database Management
+    # Database Management
 
     def manage_database(self):
         """
@@ -841,7 +840,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
                     name = row[0]
                 self.database.execute("update vms set name='%s' where uuid =='%s'" % (name, row[0]))
 
-    ### Event loop
+    # Event loop
 
     def on_xmpp_loop_tick(self):
 
@@ -849,7 +848,7 @@ class TNArchipelCentralAgent (TNArchipelEntity, TNHookableEntity, TNAvatarContro
 
             if not self.is_central_agent and self.central_agent_mode == "auto":
                 self.become_central_agent()
-            elif self.is_central_agent: # we are central agent
+            elif self.is_central_agent:
                 if (datetime.datetime.now() - self.last_keepalive_sent).total_seconds() >= self.keepalive_interval:
                     self.central_keepalive_pubsub.add_item(self.keepalive_event_with_date())
                     self.last_keepalive_sent = datetime.datetime.now()
