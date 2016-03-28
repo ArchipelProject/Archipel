@@ -37,6 +37,7 @@ ARCHIPEL_ERROR_CODE_CENTRALAGENT         = 123
 
 ARCHIPEL_CENTRAL_AGENT_TIMEOUT           = 60
 
+
 class TNTasks(object):
     """Timed jobs tasker"""
     def __init__(self, log):
@@ -89,7 +90,7 @@ class TNCentralDb (TNArchipelPlugin):
         self.xmpp_authenticated    = False
         self.required_statistics        = []
 
-    ### Hooks
+    # Hooks
     def hook_vm_event(self, origin=None, user_info=None, arguments=None):
         """
         Called when a VM definition or change of definition occurs.
@@ -100,7 +101,7 @@ class TNCentralDb (TNArchipelPlugin):
         if self.entity.definition:
             xmldesc = self.entity.xmldesc(mask_description=False)
 
-        vm_info=[{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid, 'name':xmldesc.getTag("name").getData()}]
+        vm_info = [{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid, 'name':xmldesc.getTag("name").getData()}]
         self.register_vms(vm_info)
 
     def hook_vm_terminate(self, origin=None, user_info=None, arguments=None):
@@ -110,7 +111,7 @@ class TNCentralDb (TNArchipelPlugin):
         """
         self.unregister_vms([{"uuid":self.entity.uuid}], None)
 
-    ### Pubsub management
+    # Pubsub management
 
     def hypervisor_hook_xmpp_authenticated(self, origin=None, user_info=None, arguments=None):
         """
@@ -140,9 +141,16 @@ class TNCentralDb (TNArchipelPlugin):
         if not self.central_agent_jid_val:
             return None
 
+        if not self.entity.roster.getItem(self.central_agent_jid_val.getStripped()):
+            self.entity.log.warning("CENTRALDB: CentralAgent not in my roster, adding it.")
+            self.entity.add_jid(self.central_agent_jid_val)
+
         # if central agent has a status, it's available
-        if self.entity.roster.getStatus(self.central_agent_jid_val.getStripped()):
-            return self.central_agent_jid_val
+        try:
+            if self.entity.roster.getStatus(self.central_agent_jid_val.getStripped()):
+                return self.central_agent_jid_val
+        except:
+            pass
 
         # If presence is not known check if we hit the keepalive threshold timeout
         # This could append when you restart it for example
@@ -152,7 +160,7 @@ class TNCentralDb (TNArchipelPlugin):
             self.central_agent_jid_val = None
             return None
         else:
-            self.entity.log.warning("CENTRALDB: CentralAgent looks down. Can't retrieve its presence")
+            self.entity.log.warning("CENTRALDB: Can't get central-agent presence, using keepalive to check it's availability.")
             return self.central_agent_jid_val
 
     def handle_central_keepalive_event(self, event):
@@ -181,9 +189,9 @@ class TNCentralDb (TNArchipelPlugin):
                 self.central_agent_jid_val = keepalive_jid
                 self.last_keepalive_heard  = datetime.datetime.now()
 
-                self.delayed_tasks.add((self.hypervisor_timeout_threshold - self.keepalive_interval)*2/3, self.push_statistics_to_centraldb)
+                self.delayed_tasks.add((self.hypervisor_timeout_threshold - self.keepalive_interval) * 2 / 3, self.push_statistics_to_centraldb)
 
-                if old_central_agent_jid == None:
+                if not old_central_agent_jid:
                     self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid, 'callback': self.push_vms_in_central_db, 'kwargs':{'central_announcement_event':central_announcement_event}})
                 elif central_announcement_event.getAttr("force_update") == "true" or keepalive_jid != old_central_agent_jid:
                     self.delayed_tasks.add(self.keepalive_interval, self.push_vms_in_central_db, {'central_announcement_event':central_announcement_event})
@@ -193,8 +201,7 @@ class TNCentralDb (TNArchipelPlugin):
         each time we hear a keepalive, we push relevant statistics to central db
         """
         stats_results = {"jid":str(self.entity.jid)}
-
-        if len(self.required_statistics) > 0 :
+        if len(self.required_statistics) > 0:
             stat_num = 0
             for stat in self.required_statistics:
                 stat_num += 1
@@ -204,7 +211,6 @@ class TNCentralDb (TNArchipelPlugin):
             self.entity.log.debug("CENTRALDB: updating central db with %s" % stats_results)
 
         self.update_hypervisors([stats_results])
-
 
     def handle_first_keepalive(self, keepalive_jid, callback=None, kwargs={}):
         """
@@ -237,7 +243,8 @@ class TNCentralDb (TNArchipelPlugin):
         else:
             # update status to Online(0)
             self.entity.manage_persistence()
-
+            if callback:
+                callback(**kwargs)
 
     def push_vms_in_central_db(self, central_announcement_event):
         """
@@ -261,9 +268,8 @@ class TNCentralDb (TNArchipelPlugin):
             for required_stat in central_announcement_event.getTag("required_stats").getChildren():
                 self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
 
-    ### Database Management
-
-    #### read commands
+    # Database Management
+    # read commands
 
     def read_hypervisors(self, columns, where_statement, callback):
         """
@@ -281,7 +287,7 @@ class TNCentralDb (TNArchipelPlugin):
         """
         self.read_from_db("read_vms", columns, where_statement, callback)
 
-    #### write commands
+    # write commands
 
     def register_hypervisors(self,table):
         """
@@ -370,7 +376,6 @@ class TNCentralDb (TNArchipelPlugin):
 
                 dbCommand.addChild(node=entryTag)
 
-
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=central_agent_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":action})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
@@ -419,19 +424,19 @@ class TNCentralDb (TNArchipelPlugin):
         @type iq: xmpp.Iq
         @param event: received Iq
         """
-        entries=[]
+        entries = []
 
         for entry in iq.getChildren():
             entry_dict = {}
             for entry_val in entry.getChildren():
                 if entry_val.getAttr("key"):
-                     entry_dict[entry_val.getAttr("key")]=entry_val.getAttr("value")
-            if entry_dict != {} :
+                    entry_dict[entry_val.getAttr("key")] = entry_val.getAttr("value")
+            if entry_dict != {}:
                 entries.append(entry_dict)
         return entries
 
 
-    ### Plugin information
+    # Plugin information
 
     @staticmethod
     def plugin_info():
