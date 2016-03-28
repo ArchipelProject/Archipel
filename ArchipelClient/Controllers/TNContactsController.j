@@ -270,15 +270,21 @@
     else
         nick = [requestStanza from];
 
-    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Subscription request", @"Subscription request")
-                              informative:nick + CPLocalizedString(@" is asking you subscription. Do you want to authorize it ?", @" is asking you subscription. Do you want to authorize it ?")
-                                   target:self
-                                  actions:[[CPLocalizedString("Accept", "Accept"), @selector(performAuthorize:)],
-                                            [CPLocalizedString("Decline", "Decline"), @selector(performRefuse:)]]];
+    if (![[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelContactAlwaysAuthorize"]){
+        var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Subscription request", @"Subscription request")
+                                  informative:nick + CPLocalizedString(@" is asking you subscription. Do you want to authorize it ?", @" is asking you subscription. Do you want to authorize it ?")
+                                       target:self
+                                      actions:[[CPLocalizedString("Accept", "Accept"), @selector(performAuthorize:)],
+                                                [CPLocalizedString("Decline", "Decline"), @selector(performRefuse:)]]];
 
-    [alert setHelpTarget:self action:@selector(showHelpForSubscription:)];
-    [alert setUserInfo:requestStanza]
-    [alert runModal];
+        [alert setHelpTarget:self action:@selector(showHelpForSubscription:)];
+        [alert setShowsSuppressionButton:YES];
+        [alert setUserInfo:requestStanza];
+        [alert runModal];
+    }
+    else
+        [self performAuthorize:requestStanza]
+
 }
 
 /*! Action of didReceiveSubscriptionRequest's confirmation alert.
@@ -287,6 +293,8 @@
 - (void)performAuthorize:(TNStropheStanza)aRequestStanza
 {
     [[[TNStropheIMClient defaultClient] roster] answerAuthorizationRequest:aRequestStanza answer:YES];
+    [[CPUserDefaults standardUserDefaults] setBool:YES forKey:@"TNArchipelContactAlwaysAuthorize"];
+
 }
 
 /*! Action of didReceiveSubscriptionRequest's confirmation alert.
