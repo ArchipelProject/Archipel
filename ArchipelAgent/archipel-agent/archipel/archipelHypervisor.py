@@ -71,6 +71,7 @@ ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 
+
 class TNThreadedVirtualMachine (Thread):
     """
     This class is used to run L{ArchipelVirtualMachine} main loop
@@ -221,8 +222,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
 
-
-    ### Overrides
+    # Overrides
 
     def set_custom_vcard_information(self, vCard):
         """
@@ -252,7 +252,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         if vCard.getTag("CATEGORIES"):
             self.vcard_infos["CATEGORIES"] = vCard.getTag("CATEGORIES").getData()
 
-    ### Utilities
+    # Utilities
 
     def update_presence(self, origin=None, user_info=None, parameters=None, presence_msg=None):
         """
@@ -306,54 +306,51 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         TNArchipelEntity.unregister_handlers(self)
         self.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
 
-
     def init_vocabulary(self):
         """
         Initialize the base vocabulary.
         """
         TNArchipelEntity.init_vocabulary(self)
-        registrar_items = [
-                            {   "commands" : ["capabilities"],
-                                "parameters": [],
-                                "method": self.message_capabilities,
-                                "permissions": ["capabilities"],
-                                "description": "Get my libvirt capabilities" },
-                            {   "commands" : ["nodeinfo"],
-                                "parameters": [],
-                                "method": self.message_nodeinfo,
-                                "permissions": ["nodeinfo"],
-                                "description": "Get my node informations" },
-                            {   "commands" : ["libvirt uri", "migration info"],
-                                "parameters": [],
-                                "method": self.message_migration_info,
-                                "permissions": ["migrationinfo"],
-                                "description": "Get my migration informations" },
-                            {   "commands" : ["ip"],
-                                "parameters": [],
-                                "method": self.message_ip,
-                                "permissions": ["ip"],
-                                "description": "Get my IP address" },
-                            {   "commands" : ["roster", "vms", "virtual machines", "domains"],
-                                "parameters": [],
-                                "method": self.message_roster,
-                                "permissions": ["rostervm"],
-                                "description": "Get the content of my roster" },
-                            {   "commands" : ["alloc"],
-                                "parameters": [{"name": "name", "description": "The name of the vm. If not given, it will be generated"}],
-                                "method": self.message_alloc,
-                                "permissions": ["alloc"],
-                                "description": "Allocate a new virtual machine" },
-                            {   "commands" : ["free"],
-                                "parameters": [{"name": "identifier", "description": "The name or the UUID of the vm to free"}],
-                                "method": self.message_free,
-                                "permissions": ["free"],
-                                "description": "Free a virtual machine" },
-                            {   "commands" : ["clone"],
-                                "parameters": [{"name": "identifier", "description": "The name or the UUID of the vm to clone"}],
-                                "method": self.message_clone,
-                                "permissions": ["clone"],
-                                "description": "Clone a virtual machine" }
-                            ]
+        registrar_items = [{"commands": ["capabilities"],
+                            "parameters": [],
+                            "method": self.message_capabilities,
+                            "permissions": ["capabilities"],
+                            "description": "Get my libvirt capabilities"},
+                           {"commands": ["nodeinfo"],
+                            "parameters": [],
+                            "method": self.message_nodeinfo,
+                            "permissions": ["nodeinfo"],
+                            "description": "Get my node informations"},
+                           {"commands": ["libvirt uri", "migration info"],
+                            "parameters": [],
+                            "method": self.message_migration_info,
+                            "permissions": ["migrationinfo"],
+                            "description": "Get my migration informations"},
+                           {"commands": ["ip"],
+                            "parameters": [],
+                            "method": self.message_ip,
+                            "permissions": ["ip"],
+                            "description": "Get my IP address"},
+                           {"commands": ["roster", "vms", "virtual machines", "domains"],
+                            "parameters": [],
+                            "method": self.message_roster,
+                            "permissions": ["rostervm"],
+                            "description": "Get the content of my roster"},
+                           {"commands": ["alloc"],
+                            "parameters": [{"name": "name", "description": "The name of the vm. If not given, it will be generated"}],
+                            "method": self.message_alloc,
+                            "permissions": ["alloc"],
+                            "description": "Allocate a new virtual machine"},
+                           {"commands": ["free"],
+                            "parameters": [{"name": "identifier", "description": "The name or the UUID of the vm to free"}],
+                            "method": self.message_free,
+                            "permissions": ["free"],
+                            "description": "Free a virtual machine"},
+                           {"commands": ["clone"],
+                            "parameters": [{"name": "identifier", "description": "The name or the UUID of the vm to clone"}],
+                            "method": self.message_clone,
+                            "permissions": ["clone"],
+                            "description": "Clone a virtual machine"}]
 
         self.add_message_registrar_items(registrar_items)
 
@@ -431,7 +428,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
                                 libvirt_vm.destroy()
                             libvirt_vm.undefine()
                         except libvirt.libvirtError:
-                             self.log.warning("Libvirt gave error while trying to destroy the existing vm %s" % (vm))
+                            self.log.warning("Libvirt gave error while trying to destroy the existing vm %s" % (vm))
 
         self.perform_hooks("HOOK_HYPERVISOR_WOKE_UP", self)
         self.update_presence()
@@ -516,7 +513,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 dom = self.libvirt_connection.lookupByID(domID)
                 uuid = dom.UUIDString()
-                if not uuid in self.virtualmachines:
+                if uuid not in self.virtualmachines:
                     if dom.isPersistent() or not only_persistant:
                         domains.append(dom)
             except Exception as ex:
@@ -527,7 +524,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 dom = self.libvirt_connection.lookupByName(name)
                 uuid = dom.UUIDString()
-                if not uuid in self.virtualmachines:
+                if uuid not in self.virtualmachines:
                     domains.append(dom)
             except Exception as ex:
                 self.log.warning("LIBVIRT: Coud not find domain with name %s. It may have been undefine just right now (%s)" % (name, ex))
@@ -548,7 +545,8 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: True if a domain has been found
         """
         if self.get_vm_by_name(name):
-            if raise_error: raise Exception("Archipel already manages a virtual machine named %s." % name)
+            if raise_error:
+                raise Exception("Archipel already manages a virtual machine named %s." % name)
             return True
 
         if not name_check_level == ARCHIPEL_VM_NAME_CHECK_ALL:
@@ -557,11 +555,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         unamanaged_doms = self.get_raw_libvirt_domains()
         for dom in unamanaged_doms:
             if dom.name() == name:
-                if raise_error: raise Exception("There is already a non managed virtual machine named %s declared in Libvirt." % name)
+                if raise_error:
+                    raise Exception("There is already a non managed virtual machine named %s declared in Libvirt." % name)
                 return True
         return False
 
-    ### LIBVIRT events Processing
+    # LIBVIRT events Processing
 
     def hypervisor_on_domain_event(self, conn, dom, event, detail, opaque):
         """
@@ -599,7 +598,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             except Exception as ex:
                 self.log.error("EVENTVIRTUALMACHINE: Exception while running on_domain_event for vm %s: %s" % (dom.UUIDString(), str(ex)))
 
-    ### XMPP Processing
+    # XMPP Processing
 
     def process_iq(self, conn, iq):
         """
@@ -628,7 +627,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         # temp fix to authorize migration
         # We should find a way to authorize
         # hypervisors to ask uri with another way
-        if not action in ('migrationinfo', 'soft_alloc'):
+        if action not in ('migrationinfo', 'soft_alloc'):
             self.check_perm(conn, iq, action, -1)
 
         if action == "alloc":
@@ -659,8 +658,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
-    ###  Hypervisor controls
+    # Hypervisor controls
 
     def alloc(self, requester=None, requested_name=None, start_thread=True, requested_uuid=None, definition=None,
               organization_info=None, name_check_level=ARCHIPEL_VM_NAME_CHECK_ALL):
@@ -760,7 +758,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
 
         jid.setResource(self.jid.getNode().lower())
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
-        vm_thread = self.create_threaded_vm(jid, password, name , organization_info)
+        vm_thread = self.create_threaded_vm(jid, password, name, organization_info)
         vm = vm_thread.get_instance()
         self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
@@ -853,7 +851,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             raise Exception('The mother VM has to be defined to be cloned.')
 
         vm_state = vm.domain.info()[0]
-        if not vm_state in (libvirt.VIR_DOMAIN_SHUTOFF, libvirt.VIR_DOMAIN_SHUTDOWN):
+        if vm_state not in (libvirt.VIR_DOMAIN_SHUTOFF, libvirt.VIR_DOMAIN_SHUTDOWN):
             raise Exception('The mother VM has to be stopped to be cloned.')
 
         if wanted_name:
@@ -864,9 +862,9 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         new_vm_thread = self.alloc(requester, requested_name=name, start_thread=False, organization_info=vm.vcard_infos)
         new_vm = new_vm_thread.get_instance()
         new_vm.register_hook("HOOK_VM_INITIALIZE",
-                            method=new_vm.clone,
-                            user_info={"definition": definition, "path": vm.folder, "parentvm": vm},
-                            oneshot=True)
+                             method=new_vm.clone,
+                             user_info={"definition": definition, "path": vm.folder, "parentvm": vm},
+                             oneshot=True)
         new_vm_thread.start()
         self.perform_hooks("HOOK_HYPERVISOR_CLONE", new_vm)
         self.push_change("hypervisor", "clone")
@@ -903,8 +901,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         return {"libvirt_uri": uri,
                 "base_folder": self.configuration.get("VIRTUALMACHINE", "vm_base_path")}
 
-
-    ###  Hypervisor IQs
+    # Hypervisor IQs
 
     def iq_alloc(self, iq):
         """
@@ -1075,10 +1072,12 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         try:
             tokens = msg.getBody().split(None, 1)
-            if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            if not len(tokens) == 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help"
             identifier = tokens[1]
             vm = self.get_vm_by_identifier(identifier)
-            if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
+            if not vm:
+                return "It seems that vm with identifer %s doesn't exists." % identifier
             self.clone(vm.uuid, msg.getFrom())
             return "Cloning of virtual machine %s has started." % (vm.jid)
         except Exception as ex:
@@ -1281,7 +1280,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             for item in items:
                 jid = xmpp.JID(item.getAttr("jid"))
                 uuid = jid.getNode()
-                if not uuid in self.virtualmachines:
+                if uuid not in self.virtualmachines:
                     raise Exception("Virtual machine with JID %s is not managed by Archipel" % jid)
                 vm = self.virtualmachines[uuid]
                 vm.terminate(clean_files=False)
@@ -1309,17 +1308,17 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             target_vm = self.get_vm_by_uuid(target_uuid)
 
             if not target_vm:
-                raise Exception("No VM with UUID %s" % target_uuid);
+                raise Exception("No VM with UUID %s" % target_uuid)
 
             if target_vm.domain:
                 dominfo = target_vm.domain.info()
                 if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
                     raise Exception('The VM has to be stopped in order to change its information.')
 
-            ## Name changing, using custom thing for that
-            ## We need to change the VM name using rename_virtual_machine
-            ## in order to manage the domain libvirt connection.
-            ## Plus to avoid setting the vCard twice, we disable auto publishing
+            # Name changing, using custom thing for that
+            # We need to change the VM name using rename_virtual_machine
+            # in order to manage the domain libvirt connection.
+            # Plus to avoid setting the vCard twice, we disable auto publishing
             if archipel_tag.getTag("FN"):
                 new_name = archipel_tag.getTag("FN").getData()
                 if not new_name == target_vm.name:
@@ -1356,7 +1355,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             if self.get_plugin("centraldb"):
                 if self.get_plugin("centraldb").central_agent_jid():
                     if not self.seen_central_agent:
-                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database with keep alive set to %ss" % ( self.get_plugin("centraldb").central_agent_jid_val, self.get_plugin("centraldb").keepalive_interval))
+                        self.log.info("HYPERVISOR: Central Agent detected %s, using central database with keep alive set to %ss" % (self.get_plugin("centraldb").central_agent_jid_val, self.get_plugin("centraldb").keepalive_interval))
                         self.seen_central_agent = True
                     return
                 elif self.seen_central_agent:
@@ -1382,6 +1381,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             try:
                 self.get_plugin("centraldb").update_hypervisors([{"jid":str(self.jid), "last_seen":datetime.datetime.now(), "status":"Off"}])
             except Exception as ex:
-                self.log.error("CENTRALDB: error when executing exit proc: %s"%ex)
+                self.log.error("CENTRALDB: error when executing exit proc: %s" % ex)
 
         self.disconnect()
