@@ -76,31 +76,42 @@ class TNCentralDb (TNArchipelPlugin):
 
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.hypervisor_hook_xmpp_authenticated)
+            self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.push_vms_in_central_db)
 
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
-            self.entity.register_hook("HOOK_VM_DEFINE", method=self.hook_vm_event)
-            self.entity.register_hook("HOOK_VM_TERMINATE", method=self.hook_vm_terminate)
+            self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.hook_missed_vms, oneshot=True)
+            self.entity.register_hook("HOOK_VM_DEFINE",     method=self.hook_vm_event)
+            self.entity.register_hook("HOOK_VM_TERMINATE",  method=self.hook_vm_terminate)
 
         self.central_agent_jid_val = None
         self.last_keepalive_heard = None
         self.keepalive_interval = int(ARCHIPEL_CENTRAL_AGENT_TIMEOUT * 2)
         self.hypervisor_timeout_threshold = int(ARCHIPEL_CENTRAL_AGENT_TIMEOUT)
         self.delayed_tasks = TNTasks(self.entity.log)
+        self.vms_to_hook = set()
 
         self.xmpp_authenticated    = False
-        self.required_statistics        = []
 
     # Hooks
+
+    def hook_missed_vms(self, origin=None, user_info=None, arguments=None):
+        """
+        Called when a vm was not ready on first push_vms_in_central_db.
+        """
+        if self.entity.hypervisor.get_plugin("centraldb") and self.entity.uuid in self.entity.hypervisor.get_plugin("centraldb").vms_to_hook:
+            self.entity.hypervisor.get_plugin("centraldb").vms_to_hook.remove(self.entity.uuid)
+            self.entity.log.debug("CENTRALDB: Registering ourself in centraldb as we were not ready the first time.")
+            self.hook_vm_event()
+
     def hook_vm_event(self, origin=None, user_info=None, arguments=None):
         """
         Called when a VM definition or change of definition occurs.
         This will advertise definition to the central agent
         """
-        xmldesc = None
+        if not self.entity.definition:
+            return
 
-        if self.entity.definition:
-            xmldesc = self.entity.xmldesc(mask_description=False)
-
+        xmldesc = self.entity.xmldesc(mask_description=False)
         vm_info = [{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid, 'name':xmldesc.getTag("name").getData()}]
         self.register_vms(vm_info)
 
@@ -189,21 +200,27 @@ class TNCentralDb (TNArchipelPlugin):
                 self.central_agent_jid_val = keepalive_jid
                 self.last_keepalive_heard  = datetime.datetime.now()
 
-                self.delayed_tasks.add((self.hypervisor_timeout_threshold - self.keepalive_interval) * 2 / 3, self.push_statistics_to_centraldb)
+                self.delayed_tasks.add((self.hypervisor_timeout_threshold - self.keepalive_interval) * 2 / 3, self.push_statistics_to_centraldb, {'central_announcement_event':central_announcement_event})
 
                 if not old_central_agent_jid:
-                    self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid, 'callback': self.push_vms_in_central_db, 'kwargs':{'central_announcement_event':central_announcement_event}})
+                    self.delayed_tasks.add(self.keepalive_interval, self.handle_first_keepalive, {'keepalive_jid':keepalive_jid})
                 elif central_announcement_event.getAttr("force_update") == "true" or keepalive_jid != old_central_agent_jid:
-                    self.delayed_tasks.add(self.keepalive_interval, self.push_vms_in_central_db, {'central_announcement_event':central_announcement_event})
+                    self.delayed_tasks.add(self.keepalive_interval, self.push_vms_in_central_db)
 
-    def push_statistics_to_centraldb(self):
+    def push_statistics_to_centraldb(self, central_announcement_event):
         """
         each time we hear a keepalive, we push relevant statistics to central db
         """
+        # parsing required statistics to be pushed to central agent
+        required_statistics = []
+        if central_announcement_event.getTag("required_stats"):
+            for required_stat in central_announcement_event.getTag("required_stats").getChildren():
+                required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
+
         stats_results = {"jid":str(self.entity.jid)}
-        if len(self.required_statistics) > 0:
+        if len(required_statistics) > 0:
             stat_num = 0
-            for stat in self.required_statistics:
+            for stat in required_statistics:
                 stat_num += 1
                 value = eval("self.entity.get_plugin('hypervisor_health').collector.stats_%s" % stat["major"])[-1][stat["minor"]]
                 stats_results["stat%s" % stat_num] = value
@@ -222,6 +239,12 @@ class TNCentralDb (TNArchipelPlugin):
         if len(vms_from_local_db) > 0:
             dbCommand = xmpp.Node(tag="event", attrs={"jid":self.entity.jid})
 
+            def _get_existing_vms_instances_callback(conn, packed_vms):
+                existing_vms_entities = self.unpack_entries(packed_vms)
+                self.entity.manage_persistence(vms_from_local_db, existing_vms_entities)
+                if callback:
+                    callback(**kwargs)
+
             for vm in vms_from_local_db:
                 entryTag = xmpp.Node(tag="entry")
                 uuid     = xmpp.JID(vm["string_jid"]).getNode()
@@ -231,13 +254,6 @@ class TNCentralDb (TNArchipelPlugin):
             iq = xmpp.Iq(typ="set", queryNS=ARCHIPEL_NS_CENTRALAGENT, to=keepalive_jid)
             iq.getTag("query").addChild(name="archipel", attrs={"action":"get_existing_vms_instances"})
             iq.getTag("query").getTag("archipel").addChild(node=dbCommand)
-
-            def _get_existing_vms_instances_callback(conn, packed_vms):
-                existing_vms_entities = self.unpack_entries(packed_vms)
-                self.entity.manage_persistence(vms_from_local_db, existing_vms_entities)
-                if callback:
-                    callback(**kwargs)
-
             self.entity.xmppclient.SendAndCallForResponse(iq, _get_existing_vms_instances_callback)
 
         else:
@@ -246,27 +262,24 @@ class TNCentralDb (TNArchipelPlugin):
             if callback:
                 callback(**kwargs)
 
-    def push_vms_in_central_db(self, central_announcement_event):
+    def push_vms_in_central_db(self, origin=None, user_info=None, arguments=None):
         """
         there is a new central agent, or we just started.
         Consequently, we re-populate central database
         since we are using "on conflict replace" mode of sqlite, inserting an existing uuid will overwrite it.
         """
-        vm_table = []
+        vms = []
         for vm,vmprops in self.entity.virtualmachines.iteritems():
             if vmprops.definition:
-                vm_table.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid, "name":vmprops.definition.getTag("name").getData()})
+                vms.append({"uuid":vmprops.uuid,"parker":None,"creation_date":None,"domain":vmprops.definition,"hypervisor":self.entity.jid, "name":vmprops.definition.getTag("name").getData()})
+            else:
+                self.entity.log.debug("[CENTRALDB] The entity %s looks not ready, postponing it's registration." % vmprops.uuid)
+                self.vms_to_hook.add(vmprops.uuid)
 
-        if len(vm_table) >= 1:
-            self.register_vms(vm_table)
+        if len(vms) >= 1:
+            self.register_vms(vms)
 
         self.register_hypervisors([{"jid":self.entity.jid, "status":"Online", "last_seen": datetime.datetime.now(), "stat1":0, "stat2":0, "stat3":0}])
-
-        # parsing required statistics to be pushed to central agent
-        self.required_statistics = []
-        if central_announcement_event.getTag("required_stats"):
-            for required_stat in central_announcement_event.getTag("required_stats").getChildren():
-                self.required_statistics.append({"major":required_stat.getAttr("major"),"minor":required_stat.getAttr("minor")})
 
     # Database Management
     # read commands
@@ -434,7 +447,6 @@ class TNCentralDb (TNArchipelPlugin):
             if entry_dict != {}:
                 entries.append(entry_dict)
         return entries
-
 
     # Plugin information
 
