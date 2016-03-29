@@ -302,7 +302,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 callback(**args)
             else:
                 temp_users = set()
-                self.entity.log.debug("XMPPSERVER: Refresh cached entries. %s entries cached / %s entries" % (len(total_number_of_users, len(self.users))))
+                self.entity.log.debug("XMPPSERVER: Refresh cached entries. %s entries cached / %s entries" % (total_number_of_users, len(self.users)))
                 answer = self._send_xmlrpc_call("registered_users", {"host": xmppserver})
                 for item in answer.get('users', []):
                     user = "%s@%s" % (item.get('username'), xmppserver)
