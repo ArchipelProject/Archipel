@@ -51,7 +51,7 @@ class TNOOMKiller (TNArchipelPlugin):
         self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False)
         self.entity.permission_center.create_permission("oom_setadjust", "Authorizes user to set OOM values", False)
 
-    ### Module implementation
+    # Module implementation
 
     def register_handlers(self):
         """
@@ -78,13 +78,12 @@ class TNOOMKiller (TNArchipelPlugin):
         plugin_configuration_section   = "OOMKILLER"
         plugin_configuration_tokens    = []
 
-        return {    "common-name"               : plugin_friendly_name,
-                    "identifier"                : plugin_identifier,
-                    "configuration-section"     : plugin_configuration_section,
-                    "configuration-tokens"      : plugin_configuration_tokens }
+        return {"common-name":           plugin_friendly_name,
+                "identifier":            plugin_identifier,
+                "configuration-section": plugin_configuration_section,
+                "configuration-tokens":  plugin_configuration_tokens}
 
-
-    ### Hooks
+    # Hooks
 
     def vm_create(self, origin, user_info, parameters):
         """
@@ -128,8 +127,7 @@ class TNOOMKiller (TNArchipelPlugin):
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
         self.entity.log.info("OOM: information for vm with uuid %s have been removed." % self.entity.uuid)
 
-
-    ### OOM information management
+    # OOM information management
 
     def get_oom_info(self):
         """
@@ -160,18 +158,18 @@ class TNOOMKiller (TNArchipelPlugin):
                 f = open("/proc/%d/oom_score_adj" % pid, "w")
             elif os.path.isfile("/proc/%d/oom_adj" % pid):
                 f = open("/proc/%d/oom_adj" % pid, "w")
-            f.write(str(adjust))
-            f.close()
-        except Exception as ex:
-            self.entity.log.warning("OOM: No valid PID. storing value only on file: " + str(ex))
+            if f:
+                f.write(str(adjust))
+                f.close()
+        except:
+            self.entity.log.warning("OOM: No valid PID. Storing value only on file.")
         try:
             with open(self.oomkiller_flag, "w") as oomkiller_flag:
                 oomkiller_flag.write(adjust)
         except Exception as ex:
             self.entity.log.warning("OOM: Unable to write change in file while setting OOM: " + str(ex))
 
-
-    ### XMPP handlers
+    # XMPP handlers
 
     def process_iq(self, conn, iq):
         """
@@ -210,7 +208,6 @@ class TNOOMKiller (TNArchipelPlugin):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
-
 
     def iq_oom_set_adjust(self, iq):
         """

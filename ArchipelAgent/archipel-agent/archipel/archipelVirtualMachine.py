@@ -114,8 +114,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.vm_disk_base_path = self.configuration.get("VIRTUALMACHINE", "vm_base_path")
         self.folder = "%s/%s" % (self.vm_disk_base_path, self.uuid)
         self.vm_perm_base_path = self.vm_disk_base_path
-        self.lock_timer = None
-        self.maximum_lock_time = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         self.is_migrating = False
         self.libvirt_event_callback_id = -1
         self.entity_type = "virtualmachine"
@@ -125,7 +123,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.is_freeing = False
         self.inhibit_undefine_domain_event_counter = 0
         self.inhibit_define_domain_event_counter   = 0
-        self.cputime_samples=[]
+        self.cputime_samples = []
         self.cputime_sampling_Interval = 2.0
         self.cputime_sampling_timer(self.cputime_sampling_Interval)
 
@@ -173,8 +171,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.virtualmachine')
 
-
-    ### Overrides
+    # Overrides
 
     def set_custom_vcard_information(self, vCard):
         """
@@ -186,7 +183,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         vCard.append(xmpp.Node("LOCALITY", payload=self.vcard_infos["LOCALITY"]))
         vCard.append(xmpp.Node("USERID", payload=self.vcard_infos["USERID"]))
         vCard.append(xmpp.Node("CATEGORIES", payload=self.vcard_infos["CATEGORIES"]))
-
 
     def get_custom_vcard_information(self, vCard):
         """
@@ -205,66 +201,63 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         if vCard.getTag("CATEGORIES"):
             self.vcard_infos["CATEGORIES"] = vCard.getTag("CATEGORIES").getData()
 
-
-    ### Utilities
+    # Utilities
 
     def init_vocabulary(self):
         """
         This method registers for user messages.
         """
         TNArchipelEntity.init_vocabulary(self)
-        registrar_items = [
-                            {  "commands" : ["start", "create", "boot", "play", "run"],
-                                "parameters": [],
-                                "method": self.message_create,
-                                "permissions": ["create"],
-                                "description": "I'll start" },
-                            {  "commands" : ["shutdown", "stop"],
-                                "parameters": [],
-                                "method": self.message_shutdown,
-                                "permissions": ["shutdown"],
-                                "description": "I'll shutdown" },
-                            {  "commands" : ["destroy"],
-                                "parameters": [],
-                                "method": self.message_destroy,
-                                "permissions": ["destroy"],
-                                "description": "I'll destroy myself" },
-                            {  "commands" : ["pause", "suspend"],
-                                "parameters": [],
-                                "method": self.message_suspend,
-                                "permissions": ["suspend"],
-                                "description": "I'll suspend" },
-                            {  "commands" : ["resume", "unpause"],
-                                "parameters": [],
-                                "method": self.message_resume,
-                                "permissions": ["resume"],
-                                "description": "I'll resume" },
-                            {  "commands" : ["info", "how are you", "and you"],
-                                "parameters": [],
-                                "method": self.message_info,
-                                "permissions": ["info"],
-                                "description": "I'll give info about me" },
-                            {  "commands" : ["desc", "xml"],
-                                "parameters": [],
-                                "permissions": ["xmldesc"],
-                                "method": self.message_xmldesc,
-                                "description": "I'll show my description" },
-                            {  "commands" : ["net", "stat"],
-                                "parameters": [],
-                                "method": self.message_networkinfo,
-                                "permissions": ["networkinfo"],
-                                "description": "I'll show my network stats" },
-                            {  "commands" : ["fuck", "asshole", "jerk", "stupid", "suck"],
-                                "ignore": True,
-                                "parameters": [],
-                                "method": self.message_insult,
-                                "description": "" },
-                            {  "commands" : ["hello", "hey", "hi", "good morning", "yo"],
-                                "ignore": True,
-                                "parameters": [],
-                                "method": self.message_hello,
-                                "description": "" }
-                        ]
+        registrar_items = [{"commands": ["start", "create", "boot", "play", "run"],
+                            "parameters": [],
+                            "method": self.message_create,
+                            "permissions": ["create"],
+                            "description": "I'll start"},
+                           {"commands": ["shutdown", "stop"],
+                            "parameters": [],
+                            "method": self.message_shutdown,
+                            "permissions": ["shutdown"],
+                            "description": "I'll shutdown"},
+                           {"commands": ["destroy"],
+                            "parameters": [],
+                            "method": self.message_destroy,
+                            "permissions": ["destroy"],
+                            "description": "I'll destroy myself"},
+                           {"commands": ["pause", "suspend"],
+                            "parameters": [],
+                            "method": self.message_suspend,
+                            "permissions": ["suspend"],
+                            "description": "I'll suspend"},
+                           {"commands": ["resume", "unpause"],
+                            "parameters": [],
+                            "method": self.message_resume,
+                            "permissions": ["resume"],
+                            "description": "I'll resume"},
+                           {"commands": ["info", "how are you", "and you"],
+                            "parameters": [],
+                            "method": self.message_info,
+                            "permissions": ["info"],
+                            "description": "I'll give info about me"},
+                           {"commands": ["desc", "xml"],
+                            "parameters": [],
+                            "permissions": ["xmldesc"],
+                            "method": self.message_xmldesc,
+                            "description": "I'll show my description"},
+                           {"commands": ["net", "stat"],
+                            "parameters": [],
+                            "method": self.message_networkinfo,
+                            "permissions": ["networkinfo"],
+                            "description": "I'll show my network stats"},
+                           {"commands": ["fuck", "asshole", "jerk", "stupid", "suck"],
+                            "ignore": True,
+                            "parameters": [],
+                            "method": self.message_insult,
+                            "description": ""},
+                           {"commands": ["hello", "hey", "hi", "good morning", "yo"],
+                            "ignore": True,
+                            "parameters": [],
+                            "method": self.message_hello,
+                            "description": ""}]
         self.add_message_registrar_items(registrar_items)
 
     def init_permissions(self):
@@ -301,7 +294,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         @type method: function
         @param method: the method to run before defining the VM
         """
-        if not method in self.vm_will_define_hooks:
+        if method not in self.vm_will_define_hooks:
             self.vm_will_define_hooks.append(method)
 
     def register_handlers(self):
@@ -368,7 +361,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         # Here a glitch could appear where self.name is not the same as the definition.
         if not provided_name_tag:
             xmldesc.addChild(name='name')
-        elif self.definition and (not provided_name_tag.getData() == self.name or not provided_name_tag.getData() == self.definition.getTag('name').getData()) :
+        elif self.definition and (not provided_name_tag.getData() == self.name or not provided_name_tag.getData() == self.definition.getTag('name').getData()):
             self.rename_virtual_machine(provided_name_tag.getData(), publish=True)
 
         xmldesc.getTag('name').setData(self.name.encode("ascii", "replace"))
@@ -453,7 +446,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             return
 
         try:
-            if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
+            if event == libvirt.VIR_DOMAIN_EVENT_STARTED and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "created")
                 self.perform_hooks("HOOK_VM_CREATE")
@@ -540,15 +533,15 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             progress = 0
 
             if (total == 0):
-               progress = 0
+                progress = 0
             else:
                 if remaining == 0:
-                    progress = 100;
+                    progress = 100
                 else:
                     progress = int(float(100) - float(remaining) * float(100.0) / float(total))
                     if progress >= 100:
                         progress = 99
-            if progress > 0: # we save une presence :)
+            if progress > 0:
                 self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating - %d%%" % progress)
 
             if self.is_migrating:
@@ -556,8 +549,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         except Exception:
             pass
 
-
-    ### Process IQ
+    # Process IQ
 
     def __process_iq_archipel_control(self, conn, iq):
         """
@@ -588,7 +580,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         if not self.hypervisor.libvirt_connection:
             self.log.info("Control action required but no libvirt connection.")
             raise xmpp.protocol.NodeProcessed
-        if self.is_migrating and (not action in ("info", "xmldesc", "networkinfo")):
+        if self.is_migrating and (action not in ("info", "xmldesc", "networkinfo")):
             reply = build_error_iq(self, "Virtual machine is migrating. Can't perform this control operation.", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -646,7 +638,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
 
-        if self.is_migrating and (not action in ("capabilities")):
+        if self.is_migrating and (action not in ("capabilities")):
             reply = build_error_iq(self, "Virtual machine is migrating. Can't perform this control operation.", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -662,8 +654,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
-    ### libvirt controls
+    # libvirt controls
 
     def create(self):
         """
@@ -784,7 +775,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 self.log.warning("It seems the VM is gone, certainly due to migration. Stopping cpu usage collector. (reason %s)" % ex)
                 return
 
-        if not self.is_migrating: # for some reason this is not working...
+        if not self.is_migrating:
             Timer(interval, self.cputime_sampling_timer, [interval]).start()
 
     def compute_cpu_usage(self):
@@ -966,7 +957,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                 xmldesc.delChild("description")
             raise ex
 
-
         if not self.domain:
             self.connect_domain()
 
@@ -1041,7 +1031,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         Then ask for the destination_jid hypervisor what is his
         libvirt uri.
         """
-        ### Sanity checks
+        # Sanity checks
         if not self.hypervisor.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             raise Exception('Archipel only supports Live migration for QEMU/KVM domains at the moment.')
         if self.is_migrating:
@@ -1101,8 +1091,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         Perform the migration.
         """
-        ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
-        try: # libvirt 0.9.10+
+        # DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
+        try:
             flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE | libvirt.VIR_MIGRATE_UNSAFE
         except:
             flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
@@ -1157,7 +1147,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         Set the vCard fields for the organization
         """
         if not organizationInfo:
-            return;
+            return
 
         if "ORGNAME" in organizationInfo:
             self.vcard_infos["ORGNAME"] = organizationInfo["ORGNAME"]
@@ -1175,8 +1165,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         if publish:
             self.set_vcard()
 
-
-    ### Other stuffs
+    # Other stuffs
 
     def perform_threaded_cloning(self, src_path, newxml, parentvm):
         """
@@ -1208,8 +1197,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
             os.unlink(self.permission_db_file)
             self.remove_folder()
 
-
-    ### XMPP Controls
+    # XMPP Controls
 
     def iq_migrate(self, iq):
         """
@@ -1491,7 +1479,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         @return: a ready to send Message containing the result of the action
         """
         return str(self.xmldesc())
-
 
     # iq definition
 

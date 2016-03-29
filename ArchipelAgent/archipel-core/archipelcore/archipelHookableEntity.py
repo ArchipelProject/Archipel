@@ -19,7 +19,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys,traceback
+import sys
+import traceback
+
 
 class TNHookableEntity (object):
     """
@@ -35,8 +37,7 @@ class TNHookableEntity (object):
         self.hooks  = {}
         self.log    = log
 
-
-    ### Hooks management
+    # Hooks management
 
     def create_hook(self, hookname):
         """
@@ -57,7 +58,7 @@ class TNHookableEntity (object):
         @rtype: boolean
         @return: True in case of success
         """
-        if not hookname in self.hooks:
+        if hookname not in self.hooks:
             return False
         for hook in self.hooks[hookname]:
             self.hooks[hookname].remove(hook)
@@ -79,7 +80,7 @@ class TNHookableEntity (object):
         @param oneshot: if True, the method will be unregistered after first performing
         """
         # If the hook is not existing, we create it.
-        if not hookname in self.hooks:
+        if hookname not in self.hooks:
             self.create_hook(hookname)
         self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
         self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
@@ -94,7 +95,7 @@ class TNHookableEntity (object):
         @rtype: boolean
         @return: True in case of success
         """
-        if not hookname in self.hooks:
+        if hookname not in self.hooks:
             return False
         for hook in self.hooks[hookname]:
             if hook["method"] == method:
@@ -102,7 +103,6 @@ class TNHookableEntity (object):
                 break
         self.log.info("HOOK: unregistering hook method %s for hook name %s" % (method.__name__, hookname))
         return True
-
 
     def perform_hooks(self, hookname, arguments=None):
         """
@@ -114,7 +114,7 @@ class TNHookableEntity (object):
         """
         self.log.info("HOOK: going to run methods for hook %s" % hookname)
         hook_to_remove = []
-        if not hookname in self.hooks:
+        if hookname not in self.hooks:
             self.log.warning("No hook with name %s found" % hookname)
             return
         for info in self.hooks[hookname]:
@@ -125,13 +125,12 @@ class TNHookableEntity (object):
                 self.log.debug("HOOK: performing method %s registered in hook with name %s and user_info: %s (oneshot: %s)" % (m.__name__, hookname, str(user_info), str(oneshot)))
                 m(self, user_info, arguments)
                 if oneshot:
-                    self.log.info("HOOK: this hook was oneshot. registering for deletion.")
+                    self.log.info("HOOK: this hook was oneshot. Registering for deletion.")
                     hook_to_remove.append(m)
             except Exception as ex:
                     self.log.error("HOOK: error when performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
                     t, v, tr = sys.exc_info()
                     self.log.debug("\n".join(traceback.format_exception(t,v,tr)))
-
 
         for hook_method in hook_to_remove:
             self.log.info("HOOK: removing registred hook for deletion %s" % (hook_method.__name__))
