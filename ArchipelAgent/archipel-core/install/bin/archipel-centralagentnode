@@ -53,6 +53,13 @@ def delete(xmppclient, pubsubserver):
     delete_pubsub(xmppclient, pubsubserver, NODENAME_CENTRAL_KEEPALIVE)
 
 
+def list(xmppclient, pubsubserver):
+    """
+    list the content
+    """
+    pubsubNode = get_pubsub(xmppclient, pubsubserver, NODENAME_CENTRAL_KEEPALIVE)
+    for item in pubsubNode.get_items():
+        print item
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -77,6 +84,10 @@ if __name__ == "__main__":
                         action="store_true",
                         dest="delete",
                         help="delete the node")
+    parser.add_argument("-l", "--list",
+                        action="store_true",
+                        dest="list",
+                        help="list the content")
 
     options = parser.parse_args()
 
@@ -86,3 +97,5 @@ if __name__ == "__main__":
         create(xmppclient, options.pubsubserver)
     elif options.delete:
         delete(xmppclient, options.pubsubserver)
+    elif options.list:
+        list(xmppclient, options.pubsubserver)
