@@ -21,6 +21,7 @@
 
 import xmlrpclib
 import time
+import re
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
@@ -388,7 +389,7 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param display: list fo group(s) which can see the group
         """
         server = self.entity.jid.getDomain()
-        sanitized_display_group = list(set([group.strip() for group in display if len(group.strip()) > 0]))
+        sanitized_display_group = set([group.strip() for group in display if len(group.strip()) > 0])
         display_groups = '\\n'.join(map(str, sanitized_display_group))
         answer = self._send_xmlrpc_call("srg_create", {"host": server, "display": display_groups, "name": name, "description": description, "group": ID})
         if not answer['res'] == 0:
@@ -465,19 +466,24 @@ class TNXMPPServerController (TNArchipelPlugin):
         groups = answer["groups"]
         ret = []
 
+        def strip_value(s):
+            v = re.sub('\n\s*', '', s)
+            v = re.sub('\[\s*91\s*,', '', v)
+            v = re.sub(',\s*44\s*,', ',', v)
+            v = re.sub(',\s*93\s*]', '', v)
+            return ''.join(c for c in v.strip() if c not in "[]\"\\")
+
         for group in groups:
             answer = self._send_xmlrpc_call("srg_get_info", {"host": server, "group": group["id"]})
             informations = answer["informations"]
             for info in informations:
                 if info['information'][0]["key"] == "name":
-                    displayed_name = info['information'][1]["value"]
+                    displayed_name = strip_value(info['information'][1]["value"])
                 if info['information'][0]["key"] == "description":
-                    description = info['information'][1]["value"]
+                    description = strip_value(info['information'][1]["value"])
                 if info['information'][0]["key"] == "displayed_groups":
-                    displayed_groups = ''.join(c for c in info['information'][1]["value"] if c not in "[]\"")
-            info = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", ""), "displayed_groups": [], "members": []}
-            for displayed_group in displayed_groups.split(","):
-                info["displayed_groups"].append(displayed_group)
+                    displayed_groups = sorted(strip_value(info['information'][1]["value"]).split(','))
+            info = {"id": group["id"], "displayed_name": displayed_name, "description": description, "displayed_groups": displayed_groups, "members": []}
             answer = self._send_xmlrpc_call("srg_get_members", {"host": server, "group": group["id"]})
             members = answer["members"]
             for member in members:
@@ -750,7 +756,6 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.users_number(reply, only_humans)
             return None
         except Exception as ex:
-            print "ex"
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
         return reply
 
