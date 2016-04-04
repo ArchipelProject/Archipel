@@ -229,9 +229,12 @@ class TNThreadedHealthCollector (Thread):
                 (mdev,mpath,mfs,moptions,msomething,mpass) = mount.split()
                 if mdev in listed or mpath in listed:
                     continue
-                if (mfs in ['devfs', 'devtmpfs', 'tmpfs']):
+                if (mfs in ['autofs', 'devfs', 'devtmpfs', 'tmpfs']):
                     continue
-                vfs = statvfs(mpath)
+                try:
+                    vfs = statvfs(mpath)
+                except:
+                    continue
                 if (vfs.f_blocks == 0):
                     continue
                 entry = {"partition": mdev,
