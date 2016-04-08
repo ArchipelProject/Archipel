@@ -77,11 +77,12 @@ class TNCentralDb (TNArchipelPlugin):
         if self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.hypervisor_hook_xmpp_authenticated)
             self.entity.register_hook("HOOK_HYPERVISOR_WOKE_UP", method=self.push_vms_in_central_db)
+            self.entity.register_hook("HOOK_HYPERVISOR_FREE",  method=self.hook_vm_unregistered)
+
 
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.hook_missed_vms, oneshot=True)
             self.entity.register_hook("HOOK_VM_DEFINE",     method=self.hook_vm_event)
-            self.entity.register_hook("HOOK_VM_TERMINATE",  method=self.hook_vm_terminate)
 
         self.central_agent_jid_val = None
         self.last_keepalive_heard = None
@@ -115,12 +116,12 @@ class TNCentralDb (TNArchipelPlugin):
         vm_info = [{"uuid":self.entity.uuid,"parker":None,"creation_date":None,"domain":xmldesc,"hypervisor":self.entity.hypervisor.jid, 'name':xmldesc.getTag("name").getData()}]
         self.register_vms(vm_info)
 
-    def hook_vm_terminate(self, origin=None, user_info=None, arguments=None):
+    def hook_vm_unregistered(self, origin=None, user_info=None, arguments=None):
         """
         Called when a VM termination occurs.
         This will advertise undefinition to the central agent.
         """
-        self.unregister_vms([{"uuid":self.entity.uuid}], None)
+        self.unregister_vms([{"uuid":arguments.uuid}], None)
 
     # Pubsub management
 
@@ -459,7 +460,7 @@ class TNCentralDb (TNArchipelPlugin):
         """
         plugin_friendly_name         = "Central db"
         plugin_identifier            = "centraldb"
-        plugin_configuration_section = "CENTRALDB"
+        plugin_configuration_section = None
         plugin_configuration_tokens  = []
         return {"common-name": plugin_friendly_name,
                 "identifier": plugin_identifier,

@@ -75,7 +75,7 @@ class TNOOMKiller (TNArchipelPlugin):
         """
         plugin_friendly_name           = "Virtual Machine OOM Killer"
         plugin_identifier              = "oomkiller"
-        plugin_configuration_section   = "OOMKILLER"
+        plugin_configuration_section   = None
         plugin_configuration_tokens    = []
 
         return {"common-name":           plugin_friendly_name,
@@ -221,7 +221,7 @@ class TNOOMKiller (TNArchipelPlugin):
         try:
             reply = iq.buildReply("result")
             value = iq.getTag("query").getTag("archipel").getAttr("adjust")
-            self.set_oom_info(value, 0)
+            self.set_oom_info(value, "0")
             self.entity.push_change("oom", "adjusted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)

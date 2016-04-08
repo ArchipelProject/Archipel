@@ -73,6 +73,8 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.entity.permission_center.create_permission("appliance_attach", "Authorizes user attach appliance to virtual machine", False)
         self.entity.permission_center.create_permission("appliance_detach", "Authorizes user to detach appliance_detach from virtual machine", False)
         self.entity.permission_center.create_permission("appliance_package", "Authorizes user to package new appliance from virtual machine", False)
+        self.entity.register_hook("HOOK_VM_TERMINATE", method=self.vm_terminate)
+
 
         # chat
         registrar_items = [
@@ -253,6 +255,17 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.is_installed = False
         self.entity.push_change("vmcasting", "appliancedetached")
 
+    def vm_terminate(self, origin, user_info, arguments):
+        """
+        Close the database connection.
+        @type origin: TNArchipelEntity
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user information
+        @type arguments: object
+        @param arguments: runtime argument
+        """
+        self.database_connection.close()
 
     ### XMPP Processing
 

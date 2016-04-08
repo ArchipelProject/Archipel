@@ -476,8 +476,9 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
                     self.log.info("LIBVIRTEVENT: VM has inihibited its undefine event reaction. Ignoring")
                     self.log.debug("LIBVIRTEVENT: Value of undefine inhibit counter is now %s" % self.inhibit_undefine_domain_event_counter)
                     return
-                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
-                self.push_change("virtualmachine:definition", "undefined")
+                if self.isAuth:
+                    self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
+                    self.push_change("virtualmachine:definition", "undefined")
                 self.perform_hooks("HOOK_VM_UNDEFINE")
                 self.domain = None
                 self.definition = None
@@ -981,6 +982,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, TNHookableEntity, TNAvatarCont
         """
         Undefine the domain and disconnect from XMPP.
         """
+        self.terminate(clean_files=False)
         self.undefine()
         self.disconnect()
         self.log.info("Virtual machine undefined and disconnected.")
