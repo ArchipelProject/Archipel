@@ -315,10 +315,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                         temp_users.add('u' + user)
                 self.users = temp_users
                 del temp_users
-
-                if len(self.users) == total_number_of_users:
-                    self.entity.log.debug("XMPPSERVER: Done fetching %s users in %s seconds" % (total_number_of_users, time.time() - start_time))
-                    callback(**args)
+                self.entity.log.debug("XMPPSERVER: Done fetching %s users in %s seconds" % (total_number_of_users, time.time() - start_time))
+                callback(**args)
 
         iq = xmpp.Iq(typ="set", to=xmppserver)
         iq.addChild("command", attrs={"action": "execute", "node": "http://jabber.org/protocol/admin#get-registered-users-num"}, namespace="http://jabber.org/protocol/commands")
