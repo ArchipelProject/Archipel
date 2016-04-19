@@ -128,9 +128,11 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_changepassword", "Authorizes user to change XMPP users password", False)
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_filter", "Authorizes user to filter XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
         else:
             self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
+            self.entity.permission_center.create_permission("xmppserver_users_filter", "Authorizes user to filter XMPP users", False)
             self.entity.permission_center.create_permission("xmppserver_users_number", "Authorizes user to get the total number of XMPP users", False)
 
     # Plugin interface
@@ -244,6 +246,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 group_id = self.autogroup_vms_id
                 jid = xmpp.JID(node=entity.get('uuid').lower(), domain=self.xmpp_server.lower())
             self.entity.permission_center.grant_permission_to_user('xmppserver_users_list', jid.getStripped())
+            self.entity.permission_center.grant_permission_to_user('xmppserver_users_filter', jid.getStripped())
             self.entity.permission_center.grant_permission_to_user('xmppserver_users_number', jid.getStripped())
             try:
                 for group in self.group_list():
