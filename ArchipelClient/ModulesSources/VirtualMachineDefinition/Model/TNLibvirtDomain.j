@@ -25,6 +25,7 @@
 @import "TNLibvirtDomainBlockIOTune.j"
 @import "TNLibvirtDomainFeatures.j"
 @import "TNLibvirtDomainClock.j"
+@import "TNLibvirtDomainCpu.j"
 @import "TNLibvirtDomainMemoryBacking.j"
 @import "TNLibvirtDomainMemoryTune.j"
 @import "TNLibvirtDomainOS.j"
@@ -79,6 +80,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     TNLibvirtDomainMemoryBacking    _memoryBacking      @accessors(property=memoryBacking);
     TNLibvirtDomainMemoryTune       _memoryTuning       @accessors(property=memoryTuning);
     TNLibvirtDomainOS               _OS                 @accessors(property=OS);
+    TNLibvirtDomainCpu              _cpu                @accessors(property=cpu);
     TNLibvirtDomainMetadata         _metadata           @accessors(property=metadata);
 }
 
@@ -109,6 +111,7 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] init];
         _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] init];
         _OS             = [[TNLibvirtDomainOS alloc] init];
+        _cpu            = [[TNLibvirtDomainCpu alloc] init];
     }
 
     return self;
@@ -144,6 +147,9 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] initWithXMLNode:[aNode firstChildWithName:@"memoryBacking"]];
         _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] initWithXMLNode:[aNode firstChildWithName:@"memtune"]];
         _OS             = [[TNLibvirtDomainOS alloc] initWithXMLNode:[aNode firstChildWithName:@"os"] domainType:[aNode valueForAttribute:@"type"]];
+
+        if ([aNode containsChildrenWithName:@"cpu"])
+            _cpu        = [[TNLibvirtDomainCpu alloc] initWithXMLNode:[aNode firstChildWithName:@"cpu"]];
 
         _commandLine    = [CPArray array];
         var clNodes     = [aNode childrenWithName:@"commandline"];
@@ -216,6 +222,11 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     if (_OS)
     {
         [node addNode:[_OS XMLNode]];
+        [node up];
+    }
+    if (_cpu)
+    {
+        [node addNode:[_cpu XMLNode]];
         [node up];
     }
     if (_clock)
