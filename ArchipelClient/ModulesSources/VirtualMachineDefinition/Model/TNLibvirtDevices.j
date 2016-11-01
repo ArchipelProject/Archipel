@@ -28,6 +28,7 @@
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
 @import "TNLibvirtDeviceController.j"
+@import "TNLibvirtDeviceSound.j"
 @import "TNLibvirtDeviceVideo.j"
 
 /*! @ingroup virtualmachinedefinition
@@ -43,6 +44,7 @@
     CPArray                 _inputs         @accessors(property=inputs);
     CPArray                 _interfaces     @accessors(property=interfaces);
     CPArray                 _controllers    @accessors(property=controllers);
+    CPArray                 _sound          @accessors(property=sound)
     CPString                _emulator       @accessors(property=emulator);
 
     TNLibvirtDeviceVideo    _video          @accessors(property=video);
@@ -64,6 +66,7 @@
         _inputs      = [CPArray array];
         _interfaces  = [CPArray array];
         _controllers = [CPArray array];
+        _sound       = [CPArray array];
     }
 
     return self;
@@ -88,6 +91,7 @@
         _inputs      = [CPArray array];
         _interfaces  = [CPArray array];
         _controllers = [CPArray array];
+        _sound       = [CPArray array];
 
         var diskNodes = [aNode ownChildrenWithName:@"disk"];
         for (var i = 0; i < [diskNodes count]; i++)
@@ -132,6 +136,10 @@
         var controllerNodes = [aNode ownChildrenWithName:@"controller"];
         for (var i = 0; i < [controllerNodes count]; i++)
             [_controllers addObject:[[TNLibvirtDeviceController alloc] initWithXMLNode:[controllerNodes objectAtIndex:i]]];
+
+        var soundNodes = [aNode ownChildrenWithName:@"sound"];
+        for (var i = 0; i < [soundNodes count]; i++)
+            [_sound addObject:[[TNLibvirtDeviceSound alloc] initWithXMLNode:[soundNodes objectAtIndex:i]]];
 
         if  ([aNode firstChildWithName:@"video"])
             _video = [[TNLibvirtDeviceVideo alloc] initWithXMLNode:[aNode firstChildWithName:@"video"]];
@@ -203,6 +211,12 @@
     for (var i = 0; i < [_controllers count]; i++)
     {
         [node addNode:[[_controllers objectAtIndex:i] XMLNode]];
+        [node up];
+    }
+
+    for (var i = 0; i < [_sound count]; i++)
+    {
+        [node addNode:[[_sound objectAtIndex:i] XMLNode]];
         [node up];
     }
 
